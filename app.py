@@ -54,10 +54,7 @@ class app:
 
         # Ajouter chaque image comme une Part distincte
         for image_data in self.imageList[folder].values():
-            if image_data.endswith(".jpg") or image.endswith(".jpeg"):
-                parts.append(Part.from_data(data=self.imageList[folder][image], mime_type="image/jpeg"))
-            elif image_data.endswith(".png"):
-                parts.append(Part.from_data(data=self.imageList[folder][image], mime_type="image/png"))
+            parts.append(Part.from_data(data=image_data, mime_type="image/jpeg"))
 
         # Lire le texte à partir du fichier
         with open("keys_questions.txt", 'r', encoding='utf-8') as file:
@@ -68,7 +65,7 @@ class app:
         parts.append(text)
 
         # Passer toutes les Parts à generate_content
-        responses = model.generate_content(parts,
+        response = model.generate_content(parts,
             generation_config={
             "max_output_tokens": 2048,
             "temperature": 0,
@@ -81,14 +78,10 @@ class app:
                 generative_models.HarmCategory.HARM_CATEGORY_SEXUALLY_EXPLICIT: generative_models.HarmBlockThreshold.BLOCK_MEDIUM_AND_ABOVE,
                 generative_models.HarmCategory.HARM_CATEGORY_HARASSMENT: generative_models.HarmBlockThreshold.BLOCK_MEDIUM_AND_ABOVE,
             },
-            stream=True,
+            stream=False,
         )    
-        for response in responses:
-            if response.text!=None:
-                line = response.text 
-                print(line)
-        else:
-            print("No parts in this content.")
+        print(response.text)
+        
 
          
         #response = model.generate_content([image_Part, merge_keys_and_questions("keys.json", "questions.json")])
