@@ -16,56 +16,35 @@ class app:
         print("App started")
         print("-------------------------------------------------------------------------")
 
-    def list_files_and_directories(self, dir_path):
-        self.numberFolder=0
-        numberFileTotal=0
-        for root, dirs, files in os.walk(dir_path):
-            self.numberFolder+=1
-            numberFile=0
-            self.imageList[self.numberFolder] = {}
-            for name in files:
-                try:
-                    with open(os.path.join(root, name), "rb") as img_file:
-                        image_data = img_file.read()
-                        numberFile+=1
-                        numberFileTotal+=1
-                        self.imageList[self.numberFolder][numberFile] = image_data
-                except FileNotFoundError:
-                    print("Le fichier spécifié n'a pas été trouvé.")
-        
-        print("\n-------------------------------------------------------------------------")
-        print("Image transfer completed")
-        print("-------------------------------------------------------------------------")
+    def collect_images(self,directory):
+        image_extensions = [".jpg", ".jpeg", ".png"]
+        image_paths = []
 
-        print("\nFile loaded --> " + "\nNumber of folder: " + str(self.numberFolder) + "\nNumber of file: " + str(numberFileTotal))
+        for root, dirs, files in os.walk(directory):
+            for file in files:
+                if any(file.endswith(ext) for ext in image_extensions):
+                    image_paths.append(os.path.join(root, file))
 
-    def get_number_folder(self):
-        return self.numberFolder
+        return image_paths
 
-    def get_image_list(self):
-        return self.imageList
-
-    def generateRequest(self, folder):
+    def generateRequest(self, directory):
+        imageListPath = self.collect_images(directory)
         vertexai.init(project="test-application-2-416219", location="northamerica-northeast1")
         model = GenerativeModel("gemini-1.0-pro-vision-001")
 
-        # Créer une liste pour stocker les Parts
-        parts = []
+        imagesList = []
 
-        # Ajouter chaque image comme une Part distincte
-        for image_data in self.imageList[folder].values():
-            parts.append(Part.from_data(data=image_data, mime_type="image/jpeg"))
+        for image_data in imageListPath:
+            with open(image_data, 'rb') as f:
+                image_data = f.read()
+                imagesList.append(Part.from_data(data=image_data, mime_type="image/jpeg"))
 
-        # Lire le texte à partir du fichier
         with open("keys_questions.txt", 'r', encoding='utf-8') as file:
             text = file.read()
 
-        # Ajouter le texte comme une autre Part
-        # parts.append(Part.from_data(data=text, mime_type="text/plain"))
-        parts.append(text)
+        imagesList.append(text)
 
-        # Passer toutes les Parts à generate_content
-        response = model.generate_content(parts,
+        response = model.generate_content(imagesList,
             generation_config={
             "max_output_tokens": 2048,
             "temperature": 0,
@@ -80,8 +59,7 @@ class app:
             },
             stream=False,
         )    
-        print(response.text)
-        
+        print(response.text)        
 
          
         #response = model.generate_content([image_Part, merge_keys_and_questions("keys.json", "questions.json")])
@@ -99,9 +77,6 @@ class app:
         for key, value in temp_data.items():
             print(f"Key : {key}, Question : {value}")
         return temp_data """
-        
+    
 my_app = app()
-my_app.list_files_and_directories('Company_Image_Folder')
-my_app.generateRequest(1)
-
-# Path: app.py
+my_app.generateRequest('Company_Image_Folder\Acti_Sol1')
