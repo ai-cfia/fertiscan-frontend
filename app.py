@@ -27,7 +27,6 @@ class app:
                 try:
                     with open(os.path.join(root, name), "rb") as img_file:
                         image_data = img_file.read()
-                        print(f"Image: {name} - Taille: {len(image_data)} octets")  
                         numberFile+=1
                         numberFileTotal+=1
                         self.imageList[self.numberFolder][numberFile] = image_data
@@ -47,19 +46,54 @@ class app:
         return self.imageList
 
     def generateRequest(self, folder):
-        image_Part = []
         vertexai.init(project="test-application-2-416219", location="northamerica-northeast1")
         model = GenerativeModel("gemini-1.0-pro-vision-001")
 
-        for image in self.imageList[folder]:
-            if(image.endswith(".jpg") or image.endswith(".jpeg")):
-                image_Part.append(Part.from_data(data=self.imageList[folder][image]), mime_type="image/jpeg")
-            elif image.endswith(".png"):
-                image_Part.append(Part.from_data(data=self.imageList[folder][image], mime_type="image/png"))
-        self.merge_keys_and_questions("keys.json", "questions.json")
-        # response = model.generate_content([image_Part, merge_keys_and_questions("keys.json", "questions.json")])
+        # Créer une liste pour stocker les Parts
+        parts = []
 
-    def merge_keys_and_questions(self, key_file_path, question_file_path):
+        # Ajouter chaque image comme une Part distincte
+        for image_data in self.imageList[folder].values():
+            if image_data.endswith(".jpg") or image.endswith(".jpeg"):
+                parts.append(Part.from_data(data=self.imageList[folder][image], mime_type="image/jpeg"))
+            elif image_data.endswith(".png"):
+                parts.append(Part.from_data(data=self.imageList[folder][image], mime_type="image/png"))
+
+        # Lire le texte à partir du fichier
+        with open("keys_questions.txt", 'r', encoding='utf-8') as file:
+            text = file.read()
+
+        # Ajouter le texte comme une autre Part
+        # parts.append(Part.from_data(data=text, mime_type="text/plain"))
+        parts.append(text)
+
+        # Passer toutes les Parts à generate_content
+        responses = model.generate_content(parts,
+            generation_config={
+            "max_output_tokens": 2048,
+            "temperature": 0,
+            "top_p": 1,
+            "top_k": 32
+            },
+            safety_settings={
+                generative_models.HarmCategory.HARM_CATEGORY_HATE_SPEECH: generative_models.HarmBlockThreshold.BLOCK_MEDIUM_AND_ABOVE,
+                generative_models.HarmCategory.HARM_CATEGORY_DANGEROUS_CONTENT: generative_models.HarmBlockThreshold.BLOCK_MEDIUM_AND_ABOVE,
+                generative_models.HarmCategory.HARM_CATEGORY_SEXUALLY_EXPLICIT: generative_models.HarmBlockThreshold.BLOCK_MEDIUM_AND_ABOVE,
+                generative_models.HarmCategory.HARM_CATEGORY_HARASSMENT: generative_models.HarmBlockThreshold.BLOCK_MEDIUM_AND_ABOVE,
+            },
+            stream=True,
+        )    
+        for response in responses:
+            if response.text!=None:
+                line = response.text 
+                print(line)
+        else:
+            print("No parts in this content.")
+
+         
+        #response = model.generate_content([image_Part, merge_keys_and_questions("keys.json", "questions.json")])
+
+"""     def merge_keys_and_questions(self, key_file_path, question_file_path):
         # Load JSON data from key and question files
         with open(key_file_path, 'r', encoding='utf-8') as key_file:
             keys_data = json.load(key_file)
@@ -71,7 +105,7 @@ class app:
             
         for key, value in temp_data.items():
             print(f"Key : {key}, Question : {value}")
-        return temp_data
+        return temp_data """
         
 my_app = app()
 my_app.list_files_and_directories('Company_Image_Folder')
