@@ -193,7 +193,7 @@ def result_to_jsonFile(data, directory):
     if typeOfQuestion == "Original_question":
         folder_path = f"Tests\\TestsResult\\Original_question\\{imageName}"
     else:  
-        folder_path = "Tests\\TestsResult\\Modified_question\\{imageName}"
+        folder_path = f"Tests\\TestsResult\\Modified_question\\{imageName}"
     if not os.path.exists(folder_path):
         os.makedirs(folder_path)
     file_path = os.path.join(folder_path, f"Test_{date_time}.json")
