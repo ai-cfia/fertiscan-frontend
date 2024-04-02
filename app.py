@@ -4,6 +4,8 @@ from vertexai.preview.generative_models import GenerativeModel, Part
 import vertexai.preview.generative_models as generative_models
 import pandas as pd
 
+typeOfQuestion = "Original_question"
+
 def collect_images(directory):
     image_extensions = [".jpg", ".jpeg", ".png"]
     image_paths = []
@@ -23,20 +25,24 @@ def getListImage(image_paths):
             
     return request
 
-def addText(request, number, baseQuestions=None):
+def addText(request, baseQuestions=None):
     if baseQuestions == None:
         request.append(create_base_request(read_csv_file("base_composition_questions.csv")))
     else:  
+        print("Final question")
         request.append(create_final_request(read_csv_file("questions_spreadsheet.csv"), baseQuestions))
 
     return request
 
-def generateRequest(directory, model:GenerativeModel, vertex:vertexai, baseQuestions=None, typeOfQuestion):
+def generateRequest(directory, model:GenerativeModel, vertex:vertexai, choiceOfQuestions, baseQuestions=None):
+    global typeOfQuestion
+    typeOfQuestion = choiceOfQuestions
     request = getListImage(collect_images(directory))
     if baseQuestions == None:
-        request = addText(request, 1)
+        print("Base question")
+        request = addText(request, None)
     else:
-        request = addText(request, 2, baseQuestions)
+        request = addText(request, baseQuestions)
     responses = model.generate_content(request,
         generation_config={
         "max_output_tokens": 2048,
@@ -80,19 +86,17 @@ def read_csv_file(file_path):
     df = pd.read_csv(file_path, sep=';')
     return df
 
-def  create_final_request(file, baseQuestions, typeOfQuestion):
+def  create_final_request(file, baseQuestions):
     request_AsText = ""
     for index, line in file.iterrows():
         if not line.isnull().all():
+            #print(line)
             categorie = str(line['Categories'])
             if line['Specification'] != None:
                 request_AsText += str(line['Specification']) + "\n"
-
             if line['Categories'] != None:
-                if "not_asked" in categorie:
-                    break
-                elif "all" in categorie:
-                    request_AsText = addLine(request_AsText, line, typeOfQuestion)
+                if "all" in categorie:
+                    request_AsText = addLine(request_AsText, line)
 
                 if "fertilizer" in categorie and "is_fertilizer" in baseQuestions:
 
@@ -143,15 +147,26 @@ def  create_final_request(file, baseQuestions, typeOfQuestion):
                     if "nutrient" in categorie & "contain_nutrient" in baseQuestions:
                         request_AsText = addLine(request_AsText, line)
 
+                    if "microorganism_group" in categorie and "contain_microorganism" in baseQuestions:
+                        request_AsText = addLine(request_AsText, line)
+
                 elif "growing_medium" in categorie and "contain_growing_medium" in baseQuestions:
                     request_AsText = addLine(request_AsText, line)
 
                 if "mixture_product" in categorie and "is_mixture_product" in baseQuestions:
                     request_AsText = addLine(request_AsText, line)
-                return request_AsText
+                if "allergen" in categorie and "contain_allergen" in baseQuestions:
+                    request_AsText = addLine(request_AsText, line)
+                if "acronyms" in categorie and "contain_acronyms" in baseQuestions:
+                    request_AsText = addLine(request_AsText, line)
+                if "polymeric" in categorie and "contain_polymeric" in baseQuestions:
+                    request_AsText = addLine(request_AsText, line)
+                #print(request_AsText)
+    return request_AsText
                 
 
-def addLine(requestAsText, line, typeOfQuestion):
+def addLine(requestAsText, line):
+    global typeOfQuestion
     if not line.isnull().all():
         line_text = str(line['Key']) + ":" + str(line[typeOfQuestion]) + "\n"
         requestAsText += line_text
@@ -175,11 +190,13 @@ def create_base_request(file):
 model = GenerativeModel("gemini-1.0-pro-vision-001")
 projectinit=vertexai.init(project="test-application-2-416219", location="northamerica-northeast1")
 #Original question
-baseQuestions = generateRequest('Company_Image_Folder\\Acti_Sol1', model, projectinit, None, "Original_question")
-baseQuestions = generateRequest('Company_Image_Folder\\Acti_Sol1', model, projectinit, baseQuestions, "Original_question")
+print("----------------- Original question -----------------")
+baseQuestions = generateRequest('Company_Image_Folder\\Acti_Sol1', model, projectinit, "Original_question", None)
+baseQuestions = generateRequest('Company_Image_Folder\\Acti_Sol1', model, projectinit, "Original_question", baseQuestions)
 # Modified question
-baseQuestions = generateRequest('Company_Image_Folder\\Acti_Sol1', model, projectinit, None, "Modified_question")
-baseQuestions = generateRequest('Company_Image_Folder\\Acti_Sol1', model, projectinit, baseQuestions, "Modified_question")
+print("\n \n----------------- Modified question -----------------")
+baseQuestions = generateRequest('Company_Image_Folder\\Acti_Sol1', model, projectinit, "Modified_question", None)
+baseQuestions = generateRequest('Company_Image_Folder\\Acti_Sol1', model, projectinit, "Modified_question",baseQuestions)
 
 #generateRequest('Company_Image_Folder\Bio_Fleur', model, projectinit)
 #generateRequest('Company_Image_Folder\Bio_Fleur', model, projectinit)
