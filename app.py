@@ -5,6 +5,10 @@ import vertexai
 from vertexai.preview.generative_models import GenerativeModel, Part
 import vertexai.preview.generative_models as generative_models
 import pandas as pd
+from difflib import SequenceMatcher
+
+
+
 
 typeOfQuestion = "Original_question"
 
@@ -192,58 +196,78 @@ def result_to_jsonFile(data, directory):
         os.makedirs(folder_path)
     file_path = os.path.join(folder_path, f"Test_{date_time}.json")
     with open(file_path, "w") as json_file:
-        json.dump(data, json_file, indent=4)
+        formatted_data = {key: 'response' for key in data.keys()}
+        json.dump(formatted_data, json_file, indent=4)
     
-def get_all_json_test_file(parent_folder_path=None):
 
-   import os
-
-def get_all_json_test_file(parent_folder_path=None):
-    if parent_folder_path is None:
-        # Chemin absolu du dossier parent
-        parent_folder_path = os.path.abspath("Tests\\TestsResult")
+def get_all_json_test_file(parent_folder_path):
     
-    # Liste pour stocker tous les fichiers
+    # list of all files
     all_files = []
     
-    # Traverse chaque sous-dossier dans le dossier parent
+    # Traverse each subfolder in the parent directory
     for root, dirs, files in os.walk(parent_folder_path):
         # Liste des fichiers JSON dans le sous-dossier actuel
         json_files = [os.path.relpath(os.path.join(root, file), "Tests\\") 
                       for file in files if file.endswith('.json')]
         
-        # Ajoute les fichiers JSON à la liste de tous les fichiers
+        # Add the JSON files to the list of all files
         all_files.extend(json_files)
         
-        # Appel récursif pour obtenir les fichiers JSON dans les sous-sous-dossiers
+        # Recursive call to get JSON files in sub-subfolders
         for dir in dirs:
             subdir_path = os.path.join(root, dir)
             all_files.extend(get_all_json_test_file(subdir_path))
         
-        # Arrête la boucle pour éviter de traverser davantage dans les sous-dossiers
+        # Stop the loop to avoid traversing further into subfolders
         break
         
     return all_files
 
-# Chemin absolu du dossier parent
-parent_folder_path = os.path.abspath("Tests\\TestsResult")
+def similarity(a, b):
+    return SequenceMatcher(None, a, b).ratio()
 
-# Obtient tous les fichiers JSON de test dans le dossier spécifié et ses sous-dossiers
-files = get_all_json_test_file(parent_folder_path)
-
-# Affiche les chemins de tous les fichiers JSON
-print("Tous les fichiers JSON de test dans le dossier TestResult et ses sous-dossiers:")
-for file in files:
-    print(file)
-
-         
-
+def compare_json_files_line_by_line(directory):
+    # Get a list of JSON files in the directory
+    json_files = [f for f in os.listdir(directory) if f.endswith('.json')]
+    
+    # Dictionary to store similarities
+    similarities = {}
+    
+    # Iterate over each pair of JSON files
+    for i in range(len(json_files)):
+        for j in range(i+1, len(json_files)):
+            # Open each file
+            with open(os.path.join(directory, json_files[i]), 'r') as file1, open(os.path.join(directory, json_files[j]), 'r') as file2:
+                # Load JSON content
+                content1 = json.load(file1)
+                content2 = json.load(file2)
+                
+                # Check if content is dictionaries
+                if isinstance(content1, dict) and isinstance(content2, dict):
+                    # Iterate over keys and values in both dictionaries
+                    for key1, value1 in content1.items():
+                        for key2, value2 in content2.items():
+                            # Compare keys
+                            if key1 == key2:
+                                # Calculate similarity between values
+                                sim = similarity(str(value1), str(value2))
+                                # If no similarity, set the value to 0%
+                                if sim is None:
+                                    sim = 0
+                                similarities[(json_files[i], json_files[j], key1)] = sim
+    
+    # Write similarities to a JSON file
+    with open('results%Test.json', 'w') as outfile:
+        json.dump(similarities, outfile)
+    
+    return similarities
  
 model = GenerativeModel("gemini-1.0-pro-vision-001")
 projectinit=vertexai.init(project="test-application-2-416219", location="northamerica-northeast1")
 # print("----------------- Acti_Sol1 -----------------")
-# baseQuestions = generateRequest('Company_Image_Folder\\Acti_Sol1', model, projectinit, "Original_question", None)
-# baseQuestions = generateRequest('Company_Image_Folder\\Acti_Sol1', model, projectinit, "Original_question", baseQuestions)
+baseQuestions = generateRequest('Company_Image_Folder\\Acti_Sol1', model, projectinit, "Original_question", None)
+baseQuestions = generateRequest('Company_Image_Folder\\Acti_Sol1', model, projectinit, "Original_question", baseQuestions)
 # baseQuestions = generateRequest('Company_Image_Folder\\Acti_Sol1', model, projectinit, "Modified_question", None)
 # baseQuestions = generateRequest('Company_Image_Folder\\Acti_Sol1', model, projectinit, "Modified_question",baseQuestions)
 
@@ -289,4 +313,14 @@ projectinit=vertexai.init(project="test-application-2-416219", location="northam
 # baseQuestions = generateRequest('Company_Image_Folder\\Synagri', model, projectinit, "Modified_question", None)
 # baseQuestions = generateRequest('Company_Image_Folder\\Synagri', model, projectinit, "Modified_question", baseQuestions)
 
-get_all_json_test_file()
+# Absolute path of the parent directory
+parent_folder_path = os.path.abspath("Tests\\TestsResult")
+print(compare_json_files_line_by_line("Tests\\TestsResult\\Original_question\\Acti_Sol1"))
+
+# Get all the test JSON files in the specified directory and its subdirectories
+#files = get_all_json_test_file(parent_folder_path)
+
+# Display the paths of all JSON files
+#print("All the JSON files in the specified directory and its subdirectories:")
+#for file in files:
+#    print(file)
