@@ -1,3 +1,5 @@
+import datetime
+import json
 import os
 import vertexai
 from vertexai.preview.generative_models import GenerativeModel, Part
@@ -60,12 +62,11 @@ def generateRequest(directory, model:GenerativeModel, vertex:vertexai, choiceOfQ
     ),
         stream=False,
     )   
-
+    if baseQuestions != None:
+        result_to_jsonFile(responses.text, directory) 
     if baseQuestions == None:
         baseQuestions = toDict(responses.text)
-    else:
-        otherQuestion = toDict(responses, baseQuestions)
-       
+           
     print(responses.text)
     
     return baseQuestions
@@ -85,6 +86,18 @@ def read_csv_file(file_path):
     # Lire le fichier CSV
     df = pd.read_csv(file_path, sep=';')
     return df
+
+
+def create_base_request(file):
+    requestAsText = ""
+    for index, line in file.iterrows():
+        if not line.isnull().all():
+            specification = line['Specification']
+            requestAsText += str(specification) + "\n"
+        
+        line_text = str(line['Key']) + ":" + str(line['Question']) + "; \n"
+        requestAsText += line_text
+    return requestAsText
 
 def  create_final_request(file, baseQuestions):
     request_AsText = ""
@@ -160,8 +173,7 @@ def  create_final_request(file, baseQuestions):
                 if "acronyms" in categorie and "contain_acronyms" in baseQuestions:
                     request_AsText = addLine(request_AsText, line)
                 if "polymeric" in categorie and "contain_polymeric" in baseQuestions:
-                    request_AsText = addLine(request_AsText, line)
-                #print(request_AsText)
+                    request_AsText = addLine(request_AsText, line)         
     return request_AsText
                 
 
@@ -172,17 +184,21 @@ def addLine(requestAsText, line):
         requestAsText += line_text
     return requestAsText
 
-def create_base_request(file):
-    requestAsText = ""
-    for index, line in file.iterrows():
-        if not line.isnull().all():
-            specification = line['Specification']
-            requestAsText += str(specification) + "\n"
-        
-        line_text = str(line['Key']) + ":" + str(line['Question']) + "; \n"
-        requestAsText += line_text
-    return requestAsText
-
+def result_to_jsonFile(data, directory):
+    global typeOfQuestion
+    lastIndex = directory.rfind('\\')
+    imageName = directory[lastIndex+1:]
+    imageName = imageName.split(".")[0]
+    date_time  = datetime.datetime.now().strftime("%Y-%m-%d_%Hh%Mm%Ss")
+    if typeOfQuestion == "Original_question":
+        folder_path = f"Tests\\TestsResult\\Original_question\\{imageName}"
+    else:  
+        folder_path = "Tests\\TestsResult\\Modified_question\\{imageName}"
+    if not os.path.exists(folder_path):
+        os.makedirs(folder_path)
+    file_path = os.path.join(folder_path, f"Test_{date_time}.json")
+    with open(file_path, "w") as json_file:
+        json.dump(data, json_file, indent=4)
     
         
 
