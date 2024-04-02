@@ -20,7 +20,6 @@ def collect_images(directory):
 def getListImage(image_paths):
     request = []
     for image_data in image_paths:
-        print(image_data)
         with open(image_data, 'rb') as f:
             image = f.read()
             request.append(Part.from_data(data=image, mime_type="image/jpeg"))
@@ -31,7 +30,6 @@ def addText(request, baseQuestions=None):
     if baseQuestions == None:
         request.append(create_base_request(read_csv_file("base_composition_questions.csv")))
     else:  
-        print("Final question")
         request.append(create_final_request(read_csv_file("questions_spreadsheet.csv"), baseQuestions))
 
     return request
@@ -41,7 +39,6 @@ def generateRequest(directory, model:GenerativeModel, vertex:vertexai, choiceOfQ
     typeOfQuestion = choiceOfQuestions
     request = getListImage(collect_images(directory))
     if baseQuestions == None:
-        print("Base question")
         request = addText(request, None)
     else:
         request = addText(request, baseQuestions)
@@ -66,8 +63,6 @@ def generateRequest(directory, model:GenerativeModel, vertex:vertexai, choiceOfQ
         result_to_jsonFile(responses.text, directory) 
     if baseQuestions == None:
         baseQuestions = toDict(responses.text)
-           
-    print(responses.text)
     
     return baseQuestions
 
@@ -103,7 +98,6 @@ def  create_final_request(file, baseQuestions):
     request_AsText = ""
     for index, line in file.iterrows():
         if not line.isnull().all():
-            #print(line)
             categorie = str(line['Categories'])
             if line['Specification'] != None:
                 request_AsText += str(line['Specification']) + "\n"
@@ -200,20 +194,99 @@ def result_to_jsonFile(data, directory):
     with open(file_path, "w") as json_file:
         json.dump(data, json_file, indent=4)
     
+def get_all_json_test_file(parent_folder_path=None):
+
+   import os
+
+def get_all_json_test_file(parent_folder_path=None):
+    if parent_folder_path is None:
+        # Chemin absolu du dossier parent
+        parent_folder_path = os.path.abspath("Tests\\TestsResult")
+    
+    # Liste pour stocker tous les fichiers
+    all_files = []
+    
+    # Traverse chaque sous-dossier dans le dossier parent
+    for root, dirs, files in os.walk(parent_folder_path):
+        # Liste des fichiers JSON dans le sous-dossier actuel
+        json_files = [os.path.relpath(os.path.join(root, file), "Tests\\") 
+                      for file in files if file.endswith('.json')]
         
+        # Ajoute les fichiers JSON à la liste de tous les fichiers
+        all_files.extend(json_files)
+        
+        # Appel récursif pour obtenir les fichiers JSON dans les sous-sous-dossiers
+        for dir in dirs:
+            subdir_path = os.path.join(root, dir)
+            all_files.extend(get_all_json_test_file(subdir_path))
+        
+        # Arrête la boucle pour éviter de traverser davantage dans les sous-dossiers
+        break
+        
+    return all_files
+
+# Chemin absolu du dossier parent
+parent_folder_path = os.path.abspath("Tests\\TestsResult")
+
+# Obtient tous les fichiers JSON de test dans le dossier spécifié et ses sous-dossiers
+files = get_all_json_test_file(parent_folder_path)
+
+# Affiche les chemins de tous les fichiers JSON
+print("Tous les fichiers JSON de test dans le dossier TestResult et ses sous-dossiers:")
+for file in files:
+    print(file)
+
+         
 
  
 model = GenerativeModel("gemini-1.0-pro-vision-001")
 projectinit=vertexai.init(project="test-application-2-416219", location="northamerica-northeast1")
-#Original question
-print("----------------- Original question -----------------")
-baseQuestions = generateRequest('Company_Image_Folder\\Acti_Sol1', model, projectinit, "Original_question", None)
-baseQuestions = generateRequest('Company_Image_Folder\\Acti_Sol1', model, projectinit, "Original_question", baseQuestions)
-# Modified question
-print("\n \n----------------- Modified question -----------------")
-baseQuestions = generateRequest('Company_Image_Folder\\Acti_Sol1', model, projectinit, "Modified_question", None)
-baseQuestions = generateRequest('Company_Image_Folder\\Acti_Sol1', model, projectinit, "Modified_question",baseQuestions)
+# print("----------------- Acti_Sol1 -----------------")
+# baseQuestions = generateRequest('Company_Image_Folder\\Acti_Sol1', model, projectinit, "Original_question", None)
+# baseQuestions = generateRequest('Company_Image_Folder\\Acti_Sol1', model, projectinit, "Original_question", baseQuestions)
+# baseQuestions = generateRequest('Company_Image_Folder\\Acti_Sol1', model, projectinit, "Modified_question", None)
+# baseQuestions = generateRequest('Company_Image_Folder\\Acti_Sol1', model, projectinit, "Modified_question",baseQuestions)
 
-#generateRequest('Company_Image_Folder\Bio_Fleur', model, projectinit)
-#generateRequest('Company_Image_Folder\Bio_Fleur', model, projectinit)
-#generateRequest('Company_Image_Folder\Bio_Fleur', model, projectinit)
+# print("----------------- Acti_Sol2 -----------------")
+# baseQuestions = generateRequest('Company_Image_Folder\\Acti_Sol2', model, projectinit, "Original_question", None)
+# baseQuestions = generateRequest('Company_Image_Folder\\Acti_Sol2', model, projectinit, "Original_question", baseQuestions)
+# baseQuestions = generateRequest('Company_Image_Folder\\Acti_Sol2', model, projectinit, "Modified_question", None)
+# baseQuestions = generateRequest('Company_Image_Folder\\Acti_Sol2', model, projectinit, "Modified_question", baseQuestions)
+
+# print("----------------- Agrocentre -----------------")
+# baseQuestions = generateRequest('Company_Image_Folder\\Agrocentre', model, projectinit, "Original_question", None)
+# baseQuestions = generateRequest('Company_Image_Folder\\Agrocentre', model, projectinit, "Original_question", baseQuestions)
+# baseQuestions = generateRequest('Company_Image_Folder\\Agrocentre', model, projectinit, "Modified_question", None)
+# baseQuestions = generateRequest('Company_Image_Folder\\Agrocentre', model, projectinit, "Modified_question", baseQuestions)
+
+# print("----------------- Bio_Fleur -----------------")
+# baseQuestions = generateRequest('Company_Image_Folder\\Bio_Fleur', model, projectinit, "Original_question", None)
+# baseQuestions = generateRequest('Company_Image_Folder\\Bio_Fleur', model, projectinit, "Original_question", baseQuestions)
+# baseQuestions = generateRequest('Company_Image_Folder\\Bio_Fleur', model, projectinit, "Modified_question", None)
+# baseQuestions = generateRequest('Company_Image_Folder\\Bio_Fleur', model, projectinit, "Modified_question", baseQuestions)
+
+# print("----------------- Cameron_Micronutrients -----------------")
+# baseQuestions = generateRequest('Company_Image_Folder\\Cameron_Micronutrients', model, projectinit, "Original_question", None)
+# baseQuestions = generateRequest('Company_Image_Folder\\Cameron_Micronutrients', model, projectinit, "Original_question", baseQuestions)
+# baseQuestions = generateRequest('Company_Image_Folder\\Cameron_Micronutrients', model, projectinit, "Modified_question", None)
+# baseQuestions = generateRequest('Company_Image_Folder\\Cameron_Micronutrients', model, projectinit, "Modified_question", baseQuestions)
+
+# print("----------------- Resilence -----------------")
+# baseQuestions = generateRequest('Company_Image_Folder\\Resilence', model, projectinit, "Original_question", None)
+# baseQuestions = generateRequest('Company_Image_Folder\\Resilence', model, projectinit, "Original_question", baseQuestions)
+# baseQuestions = generateRequest('Company_Image_Folder\\Resilence', model, projectinit, "Modified_question", None)
+# baseQuestions = generateRequest('Company_Image_Folder\\Resilence', model, projectinit, "Modified_question", baseQuestions)
+
+# print("----------------- Sustane -----------------")
+# baseQuestions = generateRequest('Company_Image_Folder\\Sustane', model, projectinit, "Original_question", None)
+# baseQuestions = generateRequest('Company_Image_Folder\\Sustane', model, projectinit, "Original_question", baseQuestions)
+# baseQuestions = generateRequest('Company_Image_Folder\\Sustane', model, projectinit, "Modified_question", None)
+# baseQuestions = generateRequest('Company_Image_Folder\\Sustane', model, projectinit, "Modified_question", baseQuestions)
+
+# print("----------------- Synagri -----------------")
+# baseQuestions = generateRequest('Company_Image_Folder\\Synagri', model, projectinit, "Original_question", None)
+# baseQuestions = generateRequest('Company_Image_Folder\\Synagri', model, projectinit, "Original_question", baseQuestions)
+# baseQuestions = generateRequest('Company_Image_Folder\\Synagri', model, projectinit, "Modified_question", None)
+# baseQuestions = generateRequest('Company_Image_Folder\\Synagri', model, projectinit, "Modified_question", baseQuestions)
+
+get_all_json_test_file()
