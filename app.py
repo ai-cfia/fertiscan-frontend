@@ -182,7 +182,9 @@ def addLine(requestAsText, line):
         requestAsText += line_text
     return requestAsText
 
-def result_to_jsonFile(data, directory):
+import json
+
+def result_to_jsonFile(responses, directory):
     global typeOfQuestion
     lastIndex = directory.rfind('\\')
     imageName = directory[lastIndex+1:]
@@ -194,13 +196,23 @@ def result_to_jsonFile(data, directory):
         folder_path = f"Tests\\TestsResult\\Modified_question\\{imageName}"
     if not os.path.exists(folder_path):
         os.makedirs(folder_path)
-    file_path = os.path.join(folder_path, f"Test_{date_time}.json")
+    file_path = os.path.join(folder_path, f"{date_time}_test.json")
+    
+    # Extract JSON content from raw text
+    start_index = responses.find('{')
+    end_index = responses.rfind('}') + 1
+    json_content = responses[start_index:end_index]
+
+    # Parse JSON
+    data_formated = json.loads(json_content)
+
+    # Write JSON data to file
     with open(file_path, "w") as json_file:
-        formatted_data = {key: 'response' for key in data.keys()}
-        json.dump(formatted_data, json_file, indent=4)
+        json.dump(data_formated, json_file, indent=4)
+
     
 
-def get_all_json_test_file(parent_folder_path):
+def get_all_json_test_file(data_formated, parent_folder_path):
     
     # list of all files
     all_files = []
@@ -224,48 +236,48 @@ def get_all_json_test_file(parent_folder_path):
         
     return all_files
 
-def similarity(a, b):
-    return SequenceMatcher(None, a, b).ratio()
+# def similarity(a, b):
+#     return SequenceMatcher(None, a, b).ratio()
 
-def compare_json_files_line_by_line(directory):
-    # Get a list of JSON files in the directory
-    json_files = [f for f in os.listdir(directory) if f.endswith('.json')]
+# def compare_json_files_line_by_line(directory):
+#     # Get a list of JSON files in the directory
+#     json_files = [f for f in os.listdir(directory) if f.endswith('.json')]
     
-    # Dictionary to store similarities
-    similarities = {}
+#     # Dictionary to store similarities
+#     similarities = {}
     
-    # Iterate over each pair of JSON files
-    for i in range(len(json_files)):
-        for j in range(i+1, len(json_files)):
-            # Open each file
-            with open(os.path.join(directory, json_files[i]), 'r') as file1, open(os.path.join(directory, json_files[j]), 'r') as file2:
-                # Load JSON content
-                content1 = json.load(file1)
-                content2 = json.load(file2)
+#     # Iterate over each pair of JSON files
+#     for i in range(len(json_files)):
+#         for j in range(i+1, len(json_files)):
+#             # Open each file
+#             with open(os.path.join(directory, json_files[i]), 'r') as file1, open(os.path.join(directory, json_files[j]), 'r') as file2:
+#                 # Load JSON content
+#                 content1 = json.load(file1)
+#                 content2 = json.load(file2)
                 
-                # Check if content is dictionaries
-                if isinstance(content1, dict) and isinstance(content2, dict):
-                    # Iterate over keys and values in both dictionaries
-                    for key1, value1 in content1.items():
-                        for key2, value2 in content2.items():
-                            # Compare keys
-                            if key1 == key2:
-                                # Calculate similarity between values
-                                sim = similarity(str(value1), str(value2))
-                                # If no similarity, set the value to 0%
-                                if sim is None:
-                                    sim = 0
-                                similarities[(json_files[i], json_files[j], key1)] = sim
+#                 # Check if content is dictionaries
+#                 if isinstance(content1, dict) and isinstance(content2, dict):
+#                     # Iterate over keys and values in both dictionaries
+#                     for key1, value1 in content1.items():
+#                         for key2, value2 in content2.items():
+#                             # Compare keys
+#                             if key1 == key2:
+#                                 # Calculate similarity between values
+#                                 sim = similarity(str(value1), str(value2))
+#                                 # If no similarity, set the value to 0%
+#                                 if sim is None:
+#                                     sim = 0
+#                                 similarities[(json_files[i], json_files[j], key1)] = sim
     
-    # Write similarities to a JSON file
-    with open('results%Test.json', 'w') as outfile:
-        json.dump(similarities, outfile)
+#     # Write similarities to a JSON file
+#     with open('results%Test.json', 'w') as outfile:
+#         json.dump(similarities, outfile)
     
-    return similarities
+#     return similarities
  
 model = GenerativeModel("gemini-1.0-pro-vision-001")
 projectinit=vertexai.init(project="test-application-2-416219", location="northamerica-northeast1")
-# print("----------------- Acti_Sol1 -----------------")
+print("----------------- Acti_Sol1 -----------------")
 baseQuestions = generateRequest('Company_Image_Folder\\Acti_Sol1', model, projectinit, "Original_question", None)
 baseQuestions = generateRequest('Company_Image_Folder\\Acti_Sol1', model, projectinit, "Original_question", baseQuestions)
 # baseQuestions = generateRequest('Company_Image_Folder\\Acti_Sol1', model, projectinit, "Modified_question", None)
@@ -315,7 +327,7 @@ baseQuestions = generateRequest('Company_Image_Folder\\Acti_Sol1', model, projec
 
 # Absolute path of the parent directory
 parent_folder_path = os.path.abspath("Tests\\TestsResult")
-print(compare_json_files_line_by_line("Tests\\TestsResult\\Original_question\\Acti_Sol1"))
+#print(compare_json_files_line_by_line("Tests\\TestsResult\\Original_question\\Acti_Sol1"))
 
 # Get all the test JSON files in the specified directory and its subdirectories
 #files = get_all_json_test_file(parent_folder_path)
