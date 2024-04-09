@@ -10,10 +10,10 @@ from typing import Dict
 from difflib import SequenceMatcher
 from typing import List
 
-
 typeOfQuestion = "Original_question"
 firstRequest = True
 
+# Function to collect images from a directory
 def collect_images(directory):
     image_extensions = [".jpg", ".jpeg", ".png"]
     image_paths = []
@@ -23,23 +23,24 @@ def collect_images(directory):
                 image_paths.append(os.path.join(root, file))
     return image_paths
 
+# Function to get image data list from image paths
 def get_list_image(image_paths):
     request = []
     for image_data in image_paths:
         with open(image_data, 'rb') as f:
             image = f.read()
             request.append(Part.from_data(data=image, mime_type="image/jpeg"))
-            
     return request
 
+# Function to add text to the request
 def add_text(request, baseQuestions=None):
     if baseQuestions == None:
         request.append(create_base_request(read_csv_file("base_composition_questions.csv")))
     else:  
         request.append(create_final_request(read_csv_file("questions_spreadsheet.csv"), baseQuestions))
-
     return request
 
+# Function to generate a request
 def generate_request(directory, model:GenerativeModel, vertex:vertexai, choiceOfQuestions, baseQuestions=None):
     global typeOfQuestion
     global firstRequest
@@ -81,6 +82,7 @@ def generate_request(directory, model:GenerativeModel, vertex:vertexai, choiceOf
         firstRequest = False
     return baseQuestions
 
+# Function to convert response to dictionary
 def to_dict(responses, baseQuestions):
     responseAsDict = {}
     if baseQuestions == None: 
@@ -88,17 +90,17 @@ def to_dict(responses, baseQuestions):
             texte = response
             indice = texte.find(":")
             partie_avant = texte[:indice]
-            
             partie_apres = texte[indice + 1:]
             responseAsDict[partie_avant] = partie_apres
     return responseAsDict
 
+# Function to read CSV file
 def read_csv_file(file_path):
     # Read csv file
     df = pd.read_csv(file_path, sep=';')
     return df
 
-
+# Function to create base request
 def create_base_request(file):
     requestAsText = ""
     for index, line in file.iterrows():
@@ -110,6 +112,7 @@ def create_base_request(file):
         requestAsText += line_text
     return requestAsText
 
+# Function to create final request
 def  create_final_request(file, baseQuestions):
     request_AsText = ""
     for index, line in file.iterrows():
@@ -121,7 +124,6 @@ def  create_final_request(file, baseQuestions):
 
             if line['Categories'] != None:
                 if "all" in categorie:
-                    print("---------------all----------------")
                     request_AsText = add_line(request_AsText, line)
                 
                 if  "fertilizer"in categorie and"is_fertilizer" in baseQuestions:
@@ -220,8 +222,8 @@ def  create_final_request(file, baseQuestions):
                         request_AsText = add_line(request_AsText, line)
     baseQuestions == None       
     return request_AsText
-                
 
+# Function to add a line to the request
 def add_line(requestAsText, line):
     global typeOfQuestion
     if not line.isnull().all():
@@ -229,199 +231,127 @@ def add_line(requestAsText, line):
         requestAsText += line_text
     return requestAsText
 
-
-
+# Function to write results to a JSON file
 def result_to_json_file(responses, directory):
-    global typeOfQuestion
+    global typeOfQuestion  # Using global variable typeOfQuestion
     lastIndex = directory.rfind('\\')
     imageName = directory[lastIndex+1:]
     imageName = imageName.split(".")[0]
-    date_time  = datetime.datetime.now().strftime("%Y-%m-%d_%Hh%Mm%Ss")
+    date_time  = datetime.datetime.now().strftime("%Y-%m-%d_%Hh%Mm%Ss")  # Get current date and time
     if typeOfQuestion == "Original_question":
+        # Define folder path based on the type of question
         folder_path = f"Tests\\TestsResult\\Original_question\\{imageName}"
-    else:  
+    else:
         folder_path = f"Tests\\TestsResult\\Modified_question\\{imageName}"
+
+    # Create folder if it doesn't exist
     if not os.path.exists(folder_path):
         os.makedirs(folder_path)
+
+    # Define file path using image name and current date-time
     file_path = os.path.join(folder_path, f"{date_time}_test.json")
     
-    # Extract JSON content from raw text
+    # Extract JSON content from raw text response
     start_index = responses.find('{')
     end_index = responses.rfind('}') + 1
     json_content = responses[start_index:end_index]
-    # Parse JSON
+
+    # Try parsing JSON content
     try:
-        data_formated = json.loads(json_content)
+        data_formatted = json.loads(json_content)
     except json.JSONDecodeError as e:
+        # Print error message if JSON parsing fails
         print(f"Error parsing JSON: {e}")
-        data_formated = {}
+        data_formatted = {}  # Assign empty dictionary if parsing fails
 
-    # Write JSON data to file
+    # Write formatted JSON data to file with indentation
     with open(file_path, "w") as json_file:
-        json.dump(data_formated, json_file, indent=4)
+        json.dump(data_formatted, json_file, indent=4)
 
-    
 
+# Function to scan a folder and get file paths
 def scan_folder(folder_path):
     file_paths = []
-    for root, dirs, files in os.walk(folder_path):
+    for root, files in os.walk(folder_path):
         for file in files:
             file_paths.append(os.path.join(root, file))
     return file_paths
 
+# Function to calculate similarity between two strings
 def similarity(a, b):
     return SequenceMatcher(None, str(a), str(b)).ratio()
 
 number_of_tests = None
 
-# def compare_json_files(json_files: List[str], lastFile=None):
-#     results = {}
-#     global number_of_tests
-#     if number_of_tests == None:
-#         number_of_tests = 0
-
-#     with open('results%Test.json', 'r') as f:
-#         results = json.load(f)
-
-#     number_of_tests = len(json_files) - 1
-#     print("Comparing JSON files...")     
-#     for i in range(len(json_files) - 1):
-#         print(number_of_tests)
-#         file1 = json_files[i]
-#         file2 = json_files[i+1]
-#         print("Comparing", file1, "and", file2)
-#         with open(file1, 'r') as f1, open(file2, 'r') as f2:
-#             data1 = json.load(f1)
-#             data2 = json.load(f2)
-
-#             for key in set(data1.keys()).intersection(data2.keys()):
-#                 similarity_score = similarity(data1[key], data2[key]) * 100
-#                 results[key] = (results[key]+similarity_score)
-#                 if number_of_tests == len(json_files):
-#                     results[key] = similarity_score/len(json_files)
-#                 print(f"Similarity {key}: {results[key]}%")
-
-#     with open('results%Test.json', 'w') as f:
-#         json.dump(results, f)
-
-def compare_json_files(json_files: List[str], response_file, result_file):
+# Function to compare JSON files and calculate similarity
+def compare_json_file_path(json_file_path: List[str], template_file, result_file):
+    # Initialize results dictionary
     results = {}
-    number_of_tests = 0  # Initialisation of the number of test
-    for file1 in json_files:
-        number_of_tests += 1
+    # Initialize the number of tests
+    number_of_tests = 0  
 
-        with open(file1, 'r') as f1, open(response_file, 'r') as f2:
+    # Iterate over each file path in the list
+    for file1 in json_file_path:
+        number_of_tests += 1  # Increment the test counter
+
+        # Open current JSON file and template file
+        with open(file1, 'r') as f1, open(template_file, 'r') as f2:
+            # Load JSON data from files
             data1 = json.load(f1)
             dataGoodResponse = json.load(f2)
 
+            # Iterate over keys common to both JSON files
             for key in set(data1.keys()).intersection(dataGoodResponse.keys()):
+                # Print key and corresponding values from both files
                 print(key, data1[key], dataGoodResponse[key])
+
+                # Check if key exists in both JSON files
                 if key in data1 and key in dataGoodResponse:
+                    # Calculate similarity score between values
                     if isinstance(data1[key], str) and data1[key] != "None":
                             similarity_score = round(similarity(isinstance(data1[key], str), dataGoodResponse[key]) * 100, 2)
                     else:
-                        similarity_score = round(similarity(data1[key], dataGoodResponse[key]) * 100, 2)
+                        similarity_score = int(round(similarity(data1[key], dataGoodResponse[key]) * 100, 2))
+                    
+                    # Update results dictionary with similarity score
                     if key in results:
                         results[key] += similarity_score
                     else:
                         results[key] = similarity_score
                 else:
+                    # If key is not found in one of the files, print an error message
                     print("\n\nKey not found in one of the two files"+ key+"\n\n")
-                    results[key] += 0
+                    results[key] += 0  # Increment the result with 0 for the missing key
 
-    # Calcul of the average
+    # Calculate the average similarity score
     if number_of_tests > 0:
         for key in results:
             results[key] /= number_of_tests
     
-    # Formatting the results into a more readable format
-    formatted_results = {"tests": []}
-    for key, value in results.items():
-        formatted_results["tests"].append({
-            "key": key,
-            "similarity_score": value
-        })
-
-    # Writhing the results in the file
+    # Write the results to the result file
     with open(result_file, 'w') as f:
-        json.dump(formatted_results, f, indent =4)
+        json.dump(results, f, indent=4)  # Write results in a formatted JSON
 
 
  
 model = GenerativeModel("gemini-1.0-pro-vision-001")
 projectinit=vertexai.init(project="test-application-2-416219", location="northamerica-northeast1")
-# print("----------------- Acti_Sol1 -----------------")
+
+# Example usage:
+# print("----------------- sunshine_mix -----------------")
 # baseQuestions = {}
-# baseQuestions = generate_request('Company_Image_Folder\\Acti_Sol1', model, projectinit, "Original_question", None)
-# baseQuestions = generate_request('Company_Image_Folder\\Acti_Sol1', model, projectinit, "Original_question", baseQuestions)
+# baseQuestions = generate_request('Company_Image_Folder\\sunshine_mix', model, projectinit, "Original_question", None)
+# baseQuestions = generate_request('Company_Image_Folder\\sunshine_mix', model, projectinit, "Original_question", baseQuestions)
 # baseQuestions = {}
-# baseQuestions = generate_request('Company_Image_Folder\\Acti_Sol1', model, projectinit, "Modified_question", None)
-# baseQuestions = generate_request('Company_Image_Folder\\Acti_Sol1', model, projectinit, "Modified_question",baseQuestions)
+# baseQuestions = generate_request('Company_Image_Folder\\sunshine_mix', model, projectinit, "Modified_question", None)
+# baseQuestions = generate_request('Company_Image_Folder\\sunshine_mix', model, projectinit, "Modified_question",baseQuestions)
 # baseQuestions = {}
-# print("----------------- Acti_Sol2 -----------------")
-# baseQuestions = generate_request('Company_Image_Folder\\Acti_Sol2', model, projectinit, "Original_question", None)
-# baseQuestions = generate_request('Company_Image_Folder\\Acti_Sol2', model, projectinit, "Original_question", baseQuestions)
-# baseQuestions = {}
-# baseQuestions = generate_request('Company_Image_Folder\\Acti_Sol2', model, projectinit, "Modified_question", None)
-# baseQuestions = generate_request('Company_Image_Folder\\Acti_Sol2', model, projectinit, "Modified_question", baseQuestions)
-# baseQuestions = {}
-print("----------------- sunshine_mix -----------------")
-baseQuestions = {}
-baseQuestions = generate_request('Company_Image_Folder\\sunshine_mix', model, projectinit, "Original_question", None)
-baseQuestions = generate_request('Company_Image_Folder\\sunshine_mix', model, projectinit, "Original_question", baseQuestions)
-baseQuestions = {}
-baseQuestions = generate_request('Company_Image_Folder\\sunshine_mix', model, projectinit, "Modified_question", None)
-baseQuestions = generate_request('Company_Image_Folder\\sunshine_mix', model, projectinit, "Modified_question",baseQuestions)
-baseQuestions = {}
-# print("----------------- Agrocentre -----------------")
-# baseQuestions = generate_request('Company_Image_Folder\\Agrocentre', model, projectinit, "Original_question", None)
-# baseQuestions = generate_request('Company_Image_Folder\\Agrocentre', model, projectinit, "Original_question", baseQuestions)
-# baseQuestions = generate_request('Company_Image_Folder\\Agrocentre', model, projectinit, "Modified_question", None)
-# baseQuestions = generate_request('Company_Image_Folder\\Agrocentre', model, projectinit, "Modified_question", baseQuestions)
 
-# print("----------------- Bio_Fleur -----------------")
-# baseQuestions = generate_request('Company_Image_Folder\\Bio_Fleur', model, projectinit, "Original_question", None)
-# baseQuestions = generate_request('Company_Image_Folder\\Bio_Fleur', model, projectinit, "Original_question", baseQuestions)
-# baseQuestions = generate_request('Company_Image_Folder\\Bio_Fleur', model, projectinit, "Modified_question", None)
-# baseQuestions = generate_request('Company_Image_Folder\\Bio_Fleur', model, projectinit, "Modified_question", baseQuestions)
-
-# print("----------------- Cameron_Micronutrients -----------------")
-# baseQuestions = generate_request('Company_Image_Folder\\Cameron_Micronutrients', model, projectinit, "Original_question", None)
-# baseQuestions = generate_request('Company_Image_Folder\\Cameron_Micronutrients', model, projectinit, "Original_question", baseQuestions)
-# baseQuestions = generate_request('Company_Image_Folder\\Cameron_Micronutrients', model, projectinit, "Modified_question", None)
-# baseQuestions = generate_request('Company_Image_Folder\\Cameron_Micronutrients', model, projectinit, "Modified_question", baseQuestions)
-
-# print("----------------- Resilence -----------------")
-# baseQuestions = generate_request('Company_Image_Folder\\Resilence', model, projectinit, "Original_question", None)
-# baseQuestions = generate_request('Company_Image_Folder\\Resilence', model, projectinit, "Original_question", baseQuestions)
-# baseQuestions = generate_request('Company_Image_Folder\\Resilence', model, projectinit, "Modified_question", None)
-# baseQuestions = generate_request('Company_Image_Folder\\Resilence', model, projectinit, "Modified_question", baseQuestions)
-
-# print("----------------- Sustane -----------------")
-# baseQuestions = generate_request('Company_Image_Folder\\Sustane', model, projectinit, "Original_question", None)
-# baseQuestions = generate_request('Company_Image_Folder\\Sustane', model, projectinit, "Original_question", baseQuestions)
-# baseQuestions = generate_request('Company_Image_Folder\\Sustane', model, projectinit, "Modified_question", None)
-# baseQuestions = generate_request('Company_Image_Folder\\Sustane', model, projectinit, "Modified_question", baseQuestions)
-
-# print("----------------- Synagri -----------------")
-# baseQuestions = generate_request('Company_Image_Folder\\Synagri', model, projectinit, "Original_question", None)
-# baseQuestions = generate_request('Company_Image_Folder\\Synagri', model, projectinit, "Original_question", baseQuestions)
-# baseQuestions = generate_request('Company_Image_Folder\\Synagri', model, projectinit, "Modified_question", None)
-# baseQuestions = generate_request('Company_Image_Folder\\Synagri', model, projectinit, "Modified_question", baseQuestions)
-
-# Absolute path of the parent directory
-# parent_folder_path = os.path.abspath("Tests\\TestsResult\\Original_question\\Acti_Sol1")
+# Example comparison:
+# parent_folder_path = os.path.abspath("Tests\\TestsResult\\Original_question\\sunshine_mix")
 # paths=scan_folder(parent_folder_path)
-# compare_json_files(paths, "Tests\\Responses\\response_actiSol1.json", "results_good_responses_original_question%Test.json" )
+# compare_json_file_path(paths, "Tests\\Responses\\response_sunshine_mix.json", "results_sunshinemix_original_question_comparision%Test.json" )
 
-# parent_folder_path = os.path.abspath("Tests\\TestsResult\\Modified_question\\Acti_Sol1")
+# parent_folder_path = os.path.abspath("Tests\\TestsResult\\Modified_question\\sunshine_mix")
 # paths=scan_folder(parent_folder_path)
-# compare_json_files(paths, "Tests\\Responses\\response_actiSol1.json", "results_good_responses_modified_question%Test.json" )
-
-parent_folder_path = os.path.abspath("Tests\\TestsResult\\Original_question\\sunshine_mix")
-paths=scan_folder(parent_folder_path)
-compare_json_files(paths, "Tests\\Responses\\response_sunshine_mix.json", "results_sunshinemix_original_question_comparision%Test.json" )
-
-parent_folder_path = os.path.abspath("Tests\\TestsResult\\Modified_question\\sunshine_mix")
-paths=scan_folder(parent_folder_path)
-compare_json_files(paths, "Tests\\Responses\\response_sunshine_mix.json", "results_sunshinemix_modified_question_comparision%Test.json" )
+# compare_json_file_path(paths, "Tests\\Responses\\response_sunshine_mix.json", "results_sunshinemix_modified_question_comparision%Test.json" )
