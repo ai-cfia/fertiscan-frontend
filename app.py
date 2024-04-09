@@ -24,16 +24,16 @@ def getListImage(image_paths):
     return request
 
 def addText(request, number, baseQuestions=None):
-    if baseQuestions == None:
+    if baseQuestions is None:
         request.append(create_base_request(read_csv_file("base_composition_questions.csv")))
     else:  
         request.append(create_final_request(read_csv_file("questions_spreadsheet.csv"), baseQuestions))
 
     return request
 
-def generateRequest(directory, model:GenerativeModel, vertex:vertexai, baseQuestions=None):
+def generateRequest(directory, model:GenerativeModel, vertex:vertexai, baseQuestions=None, None):
     request = getListImage(collect_images(directory))
-    if baseQuestions == None:
+    if baseQuestions is None:
         request = addText(request, 1)
     else:
         request = addText(request, 2, baseQuestions)
@@ -55,7 +55,7 @@ def generateRequest(directory, model:GenerativeModel, vertex:vertexai, baseQuest
         stream=False,
     )   
 
-    if baseQuestions == None:
+    if baseQuestions is None:
         baseQuestions = toDict(responses.text)
     else:
         otherQuestion = toDict(responses, baseQuestions)
@@ -66,7 +66,7 @@ def generateRequest(directory, model:GenerativeModel, vertex:vertexai, baseQuest
 
 def toDict(responses, baseQuestions=None):
     responseAsDict = {}
-    if baseQuestions == None: 
+    if baseQuestions is None: 
         for response in responses:
             texte = response
             indice = texte.find(":")
@@ -85,10 +85,10 @@ def  create_final_request(file, baseQuestions, typeOfQuestion):
     for index, line in file.iterrows():
         if not line.isnull().all():
             categorie = str(line['Categories'])
-            if line['Specification'] != None:
+            if line['Specification'] is not None:
                 request_AsText += str(line['Specification']) + "\n"
 
-            if line['Categories'] != None:
+            if line['Categories'] is not None:
                 if "not_asked" in categorie:
                     break
                 elif "all" in categorie:
