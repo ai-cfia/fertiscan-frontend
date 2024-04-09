@@ -1,0 +1,52 @@
+{
+    "tests": [
+        {
+            "key": "mixture_product_options",
+            "similarity_score": 22.222222222222218
+        },
+        {
+            "key": "name_of_the_registrant",
+            "similarity_score": 100.0
+        },
+        {
+            "key": "measurement_unit",
+            "similarity_score": 100.0
+        },
+        {
+            "key": "seller_guarantee",
+            "similarity_score": 22.222222222222218
+        },
+        {
+            "key": "metric_usage",
+            "similarity_score": 100.0
+        },
+        {
+            "key": "lot_number",
+            "similarity_score": 100.0
+        },
+        {
+            "key": "name_of_fertiliser",
+            "similarity_score": 100.0
+        },
+        {
+            "key": "address_of_the_registrant",
+            "similarity_score": 100.0
+        },
+        {
+            "key": "two_language",
+            "similarity_score": 100.0
+        },
+        {
+            "key": "weight",
+            "similarity_score": 100.0
+        },
+        {
+            "key": "good_metric_conversion",
+            "similarity_score": 100.0
+        },
+        {
+            "key": "acronyms",
+            "similarity_score": 22.222222222222218
+        }
+    ]
+}

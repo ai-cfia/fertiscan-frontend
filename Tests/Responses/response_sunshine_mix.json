@@ -1,0 +1,19 @@
+{
+    "name_of_the_registrant": true,
+    "address_of_the_registrant": true,
+    "name_of_fertiliser": true,
+    "name_of_fertiliser_contain_term": true,
+    "mixture_product_options": true,
+    "direction_of_use_on_bag": true,
+    "direction_of_use_contain_option1": "None",
+    "direction_of_use_contain_option2": "None",
+    "direction_of_use_contain_option3": true,
+    "weight": true,
+    "measurement_unit": true,
+    "acronyms": true,
+    "metric_usage": true,
+    "seller_guarantee": true,
+    "good_metric_conversion": true,
+    "lot_number":true,
+    "two_language": true
+}
