@@ -31,7 +31,7 @@ def addText(request, number, baseQuestions=None):
 
     return request
 
-def generateRequest(directory, model:GenerativeModel, vertex:vertexai, baseQuestions=None, typeOfQuestion):
+def generateRequest(directory, model:GenerativeModel, vertex:vertexai, baseQuestions=None):
     request = getListImage(collect_images(directory))
     if baseQuestions == None:
         request = addText(request, 1)
