@@ -1,6 +1,9 @@
+
 # Harvester Prototype (FertiScan)
 
 ## Overview Description
+
+---
 The Harvester project, hosted on Azure DevOps, represents a significant 
 advancement in fertilizer bag inspection. The primary goal of this prototype is
 to test and validate various potential solutions that could be integrated into 
@@ -9,10 +12,10 @@ the best approach to address issues associated with fertilizer bag inspection.
 
 ## Key Features
 
+---
 **Gemini Vertex API:** An application programming interface designed to 
 simulate human conversation, capable of answering questions and processing 
-a large number of images.
-
+a large number of images.<br>
 **Testing Process:** Rigorous testing is conducted to demonstrate that
 the Gemini Vertex API, created by Google, is the appropriate method for the 
 Harvester project. 
@@ -22,14 +25,15 @@ by inspectors.
 
 ## Potential Advantages
 
+---
 **Increased Efficiency:** By automating fertilizer bag inspection, the project 
-aims to increase the efficiency and accuracy of the inspection process.
-
+aims to increase the efficiency and accuracy of the inspection process.<br>
 **Advanced Analysis:** Through the integration of the Gemini Vertex API, the 
 system can analyze fertilizer bag labels more thoroughly, identifying not only 
 basic information but also subtle differences that may escape human inspection.
 
 ## Future Outlook
+
 The Harvester prototype is a crucial step toward realizing a
 comprehensive automated inspection system. With continuous testing and 
 improvements, it has the potential to transform the way fertilizer bag 
