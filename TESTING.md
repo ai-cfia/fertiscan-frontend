@@ -3,5 +3,5 @@
 Run:
 
 ```cmd
-python -m unittest discover -s tests
+python -m unittest discover -s Tests
 ```
