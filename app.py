@@ -321,7 +321,7 @@ def compare_json_file_path(json_file_path: List[str], template_file, result_file
                 else:
                     # If key is not found in one of the files, print an error message
                     print("\n\nKey not found in one of the two files"+ key+"\n\n")
-                    results[key] += 0  # Increment the result with 0 for the missing key
+                    results[key] += 1  # Increment the result with 0 for the missing key
 
     # Calculate the average similarity score
     if number_of_tests > 0:
@@ -338,14 +338,14 @@ model = GenerativeModel("gemini-1.0-pro-vision-001")
 projectinit=vertexai.init(project="test-application-2-416219", location="northamerica-northeast1")
 
 # Example usage:
-# print("----------------- sunshine_mix -----------------")
-# baseQuestions = {}
-# baseQuestions = generate_request('company_image_folder\\sunshine_mix', model, projectinit, "Original_question", None)
-# baseQuestions = generate_request('company_image_folder\\sunshine_mix', model, projectinit, "Original_question", baseQuestions)
-# baseQuestions = {}
-# baseQuestions = generate_request('company_image_folder\\sunshine_mix', model, projectinit, "Modified_question", None)
-# baseQuestions = generate_request('company_image_folder\\sunshine_mix', model, projectinit, "Modified_question",baseQuestions)
-# baseQuestions = {}
+print("----------------- sunshine_mix -----------------")
+baseQuestions = {}
+baseQuestions = generate_request('company_image_folder\\sunshine_mix', model, projectinit, "Original_question", None)
+baseQuestions = generate_request('company_image_folder\\sunshine_mix', model, projectinit, "Original_question", baseQuestions)
+baseQuestions = {}
+baseQuestions = generate_request('company_image_folder\\sunshine_mix', model, projectinit, "Modified_question", None)
+baseQuestions = generate_request('company_image_folder\\sunshine_mix', model, projectinit, "Modified_question",baseQuestions)
+baseQuestions = {}
 
 # Example comparison:
 # parent_folder_path = os.path.abspath("tests\\test_result\\original_question\\sunshine_mix")
