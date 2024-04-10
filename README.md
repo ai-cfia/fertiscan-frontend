@@ -4,11 +4,22 @@
 ## Overview Description
 
 ---
-The Harvester project, represents a significant
-advancement in fertilizer bag inspection. The primary goal of this prototype is
-to test and validate various potential solutions that could be integrated into
-the final project. The AI-Lab team, utilizing unit tests, strives to determine
-the best approach to address issues associated with fertilizer bag inspection.
+The FertiScan project, initiated by the AI-Lab, aims to streamline the process
+of capturing and organizing information on fertilizer labels. By leveraging AI
+technology, the mobile application will allow users to scan fertilizer labels,
+extract essential data, and automatically load this data into a database for
+easy access and analysis. This project involves the AI-Lab, the CFIA, and
+clients such as inspectors and teams who will benefit from the streamlined
+process. FertiScan is a web application that facilitates the inspection process
+wherever internet access is available. By automating fertilizer bag inspection,
+the project aims to increase the efficiency and accuracy of the inspection
+process. Through the integration of the Gemini Vertex API, the system can
+analyze fertilizer bag labels more thoroughly, identifying not only basic
+information but also subtle differences that may escape human inspection.
+The Harvester prototype is a crucial step towards realizing a complete
+automated inspection system. With continuous testing and improvements, it has
+the potential to transform the way fertilizer bag inspections are conducted,
+bringing an advanced technological solution to the agricultural sector.
 
 ## Key Features
 
@@ -37,5 +48,5 @@ basic information but also subtle differences that may escape human inspection.
 The Harvester prototype is a crucial step toward realizing a
 comprehensive automated inspection system. With continuous testing and
 improvements, it has the potential to transform the way fertilizer bag
-inspections are conducted, bringing an advanced technological solution
-to the agricultural sector.
+inspections are conducted, bringing an advanced technological
+solution to the agricultural sector.
