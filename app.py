@@ -20,13 +20,13 @@ def getListImage(image_paths):
         with open(image_data, 'rb') as f:
             image = f.read()
             request.append(Part.from_data(data=image, mime_type="image/jpeg"))
-            
+
     return request
 
 def addText(request, number, baseQuestions=None):
     if baseQuestions is None:
         request.append(create_base_request(read_csv_file("base_composition_questions.csv")))
-    else:  
+    else:
         request.append(create_final_request(read_csv_file("questions_spreadsheet.csv"), baseQuestions))
 
     return request
@@ -53,20 +53,20 @@ def generateRequest(directory, model:GenerativeModel, vertex:vertexai, baseQuest
         }
     ),
         stream=False,
-    )   
+    )
 
     if baseQuestions is None:
         baseQuestions = toDict(responses.text)
     #else:
        # otherQuestion = toDict(responses, baseQuestions)
-       
+
     print(responses.text)
-    
+
     return baseQuestions
 
 def toDict(responses, baseQuestions=None):
     responseAsDict = {}
-    if baseQuestions is None: 
+    if baseQuestions is None:
         for response in responses:
             texte = response
             indice = texte.find(":")
@@ -101,10 +101,10 @@ def  create_final_request(file, baseQuestions, typeOfQuestion):
 
                     if "seed" in categorie and "is_seed" in baseQuestions:
                         request_AsText = addLine(request_AsText, line)
-                    
+
                     if "tank_mixing" in categorie and "is_tank_mixing" in baseQuestions:
                         request_AsText = addLine(request_AsText, line)
-                    
+
                     if "microorganism" in categorie and "contain_microorganism" in baseQuestions:
                         request_AsText = addLine(request_AsText, line)
 
@@ -127,10 +127,10 @@ def  create_final_request(file, baseQuestions, typeOfQuestion):
 
                     if "seed" in categorie & "is_seed" in baseQuestions:
                         request_AsText = addLine(request_AsText, line)
-                    
+
                     if "tank_mixing" in categorie & "is_tank_mixing" in baseQuestions:
                         request_AsText = addLine(request_AsText, line)
-                    
+
                     if "microorganism" in categorie & "contain_microorganism" in baseQuestions:
                         request_AsText = addLine(request_AsText, line)
 
@@ -149,7 +149,7 @@ def  create_final_request(file, baseQuestions, typeOfQuestion):
                 if "mixture_product" in categorie and "is_mixture_product" in baseQuestions:
                     request_AsText = addLine(request_AsText, line)
                 return request_AsText
-                
+
 
 def addLine(requestAsText, line, typeOfQuestion):
     if not line.isnull().all():
@@ -163,15 +163,15 @@ def create_base_request(file):
         if not line.isnull().all():
             specification = line['Specification']
             requestAsText += str(specification) + "\n"
-        
+
         line_text = str(line['Key']) + ":" + str(line['Question']) + "; \n"
         requestAsText += line_text
     return requestAsText
 
-    
-        
 
- 
+
+
+
 model = GenerativeModel("gemini-1.0-pro-vision-001")
 projectinit=vertexai.init(project="test-application-2-416219", location="northamerica-northeast1")
 #Original question
@@ -181,6 +181,6 @@ baseQuestions = generateRequest('company_image_folder\\acti_sol1', model, projec
 baseQuestions = generateRequest('company_image_folder\\acti_sol1', model, projectinit, None, "modified_question")
 baseQuestions = generateRequest('company_image_folder\\acti_sol1', model, projectinit, baseQuestions, "modified_question")
 
-#generateRequest('Company_Image_Folder\Bio_Fleur', model, projectinit)
-#generateRequest('Company_Image_Folder\Bio_Fleur', model, projectinit)
-#generateRequest('Company_Image_Folder\Bio_Fleur', model, projectinit)
+#generateRequest('Company_Image_Folder\\Bio_Fleur', model, projectinit)
+#generateRequest('Company_Image_Folder\\Bio_Fleur', model, projectinit)
+#generateRequest('Company_Image_Folder\\Bio_Fleur', model, projectinit)
