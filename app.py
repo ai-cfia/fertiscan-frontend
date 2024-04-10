@@ -57,7 +57,7 @@ def generateRequest(directory, model:GenerativeModel, vertex:vertexai, baseQuest
 
     if baseQuestions is None:
         baseQuestions = toDict(responses.text)
-    else:
+    #else:
        # otherQuestion = toDict(responses, baseQuestions)
        
     print(responses.text)
