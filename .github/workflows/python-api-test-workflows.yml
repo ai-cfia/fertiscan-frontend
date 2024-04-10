@@ -1,0 +1,21 @@
+name: Python api-test workflows
+
+on:
+  pull_request:
+    types:
+      - opened
+      - closed
+      - synchronize
+
+jobs:
+  markdown-check:
+    uses: ai-cfia/github-workflows/.github/workflows/workflow-markdown-check.yml@main
+    secrets: inherit
+
+  repo-standard:
+    uses: ai-cfia/github-workflows/.github/workflows/workflow-repo-standards-validation.yml@main
+    secrets: inherit
+
+  test-python:
+    uses: ai-cfia/github-workflows/.github/workflows/workflow-lint-test-python.yml@main
+    secrets: inherit

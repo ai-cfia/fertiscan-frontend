@@ -3,3 +3,4 @@ questions.json
 keys_questions.txt
 questions_spreadsheet.csv
 base_composition_questions.csv
+*.pyc
