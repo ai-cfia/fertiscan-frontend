@@ -175,11 +175,11 @@ def create_base_request(file):
 model = GenerativeModel("gemini-1.0-pro-vision-001")
 projectinit=vertexai.init(project="test-application-2-416219", location="northamerica-northeast1")
 #Original question
-baseQuestions = generateRequest('Company_Image_Folder\\Acti_Sol1', model, projectinit, None, "Original_question")
-baseQuestions = generateRequest('Company_Image_Folder\\Acti_Sol1', model, projectinit, baseQuestions, "Original_question")
+baseQuestions = generateRequest('company_image_folder\\Acti_Sol1', model, projectinit, None, "Original_question")
+baseQuestions = generateRequest('company_image_folder\\Acti_Sol1', model, projectinit, baseQuestions, "Original_question")
 # Modified question
-baseQuestions = generateRequest('Company_Image_Folder\\Acti_Sol1', model, projectinit, None, "Modified_question")
-baseQuestions = generateRequest('Company_Image_Folder\\Acti_Sol1', model, projectinit, baseQuestions, "Modified_question")
+baseQuestions = generateRequest('company_image_folder\\Acti_Sol1', model, projectinit, None, "Modified_question")
+baseQuestions = generateRequest('company_image_folder\\Acti_Sol1', model, projectinit, baseQuestions, "Modified_question")
 
 #generateRequest('Company_Image_Folder\Bio_Fleur', model, projectinit)
 #generateRequest('Company_Image_Folder\Bio_Fleur', model, projectinit)
