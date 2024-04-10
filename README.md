@@ -4,7 +4,7 @@
 ## Overview Description
 
 ---
-The Harvester project, hosted on Azure DevOps, represents a significant 
+The Harvester project, represents a significant 
 advancement in fertilizer bag inspection. The primary goal of this prototype is
 to test and validate various potential solutions that could be integrated into 
 the final project. The AI-Lab team, utilizing unit tests, strives to determine 
