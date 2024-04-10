@@ -53,4 +53,4 @@ solution to the agricultural sector.
 
 ## References
 
-You can find more information on the official site of Google gemini vertex ai : <https://cloud.google.com/vertex-ai/generative-ai/docs/model-reference/gemini?hl=fr>
+You can find more information on the official site of Google gemini vertex ai: <https://cloud.google.com/vertex-ai/generative-ai/docs/model-reference/gemini?hl=fr>
