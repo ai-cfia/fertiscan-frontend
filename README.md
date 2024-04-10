@@ -2,7 +2,6 @@
 # Harvester Prototype (FertiScan)
 
 ## Overview Description
-
 ---
 The Harvester project, represents a significant 
 advancement in fertilizer bag inspection. The primary goal of this prototype is
@@ -11,7 +10,6 @@ the final project. The AI-Lab team, utilizing unit tests, strives to determine
 the best approach to address issues associated with fertilizer bag inspection.
 
 ## Key Features
-
 ---
 **Gemini Vertex API:** An application programming interface designed to 
 simulate human conversation, capable of answering questions and processing 
@@ -24,7 +22,6 @@ reading labels during recording and identifying differences with bags analyzed
 by inspectors.
 
 ## Potential Advantages
-
 ---
 **Increased Efficiency:** By automating fertilizer bag inspection, the project 
 aims to increase the efficiency and accuracy of the inspection process.
@@ -33,7 +30,6 @@ system can analyze fertilizer bag labels more thoroughly, identifying not only
 basic information but also subtle differences that may escape human inspection.
 
 ## Future Outlook
-
 The Harvester prototype is a crucial step toward realizing a
 comprehensive automated inspection system. With continuous testing and 
 improvements, it has the potential to transform the way fertilizer bag 
