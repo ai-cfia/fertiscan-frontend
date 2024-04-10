@@ -36,7 +36,7 @@ def get_list_image(image_paths):
 def add_text(request, baseQuestions=None):
     if baseQuestions == None:
         request.append(create_base_request(read_csv_file("base_composition_questions.csv")))
-    else:  
+    else:
         request.append(create_final_request(read_csv_file("questions_spreadsheet.csv"), baseQuestions))
     return request
 
@@ -66,10 +66,10 @@ def generate_request(directory, model:GenerativeModel, vertex:vertexai, choiceOf
         }
     ),
         stream=False,
-    )   
+    )
 
     if not firstRequest:
-        result_to_json_file(responses.text, directory) 
+        result_to_json_file(responses.text, directory)
         firstRequest = True
     else:
         # Extract JSON content from raw text
@@ -85,7 +85,7 @@ def generate_request(directory, model:GenerativeModel, vertex:vertexai, choiceOf
 # Function to convert response to dictionary
 def to_dict(responses, baseQuestions):
     responseAsDict = {}
-    if baseQuestions == None: 
+    if baseQuestions == None:
         for response in responses:
             texte = response
             indice = texte.find(":")
@@ -107,7 +107,7 @@ def create_base_request(file):
         if not line.isnull().all():
             specification = line['Specification']
             requestAsText += str(specification) + "\n"
-        
+
         line_text = str(line['Key']) + ":" + str(line['Question']) + "; \n"
         requestAsText += line_text
     return requestAsText
@@ -125,7 +125,7 @@ def  create_final_request(file, baseQuestions):
             if line['Categories'] != None:
                 if "all" in categorie:
                     request_AsText = add_line(request_AsText, line)
-                
+
                 if  "fertilizer"in categorie and"is_fertilizer" in baseQuestions:
                     if "contain_pesticide" in baseQuestions:
                         if "pesticide" in categorie:
@@ -134,11 +134,11 @@ def  create_final_request(file, baseQuestions):
                     if "is_seed" in baseQuestions:
                         if "seed" in categorie:
                             request_AsText = add_line(request_AsText, line)
-                    
+
                     if "is_tank_mixing" in baseQuestions:
                         if "tank_mixing" in categorie:
                             request_AsText = add_line(request_AsText, line)
-                    
+
                     if "contain_microorganism" in baseQuestions:
                         if "microorganism" in categorie :
                             request_AsText = add_line(request_AsText, line)
@@ -172,11 +172,11 @@ def  create_final_request(file, baseQuestions):
                     if "is_seed" in baseQuestions:
                         if "seed" in categorie:
                             request_AsText = add_line(request_AsText, line)
-                    
+
                     if "is_tank_mixing" in baseQuestions:
                         if "tank_mixing" in categorie:
                             request_AsText = add_line(request_AsText, line)
-                    
+
                     if "contain_microorganism" in baseQuestions:
                         if "microorganism" in categorie :
                             request_AsText = add_line(request_AsText, line)
@@ -196,7 +196,7 @@ def  create_final_request(file, baseQuestions):
                     if "contain_nutrient" in baseQuestions:
                         if "nutrient" in categorie:
                             request_AsText = add_line(request_AsText, line)
-                            
+
                     if  "contain_microorganism" in baseQuestions:
                         if "microorganism" in categorie:
                             request_AsText = add_line(request_AsText, line)
@@ -212,7 +212,7 @@ def  create_final_request(file, baseQuestions):
                 if "contain_allergen" in baseQuestions:
                     if "allergen" in categorie:
                         request_AsText = add_line(request_AsText, line)
-                
+
                 if "contain_acronyms" in baseQuestions:
                     if "acronyms" in categorie:
                         request_AsText = add_line(request_AsText, line)
@@ -220,7 +220,7 @@ def  create_final_request(file, baseQuestions):
                 if "contain_polymeric" in baseQuestions:
                     if "polymeric" in categorie:
                         request_AsText = add_line(request_AsText, line)
-    baseQuestions == None       
+    baseQuestions == None
     return request_AsText
 
 # Function to add a line to the request
@@ -236,13 +236,13 @@ def result_to_json_file(responses, directory):
     global typeOfQuestion  # Using global variable typeOfQuestion
     lastIndex = directory.rfind('\\')
     imageName = directory[lastIndex+1:]
-    imageName = imageName.split(".")[0]
+    imageName = imageName.split(".")[0].lower()
     date_time  = datetime.datetime.now().strftime("%Y-%m-%d_%Hh%Mm%Ss")  # Get current date and time
     if typeOfQuestion == "Original_question":
         # Define folder path based on the type of question
-        folder_path = f"Tests\\TestsResult\\Original_question\\{imageName}"
+        folder_path = f"tests\\tests_result\\original_question\\{imageName}"
     else:
-        folder_path = f"Tests\\TestsResult\\Modified_question\\{imageName}"
+        folder_path = f"tests\\tests_result\\modified_question\\{imageName}"
 
     # Create folder if it doesn't exist
     if not os.path.exists(folder_path):
@@ -250,7 +250,7 @@ def result_to_json_file(responses, directory):
 
     # Define file path using image name and current date-time
     file_path = os.path.join(folder_path, f"{date_time}_test.json")
-    
+
     # Extract JSON content from raw text response
     start_index = responses.find('{')
     end_index = responses.rfind('}') + 1
@@ -288,7 +288,7 @@ def compare_json_file_path(json_file_path: List[str], template_file, result_file
     # Initialize results dictionary
     results = {}
     # Initialize the number of tests
-    number_of_tests = 0  
+    number_of_tests = 0
 
     # Iterate over each file path in the list
     for file1 in json_file_path:
@@ -312,7 +312,7 @@ def compare_json_file_path(json_file_path: List[str], template_file, result_file
                             similarity_score = round(similarity(isinstance(data1[key], str), dataGoodResponse[key]) * 100, 2)
                     else:
                         similarity_score = int(round(similarity(data1[key], dataGoodResponse[key]) * 100, 2))
-                    
+
                     # Update results dictionary with similarity score
                     if key in results:
                         results[key] += similarity_score
@@ -327,31 +327,31 @@ def compare_json_file_path(json_file_path: List[str], template_file, result_file
     if number_of_tests > 0:
         for key in results:
             results[key] /= number_of_tests
-    
+
     # Write the results to the result file
     with open(result_file, 'w') as f:
         json.dump(results, f, indent=4)  # Write results in a formatted JSON
 
 
- 
+
 model = GenerativeModel("gemini-1.0-pro-vision-001")
 projectinit=vertexai.init(project="test-application-2-416219", location="northamerica-northeast1")
 
 # Example usage:
 # print("----------------- sunshine_mix -----------------")
 # baseQuestions = {}
-# baseQuestions = generate_request('Company_Image_Folder\\sunshine_mix', model, projectinit, "Original_question", None)
-# baseQuestions = generate_request('Company_Image_Folder\\sunshine_mix', model, projectinit, "Original_question", baseQuestions)
+# baseQuestions = generate_request('company_image_folder\\sunshine_mix', model, projectinit, "Original_question", None)
+# baseQuestions = generate_request('company_image_folder\\sunshine_mix', model, projectinit, "Original_question", baseQuestions)
 # baseQuestions = {}
-# baseQuestions = generate_request('Company_Image_Folder\\sunshine_mix', model, projectinit, "Modified_question", None)
-# baseQuestions = generate_request('Company_Image_Folder\\sunshine_mix', model, projectinit, "Modified_question",baseQuestions)
+# baseQuestions = generate_request('company_image_folder\\sunshine_mix', model, projectinit, "Modified_question", None)
+# baseQuestions = generate_request('company_image_folder\\sunshine_mix', model, projectinit, "Modified_question",baseQuestions)
 # baseQuestions = {}
 
 # Example comparison:
-# parent_folder_path = os.path.abspath("Tests\\TestsResult\\Original_question\\sunshine_mix")
-# paths=scan_folder(parent_folder_path)
-# compare_json_file_path(paths, "Tests\\Responses\\response_sunshine_mix.json", "results_sunshinemix_original_question_comparision%Test.json" )
+# parent_folder_path = os.path.abspath("tests\\test_result\\original_question\\sunshine_mix")
+# paths=scan_folder(parent_folder_path
+# compare_json_file_path(paths, "tests\\responses\\response_sunshine_mix.json", "results_sunshinemix_original_question_comparision%test.json" )
 
-# parent_folder_path = os.path.abspath("Tests\\TestsResult\\Modified_question\\sunshine_mix")
+# parent_folder_path = os.path.abspath("tests\\tests_result\\modified_question\\sunshine_mix")
 # paths=scan_folder(parent_folder_path)
-# compare_json_file_path(paths, "Tests\\Responses\\response_sunshine_mix.json", "results_sunshinemix_modified_question_comparision%Test.json" )
+# compare_json_file_path(paths, "tests\\responses\\response_sunshine_mix.json", "results_sunshinemix_modified_question_comparision%test.json" )
