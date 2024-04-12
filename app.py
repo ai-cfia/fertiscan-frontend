@@ -12,6 +12,25 @@ TYPE_OF_QUESTION = "Original_question"
 QUESTION_TYPE = "Original_question"
 FIRST_REQUEST = True
 
+PROPERTIES = {
+        "is_fertilizer": "fertiliser",
+        "is_supplement": "supplement",
+        "is_seed": "seed",
+        "is_tank_mixing": "tank mixing",
+        "is_mixture_product": "mixture product",
+
+        "contain_pesticide": "pesticide",
+        "contain_microorganism": "microorganism",
+        "contain_organic_matter": "organic matter",
+        "contain_phosphate": "phosphate",
+        "contain_micronutrient": "micronutrient",
+        "contain_nutrient": "nutrient",
+        "contain_growing_medium": "growing medium",
+        "contain_allergen": "allergen",
+        "contain_acronyms": "acronyms",
+        "contain_polymeric": "polymeric"
+}
+
 # Function to collect images from a directory
 def collect_images(directory):
     image_extensions = [".jpg", ".jpeg", ".png"]
@@ -32,23 +51,23 @@ def get_list_image(image_paths):
     return request
 
 # Function to add text to the request
-def add_text(request, base_questions=None):
+def add_text(request, properties, base_questions=None):
     if base_questions is None:
         request.append(create_base_request(read_csv_file("base_composition_questions.csv")))
     else:
-        request.append(create_final_request(read_csv_file("questions_spreadsheet.csv"), base_questions))
+        request.append(create_final_request(read_csv_file("questions_spreadsheet.csv"), base_questions, properties))
     return request
 
 # Function to generate a request
-def generate_request(directory, model:GenerativeModel, vertex:vertexai, choice_of_questions, base_questions=None):
+def generate_request(directory, model:GenerativeModel, vertex:vertexai, choice_of_questions, properties, base_questions=None):
     global TYPE_OF_QUESTION
     global first_request
     TYPE_OF_QUESTION = choice_of_questions
     request = get_list_image(collect_images(directory))
     if base_questions is None:
-        request = add_text(request, None)
+        request = add_text(request, properties)
     else:
-        request = add_text(request, base_questions)
+        request = add_text(request, properties, base_questions)
     answers = model.generate_content(request,
         generation_config={
         "max_output_tokens": 2048,
@@ -112,9 +131,10 @@ def create_base_request(file):
     return request_as_text
 
 # Function to create final request
-def  create_final_request(file, base_questions):
+def create_final_request(file, base_questions, properties):
     request_as_text = ""
-    for index, line in file.iterrows():
+
+    for _, line in file.iterrows():
         if not line.isnull().all():
             categorie = str(line['Categories'])
 
@@ -125,101 +145,11 @@ def  create_final_request(file, base_questions):
                 if "all" in categorie:
                     request_as_text = add_line(request_as_text, line)
 
-                if  "fertilizer"in categorie and"is_fertilizer" in base_questions:
-                    if "contain_pesticide" in base_questions:
-                        if "pesticide" in categorie:
-                            request_as_text = add_line(request_as_text, line)
-
-                    if "is_seed" in base_questions:
-                        if "seed" in categorie:
-                            request_as_text = add_line(request_as_text, line)
-
-                    if "is_tank_mixing" in base_questions:
-                        if "tank_mixing" in categorie:
-                            request_as_text = add_line(request_as_text, line)
-
-                    if "contain_microorganism" in base_questions:
-                        if "microorganism" in categorie :
-                            request_as_text = add_line(request_as_text, line)
-
-                    if "contain_organic_matter" in base_questions:
-                        if "organic_matter" in categorie:
-                            request_as_text = add_line(request_as_text, line)
-
-                    if "contain_phosphate" in base_questions:
-                        if "phosphate" in categorie:
-                            request_as_text = add_line(request_as_text, line)
-
-                    if "contain_micronutrient" in base_questions:
-                        if "micronutrient" in categorie:
-                            request_as_text = add_line(request_as_text, line)
-
-                    if "contain_nutrient" in base_questions:
-                        if "nutrient" in categorie:
-                            request_as_text = add_line(request_as_text, line)
-
-                    if  "contain_microorganism" in base_questions:
-                        if "microorganism" in categorie:
-                            request_as_text = add_line(request_as_text, line)
-
-                elif "supplement" in categorie and "is_supplement" in base_questions:
-
-                    if "contain_pesticide" in base_questions:
-                        if "pesticide" in categorie:
-                            request_as_text = add_line(request_as_text, line)
-
-                    if "is_seed" in base_questions:
-                        if "seed" in categorie:
-                            request_as_text = add_line(request_as_text, line)
-
-                    if "is_tank_mixing" in base_questions:
-                        if "tank_mixing" in categorie:
-                            request_as_text = add_line(request_as_text, line)
-
-                    if "contain_microorganism" in base_questions:
-                        if "microorganism" in categorie :
-                            request_as_text = add_line(request_as_text, line)
-
-                    if "contain_organic_matter" in base_questions:
-                        if "organic_matter" in categorie:
-                            request_as_text = add_line(request_as_text, line)
-
-                    if "contain_phosphate" in base_questions:
-                        if "phosphate" in categorie:
-                            request_as_text = add_line(request_as_text, line)
-
-                    if "contain_micronutrient" in base_questions:
-                        if "micronutrient" in categorie:
-                            request_as_text = add_line(request_as_text, line)
-
-                    if "contain_nutrient" in base_questions:
-                        if "nutrient" in categorie:
-                            request_as_text = add_line(request_as_text, line)
-
-                    if  "contain_microorganism" in base_questions:
-                        if "microorganism" in categorie:
-                            request_as_text = add_line(request_as_text, line)
-
-                elif "contain_growing_medium" in base_questions:
-                    if "growing_medium" in categorie:
+                for key, value in properties.items():
+                    if key in base_questions and value in categorie:
                         request_as_text = add_line(request_as_text, line)
 
-                if  "is_mixture_product" in base_questions:
-                    if "mixture_product" in categorie:
-                        request_as_text = add_line(request_as_text, line)
-
-                if "contain_allergen" in base_questions:
-                    if "allergen" in categorie:
-                        request_as_text = add_line(request_as_text, line)
-
-                if "contain_acronyms" in base_questions:
-                    if "acronyms" in categorie:
-                        request_as_text = add_line(request_as_text, line)
-
-                if "contain_polymeric" in base_questions:
-                    if "polymeric" in categorie:
-                        request_as_text = add_line(request_as_text, line)
-    base_questions is None
+    base_questions = None
     return request_as_text
 
 # Function to add a line to the request
@@ -331,24 +261,28 @@ def compare_json_file_path(json_file_path: List[str], template_file, result_file
     with open(result_file, 'w') as f:
         json.dump(results, f, indent=4)  # Write results in a formatted JSON
 
-model = GenerativeModel("gemini-1.0-pro-vision-001")
-projectinit=vertexai.init(project="test-application-2-416219", location="northamerica-northeast1")
+def main():
+    model = GenerativeModel("gemini-1.0-pro-vision-001")
+    projectinit=vertexai.init(project="test-application-2-416219", location="northamerica-northeast1")
 
-# Example usage:
-print("----------------- sunshine_mix -----------------")
-base_questions = {}
-base_questions = generate_request('company_image_folder/sunshine_mix', model, projectinit, "Original_question", None)
-base_questions = generate_request('company_image_folder/sunshine_mix', model, projectinit, "Original_question", base_questions)
-base_questions = {}
-base_questions = generate_request('company_image_folder/sunshine_mix', model, projectinit, "Modified_question", None)
-base_questions = generate_request('company_image_folder/sunshine_mix', model, projectinit, "Modified_question", base_questions)
-base_questions = {}
+    # Example usage:
+    print("----------------- sunshine_mix -----------------")
+    base_questions = {}
+    base_questions = generate_request('company_image_folder/sunshine_mix', model, projectinit, "Original_question", PROPERTIES)
+    base_questions = generate_request('company_image_folder/sunshine_mix', model, projectinit, "Original_question", PROPERTIES, base_questions)
+    base_questions = {}
+    base_questions = generate_request('company_image_folder/sunshine_mix', model, projectinit, "Modified_question", PROPERTIES)
+    base_questions = generate_request('company_image_folder/sunshine_mix', model, projectinit, "Modified_question", PROPERTIES, base_questions)
+    base_questions = {}
 
-# Example comparison:
-# parent_folder_path = os.path.abspath("tests/test_resultoriginal_question/sunshine_mix")
-# paths=scan_folder(parent_folder_path
-# compare_json_file_path(paths, "tests/answers/answer_sunshine_mix.json", "results_sunshinemix_original_question_comparision%test.json" )
+    # Example comparison:
+    # parent_folder_path = os.path.abspath("tests/test_resultoriginal_question/sunshine_mix")
+    # paths=scan_folder(parent_folder_path
+    # compare_json_file_path(paths, "tests/answers/answer_sunshine_mix.json", "results_sunshinemix_original_question_comparision%test.json" )
 
-# parent_folder_path = os.path.abspath("tests/tests_result/modified_question/sunshine_mix")
-# paths=scan_folder(parent_folder_path)
-# compare_json_file_path(paths, "tests/answers/answer_sunshine_mix.json", "results_sunshinemix_modified_question_comparision%test.json" )
+    # parent_folder_path = os.path.abspath("tests/tests_result/modified_question/sunshine_mix")
+    # paths=scan_folder(parent_folder_path)
+    # compare_json_file_path(paths, "tests/answers/answer_sunshine_mix.json", "results_sunshinemix_modified_question_comparision%test.json" )
+
+if __name__ == "__main__":
+    main()
