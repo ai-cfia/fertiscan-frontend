@@ -6,8 +6,6 @@ from vertexai.preview.generative_models import GenerativeModel, Part
 import vertexai.preview.generative_models as generative_models
 import pandas as pd
 from difflib import SequenceMatcher
-from typing import Dict
-from difflib import SequenceMatcher
 from typing import List
 
 TYPE_OF_QUESTION = "Original_question"
@@ -35,7 +33,7 @@ def get_list_image(image_paths):
 
 # Function to add text to the request
 def add_text(request, base_questions=None):
-    if base_questions == None:
+    if base_questions is None:
         request.append(create_base_request(read_csv_file("base_composition_questions.csv")))
     else:
         request.append(create_final_request(read_csv_file("questions_spreadsheet.csv"), base_questions))
@@ -47,11 +45,11 @@ def generate_request(directory, model:GenerativeModel, vertex:vertexai, choice_o
     global first_request
     TYPE_OF_QUESTION = choice_of_questions
     request = get_list_image(collect_images(directory))
-    if base_questions == None:
+    if base_questions is None:
         request = add_text(request, None)
     else:
         request = add_text(request, base_questions)
-    responses = model.generate_content(request,
+    answers = model.generate_content(request,
         generation_config={
         "max_output_tokens": 2048,
         "temperature": 0,
@@ -70,30 +68,30 @@ def generate_request(directory, model:GenerativeModel, vertex:vertexai, choice_o
     )
 
     if not first_request:
-        result_to_json_file(responses.text, directory)
+        result_to_json_file(answers.text, directory)
         first_request = True
     else:
         # Extract JSON content from raw text
-        response = responses.text
-        start_index = response.find('{')
-        end_index = response.rfind('}') + 1
-        json_content = response[start_index:end_index]
+        answer = answers.text
+        start_index = answer.find('{')
+        end_index = answer.rfind('}') + 1
+        json_content = answer[start_index:end_index]
         # Parse JSON
         base_questions = json.loads(json_content)
         first_request = False
     return base_questions
 
-# Function to convert response to dictionary
-def to_dict(responses, base_questions):
-    response_as_dict = {}
-    if base_questions == None:
-        for response in responses:
-            texte = response
-            indice = texte.find(":")
-            partie_avant = texte[:indice]
-            partie_apres = texte[indice + 1:]
-            response_as_dict[partie_avant] = partie_apres
-    return response_as_dict
+# Function to convert answer to dictionary
+def to_dict(answers, base_questions):
+    answer_as_dict = {}
+    if base_questions is None:
+        for answer in answers:
+            text = answer
+            indice = text.find(":")
+            test_before = text[:indice]
+            test_after = text[indice + 1:]
+            answer_as_dict[test_before] = test_after
+    return answer_as_dict
 
 # Function to read CSV file
 def read_csv_file(file_path):
@@ -221,7 +219,7 @@ def  create_final_request(file, base_questions):
                 if "contain_polymeric" in base_questions:
                     if "polymeric" in categorie:
                         request_as_text = add_line(request_as_text, line)
-    base_questions == None
+    base_questions is None
     return request_as_text
 
 # Function to add a line to the request
@@ -233,13 +231,13 @@ def add_line(request_as_text, line):
     return request_as_text
 
 # Function to write results to a JSON file
-def result_to_json_file(responses, directory):
+def result_to_json_file(answers, directory):
     global TYPE_OF_QUESTION  # Using global variable TYPEOFQUESTION
     last_index = directory.rfind('/')
     image_name = directory[last_index+1:]
     image_name = image_name.split(".")[0].lower()
     date_time  = datetime.datetime.now().strftime("%Y-%m-%d_%Hh%Mm%Ss")  # Get current date and time
-    if TYPE_OF_QUESTION == "Original_question":
+    if TYPE_OF_QUESTION is "Original_question":
         # Define folder path based on the type of question
         folder_path = f"tests/tests_result/original_question/{image_name}"
     else:
@@ -252,10 +250,10 @@ def result_to_json_file(responses, directory):
     # Define file path using image name and current date-time
     file_path = os.path.join(folder_path, f"{date_time}_result.json")
 
-    # Extract JSON content from raw text response
-    start_index = responses.find('{')
-    end_index = responses.rfind('}') + 1
-    json_content = responses[start_index:end_index]
+    # Extract JSON content from raw text answer
+    start_index = answers.find('{')
+    end_index = answers.rfind('}') + 1
+    json_content = answers[start_index:end_index]
 
     # Try parsing JSON content
     try:
@@ -299,20 +297,20 @@ def compare_json_file_path(json_file_path: List[str], template_file, result_file
         with open(file1, 'r') as f1, open(template_file, 'r') as f2:
             # Load JSON data from files
             data1 = json.load(f1)
-            data_good_response = json.load(f2)
+            data_good_answer = json.load(f2)
 
             # Iterate over keys common to both JSON files
-            for key in set(data1.keys()).intersection(data_good_response.keys()):
+            for key in set(data1.keys()).intersection(data_good_answer.keys()):
                 # Print key and corresponding values from both files
-                print(key, data1[key], data_good_response[key])
+                print(key, data1[key], data_good_answer[key])
 
                 # Check if key exists in both JSON files
-                if key in data1 and key in data_good_response:
+                if key in data1 and key in data_good_answer:
                     # Calculate similarity score between values
                     if isinstance(data1[key], str) and data1[key] != "None":
-                            similarity_score = round(similarity(isinstance(data1[key], str), data_good_response[key]) * 100, 2)
+                            similarity_score = round(similarity(isinstance(data1[key], str), data_good_answer[key]) * 100, 2)
                     else:
-                        similarity_score = int(round(similarity(data1[key], data_good_response[key]) * 100, 2))
+                        similarity_score = int(round(similarity(data1[key], data_good_answer[key]) * 100, 2))
 
                     # Update results dictionary with similarity score
                     if key in results:
@@ -351,8 +349,8 @@ base_questions = {}
 # Example comparison:
 # parent_folder_path = os.path.abspath("tests/test_resultoriginal_question/sunshine_mix")
 # paths=scan_folder(parent_folder_path
-# compare_json_file_path(paths, "tests/responses/response_sunshine_mix.json", "results_sunshinemix_original_question_comparision%test.json" )
+# compare_json_file_path(paths, "tests/answers/answer_sunshine_mix.json", "results_sunshinemix_original_question_comparision%test.json" )
 
 # parent_folder_path = os.path.abspath("tests/tests_result/modified_question/sunshine_mix")
 # paths=scan_folder(parent_folder_path)
-# compare_json_file_path(paths, "tests/responses/response_sunshine_mix.json", "results_sunshinemix_modified_question_comparision%test.json" )
+# compare_json_file_path(paths, "tests/answers/answer_sunshine_mix.json", "results_sunshinemix_modified_question_comparision%test.json" )
