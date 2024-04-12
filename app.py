@@ -183,7 +183,7 @@ def  create_final_request(file, base_questions):
                     if "contain_organic_matter" in base_questions:
                         if "organic_matter" in categorie:
                             request_as_text = add_line(request_as_text, line)
-                            
+
                     if "contain_phosphate" in base_questions:
                         if "phosphate" in categorie:
                             request_as_text = add_line(request_as_text, line)
@@ -237,7 +237,7 @@ def result_to_json_file(answers, directory):
     image_name = directory[last_index+1:]
     image_name = image_name.split(".")[0].lower()
     date_time  = datetime.datetime.now().strftime("%Y-%m-%d_%Hh%Mm%Ss")  # Get current date and time
-    if TYPE_OF_QUESTION is "Original_question":
+    if TYPE_OF_QUESTION == "Original_question":
         # Define folder path based on the type of question
         folder_path = f"tests/tests_result/original_question/{image_name}"
     else:
