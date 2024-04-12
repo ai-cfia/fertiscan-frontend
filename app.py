@@ -118,10 +118,10 @@ def  create_final_request(file, base_questions):
         if not line.isnull().all():
             categorie = str(line['Categories'])
 
-            if line['Specification'] != None:
+            if line['Specification'] is not None:
                 request_as_text += str(line['Specification']) + "\n"
 
-            if line['Categories'] != None:
+            if line['Categories'] is not None:
                 if "all" in categorie:
                     request_as_text = add_line(request_as_text, line)
 
