@@ -234,22 +234,22 @@ def add_line(requestAsText, line):
 # Function to write results to a JSON file
 def result_to_json_file(responses, directory):
     global typeOfQuestion  # Using global variable typeOfQuestion
-    lastIndex = directory.rfind('\\')
+    lastIndex = directory.rfind('/')
     imageName = directory[lastIndex+1:]
     imageName = imageName.split(".")[0].lower()
     date_time  = datetime.datetime.now().strftime("%Y-%m-%d_%Hh%Mm%Ss")  # Get current date and time
     if typeOfQuestion == "Original_question":
         # Define folder path based on the type of question
-        folder_path = f"tests\\tests_result\\original_question\\{imageName}"
+        folder_path = f"tests/tests_result/original_question/{imageName}"
     else:
-        folder_path = f"tests\\tests_result\\modified_question\\{imageName}"
+        folder_path = f"tests/tests_result/modified_question/{imageName}"
 
     # Create folder if it doesn't exist
     if not os.path.exists(folder_path):
         os.makedirs(folder_path)
 
     # Define file path using image name and current date-time
-    file_path = os.path.join(folder_path, f"{date_time}_test.json")
+    file_path = os.path.join(folder_path, f"{date_time}_result.json")
 
     # Extract JSON content from raw text response
     start_index = responses.find('{')
@@ -340,18 +340,18 @@ projectinit=vertexai.init(project="test-application-2-416219", location="northam
 # Example usage:
 print("----------------- sunshine_mix -----------------")
 baseQuestions = {}
-baseQuestions = generate_request('company_image_folder\\sunshine_mix', model, projectinit, "Original_question", None)
-baseQuestions = generate_request('company_image_folder\\sunshine_mix', model, projectinit, "Original_question", baseQuestions)
+baseQuestions = generate_request('company_image_folder/sunshine_mix', model, projectinit, "Original_question", None)
+baseQuestions = generate_request('company_image_folder/sunshine_mix', model, projectinit, "Original_question", baseQuestions)
 baseQuestions = {}
-baseQuestions = generate_request('company_image_folder\\sunshine_mix', model, projectinit, "Modified_question", None)
-baseQuestions = generate_request('company_image_folder\\sunshine_mix', model, projectinit, "Modified_question",baseQuestions)
+baseQuestions = generate_request('company_image_folder/sunshine_mix', model, projectinit, "Modified_question", None)
+baseQuestions = generate_request('company_image_folder/sunshine_mix', model, projectinit, "Modified_question",baseQuestions)
 baseQuestions = {}
 
 # Example comparison:
-# parent_folder_path = os.path.abspath("tests\\test_result\\original_question\\sunshine_mix")
+# parent_folder_path = os.path.abspath("tests/test_resultoriginal_question/sunshine_mix")
 # paths=scan_folder(parent_folder_path
-# compare_json_file_path(paths, "tests\\responses\\response_sunshine_mix.json", "results_sunshinemix_original_question_comparision%test.json" )
+# compare_json_file_path(paths, "tests/responses/response_sunshine_mix.json", "results_sunshinemix_original_question_comparision%test.json" )
 
-# parent_folder_path = os.path.abspath("tests\\tests_result\\modified_question\\sunshine_mix")
+# parent_folder_path = os.path.abspath("tests/tests_result/modified_question/sunshine_mix")
 # paths=scan_folder(parent_folder_path)
-# compare_json_file_path(paths, "tests\\responses\\response_sunshine_mix.json", "results_sunshinemix_modified_question_comparision%test.json" )
+# compare_json_file_path(paths, "tests/responses/response_sunshine_mix.json", "results_sunshinemix_modified_question_comparision%test.json" )
