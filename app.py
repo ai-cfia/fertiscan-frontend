@@ -11,7 +11,8 @@ from difflib import SequenceMatcher
 from typing import List
 
 typeOfQuestion = "Original_question"
-firstRequest = True
+QUESTION_TYPE = "original_question"
+FIRST_REQUEST = True
 
 # Function to collect images from a directory
 def collect_images(directory):
