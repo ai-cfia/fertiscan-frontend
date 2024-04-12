@@ -185,7 +185,7 @@ def  create_final_request(file, base_questions):
                     if "contain_organic_matter" in base_questions:
                         if "organic_matter" in categorie:
                             request_as_text = add_line(request_as_text, line)
-
+                            
                     if "contain_phosphate" in base_questions:
                         if "phosphate" in categorie:
                             request_as_text = add_line(request_as_text, line)
@@ -332,8 +332,6 @@ def compare_json_file_path(json_file_path: List[str], template_file, result_file
     # Write the results to the result file
     with open(result_file, 'w') as f:
         json.dump(results, f, indent=4)  # Write results in a formatted JSON
-
-
 
 model = GenerativeModel("gemini-1.0-pro-vision-001")
 projectinit=vertexai.init(project="test-application-2-416219", location="northamerica-northeast1")
