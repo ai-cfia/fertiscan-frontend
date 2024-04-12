@@ -1,9 +1,18 @@
+import datetime
+import json
 import os
 import vertexai
 from vertexai.preview.generative_models import GenerativeModel, Part
 import vertexai.preview.generative_models as generative_models
 import pandas as pd
+from difflib import SequenceMatcher
+from typing import List
 
+TYPE_OF_QUESTION = "Original_question"
+QUESTION_TYPE = "Original_question"
+FIRST_REQUEST = True
+
+# Function to collect images from a directory
 def collect_images(directory):
     image_extensions = [".jpg", ".jpeg", ".png"]
     image_paths = []
@@ -13,31 +22,34 @@ def collect_images(directory):
                 image_paths.append(os.path.join(root, file))
     return image_paths
 
-def getListImage(image_paths):
+# Function to get image data list from image paths
+def get_list_image(image_paths):
     request = []
     for image_data in image_paths:
-        print(image_data)
         with open(image_data, 'rb') as f:
             image = f.read()
             request.append(Part.from_data(data=image, mime_type="image/jpeg"))
-
     return request
 
-def addText(request, number, baseQuestions=None):
-    if baseQuestions is None:
+# Function to add text to the request
+def add_text(request, base_questions=None):
+    if base_questions is None:
         request.append(create_base_request(read_csv_file("base_composition_questions.csv")))
     else:
-        request.append(create_final_request(read_csv_file("questions_spreadsheet.csv"), baseQuestions))
-
+        request.append(create_final_request(read_csv_file("questions_spreadsheet.csv"), base_questions))
     return request
 
-def generateRequest(directory, model:GenerativeModel, vertex:vertexai, baseQuestions=None):
-    request = getListImage(collect_images(directory))
-    if baseQuestions is None:
-        request = addText(request, 1)
+# Function to generate a request
+def generate_request(directory, model:GenerativeModel, vertex:vertexai, choice_of_questions, base_questions=None):
+    global TYPE_OF_QUESTION
+    global first_request
+    TYPE_OF_QUESTION = choice_of_questions
+    request = get_list_image(collect_images(directory))
+    if base_questions is None:
+        request = add_text(request, None)
     else:
-        request = addText(request, 2, baseQuestions)
-    responses = model.generate_content(request,
+        request = add_text(request, base_questions)
+    answers = model.generate_content(request,
         generation_config={
         "max_output_tokens": 2048,
         "temperature": 0,
@@ -55,132 +67,288 @@ def generateRequest(directory, model:GenerativeModel, vertex:vertexai, baseQuest
         stream=False,
     )
 
-    if baseQuestions is None:
-        baseQuestions = toDict(responses.text)
-    #else:
-       # otherQuestion = toDict(responses, baseQuestions)
+    if not first_request:
+        result_to_json_file(answers.text, directory)
+        first_request = True
+    else:
+        # Extract JSON content from raw text
+        answer = answers.text
+        start_index = answer.find('{')
+        end_index = answer.rfind('}') + 1
+        json_content = answer[start_index:end_index]
+        # Parse JSON
+        base_questions = json.loads(json_content)
+        first_request = False
+    return base_questions
 
-    print(responses.text)
+# Function to convert answer to dictionary
+def to_dict(answers, base_questions):
+    answer_as_dict = {}
+    if base_questions is None:
+        for answer in answers:
+            text = answer
+            indice = text.find(":")
+            test_before = text[:indice]
+            test_after = text[indice + 1:]
+            answer_as_dict[test_before] = test_after
+    return answer_as_dict
 
-    return baseQuestions
-
-def toDict(responses, baseQuestions=None):
-    responseAsDict = {}
-    if baseQuestions is None:
-        for response in responses:
-            texte = response
-            indice = texte.find(":")
-            partie_avant = texte[:indice]
-            partie_apres = texte[indice + 1:]
-            responseAsDict[partie_avant] = partie_apres
-    return responseAsDict
-
+# Function to read CSV file
 def read_csv_file(file_path):
-    # Lire le fichier CSV
+    # Read csv file
     df = pd.read_csv(file_path, sep=';')
     return df
 
-def  create_final_request(file, baseQuestions, typeOfQuestion):
-    request_AsText = ""
-    for index, line in file.iterrows():
-        if not line.isnull().all():
-            categorie = str(line['Categories'])
-            if line['Specification'] is not None:
-                request_AsText += str(line['Specification']) + "\n"
-
-            if line['Categories'] is not None:
-                if "not_asked" in categorie:
-                    break
-                elif "all" in categorie:
-                    request_AsText = addLine(request_AsText, line, typeOfQuestion)
-
-                if "fertilizer" in categorie and "is_fertilizer" in baseQuestions:
-
-                    if "pesticide" in categorie and "contain_pesticide" in baseQuestions:
-                        request_AsText = addLine(request_AsText, line)
-
-                    if "seed" in categorie and "is_seed" in baseQuestions:
-                        request_AsText = addLine(request_AsText, line)
-
-                    if "tank_mixing" in categorie and "is_tank_mixing" in baseQuestions:
-                        request_AsText = addLine(request_AsText, line)
-
-                    if "microorganism" in categorie and "contain_microorganism" in baseQuestions:
-                        request_AsText = addLine(request_AsText, line)
-
-                    if "organic_matter" in categorie and "contain_organic_matter" in baseQuestions:
-                        request_AsText = addLine(request_AsText, line)
-
-                    if "phosphate" in categorie & "contain_phosphate" in baseQuestions:
-                        request_AsText = addLine(request_AsText, line)
-
-                    if "micronutrient" in categorie & "contain_micronutrient" in baseQuestions:
-                        request_AsText = addLine(request_AsText, line)
-
-                    if "nutrient" in categorie & "contain_nutrient" in baseQuestions:
-                        request_AsText = addLine(request_AsText, line)
-
-                elif "supplement" in categorie and "is_supplement" in baseQuestions:
-
-                    if "pesticide" in categorie & "contain_pesticide" in baseQuestions:
-                        request_AsText = addLine(request_AsText, line)
-
-                    if "seed" in categorie & "is_seed" in baseQuestions:
-                        request_AsText = addLine(request_AsText, line)
-
-                    if "tank_mixing" in categorie & "is_tank_mixing" in baseQuestions:
-                        request_AsText = addLine(request_AsText, line)
-
-                    if "microorganism" in categorie & "contain_microorganism" in baseQuestions:
-                        request_AsText = addLine(request_AsText, line)
-
-                    if "organic_matter" in categorie & "contain_organic_matter" in baseQuestions:
-                        request_AsText = addLine(request_AsText, line)
-
-                    if "micronutrient" in categorie & "contain_micronutrient" in baseQuestions:
-                        request_AsText = addLine(request_AsText, line)
-
-                    if "nutrient" in categorie & "contain_nutrient" in baseQuestions:
-                        request_AsText = addLine(request_AsText, line)
-
-                elif "growing_medium" in categorie and "contain_growing_medium" in baseQuestions:
-                    request_AsText = addLine(request_AsText, line)
-
-                if "mixture_product" in categorie and "is_mixture_product" in baseQuestions:
-                    request_AsText = addLine(request_AsText, line)
-                return request_AsText
-
-
-def addLine(requestAsText, line, typeOfQuestion):
-    if not line.isnull().all():
-        line_text = str(line['Key']) + ":" + str(line[typeOfQuestion]) + "\n"
-        requestAsText += line_text
-    return requestAsText
-
+# Function to create base request
 def create_base_request(file):
-    requestAsText = ""
+    request_as_text = ""
     for index, line in file.iterrows():
         if not line.isnull().all():
             specification = line['Specification']
-            requestAsText += str(specification) + "\n"
+            request_as_text += str(specification) + "\n"
 
         line_text = str(line['Key']) + ":" + str(line['Question']) + "; \n"
-        requestAsText += line_text
-    return requestAsText
+        request_as_text += line_text
+    return request_as_text
+
+# Function to create final request
+def  create_final_request(file, base_questions):
+    request_as_text = ""
+    for index, line in file.iterrows():
+        if not line.isnull().all():
+            categorie = str(line['Categories'])
+
+            if line['Specification'] is not None:
+                request_as_text += str(line['Specification']) + "\n"
+
+            if line['Categories'] is not None:
+                if "all" in categorie:
+                    request_as_text = add_line(request_as_text, line)
+
+                if  "fertilizer"in categorie and"is_fertilizer" in base_questions:
+                    if "contain_pesticide" in base_questions:
+                        if "pesticide" in categorie:
+                            request_as_text = add_line(request_as_text, line)
+
+                    if "is_seed" in base_questions:
+                        if "seed" in categorie:
+                            request_as_text = add_line(request_as_text, line)
+
+                    if "is_tank_mixing" in base_questions:
+                        if "tank_mixing" in categorie:
+                            request_as_text = add_line(request_as_text, line)
+
+                    if "contain_microorganism" in base_questions:
+                        if "microorganism" in categorie :
+                            request_as_text = add_line(request_as_text, line)
+
+                    if "contain_organic_matter" in base_questions:
+                        if "organic_matter" in categorie:
+                            request_as_text = add_line(request_as_text, line)
+
+                    if "contain_phosphate" in base_questions:
+                        if "phosphate" in categorie:
+                            request_as_text = add_line(request_as_text, line)
+
+                    if "contain_micronutrient" in base_questions:
+                        if "micronutrient" in categorie:
+                            request_as_text = add_line(request_as_text, line)
+
+                    if "contain_nutrient" in base_questions:
+                        if "nutrient" in categorie:
+                            request_as_text = add_line(request_as_text, line)
+
+                    if  "contain_microorganism" in base_questions:
+                        if "microorganism" in categorie:
+                            request_as_text = add_line(request_as_text, line)
+
+                elif "supplement" in categorie and "is_supplement" in base_questions:
+
+                    if "contain_pesticide" in base_questions:
+                        if "pesticide" in categorie:
+                            request_as_text = add_line(request_as_text, line)
+
+                    if "is_seed" in base_questions:
+                        if "seed" in categorie:
+                            request_as_text = add_line(request_as_text, line)
+
+                    if "is_tank_mixing" in base_questions:
+                        if "tank_mixing" in categorie:
+                            request_as_text = add_line(request_as_text, line)
+
+                    if "contain_microorganism" in base_questions:
+                        if "microorganism" in categorie :
+                            request_as_text = add_line(request_as_text, line)
+
+                    if "contain_organic_matter" in base_questions:
+                        if "organic_matter" in categorie:
+                            request_as_text = add_line(request_as_text, line)
+
+                    if "contain_phosphate" in base_questions:
+                        if "phosphate" in categorie:
+                            request_as_text = add_line(request_as_text, line)
+
+                    if "contain_micronutrient" in base_questions:
+                        if "micronutrient" in categorie:
+                            request_as_text = add_line(request_as_text, line)
+
+                    if "contain_nutrient" in base_questions:
+                        if "nutrient" in categorie:
+                            request_as_text = add_line(request_as_text, line)
+
+                    if  "contain_microorganism" in base_questions:
+                        if "microorganism" in categorie:
+                            request_as_text = add_line(request_as_text, line)
+
+                elif "contain_growing_medium" in base_questions:
+                    if "growing_medium" in categorie:
+                        request_as_text = add_line(request_as_text, line)
+
+                if  "is_mixture_product" in base_questions:
+                    if "mixture_product" in categorie:
+                        request_as_text = add_line(request_as_text, line)
+
+                if "contain_allergen" in base_questions:
+                    if "allergen" in categorie:
+                        request_as_text = add_line(request_as_text, line)
+
+                if "contain_acronyms" in base_questions:
+                    if "acronyms" in categorie:
+                        request_as_text = add_line(request_as_text, line)
+
+                if "contain_polymeric" in base_questions:
+                    if "polymeric" in categorie:
+                        request_as_text = add_line(request_as_text, line)
+    base_questions is None
+    return request_as_text
+
+# Function to add a line to the request
+def add_line(request_as_text, line):
+    global TYPE_OF_QUESTION
+    if not line.isnull().all():
+        line_text = str(line['Key']) + ":" + str(line[TYPE_OF_QUESTION]) + "\n"
+        request_as_text += line_text
+    return request_as_text
+
+# Function to write results to a JSON file
+def result_to_json_file(answers, directory):
+    global TYPE_OF_QUESTION  # Using global variable TYPEOFQUESTION
+    last_index = directory.rfind('/')
+    image_name = directory[last_index+1:]
+    image_name = image_name.split(".")[0].lower()
+    date_time  = datetime.datetime.now().strftime("%Y-%m-%d_%Hh%Mm%Ss")  # Get current date and time
+    if TYPE_OF_QUESTION == "Original_question":
+        # Define folder path based on the type of question
+        folder_path = f"tests/tests_result/original_question/{image_name}"
+    else:
+        folder_path = f"tests/tests_result/modified_question/{image_name}"
+
+    # Create folder if it doesn't exist
+    if not os.path.exists(folder_path):
+        os.makedirs(folder_path)
+
+    # Define file path using image name and current date-time
+    file_path = os.path.join(folder_path, f"{date_time}_result.json")
+
+    # Extract JSON content from raw text answer
+    start_index = answers.find('{')
+    end_index = answers.rfind('}') + 1
+    json_content = answers[start_index:end_index]
+
+    # Try parsing JSON content
+    try:
+        data_formatted = json.loads(json_content)
+    except json.JSONDecodeError as e:
+        # Print error message if JSON parsing fails
+        print(f"Error parsing JSON: {e}")
+        data_formatted = {}  # Assign empty dictionary if parsing fails
+
+    # Write formatted JSON data to file with indentation
+    with open(file_path, "w") as json_file:
+        json.dump(data_formatted, json_file, indent=4)
 
 
+# Function to scan a folder and get file paths
+def scan_folder(folder_path):
+    file_paths = []
+    for root, files in os.walk(folder_path):
+        for file in files:
+            file_paths.append(os.path.join(root, file))
+    return file_paths
 
+# Function to calculate similarity between two strings
+def similarity(a, b):
+    return SequenceMatcher(None, str(a), str(b)).ratio()
 
+number_of_tests = None
+
+# Function to compare JSON files and calculate similarity
+def compare_json_file_path(json_file_path: List[str], template_file, result_file):
+    # Initialize results dictionary
+    results = {}
+    # Initialize the number of tests
+    number_of_tests = 0
+
+    # Iterate over each file path in the list
+    for file1 in json_file_path:
+        number_of_tests += 1  # Increment the test counter
+
+        # Open current JSON file and template file
+        with open(file1, 'r') as f1, open(template_file, 'r') as f2:
+            # Load JSON data from files
+            data1 = json.load(f1)
+            data_good_answer = json.load(f2)
+
+            # Iterate over keys common to both JSON files
+            for key in set(data1.keys()).intersection(data_good_answer.keys()):
+                # Print key and corresponding values from both files
+                print(key, data1[key], data_good_answer[key])
+
+                # Check if key exists in both JSON files
+                if key in data1 and key in data_good_answer:
+                    # Calculate similarity score between values
+                    if isinstance(data1[key], str) and data1[key] != "None":
+                            similarity_score = round(similarity(isinstance(data1[key], str), data_good_answer[key]) * 100, 2)
+                    else:
+                        similarity_score = int(round(similarity(data1[key], data_good_answer[key]) * 100, 2))
+
+                    # Update results dictionary with similarity score
+                    if key in results:
+                        results[key] += similarity_score
+                    else:
+                        results[key] = similarity_score
+                else:
+                    # If key is not found in one of the files, print an error message
+                    print("\n\nKey not found in one of the two files"+ key+"\n\n")
+                    results[key] += 1  # Increment the result with 0 for the missing key
+
+    # Calculate the average similarity score
+    if number_of_tests > 0:
+        for key in results:
+            results[key] /= number_of_tests
+
+    # Write the results to the result file
+    with open(result_file, 'w') as f:
+        json.dump(results, f, indent=4)  # Write results in a formatted JSON
 
 model = GenerativeModel("gemini-1.0-pro-vision-001")
 projectinit=vertexai.init(project="test-application-2-416219", location="northamerica-northeast1")
-#Original question
-baseQuestions = generateRequest('company_image_folder\\acti_sol1', model, projectinit, None, "original_question")
-baseQuestions = generateRequest('company_image_folder\\acti_sol1', model, projectinit, baseQuestions, "original_question")
-# Modified question
-baseQuestions = generateRequest('company_image_folder\\acti_sol1', model, projectinit, None, "modified_question")
-baseQuestions = generateRequest('company_image_folder\\acti_sol1', model, projectinit, baseQuestions, "modified_question")
 
-#generateRequest('Company_Image_Folder\\Bio_Fleur', model, projectinit)
-#generateRequest('Company_Image_Folder\\Bio_Fleur', model, projectinit)
-#generateRequest('Company_Image_Folder\\Bio_Fleur', model, projectinit)
+# Example usage:
+print("----------------- sunshine_mix -----------------")
+base_questions = {}
+base_questions = generate_request('company_image_folder/sunshine_mix', model, projectinit, "Original_question", None)
+base_questions = generate_request('company_image_folder/sunshine_mix', model, projectinit, "Original_question", base_questions)
+base_questions = {}
+base_questions = generate_request('company_image_folder/sunshine_mix', model, projectinit, "Modified_question", None)
+base_questions = generate_request('company_image_folder/sunshine_mix', model, projectinit, "Modified_question", base_questions)
+base_questions = {}
+
+# Example comparison:
+# parent_folder_path = os.path.abspath("tests/test_resultoriginal_question/sunshine_mix")
+# paths=scan_folder(parent_folder_path
+# compare_json_file_path(paths, "tests/answers/answer_sunshine_mix.json", "results_sunshinemix_original_question_comparision%test.json" )
+
+# parent_folder_path = os.path.abspath("tests/tests_result/modified_question/sunshine_mix")
+# paths=scan_folder(parent_folder_path)
+# compare_json_file_path(paths, "tests/answers/answer_sunshine_mix.json", "results_sunshinemix_modified_question_comparision%test.json" )
