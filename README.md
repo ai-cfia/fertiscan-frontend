@@ -1,5 +1,5 @@
 
-# Harvester Prototype (FertiScan)
+# FertiScan Prototype
 
 ## Overview Description
 
@@ -16,7 +16,7 @@ the project aims to increase the efficiency and accuracy of the inspection
 process. Through the integration of the Gemini Vertex API, the system can
 analyze fertilizer bag labels more thoroughly, identifying not only basic
 information but also subtle differences that may escape human inspection.
-The Harvester prototype is a crucial step towards realizing a complete
+The FertiScan prototype is a crucial step towards realizing a complete
 automated inspection system. With continuous testing and improvements, it has
 the potential to transform the way fertilizer bag inspections are conducted,
 bringing an advanced technological solution to the agricultural sector.
@@ -29,7 +29,7 @@ simulate human conversation, capable of answering questions and processing
 a large number of images.
 **Testing Process:** Rigorous testing is conducted to demonstrate that
 the Gemini Vertex API, created by Google, is the appropriate method for the
-Harvester project.
+FertiScan project.
 It meets various criteria and achieves two main objectives:
 reading labels during recording and identifying differences with bags analyzed
 by inspectors.
@@ -45,7 +45,7 @@ basic information but also subtle differences that may escape human inspection.
 
 ## Future Outlook
 
-The Harvester prototype is a crucial step toward realizing a
+The FertiScan prototype is a crucial step toward realizing a
 comprehensive automated inspection system. With continuous testing and
 improvements, it has the potential to transform the way fertilizer bag
 inspections are conducted, bringing an advanced technological
