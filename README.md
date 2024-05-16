@@ -1,5 +1,5 @@
 
-# FertiScan Prototype
+# FertiScan
 
 ## Overview Description
 
