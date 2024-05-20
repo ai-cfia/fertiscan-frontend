@@ -67,7 +67,7 @@ function HomePage() {
         <div className="container">
           <h3 className="title">Attach a document</h3>
 
-          <DragDropFileInput onFileChange={handlePhotoChange}/>
+          <DragDropFileInput sendChange={handlePhotoChange}/>
           <button type="submit" className="cancel-button">
               Cancel
           </button>
