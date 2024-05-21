@@ -1,0 +1,21 @@
+.file-list{
+    border: 2px solid #ccc;
+    border-radius: 5px;
+    grid-area: b;
+    padding: 5px;
+}
+
+.file-list.empty{
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 159%;
+}
+
+.no-element{
+    display: none;
+}
+
+.no-element.active{
+    display: block;
+}

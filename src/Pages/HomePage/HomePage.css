@@ -1,0 +1,7 @@
+.container{
+    display: grid;
+    grid-template: "x a b";
+    gap:10px;
+    justify-content: space-evenly;
+    padding: 0% 3%;
+}
