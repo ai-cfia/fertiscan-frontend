@@ -1,0 +1,91 @@
+/* Text box container styles */
+.textbox-container {
+  display: flex; /* Enable flexbox layout */
+  justify-content: center; /* Center horizontally within the container */
+  align-items: center; /* Center vertically within the container */
+  width: 100%; /* Make the container take up the full width */
+}
+
+/* Text box styles */
+textarea {
+  padding: 10px;
+  border: 1px solid #ccc;
+  box-sizing: border-box;
+  width: 300px; /* Adjust width as needed */
+  height: 100px; /* Adjust height as needed */
+  resize: none;
+}
+
+.open-icon {
+  /* ... (Existing styles remain the same) */
+}
+
+/* Styles de l'overlay */
+.overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background-color: rgba(0, 0, 0, 0.7);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+/* Styles de la carte */
+.card {
+  width: 75%;
+  max-width: 800px;
+  background-color: white;
+  padding: 20px;
+  border-radius: 5px;
+  box-shadow: 0 2px 5px rgba(0, 0, 0, 0.3);
+}
+
+/* Styles du bouton de fermeture */
+.close-icon {
+  position: absolute;
+  top: 15px;
+  right: 15px;
+  cursor: pointer;
+}
+
+/* Styles du contenu de la carte */
+.card-content {
+  height: 300px;
+  overflow-y: auto;
+}
+
+/* Styles du texte de la carte */
+.card-content p {
+  font-size: 18px; /* Increase font size for fertilizer instructions */
+  margin: 0; /* Remove margin from the top of the text */
+  border: none; /* Remove border from the text */
+  width: 100%;
+  height: 100%;
+  resize: none;
+  white-space: wrap; /* Enable automatic line wrapping */
+}
+
+/* Styles du textarea de la carte */
+.card-content textarea {
+  width: 100%;
+  height: 100%;
+  resize: none;
+  font-size: 17px; /* Set base font size for card content */
+}
+
+/* Styles du pied de page de la carte */
+.card-footer {
+  text-align: right;
+  margin-top: 10px;
+}
+
+/* Styles du bouton modifier/enregistrer */
+.card-footer button {
+  padding: 5px 10px;
+  border: 1px solid #ccc;
+  border-radius: 3px;
+  cursor: pointer;
+}
