@@ -5,13 +5,11 @@ import "./App.css";
 import Header from "./Components/Header/Header";
 
 function App() {
-
-
   return (
     <BrowserRouter>
-      <Header/>
+      <Header />
       <Routes>
-          <Route path="/">
+        <Route path="/">
           <Route index element={<HomePage />} />
           <Route path="*" element={<NoPage />} />
         </Route>
