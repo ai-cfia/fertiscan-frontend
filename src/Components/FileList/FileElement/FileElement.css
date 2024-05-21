@@ -1,3 +1,9 @@
 .file-element{
-    border: 2px solid #ddd;
+    border: 2px solid #808080;
+    display:flex;
+    align-items: center;
+    max-width: 150px;
+    height: 150px;
 }
+
+

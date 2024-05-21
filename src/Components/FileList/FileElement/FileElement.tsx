@@ -1,25 +1,39 @@
-import React from "react";
+import React, { useState, useEffect } from "react";
 
-interface FileElementProps{
-    file: File;
-    position: number;
+interface FileElementProps {
+  key: number;
+  file: File;
+  position: number;
+  onClick: () => void; // Function to be called on click
 }
 
-const FileElement: React.FC<FileElementProps> = ({file, position})=>{
-    console.log(file)
-    let fileUrl = "";
+const FileElement: React.FC<FileElementProps> = ({ file, position, onClick }) => {
+  const [fileUrl, setFileUrl] = useState("");
+
+  useEffect(() => {
     const reader = new FileReader();
-    reader.onload = (e) => {
-      const newFile = e!.target!.result!;
-      fileUrl = newFile as string
-    };
+    reader.onload = (e) => setFileUrl(e?.target?.result as string || "");
     reader.readAsDataURL(file);
-    return(
-        <div className="file-element" id={"file_"+position}>
-            <img src={fileUrl}></img>
-        </div>
-    )
+  }, [file]);
 
-}
+  const handleClick = (event: React.MouseEvent<HTMLImageElement>) => {
+    event.preventDefault(); // Prevent default navigation
+    console.log("Image clicked! File name:", file.name);
+  
+    // Call the onClick prop passed from FileList if needed
+    onClick?.();
+  };
 
-export default FileElement
+  return (
+    <div className="file-element" id={"file_" + position}>
+      <img
+        src={fileUrl}
+        alt={file.name}
+        style={{ maxWidth: "300px", height: "auto" }}
+        onClick={handleClick} // Call the handleClick function on click
+      />
+    </div>
+  );
+};
+
+export default FileElement;

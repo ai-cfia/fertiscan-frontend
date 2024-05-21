@@ -1,21 +1,41 @@
-.file-list{
+.file-list {
     border: 2px solid #ccc;
     border-radius: 5px;
     grid-area: b;
     padding: 5px;
+    position: relative; 
 }
-
-.file-list.empty{
+  
+  .file-list.empty {
     display: flex;
     align-items: center;
     justify-content: center;
     width: 159%;
-}
-
-.no-element{
+  }
+  
+  .no-element {
     display: none;
-}
-
-.no-element.active{
+  }
+  
+  .no-element.active {
     display: block;
-}
+  }
+  
+  .overlay {
+    position: absolute; /* Positioned absolutely within FileList */
+    top: 0;
+    left: 0; /* Initial position (can be adjusted based on selection) */
+    width: 100%; /* Adjust width/height as needed */
+    height: 100%;
+    background-color: rgba(0, 0, 0, 0.5); /* Gray overlay with opacity */
+    display: flex; /* Center image content horizontally and vertically */
+    align-items: center;
+    justify-content: center;
+    z-index: 1; /* Ensure overlay is above FileElement components */
+    visibility: hidden; /* Initially hidden */
+  }
+  
+  .overlay.active {
+    visibility: visible; /* Show overlay when an image is selected */
+  }
+  
