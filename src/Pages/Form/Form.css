@@ -1,0 +1,54 @@
+/* Text box container styles */
+.data-container{
+  display: flex;
+  flex-direction: column;
+  min-height: 100%;
+  padding-bottom: 60px;
+}
+
+.textbox-container {
+  display: flex; /* Enable flexbox layout */
+  justify-content: center; /* Center horizontally within the container */
+  align-items: center; /* Center vertically within the container */
+  width: 100%; /* Make the container take up the full width */
+}
+
+.underlined{
+  text-decoration: underline;
+}
+
+/* Text box styles */
+textarea {
+  padding: 10px;
+  border: 1px solid #ccc;
+  box-sizing: border-box;
+  width: 300px; /* Adjust width as needed */
+  height: 100px; /* Adjust height as needed */
+  resize: none;
+}
+
+.open-icon {
+  position: relative;
+  top: 40px;
+  right: 50px;
+}
+
+.data-section{
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  gap: 10px;
+}
+
+.input-container{
+  display: inline-flex;
+  flex-direction: column;
+  align-items: baseline;
+  width: 300px; 
+}
+
+.input-container input{
+  width: 98%;
+}
+
