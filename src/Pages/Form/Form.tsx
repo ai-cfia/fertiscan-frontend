@@ -170,7 +170,6 @@ const FormPage = () => {
         <h1 className='title underlined'>Company information</h1>
         <div className={`input-container ${form.Compagny_name?'active':''}`}>
           <label htmlFor='company-name'>Company name :</label>
-          {/*Tried to link data and input, not worked TODO*/}
           <input type='text' 
             className='company-info' id="company-name"
             value={form.Compagny_name}
