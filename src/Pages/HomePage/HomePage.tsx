@@ -71,7 +71,7 @@ function HomePage() {
     <div className="App">
       <div className="container">
         <DragDropFileInput sendChange={handlePhotoChange} />
-        <FileList files={files} />
+        {/*<FileList files={files} />*/}
       </div>
       <button className="submit-btn" type="submit" onClick={Submit}>Submit</button>
     </div>
