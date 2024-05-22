@@ -5,9 +5,10 @@ interface ModalProps{
     text: string;
     handleTextChange: (event: { target: { value: React.SetStateAction<string>;}; })=> void;
     close: ()=>void;
+    toRef:  React.MutableRefObject<HTMLDivElement|null>;
 }
 
-const Modal: React.FC<ModalProps>=({text, handleTextChange, close})=>{
+const Modal: React.FC<ModalProps>=({text, handleTextChange, close, toRef})=>{
     const [isEditing, setIsEditing] = useState(false); // Added state for edit mode
 
     const handleOverlayTextChange = (event: React.ChangeEvent<HTMLTextAreaElement>)=>{
@@ -17,8 +18,7 @@ const Modal: React.FC<ModalProps>=({text, handleTextChange, close})=>{
 
     const handleOverlayClick = (event: React.MouseEvent<HTMLElement>)=>{
         const element = event!.target as HTMLElement
-        console.log(event);
-        if(element.className == "overlay"|| element.className == "close-icon"){
+        if(element.className == "overlay active"|| element.className == "close-icon"){
             close();
         };
     };
@@ -28,7 +28,7 @@ const Modal: React.FC<ModalProps>=({text, handleTextChange, close})=>{
     };
 
     return(
-        <div className="overlay" onClick={handleOverlayClick}>
+        <div className="overlay" onClick={handleOverlayClick} ref={toRef}>
           <div className="card">
             <img src={closeIcon} alt="Fermer la carte" className="close-icon" onClick={handleOverlayClick} />
             <div className="card-content">
