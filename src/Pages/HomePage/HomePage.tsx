@@ -2,6 +2,7 @@ import React, { useState, ChangeEvent } from "react";
 import "./HomePage.css";
 import DragDropFileInput from "../../Components/DragDropFileInput/DragDropFileInput";
 import FileList from "../../Components/FileList/FileList";
+import { useNavigate } from "react-router-dom";
 
 function HomePage() {
   const [files, setFiles] = useState<File[]>([]);
@@ -61,13 +62,18 @@ function HomePage() {
     }
   };
 
+  const navigate = useNavigate();
+  const Submit = ()=>{
+    navigate('/Json',{state:{data:files}})
+  }
 
   return (
     <div className="App">
       <div className="container">
         <DragDropFileInput sendChange={handlePhotoChange} />
-        <FileList files={files} />     
+        <FileList files={files} />
       </div>
+      <button className="submit-btn" type="submit" onClick={Submit}>Submit</button>
     </div>
   );
 }
