@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useRef } from 'react';
 import "./Form.css";
 import Modal from '../../Components/Modal/Modal';
 
@@ -6,11 +6,13 @@ import openIcon from "../../assets/dot-menu.png";
 import editIcon from "../../assets/edit_icon.png";
 import saveIcon from "../../assets/save_icon.png";
 
-const TextboxWithOverlay = () => {
-
-
+const FormPage = () => {
+  const precauFR_Modal = useRef<HTMLDivElement | null>(null)
+  const precauEN_Modal = useRef<HTMLDivElement | null>(null)
+  const instruFR_Modal = useRef<HTMLDivElement | null>(null)
+  const instruEN_Modal = useRef<HTMLDivElement | null>(null)
   const [form, setForm] = useState({
-    Compagny_name: "",
+    Compagny_name: "a",
     Compagny_address: "",
     Compagny_website: "",
     Compagny_phone_number: "",
@@ -54,64 +56,195 @@ const TextboxWithOverlay = () => {
     all_other_text_EN_2: "",
   });
 
-  /** 
-  const handleOverlayClick = () => {
-    setShowOverlay(false);
-  };
-  // Update the text state directly when editing in the overlay
-  const handleOverlayTextChange = (event: { target: { value: React.SetStateAction<string>; }; }) => {
-    setText(event.target.value);
-  };
-  */
+  const [data, setData] = useState({
+    sections : [
+      {
+        title : "Company information",
+        label : "Company",
+        inputs : [
+          {
+            type: "input",
+            label: "name",
+            value: form.Compagny_name
+          },
+          {
+            type: "input",
+            label: "address",
+            value: form.Compagny_name 
+          }
+        ]
+      },
+      {
+        title:"Manufacturer information",
+        label: "Manufacturer",
+        inputs:[
+          {
+            type: "input",
+            label: "name",
+            value: form.Manufacturer_name 
+          }
+        ]
+      },
+      {
+        title:"Fertilizer information",
+        label:"Fertilizer",
+        inputs:[
+          {
+            type: "textarea",
+            label: "precautionary FR",
+            value: form.Fertiliser_precautionary_FR
+          }
+        ]
+      }
+    ]
+  })
+
   return (
     <div className='data-container'>
+      {/**
+      {[...data.sections].map(
+        (section: object, index: number, array: object[]) => [
+          
+          <div className={section.label+'-container data-section'}>
+            <h1 className='title underlined'>{section.title}</h1>
+            {[...(section.inputs)].map(
+              (input: object, index: number, array: object[])=>{
+                if(input.type == 'input'){
+                  return ( 
+                  <div className='input-container'>
+                      <label htmlFor={section.label+'-'+input.label}>Company name :</label>
+                      <input type='text' 
+                        className={section.label+'-info'} id={section.label+'-'+input.label}
+                        value={input.value}
+                        onChange={(event:React.ChangeEvent<HTMLInputElement>)=>{
+                          const newSections = data.sections.slice();
+                          
+                          setData({...data, })
+                        }}
+                      >
+                      </input>
+                    </div>
+                  )
+                }else if(input.type == 'textarea'){
+                  return (
+                    <div className='input-container'>
+                      <label htmlFor='fertiliser-instru_EN'>Fertiliser instructions EN :</label>
+                      <div className="textbox-container">
+                        <textarea
+                          value={form.Fertiliser_instructions_EN}
+                          onChange={(event:React.ChangeEvent<HTMLTextAreaElement>) => {
+                            setForm({...form, Fertiliser_instructions_EN:event.target.value})
+                          }}
+                          className='text-box'
+                        />
+                        {form.Fertiliser_instructions_EN.length>100 && (
+                          <img
+                            src={openIcon}
+                            alt="Ouvrir l'overlay"
+                            className="open-icon"
+                            onClick={() => {
+                              instruEN_Modal.current!.classList.add("active")
+                            }}
+                          />
+                        )}
+                        <Modal 
+                          toRef={instruEN_Modal} 
+                          text={form.Fertiliser_instructions_EN} 
+                          handleTextChange={(event: { target: { value: React.SetStateAction<string>}}) => {
+                            setForm({...form, Fertiliser_instructions_EN:event.target.value.toString()})
+                          }} 
+                          close={() => instruEN_Modal.current!.classList.remove("active")} 
+                        />
+                      </div>
+                    </div>
+                  )
+                }
+              }
+            )}
+          </div>
+        ]
+      )}
+      */}
       {/* ----------     Company section     ---------- */}
-      <div className='company-container data-section'>
+      <div className={`company-container data-section ${(form.Compagny_address || form.Compagny_name || form.Compagny_phone_number || form.Compagny_website)?'active':''}`}>
         <h1 className='title underlined'>Company information</h1>
-        <div className='input-container'>
+        <div className={`input-container ${form.Compagny_name?'active':''}`}>
           <label htmlFor='company-name'>Company name :</label>
-          {/*Tried to link data and input, not worked TODO*/}
           <input type='text' 
-            className='company-info' id="company-name" 
-            value={form.Compagny_name} 
-            onChange={(event:React.ChangeEvent<HTMLInputElement>)=>
-              form.Compagny_name=event.target.value
-            }
+            className='company-info' id="company-name"
+            value={form.Compagny_name}
+            onChange={(event:React.ChangeEvent<HTMLInputElement>)=>{
+              setForm({...form, Compagny_name:event.target.value})
+            }}
           >
           </input>
         </div>
-        <div className='input-container'>
+        <div className={`input-container ${form.Compagny_address?'active':''}`}>
           <label htmlFor='company-address'>Company address :</label>
-          <input type='text' className='company-info' id="company-address" value={form.Compagny_address}></input>
+          <input type='text' className='company-info' id="company-address" 
+            value={form.Compagny_address}
+            onChange={(event:React.ChangeEvent<HTMLInputElement>)=>{
+              setForm({...form, Compagny_address:event.target.value})
+            }}
+          ></input>
         </div>
         <div className='input-container'>
           <label htmlFor='company-website'>Company website :</label>
-          <input type='text' className='company-info' id="company-website" value={form.Compagny_website}></input>
+          <input type='text' className='company-info' id="company-website" 
+            value={form.Compagny_website}
+            onChange={(event:React.ChangeEvent<HTMLInputElement>)=>{
+              setForm({...form, Compagny_website:event.target.value})
+            }}
+          ></input>
         </div>
         <div className='input-container'>
           <label htmlFor='company-phone'>Company phone number :</label>
-          <input type='text' className='company-info' id="company-phone" value={form.Compagny_phone_number}></input>
+          <input type='text' className='company-info' id="company-phone" 
+            value={form.Compagny_phone_number}
+            onChange={(event:React.ChangeEvent<HTMLInputElement>)=>{
+              setForm({...form, Compagny_phone_number:event.target.value})
+            }}
+          ></input>
         </div>
       </div>
-
       {/* ----------     Manufacturer section     ---------- */}
       <div className='manufacturer-container data-section'>
         <h1 className='title underlined'>Manufacturer information</h1>
         <div className='input-container'>
           <label htmlFor='manufacturer-name'>Manufacturer name :</label>
-          <input type='text' className='manufacturer-info' id="manufacturer-name" value={form.Manufacturer_name}></input>
+          <input type='text' className='manufacturer-info' id="manufacturer-name" 
+            value={form.Manufacturer_name}
+            onChange={(event:React.ChangeEvent<HTMLInputElement>)=>{
+              setForm({...form, Manufacturer_name:event.target.value})
+            }}
+          ></input>
         </div>
         <div className='input-container'>
           <label htmlFor='manufacturer-address'>Manufacturer address :</label>
-          <input type='text' className='manufacturer-info' id="manufacturer-address" value={form.Manufacturer_address}></input>
+          <input type='text' className='manufacturer-info' id="manufacturer-address" 
+            value={form.Manufacturer_address}
+            onChange={(event:React.ChangeEvent<HTMLInputElement>)=>{
+              setForm({...form, Manufacturer_address:event.target.value})
+            }}
+          ></input>
         </div>
         <div className='input-container'>
           <label htmlFor='manufacturer-website'>Manufacturer website :</label>
-          <input type='text' className='manufacturer-info' id="manufacturer-website" value={form.Manufacturer_website}></input>
+          <input type='text' className='manufacturer-info' id="manufacturer-website" 
+            value={form.Manufacturer_website}
+            onChange={(event:React.ChangeEvent<HTMLInputElement>)=>{
+              setForm({...form, Manufacturer_website:event.target.value})
+            }}
+          ></input>
         </div>
         <div className='input-container'>
           <label htmlFor='manufacturer-phone'>Manufacturer phone number :</label>
-          <input type='text' className='manufacturer-info' id="manufacturer-phone" value={form.Manufacturer_phone_number}></input>
+          <input type='text' className='manufacturer-info' id="manufacturer-phone" 
+            value={form.Manufacturer_phone_number}
+            onChange={(event:React.ChangeEvent<HTMLInputElement>)=>{
+              setForm({...form, Manufacturer_phone_number:event.target.value})
+            }}
+          ></input>
         </div>
       </div>
       {/* ----------     Fertiliser section     ---------- */}
@@ -119,46 +252,163 @@ const TextboxWithOverlay = () => {
         <h1 className='title underlined'>Fertiliser information</h1>
         <div className='input-container'>
           <label htmlFor='fertiliser-name'>Fertiliser name :</label>
-          <input type='text' className='fertiliser-info' id="fertiliser-name" value={form.Fertiliser_name}></input>
+          <input type='text' className='fertiliser-info' id="fertiliser-name" 
+            value={form.Fertiliser_name}
+            onChange={(event:React.ChangeEvent<HTMLInputElement>)=>{
+              setForm({...form, Fertiliser_name:event.target.value})
+            }}
+          ></input>
         </div>
         <div className='input-container'>
           <label htmlFor='fertiliser-registr_num'>Fertiliser registration number :</label>
-          <input type='text' className='fertiliser-info' id="fertiliser-registr_num" value={form.Fertiliser_registration_number}></input>
+          <input type='text' className='fertiliser-info' id="fertiliser-registr_num" 
+            value={form.Fertiliser_registration_number}
+            onChange={(event:React.ChangeEvent<HTMLInputElement>)=>{
+              setForm({...form, Fertiliser_registration_number:event.target.value})
+            }}
+          ></input>
         </div>
         <div className='input-container'>
           <label htmlFor='fertiliser-lot_number'>Fertiliser lot number :</label>
-          <input type='text' className='fertiliser-info' id="fertiliser-lot_number" value={form.Fertiliser_lot_number}></input>
+          <input type='text' className='fertiliser-info' id="fertiliser-lot_number" 
+            value={form.Fertiliser_lot_number}
+            onChange={(event:React.ChangeEvent<HTMLInputElement>)=>{
+              setForm({...form, Fertiliser_lot_number:event.target.value})
+            }}
+          ></input>
         </div>
         <div className='input-container'>
           <label htmlFor='fertiliser-NPK'>Fertiliser NPK :</label>
-          <input type='text' className='fertiliser-info' id="fertiliser-NPK" value={form.Fertiliser_NPK}></input>
+          <input type='text' className='fertiliser-info' id="fertiliser-NPK" 
+            value={form.Fertiliser_NPK}
+            onChange={(event:React.ChangeEvent<HTMLInputElement>)=>{
+              setForm({...form, Fertiliser_NPK:event.target.value})
+            }}            
+          ></input>
         </div>
+        {/* Fertiliser Precautionary */}
         <div className='input-container'>
           <label htmlFor='fertiliser-precau_FR'>Fertiliser precautionary FR :</label>
-          {/**
           <div className="textbox-container">
             <textarea
-              value={text}
-              onChange={handleTextChange}
+              value={form.Fertiliser_precautionary_FR}
+              onChange={(event:React.ChangeEvent<HTMLTextAreaElement>) => {
+                setForm({...form, Fertiliser_precautionary_FR:event.target.value})
+              }}
               className='text-box'
             />
-            {isTextTooLong && (
+            {form.Fertiliser_precautionary_FR.length>100 && (
               <img
                 src={openIcon}
                 alt="Ouvrir l'overlay"
                 className="open-icon"
-                onClick={() => setShowOverlay(true)}
+                onClick={() => {
+                  precauFR_Modal.current!.classList.add("active")
+                }}
               />
             )}
-
-            {showOverlay && (
-              <Modal text={text} handleTextChange={handleOverlayTextChange} close={handleOverlayClick} />
-            )}
+            <Modal 
+              toRef={precauFR_Modal} 
+              text={form.Fertiliser_precautionary_FR} 
+              handleTextChange={(event: { target: { value: React.SetStateAction<string>}}) => {
+                setForm({...form, Fertiliser_precautionary_FR:event.target.value.toString()})
+              }} 
+              close={() => precauFR_Modal.current!.classList.remove("active")} 
+            />
           </div>
-           */}
+        </div>
+        <div className='input-container'>
+          <label htmlFor='fertiliser-precau_EN'>Fertiliser precautionary EN :</label>
+          <div className="textbox-container">
+            <textarea
+              value={form.Fertiliser_precautionary_EN}
+              onChange={(event:React.ChangeEvent<HTMLTextAreaElement>) => {
+                setForm({...form, Fertiliser_precautionary_EN:event.target.value})
+              }}
+              className='text-box'
+            />
+            {form.Fertiliser_precautionary_EN.length>100 && (
+              <img
+                src={openIcon}
+                alt="Ouvrir l'overlay"
+                className="open-icon"
+                onClick={() => {
+                  precauEN_Modal.current!.classList.add("active")
+                }}
+              />
+            )}
+            <Modal 
+              toRef={precauEN_Modal} 
+              text={form.Fertiliser_precautionary_EN} 
+              handleTextChange={(event: { target: { value: React.SetStateAction<string>}}) => {
+                setForm({...form, Fertiliser_precautionary_EN:event.target.value.toString()})
+              }} 
+              close={() => precauEN_Modal.current!.classList.remove("active")} 
+            />
+          </div>
+        </div>
+        {/* Fertiliser Instructions */}
+        <div className='input-container'>
+          <label htmlFor='fertiliser-instru_FR'>Fertiliser instructions FR :</label>
+          <div className="textbox-container">
+            <textarea
+              value={form.Fertiliser_instructions_FR}
+              onChange={(event:React.ChangeEvent<HTMLTextAreaElement>) => {
+                setForm({...form, Fertiliser_instructions_FR:event.target.value})
+              }}
+              className='text-box'
+            />
+            {form.Fertiliser_instructions_FR.length>100 && (
+              <img
+                src={openIcon}
+                alt="Ouvrir l'overlay"
+                className="open-icon"
+                onClick={() => {
+                  instruFR_Modal.current!.classList.add("active")
+                }}
+              />
+            )}
+            <Modal 
+              toRef={instruFR_Modal} 
+              text={form.Fertiliser_instructions_FR} 
+              handleTextChange={(event: { target: { value: React.SetStateAction<string>}}) => {
+                setForm({...form, Fertiliser_instructions_FR:event.target.value.toString()})
+              }} 
+              close={() => instruFR_Modal.current!.classList.remove("active")} 
+            />
+          </div>
+        </div>
+        <div className='input-container'>
+          <label htmlFor='fertiliser-instru_EN'>Fertiliser instructions EN :</label>
+          <div className="textbox-container">
+            <textarea
+              value={form.Fertiliser_instructions_EN}
+              onChange={(event:React.ChangeEvent<HTMLTextAreaElement>) => {
+                setForm({...form, Fertiliser_instructions_EN:event.target.value})
+              }}
+              className='text-box'
+            />
+            {form.Fertiliser_instructions_EN.length>100 && (
+              <img
+                src={openIcon}
+                alt="Ouvrir l'overlay"
+                className="open-icon"
+                onClick={() => {
+                  instruEN_Modal.current!.classList.add("active")
+                }}
+              />
+            )}
+            <Modal 
+              toRef={instruEN_Modal} 
+              text={form.Fertiliser_instructions_EN} 
+              handleTextChange={(event: { target: { value: React.SetStateAction<string>}}) => {
+                setForm({...form, Fertiliser_instructions_EN:event.target.value.toString()})
+              }} 
+              close={() => instruEN_Modal.current!.classList.remove("active")} 
+            />
+          </div>
         </div>
       </div>
-
 
       
     </div>
@@ -166,4 +416,4 @@ const TextboxWithOverlay = () => {
   );
 };
 
-export default TextboxWithOverlay;
+export default FormPage;
