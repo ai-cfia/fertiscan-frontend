@@ -18,3 +18,7 @@
 .loader-container{
     display: none;
 }
+
+pre{
+    text-align: left;
+}
