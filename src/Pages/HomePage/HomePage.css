@@ -1,7 +1,15 @@
 .container{
     display: grid;
-    grid-template: "x a b";
+    grid-template-rows: auto;
+    grid-template-columns: auto;
+    grid-template-areas: ". a b";
     gap:10px;
     justify-content: space-evenly;
     padding: 0% 3%;
+}
+
+.submit-btn{
+    margin-top:50px;
+    position:relative;
+    width: 30%;
 }
