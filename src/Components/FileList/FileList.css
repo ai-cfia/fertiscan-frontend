@@ -3,14 +3,32 @@
     border-radius: 5px;
     grid-area: b;
     padding: 5px;
-    position: relative; 
+    width: 105%;
+
 }
+
+@media only screen and (min-width:850px) {
+  .file-list.empty{
+    width: 100%;
+  }
+}
+
+@media only screen and (max-width:850px){
+  .file-list.empty{
+    width: 96%;
+  }
+  .file-list{
+    display: flex;
+    justify-content: center;
+    flex-direction: column;
+  }
+}
+
   
   .file-list.empty {
     display: flex;
     align-items: center;
     justify-content: center;
-    width: 159%;
   }
   
   .no-element {

@@ -4,25 +4,27 @@ import FileElement from "./FileElement/FileElement";
 
 interface FileListProps {
   files: File[];
+  onSelectedChange: (file:File|null)=>void;
+  propagateDelete: (file:File, wasShown:boolean)=>void;
 }
 
-const FileList: React.FC<FileListProps> = ({ files }) => {
+const FileList: React.FC<FileListProps> = ({ files, onSelectedChange, propagateDelete}) => {
   const [selectedFile, setSelectedFile] = useState<File | null>(null);
-  const overlayRef = useRef<HTMLDivElement>(null);
 
-  const handleSelectFile = (file: File, index: number) => {
+  const handleSelectFile = (file: File|null, index: number) => {
     setSelectedFile(file);
-
-    // Optionally, adjust overlay position based on selected image
-    if (overlayRef.current) {
-      const fileElement = document.getElementById(`file_${index}`);
-      if (fileElement) {
-        const { top, left } = fileElement.getBoundingClientRect();
-        overlayRef.current.style.top = `${top}px`;
-        overlayRef.current.style.left = `${left}px`;
-      }
-    }
+    onSelectedChange(file)
   };
+
+  const handleDelete = (file: File, index:number)=>{
+    if(selectedFile===file){
+      setSelectedFile(null)
+      propagateDelete(file, false)
+    }else{
+      propagateDelete(file, files[files.length-1]===file);
+    }
+
+  }
 
   return (
     <div className={`file-list ${files.length === 0 ? "empty" : ""}`}>
@@ -34,18 +36,10 @@ const FileList: React.FC<FileListProps> = ({ files }) => {
           key={index}
           file={file}
           position={index}
-          onClick={() => handleSelectFile(file, index)}
+          onClick={(selected) => selected ? handleSelectFile(file, index): handleSelectFile(null,-1)}
+          onDelete={()=>handleDelete(file, index)}
         />
       ))}
-      <div ref={overlayRef} className="overlay">
-        {selectedFile && (
-          <img
-            src={URL.createObjectURL(selectedFile)}
-            alt={selectedFile.name}
-            style={{ maxWidth: "100%", maxHeight: "100%" }} // Adjust size as needed
-          />
-        )}
-      </div>
     </div>
   );
 };

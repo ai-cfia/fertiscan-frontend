@@ -8,38 +8,45 @@ function JsonPage(){
     const [form, setForm]=useState({})
     const [fetchError, setError]=useState<Error|null>(null)
     const location = useLocation();
-    const file:File = location.state.data[0];
+    const files:File[] = location.state.data[0];
+    const [uploadStarted, startUpload] = useState(false);
 
-    console.log(file)
     
     const api_url = "http://localhost:5000"
-    useEffect(()=>{
-        const formData = new FormData()
-        formData.append("file",file)
-        fetch(api_url+"/upload",{
-            method:'POST',
-            headers:{
-
-            }, 
-            body:formData
-        }).then((res:Response)=>{
-            fetch(api_url+"/analyze",{
-                method:'GET',
+    const upload_all = async ()=>{
+        for(let i=0; i<files.length; i++){
+            const formData = new FormData()
+            formData.append("file", files[i])
+            await fetch(api_url+"/upload",{
+                method:'POST',
                 headers:{
-
-                }
-            }).then((response:Response)=>{
-                response.json().then((data)=>{
-                    console.log(data)
-                    setForm(data)
-                    setLoading(false)
-                }).catch(e=>{
-                    setLoading(false)
-                    setError(e)
-                    console.log(e)
+                    // if needed, add headers here
+                }, 
+                body:formData
+            })
+        }
+    }
+    useEffect(()=>{
+        if(!uploadStarted){
+            startUpload(true);
+            upload_all().then(()=>{
+                fetch(api_url+"/analyze",{
+                    method:'GET',
+                    headers:{
+        
+                    }
+                }).then((response:Response)=>{
+                    response.json().then((data)=>{
+                        setForm(data)
+                        setLoading(false)
+                    }).catch(e=>{
+                        setLoading(false)
+                        setError(e)
+                        console.log(e)
+                    })
                 })
             })
-        })
+        }
     },[])
     return (
         <div>

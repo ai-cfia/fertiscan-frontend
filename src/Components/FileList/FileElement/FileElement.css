@@ -1,9 +1,78 @@
 .file-element{
-    border: 2px solid #808080;
-    display:flex;
+    position: relative;
+    border: 2px solid #999;
+    border-radius: 5px;
+    background-color: #ccc;
+    display:grid;
+    grid-template-areas: "pic title";
+    grid-template-columns: 36% 62%;
+    gap: 2%;
     align-items: center;
-    max-width: 150px;
-    height: 150px;
+    width: 95%;
+    margin: 5px 2%;
+    transition: box-shadow 0.3s ease;
+    transition: border-color 0.3s ease;
 }
 
 
+.file-element:hover{
+    box-shadow: 0 8px 16px rgba(255, 255, 255, 0.2);
+}
+
+.file-element.selected{
+    background-color: #aaa;
+    border-color: #666;
+}
+
+.file-element img{
+    max-width:100px;
+    margin:5px;
+    height: auto;
+    grid-area: pic;
+}
+
+.file-element p{
+    grid-area: title;
+    overflow: hidden;
+}
+.file-element:hover .cross {
+    opacity: 1;
+}
+.cross {
+    position: absolute;
+    top: -15px;
+    right: -15px;
+    width: 30px;
+    height: 30px;
+    background-color: transparent;
+    cursor: pointer;
+    opacity: 0;
+    transition: opacity 0.3s ease;
+    border: solid;
+    border-radius: 100%;
+    background: #777a;
+}
+
+  .card:hover .cross {
+    opacity: 1;
+  }
+
+  .cross:before,
+  .cross:after {
+    content: "";
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    width: 2px;
+    height: 15px;
+    background-color: #333;
+    transform: translate(-50%, -50%);
+  }
+
+  .cross:before {
+    transform: translate(-50%, -50%) rotate(45deg);
+  }
+
+  .cross:after {
+    transform: translate(-50%, -50%) rotate(-45deg);
+  }
