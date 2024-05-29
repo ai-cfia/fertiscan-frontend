@@ -13,9 +13,9 @@ function Header() {
             <a href="https://inspection.canada.ca/" title="ACIA | CFIA">
               <img
                 src={cfia}
+                id="header-img"
                 alt="CFIA logo"
                 aria-label="Link to CFIA | Lien à l'ACIA"
-                style={{ height: 50 }}
               />
             </a>
           </li>

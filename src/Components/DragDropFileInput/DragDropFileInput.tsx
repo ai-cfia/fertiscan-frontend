@@ -1,14 +1,19 @@
-import React, { useState, useRef } from "react";
+import React, { useState, useRef, useEffect } from "react";
 import "./DragDropFileInput.css";
 interface FileInputProps {
   sendChange: (files: File[]) => void;
+  file: string;
 }
 
-const DragDropFileInput: React.FC<FileInputProps> = ({ sendChange }) => {
+const DragDropFileInput: React.FC<FileInputProps> = ({ sendChange, file }) => {
   const [dragActive, setDragActive] = useState(false);
-  const fileInput = useRef(null);
-  const [file, setFile] = useState("");
-
+  const fileInput = useRef<null | HTMLInputElement>(null);
+  useEffect(()=>{
+    if(file==""){
+      const input = fileInput!.current as HTMLInputElement;
+      input.value="";
+    }
+  },[file])
   const handleDrag = (event: React.DragEvent<HTMLLabelElement>) => {
     event.preventDefault();
     if (event.type === "dragover") {
@@ -35,12 +40,6 @@ const DragDropFileInput: React.FC<FileInputProps> = ({ sendChange }) => {
 
   const handleFileChange = (files: File[]) => {
     if (files!.length > 0) {
-      const reader = new FileReader();
-      reader.onload = (e) => {
-        const newFile = e!.target!.result! as string;
-        setFile(newFile);
-      };
-      reader.readAsDataURL(files[0]!);
       sendChange(files);
     }
   };
@@ -51,7 +50,7 @@ const DragDropFileInput: React.FC<FileInputProps> = ({ sendChange }) => {
   };
 
   const handleCancel = () => {
-    setFile("");
+    sendChange([]);
   };
 
   return (
