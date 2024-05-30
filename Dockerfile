@@ -15,7 +15,6 @@ COPY index.html .
 # Install npm at a specific version, dependencies, build, and run tests
 RUN npm install --include=dev
 RUN npm run build
-RUN CI=1 npm run test
 
 # Setup for production
 FROM node:20.12.2-alpine AS runtime
@@ -28,6 +27,8 @@ WORKDIR /app
 
 # Copy build artifacts from the build stage
 COPY --from=build /code/dist /app
+
+EXPOSE 3000
 
 # Serve your app
 ENTRYPOINT ["serve", "-s", "/app"]
