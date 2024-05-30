@@ -1,4 +1,4 @@
-import React, { useState, useRef } from "react";
+import React, { useState } from "react";
 import "./FileList.css";
 import FileElement from "./FileElement/FileElement";
 
@@ -11,12 +11,12 @@ interface FileListProps {
 const FileList: React.FC<FileListProps> = ({ files, onSelectedChange, propagateDelete}) => {
   const [selectedFile, setSelectedFile] = useState<File | null>(null);
 
-  const handleSelectFile = (file: File|null, index: number) => {
+  const handleSelectFile = (file: File|null) => {
     setSelectedFile(file);
     onSelectedChange(file)
   };
 
-  const handleDelete = (file: File, index:number)=>{
+  const handleDelete = (file: File)=>{
     if(selectedFile===file){
       setSelectedFile(null)
       propagateDelete(file, false)
@@ -31,13 +31,13 @@ const FileList: React.FC<FileListProps> = ({ files, onSelectedChange, propagateD
       <div className={`no-element ${files.length === 0 ? "active" : ""}`}>
         No element to show
       </div>
-      {[...files].map((file: File, index: number, array: File[]) => (
+      {[...files].map((file: File, index: number) => (
         <FileElement
           key={index}
           file={file}
           position={index}
-          onClick={(selected) => selected ? handleSelectFile(file, index): handleSelectFile(null,-1)}
-          onDelete={()=>handleDelete(file, index)}
+          onClick={(selected) => selected ? handleSelectFile(file): handleSelectFile(null)}
+          onDelete={()=>handleDelete(file)}
         />
       ))}
     </div>
