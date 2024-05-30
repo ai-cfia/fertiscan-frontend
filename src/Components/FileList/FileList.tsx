@@ -3,7 +3,6 @@ import "./FileList.css";
 import FileElement from "./FileElement/FileElement";
 import { useTranslation } from 'react-i18next';
 
-const { t } = useTranslation();
 interface FileListProps {
   files: File[];
   onSelectedChange: (file:File|null)=>void;
@@ -27,7 +26,7 @@ const FileList: React.FC<FileListProps> = ({ files, onSelectedChange, propagateD
     }
 
   }
-
+  const { t } = useTranslation();
   return (
     <div className={`file-list ${files.length === 0 ? "empty" : ""}`}>
       <div className={`no-element ${files.length === 0 ? "active" : ""}`}>

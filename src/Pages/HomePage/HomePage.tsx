@@ -1,9 +1,10 @@
-import React, { useState, ChangeEvent } from "react";
+import { useState, ChangeEvent } from "react";
 import "./HomePage.css";
 import DragDropFileInput from "../../Components/DragDropFileInput/DragDropFileInput";
 import FileList from "../../Components/FileList/FileList";
 import { useNavigate } from "react-router-dom";
-import { Trans, useTranslation } from 'react-i18next';
+import {useTranslation } from 'react-i18next';
+import LanguageSwitcherButton from "../../Components/LanguageChanger/LanguageChanger";
 
 function HomePage() {
   const [files, setFiles] = useState<File[]>([]);
@@ -100,6 +101,7 @@ const [form, setForm] = useState({
 
   return (
     <div className="App">
+      <LanguageSwitcherButton />
       <div className="container">
         <DragDropFileInput sendChange={handlePhotoChange} file={toShow} />
         <button className="submit-btn" type="submit" onClick={Submit}>{t("submit")}</button>

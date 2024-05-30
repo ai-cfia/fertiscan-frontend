@@ -1,12 +1,12 @@
 import cfia from "../../assets/CFIA_Banner.png";
 import "./Header.css";
 import { useTranslation } from 'react-i18next';
-const { t } = useTranslation();
 const environment = {
   version: "0.0.1",
 };
 
 function Header() {
+  const { t } = useTranslation();
   return (
     <header role={"banner"}>
       <nav>
@@ -30,5 +30,4 @@ function Header() {
     </header>
   );
 }
-
 export default Header;

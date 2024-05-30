@@ -77,7 +77,7 @@ const DragDropFileInput: React.FC<FileInputProps> = ({ sendChange, file }) => {
         <embed id="preview" src={file} className={file ? "active" : ""}></embed>
       </label>
       <div className="drag-drop-inner">
-        <p>{t('drag_and_drop_component')}</p>
+        <p>{t('drag_and_drop')}</p>
         <button type="button" onClick={handleClick}>
         {t('browse')}
         </button>

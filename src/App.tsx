@@ -4,6 +4,8 @@ import JsonPage from "./Pages/JsonPage/Json"
 import NoPage from "./Pages/NoPage/NoPage";
 import "./App.css";
 import Header from "./Components/Header/Header";
+import LanguageSwitcherButton from "./Components/LanguageChanger/LanguageChanger";
+
 
 function App() {
   return (

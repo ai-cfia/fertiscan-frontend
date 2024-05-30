@@ -1,9 +1,7 @@
 import { useEffect, useState } from "react";
 import { useLocation } from "react-router-dom";
 import "./Json.css"
-import { useTranslation } from 'react-i18next';
-const { t } = useTranslation();
-
+import { Trans } from 'react-i18next';
 
 function JsonPage(){
     const [loading, setLoading] = useState(true)
@@ -14,7 +12,7 @@ function JsonPage(){
     const [uploadStarted, startUpload] = useState(false);
 
     
-    const api_url = "http://localhost:5000"
+    const api_url = "https://silver-space-parakeet-p9xgrj9j6v7fr6p5-5000.app.github.dev/"
     const upload_all = async ()=>{
         for(let i=0; i<files.length; i++){
             const formData = new FormData()
@@ -55,7 +53,7 @@ function JsonPage(){
             <div className={`loader-container ${loading?'active':''}`}>
                 <div className="spinner"></div>
                 <p>
-                    {t("file_analyse")}
+                    <Trans>file_analyse</Trans>
                 </p>
             </div>
             <pre>{(fetchError ? <p>{fetchError.message}</p> : JSON.stringify(form, null, 2))}</pre>

@@ -20,6 +20,6 @@
     "noUnusedParameters": true,
     "noFallthroughCasesInSwitch": true
   },
-  "include": ["src", "src/i18n.js"],
+  "include": ["src", "src/i18n.ts"],
   "references": [{ "path": "./tsconfig.node.json" }]
 }
