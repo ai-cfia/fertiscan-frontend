@@ -1,0 +1,29 @@
+{"translation": {
+    "common":{
+        "submit":"Soumettre"
+    },
+    "home_page":{
+
+    },
+    "error_page":{
+        "404":"Page indisponible"
+    },
+    "header": {
+        "version":"Version Alpha ",
+        "logo":"logo ACIA",
+        "title_link":"ACIA"
+    },
+    "drag_and_drop_component":{
+        "drag_and_drop":"Faites glisser et déposez vos fichiers ici ou",
+        "attach_doc": "Attacher un document",
+        "browse":"Parcourir les fichiers",
+        "cancel":"Canceller"
+    },
+    "file_list_component":{
+        "no_element": " Aucun element à afficher"
+    },
+    "json_page":{
+        "file_analyse":"Votre fichier est en cours d'analyse"
+    }
+    }
+}

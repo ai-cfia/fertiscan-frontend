@@ -3,9 +3,11 @@ import "./HomePage.css";
 import DragDropFileInput from "../../Components/DragDropFileInput/DragDropFileInput";
 import FileList from "../../Components/FileList/FileList";
 import { useNavigate } from "react-router-dom";
+import { Trans, useTranslation } from 'react-i18next';
 
 function HomePage() {
   const [files, setFiles] = useState<File[]>([]);
+  const { t } = useTranslation(['translation', 'common']);
 
 const [form, setForm] = useState({
   company_name: "",
@@ -62,7 +64,8 @@ const [form, setForm] = useState({
 
   const handleChange = (e: ChangeEvent<HTMLInputElement>) => {
     const field = e.target! as HTMLInputElement;
-    setForm({ ...form, [field.name]: field.value });
+    const translatedFieldName = t("field.name"); // Translate the field name
+    setForm({ ...form, [translatedFieldName]: field.value });
   };
 
   const handlePhotoChange = (newFiles: File[]) => {
@@ -99,7 +102,7 @@ const [form, setForm] = useState({
     <div className="App">
       <div className="container">
         <DragDropFileInput sendChange={handlePhotoChange} file={toShow} />
-        <button className="submit-btn" type="submit" onClick={Submit}>Submit</button>
+        <button className="submit-btn" type="submit" onClick={Submit}>{t("submit")}</button>
         <FileList files={files} onSelectedChange={handleSelectedChange} propagateDelete={handleDeletion} />
       </div>
     </div>

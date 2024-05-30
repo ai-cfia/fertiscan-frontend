@@ -1,6 +1,8 @@
 import { useEffect, useState } from "react";
 import { useLocation } from "react-router-dom";
 import "./Json.css"
+import { useTranslation } from 'react-i18next';
+const { t } = useTranslation();
 
 
 function JsonPage(){
@@ -53,8 +55,7 @@ function JsonPage(){
             <div className={`loader-container ${loading?'active':''}`}>
                 <div className="spinner"></div>
                 <p>
-                    Votre fichier est en cours d'analyse
-                    Your file is being analyzed
+                    {t("file_analyse")}
                 </p>
             </div>
             <pre>{(fetchError ? <p>{fetchError.message}</p> : JSON.stringify(form, null, 2))}</pre>

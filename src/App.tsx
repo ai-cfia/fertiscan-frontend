@@ -4,9 +4,12 @@ import JsonPage from "./Pages/JsonPage/Json"
 import NoPage from "./Pages/NoPage/NoPage";
 import "./App.css";
 import Header from "./Components/Header/Header";
+import { I18nextProvider } from "react-i18next";
+import i18n from "i18next";
 
 function App() {
   return (
+    <I18nextProvider i18n={i18n}>
     <BrowserRouter>
       <Header />
       <Routes>
@@ -17,6 +20,7 @@ function App() {
         </Route>
       </Routes>
     </BrowserRouter>
+    </I18nextProvider>
   );
 }
 
