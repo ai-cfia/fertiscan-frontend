@@ -4,27 +4,30 @@ import FileElement from "./FileElement/FileElement";
 
 interface FileListProps {
   files: File[];
-  onSelectedChange: (file:File|null)=>void;
-  propagateDelete: (file:File, wasShown:boolean)=>void;
+  onSelectedChange: (file: File | null) => void;
+  propagateDelete: (file: File, wasShown: boolean) => void;
 }
 
-const FileList: React.FC<FileListProps> = ({ files, onSelectedChange, propagateDelete}) => {
+const FileList: React.FC<FileListProps> = ({
+  files,
+  onSelectedChange,
+  propagateDelete,
+}) => {
   const [selectedFile, setSelectedFile] = useState<File | null>(null);
 
-  const handleSelectFile = (file: File|null) => {
+  const handleSelectFile = (file: File | null) => {
     setSelectedFile(file);
-    onSelectedChange(file)
+    onSelectedChange(file);
   };
 
-  const handleDelete = (file: File)=>{
-    if(selectedFile===file){
-      setSelectedFile(null)
-      propagateDelete(file, false)
-    }else{
-      propagateDelete(file, files[files.length-1]===file);
+  const handleDelete = (file: File) => {
+    if (selectedFile === file) {
+      setSelectedFile(null);
+      propagateDelete(file, false);
+    } else {
+      propagateDelete(file, files[files.length - 1] === file);
     }
-
-  }
+  };
 
   return (
     <div className={`file-list ${files.length === 0 ? "empty" : ""}`}>
@@ -36,8 +39,10 @@ const FileList: React.FC<FileListProps> = ({ files, onSelectedChange, propagateD
           key={index}
           file={file}
           position={index}
-          onClick={(selected) => selected ? handleSelectFile(file): handleSelectFile(null)}
-          onDelete={()=>handleDelete(file)}
+          onClick={(selected) =>
+            selected ? handleSelectFile(file) : handleSelectFile(null)
+          }
+          onDelete={() => handleDelete(file)}
         />
       ))}
     </div>

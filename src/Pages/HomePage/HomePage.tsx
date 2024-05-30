@@ -7,7 +7,7 @@ import { useNavigate } from "react-router-dom";
 function HomePage() {
   const [files, setFiles] = useState<File[]>([]);
 
-  const [toShow, setShow] = useState("")
+  const [toShow, setShow] = useState("");
 
   const reader = new FileReader();
   reader.onload = (e) => {
@@ -25,38 +25,43 @@ function HomePage() {
     if (newFiles!.length > 0) {
       setFiles([...files, ...newFiles]);
       reader.readAsDataURL(newFiles[0]!);
-    }else{
+    } else {
       setShow("");
     }
-    
   };
 
-  const handleSelectedChange = (selection: File|null)=>{
-    if(selection){
+  const handleSelectedChange = (selection: File | null) => {
+    if (selection) {
       reader.readAsDataURL(selection);
-    }else{
+    } else {
       setShow("");
     }
-  }
+  };
 
   const navigate = useNavigate();
-  const Submit = ()=>{
-    navigate('/Json',{state:{data:files}});
-  }
+  const Submit = () => {
+    navigate("/Json", { state: { data: files } });
+  };
 
-  const handleDeletion = (toDelete:File, wasShown:boolean)=>{
-    setFiles(files.filter(file=>file!==toDelete))
-    if(wasShown){
-      setShow("")
+  const handleDeletion = (toDelete: File, wasShown: boolean) => {
+    setFiles(files.filter((file) => file !== toDelete));
+    if (wasShown) {
+      setShow("");
     }
-  }
+  };
 
   return (
     <div className="App">
       <div className="container">
         <DragDropFileInput sendChange={handlePhotoChange} file={toShow} />
-        <button className="submit-btn" type="submit" onClick={Submit}>Submit</button>
-        <FileList files={files} onSelectedChange={handleSelectedChange} propagateDelete={handleDeletion} />
+        <button className="submit-btn" type="submit" onClick={Submit}>
+          Submit
+        </button>
+        <FileList
+          files={files}
+          onSelectedChange={handleSelectedChange}
+          propagateDelete={handleDeletion}
+        />
       </div>
     </div>
   );
