@@ -1,4 +1,4 @@
-name: React frontend workflows
+name: Fertiscan frontend workflows
 
 on:
   pull_request:
