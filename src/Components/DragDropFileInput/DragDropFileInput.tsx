@@ -9,12 +9,12 @@ interface FileInputProps {
 const DragDropFileInput: React.FC<FileInputProps> = ({ sendChange, file }) => {
   const [dragActive, setDragActive] = useState(false);
   const fileInput = useRef<null | HTMLInputElement>(null);
-  useEffect(()=>{
-    if(file==""){
+  useEffect(() => {
+    if (file == "") {
       const input = fileInput!.current as HTMLInputElement;
-      input.value="";
+      input.value = "";
     }
-  },[file])
+  }, [file]);
   const handleDrag = (event: React.DragEvent<HTMLLabelElement>) => {
     event.preventDefault();
     if (event.type === "dragover") {

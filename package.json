@@ -8,7 +8,8 @@
     "build": "tsc && vite build",
     "lint": "eslint .",
     "lint:fix": "eslint --fix .",
-    "preview": "vite preview"
+    "preview": "vite preview",
+    "test": "echo \"No tests for now\""
   },
   "dependencies": {
     "@dts-stn/service-canada-design-system": "^1.67.3",

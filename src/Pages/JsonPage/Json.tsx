@@ -29,26 +29,21 @@ function JsonPage(){
             }))
         }
         return res
-    }
-    useEffect(()=>{
-        if(!uploadStarted){
-            startUpload(true);
-            upload_all().then(()=>{
-                fetch(api_url+"/analyze",{
-                    method:'GET',
-                    headers:{
-        
-                    }
-                }).then((response:Response)=>{
-                    response.json().then((data)=>{
-                        setForm(data)
-                        setLoading(false)
-                    }).catch(e=>{
-                        setLoading(false)
-                        setError(e)
-                        console.log(e)
-                    })
-                })
+  };
+  
+  useEffect(() => {
+    if (!uploadStarted) {
+      startUpload(true);
+      upload_all().then(() => {
+        fetch(api_url + "/analyze", {
+          method: "GET",
+          headers: {},
+        }).then((response: Response) => {
+          response
+            .json()
+            .then((data) => {
+              setForm(data);
+              setLoading(false);
             })
         }
     },[])
@@ -65,4 +60,4 @@ function JsonPage(){
     );
 }
 
-export default JsonPage
+export default JsonPage;
