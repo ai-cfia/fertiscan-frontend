@@ -30,7 +30,6 @@ const FileList: React.FC<FileListProps> = ({
     }
   }
   const { t } = useTranslation();
-  };
   return (
     <div className={`file-list ${files.length === 0 ? "empty" : ""}`}>
       <div className={`no-element ${files.length === 0 ? "active" : ""}`}>
