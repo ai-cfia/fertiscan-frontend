@@ -12,6 +12,7 @@ const DragDropFileInput: React.FC<FileInputProps> = ({ sendChange, file }) => {
   const [capturedImage, setCapturedImage] = useState<string | null>(null);
   const [showOptions, setShowOptions] = useState(false);
   const [showModal, setShowModal] = useState(false);
+  const [showOverlay, setShowOverlay] = useState(false); // State for the overlay
   const [cameraMode, setCameraMode] = useState<"environment" | "user">("environment");
   const fileInput = useRef<null | HTMLInputElement>(null);
   const videoRef = useRef<HTMLVideoElement | null>(null);
@@ -57,6 +58,7 @@ const DragDropFileInput: React.FC<FileInputProps> = ({ sendChange, file }) => {
   const handleClick = (event: React.MouseEvent<HTMLElement>) => {
     event.preventDefault();
     setShowOptions(true);
+    setShowOverlay(true); // Show the overlay when options are opened
   };
 
   const handleFileChange = (files: File[]) => {
@@ -80,7 +82,8 @@ const DragDropFileInput: React.FC<FileInputProps> = ({ sendChange, file }) => {
       setStream(null);
     }
     setShowModal(false);
-    setCameraMode("environment"); // Reset camera mode to default (rear)
+    setCameraMode("environment");
+    setShowOverlay(false); // Hide the overlay when canceling
   };
 
   const handleCapture = async () => {
@@ -90,11 +93,9 @@ const DragDropFileInput: React.FC<FileInputProps> = ({ sendChange, file }) => {
         context.drawImage(videoRef.current, 0, 0, canvasRef.current.width, canvasRef.current.height);
         const capturedImage = canvasRef.current.toDataURL("image/png");
         setCapturedImage(capturedImage);
-
         const blob = await fetch(capturedImage).then((res) => res.blob());
         const file = new File([blob], "capture.png", { type: "image/png" });
         sendChange([file]);
-
         setShowOptions(false);
         setShowModal(false);
         if (stream) {
@@ -103,92 +104,81 @@ const DragDropFileInput: React.FC<FileInputProps> = ({ sendChange, file }) => {
         }
       }
     }
+    setShowOverlay(false); // Hide the overlay when capturing
   };
 
   const selectFiles = () => {
     const input = fileInput.current!;
     input.click();
+    
     setShowOptions(false);
+    setShowOverlay(false); // Hide the overlay when selecting files
   };
 
   const selectCamera = async () => {
     setShowOptions(false);
     setShowModal(true);
-
+    setShowOverlay(true); // Show the overlay when opening camera modal
     try {
-      const constraints = { video: { facingMode: cameraMode === "user" ? "environment" : "user"
-    } };
-    const stream = await navigator.mediaDevices.getUserMedia(constraints);
-    setStream(stream);
-  } catch (error) {
-    console.error("Error accessing camera:", error);
-  }
-};
+      const constraints = { video: { facingMode: cameraMode === "user" ? "environment" : "user" } };
+      const stream = await navigator.mediaDevices.getUserMedia(constraints);
+      setStream(stream);
+    } catch (error) {
+      console.error("Error accessing camera:", error);
+    }
+  };
 
-const toggleCameraMode = () => {
-  setCameraMode(prevMode => prevMode === "environment" ? "user" : "environment");
-  if (stream) {
-    stream.getTracks().forEach((track) => track.stop());
-  }
-};
+  const toggleCameraMode = () => {
+    setCameraMode(prevMode => prevMode === "environment" ? "user" : "environment");
+    if (stream) {
+      stream.getTracks().forEach((track) => track.stop());
+    }
+  };
 
-return (
-  <div className="drag-drop-container">
-    <h3 className="title">Attach a document</h3>
-    <input
-      id="file-input"
-      ref={fileInput}
-      type="file"
-      multiple
-      onChange={onFileChange}
-      style={{ display: "none" }}
-    />
-    <label
-      htmlFor="file-input"
-      onDragOver={handleDrag}
-      onDragLeave={handleDrag}
-      onDrop={handleDrop}
-      onClick={handleClick}
-      className={`drag-drop-file-input ${dragActive ? "active" : ""} ${file ? "hasFile" : ""}`}
-    >
-      <embed id="preview" src={file} className={file ? "active" : ""} />
-    </label>
-    {showOptions && (
-        <div className="options-container">
-          <button type="button" onClick={selectFiles}>
-            Choose Files
-          </button>
-          <button type="button" onClick={selectCamera}>
-            Use Camera
-          </button>
-        </div>
-      )}
-    <div className="drag-drop-inner">
-      <p>Drag & drop your files here or</p>
-      <button type="button" onClick={handleClick}>
-        Browse Files or Camera
-      </button>
-      <button type="button" onClick={handleCancel}>
-        Cancel
-      </button>
-    </div>
-    {showModal && (
-      <div className="modal">
-        <div className="modal-content">
-          <span className="close" onClick={handleCancel}>&times;</span>
-          <div className="camera-container">
-            <video id="player" ref={videoRef} autoPlay muted style={{ width: '320px', height: '240px' }} />
-            <button id="capture" onClick={handleCapture} disabled={!stream}>
-              Capture
-            </button>
-            <button onClick={toggleCameraMode}>Switch Camera</button>
-            <canvas id="canvas" ref={canvasRef} width="320" height="240" style={{ display: 'none' }} />
+  const toggleOverlay = (event: React.MouseEvent<HTMLDivElement>) => {
+    event.stopPropagation(); // Prevent event propagation
+    setShowOverlay(!showOverlay);
+  };
+
+  return (
+    <div className="drag-drop-container">
+      <h3 className="title">Attach a document</h3>
+      <input id="file-input" ref={fileInput} type="file" multiple onChange={onFileChange} style={{ display: "none" }} />
+      <label htmlFor="file-input" onDragOver={handleDrag} onDragLeave={handleDrag} onDrop={handleDrop} onClick={handleClick} className={`drag-drop-file-input ${dragActive ? "active" : ""} ${file ? "hasFile" : ""}`} >
+        <embed id="preview" src={file} className={file ? "active" : ""} />
+      </label>
+      <div className="drag-drop-inner">
+        <p>Drag & drop your files here or</p>
+        <button type="button" onClick={handleClick}> Browse Files or Camera </button>
+        <button type="button" onClick={handleCancel}> Cancel </button>
+      </div>
+      {showModal && (
+        <div className="modal">
+          <div className="modal-content">
+            <span className="close" onClick={handleCancel}>&times;</span>
+            <div className="camera-container">
+              <video id="player" ref={videoRef} autoPlay muted style={{ width: '320px', height: '240px' }} />
+              <button id="capture" onClick={handleCapture} disabled={!stream}> Capture </button>
+              <button onClick={toggleCameraMode}>Switch Camera</button>
+              <canvas id="canvas" ref={canvasRef} width="320" height="240" style={{ display: 'none' }} />
+            </div>
           </div>
         </div>
-      </div>
-    )}
-  </div>
-);
+      )}
+      {showOptions && (
+        <div className="modal">
+          <div className="option-modal-content">
+              <span className="close" onClick={handleCancel}>&times;</span>
+            <div className="centered-buttons">
+            <button type="button" onClick={selectFiles}> Choose Files </button>
+            <button type="button" onClick={selectCamera}> Use Camera </button>
+          </div>
+          </div>
+        </div>
+      )}
+      {showOverlay && <div className="overlay" onClick={toggleOverlay}></div>}
+    </div>
+  );
 };
 
 export default DragDropFileInput;
