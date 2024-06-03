@@ -120,3 +120,26 @@ input[type="file"] {
   margin-left: 30%;
   gap: 10px;
 }
+.centered-buttons {
+  display: flex;
+  vertical-align:middle;
+  align-self: center;
+  z-index: 9999;
+}
+
+.centered-buttons button {
+  display: flex;
+  margin: 10px auto;
+  padding: 10px 20px;
+  cursor: pointer;
+}
+.option-modal-content {
+  background-color: transparent;
+  margin: auto;
+  padding: 20px;
+  width: 80%;
+  max-width: 500px;
+  position: relative;
+  background-color: rgba(0, 0, 0, 0.1); /* couleur de l'overlay avec une opacité */
+  border-radius: 10px;
+}
