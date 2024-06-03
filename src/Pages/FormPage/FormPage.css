@@ -1,5 +1,20 @@
+.formPage-container {
+  display: grid;
+  grid-template-areas: "pics data";
+  grid-template-columns: 42% 55%;
+  justify-content: space-between;
+}
+
+.pic-container {
+  grid-area: pics;
+
+}
+
+
+
 /* Text box container styles */
-.data-container{
+.data-container {
+  grid-area: data;
   display: flex;
   flex-direction: column;
   min-height: 100%;
@@ -13,7 +28,7 @@
   width: 100%; /* Make the container take up the full width */
 }
 
-.underlined{
+.underlined {
   text-decoration: underline;
 }
 
@@ -34,30 +49,21 @@ textarea {
   margin: -8.5%;
 }
 
-.data-section{
-  display: none;
+.data-section {
+  display: flex;
   flex-direction: column;
   justify-content: center;
   align-items: center;
   gap: 10px;
 }
 
-.data-section.active{
-  display: flex;
-}
-
-.input-container{
-  display: none;
+.input-container {
+  display: inline-flex;
   flex-direction: column;
   align-items: baseline;
-  width: 300px; 
+  width: 300px;
 }
 
-.input-container.active{
-  display: inline-flex;
-}
-
-.input-container input{
+.input-container input {
   width: 98%;
 }
-

@@ -52,7 +52,7 @@ function HomePage() {
 
   return (
     <div className="App">
-      <div className="container">
+      <div className="homePage-container">
         <DragDropFileInput sendChange={handlePhotoChange} file={toShow} />
         <button className="submit-btn" type="submit" onClick={Submit}>
           Submit

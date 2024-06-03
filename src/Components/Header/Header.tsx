@@ -1,4 +1,4 @@
-import React, {useRef} from "react";
+import React, { useRef } from "react";
 import cfia from "../../assets/CFIA_Banner.png";
 import "./Header.css";
 const environment = {
@@ -9,14 +9,14 @@ function Header() {
   const header = useRef<HTMLElement | null>(null);
 
   // When the user scrolls the page, execute myFunction
-  window.onscroll = function() {myFunction()};
-
- 
+  window.onscroll = function () {
+    myFunction();
+  };
 
   // Add the sticky class to the header when you reach its scroll position. Remove "sticky" when you leave the scroll position
   function myFunction() {
     // Get the offset position of the navbar
-    let sticky = header.current!.offsetTop;
+    const sticky = header.current!.offsetTop;
     if (window.scrollY > sticky) {
       header.current!.classList.add("sticky");
     } else {

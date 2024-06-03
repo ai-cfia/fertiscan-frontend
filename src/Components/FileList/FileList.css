@@ -1,23 +1,22 @@
 .file-list {
-    border: 2px solid #ccc;
-    border-radius: 5px;
-    grid-area: b;
-    padding: 5px;
-    width: 105%;
-
+  border: 2px solid #ccc;
+  border-radius: 5px;
+  grid-area: b;
+  padding: 5px;
+  width: 105%;
 }
 
-@media only screen and (min-width:850px) {
-  .file-list.empty{
+@media only screen and (min-width: 850px) {
+  .file-list.empty {
     width: 100%;
   }
 }
 
-@media only screen and (max-width:850px){
-  .file-list.empty{
+@media only screen and (max-width: 850px) {
+  .file-list.empty {
     width: 96%;
   }
-  .file-list{
+  .file-list {
     display: flex;
     justify-content: center;
     flex-direction: column;
