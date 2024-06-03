@@ -1,23 +1,74 @@
+import React, { useState, useRef } from "react";
 import "./Carousel.css"
+interface CarouselProps{
+    imgs:{
+        url:string;
+        title:string;
+    }[]
+}
+
+class imgObject{
+    index:number;
+    ref:React.MutableRefObject<HTMLImageElement|null>;
+    url:string;
+    title:string;
+    constructor(index:number, ref:React.MutableRefObject<HTMLImageElement|null>,url:string,title:string){
+        this.index=index;
+        this.ref=ref;
+        this.url=url;
+        this.title=title;
+    }
+}
 
 
-const Carousel = ()=>{
+
+
+
+const Carousel:React.FC<CarouselProps> = ({imgs})=>{    
+    let tempList:imgObject[] = []
+    imgs.forEach((imgData,index)=>{
+        const imgRef = useRef<HTMLImageElement | null>(null);
+        tempList.push(new imgObject(index,imgRef,imgData.url,imgData.title))
+    })
+
+    const [currImg, setCurrImg] = useState<number>(0)
+    const [imgList, setImgList] = useState<imgObject[]>(tempList)
+
+
+    const selectImg = (idx:number)=>{
+        if(imgList.length==1) return setCurrImg(0);
+        if(idx<0){
+            while(idx<0){
+                idx=imgList.length+idx;
+            }
+        }
+        if(idx>imgList.length-1){
+            idx%=imgList.length;
+        }
+        setCurrImg(idx);
+    }
 
     return (
         <div className="carousel-wrapper">
-            <img
-                id="main-img"
-                src={"https://clipground.com/images/square-clipart-image-9.png"}
-            >
-
-            </img>
+            <div className="curr-img">
+                <a className="prev" onClick={()=>selectImg(currImg-1)}>&#10094;</a>
+                <img
+                    id="main-img"
+                    src={imgList[currImg].url}
+                    alt={imgList[currImg].title}
+                ></img>
+                <a className="next" onClick={()=>selectImg(currImg+1)}>&#10095;</a>
+            </div>
             <div className="carousel">
-                {[
-                    "https://clipground.com/images/square-clipart-image-9.png",
-                    "https://th.bing.com/th/id/R.f8584c07a8b39a6a557a5520d70c644c?rik=%2fLl1Q2WLTDIxgA&riu=http%3a%2f%2fpluspng.com%2fimg-png%2fpng-square-shape-red-square-shape-clipart-2400.png&ehk=PIUxN4poK1BZcEAeCVOR58%2fUBfTFPghHhHyM89QELlA%3d&risl=&pid=ImgRaw&r=0",
-                    "https://th.bing.com/th/id/R.f32a9ed5b415a028255ccbea99f36c9c?rik=lMuMnNXmowxWSA&pid=ImgRaw&r=0",
-                ].map((url: string) => {
-                    return <img src={url} className="carousel-img"></img>;
+                {imgList.map((img: imgObject) => {
+                    return <img 
+                        src={img.url} 
+                        className={"carousel-img"+(img.index==currImg?" current":" ")} 
+                        ref={img.ref}
+                        alt={imgList[currImg].title}
+                        key={img.index}
+                        onClick={()=>selectImg(img.index)}
+                    ></img>;
                 })}
             </div>
         </div>

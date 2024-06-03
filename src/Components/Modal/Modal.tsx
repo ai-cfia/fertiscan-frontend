@@ -56,7 +56,9 @@ const Modal: React.FC<ModalProps> = ({
               style={{ width: "100%", height: "300px" }}
             />
           ) : (
-            <p>{text}</p>
+            <div>
+            {[...text.matchAll(/^(.*)$/gm)].map((value,idx)=><p key={idx}>{(value[0]||<br/>)}</p>)}
+            </div>
           )}
         </div>
         <div className="card-footer">

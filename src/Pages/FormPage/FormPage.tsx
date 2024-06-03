@@ -1,9 +1,11 @@
 import React, { useState, useRef } from "react";
 import "./FormPage.css";
 import Modal from "../../Components/Modal/Modal";
-
-import openIcon from "../../assets/dot-menu.png";
+import openIcon from "../../assets/dot-menu.svg";
 import Carousel from "../../Components/Carousel/Carousel";
+
+
+
 class dataObject {
   sections: section[];
   constructor(sections: section[]) {
@@ -116,39 +118,30 @@ const FormPage = () => {
     modal: React.MutableRefObject<HTMLDivElement | null>;
   }[] = [];
 
+  const urls = [{
+      url:"https://clipground.com/images/square-clipart-image-9.png",
+      title:"blue"
+    },
+    {
+      url:"https://th.bing.com/th/id/R.831df2b352f211506b6f5e96fe495e3b?rik=kOhAG2Zaz45WMg&riu=http%3a%2f%2ffc06.deviantart.net%2ffs13%2ff%2f2007%2f040%2fb%2f7%2fPhoto__Large_red_square_by_TheLastDanishPastry.png&ehk=TxXfjnmu6TwpRkPtzi7u1X%2fHbjCBDARquCvl7J1a%2b58%3d&risl=&pid=ImgRaw&r=0",
+      title:"red"
+    },
+    {
+      url:"https://upload.wikimedia.org/wikipedia/commons/2/29/Solid_green.svg",
+      title:"green"
+    }
+  ]
   data.sections.forEach((sectionInfo) => {
     sectionInfo.inputs.forEach((inputInfo) => {
-      if (inputInfo.type === "textarea") {
-        const modal = useRef<HTMLDivElement | null>(null);
-        modals.push({
-          label: sectionInfo.label + inputInfo.label,
-          modal: modal,
-        });
-      }
+      const modal = useRef<HTMLDivElement | null>(null);
+      modals.push({
+        label: sectionInfo.label + inputInfo.label,
+        modal: modal,
+      });
     });
   });
 
   const inputFactory = (parent: section, inputInfo: input) => {
-    if (inputInfo.type == "input") {
-      return (
-        <div className="input-container">
-          <label htmlFor={parent.label + "-" + inputInfo.label}>
-            {parent.label.charAt(0).toUpperCase() + parent.label.slice(1)}{" "}
-            {inputInfo.label} :
-          </label>
-          <input
-            type="text"
-            className={parent.label + "-info"}
-            id={parent.label + "-" + inputInfo.label}
-            value={inputInfo.value}
-            onChange={(event: React.ChangeEvent<HTMLInputElement>) => {
-              inputInfo.value = event.target.value;
-              setData(data.copy());
-            }}
-          ></input>
-        </div>
-      );
-    } else if (inputInfo.type == "textarea") {
       return (
         <div className="input-container">
           <label htmlFor={parent.label + "-" + inputInfo.label}>
@@ -163,8 +156,9 @@ const FormPage = () => {
                 setData(data.copy());
               }}
               className="text-box"
+              rows={(inputInfo.type=="input"?1:3)}
             />
-            {inputInfo.value.length > 100 && (
+            {[...inputInfo.value.matchAll(new RegExp('\n','g'))].length>=(inputInfo.type=="input"?1:3) && (
               <img
                 src={openIcon}
                 alt="Ouvrir l'overlay"
@@ -205,7 +199,6 @@ const FormPage = () => {
           </div>
         </div>
       );
-    }
   };
 
   const sectionFactory = (sectionInfo: section) => {
@@ -222,7 +215,7 @@ const FormPage = () => {
   return (
     <div className="formPage-container">
       <div className="pic-container">
-        <Carousel></Carousel>
+        <Carousel imgs={urls}></Carousel>
       </div>
       <div className="data-container">
         {[...data.sections].map((sectionInfo: section) => {

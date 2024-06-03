@@ -1,8 +1,22 @@
 .formPage-container {
   display: grid;
-  grid-template-areas: "pics data";
-  grid-template-columns: 42% 55%;
   justify-content: space-between;
+  padding: 0 10px;
+}
+
+@media only screen and (min-width: 850px) {
+  .formPage-container{
+    grid-template-areas: "pics data";
+    grid-template-columns: 42% 55%;
+  }
+}
+
+@media only screen and (max-width: 850px){
+  .formPage-container{
+    grid-template-areas: "pics"
+                         "data";
+    justify-content: center;
+  }
 }
 
 .pic-container {
@@ -10,6 +24,11 @@
 
 }
 
+@media (prefers-color-scheme: dark) {
+  .open-icon{
+    filter: invert(74%) sepia(37%) saturate(0%) hue-rotate(249deg) brightness(101%) contrast(98%);
+  }
+}
 
 
 /* Text box container styles */
@@ -38,7 +57,7 @@ textarea {
   border: 1px solid #ccc;
   box-sizing: border-box;
   width: 300px; /* Adjust width as needed */
-  height: 100px; /* Adjust height as needed */
+  height: auto; /* Adjust height as needed */
   resize: none;
 }
 
@@ -46,8 +65,12 @@ textarea {
   position: relative;
   top: 40px;
   right: 50px;
-  margin: -8.5%;
+  margin: -5%;
+  width: 10%;
+  height: auto;
 }
+
+
 
 .data-section {
   display: flex;
