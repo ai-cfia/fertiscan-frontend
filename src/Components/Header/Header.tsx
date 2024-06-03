@@ -1,6 +1,6 @@
 import cfia from "../../assets/CFIA_Banner.png";
 import "./Header.css";
-import { useTranslation } from 'react-i18next';
+import { useTranslation } from "react-i18next";
 const environment = {
   version: "0.0.1",
 };

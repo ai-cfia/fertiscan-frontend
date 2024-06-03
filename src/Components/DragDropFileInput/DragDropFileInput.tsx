@@ -1,6 +1,6 @@
 import React, { useState, useRef, useEffect } from "react";
 import "./DragDropFileInput.css";
-import { useTranslation } from 'react-i18next';
+import { useTranslation } from "react-i18next";
 interface FileInputProps {
   sendChange: (files: File[]) => void;
   file: string;
@@ -58,7 +58,7 @@ const DragDropFileInput: React.FC<FileInputProps> = ({ sendChange, file }) => {
 
   return (
     <div className="drag-drop-container">
-      <h3 className="title">{t('attach_doc')}</h3>
+      <h3 className="title">{t("attach_doc")}</h3>
       <input
         id="file-input"
         ref={fileInput}
@@ -77,12 +77,12 @@ const DragDropFileInput: React.FC<FileInputProps> = ({ sendChange, file }) => {
         <embed id="preview" src={file} className={file ? "active" : ""}></embed>
       </label>
       <div className="drag-drop-inner">
-        <p>{t('drag_and_drop')}</p>
+        <p>{t("drag_and_drop")}</p>
         <button type="button" onClick={handleClick}>
-        {t('browse')}
+          {t("browse")}
         </button>
         <button type="button" onClick={handleCancel}>
-        {t('cancel')}
+          {t("cancel")}
         </button>
       </div>
     </div>
