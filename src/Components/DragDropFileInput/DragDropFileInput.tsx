@@ -12,15 +12,15 @@ const DragDropFileInput: React.FC<FileInputProps> = ({ sendChange, file }) => {
   const [capturedImage, setCapturedImage] = useState<string | null>(null);
   const [showOptions, setShowOptions] = useState(false);
   const [showModal, setShowModal] = useState(false);
-  const [showOverlay, setShowOverlay] = useState(false); // State for the overlay
+  const [showOverlay, setShowOverlay] = useState(false);
   const [cameraMode, setCameraMode] = useState<"environment" | "user">("environment");
-  const fileInput = useRef<null | HTMLInputElement>(null);
-  const videoRef = useRef<HTMLVideoElement | null>(null);
-  const canvasRef = useRef<HTMLCanvasElement | null>(null);
+  const fileInput = useRef<HTMLInputElement>(null);
+  const videoRef = useRef<HTMLVideoElement>(null);
+  const canvasRef = useRef<HTMLCanvasElement>(null);
 
   useEffect(() => {
     if (file === "") {
-      const input = fileInput!.current as HTMLInputElement;
+      const input = fileInput!.current!;
       input.value = "";
     }
   }, [file]);
@@ -58,7 +58,7 @@ const DragDropFileInput: React.FC<FileInputProps> = ({ sendChange, file }) => {
   const handleClick = (event: React.MouseEvent<HTMLElement>) => {
     event.preventDefault();
     setShowOptions(true);
-    setShowOverlay(true); // Show the overlay when options are opened
+    setShowOverlay(true);
   };
 
   const handleFileChange = (files: File[]) => {
@@ -82,8 +82,7 @@ const DragDropFileInput: React.FC<FileInputProps> = ({ sendChange, file }) => {
       setStream(null);
     }
     setShowModal(false);
-    setCameraMode("environment");
-    setShowOverlay(false); // Hide the overlay when canceling
+    setShowOverlay(false);
   };
 
   const handleCapture = async () => {
@@ -104,25 +103,24 @@ const DragDropFileInput: React.FC<FileInputProps> = ({ sendChange, file }) => {
         }
       }
     }
-    setShowOverlay(false); // Hide the overlay when capturing
+    setShowOverlay(false);
   };
 
   const selectFiles = () => {
     const input = fileInput.current!;
     input.click();
-    
     setShowOptions(false);
-    setShowOverlay(false); // Hide the overlay when selecting files
+    setShowOverlay(false);
   };
 
   const selectCamera = async () => {
     setShowOptions(false);
     setShowModal(true);
-    setShowOverlay(true); // Show the overlay when opening camera modal
+    setShowOverlay(true);
     try {
-      const constraints = { video: { facingMode: cameraMode === "user" ? "environment" : "user" } };
-      const stream = await navigator.mediaDevices.getUserMedia(constraints);
-      setStream(stream);
+      const constraints = { video: { facingMode: cameraMode } };
+      const newStream = await navigator.mediaDevices.getUserMedia(constraints);
+      setStream(newStream);
     } catch (error) {
       console.error("Error accessing camera:", error);
     }
@@ -130,13 +128,10 @@ const DragDropFileInput: React.FC<FileInputProps> = ({ sendChange, file }) => {
 
   const toggleCameraMode = () => {
     setCameraMode(prevMode => prevMode === "environment" ? "user" : "environment");
-    if (stream) {
-      stream.getTracks().forEach((track) => track.stop());
-    }
   };
 
   const toggleOverlay = (event: React.MouseEvent<HTMLDivElement>) => {
-    event.stopPropagation(); // Prevent event propagation
+    event.stopPropagation();
     setShowOverlay(!showOverlay);
   };
 
@@ -158,8 +153,10 @@ const DragDropFileInput: React.FC<FileInputProps> = ({ sendChange, file }) => {
             <span className="close" onClick={handleCancel}>&times;</span>
             <div className="camera-container">
               <video id="player" ref={videoRef} autoPlay muted style={{ width: '320px', height: '240px' }} />
-              <button id="capture" onClick={handleCapture} disabled={!stream}> Capture </button>
-              <button onClick={toggleCameraMode}>Switch Camera</button>
+              <div className="camera-controls">
+                <button id="capture" onClick={handleCapture} disabled={!stream}> Capture </button>
+                <button onClick={toggleCameraMode}>Switch Camera</button>
+              </div>
               <canvas id="canvas" ref={canvasRef} width="320" height="240" style={{ display: 'none' }} />
             </div>
           </div>
@@ -168,11 +165,11 @@ const DragDropFileInput: React.FC<FileInputProps> = ({ sendChange, file }) => {
       {showOptions && (
         <div className="modal">
           <div className="option-modal-content">
-              <span className="close" onClick={handleCancel}>&times;</span>
+            <span className="close" onClick={handleCancel}>&times;</span>
             <div className="centered-buttons">
-            <button type="button" onClick={selectFiles}> Choose Files </button>
-            <button type="button" onClick={selectCamera}> Use Camera </button>
-          </div>
+              <button type="button" onClick={selectFiles}> Choose Files </button>
+              <button type="button" onClick={selectCamera}> Use Camera </button>
+            </div>
           </div>
         </div>
       )}
