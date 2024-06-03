@@ -1,59 +1,56 @@
 .file-list {
-    border: 2px solid #ccc;
-    border-radius: 5px;
-    grid-area: b;
-    padding: 5px;
-    width: 105%;
-
+  border: 2px solid #ccc;
+  border-radius: 5px;
+  grid-area: b;
+  padding: 5px;
+  width: 105%;
 }
 
-@media only screen and (min-width:850px) {
-  .file-list.empty{
+@media only screen and (min-width: 850px) {
+  .file-list.empty {
     width: 100%;
   }
 }
 
-@media only screen and (max-width:850px){
-  .file-list.empty{
+@media only screen and (max-width: 850px) {
+  .file-list.empty {
     width: 96%;
   }
-  .file-list{
+  .file-list {
     display: flex;
     justify-content: center;
     flex-direction: column;
   }
 }
 
-  
-  .file-list.empty {
-    display: flex;
-    align-items: center;
-    justify-content: center;
-  }
-  
-  .no-element {
-    display: none;
-  }
-  
-  .no-element.active {
-    display: block;
-  }
-  
-  .overlay {
-    position: absolute; /* Positioned absolutely within FileList */
-    top: 0;
-    left: 0; /* Initial position (can be adjusted based on selection) */
-    width: 100%; /* Adjust width/height as needed */
-    height: 100%;
-    background-color: rgba(0, 0, 0, 0.5); /* Gray overlay with opacity */
-    display: flex; /* Center image content horizontally and vertically */
-    align-items: center;
-    justify-content: center;
-    z-index: 1; /* Ensure overlay is above FileElement components */
-    visibility: hidden; /* Initially hidden */
-  }
-  
-  .overlay.active {
-    visibility: visible; /* Show overlay when an image is selected */
-  }
-  
+.file-list.empty {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.no-element {
+  display: none;
+}
+
+.no-element.active {
+  display: block;
+}
+
+.overlay {
+  position: absolute; /* Positioned absolutely within FileList */
+  top: 0;
+  left: 0; /* Initial position (can be adjusted based on selection) */
+  width: 100%; /* Adjust width/height as needed */
+  height: 100%;
+  background-color: rgba(0, 0, 0, 0.5); /* Gray overlay with opacity */
+  display: flex; /* Center image content horizontally and vertically */
+  align-items: center;
+  justify-content: center;
+  z-index: 1; /* Ensure overlay is above FileElement components */
+  visibility: hidden; /* Initially hidden */
+}
+
+.overlay.active {
+  visibility: visible; /* Show overlay when an image is selected */
+}

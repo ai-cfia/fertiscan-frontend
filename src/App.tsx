@@ -1,6 +1,7 @@
 import { BrowserRouter, Routes, Route } from "react-router-dom";
 import HomePage from "./Pages/HomePage/HomePage";
-import JsonPage from "./Pages/JsonPage/Json"
+import JsonPage from "./Pages/JsonPage/Json";
+import FormPage from "./Pages/FormPage/FormPage";
 import NoPage from "./Pages/NoPage/NoPage";
 import "./App.css";
 import Header from "./Components/Header/Header";
@@ -12,7 +13,8 @@ function App() {
       <Routes>
         <Route path="/">
           <Route index element={<HomePage />} />
-          <Route path="Json" element={<JsonPage/>}/>
+          <Route path="Json" element={<JsonPage />} />
+          <Route path="Form" element={<FormPage />} />
           <Route path="*" element={<NoPage />} />
         </Route>
       </Routes>
