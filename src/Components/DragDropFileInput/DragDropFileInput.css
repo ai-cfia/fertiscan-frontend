@@ -114,7 +114,9 @@ input[type="file"] {
 
 .options-container {
   display: flex;
-  flex-direction: column;
+  flex-direction: row;
   align-items: center;
+  vertical-align: center;
+  margin-left: 30%;
   gap: 10px;
 }

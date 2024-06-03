@@ -153,15 +153,7 @@ return (
     >
       <embed id="preview" src={file} className={file ? "active" : ""} />
     </label>
-    <div className="drag-drop-inner">
-      <p>Drag & drop your files here or</p>
-      <button type="button" onClick={handleClick}>
-        Browse Files or Camera
-      </button>
-      <button type="button" onClick={handleCancel}>
-        Cancel
-      </button>
-      {showOptions && (
+    {showOptions && (
         <div className="options-container">
           <button type="button" onClick={selectFiles}>
             Choose Files
@@ -171,7 +163,14 @@ return (
           </button>
         </div>
       )}
-      {capturedImage && <img src={capturedImage} alt="Captured" />}
+    <div className="drag-drop-inner">
+      <p>Drag & drop your files here or</p>
+      <button type="button" onClick={handleClick}>
+        Browse Files or Camera
+      </button>
+      <button type="button" onClick={handleCancel}>
+        Cancel
+      </button>
     </div>
     {showModal && (
       <div className="modal">
