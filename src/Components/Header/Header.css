@@ -1,5 +1,6 @@
 header{
   width: 100%;
+  z-index: 2;
 }
 header nav {
   background-color: #05486c;
@@ -55,5 +56,5 @@ ul {
 
 /* Add some top padding to the page content to prevent sudden quick movement (as the header gets a new position at the top of the page (position:fixed and top:0) */
 .sticky + * {
-  padding-top: 102px;
+  padding-top: 102px !important;
 }

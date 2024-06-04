@@ -40,7 +40,8 @@ function HomePage() {
 
   const navigate = useNavigate();
   const Submit = () => {
-    navigate("/Json", { state: { data: files } });
+
+    navigate("/Form", { state: { data: files } });
   };
 
   const handleDeletion = (toDelete: File, wasShown: boolean) => {

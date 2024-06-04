@@ -63,8 +63,8 @@ textarea {
 
 .open-icon {
   position: relative;
-  top: 40px;
-  right: 50px;
+  top: 25px;
+  right: 40px;
   margin: -5%;
   width: 10%;
   height: auto;
@@ -89,4 +89,21 @@ textarea {
 
 .input-container input {
   width: 98%;
+}
+
+
+.loader-container-form.active {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  height: 100vh;
+  background: rgba(0, 0, 0, 0.834) url("../../assets/6.svg") center no-repeat;
+  z-index: 1;
+}
+.loader-container-form p {
+  position: relative;
+  top:7%;
+}
+.loader-container-form {
+  display: none;
 }

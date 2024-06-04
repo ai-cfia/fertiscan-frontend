@@ -9,12 +9,10 @@ interface CarouselProps{
 
 class imgObject{
     index:number;
-    ref:React.MutableRefObject<HTMLImageElement|null>;
     url:string;
     title:string;
-    constructor(index:number, ref:React.MutableRefObject<HTMLImageElement|null>,url:string,title:string){
+    constructor(index:number,url:string,title:string){
         this.index=index;
-        this.ref=ref;
         this.url=url;
         this.title=title;
     }
@@ -25,14 +23,14 @@ class imgObject{
 
 
 const Carousel:React.FC<CarouselProps> = ({imgs})=>{    
-    let tempList:imgObject[] = []
+    const [currImg, setCurrImg] = useState<number>(0)
+    
+    let imgList:imgObject[] = []
     imgs.forEach((imgData,index)=>{
-        const imgRef = useRef<HTMLImageElement | null>(null);
-        tempList.push(new imgObject(index,imgRef,imgData.url,imgData.title))
+        imgList.push(new imgObject(index,imgData.url,imgData.title))
     })
 
-    const [currImg, setCurrImg] = useState<number>(0)
-    const [imgList, setImgList] = useState<imgObject[]>(tempList)
+    
 
 
     const selectImg = (idx:number)=>{
@@ -54,8 +52,8 @@ const Carousel:React.FC<CarouselProps> = ({imgs})=>{
                 <a className="prev" onClick={()=>selectImg(currImg-1)}>&#10094;</a>
                 <img
                     id="main-img"
-                    src={imgList[currImg].url}
-                    alt={imgList[currImg].title}
+                    src={imgList.length>0 ? imgList[currImg].url:""}
+                    alt={imgList.length>0 ? imgList[currImg].title:"No picture"}
                 ></img>
                 <a className="next" onClick={()=>selectImg(currImg+1)}>&#10095;</a>
             </div>
@@ -63,8 +61,7 @@ const Carousel:React.FC<CarouselProps> = ({imgs})=>{
                 {imgList.map((img: imgObject) => {
                     return <img 
                         src={img.url} 
-                        className={"carousel-img"+(img.index==currImg?" current":" ")} 
-                        ref={img.ref}
+                        className={"carousel-img"+(img.index==currImg?" current":" ")}
                         alt={imgList[currImg].title}
                         key={img.index}
                         onClick={()=>selectImg(img.index)}

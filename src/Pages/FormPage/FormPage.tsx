@@ -1,8 +1,9 @@
-import React, { useState, useRef } from "react";
+import React, { useState, useRef, useEffect } from "react";
 import "./FormPage.css";
 import Modal from "../../Components/Modal/Modal";
 import openIcon from "../../assets/dot-menu.svg";
 import Carousel from "../../Components/Carousel/Carousel";
+import { useLocation } from "react-router-dom";
 
 
 
@@ -51,7 +52,7 @@ const MAX_CHAR_IN_ROW = 37;
 
 const FormPage = () => {
   const [form, setForm] = useState({
-    company_name: "a",
+    company_name: "",
     company_address: "",
     company_website: "",
     company_phone_number: "",
@@ -63,7 +64,7 @@ const FormPage = () => {
     fertiliser_registration_number: "",
     fertiliser_lot_number: "",
     fertiliser_npk: "",
-    fertiliser_precautionary_fr: "a",
+    fertiliser_precautionary_fr: "",
     fertiliser_precautionary_en: "",
     fertiliser_instructions_fr: "",
     fertiliser_instructions_en: "",
@@ -94,23 +95,68 @@ const FormPage = () => {
     all_other_text_en_1: "",
     all_other_text_en_2: "",
   });
+  
+  const location = useLocation();
+  const files:File[] = location.state.data
+  const [uploadStarted, startUpload] = useState(false);
+  const [loading, setLoading] = useState(true);
+  const [fetchError, setError] = useState<Error | null>(null);
+  const [urls,setUrls]=useState<{
+    url:string,
+    title:string
+  }[]>([]) 
+  
+
 
   const [data, setData] = useState<dataObject>(
     new dataObject([
       new section("Company information", "company", [
-        new input( "name", form.company_name),
-        new input( "address", form.company_name),
+        new input("name", form.company_name),
+        new input("address", form.company_address),
+        new input("website", form.company_website),
+        new input("phone_number", form.company_phone_number),
       ]),
       new section("Manufacturer information", "manufacturer", [
         new input("name", form.manufacturer_name),
+        new input("address", form.manufacturer_address),
+        new input("website", form.manufacturer_website),
+        new input("phone_number", form.manufacturer_phone_number),
       ]),
-      new section("Fertilizer information", "fertilizer", [
-        new input(
-          "precautionary fr",
-          form.fertiliser_precautionary_fr,
-        ),
+      new section("Fertiliser information", "fertiliser", [
+        new input("name", form.fertiliser_name),
+        new input("registration_number", form.fertiliser_registration_number),
+        new input("lot_number", form.fertiliser_lot_number),
+        new input("npk", form.fertiliser_npk),
+        new input("precautionary_fr", form.fertiliser_precautionary_fr),
+        new input("precautionary_en", form.fertiliser_precautionary_en),
+        new input("instructions_fr", form.fertiliser_instructions_fr),
+        new input("instructions_en", form.fertiliser_instructions_en),
+        new input("ingredients_fr", form.fertiliser_ingredients_fr),
+        new input("ingredients_en", form.fertiliser_ingredients_en),
+        new input("specifications_fr", form.fertiliser_specifications_fr),
+        new input("specifications_en", form.fertiliser_specifications_en),
+        new input("cautions_fr", form.fertiliser_cautions_fr), // Added missing field
+        new input("cautions_en", form.fertiliser_cautions_en), // Added missing field
+        new input("recommendation_fr", form.fertiliser_recommendation_fr),
+        new input("recommendation_en", form.fertiliser_recommendation_en),
+        new input("first_aid_fr", form.fertiliser_first_aid_fr),
+        new input("first_aid_en", form.fertiliser_first_aid_en),
+        new input("warranty_fr", form.fertiliser_warranty_fr),
+        new input("warranty_en", form.fertiliser_warranty_en),
+        new input("guaranteed_analysis", form.fertiliser_guaranteed_analysis),
+        new input("nutrient_in_guaranteed_analysis", form.nutrient_in_guaranteed_analysis),
+        new input("percentage_in_guaranteed_analysis", form.percentage_in_guaranteed_analysis),
+        new input("weight", form.fertiliser_weight),
+        new input("density", form.fertiliser_density),
+        new input("volume", form.fertiliser_volume),
+        new input("label_all_other_text_fr", form.fertiliser_label_all_other_text_fr),
+        new input("all_other_text_fr_1", form.all_other_text_fr_1),
+        new input("all_other_text_fr_2", form.all_other_text_fr_2),
+        new input("label_all_other_text_en", form.fertiliser_label_all_other_text_en),
+        new input("all_other_text_en_1", form.all_other_text_en_1),
+        new input("all_other_text_en_2", form.all_other_text_en_2),
       ]),
-    ]),
+    ])
   );
 
   const modals: {
@@ -122,19 +168,6 @@ const FormPage = () => {
     ref: React.MutableRefObject<HTMLTextAreaElement | null>;
   }[] = [];
 
-  const urls = [{
-      url:"https://clipground.com/images/square-clipart-image-9.png",
-      title:"blue"
-    },
-    {
-      url:"https://th.bing.com/th/id/R.831df2b352f211506b6f5e96fe495e3b?rik=kOhAG2Zaz45WMg&riu=http%3a%2f%2ffc06.deviantart.net%2ffs13%2ff%2f2007%2f040%2fb%2f7%2fPhoto__Large_red_square_by_TheLastDanishPastry.png&ehk=TxXfjnmu6TwpRkPtzi7u1X%2fHbjCBDARquCvl7J1a%2b58%3d&risl=&pid=ImgRaw&r=0",
-      title:"red"
-    },
-    {
-      url:"https://upload.wikimedia.org/wikipedia/commons/2/29/Solid_green.svg",
-      title:"green"
-    }
-  ]
   data.sections.forEach((sectionInfo) => {
     sectionInfo.inputs.forEach((inputInfo) => {
       const modal = useRef<HTMLDivElement | null>(null);
@@ -152,17 +185,20 @@ const FormPage = () => {
 
 
   const inputFactory = (parent: section, inputInfo: input) => {
+      if(inputInfo.value=="") return
       return (
         <div className="input-container">
           <label htmlFor={parent.label + "-" + inputInfo.label}>
             {parent.label.charAt(0).toUpperCase() + parent.label.slice(1)}{" "}
-            {inputInfo.label} :
+            {inputInfo.label.replace(/_/gi,' ')} :
           </label>
           <div className="textbox-container">
             <textarea
+              id={parent.label + "-" + inputInfo.label}
               ref={textareas.find(obj=>obj.label==parent.label+inputInfo.label)?.ref}
               value={inputInfo.value}
               onChange={(event: React.ChangeEvent<HTMLTextAreaElement>) => {
+                console.log(event)
                 const current = event.target as HTMLTextAreaElement
                 {/* 
                   - first we count the number line break 
@@ -175,10 +211,10 @@ const FormPage = () => {
                     .reduce((sum,current)=>sum+current)
                 
                 if( shown_lines < current.rows && current.rows > 1 ){
-                  current.rows--;
+                  current.rows= Math.min(shown_lines, 3);
                 }
                 if( shown_lines > current.rows && current.rows<3 ){
-                  current.rows++;
+                  current.rows=Math.max(shown_lines,1);
                 }
                 inputInfo.value = event.target.value;
                 setData(data.copy());
@@ -231,6 +267,7 @@ const FormPage = () => {
   };
 
   const sectionFactory = (sectionInfo: section) => {
+    if(sectionInfo.inputs.map(input=>input.value).reduce((total,current)=>total+current)=="") return
     return (
       <div className={sectionInfo.label + "-container data-section"}>
         <h1 className="title underlined">{sectionInfo.title}</h1>
@@ -241,15 +278,114 @@ const FormPage = () => {
     );
   };
 
+
+  const api_url = "https://shiny-goggles-75q6p5xj4wwfp6gg-5000.app.github.dev";
+  
+  const upload_all = async () => {
+    const res = [];
+    for (let i = 0; i < files.length; i++) {
+      const formData = new FormData();
+      formData.append("file", files[i]);
+      res.push(
+        await fetch(api_url + "/upload", {
+          method: "POST",
+          headers:{
+            'Access-Control-Allow-Origin': '*',
+            'Access-Control-Allow-Credentials': 'true',
+            'Access-Control-Allow-Headers': 'Origin, Content-Type, X-Amz-Date, Authorization, X-Api-Key, X-Amz-Security-Token, locale',
+            'Access-Control-Allow-Methods': 'GET, POST',
+
+          },
+          body: formData,
+        }),
+      );
+    }
+    return res;
+  };
+
+  const sleep = (ms: number) => new Promise((r) => setTimeout(r, ms));
+
+  const poll_analyze= async()=>{
+    let data = await (await fetch(api_url + "/analyze", {
+      method: "GET",
+      headers:{
+      }
+    })).json()
+    while(data["Retry-after"]){
+      await sleep(data["Retry-after"]*1000)
+      data = await (await fetch(api_url + "/analyze", {
+        method: "GET",
+        headers:{
+        }
+      })).json()
+    }
+    return data
+    
+  }
+
+
+  useEffect(()=>{
+    let tmpUrls:{url:string,title:string}[]=[]
+    files.forEach(file=>{
+      const reader = new FileReader();
+      reader.onload = (e) => {
+        tmpUrls.push({
+          url:e!.target!.result as string,
+          title:file.name
+        })
+      };
+      reader.onloadend=()=>setUrls(tmpUrls)
+      reader.readAsDataURL(file)
+    })
+
+    if (!uploadStarted) {
+      startUpload(true);
+      upload_all()
+      .then(() => {
+        poll_analyze().then((response) => {
+          data.sections.forEach(section=>{
+            section.inputs.forEach(input=>{
+              input.value=(typeof(response[section.label+"_"+input.label]) == "string" ?response[section.label+"_"+input.label]:"")
+            })
+          })
+          setData(data.copy())
+          setLoading(false);
+          console.log("just before update")
+          let event = new Event('change');
+          document.querySelectorAll('textarea').forEach(elem=>{
+            elem.dispatchEvent(event)
+          })
+        })
+        .catch((e) => {
+          setLoading(false);
+          setError(e);
+          console.log(e);
+        });
+      }).catch((error=>{
+          console.log(error)
+      }));
+    };
+  },[])
+  
+
   return (
     <div className="formPage-container">
       <div className="pic-container">
         <Carousel imgs={urls}></Carousel>
       </div>
       <div className="data-container">
-        {[...data.sections].map((sectionInfo: section) => {
-          return sectionFactory(sectionInfo);
-        })}
+        {
+          loading 
+        ? 
+          (<div className={`loader-container-form ${loading ? "active" : ""}`}>
+            <div className="spinner"></div>
+            <p>Votre fichier est en cours d'analyse Your file is being analyzed</p>
+          </div>)
+        : 
+          [...data.sections].map((sectionInfo: section) => {
+            return sectionFactory(sectionInfo);
+          })
+        }
       </div>
     </div>
   );
