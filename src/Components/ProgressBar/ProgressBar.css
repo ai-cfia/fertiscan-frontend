@@ -1,0 +1,24 @@
+.progress-bar-vertical {
+    display: flex;
+    flex-direction: column;
+    width: 30px;
+    height: 100%;
+    border-radius: 15px;
+    overflow: hidden;
+}
+
+.section {
+    flex: 1;
+}
+
+.non-evaluated {
+    background-color: red;
+}
+
+.evaluated {
+    background-color: green;
+}
+
+.non-modified {
+    background-color: yellow;
+}
