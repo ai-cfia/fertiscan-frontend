@@ -38,15 +38,16 @@ class section {
   }
 }
 class input {
-  type: string;
   label: string;
   value: string;
-  constructor(type: string, label: string, value: string) {
-    this.type = type;
+  constructor(label: string, value: string) {
     this.label = label;
     this.value = value;
   }
 }
+
+
+const MAX_CHAR_IN_ROW = 37;
 
 const FormPage = () => {
   const [form, setForm] = useState({
@@ -97,15 +98,14 @@ const FormPage = () => {
   const [data, setData] = useState<dataObject>(
     new dataObject([
       new section("Company information", "company", [
-        new input("input", "name", form.company_name),
-        new input("input", "address", form.company_name),
+        new input( "name", form.company_name),
+        new input( "address", form.company_name),
       ]),
       new section("Manufacturer information", "manufacturer", [
-        new input("input", "name", form.manufacturer_name),
+        new input("name", form.manufacturer_name),
       ]),
       new section("Fertilizer information", "fertilizer", [
         new input(
-          "textarea",
           "precautionary fr",
           form.fertiliser_precautionary_fr,
         ),
@@ -115,7 +115,11 @@ const FormPage = () => {
 
   const modals: {
     label: string;
-    modal: React.MutableRefObject<HTMLDivElement | null>;
+    ref: React.MutableRefObject<HTMLDivElement | null>;
+  }[] = [];
+  const textareas:{
+    label:string;
+    ref: React.MutableRefObject<HTMLTextAreaElement | null>;
   }[] = [];
 
   const urls = [{
@@ -136,10 +140,16 @@ const FormPage = () => {
       const modal = useRef<HTMLDivElement | null>(null);
       modals.push({
         label: sectionInfo.label + inputInfo.label,
-        modal: modal,
+        ref: modal,
       });
+      const textarea = useRef<HTMLTextAreaElement | null>(null);
+      textareas.push({
+        label: sectionInfo.label + inputInfo.label,
+        ref: textarea,
+      })
     });
   });
+
 
   const inputFactory = (parent: section, inputInfo: input) => {
       return (
@@ -150,15 +160,34 @@ const FormPage = () => {
           </label>
           <div className="textbox-container">
             <textarea
+              ref={textareas.find(obj=>obj.label==parent.label+inputInfo.label)?.ref}
               value={inputInfo.value}
               onChange={(event: React.ChangeEvent<HTMLTextAreaElement>) => {
+                const current = event.target as HTMLTextAreaElement
+                {/* 
+                  - first we count the number line break 
+                  - then for each piece of text (separated by a line break)
+                      we check if this piece is too long for a line
+                */}
+                let shown_lines = current.value.split('\n').length+
+                  current.value.split('\n')
+                    .map(line=>Math.floor(line.length/MAX_CHAR_IN_ROW))
+                    .reduce((sum,current)=>sum+current)
+                
+                if( shown_lines < current.rows && current.rows > 1 ){
+                  current.rows--;
+                }
+                if( shown_lines > current.rows && current.rows<3 ){
+                  current.rows++;
+                }
                 inputInfo.value = event.target.value;
                 setData(data.copy());
               }}
               className="text-box"
-              rows={(inputInfo.type=="input"?1:3)}
+              rows={1}
             />
-            {[...inputInfo.value.matchAll(new RegExp('\n','g'))].length>=(inputInfo.type=="input"?1:3) && (
+            {/* same as shown_lines */}
+            {inputInfo.value.split('\n').length+inputInfo.value.split('\n').map(line=>Math.floor(line.length/MAX_CHAR_IN_ROW)).reduce((sum,current)=>sum+current) > 3 && (
               <img
                 src={openIcon}
                 alt="Ouvrir l'overlay"
@@ -169,7 +198,7 @@ const FormPage = () => {
                       (modalObj) =>
                         modalObj.label === parent.label + inputInfo.label,
                     )
-                    ?.modal.current?.classList.add("active");
+                    ?.ref.current?.classList.add("active");
                 }}
               />
             )}
@@ -178,7 +207,7 @@ const FormPage = () => {
                 modals.find(
                   (modalObj) =>
                     modalObj.label === parent.label + inputInfo.label,
-                )!.modal
+                )!.ref
               }
               text={inputInfo.value}
               handleTextChange={(event: {
@@ -193,7 +222,7 @@ const FormPage = () => {
                     (modalObj) =>
                       modalObj.label === parent.label + inputInfo.label,
                   )
-                  ?.modal.current!.classList.remove("active")
+                  ?.ref.current!.classList.remove("active")
               }
             />
           </div>
