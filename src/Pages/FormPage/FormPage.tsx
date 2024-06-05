@@ -279,7 +279,7 @@ const FormPage = () => {
   };
 
 
-  const api_url = "https://shiny-goggles-75q6p5xj4wwfp6gg-5000.app.github.dev";
+  const api_url = "https://fantastic-space-cod-pwv4pw65w7w27wgj-5000.app.github.dev/";
   
   const upload_all = async () => {
     const res = [];
@@ -353,7 +353,12 @@ const FormPage = () => {
           console.log("just before update")
           let event = new Event('change');
           document.querySelectorAll('textarea').forEach(elem=>{
-            elem.dispatchEvent(event)
+            const nativeTAValueSetter = Object.getOwnPropertyDescriptor(
+              window.HTMLTextAreaElement.prototype,
+              'value')!.set;
+              nativeTAValueSetter!.call(elem, elem.value);
+            const event = new Event('change', { bubbles: true });
+            elem.dispatchEvent(event);
           })
         })
         .catch((e) => {
