@@ -51,6 +51,7 @@ class input {
 const MAX_CHAR_IN_ROW = 37;
 
 const FormPage = () => {
+  // @ts-ignore
   const [form, setForm] = useState({
     company_name: "",
     company_address: "",
@@ -100,6 +101,7 @@ const FormPage = () => {
   const files:File[] = location.state.data
   const [uploadStarted, startUpload] = useState(false);
   const [loading, setLoading] = useState(true);
+  // @ts-ignore
   const [fetchError, setError] = useState<Error | null>(null);
   const [urls,setUrls]=useState<{
     url:string,
@@ -135,8 +137,8 @@ const FormPage = () => {
         new input("ingredients_en", form.fertiliser_ingredients_en),
         new input("specifications_fr", form.fertiliser_specifications_fr),
         new input("specifications_en", form.fertiliser_specifications_en),
-        new input("cautions_fr", form.fertiliser_cautions_fr), // Added missing field
-        new input("cautions_en", form.fertiliser_cautions_en), // Added missing field
+        new input("cautions_fr", form.fertiliser_cautions_fr),
+        new input("cautions_en", form.fertiliser_cautions_en),
         new input("recommendation_fr", form.fertiliser_recommendation_fr),
         new input("recommendation_en", form.fertiliser_recommendation_en),
         new input("first_aid_fr", form.fertiliser_first_aid_fr),
@@ -211,10 +213,10 @@ const FormPage = () => {
                     .reduce((sum,current)=>sum+current)
                 
                 if( shown_lines < current.rows && current.rows > 1 ){
-                  current.rows= Math.min(shown_lines, 3);
+                  current.rows= Math.max(shown_lines, 1);
                 }
                 if( shown_lines > current.rows && current.rows<3 ){
-                  current.rows=Math.max(shown_lines,1);
+                  current.rows=Math.min(shown_lines,3);
                 }
                 inputInfo.value = event.target.value;
                 setData(data.copy());
@@ -279,7 +281,7 @@ const FormPage = () => {
   };
 
 
-  const api_url = "https://fantastic-space-cod-pwv4pw65w7w27wgj-5000.app.github.dev/";
+  const api_url = "http://127.0.0.1:5000";
   
   const upload_all = async () => {
     const res = [];
@@ -351,13 +353,14 @@ const FormPage = () => {
           setData(data.copy())
           setLoading(false);
           console.log("just before update")
-          let event = new Event('change');
           document.querySelectorAll('textarea').forEach(elem=>{
             const nativeTAValueSetter = Object.getOwnPropertyDescriptor(
               window.HTMLTextAreaElement.prototype,
               'value')!.set;
-              nativeTAValueSetter!.call(elem, elem.value);
             const event = new Event('change', { bubbles: true });
+            nativeTAValueSetter!.call(elem, elem.value+" ");
+            elem.dispatchEvent(event);
+            nativeTAValueSetter!.call(elem, elem.value.slice(0, -1));
             elem.dispatchEvent(event);
           })
         })
