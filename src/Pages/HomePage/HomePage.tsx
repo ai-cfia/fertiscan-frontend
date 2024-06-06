@@ -40,7 +40,8 @@ function HomePage() {
 
   const navigate = useNavigate();
   const Submit = () => {
-    navigate("/Json", { state: { data: files } });
+
+    navigate("/Form", { state: { data: files } });
   };
 
   const handleDeletion = (toDelete: File, wasShown: boolean) => {
@@ -52,7 +53,7 @@ function HomePage() {
 
   return (
     <div className="App">
-      <div className="container">
+      <div className="homePage-container">
         <DragDropFileInput sendChange={handlePhotoChange} file={toShow} />
         <button className="submit-btn" type="submit" onClick={Submit}>
           Submit

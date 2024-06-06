@@ -12,7 +12,6 @@
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
 }
-
 a {
   font-weight: 500;
   color: #646cff;
@@ -66,12 +65,11 @@ button:focus-visible {
   }
 }
 
-
-.black{
+.black {
   color: #1a1a1a;
 }
 
-.bold{
+.bold {
   font-weight: 700;
 }
 

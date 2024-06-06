@@ -1,3 +1,7 @@
+header{
+  width: 100%;
+  z-index: 2;
+}
 header nav {
   background-color: #05486c;
   width: 100%;
@@ -17,25 +21,24 @@ header nav {
   border-radius: 5px;
 }
 
-
-#header-img{
+#header-img {
   max-height: 50px;
   width: 90%;
 }
 
-@media only screen and (min-width:850px) {
-  #version{
+@media only screen and (min-width: 850px) {
+  #version {
     position: absolute;
   }
 }
 
-@media only screen and (max-width:850px){
-  #version{  
+@media only screen and (max-width: 850px) {
+  #version {
     width: 90%;
     position: initial;
   }
-  header ul{
-    padding:0;
+  header ul {
+    padding: 0;
     flex-direction: column;
     align-items: center;
   }
@@ -44,4 +47,14 @@ header nav {
 ul {
   list-style-type: none;
   display: flex;
+}
+
+.sticky {
+  position: fixed;
+  top: 0;
+}
+
+/* Add some top padding to the page content to prevent sudden quick movement (as the header gets a new position at the top of the page (position:fixed and top:0) */
+.sticky + * {
+  padding-top: 102px !important;
 }

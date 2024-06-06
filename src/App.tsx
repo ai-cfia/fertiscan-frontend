@@ -4,6 +4,7 @@ import JsonPage from "./Pages/JsonPage/Json";
 import NoPage from "./Pages/NoPage/NoPage";
 import "./App.css";
 import Header from "./Components/Header/Header";
+import FormPage from "./Pages/FormPage/FormPage";
 
 function App() {
   return (
@@ -13,6 +14,7 @@ function App() {
         <Route path="/">
           <Route index element={<HomePage />} />
           <Route path="Json" element={<JsonPage />} />
+          <Route path="Form" element={<FormPage/>}/>
           <Route path="*" element={<NoPage />} />
         </Route>
       </Routes>
