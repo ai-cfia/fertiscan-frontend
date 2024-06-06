@@ -1,4 +1,4 @@
-import React, { useState, useRef, useEffect } from "react";
+import React, { useState, useRef, useEffect, StrictMode } from "react";
 import "./FormPage.css";
 import Modal from "../../Components/Modal/Modal";
 import openIcon from "../../assets/dot-menu.svg";
@@ -377,25 +377,27 @@ const FormPage = () => {
   
 
   return (
-    <div className="formPage-container">
-      <div className="pic-container">
-        <Carousel imgs={urls}></Carousel>
+    <StrictMode>
+      <div className="formPage-container">
+        <div className="pic-container">
+          <Carousel imgs={urls}></Carousel>
+        </div>
+        <div className="data-container">
+          {
+            loading 
+          ? 
+            (<div className={`loader-container-form ${loading ? "active" : ""}`}>
+              <div className="spinner"></div>
+              <p>Votre fichier est en cours d'analyse Your file is being analyzed</p>
+            </div>)
+          : 
+            [...data.sections].map((sectionInfo: section) => {
+              return sectionFactory(sectionInfo);
+            })
+          }
+        </div>
       </div>
-      <div className="data-container">
-        {
-          loading 
-        ? 
-          (<div className={`loader-container-form ${loading ? "active" : ""}`}>
-            <div className="spinner"></div>
-            <p>Votre fichier est en cours d'analyse Your file is being analyzed</p>
-          </div>)
-        : 
-          [...data.sections].map((sectionInfo: section) => {
-            return sectionFactory(sectionInfo);
-          })
-        }
-      </div>
-    </div>
+    </StrictMode>
   );
 };
 

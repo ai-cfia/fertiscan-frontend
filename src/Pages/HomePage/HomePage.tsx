@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { StrictMode, useState } from "react";
 import "./HomePage.css";
 import DragDropFileInput from "../../Components/DragDropFileInput/DragDropFileInput";
 import FileList from "../../Components/FileList/FileList";
@@ -52,19 +52,21 @@ function HomePage() {
   };
 
   return (
-    <div className="App">
-      <div className="homePage-container">
-        <DragDropFileInput sendChange={handlePhotoChange} file={toShow} />
-        <button className="submit-btn" type="submit" onClick={Submit}>
-          Submit
-        </button>
-        <FileList
-          files={files}
-          onSelectedChange={handleSelectedChange}
-          propagateDelete={handleDeletion}
-        />
+    <StrictMode>
+      <div className="App">
+        <div className="homePage-container">
+          <DragDropFileInput sendChange={handlePhotoChange} file={toShow} />
+          <button className="submit-btn" type="submit" onClick={Submit}>
+            Submit
+          </button>
+          <FileList
+            files={files}
+            onSelectedChange={handleSelectedChange}
+            propagateDelete={handleDeletion}
+          />
+        </div>
       </div>
-    </div>
+      </StrictMode>
   );
 }
 
