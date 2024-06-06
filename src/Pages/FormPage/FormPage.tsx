@@ -4,6 +4,8 @@ import Modal from '../../Components/Modal/Modal';
 import openIcon from '../../assets/dot-menu.svg';      
 import Carousel from '../../Components/Carousel/Carousel';      
 import ProgressBar from '../../Components/ProgressBar/ProgressBar';   
+import Button_modify from '../../Components/Button/Button_modify';
+import Button_approve from '../../Components/Button/Button_approve';
   
 class dataObject {      
   sections: section[];      
@@ -42,8 +44,9 @@ class input {
   label: string;        
   value: string;    
   haveBeenModified: boolean;  
+  approved: boolean = false;
   state: string;       
-  constructor(type: string, label: string, value: string, haveBeenModified = false,  state: string = 'empty') {        
+  constructor(type: string, label: string, value: string, haveBeenModified = false,  state: string = 'empty', approved = false) {        
     this.type = type;        
     this.label = label;        
     this.value = value;        
@@ -53,6 +56,7 @@ class input {
     }else{
       this.state = 'modified';
     } 
+    this.approved = approved;
 
   }        
 }    
@@ -180,6 +184,10 @@ const FormPage = () => {
               }}  
             />  
           )}  
+        <div className="button-container">  
+        <Button_modify />  
+        <Button_approve />  
+      </div>  
           <Modal  
             toRef={modals.find(modalObj => modalObj.label === parent.label + inputInfo.label)!.modal}  
             text={inputInfo.value}  

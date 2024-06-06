@@ -1,0 +1,29 @@
+.button {
+    background-color: #DCDCDC ;
+    border: 1px solid #979393;
+    padding: 10px;
+
+    width: 40px;
+    height: 40px;
+    cursor: pointer;
+    rotate: 45deg;
+  }
+  
+  .button img {
+    rotate: -45deg;
+    width: 130%;
+
+  }
+  
+  .button.active {
+    animation: pulsate 0.05s ease-in-out;
+  }
+  
+  @keyframes pulsate {
+    0% {
+      transform: scale(1);
+    }
+    100% {
+      transform: scale(1.1);
+    }
+  }

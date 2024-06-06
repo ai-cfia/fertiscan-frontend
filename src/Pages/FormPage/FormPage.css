@@ -91,3 +91,10 @@ textarea {
 .input-container input {
   width: 98%;
 }
+  
+.button-container {  
+  display: flex;  
+  align-items: center;  
+  gap: 10px;  
+  margin-left: 20px;
+}  
