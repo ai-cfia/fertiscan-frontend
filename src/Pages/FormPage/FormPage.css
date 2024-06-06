@@ -98,3 +98,10 @@ textarea {
   gap: 10px;  
   margin-left: 20px;
 }  
+
+.button{
+  background-color: #DCDCDC;
+}
+.input-error {  
+  border: 2px solid red; /* Entoure l'élément d'une bordure rouge */  
+}  

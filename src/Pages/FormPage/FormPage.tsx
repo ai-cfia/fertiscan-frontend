@@ -4,8 +4,8 @@ import Modal from '../../Components/Modal/Modal';
 import openIcon from '../../assets/dot-menu.svg';      
 import Carousel from '../../Components/Carousel/Carousel';      
 import ProgressBar from '../../Components/ProgressBar/ProgressBar';   
-import Button_modify from '../../Components/Button/Button_modify';
-import Button_approve from '../../Components/Button/Button_approve';
+import editIcon from "../../assets/edit1.svg";
+import acceptIcon from "../../assets/acceptIcon.svg";
   
 class dataObject {      
   sections: section[];      
@@ -42,22 +42,18 @@ class input {
   [x: string]: string | boolean;        
   type: string;        
   label: string;        
-  value: string;    
-  haveBeenModified: boolean;  
+  value: string;     
   approved: boolean = false;
-  state: string;       
-  constructor(type: string, label: string, value: string, haveBeenModified = false,  state: string = 'empty', approved = false) {        
-    this.type = type;        
+  state: string;      
+  disable:boolean = false; 
+  cssClass: string = '';
+  constructor(type: string, label: string, value: string,  state: string = 'empty', approved = false, disable = true) {        
+    this.type = type;       
     this.label = label;        
     this.value = value;        
-    this.haveBeenModified = haveBeenModified; 
-    if(this.value ==''){
-      this.state = 'empty'
-    }else{
-      this.state = 'modified';
-    } 
+    this.state = state;
     this.approved = approved;
-
+    this.disable = disable;
   }        
 }    
   
@@ -152,7 +148,29 @@ const FormPage = () => {
       });  
     });  
   });  
-  
+  const [isActive, setIsActive] = useState(false);
+
+  //Need to be modified to "approve" but color dont work 
+const handleClick_Modify = (inputInfo: any) => () => {    
+  console.log('Approved: ', inputInfo.label);  
+  setIsActive(true);      
+  inputInfo.state = 'approved';      
+  inputInfo.disabled = false;
+  inputInfo.approved = true;  
+  setData(data.copy());      
+  setTimeout(() => setIsActive(false), 400);      
+};  
+    
+  //Need to be modified to "modified" but color dont work
+const handleClick_Approve = (inputInfo: any) => () => {   
+  console.log('modified: ', inputInfo.label);  
+  setIsActive(true);      
+  inputInfo.state = 'modified';      
+  inputInfo.disabled = true;
+  inputInfo.approved = false;  
+  setData(data.copy());      
+  setTimeout(() => setIsActive(false), 400);      
+};    
   const inputFactory = (parent: section, inputInfo: input) => {  
     return (  
       <div className="input-container" key={parent.label + '-' + inputInfo.label}>  
@@ -160,20 +178,21 @@ const FormPage = () => {
           {parent.label.charAt(0).toUpperCase() + parent.label.slice(1)} {inputInfo.label} :  
         </label>  
         <div className="textbox-container">  
-          <textarea  
-            id={parent.label + '-' + inputInfo.label}  
-            value={inputInfo.value}  
-            onChange={(event) => {  
-              inputInfo.value = event.target.value;  
-              setData(data.copy());  
-              handleTextareaSelection(parent, inputInfo, event);
-            }}  
-            onSelect={(event) => {
-              inputInfo.haveBeenModified = true ? false : true;
-              }}
-            className="text-box"  
-            rows={inputInfo.type === 'input' ? 1 : 3}  
-          />  
+        <textarea    
+          id={parent.label + '-' + inputInfo.label}    
+          value={inputInfo.value}    
+          onChange={(event) => {    
+            inputInfo.value = event.target.value;    
+            setData(data.copy());    
+            handleTextareaSelection(parent, inputInfo, event);    
+          }}    
+          disabled={!inputInfo.disabled}  
+          onSelect={(event) => {  
+            inputInfo.haveBeenModified = true ? false : true;  
+          }}  
+          className={`text-box ${inputInfo.cssClass}`}    
+          rows={inputInfo.type === 'input' ? 1 : 3}    
+      />  
           {[...inputInfo.value.matchAll(new RegExp('\n', 'g'))].length >= (inputInfo.type === 'input' ? 1 : 3) && (  
             <img  
               src={openIcon}  
@@ -185,8 +204,17 @@ const FormPage = () => {
             />  
           )}  
         <div className="button-container">  
-        <Button_modify />  
-        <Button_approve />  
+        <button  
+            className={`button ${isActive ? "active" : ""}`}  
+            onClick={handleClick_Modify(inputInfo)}>  
+          <img src={acceptIcon} alt="Modifier" width="20" height="20" />  
+        </button>   
+        <button  
+          className={`button ${isActive ? "active" : ""}`}  
+          onClick={handleClick_Approve(inputInfo)}>  
+          <img src={editIcon} alt="Modifier" width="20" height="20" />  
+        </button>  
+
       </div>  
           <Modal  
             toRef={modals.find(modalObj => modalObj.label === parent.label + inputInfo.label)!.modal}  
@@ -210,19 +238,19 @@ const FormPage = () => {
       </div>  
     );  
   };  
-  
-    const [haveBeenModified, setHaveBeenModified] = useState({});  
-    
+      
     const handleTextareaSelection = (parent: section, inputInfo: input, event: ChangeEvent<HTMLTextAreaElement>) => {  
       inputInfo.value = event.target.value;   
       
-      if (inputInfo.value.toString() =="&&&&&") {
+      if (!inputInfo.approved) {
         inputInfo.state ="non-modified"
       }
-      else if(inputInfo.value.length >= 5){  
+      else if(inputInfo.approved){  
         inputInfo.state = 'approved';  
-      } else if(inputInfo.value.length == 0){  
-        inputInfo.state = 'empty';  
+
+      } else if(inputInfo.value.length == 0){  //To be modified
+        inputInfo.state = 'empty'; 
+
       }  else {  
         inputInfo.state = 'modified';  
       }
@@ -242,6 +270,25 @@ const inputStates = data.sections.flatMap((section) =>
     title: `${section.title} - ${input.label}`,  
   }))  
 );
+
+const validateFormInputs = () => {  
+  console.log('Validating form inputs... ');
+  let allApproved = true;  
+  // Itérer à travers chaque section et chaque input pour vérifier et mettre à jour l'état d'approbation  
+  data.sections.forEach((section) => {  
+    section.inputs.forEach((input) => {  
+      if(input.approved){
+        input.cssClass = ' '.trim();
+      }
+      else if (!input.approved) {  
+        allApproved = false;  
+        input.cssClass = 'input-error'
+      }
+    });  
+  });  
+  setData(data.copy()); // Mettre à jour l'état pour refléter les changements  
+  return allApproved;  
+};  
   
     
 return (    
@@ -253,7 +300,8 @@ return (
           <div className="content-container">    
               <div className="data-container">    
                   {data.sections.map((sectionInfo) => sectionFactory(sectionInfo))}    
-              </div>    
+              </div>  
+              <button className='button' onClick={validateFormInputs}>Submit</button>  
           </div>  
       </div>  
       <div style={{ position: 'sticky', top: 0, zIndex:"-2", gridColumn: '2 / span 1' }}>    
