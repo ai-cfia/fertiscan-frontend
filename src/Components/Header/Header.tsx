@@ -1,4 +1,4 @@
-import React, { useRef } from "react";
+import { useRef } from "react";
 import cfia from "../../assets/CFIA_Banner.png";
 import "./Header.css";
 const environment = {
