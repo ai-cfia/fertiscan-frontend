@@ -9,7 +9,7 @@ function HomePage() {
 
   const [toShow, setShow] = useState("");
   const [cameraMode, toggleCamera] = useState(false);
-  const cameraSwitch = useRef<HTMLDivElement|null>(null);
+  const cameraSwitch = useRef<HTMLDivElement | null>(null);
   const reader = new FileReader();
   reader.onload = (e) => {
     const newFile = e!.target!.result! as string;
@@ -41,7 +41,6 @@ function HomePage() {
 
   const navigate = useNavigate();
   const Submit = () => {
-
     navigate("/Form", { state: { data: files } });
   };
 
@@ -52,28 +51,37 @@ function HomePage() {
     }
   };
 
-  const handleCameraToggle = (event:React.MouseEvent<HTMLDivElement>)=>{
+  const handleCameraToggle = (event: React.MouseEvent<HTMLDivElement>) => {
     event.preventDefault();
-    toggleCamera(!cameraMode)
-    if(cameraMode){
-      cameraSwitch.current!.classList.add('active')
-    }else{
-      cameraSwitch.current!.classList.remove('active')
+    toggleCamera(!cameraMode);
+    if (cameraMode) {
+      cameraSwitch.current!.classList.add("active");
+    } else {
+      cameraSwitch.current!.classList.remove("active");
     }
-  }
+  };
 
   return (
     <StrictMode>
       <div className="App">
         <div className="homePage-container">
-          <DragDropFileInput sendChange={handlePhotoChange} file={toShow} mode={cameraMode} />
+          <DragDropFileInput
+            sendChange={handlePhotoChange}
+            file={toShow}
+            mode={cameraMode}
+          />
           <button className="submit-btn" type="submit" onClick={Submit}>
             Submit
           </button>
-          <div className={`switch ${cameraMode?'active':''}`} id="camera-switch" ref={cameraSwitch} onClick={handleCameraToggle}>
+          <div
+            className={`switch ${cameraMode ? "active" : ""}`}
+            id="camera-switch"
+            ref={cameraSwitch}
+            onClick={handleCameraToggle}
+          >
             <label>
               File Selction
-              <input type="checkbox"/>
+              <input type="checkbox" />
               <span className="lever"></span>
               Camera
             </label>
@@ -85,7 +93,7 @@ function HomePage() {
           />
         </div>
       </div>
-      </StrictMode>
+    </StrictMode>
   );
 }
 

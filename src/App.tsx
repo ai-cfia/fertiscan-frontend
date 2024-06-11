@@ -15,14 +15,12 @@ function App() {
       </StrictMode>
       <Routes>
         <Route path="/">
-          
           <Route index element={<HomePage />} />
 
           <Route path="Json" element={<JsonPage />} />
-          <Route path="Form" element={<FormPage/>}/>
+          <Route path="Form" element={<FormPage />} />
 
           <Route path="*" element={<NoPage />} />
-
         </Route>
       </Routes>
     </BrowserRouter>

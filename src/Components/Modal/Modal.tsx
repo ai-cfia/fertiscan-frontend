@@ -57,7 +57,9 @@ const Modal: React.FC<ModalProps> = ({
             />
           ) : (
             <div>
-            {[...text.matchAll(/^(.*)$/gm)].map((value,idx)=><p key={idx}>{(value[0]||<br/>)}</p>)}
+              {[...text.matchAll(/^(.*)$/gm)].map((value, idx) => (
+                <p key={idx}>{value[0] || <br />}</p>
+              ))}
             </div>
           )}
         </div>
