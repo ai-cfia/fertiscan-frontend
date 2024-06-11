@@ -5,16 +5,21 @@ import NoPage from "./Pages/NoPage/NoPage";
 import "./App.css";
 import Header from "./Components/Header/Header";
 import FormPage from "./Pages/FormPage/FormPage";
+import { StrictMode } from "react";
 
 function App() {
   return (
     <BrowserRouter>
-      <Header />
+      <StrictMode>
+        <Header />
+      </StrictMode>
       <Routes>
         <Route path="/">
           <Route index element={<HomePage />} />
+
           <Route path="Json" element={<JsonPage />} />
-          <Route path="Form" element={<FormPage/>}/>
+          <Route path="Form" element={<FormPage />} />
+
           <Route path="*" element={<NoPage />} />
         </Route>
       </Routes>

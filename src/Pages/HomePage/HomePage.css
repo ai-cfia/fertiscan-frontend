@@ -26,7 +26,12 @@
   }
 }
 
-.submit-btn{
-    margin-top:50px;
-    grid-area: c;
+.submit-btn {
+  margin-top: 50px;
+  grid-area: c;
+}
+
+#camera-switch {
+  position: relative;
+  right: 20px;
 }

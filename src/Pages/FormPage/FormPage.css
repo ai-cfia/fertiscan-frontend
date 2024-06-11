@@ -5,32 +5,33 @@
 }
 
 @media only screen and (min-width: 850px) {
-  .formPage-container{
+  .formPage-container {
     grid-template-areas: "pics data";
     grid-template-columns: 42% 55%;
   }
 }
 
-@media only screen and (max-width: 850px){
-  .formPage-container{
-    grid-template-areas: "pics"
-                         "data";
+
+@media only screen and (max-width: 850px) {
+  .formPage-container {
+    grid-template-areas:
+      "pics"
+      "data";
     justify-content: center;
   }
 }
 
 .pic-container {
   grid-area: pics;
-  max-width: 40%;
 
 }
 
 @media (prefers-color-scheme: dark) {
-  .open-icon{
-    filter: invert(74%) sepia(37%) saturate(0%) hue-rotate(249deg) brightness(101%) contrast(98%);
+  .open-icon {
+    filter: invert(74%) sepia(37%) saturate(0%) hue-rotate(249deg)
+      brightness(101%) contrast(98%);
   }
 }
-
 
 /* Text box container styles */
 .data-container {
@@ -64,13 +65,12 @@ textarea {
 
 .open-icon {
   position: relative;
-  top: 40px;
-  right: 50px;
+  top: 25px;
+  right: 40px;
   margin: -5%;
   width: 10%;
   height: auto;
 }
-
 
 
 .data-section {
@@ -91,7 +91,7 @@ textarea {
 .input-container input {
   width: 98%;
 }
-  
+
 .button-container {  
   display: flex;  
   align-items: center;  
@@ -105,3 +105,19 @@ textarea {
 .input-error {  
   border: 2px solid red; /* Entoure l'élément d'une bordure rouge */  
 }  
+
+.loader-container-form.active {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  height: 100vh;
+  background: rgba(0, 0, 0, 0.834) url("../../assets/6.svg") center no-repeat;
+  z-index: 1;
+}
+.loader-container-form p {
+  position: relative;
+  top: 7%;
+}
+.loader-container-form {
+  display: none;
+}

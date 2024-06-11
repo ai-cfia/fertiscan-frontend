@@ -72,6 +72,6 @@
   transform: translate(-50%, -50%) rotate(45deg);
 }
 
-  .cross:after {
-    transform: translate(-50%, -50%) rotate(-45deg);
-  }
+.cross:after {
+  transform: translate(-50%, -50%) rotate(-45deg);
+}

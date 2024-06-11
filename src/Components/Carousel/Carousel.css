@@ -1,48 +1,46 @@
-.curr-img{
+.curr-img {
   grid-area: main;
-  display:flex;
+  display: flex;
 }
 
-  #main-img {
-    width: 100%;
-    height: 100%;
-    object-fit: contain;
-    margin: 0 -20%
-  }
-  
-  .carousel-wrapper {
-    display: grid;
-    grid-template-areas:
-      "main main main"
-      ".  carousel  .";
-    grid-template-rows: 60% 30%;
-  }
-  
-  .carousel {
-    grid-area: carousel;
-    width: 50px;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-  
-  }
-  .carousel-img {
-    border: solid 2px #ccc0;
-    display: flex;
-    transition: all 750ms linear;
-    width: 100%;
-    height: fit-content;
-    object-fit: contain;
-  }
+#main-img {
+  width: 100%;
+  height: 100%;
+  object-fit: contain;
+  margin: 0 -20%;
+}
 
-  .carousel-img.current{
-    border: solid 2px #ccc;
-  }
+.carousel-wrapper {
+  display: grid;
+  grid-template-areas:
+    "main main main"
+    ".  carousel  .";
+  grid-template-rows: 60% 30%;
+}
 
+.carousel {
+  grid-area: carousel;
+  width: 50px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+.carousel-img {
+  border: solid 2px #ccc0;
+  display: flex;
+  transition: all 750ms linear;
+  width: 100%;
+  height: fit-content;
+  object-fit: contain;
+}
 
+.carousel-img.current {
+  border: solid 2px #ccc;
+}
 
-  /* Next & previous buttons */
-.prev, .next {
+/* Next & previous buttons */
+.prev,
+.next {
   cursor: pointer;
   width: auto;
   margin: auto;
@@ -63,6 +61,8 @@
 }
 
 /* On hover, add a black background color with a little bit see-through */
-.prev:hover, .next:hover {
-  background-color: rgba(0,0,0,0.8);
+
+.prev:hover,
+.next:hover {
+  background-color: rgba(0, 0, 0, 0.8);
 }
