@@ -81,3 +81,76 @@ button:focus-visible {
   -ms-user-select: none;
   user-select: none;
 }
+
+.switch {
+  -webkit-tap-highlight-color: transparent;
+  -webkit-user-select: none;
+  -moz-user-select: none;
+  -ms-user-select: none;
+  user-select: none;
+}
+
+.switch *{
+  -webkit-tap-highlight-color: transparent;
+  -webkit-user-select: none;
+  -moz-user-select: none;
+  -ms-user-select: none;
+  user-select: none;
+}
+
+.switch label{
+  cursor: pointer;
+}
+
+.switch label input{
+  width: 0;
+  height: 0;
+}
+
+.switch .lever{
+  content: "";
+  display: inline-block;
+  position: relative;
+  width: 36px;
+  height: 14px;
+  background-color: rgba(0, 0, 0, 0.38);
+  border-radius: 15px;
+  margin-right: 10px;
+  -webkit-transition: background 0.3s ease;
+  transition: background 0.3s ease;
+  vertical-align: middle;
+  margin: 0 16px;
+}
+
+
+.switch label .lever:before, .switch label .lever:after {
+    content: "";
+    position: absolute;
+    display: inline-block;
+    width: 20px;
+    height: 20px;
+    border-radius: 50%;
+    left: 0;
+    top: -3px;
+    -webkit-transition: left 0.3s ease, background .3s ease, -webkit-box-shadow 0.1s ease, -webkit-transform .1s ease;
+    transition: left 0.3s ease, background .3s ease, -webkit-box-shadow 0.1s ease, -webkit-transform .1s ease;
+    transition: left 0.3s ease, background .3s ease, box-shadow 0.1s ease, transform .1s ease;
+    transition: left 0.3s ease, background .3s ease, box-shadow 0.1s ease, transform .1s ease, -webkit-box-shadow 0.1s ease, -webkit-transform .1s ease;
+}
+
+.switch .lever:active::before{
+    -webkit-transform: scale(2.4);
+    transform: scale(2.4);
+    background-color: #b9b9b925 ;
+}
+.switch.active .lever:before{
+  left:17px;
+}
+
+.lever:after {
+    background-color: #b9b9b9;
+}
+
+.switch.active .lever:after{
+  left: 17px;
+}

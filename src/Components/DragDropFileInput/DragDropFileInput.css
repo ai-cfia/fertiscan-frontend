@@ -107,9 +107,13 @@ input[type="file"] {
 }
 
 .camera-container {
-  display: flex;
+  display: none;
   flex-direction: column;
   align-items: center;
+}
+
+.camera-container.active{
+  display: flex;
 }
 
 .options-container {
@@ -143,3 +147,13 @@ input[type="file"] {
   background-color: rgba(0, 0, 0, 0.1); /* couleur de l'overlay avec une opacité */
   border-radius: 10px;
 }
+
+
+.input-wrapper{
+  display: none;
+}
+
+.input-wrapper.active{
+  display: block;
+}
+
