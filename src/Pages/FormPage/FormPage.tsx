@@ -172,10 +172,18 @@ const FormPage = () => {
     ]),
   );
 
+  const resizeTextarea = (textarea: HTMLTextAreaElement | null) => {
+    if (textarea) {
+      textarea.style.height = "auto";
+      textarea.style.height = textarea.scrollHeight + "px";
+    }
+  };
+
   const modals: {
     label: string;
     ref: React.MutableRefObject<HTMLDivElement | null>;
   }[] = [];
+
   const textareas: {
     label: string;
     ref: React.MutableRefObject<HTMLTextAreaElement | null>;
@@ -238,8 +246,13 @@ const FormPage = () => {
               if (shown_lines > current.rows && current.rows < 3) {
                 current.rows = Math.min(shown_lines, 3);
               }
+              resizeTextarea(current);
               inputInfo.value = event.target.value;
               setData(data.copy());
+            }}
+            onInput={(event: React.FormEvent<HTMLTextAreaElement>) => {
+              const current = event.target as HTMLTextAreaElement;
+              resizeTextarea(current); // Ajoutez cet appel ici
             }}
             className="text-box"
             rows={1}
@@ -440,6 +453,14 @@ const FormPage = () => {
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
+
+  useEffect(() => {
+    textareas.forEach((textareaObj) => {
+      if (textareaObj.ref.current) {
+        resizeTextarea(textareaObj.ref.current);
+      }
+    });
+  }, [textareas]);
 
   return (
     <StrictMode>
