@@ -5,6 +5,7 @@ import openIcon from "../../assets/dot-menu.svg";
 import Carousel from "../../Components/Carousel/Carousel";
 import { useLocation } from "react-router-dom";
 
+
 class dataObject {
   sections: section[];
   constructor(sections: section[]) {
@@ -360,58 +361,87 @@ const FormPage = () => {
   };
 
   useEffect(() => {
-    const tmpUrls: { url: string; title: string }[] = [];
-    files.forEach((file) => {
-      const reader = new FileReader();
-      reader.onload = (e) => {
-        tmpUrls.push({
-          url: e!.target!.result as string,
-          title: file.name,
-        });
-      };
-      reader.onloadend = () => setUrls(tmpUrls);
-      reader.readAsDataURL(file);
-    });
-
-    if (!uploadStarted) {
-      startUpload(true);
-      upload_all()
-        .then(() => {
-          poll_analyze()
-            .then((response) => {
-              data.sections.forEach((section) => {
-                section.inputs.forEach((input) => {
-                  input.value =
-                    typeof response[section.label + "_" + input.label] ==
-                    "string"
-                      ? response[section.label + "_" + input.label]
-                      : "";
-                });
-              });
-              setData(data.copy());
-              setLoading(false);
-              console.log("just before update");
-              document.querySelectorAll("textarea").forEach((elem) => {
-                const nativeTAValueSetter = Object.getOwnPropertyDescriptor(
-                  window.HTMLTextAreaElement.prototype,
-                  "value",
-                )!.set;
-                const event = new Event("change", { bubbles: true });
-                nativeTAValueSetter!.call(elem, elem.value + " ");
-                elem.dispatchEvent(event);
-                nativeTAValueSetter!.call(elem, elem.value.slice(0, -1));
-                elem.dispatchEvent(event);
-              });
-            })
-            .catch((e) => {
-              setLoading(false);
-              setError(e);
-              console.log(e);
-            });
+    console.log(process.env)
+    if(process.env.REACT_APP_ACTIVATE_USING_JSON=="true"){
+      fetch("/answer.json").then(res=>res.json().then(response=>{
+        data.sections.forEach((section) => {
+          section.inputs.forEach((input) => {
+            input.value =
+              typeof response[section.label + "_" + input.label] ==
+              "string"
+                ? response[section.label + "_" + input.label]
+                : "";
+          });
         })
-        .catch((error) => {
-          console.log(error);
+        setData(data.copy());
+        setLoading(false);
+        console.log("just before update");
+        document.querySelectorAll("textarea").forEach((elem) => {
+          const nativeTAValueSetter = Object.getOwnPropertyDescriptor(
+            window.HTMLTextAreaElement.prototype,
+            "value",
+          )!.set;
+          const event = new Event("change", { bubbles: true });
+          nativeTAValueSetter!.call(elem, elem.value + " ");
+          elem.dispatchEvent(event);
+          nativeTAValueSetter!.call(elem, elem.value.slice(0, -1));
+          elem.dispatchEvent(event);
         });
+      }));
+    }else{
+      const tmpUrls: { url: string; title: string }[] = [];
+      files.forEach((file) => {
+        const reader = new FileReader();
+        reader.onload = (e) => {
+          tmpUrls.push({
+            url: e!.target!.result as string,
+            title: file.name,
+          });
+        };
+        reader.onloadend = () => setUrls(tmpUrls);
+        reader.readAsDataURL(file);
+      });
+
+      if (!uploadStarted) {
+        startUpload(true);
+        upload_all()
+          .then(() => {
+            poll_analyze()
+              .then((response) => {
+                data.sections.forEach((section) => {
+                  section.inputs.forEach((input) => {
+                    input.value =
+                      typeof response[section.label + "_" + input.label] ==
+                      "string"
+                        ? response[section.label + "_" + input.label]
+                        : "";
+                  });
+                });
+                setData(data.copy());
+                setLoading(false);
+                console.log("just before update");
+                document.querySelectorAll("textarea").forEach((elem) => {
+                  const nativeTAValueSetter = Object.getOwnPropertyDescriptor(
+                    window.HTMLTextAreaElement.prototype,
+                    "value",
+                  )!.set;
+                  const event = new Event("change", { bubbles: true });
+                  nativeTAValueSetter!.call(elem, elem.value + " ");
+                  elem.dispatchEvent(event);
+                  nativeTAValueSetter!.call(elem, elem.value.slice(0, -1));
+                  elem.dispatchEvent(event);
+                });
+              })
+              .catch((e) => {
+                setLoading(false);
+                setError(e);
+                console.log(e);
+              });
+          })
+          .catch((error) => {
+            console.log(error);
+          });
+      }
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
