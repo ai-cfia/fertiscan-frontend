@@ -5,7 +5,6 @@ import openIcon from "../../assets/dot-menu.svg";
 import Carousel from "../../Components/Carousel/Carousel";
 import { useLocation } from "react-router-dom";
 
-
 class dataObject {
   sections: section[];
   constructor(sections: section[]) {
@@ -47,7 +46,6 @@ class input {
 }
 
 const MAX_CHAR_IN_ROW = 37;
-
 
 const FormPage = () => {
   // @ts-expect-error : setForm is going to be used when linked to db
@@ -111,10 +109,6 @@ const FormPage = () => {
     }[]
   >([]);
 
-    // Load data from environment variable or local JSON file
-    const [useLocalData, setUseLocalData] = useState(process.env.REACT_APP_ACTIVATE_USING_JSON);
-
-    
   const [data, setData] = useState<dataObject>(
     new dataObject([
       new section("Company information", "company", [
@@ -361,34 +355,35 @@ const FormPage = () => {
   };
 
   useEffect(() => {
-    console.log(process.env)
-    if(process.env.REACT_APP_ACTIVATE_USING_JSON=="true"){
-      fetch("/answer.json").then(res=>res.json().then(response=>{
-        data.sections.forEach((section) => {
-          section.inputs.forEach((input) => {
-            input.value =
-              typeof response[section.label + "_" + input.label] ==
-              "string"
-                ? response[section.label + "_" + input.label]
-                : "";
+    console.log(process.env);
+    if (process.env.REACT_APP_ACTIVATE_USING_JSON == "true") {
+      fetch("/answer.json").then((res) =>
+        res.json().then((response) => {
+          data.sections.forEach((section) => {
+            section.inputs.forEach((input) => {
+              input.value =
+                typeof response[section.label + "_" + input.label] == "string"
+                  ? response[section.label + "_" + input.label]
+                  : "";
+            });
           });
-        })
-        setData(data.copy());
-        setLoading(false);
-        console.log("just before update");
-        document.querySelectorAll("textarea").forEach((elem) => {
-          const nativeTAValueSetter = Object.getOwnPropertyDescriptor(
-            window.HTMLTextAreaElement.prototype,
-            "value",
-          )!.set;
-          const event = new Event("change", { bubbles: true });
-          nativeTAValueSetter!.call(elem, elem.value + " ");
-          elem.dispatchEvent(event);
-          nativeTAValueSetter!.call(elem, elem.value.slice(0, -1));
-          elem.dispatchEvent(event);
-        });
-      }));
-    }else{
+          setData(data.copy());
+          setLoading(false);
+          console.log("just before update");
+          document.querySelectorAll("textarea").forEach((elem) => {
+            const nativeTAValueSetter = Object.getOwnPropertyDescriptor(
+              window.HTMLTextAreaElement.prototype,
+              "value",
+            )!.set;
+            const event = new Event("change", { bubbles: true });
+            nativeTAValueSetter!.call(elem, elem.value + " ");
+            elem.dispatchEvent(event);
+            nativeTAValueSetter!.call(elem, elem.value.slice(0, -1));
+            elem.dispatchEvent(event);
+          });
+        }),
+      );
+    } else {
       const tmpUrls: { url: string; title: string }[] = [];
       files.forEach((file) => {
         const reader = new FileReader();
