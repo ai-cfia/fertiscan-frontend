@@ -47,6 +47,7 @@ class input {
 
 const MAX_CHAR_IN_ROW = 37;
 
+
 const FormPage = () => {
   // @ts-expect-error : setForm is going to be used when linked to db
   // eslint-disable-next-line
@@ -109,6 +110,10 @@ const FormPage = () => {
     }[]
   >([]);
 
+    // Load data from environment variable or local JSON file
+    const [useLocalData, setUseLocalData] = useState(process.env.REACT_APP_ACTIVATE_USING_JSON);
+
+    
   const [data, setData] = useState<dataObject>(
     new dataObject([
       new section("Company information", "company", [
