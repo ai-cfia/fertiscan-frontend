@@ -16,9 +16,16 @@
   .formPage-container {
     grid-template-areas:
       "pics"
-      "data";
+      "data"
+      "progress";
     justify-content: center;
   }
+}
+
+.formPage-container{
+  grid-template-columns: '1fr auto';
+  grid-gap: '1rem';
+  align-items: 'start';
 }
 
 .pic-container {

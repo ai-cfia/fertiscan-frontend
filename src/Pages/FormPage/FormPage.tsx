@@ -41,16 +41,14 @@ class section {
   }      
 }    
 class input {
-  [x: string]: string | boolean;        
-  type: string;        
+  [x: string]: string | boolean;  
   label: string;        
   value: string;     
   approved: boolean = false;
   state: string;      
   disable:boolean = false; 
   cssClass: string = '';
-  constructor(type: string, label: string, value: string,  state: string = 'empty', approved = false, disable = true) {        
-    this.type = type;       
+  constructor( label: string, value: string,  state: string = 'empty', approved = false, disable = true) {           
     this.label = label;        
     this.value = value;        
     this.state = state;
@@ -366,7 +364,7 @@ const FormPage = () => {
     const res = [];
     for (let i = 0; i < files.length; i++) {
       const formData = new FormData();
-      formData.append("file", files[i]);
+      formData.append("image", files[i]);
       res.push(
         await fetch(api_url + "/upload", {
           method: "POST",
@@ -489,12 +487,15 @@ const FormPage = () => {
   };  
   
 const inputStates = data.sections.flatMap((section) =>   
-  section.inputs.map((input) => ({  
-    state: assessInputState(input).state,  
-    title: `${section.title} - ${input.label}`,  
-  }))  
+  section.inputs.filter(input=>input.value.length>0).map((input) => ({  
+        state: assessInputState(input).state,  
+        title: `${section.title} - ${input.label}`,  
+      })
+  )
 );
-
+/**
+ *  
+ */
 const validateFormInputs = () => {  
   console.log('Validating form inputs... ');
   let allApproved = true;  
@@ -530,16 +531,18 @@ const validateFormInputs = () => {
             </div>
           ) : (
             <div>
-              [...data.sections].map((sectionInfo: section) => {
+              {[...data.sections].map((sectionInfo: section) => {
                 return sectionFactory(sectionInfo);
-              })
+              })}
                <button className='button' onClick={validateFormInputs}>Submit</button>  
             </div>
           )}
         </div>
-        <div style={{ position: 'sticky', top: 0, zIndex:"-2", gridColumn: '2 / span 1' }}>    
+        {!loading?(
+        <div className="progress-wrapper">    
           <ProgressBar sections={inputStates} />    
-        </div>   
+        </div>
+        ):(<></>)}
       </div>
     </StrictMode>
   );
