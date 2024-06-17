@@ -40,11 +40,23 @@
   padding-bottom: 60px;
 }
 
+.data-container h1 {
+  text-align: left;
+  margin-left: 20px;
+}
+.data-container label{
+  font-family: Arial, sans-serif, Bold; ;
+  color: #000000;
+  font-size: 20px;
+}
+
+
 .textbox-container {
   display: flex; /* Enable flexbox layout */
-  justify-content: center; /* Center horizontally within the container */
+  justify-content: left; /* Center horizontally within the container */
   align-items: center; /* Center vertically within the container */
   width: 100%; /* Make the container take up the full width */
+  margin-left: 20px;
 }
 
 .underlined {
@@ -53,28 +65,42 @@
 
 /* Text box styles */
 textarea {
-  padding: 10px;
   border: 1px solid #ccc;
+  border-radius: 10px;
   box-sizing: border-box;
-  width: 300px; /* Adjust width as needed */
-  height: auto; /* Adjust height as needed */
+  width: 300px; 
+  height: auto; 
+  min-height: 40px;
+  max-height: 97px;
   resize: none;
+  background-color: rgb(220, 219, 219);
+  overflow-y: hidden;
+  padding-top: 5px;
+  padding-left: 5px;
+  padding-right: 3px;
+  padding-bottom: 10px;
+  /* Text style properties */
+  font-family: Arial, sans-serif, Bold; /* Specify a fallback font */
+  font-size: 20px;
+  font-weight: 400; /* Normal weight */
+  color: #000000; /* Dark gray */
+  text-decoration: none;
 }
 
 .open-icon {
   position: relative;
-  top: 25px;
-  right: 40px;
+  top: 35px;
+  right: 37px;
   margin: -5%;
-  width: 10%;
+  width: 12%;
   height: auto;
 }
 
 .data-section {
   display: flex;
   flex-direction: column;
-  justify-content: center;
-  align-items: center;
+  justify-content: left;
+  align-items: left;
   gap: 10px;
 }
 
