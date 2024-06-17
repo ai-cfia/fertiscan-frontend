@@ -31,6 +31,7 @@
   transition: all 750ms linear;
   width: 100%;
   height: fit-content;
+  max-height: 100px;
   object-fit: contain;
 }
 

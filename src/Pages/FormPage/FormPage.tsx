@@ -2,7 +2,6 @@
 import React, { useState, useRef, useEffect, StrictMode, ChangeEvent } from "react";
 import "./FormPage.css";
 import Modal from "../../Components/Modal/Modal";
-import openIcon from "../../assets/dot-menu.svg";
 import Carousel from "../../Components/Carousel/Carousel";
 import { useLocation } from "react-router-dom";
 import ProgressBar from '../../Components/ProgressBar/ProgressBar';   
@@ -185,10 +184,18 @@ const FormPage = () => {
     ]),
   );
 
+  const resizeTextarea = (textarea: HTMLTextAreaElement | null) => {
+    if (textarea) {
+      textarea.style.height = "auto";
+      textarea.style.height = textarea.scrollHeight + "px";
+    }
+  };
+
   const modals: {
     label: string;
     ref: React.MutableRefObject<HTMLDivElement | null>;
   }[] = [];
+
   const textareas: {
     label: string;
     ref: React.MutableRefObject<HTMLTextAreaElement | null>;
@@ -247,61 +254,25 @@ const FormPage = () => {
             id={parent.label + "-" + inputInfo.label}
             ref={
               textareas.find(
-                (obj) => obj.label == parent.label + inputInfo.label,
+                (obj) => obj.label === parent.label + inputInfo.label,
               )?.ref
             }
             value={inputInfo.value}
             onChange={(event: React.ChangeEvent<HTMLTextAreaElement>) => {
               console.log(event);
               const current = event.target as HTMLTextAreaElement;
-              {
-                /* 
-                  - first we count the number line break 
-                  - then for each piece of text (separated by a line break)
-                      we check if this piece is too long for a line
-                */
-              }
-              const shown_lines =
-                current.value.split("\n").length +
-                current.value
-                  .split("\n")
-                  .map((line) => Math.floor(line.length / MAX_CHAR_IN_ROW))
-                  .reduce((sum, current) => sum + current);
-
-              if (shown_lines < current.rows && current.rows > 1) {
-                current.rows = Math.max(shown_lines, 1);
-              }
-              if (shown_lines > current.rows && current.rows < 3) {
-                current.rows = Math.min(shown_lines, 3);
-              }
+              resizeTextarea(current);
               inputInfo.value = event.target.value;
               setData(data.copy());
+            }}
+            onInput={(event: React.FormEvent<HTMLTextAreaElement>) => {
+              const current = event.target as HTMLTextAreaElement;
+              resizeTextarea(current); // Added here
             }}
             className="text-box"
             rows={1}
           />
-          {/* same as shown_lines */}
-          {inputInfo.value.split("\n").length +
-            inputInfo.value
-              .split("\n")
-              .map((line) => Math.floor(line.length / MAX_CHAR_IN_ROW))
-              .reduce((sum, current) => sum + current) >
-            3 && (
-            <img
-              src={openIcon}
-              alt="Ouvrir l'overlay"
-              className="open-icon"
-              onClick={() => {
-                modals
-                  .find(
-                    (modalObj) =>
-                      modalObj.label === parent.label + inputInfo.label,
-                  )
-                  ?.ref.current?.classList.add("active");
-              }}
-            />
-          )}
-          <div className="button-container">  
+           <div className="button-container">  
             <button  
                 className={`button ${isActive ? "active" : ""}`}  
                 onClick={handleClick_Modify(inputInfo)}>  
@@ -314,29 +285,52 @@ const FormPage = () => {
             </button>  
 
           </div> 
-          <Modal
-            toRef={
-              modals.find(
-                (modalObj) => modalObj.label === parent.label + inputInfo.label,
-              )!.ref
-            }
-            text={inputInfo.value}
-            handleTextChange={(event: {
-              target: { value: React.SetStateAction<string> };
-            }) => {
-              inputInfo.value = event.target.value.toString();
-              setData(data.copy());
-            }}
-            close={() =>
-              modals
-                .find(
+        </div>
+        {/* Show more functionality moved here for better separation */}
+        {inputInfo.value.split("\n").length +
+          inputInfo.value
+            .split("\n")
+            .map((line) => Math.floor(line.length / MAX_CHAR_IN_ROW))
+            .reduce((sum, current) => sum + current) >
+          3 && (
+          <div className="show-more-container">
+            <label
+              className="open-icon"
+              onClick={() => {
+                const modal = modals.find(
                   (modalObj) =>
                     modalObj.label === parent.label + inputInfo.label,
-                )
-                ?.ref.current!.classList.remove("active")
-            }
-          />
-        </div>
+                );
+                modal?.ref.current?.classList.add("active");
+              }}
+              >
+              Show more
+            </label>
+            <Modal
+              toRef={
+                modals.find(
+                  (modalObj) =>
+                    modalObj.label === parent.label + inputInfo.label,
+                )!.ref
+              }
+              text={inputInfo.value}
+              handleTextChange={(event: {
+                target: { value: React.SetStateAction<string> };
+              }) => {
+                inputInfo.value = event.target.value.toString();
+                setData(data.copy());
+              }}
+              imgs={urls}
+              close={() => {
+                const modal = modals.find(
+                  (modalObj) =>
+                    modalObj.label === parent.label + inputInfo.label,
+                );
+                modal?.ref.current?.classList.remove("active");
+              }}
+            />
+          </div>
+        )}
       </div>
     );
   };
@@ -404,62 +398,91 @@ const FormPage = () => {
   };
 
   useEffect(() => {
-    const tmpUrls: { url: string; title: string }[] = [];
-    files.forEach((file) => {
-      const reader = new FileReader();
-      reader.onload = (e) => {
-        tmpUrls.push({
-          url: e!.target!.result as string,
-          title: file.name,
-        });
-      };
-      reader.onloadend = () => setUrls(tmpUrls);
-      reader.readAsDataURL(file);
-    });
-
-    if (!uploadStarted) {
-      startUpload(true);
-      upload_all()
-        .then(() => {
-          poll_analyze()
-            .then((response) => {
-              data.sections.forEach((section) => {
-                section.inputs.forEach((input) => {
-                  input.value =
-                    typeof response[section.label + "_" + input.label] ==
-                    "string"
-                      ? response[section.label + "_" + input.label]
-                      : "";
-                });
-              });
-              setData(data.copy());
-              setLoading(false);
-              console.log("just before update");
-              document.querySelectorAll("textarea").forEach((elem) => {
-                const nativeTAValueSetter = Object.getOwnPropertyDescriptor(
-                  window.HTMLTextAreaElement.prototype,
-                  "value",
-                )!.set;
-                const event = new Event("change", { bubbles: true });
-                nativeTAValueSetter!.call(elem, elem.value + " ");
-                elem.dispatchEvent(event);
-                nativeTAValueSetter!.call(elem, elem.value.slice(0, -1));
-                elem.dispatchEvent(event);
-              });
-            })
-            .catch((e) => {
-              setLoading(false);
-              setError(e);
-              console.log(e);
+    console.log(process.env);
+    if (process.env.REACT_APP_ACTIVATE_USING_JSON == "true") {
+      fetch("/answer.json").then((res) =>
+        res.json().then((response) => {
+          data.sections.forEach((section) => {
+            section.inputs.forEach((input) => {
+              input.value =
+                typeof response[section.label + "_" + input.label] == "string"
+                  ? response[section.label + "_" + input.label]
+                  : "";
             });
-        })
-        .catch((error) => {
-          console.log(error);
-        });
+          });
+          setData(data.copy());
+          setLoading(false);
+          console.log("just before update");
+          document.querySelectorAll("textarea").forEach((elem) => {
+            const nativeTAValueSetter = Object.getOwnPropertyDescriptor(
+              window.HTMLTextAreaElement.prototype,
+              "value",
+            )!.set;
+            const event = new Event("change", { bubbles: true });
+            nativeTAValueSetter!.call(elem, elem.value + " ");
+            elem.dispatchEvent(event);
+            nativeTAValueSetter!.call(elem, elem.value.slice(0, -1));
+            elem.dispatchEvent(event);
+          });
+        }),
+      );
+    } else {
+      const tmpUrls: { url: string; title: string }[] = [];
+      files.forEach((file) => {
+        const reader = new FileReader();
+        reader.onload = (e) => {
+          tmpUrls.push({
+            url: e!.target!.result as string,
+            title: file.name,
+          });
+        };
+        reader.onloadend = () => setUrls(tmpUrls);
+        reader.readAsDataURL(file);
+      });
+
+      if (!uploadStarted) {
+        startUpload(true);
+        upload_all()
+          .then(() => {
+            poll_analyze()
+              .then((response) => {
+                data.sections.forEach((section) => {
+                  section.inputs.forEach((input) => {
+                    input.value =
+                      typeof response[section.label + "_" + input.label] ==
+                      "string"
+                        ? response[section.label + "_" + input.label]
+                        : "";
+                  });
+                });
+                setData(data.copy());
+                setLoading(false);
+                console.log("just before update");
+                document.querySelectorAll("textarea").forEach((elem) => {
+                  const nativeTAValueSetter = Object.getOwnPropertyDescriptor(
+                    window.HTMLTextAreaElement.prototype,
+                    "value",
+                  )!.set;
+                  const event = new Event("change", { bubbles: true });
+                  nativeTAValueSetter!.call(elem, elem.value + " ");
+                  elem.dispatchEvent(event);
+                  nativeTAValueSetter!.call(elem, elem.value.slice(0, -1));
+                  elem.dispatchEvent(event);
+                });
+              })
+              .catch((e) => {
+                setLoading(false);
+                setError(e);
+                console.log(e);
+              });
+          })
+          .catch((error) => {
+            console.log(error);
+          });
+      }
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
-
       
     const handleTextareaSelection = (parent: section, inputInfo: input, event: ChangeEvent<HTMLTextAreaElement>) => {  
       inputInfo.value = event.target.value;   
@@ -515,6 +538,16 @@ const validateFormInputs = () => {
   return allApproved;  
 };    
     
+
+  useEffect(() => {
+    textareas.forEach((textareaObj) => {
+      if (textareaObj.ref.current) {
+        resizeTextarea(textareaObj.ref.current);
+      }
+    });
+  }, [textareas]);
+
+
   return (
     <StrictMode>
       <div className="formPage-container">
