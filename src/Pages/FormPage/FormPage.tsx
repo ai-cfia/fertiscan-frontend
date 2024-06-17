@@ -489,7 +489,7 @@ const FormPage = () => {
 const inputStates = data.sections.flatMap((section) =>   
   section.inputs.filter(input=>input.value.length>0).map((input) => ({  
         state: assessInputState(input).state,  
-        title: `${section.title} - ${input.label}`,  
+        label: `${section.label}-${input.label}`,
       })
   )
 );

@@ -5,9 +5,10 @@
     border-radius: 15px;
     overflow: hidden;
     position: sticky;
+    margin-top: 50px;
     }
 
-    .section {
+.section {
     flex: 1;
     }
     
