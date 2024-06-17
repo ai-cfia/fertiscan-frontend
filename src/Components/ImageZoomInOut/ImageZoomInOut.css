@@ -1,0 +1,21 @@
+.btn-container {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+    background-color: #fff;
+    border-radius: 8px;
+    overflow: hidden;
+    position: absolute;
+    top: 0;
+    left: 0;
+    z-index: 1;
+    border:1px solid black;
+  }
+
+.btn-container button {
+    border: none;
+    color: #737373;
+    background-color: #fff;
+    padding: 10px;
+    cursor: pointer;
+  }

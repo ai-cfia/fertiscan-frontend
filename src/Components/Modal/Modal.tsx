@@ -1,8 +1,10 @@
 import React, { useState } from "react";
 import "./Modal.css";
 import closeIcon from "../../assets/close_icon.png";
+import Carousel from "../Carousel/Carousel";
 interface ModalProps {
   text: string;
+  imgs: Image[]; // Array of Image objects
   handleTextChange: (event: {
     target: { value: React.SetStateAction<string> };
   }) => void;
@@ -10,11 +12,17 @@ interface ModalProps {
   toRef: React.MutableRefObject<HTMLDivElement | null>;
 }
 
+interface Image {
+  url: string; // Image URL
+  title: string; // Image title (optional)
+}
+
 const Modal: React.FC<ModalProps> = ({
   text,
   handleTextChange,
   close,
   toRef,
+  imgs,
 }) => {
   const [isEditing, setIsEditing] = useState(false); // Added state for edit mode
 
@@ -41,6 +49,9 @@ const Modal: React.FC<ModalProps> = ({
 
   return (
     <div className="overlay" onClick={handleOverlayClick} ref={toRef}>
+      <div className="pic-container">
+        <Carousel imgs={imgs}></Carousel>
+      </div>
       <div className="card">
         <img
           src={closeIcon}

@@ -17,7 +17,7 @@
 
 /* Styles de la carte */
 .card {
-  width: 75%;
+  width: 50%;
   max-width: 800px;
   background-color: white;
   padding: 20px;
@@ -106,4 +106,33 @@
   margin-top: 3px;
   padding-right: 10px;
   background: transparent;
+}
+
+@media only screen and (min-width: 850px) {
+  .formPage-container {
+    grid-template-areas:
+      "pics data"
+      "pics open-icon";  /* Add a new row for the open-icon */
+    grid-template-columns: 42% 55%;
+  }
+}
+
+@media only screen and (max-width: 850px) {
+  .formPage-container {
+    grid-template-areas:
+      "pics"
+      "data";
+    justify-content: center;
+  }
+}
+
+.pic-container {
+  grid-area: pics;
+  margin-right:10px ;
+}
+
+@media (prefers-color-scheme: dark) {
+  .open-icon {
+    filter: invert(74%) sepia(37%) saturate(0%) hue-rotate(249deg) brightness(101%) contrast(98%);
+  }
 }
