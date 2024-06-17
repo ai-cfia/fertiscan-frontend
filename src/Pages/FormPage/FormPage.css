@@ -8,22 +8,32 @@
   .formPage-container {
     grid-template-areas:
       "pics data"
-      "pics open-icon";  /* Add a new row for the open-icon */
-    grid-template-columns: 42% 55%;
+      "pics open-icon"
+      "progress-bar";/* Add a new row for the open-icon */
+    grid-template-columns:  40% 50% 5%;
   }
 }
+
 
 @media only screen and (max-width: 850px) {
   .formPage-container {
     grid-template-areas:
       "pics"
-      "data";
+      "data"
+      "progress";
     justify-content: center;
   }
 }
 
+.formPage-container{
+  grid-template-columns: '1fr auto';
+  grid-gap: '1rem';
+  align-items: 'start';
+}
+
 .pic-container {
   grid-area: pics;
+
 }
 
 @media (prefers-color-scheme: dark) {
@@ -109,6 +119,7 @@ textarea {
   margin-right: -30px;
   margin-top: -5px;
 }
+
 .data-section {
   display: flex;
   flex-direction: column;
@@ -126,6 +137,20 @@ textarea {
 .input-container input {
   width: 98%;
 }
+
+.button-container {  
+  display: flex;  
+  align-items: center;  
+  gap: 10px;  
+  margin-left: 20px;
+}  
+
+.button{
+  background-color: #DCDCDC;
+}
+.input-error {  
+  border: 2px solid red; /* Entoure l'élément d'une bordure rouge */  
+}  
 
 .loader-container-form.active {
   display: flex;

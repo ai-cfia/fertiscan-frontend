@@ -10,6 +10,7 @@ function JsonPage() {
   const files: File[] = location.state.data;
   const [uploadStarted, startUpload] = useState(false);
 
+
   const api_url = "https://shiny-goggles-75q6p5xj4wwfp6gg-5000.app.github.dev";
 
   const upload_all = async () => {
@@ -20,6 +21,7 @@ function JsonPage() {
       res.push(
         await fetch(api_url + "/upload", {
           method: "POST",
+
           headers: {
             "Access-Control-Allow-Origin": "*",
             "Access-Control-Allow-Credentials": "true",
@@ -33,7 +35,6 @@ function JsonPage() {
     }
     return res;
   };
-
   const sleep = (ms: number) => new Promise((r) => setTimeout(r, ms));
 
   const poll_analyze = async () => {
@@ -55,6 +56,7 @@ function JsonPage() {
     return data;
   };
   useEffect(() => {
+    console.log(uploadStarted)
     if (!uploadStarted) {
       startUpload(true);
       upload_all()
