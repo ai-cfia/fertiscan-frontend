@@ -5,7 +5,9 @@ import Carousel from "../Carousel/Carousel";
 interface ModalProps {
   text: string;
   imgs: Image[]; // Array of Image objects
-  handleTextChange: (event: { target: { value: React.SetStateAction<string> }; }) => void;
+  handleTextChange: (event: {
+    target: { value: React.SetStateAction<string> };
+  }) => void;
   close: () => void;
   toRef: React.MutableRefObject<HTMLDivElement | null>;
 }
@@ -48,8 +50,8 @@ const Modal: React.FC<ModalProps> = ({
   return (
     <div className="overlay" onClick={handleOverlayClick} ref={toRef}>
       <div className="pic-container">
-          <Carousel imgs={imgs}></Carousel>
-        </div>
+        <Carousel imgs={imgs}></Carousel>
+      </div>
       <div className="card">
         <img
           src={closeIcon}

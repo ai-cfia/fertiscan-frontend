@@ -46,7 +46,6 @@ class input {
 
 const MAX_CHAR_IN_ROW = 37;
 
-
 const FormPage = () => {
   // @ts-expect-error : setForm is going to be used when linked to db
   // eslint-disable-next-line
@@ -109,10 +108,6 @@ const FormPage = () => {
     }[]
   >([]);
 
-    // Load data from environment variable or local JSON file
-    const [useLocalData, setUseLocalData] = useState(process.env.REACT_APP_ACTIVATE_USING_JSON);
-
-    
   const [data, setData] = useState<dataObject>(
     new dataObject([
       new section("Company information", "company", [
@@ -215,7 +210,7 @@ const FormPage = () => {
     return (
       <div className="input-container">
         <label htmlFor={parent.label + "-" + inputInfo.label}>
-          {parent.label.charAt(0).toUpperCase() + parent.label.slice(1)} {" "}
+          {parent.label.charAt(0).toUpperCase() + parent.label.slice(1)}{" "}
           {inputInfo.label.replace(/_/gi, " ")} :
         </label>
         <div className="textbox-container">
@@ -223,7 +218,7 @@ const FormPage = () => {
             id={parent.label + "-" + inputInfo.label}
             ref={
               textareas.find(
-                (obj) => obj.label === parent.label + inputInfo.label
+                (obj) => obj.label === parent.label + inputInfo.label,
               )?.ref
             }
             value={inputInfo.value}
@@ -250,18 +245,23 @@ const FormPage = () => {
             .reduce((sum, current) => sum + current) >
           3 && (
           <div className="show-more-container">
-            <label className="open-icon" onClick={() => {
-              const modal = modals.find(
-                (modalObj) => modalObj.label === parent.label + inputInfo.label
-              );
-              modal?.ref.current?.classList.add("active");
-            }}>
+            <label
+              className="open-icon"
+              onClick={() => {
+                const modal = modals.find(
+                  (modalObj) =>
+                    modalObj.label === parent.label + inputInfo.label,
+                );
+                modal?.ref.current?.classList.add("active");
+              }}
+            >
               Show more
             </label>
             <Modal
               toRef={
                 modals.find(
-                  (modalObj) => modalObj.label === parent.label + inputInfo.label
+                  (modalObj) =>
+                    modalObj.label === parent.label + inputInfo.label,
                 )!.ref
               }
               text={inputInfo.value}
@@ -271,10 +271,11 @@ const FormPage = () => {
                 inputInfo.value = event.target.value.toString();
                 setData(data.copy());
               }}
-              imgs= {urls}
+              imgs={urls}
               close={() => {
                 const modal = modals.find(
-                  (modalObj) => modalObj.label === parent.label + inputInfo.label
+                  (modalObj) =>
+                    modalObj.label === parent.label + inputInfo.label,
                 );
                 modal?.ref.current?.classList.remove("active");
               }}

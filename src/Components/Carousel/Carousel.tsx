@@ -1,5 +1,6 @@
 import React, { useState } from "react";
 import "./Carousel.css";
+import ImageZoomInOut from "../ImageZoomInOut/ImageZoomInOut";
 interface CarouselProps {
   imgs: {
     url: string;
@@ -45,11 +46,15 @@ const Carousel: React.FC<CarouselProps> = ({ imgs }) => {
         <a className="prev" onClick={() => selectImg(currImg - 1)}>
           &#10094;
         </a>
-        <img
+        <ImageZoomInOut
+              className="main-img"
+              imageUrl={imgList.length > 0 ? imgList[currImg].url : ""} 
+              alt="no picture"/>
+        {/*<img
           id="main-img"
           src={imgList.length > 0 ? imgList[currImg].url : ""}
           alt={imgList.length > 0 ? imgList[currImg].title : "No picture"}
-        ></img>
+        ></img>*/}
         <a className="next" onClick={() => selectImg(currImg + 1)}>
           &#10095;
         </a>
