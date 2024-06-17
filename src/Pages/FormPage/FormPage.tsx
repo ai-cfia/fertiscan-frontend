@@ -1,7 +1,6 @@
 import React, { useState, useRef, useEffect, StrictMode } from "react";
 import "./FormPage.css";
 import Modal from "../../Components/Modal/Modal";
-import openIcon from "../../assets/dot-menu.svg";
 import Carousel from "../../Components/Carousel/Carousel";
 import { useLocation } from "react-router-dom";
 
@@ -216,7 +215,7 @@ const FormPage = () => {
     return (
       <div className="input-container">
         <label htmlFor={parent.label + "-" + inputInfo.label}>
-          {parent.label.charAt(0).toUpperCase() + parent.label.slice(1)}{" "}
+          {parent.label.charAt(0).toUpperCase() + parent.label.slice(1)} {" "}
           {inputInfo.label.replace(/_/gi, " ")} :
         </label>
         <div className="textbox-container">
@@ -224,88 +223,64 @@ const FormPage = () => {
             id={parent.label + "-" + inputInfo.label}
             ref={
               textareas.find(
-                (obj) => obj.label == parent.label + inputInfo.label,
+                (obj) => obj.label === parent.label + inputInfo.label
               )?.ref
             }
             value={inputInfo.value}
             onChange={(event: React.ChangeEvent<HTMLTextAreaElement>) => {
               console.log(event);
               const current = event.target as HTMLTextAreaElement;
-              {
-                /* 
-                  - first we count the number line break 
-                  - then for each piece of text (separated by a line break)
-                      we check if this piece is too long for a line
-                */
-              }
-              const shown_lines =
-                current.value.split("\n").length +
-                current.value
-                  .split("\n")
-                  .map((line) => Math.floor(line.length / MAX_CHAR_IN_ROW))
-                  .reduce((sum, current) => sum + current);
-
-              if (shown_lines < current.rows && current.rows > 1) {
-                current.rows = Math.max(shown_lines, 1);
-              }
-              if (shown_lines > current.rows && current.rows < 3) {
-                current.rows = Math.min(shown_lines, 3);
-              }
               resizeTextarea(current);
               inputInfo.value = event.target.value;
               setData(data.copy());
             }}
             onInput={(event: React.FormEvent<HTMLTextAreaElement>) => {
               const current = event.target as HTMLTextAreaElement;
-              resizeTextarea(current); // Ajoutez cet appel ici
+              resizeTextarea(current); // Added here
             }}
             className="text-box"
             rows={1}
           />
-          {/* same as shown_lines */}
-          {inputInfo.value.split("\n").length +
-            inputInfo.value
-              .split("\n")
-              .map((line) => Math.floor(line.length / MAX_CHAR_IN_ROW))
-              .reduce((sum, current) => sum + current) >
-            3 && (
-            <img
-              src={openIcon}
-              alt="Ouvrir l'overlay"
-              className="open-icon"
-              onClick={() => {
-                modals
-                  .find(
-                    (modalObj) =>
-                      modalObj.label === parent.label + inputInfo.label,
-                  )
-                  ?.ref.current?.classList.add("active");
+        </div>
+        {/* Show more functionality moved here for better separation */}
+        {inputInfo.value.split("\n").length +
+          inputInfo.value
+            .split("\n")
+            .map((line) => Math.floor(line.length / MAX_CHAR_IN_ROW))
+            .reduce((sum, current) => sum + current) >
+          3 && (
+          <div className="show-more-container">
+            <label className="open-icon" onClick={() => {
+              const modal = modals.find(
+                (modalObj) => modalObj.label === parent.label + inputInfo.label
+              );
+              modal?.ref.current?.classList.add("active");
+            }}>
+              Show more
+            </label>
+            <Modal
+              toRef={
+                modals.find(
+                  (modalObj) => modalObj.label === parent.label + inputInfo.label
+                )!.ref
+              }
+              text={inputInfo.value}
+              handleTextChange={(event: {
+                target: { value: React.SetStateAction<string> };
+              }) => {
+                inputInfo.value = event.target.value.toString();
+                setData(data.copy());
+              }}
+              imgs= {urls}
+              close={() => {
+                const modal = modals.find(
+                  (modalObj) => modalObj.label === parent.label + inputInfo.label
+                );
+                modal?.ref.current?.classList.remove("active");
               }}
             />
-          )}
-          <Modal
-            toRef={
-              modals.find(
-                (modalObj) => modalObj.label === parent.label + inputInfo.label,
-              )!.ref
-            }
-            text={inputInfo.value}
-            handleTextChange={(event: {
-              target: { value: React.SetStateAction<string> };
-            }) => {
-              inputInfo.value = event.target.value.toString();
-              setData(data.copy());
-            }}
-            close={() =>
-              modals
-                .find(
-                  (modalObj) =>
-                    modalObj.label === parent.label + inputInfo.label,
-                )
-                ?.ref.current!.classList.remove("active")
-            }
-          />
-        </div>
+          </div>
+        )}
       </div>
     );
   };
