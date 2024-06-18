@@ -1,7 +1,7 @@
 import "./ProgressBar.css";
 
 interface Section {
-  state: any;
+  state: string;
   label: string; // The label for the section
 }
 
