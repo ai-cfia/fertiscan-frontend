@@ -1,6 +1,6 @@
 .progress-bar-vertical {
     flex-direction: column;
-    width: 30px;
+    width: 35px;
     height: 120%;
     border-radius: 15px;
     overflow: hidden;

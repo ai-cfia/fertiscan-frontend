@@ -251,6 +251,7 @@ const FormPage = () => {
           {parent.label.charAt(0).toUpperCase() + parent.label.slice(1)}{" "}
           {inputInfo.label.replace(/_/gi, " ")} :
         </label>
+        <div className="div-grid-show-more">
         <div className="textbox-container">
           <textarea
             id={parent.label + "-" + inputInfo.label}
@@ -306,9 +307,7 @@ const FormPage = () => {
                 );
                 modal?.ref.current?.classList.add("active");
               }}
-            >
-              Show more
-            </label>
+            >Show more</label>
             <Modal
               toRef={
                 modals.find(
@@ -334,6 +333,7 @@ const FormPage = () => {
             />
           </div>
         )}
+      </div>
       </div>
     );
   };

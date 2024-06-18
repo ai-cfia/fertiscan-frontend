@@ -41,6 +41,7 @@ const Carousel: React.FC<CarouselProps> = ({ imgs }) => {
   };
 
   return (
+    <div>
     <div className="carousel-wrapper">
       <div className="curr-img">
         <a className="prev" onClick={() => selectImg(currImg - 1)}>
@@ -56,19 +57,20 @@ const Carousel: React.FC<CarouselProps> = ({ imgs }) => {
         </a>
       </div>
       <div className="carousel">
-        {imgList.map((img: imgObject) => {
-          return (
-            <img
-              src={img.url}
-              className={
-                "carousel-img" + (img.index == currImg ? " current" : " ")
-              }
-              alt={imgList[currImg].title}
-              key={img.index}
-              onClick={() => selectImg(img.index)}
-            ></img>
-          );
-        })}
+    {imgList.map((img: imgObject) => {
+      return (
+        <img
+          src={img.url}
+          className={
+            "carousel-img" + (img.index == currImg ? " current" : " ")
+          }
+          alt={imgList[currImg].title}
+          key={img.index}
+          onClick={() => selectImg(img.index)}
+        ></img>
+      );
+    })}
+  </div>
       </div>
     </div>
   );
