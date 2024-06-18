@@ -1,18 +1,18 @@
-textarea{
-    transition: box-shadow 1s ease-in-out;
+textarea {
+  transition: box-shadow 1s ease-in-out;
 }
-textarea:disabled{
-    background-color: #4e4e4e;
-    border: solid 2px black;
+textarea:disabled {
+  background-color: #4e4e4e;
+  border: solid 2px black;
 }
 
-@media (prefers-color-schem: light){
-    textarea{
-        box-shadow: 0 0 0 0 black;
-    }
+@media (prefers-color-schem: light) {
+  textarea {
+    box-shadow: 0 0 0 0 black;
+  }
 }
-@media (prefers-color-schem: dark){
-    textarea{
-        box-shadow: 0 0 0 0 white;
-    }
+@media (prefers-color-schem: dark) {
+  textarea {
+    box-shadow: 0 0 0 0 white;
+  }
 }

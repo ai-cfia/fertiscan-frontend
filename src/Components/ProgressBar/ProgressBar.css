@@ -1,19 +1,18 @@
 .progress-bar-vertical {
-    flex-direction: column;
-    width: 30px;
-    height: 120%;
-    border-radius: 15px;
-    overflow: hidden;
-    position: sticky;
-    margin-top: 50px;
-    }
+  flex-direction: column;
+  width: 30px;
+  height: 120%;
+  border-radius: 15px;
+  overflow: hidden;
+  position: sticky;
+  margin-top: 50px;
+}
 
 .section {
-    background-color: rgb(185, 185, 185);
-    flex: 1;
-    }
-    
+  background-color: rgb(185, 185, 185);
+  flex: 1;
+}
 
-.section.approved{
-    background-color: rgb(18, 178, 18);
+.section.approved {
+  background-color: rgb(18, 178, 18);
 }

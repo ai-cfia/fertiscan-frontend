@@ -1,15 +1,12 @@
-
 import React, { useState, useRef, useEffect, StrictMode } from "react";
 import "./FormPage.css";
 import Carousel from "../../Components/Carousel/Carousel";
 import { useLocation } from "react-router-dom";
-import ProgressBar from '../../Components/ProgressBar/ProgressBar';
+import ProgressBar from "../../Components/ProgressBar/ProgressBar";
 import SectionComponent from "../../Components/Section/Section.tsx";
 import Section from "../../Model/Section-Model.tsx";
 import Input from "../../Model/Input-Model.tsx";
-import Data from "../../Model/Data-Model.tsx";                 
-
-
+import Data from "../../Model/Data-Model.tsx";
 
 const FormPage = () => {
   // @ts-expect-error : setForm is going to be used when linked to db
@@ -76,7 +73,7 @@ const FormPage = () => {
   const [data, setData] = useState<Data>(
     new Data([
       new Section("Company information", "company", [
-        new Input("name", form.company_name,"company" ),
+        new Input("name", form.company_name, "company"),
         new Input("address", form.company_address, "company"),
         new Input("website", form.company_website, "company"),
         new Input("phone_number", form.company_phone_number, "company"),
@@ -85,68 +82,134 @@ const FormPage = () => {
         new Input("name", form.manufacturer_name, "manufacturer"),
         new Input("address", form.manufacturer_address, "manufacturer"),
         new Input("website", form.manufacturer_website, "manufacturer"),
-        new Input("phone_number", form.manufacturer_phone_number, "manufacturer"),
+        new Input(
+          "phone_number",
+          form.manufacturer_phone_number,
+          "manufacturer",
+        ),
       ]),
       new Section("Fertiliser information", "fertiliser", [
         new Input("name", form.fertiliser_name, "fertiliser"),
-        new Input("registration_number", form.fertiliser_registration_number, "fertiliser"),
+        new Input(
+          "registration_number",
+          form.fertiliser_registration_number,
+          "fertiliser",
+        ),
         new Input("lot_number", form.fertiliser_lot_number, "fertiliser"),
         new Input("npk", form.fertiliser_npk, "fertiliser"),
-        new Input("precautionary_fr", form.fertiliser_precautionary_fr,"fertiliser"),
-        new Input("precautionary_en", form.fertiliser_precautionary_en,"fertiliser"),
-        new Input("instructions_fr", form.fertiliser_instructions_fr,"fertiliser"),
-        new Input("instructions_en", form.fertiliser_instructions_en,"fertiliser"),
-        new Input("ingredients_fr", form.fertiliser_ingredients_fr,"fertiliser"),
-        new Input("ingredients_en", form.fertiliser_ingredients_en,"fertiliser"),
-        new Input("specifications_fr", form.fertiliser_specifications_fr,"fertiliser"),
-        new Input("specifications_en", form.fertiliser_specifications_en,"fertiliser"),
-        new Input("cautions_fr", form.fertiliser_cautions_fr,"fertiliser"),
-        new Input("cautions_en", form.fertiliser_cautions_en,"fertiliser"),
-        new Input("recommendation_fr", form.fertiliser_recommendation_fr,"fertiliser"),
-        new Input("recommendation_en", form.fertiliser_recommendation_en,"fertiliser"),
-        new Input("first_aid_fr", form.fertiliser_first_aid_fr,"fertiliser"),
-        new Input("first_aid_en", form.fertiliser_first_aid_en,"fertiliser"),
-        new Input("warranty_fr", form.fertiliser_warranty_fr,"fertiliser"),
-        new Input("warranty_en", form.fertiliser_warranty_en,"fertiliser"),
-        new Input("guaranteed_analysis", form.fertiliser_guaranteed_analysis,"fertiliser"),
+        new Input(
+          "precautionary_fr",
+          form.fertiliser_precautionary_fr,
+          "fertiliser",
+        ),
+        new Input(
+          "precautionary_en",
+          form.fertiliser_precautionary_en,
+          "fertiliser",
+        ),
+        new Input(
+          "instructions_fr",
+          form.fertiliser_instructions_fr,
+          "fertiliser",
+        ),
+        new Input(
+          "instructions_en",
+          form.fertiliser_instructions_en,
+          "fertiliser",
+        ),
+        new Input(
+          "ingredients_fr",
+          form.fertiliser_ingredients_fr,
+          "fertiliser",
+        ),
+        new Input(
+          "ingredients_en",
+          form.fertiliser_ingredients_en,
+          "fertiliser",
+        ),
+        new Input(
+          "specifications_fr",
+          form.fertiliser_specifications_fr,
+          "fertiliser",
+        ),
+        new Input(
+          "specifications_en",
+          form.fertiliser_specifications_en,
+          "fertiliser",
+        ),
+        new Input("cautions_fr", form.fertiliser_cautions_fr, "fertiliser"),
+        new Input("cautions_en", form.fertiliser_cautions_en, "fertiliser"),
+        new Input(
+          "recommendation_fr",
+          form.fertiliser_recommendation_fr,
+          "fertiliser",
+        ),
+        new Input(
+          "recommendation_en",
+          form.fertiliser_recommendation_en,
+          "fertiliser",
+        ),
+        new Input("first_aid_fr", form.fertiliser_first_aid_fr, "fertiliser"),
+        new Input("first_aid_en", form.fertiliser_first_aid_en, "fertiliser"),
+        new Input("warranty_fr", form.fertiliser_warranty_fr, "fertiliser"),
+        new Input("warranty_en", form.fertiliser_warranty_en, "fertiliser"),
+        new Input(
+          "guaranteed_analysis",
+          form.fertiliser_guaranteed_analysis,
+          "fertiliser",
+        ),
         new Input(
           "nutrient_in_guaranteed_analysis",
           form.nutrient_in_guaranteed_analysis,
-          "fertiliser"
+          "fertiliser",
         ),
         new Input(
           "percentage_in_guaranteed_analysis",
           form.percentage_in_guaranteed_analysis,
-          "fertiliser"
+          "fertiliser",
         ),
-        new Input("weight", form.fertiliser_weight,"fertiliser"),
-        new Input("density", form.fertiliser_density,"fertiliser"),
-        new Input("volume", form.fertiliser_volume,"fertiliser"),
+        new Input("weight", form.fertiliser_weight, "fertiliser"),
+        new Input("density", form.fertiliser_density, "fertiliser"),
+        new Input("volume", form.fertiliser_volume, "fertiliser"),
         new Input(
           "label_all_other_text_fr",
           form.fertiliser_label_all_other_text_fr,
-          "fertiliser"
+          "fertiliser",
         ),
-        new Input("all_other_text_fr_1", form.all_other_text_fr_1, "fertiliser"),
-        new Input("all_other_text_fr_2", form.all_other_text_fr_2,"fertiliser"),
+        new Input(
+          "all_other_text_fr_1",
+          form.all_other_text_fr_1,
+          "fertiliser",
+        ),
+        new Input(
+          "all_other_text_fr_2",
+          form.all_other_text_fr_2,
+          "fertiliser",
+        ),
         new Input(
           "label_all_other_text_en",
           form.fertiliser_label_all_other_text_en,
-          "fertiliser"
+          "fertiliser",
         ),
-        new Input("all_other_text_en_1", form.all_other_text_en_1,"fertiliser"),
-        new Input("all_other_text_en_2", form.all_other_text_en_2,"fertiliser"),
+        new Input(
+          "all_other_text_en_1",
+          form.all_other_text_en_1,
+          "fertiliser",
+        ),
+        new Input(
+          "all_other_text_en_2",
+          form.all_other_text_en_2,
+          "fertiliser",
+        ),
       ]),
     ]),
   );
-
-  
 
   const modals: {
     label: string;
     ref: React.MutableRefObject<HTMLDivElement | null>;
   }[] = [];
-
+  // eslint-disable-next-line
   const textareas: {
     label: string;
     ref: React.MutableRefObject<HTMLTextAreaElement | null>;
@@ -206,21 +269,20 @@ const FormPage = () => {
   useEffect(() => {
     // load imgs for the carousel
     const tmpUrls: { url: string; title: string }[] = [];
-      files.forEach((file) => {
-        const reader = new FileReader();
-        reader.onload = (e) => {
-          tmpUrls.push({
-            url: e!.target!.result as string,
-            title: file.name,
-          });
-        };
-        reader.onloadend = () => setUrls(tmpUrls);
-        reader.readAsDataURL(file);
+    files.forEach((file) => {
+      const reader = new FileReader();
+      reader.onload = (e) => {
+        tmpUrls.push({
+          url: e!.target!.result as string,
+          title: file.name,
+        });
+      };
+      reader.onloadend = () => setUrls(tmpUrls);
+      reader.readAsDataURL(file);
     });
 
-    
     if (process.env.REACT_APP_ACTIVATE_USING_JSON == "true") {
-    // skip backend take answer.json as answer
+      // skip backend take answer.json as answer
       fetch("/answer.json").then((res) =>
         res.json().then((response) => {
           data.sections.forEach((section) => {
@@ -231,38 +293,37 @@ const FormPage = () => {
                   : "";
             });
           });
-        updateData()
-          
+          updateData();
         }),
       );
     } else {
-    // fetch backend
-      analyse().then((response) => {
-        data.sections.forEach((section) => {
-          section.inputs.forEach((input) => {
-            input.value =
-              typeof response[section.label + "_" + input.label] ==
-              "string"
-                ? response[section.label + "_" + input.label]
-                : "";
+      // fetch backend
+      analyse()
+        .then((response) => {
+          data.sections.forEach((section) => {
+            section.inputs.forEach((input) => {
+              input.value =
+                typeof response[section.label + "_" + input.label] == "string"
+                  ? response[section.label + "_" + input.label]
+                  : "";
+            });
           });
+          updateData();
+        })
+        .catch((e) => {
+          setLoading(false);
+          setError(e);
+          console.log(e);
         });
-        updateData()
-      }).catch((e) => {
-        setLoading(false);
-        setError(e);
-        console.log(e);
-      });
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
-      
-  const updateData=()=>{
-  // update data
+
+  const updateData = () => {
+    // update data
     setData(data.copy());
     setLoading(false);
     console.log("just before update");
-
 
     //------------------------------ does this works and does it need to ------------------------------//
     // TODO
@@ -277,23 +338,24 @@ const FormPage = () => {
       nativeTAValueSetter!.call(elem, elem.value.slice(0, -1));
       elem.dispatchEvent(event);
     });
-  }
-  
-  const inputStates = data.sections.flatMap((section) =>   
-    section.inputs.filter(input=>input.value.length>0).map((input) => ({  
-      label: input.id
-    }))
+  };
+
+  const inputStates = data.sections.flatMap((section) =>
+    section.inputs
+      .filter((input) => input.value.length > 0)
+      .map((input) => ({
+        label: input.id,
+      })),
   );
 
-const validateFormInputs = () => {  
-  console.log('Validating form inputs... ');
-  let allApproved = false;  
-  // Itérer à travers chaque section et chaque input pour vérifier et mettre à jour l'état d'approbation  
-    
-  setData(data.copy()); // Mettre à jour l'état pour refléter les changements  
-  return allApproved;  
-};    
-    
+  const validateFormInputs = () => {
+    console.log("Validating form inputs... ");
+    const allApproved = false;
+    // Itérer à travers chaque section et chaque input pour vérifier et mettre à jour l'état d'approbation
+
+    setData(data.copy()); // Mettre à jour l'état pour refléter les changements
+    return allApproved;
+  };
 
   useEffect(() => {
     textareas.forEach((textareaObj) => {
@@ -301,14 +363,15 @@ const validateFormInputs = () => {
         resizeTextarea(textareaObj.ref.current);
       }
     });
+    // eslint-disable-next-line
   }, [textareas]);
 
-  const handleDataChange=(newSection : Section)=>{
-    let new_data = data.copy();
-    new_data.sections.find(cur=>cur.label==newSection.label)!=newSection;
+  const handleDataChange = (newSection: Section) => {
+    const new_data = data.copy();
+    new_data.sections.find((cur) => cur.label == newSection.label) !=
+      newSection;
     setData(new_data);
-  }
-
+  };
 
   return (
     <StrictMode>
@@ -326,18 +389,30 @@ const validateFormInputs = () => {
             </div>
           ) : (
             <div>
-              {[...data.sections].map((sectionInfo: Section,key:number) => {
-                return <SectionComponent key={key} sectionInfo={sectionInfo} textareas={textareas} modals={modals} propagateChange={handleDataChange}></SectionComponent>
+              {[...data.sections].map((sectionInfo: Section, key: number) => {
+                return (
+                  <SectionComponent
+                    key={key}
+                    sectionInfo={sectionInfo}
+                    textareas={textareas}
+                    modals={modals}
+                    propagateChange={handleDataChange}
+                  ></SectionComponent>
+                );
               })}
-               <button className='button' onClick={validateFormInputs}>Submit</button>  
+              <button className="button" onClick={validateFormInputs}>
+                Submit
+              </button>
             </div>
           )}
         </div>
-        {!loading?(
-        <div className="progress-wrapper">    
-          <ProgressBar sections={inputStates} />    
-        </div>
-        ):(<></>)}
+        {!loading ? (
+          <div className="progress-wrapper">
+            <ProgressBar sections={inputStates} />
+          </div>
+        ) : (
+          <></>
+        )}
       </div>
     </StrictMode>
   );

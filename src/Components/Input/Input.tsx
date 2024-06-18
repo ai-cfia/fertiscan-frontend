@@ -1,4 +1,4 @@
-import "./Input.css"
+import "./Input.css";
 import React, { useState } from "react";
 import Input from "../../Model/Input-Model";
 import Section from "../../Model/Section-Model";
@@ -15,7 +15,7 @@ interface InputProps {
   inputInfo: Input;
   textarea: React.MutableRefObject<HTMLTextAreaElement | null>;
   modal: React.MutableRefObject<HTMLDivElement | null>;
-  propagateChange: (inputInfo:Input)=>void;
+  propagateChange: (inputInfo: Input) => void;
 }
 
 const MAX_CHAR_IN_ROW = 37;
@@ -41,16 +41,16 @@ const InputComponent: React.FC<InputProps> = ({
     console.log("modified: ", inputInfo.label);
     setIsActive(true);
     inputInfo.disabled = false;
-    FormClickActions.emit("ModifyClick", inputInfo)
+    FormClickActions.emit("ModifyClick", inputInfo);
     setTimeout(() => setIsActive(false), 400);
   };
 
   //Need to be modified to "modified" but color dont work
-  const handleClick_Approve = (inputInfo: any) => () => {
+  const handleClick_Approve = (inputInfo: Input) => () => {
     console.log("approved: ", inputInfo.label);
     setIsActive(true);
     inputInfo.disabled = true;
-    FormClickActions.emit("ApproveClick",inputInfo)
+    FormClickActions.emit("ApproveClick", inputInfo);
     setTimeout(() => setIsActive(false), 400);
   };
 

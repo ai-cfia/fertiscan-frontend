@@ -11,17 +11,17 @@ function ImageZoomInOut({ imageUrl, className, onClick }: ImageProps) {
   const [scale, setScale] = useState(1);
   const [position, setPosition] = useState({ x: 0, y: 0 });
   const imageRef = useRef(null);
-  const intervalRef = useRef<NodeJS.Timeout | null>(null)||scale>1;
+  const intervalRef = useRef<NodeJS.Timeout | null>(null) || scale > 1;
 
   const handleHoldZoomIn = () => {
-    if (intervalRef.current && (scale + 0.05 < 1)) return;
+    if (intervalRef.current && scale + 0.05 < 1) return;
     intervalRef.current = setInterval(() => {
       handleZoomIn();
     }, 1);
   };
 
   const handleHoldZoomOut = () => {
-    if (intervalRef.current && (scale + 0.05 < 1)) return;
+    if (intervalRef.current && scale + 0.05 < 1) return;
     intervalRef.current = setInterval(() => {
       handleZoomOut();
     }, 1);
@@ -36,19 +36,19 @@ function ImageZoomInOut({ imageUrl, className, onClick }: ImageProps) {
 
   const handleZoomIn = () => {
     if (scale + 0.05 > 1) {
-        setScale((scale) => scale + 0.05);
-    }else{
-        setScale(1);
-        handleHoldZoomInOutStop();
+      setScale((scale) => scale + 0.05);
+    } else {
+      setScale(1);
+      handleHoldZoomInOutStop();
     }
   };
 
   const handleZoomOut = () => {
     if (scale - 0.05 > 1) {
-        setScale((scale) => scale - 0.05);
-    }else{
-        setScale(1);
-        handleHoldZoomInOutStop();
+      setScale((scale) => scale - 0.05);
+    } else {
+      setScale(1);
+      handleHoldZoomInOutStop();
     }
   };
 
@@ -100,10 +100,20 @@ function ImageZoomInOut({ imageUrl, className, onClick }: ImageProps) {
       onClick={onClick}
     >
       <div className={`btn-container ${imageRef.current ? "hidden" : ""}`}>
-        <button onClick={handleZoomIn} onMouseDown={handleHoldZoomIn} onMouseUp={handleHoldZoomInOutStop} onMouseLeave={handleHoldZoomInOutStop}>
+        <button
+          onClick={handleZoomIn}
+          onMouseDown={handleHoldZoomIn}
+          onMouseUp={handleHoldZoomInOutStop}
+          onMouseLeave={handleHoldZoomInOutStop}
+        >
           <span className="material-symbols-outlined">+</span>
         </button>
-        <button onClick={handleZoomOut} onMouseDown={handleHoldZoomOut} onMouseUp={handleHoldZoomInOutStop} onMouseLeave={handleHoldZoomInOutStop}>
+        <button
+          onClick={handleZoomOut}
+          onMouseDown={handleHoldZoomOut}
+          onMouseUp={handleHoldZoomInOutStop}
+          onMouseLeave={handleHoldZoomInOutStop}
+        >
           <span className="material-symbols-outlined">-</span>
         </button>
       </div>

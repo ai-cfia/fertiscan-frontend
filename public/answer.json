@@ -30,22 +30,16 @@
   "fertiliser_danger_fr": "Provoque une irritation de la peau. Provoque une irritation des yeux. Peut irriter les voies respiratoires.",
   "fertiliser_danger_en": "Causes skin irritation. Causes serious eye irritation. May cause respiratory irritation.",
   "fertiliser_guaranteed_analysis": {
-      "nutrient_in_guaranteed_analysis": [
-          "Sulphur (S)",
-          "Zinc (Zn)"
-      ],
-      "percentage_in_guaranteed_analysis": [
-          "3.00%",
-          "20.00%"
-      ]
+    "nutrient_in_guaranteed_analysis": ["Sulphur (S)", "Zinc (Zn)"],
+    "percentage_in_guaranteed_analysis": ["3.00%", "20.00%"]
   },
   "fertiliser_weight": "2000 lbs (907kg)",
   "fertiliser_density": null,
   "fertiliser_volume": null,
   "fertiliser_label_all_other_text_fr": {
-      "other_text_fr_1": "| Chemical Name: Synonym(s): Product Code No: | Classified in Accordance with Appendix C OSHA Hazaro Communicator Standard 20 CFR 1910:1200 | | Classé conformément à TArése C OSHA Hazart Communication Standard 29 CFR 1910 1200 |\n|| Granular Zinc 20% \n|| None known| | Granulaire Zinc 20% || Aucun coena. 27M240000KDD:2ZN2A20008 50, 2ZN2A2000TO0, 2ZN2A2200B50, 22N2A2205T00; 2ZN2A2500B 50 | Codo prodali No:  2ZN2AD000K00, 2ZN2A2000850, 2ZN2A2600T00, 2ZN2A2200350 2ZN2A2200700. 2ZN2A2500850 |"
+    "other_text_fr_1": "| Chemical Name: Synonym(s): Product Code No: | Classified in Accordance with Appendix C OSHA Hazaro Communicator Standard 20 CFR 1910:1200 | | Classé conformément à TArése C OSHA Hazart Communication Standard 29 CFR 1910 1200 |\n|| Granular Zinc 20% \n|| None known| | Granulaire Zinc 20% || Aucun coena. 27M240000KDD:2ZN2A20008 50, 2ZN2A2000TO0, 2ZN2A2200B50, 22N2A2205T00; 2ZN2A2500B 50 | Codo prodali No:  2ZN2AD000K00, 2ZN2A2000850, 2ZN2A2600T00, 2ZN2A2200350 2ZN2A2200700. 2ZN2A2500850 |"
   },
   "fertiliser_label_all_other_text_en": {
-      "other_text_en_1": "| Chemical Name: Synonym(s): Product Code No: | Classified in Accordance with Appendix C OSHA Hazaro Communicator Standard 20 CFR 1910:1200 | | Classé conformément à TArése C OSHA Hazart Communication Standard 29 CFR 1910 1200 |\n|| Granular Zinc 20% \n|| None known| | Granulaire Zinc 20% || Aucun coena. 27M240000KDD:2ZN2A20008 50, 2ZN2A2000TO0, 2ZN2A2200B50, 22N2A2205T00; 2ZN2A2500B 50 | Codo prodali No:  2ZN2AD000K00, 2ZN2A2000850, 2ZN2A2600T00, 2ZN2A2200350 2ZN2A2200700. 2ZN2A2500850 |"
+    "other_text_en_1": "| Chemical Name: Synonym(s): Product Code No: | Classified in Accordance with Appendix C OSHA Hazaro Communicator Standard 20 CFR 1910:1200 | | Classé conformément à TArése C OSHA Hazart Communication Standard 29 CFR 1910 1200 |\n|| Granular Zinc 20% \n|| None known| | Granulaire Zinc 20% || Aucun coena. 27M240000KDD:2ZN2A20008 50, 2ZN2A2000TO0, 2ZN2A2200B50, 22N2A2205T00; 2ZN2A2500B 50 | Codo prodali No:  2ZN2AD000K00, 2ZN2A2000850, 2ZN2A2600T00, 2ZN2A2200350 2ZN2A2200700. 2ZN2A2500850 |"
   }
 }
