@@ -395,7 +395,18 @@ const FormPage = () => {
   };
 
   useEffect(() => {
-    console.log(process.env);
+    const tmpUrls: { url: string; title: string }[] = [];
+      files.forEach((file) => {
+        const reader = new FileReader();
+        reader.onload = (e) => {
+          tmpUrls.push({
+            url: e!.target!.result as string,
+            title: file.name,
+          });
+        };
+        reader.onloadend = () => setUrls(tmpUrls);
+        reader.readAsDataURL(file);
+      });
     if (process.env.REACT_APP_ACTIVATE_USING_JSON == "true") {
       fetch("/answer.json").then((res) =>
         res.json().then((response) => {
@@ -426,19 +437,6 @@ const FormPage = () => {
         }),
       );
     } else {
-      const tmpUrls: { url: string; title: string }[] = [];
-      files.forEach((file) => {
-        const reader = new FileReader();
-        reader.onload = (e) => {
-          tmpUrls.push({
-            url: e!.target!.result as string,
-            title: file.name,
-          });
-        };
-        reader.onloadend = () => setUrls(tmpUrls);
-        reader.readAsDataURL(file);
-      });
-
       if (!uploadStarted) {
         startUpload(true);
         upload_all()

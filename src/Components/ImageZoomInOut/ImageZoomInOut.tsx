@@ -9,17 +9,6 @@ interface ImageProps {
 }
 
 function ImageZoomInOut({ imageUrl, className, onClick, alt}: ImageProps) {
-  
-  const Controls = () => {
-    const { zoomIn, zoomOut, resetTransform } = useControls();
-    return (
-      <>
-        <button onClick={() => zoomIn()}>Zoom In</button>
-        <button onClick={() => zoomOut()}>Zoom Out</button>
-        <button onClick={() => resetTransform()}>Reset</button>
-      </>
-    );
-  };
 
   return (
     <div onClick={onClick}>
