@@ -10,7 +10,6 @@ function JsonPage() {
   const files: File[] = location.state.data;
   const [uploadStarted, startUpload] = useState(false);
 
-
   const api_url = "https://shiny-goggles-75q6p5xj4wwfp6gg-5000.app.github.dev";
 
   const upload_all = async () => {
@@ -56,7 +55,7 @@ function JsonPage() {
     return data;
   };
   useEffect(() => {
-    console.log(uploadStarted)
+    console.log(uploadStarted);
     if (!uploadStarted) {
       startUpload(true);
       upload_all()

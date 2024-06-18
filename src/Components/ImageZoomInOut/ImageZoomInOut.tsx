@@ -1,4 +1,4 @@
-import { TransformWrapper, TransformComponent, useControls } from "react-zoom-pan-pinch";
+import { TransformWrapper, TransformComponent } from "react-zoom-pan-pinch";
 import "./ImageZoomInOut.css";
 
 interface ImageProps {
@@ -8,13 +8,12 @@ interface ImageProps {
   alt?: string; // Optional alt text
 }
 
-function ImageZoomInOut({ imageUrl, className, onClick, alt}: ImageProps) {
-
+function ImageZoomInOut({ imageUrl, className, onClick, alt }: ImageProps) {
   return (
     <div onClick={onClick}>
       <TransformWrapper pinch={{ step: 1000 }}>
         <TransformComponent>
-          <img src={imageUrl} alt="No Picture" className={className} />
+          <img src={imageUrl} alt={alt} className={className} />
         </TransformComponent>
       </TransformWrapper>
     </div>
