@@ -18,6 +18,13 @@ interface sectionPorps{
 
 
 const SectionComponent:React.FC<sectionPorps>=({sectionInfo, textareas, modals, propagateChange})=>{
+
+    const handleInputChange = (newInfo:Input)=>{
+        sectionInfo.inputs.find(cur=>cur.label==newInfo.label)!.value=newInfo.value
+        propagateChange(sectionInfo)
+    }
+
+
     if (
         sectionInfo.inputs
           .map((input) => input.value)
@@ -41,7 +48,7 @@ const SectionComponent:React.FC<sectionPorps>=({sectionInfo, textareas, modals, 
                 parent={sectionInfo}
                 textarea={textarea}
                 modal={modal}
-                propagateChange={propagateChange}
+                propagateChange={handleInputChange}
               />
             );
           })}

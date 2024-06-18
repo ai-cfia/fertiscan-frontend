@@ -4,16 +4,17 @@ import Section from "../../Model/Section-Model";
 
 import Modal from "../Modal/Modal";
 
-import openIcon from "../../assets/dot-menu.svg";
 import editIcon from "../../assets/edit1.svg";
 import acceptIcon from "../../assets/acceptIcon.svg";
+
+import { FormClickActions } from "../../Utils/EventChannels";
 
 interface InputProps {
   parent: Section;
   inputInfo: Input;
   textarea: React.MutableRefObject<HTMLTextAreaElement | null>;
   modal: React.MutableRefObject<HTMLDivElement | null>;
-  propagateChange: Function;
+  propagateChange: (inputInfo:Input)=>void;
 }
 
 const MAX_CHAR_IN_ROW = 37;
@@ -35,24 +36,20 @@ const InputComponent: React.FC<InputProps> = ({
   const [isActive, setIsActive] = useState(false);
 
   //Need to be modified to "approve" but color dont work
-  const handleClick_Modify = (inputInfo: any) => () => {
-    console.log("Approved: ", inputInfo.label);
+  const handleClick_Modify = (inputInfo: Input) => () => {
+    console.log("modified: ", inputInfo.label);
     setIsActive(true);
-    inputInfo.state = "approved";
     inputInfo.disabled = false;
-    inputInfo.approved = true;
-    propagateChange(inputInfo);
+    FormClickActions.emit("ModifyClick", inputInfo)
     setTimeout(() => setIsActive(false), 400);
   };
 
   //Need to be modified to "modified" but color dont work
   const handleClick_Approve = (inputInfo: any) => () => {
-    console.log("modified: ", inputInfo.label);
+    console.log("approved: ", inputInfo.label);
     setIsActive(true);
-    inputInfo.state = "modified";
     inputInfo.disabled = true;
-    inputInfo.approved = false;
-    propagateChange(inputInfo);
+    FormClickActions.emit("ApproveClick",inputInfo)
     setTimeout(() => setIsActive(false), 400);
   };
 
@@ -85,13 +82,13 @@ const InputComponent: React.FC<InputProps> = ({
         <div className="button-container">
           <button
             className={`button ${isActive ? "active" : ""}`}
-            onClick={handleClick_Modify(inputInfo)}
+            onClick={handleClick_Approve(inputInfo)}
           >
             <img src={acceptIcon} alt="Modifier" width="20" height="20" />
           </button>
           <button
             className={`button ${isActive ? "active" : ""}`}
-            onClick={handleClick_Approve(inputInfo)}
+            onClick={handleClick_Modify(inputInfo)}
           >
             <img src={editIcon} alt="Modifier" width="20" height="20" />
           </button>

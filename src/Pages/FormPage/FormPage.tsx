@@ -91,62 +91,66 @@ const FormPage = () => {
   const [data, setData] = useState<dataObject>(
     new dataObject([
       new Section("Company information", "company", [
-        new Input("name", form.company_name),
-        new Input("address", form.company_address),
-        new Input("website", form.company_website),
-        new Input("phone_number", form.company_phone_number),
+        new Input("name", form.company_name,"company" ),
+        new Input("address", form.company_address, "company"),
+        new Input("website", form.company_website, "company"),
+        new Input("phone_number", form.company_phone_number, "company"),
       ]),
       new Section("Manufacturer information", "manufacturer", [
-        new Input("name", form.manufacturer_name),
-        new Input("address", form.manufacturer_address),
-        new Input("website", form.manufacturer_website),
-        new Input("phone_number", form.manufacturer_phone_number),
+        new Input("name", form.manufacturer_name, "manufacturer"),
+        new Input("address", form.manufacturer_address, "manufacturer"),
+        new Input("website", form.manufacturer_website, "manufacturer"),
+        new Input("phone_number", form.manufacturer_phone_number, "manufacturer"),
       ]),
       new Section("Fertiliser information", "fertiliser", [
-        new Input("name", form.fertiliser_name),
-        new Input("registration_number", form.fertiliser_registration_number),
-        new Input("lot_number", form.fertiliser_lot_number),
-        new Input("npk", form.fertiliser_npk),
-        new Input("precautionary_fr", form.fertiliser_precautionary_fr),
-        new Input("precautionary_en", form.fertiliser_precautionary_en),
-        new Input("instructions_fr", form.fertiliser_instructions_fr),
-        new Input("instructions_en", form.fertiliser_instructions_en),
-        new Input("ingredients_fr", form.fertiliser_ingredients_fr),
-        new Input("ingredients_en", form.fertiliser_ingredients_en),
-        new Input("specifications_fr", form.fertiliser_specifications_fr),
-        new Input("specifications_en", form.fertiliser_specifications_en),
-        new Input("cautions_fr", form.fertiliser_cautions_fr),
-        new Input("cautions_en", form.fertiliser_cautions_en),
-        new Input("recommendation_fr", form.fertiliser_recommendation_fr),
-        new Input("recommendation_en", form.fertiliser_recommendation_en),
-        new Input("first_aid_fr", form.fertiliser_first_aid_fr),
-        new Input("first_aid_en", form.fertiliser_first_aid_en),
-        new Input("warranty_fr", form.fertiliser_warranty_fr),
-        new Input("warranty_en", form.fertiliser_warranty_en),
-        new Input("guaranteed_analysis", form.fertiliser_guaranteed_analysis),
+        new Input("name", form.fertiliser_name, "fertiliser"),
+        new Input("registration_number", form.fertiliser_registration_number, "fertiliser"),
+        new Input("lot_number", form.fertiliser_lot_number, "fertiliser"),
+        new Input("npk", form.fertiliser_npk, "fertiliser"),
+        new Input("precautionary_fr", form.fertiliser_precautionary_fr,"fertiliser"),
+        new Input("precautionary_en", form.fertiliser_precautionary_en,"fertiliser"),
+        new Input("instructions_fr", form.fertiliser_instructions_fr,"fertiliser"),
+        new Input("instructions_en", form.fertiliser_instructions_en,"fertiliser"),
+        new Input("ingredients_fr", form.fertiliser_ingredients_fr,"fertiliser"),
+        new Input("ingredients_en", form.fertiliser_ingredients_en,"fertiliser"),
+        new Input("specifications_fr", form.fertiliser_specifications_fr,"fertiliser"),
+        new Input("specifications_en", form.fertiliser_specifications_en,"fertiliser"),
+        new Input("cautions_fr", form.fertiliser_cautions_fr,"fertiliser"),
+        new Input("cautions_en", form.fertiliser_cautions_en,"fertiliser"),
+        new Input("recommendation_fr", form.fertiliser_recommendation_fr,"fertiliser"),
+        new Input("recommendation_en", form.fertiliser_recommendation_en,"fertiliser"),
+        new Input("first_aid_fr", form.fertiliser_first_aid_fr,"fertiliser"),
+        new Input("first_aid_en", form.fertiliser_first_aid_en,"fertiliser"),
+        new Input("warranty_fr", form.fertiliser_warranty_fr,"fertiliser"),
+        new Input("warranty_en", form.fertiliser_warranty_en,"fertiliser"),
+        new Input("guaranteed_analysis", form.fertiliser_guaranteed_analysis,"fertiliser"),
         new Input(
           "nutrient_in_guaranteed_analysis",
           form.nutrient_in_guaranteed_analysis,
+          "fertiliser"
         ),
         new Input(
           "percentage_in_guaranteed_analysis",
           form.percentage_in_guaranteed_analysis,
+          "fertiliser"
         ),
-        new Input("weight", form.fertiliser_weight),
-        new Input("density", form.fertiliser_density),
-        new Input("volume", form.fertiliser_volume),
+        new Input("weight", form.fertiliser_weight,"fertiliser"),
+        new Input("density", form.fertiliser_density,"fertiliser"),
+        new Input("volume", form.fertiliser_volume,"fertiliser"),
         new Input(
           "label_all_other_text_fr",
           form.fertiliser_label_all_other_text_fr,
+          "fertiliser"
         ),
-        new Input("all_other_text_fr_1", form.all_other_text_fr_1),
-        new Input("all_other_text_fr_2", form.all_other_text_fr_2),
+        new Input("all_other_text_fr_1", form.all_other_text_fr_1, "fertiliser"),
+        new Input("all_other_text_fr_2", form.all_other_text_fr_2,"fertiliser"),
         new Input(
           "label_all_other_text_en",
           form.fertiliser_label_all_other_text_en,
+          "fertiliser"
         ),
-        new Input("all_other_text_en_1", form.all_other_text_en_1),
-        new Input("all_other_text_en_2", form.all_other_text_en_2),
+        new Input("all_other_text_en_1", form.all_other_text_en_1,"fertiliser"),
+        new Input("all_other_text_en_2", form.all_other_text_en_2,"fertiliser"),
       ]),
     ]),
   );
@@ -185,36 +189,10 @@ const FormPage = () => {
     });
   });
 
-  
    
-        //Need to be modified to "approve" but color dont work 
-    const handleClick_Modify = (inputInfo: any) => () => {    
-      console.log('Approved: ', inputInfo.label);  
-      setIsActive(true);      
-      inputInfo.state = 'approved';      
-      inputInfo.disabled = false;
-      inputInfo.approved = true;  
-      setData(data.copy());      
-      setTimeout(() => setIsActive(false), 400);      
-    };  
-
-      //Need to be modified to "modified" but color dont work
-    const handleClick_Approve = (inputInfo: any) => () => {   
-      console.log('modified: ', inputInfo.label);  
-      setIsActive(true);      
-      inputInfo.state = 'modified';      
-      inputInfo.disabled = true;
-      inputInfo.approved = false;  
-      setData(data.copy());      
-      setTimeout(() => setIsActive(false), 400);      
-    };    
 
 
-  const sectionFactory = (sectionInfo: Section) => {
-    return <></>
-  };
-
-  const api_url = "http://127.0.0.1:5000";
+  const api_url = process.env.API_URLs;
 
   const poll_analyze = async () => {
     const formData = new FormData();
@@ -249,7 +227,7 @@ const FormPage = () => {
         };
         reader.onloadend = () => setUrls(tmpUrls);
         reader.readAsDataURL(file);
-      });
+    });
 
     console.log(process.env);
     if (process.env.REACT_APP_ACTIVATE_USING_JSON == "true") {
@@ -319,56 +297,32 @@ const FormPage = () => {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
       
-    const handleTextareaSelection = (parent: Section, inputInfo: Input, event: ChangeEvent<HTMLTextAreaElement>) => {  
-      inputInfo.value = event.target.value;   
-      
-      if (!inputInfo.approved) {
-        inputInfo.state ="non-modified"
-      }
-      else if(inputInfo.approved){  
-        inputInfo.state = 'approved';  
+  const handleTextareaSelection = (parent: Section, inputInfo: Input, event: ChangeEvent<HTMLTextAreaElement>) => {  
+    inputInfo.value = event.target.value;   
+    
 
-      } else if(inputInfo.value.length == 0){  //To be modified
-        inputInfo.state = 'empty'; 
-
-      }  else {  
-        inputInfo.state = 'modified';  
-      }
-      assessInputState(inputInfo);
-      
-      setData(data.copy());  
-    };  
+    assessInputState(inputInfo);
+    
+    setData(data.copy());  
+  };  
 
     //To modify when we add buttons to the form
-    const assessInputState = (input: any) => {  
-      return input;
+  const assessInputState = (input: any) => {  
+    return input;
   };  
   
-const inputStates = data.sections.flatMap((section) =>   
-  section.inputs.filter(input=>input.value.length>0).map((input) => ({  
-        state: assessInputState(input).state,  
-        label: `${section.label}-${input.label}`,
-      })
-  )
-);
-/**
- *  
- */
+  const inputStates = data.sections.flatMap((section) =>   
+    section.inputs.filter(input=>input.value.length>0).map((input) => ({  
+      state: assessInputState(input).state,  
+      label: `${section.label}-${input.label}`,
+    }))
+  );
+
 const validateFormInputs = () => {  
   console.log('Validating form inputs... ');
-  let allApproved = true;  
+  let allApproved = false;  
   // Itérer à travers chaque section et chaque input pour vérifier et mettre à jour l'état d'approbation  
-  data.sections.forEach((section) => {  
-    section.inputs.forEach((input) => {  
-      if(input.approved){
-        input.cssClass = ' '.trim();
-      }
-      else if (!input.approved) {  
-        allApproved = false;  
-        input.cssClass = 'input-error'
-      }
-    });  
-  });  
+    
   setData(data.copy()); // Mettre à jour l'état pour refléter les changements  
   return allApproved;  
 };    
@@ -381,6 +335,12 @@ const validateFormInputs = () => {
       }
     });
   }, [textareas]);
+
+  const handleDataChange=(newSection : Section)=>{
+    let new_data = data.copy();
+    new_data.sections.find(cur=>cur.label==newSection.label)!=newSection;
+    setData(new_data);
+  }
 
 
   return (
@@ -400,7 +360,7 @@ const validateFormInputs = () => {
           ) : (
             <div>
               {[...data.sections].map((sectionInfo: Section) => {
-                return <SectionComponent sectionInfo={sectionInfo} textareas={textareas} modals={modals} propagateChange={()=>{}}></SectionComponent>
+                return <SectionComponent sectionInfo={sectionInfo} textareas={textareas} modals={modals} propagateChange={handleDataChange}></SectionComponent>
               })}
                <button className='button' onClick={validateFormInputs}>Submit</button>  
             </div>

@@ -1,17 +1,14 @@
-class Input {
-    [x: string]: string | boolean;  
+class Input {  
     label: string;        
-    value: string;     
-    approved: boolean = false;
-    state: string;      
-    disable:boolean = false; 
-    cssClass: string = '';
-    constructor( label: string, value: string,  state: string = 'empty', approved = false, disable = true) {           
+    value: string;
+    id: string;
+    disabled: boolean;
+
+    constructor( label: string, value: string, parent_label: string, disabled = true) {    
       this.label = label;        
       this.value = value;        
-      this.state = state;
-      this.approved = approved;
-      this.disable = disable;
+      this.id = parent_label+"-"+this.label;
+      this.disabled = disabled;
     }        
   }  
 

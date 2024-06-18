@@ -1,0 +1,15 @@
+.input{
+
+    transition: box-shadow 1s linear;
+}
+
+@media (prefers-color-schem: light){
+    .input{
+        box-shadow: 0 0 0 0 black;
+    }
+}
+@media (prefers-color-schem: dark){
+    .input{
+        box-shadow: 0 0 0 0 white;
+    }
+}
