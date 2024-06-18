@@ -51,11 +51,6 @@ const Carousel: React.FC<CarouselProps> = ({ imgs }) => {
           imageUrl={imgList.length > 0 ? imgList[currImg].url : ""}
           alt="no picture"
         />
-        {/*<img
-          id="main-img"
-          src={imgList.length > 0 ? imgList[currImg].url : ""}
-          alt={imgList.length > 0 ? imgList[currImg].title : "No picture"}
-        ></img>*/}
         <a className="next" onClick={() => selectImg(currImg + 1)}>
           &#10095;
         </a>

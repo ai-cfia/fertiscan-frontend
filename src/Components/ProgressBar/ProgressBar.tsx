@@ -48,14 +48,16 @@ const ProgressBar = ({ sections }: { sections: { label: string }[] }) => {
       color = "white";
     }
     element.style.boxShadow = "0 0 10px 5px " + color;
+
     setTimeout(() => {
       element.style.boxShadow = "none";
     }, 500);
   };
+  
   const give_focus = (section: { label: string }) => {
     console.log(section);
     // focus on the selected section
-    const element = document.getElementById(section.label);
+    const element = document.getElementById(section.label) as HTMLElement;
     if (element) {
       element.scrollIntoView({
         behavior: "smooth",
