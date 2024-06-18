@@ -1,60 +1,65 @@
-
-import React, { useState, useRef, useEffect, StrictMode, ChangeEvent } from "react";
+import React, { useState, useRef, useEffect, StrictMode } from "react";
 import "./FormPage.css";
 import Modal from "../../Components/Modal/Modal";
 import Carousel from "../../Components/Carousel/Carousel";
 import { useLocation } from "react-router-dom";
-import ProgressBar from '../../Components/ProgressBar/ProgressBar';   
+import ProgressBar from "../../Components/ProgressBar/ProgressBar";
 import editIcon from "../../assets/edit1.svg";
 import acceptIcon from "../../assets/acceptIcon.svg";
-                 
-class dataObject {      
-  sections: section[];      
-  constructor(sections: section[]) {      
-    this.sections = sections;      
-  }      
-  public push_section(newSections: section) {      
-    this.sections.push(newSections);      
-  }      
-  public remove_sections(toRemove: section) {      
-    this.sections = this.sections.filter((cur) => cur !== toRemove);      
-  }      
-  public copy() {      
-    return new dataObject(this.sections);      
-  }      
-}      
-class section {      
-  title: string;      
-  label: string;      
-  inputs: input[];     
-  constructor(title: string, label: string, inputs: input[]) {      
-    this.title = title;      
-    this.label = label;      
-    this.inputs = inputs;    
-  }      
-  public push_input(newInput: input) {      
-    this.inputs.push(newInput);      
-  }      
-  public remove_input(toRemove: input) {      
-    this.inputs = this.inputs.filter((cur) => cur !== toRemove);      
-  }      
-}    
+
+class dataObject {
+  sections: section[];
+  constructor(sections: section[]) {
+    this.sections = sections;
+  }
+  public push_section(newSections: section) {
+    this.sections.push(newSections);
+  }
+  public remove_sections(toRemove: section) {
+    this.sections = this.sections.filter((cur) => cur !== toRemove);
+  }
+  public copy() {
+    return new dataObject(this.sections);
+  }
+}
+class section {
+  title: string;
+  label: string;
+  inputs: input[];
+  constructor(title: string, label: string, inputs: input[]) {
+    this.title = title;
+    this.label = label;
+    this.inputs = inputs;
+  }
+  public push_input(newInput: input) {
+    this.inputs.push(newInput);
+  }
+  public remove_input(toRemove: input) {
+    this.inputs = this.inputs.filter((cur) => cur !== toRemove);
+  }
+}
 class input {
-  [x: string]: string | boolean;  
-  label: string;        
-  value: string;     
+  [x: string]: string | boolean;
+  label: string;
+  value: string;
   approved: boolean = false;
-  state: string;      
-  disable:boolean = false; 
-  cssClass: string = '';
-  constructor( label: string, value: string,  state: string = 'empty', approved = false, disable = true) {           
-    this.label = label;        
-    this.value = value;        
+  state: string;
+  disable: boolean = false;
+  cssClass: string = "";
+  constructor(
+    label: string,
+    value: string,
+    state: string = "empty",
+    approved = false,
+    disable = true,
+  ) {
+    this.label = label;
+    this.value = value;
     this.state = state;
     this.approved = approved;
     this.disable = disable;
-  }        
-}  
+  }
+}
 
 const MAX_CHAR_IN_ROW = 37;
 
@@ -218,29 +223,26 @@ const FormPage = () => {
     });
   });
 
-  
-   
-        //Need to be modified to "approve" but color dont work 
-    const handleClick_Modify = (inputInfo: any) => () => {    
-      console.log('Approved: ', inputInfo.label);  
-      setIsActive(true);      
-      inputInfo.state = 'approved';      
-      inputInfo.disabled = false;
-      inputInfo.approved = true;  
-      setData(data.copy());      
-      setTimeout(() => setIsActive(false), 400);      
-    };  
+  const handleClick_Modify = (inputInfo: input) => () => {
+    console.log("Approved: ", inputInfo.label);
+    setIsActive(true);
+    inputInfo.state = "approved";
+    inputInfo.disabled = false;
+    inputInfo.approved = true;
+    setData(data.copy());
+    setTimeout(() => setIsActive(false), 400);
+  };
 
-      //Need to be modified to "modified" but color dont work
-    const handleClick_Approve = (inputInfo: any) => () => {   
-      console.log('modified: ', inputInfo.label);  
-      setIsActive(true);      
-      inputInfo.state = 'modified';      
-      inputInfo.disabled = true;
-      inputInfo.approved = false;  
-      setData(data.copy());      
-      setTimeout(() => setIsActive(false), 400);      
-    };    
+  const handleClick_Approve = (inputInfo: input) => () => {
+    console.log("modified: ", inputInfo.label);
+    setIsActive(true);
+    inputInfo.state = "modified";
+    inputInfo.disabled = true;
+    inputInfo.approved = false;
+    setData(data.copy());
+    setTimeout(() => setIsActive(false), 400);
+  };
+
   const inputFactory = (parent: section, inputInfo: input) => {
     if (inputInfo.value == "") return;
     return (
@@ -272,19 +274,20 @@ const FormPage = () => {
             className="text-box"
             rows={1}
           />
-           <div className="button-container">  
-            <button  
-                className={`button ${isActive ? "active" : ""}`}  
-                onClick={handleClick_Modify(inputInfo)}>  
-              <img src={acceptIcon} alt="Modifier" width="20" height="20" />  
-            </button>   
-            <button  
-              className={`button ${isActive ? "active" : ""}`}  
-              onClick={handleClick_Approve(inputInfo)}>  
-              <img src={editIcon} alt="Modifier" width="20" height="20" />  
-            </button>  
-
-          </div> 
+          <div className="button-container">
+            <button
+              className={`button ${isActive ? "active" : ""}`}
+              onClick={handleClick_Modify(inputInfo)}
+            >
+              <img src={acceptIcon} alt="Modifier" width="20" height="20" />
+            </button>
+            <button
+              className={`button ${isActive ? "active" : ""}`}
+              onClick={handleClick_Approve(inputInfo)}
+            >
+              <img src={editIcon} alt="Modifier" width="20" height="20" />
+            </button>
+          </div>
         </div>
         {/* Show more functionality moved here for better separation */}
         {inputInfo.value.split("\n").length +
@@ -303,7 +306,7 @@ const FormPage = () => {
                 );
                 modal?.ref.current?.classList.add("active");
               }}
-              >
+            >
               Show more
             </label>
             <Modal
@@ -398,7 +401,18 @@ const FormPage = () => {
   };
 
   useEffect(() => {
-    console.log(process.env);
+    const tmpUrls: { url: string; title: string }[] = [];
+    files.forEach((file) => {
+      const reader = new FileReader();
+      reader.onload = (e) => {
+        tmpUrls.push({
+          url: e!.target!.result as string,
+          title: file.name,
+        });
+      };
+      reader.onloadend = () => setUrls(tmpUrls);
+      reader.readAsDataURL(file);
+    });
     if (process.env.REACT_APP_ACTIVATE_USING_JSON == "true") {
       fetch("/answer.json").then((res) =>
         res.json().then((response) => {
@@ -427,19 +441,6 @@ const FormPage = () => {
         }),
       );
     } else {
-      const tmpUrls: { url: string; title: string }[] = [];
-      files.forEach((file) => {
-        const reader = new FileReader();
-        reader.onload = (e) => {
-          tmpUrls.push({
-            url: e!.target!.result as string,
-            title: file.name,
-          });
-        };
-        reader.onloadend = () => setUrls(tmpUrls);
-        reader.readAsDataURL(file);
-      });
-
       if (!uploadStarted) {
         startUpload(true);
         upload_all()
@@ -483,61 +484,63 @@ const FormPage = () => {
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
-      
-    const handleTextareaSelection = (parent: section, inputInfo: input, event: ChangeEvent<HTMLTextAreaElement>) => {  
-      inputInfo.value = event.target.value;   
-      
-      if (!inputInfo.approved) {
-        inputInfo.state ="non-modified"
-      }
-      else if(inputInfo.approved){  
-        inputInfo.state = 'approved';  
 
-      } else if(inputInfo.value.length == 0){  //To be modified
-        inputInfo.state = 'empty'; 
+  /*
+  const handleTextareaSelection = (
+    parent: section,
+    inputInfo: input,
+    event: ChangeEvent<HTMLTextAreaElement>,
+  ) => {
+    inputInfo.value = event.target.value;
 
-      }  else {  
-        inputInfo.state = 'modified';  
-      }
-      assessInputState(inputInfo);
-      
-      setData(data.copy());  
-    };  
+    if (!inputInfo.approved) {
+      inputInfo.state = "non-modified";
+    } else if (inputInfo.approved) {
+      inputInfo.state = "approved";
+    } else if (inputInfo.value.length == 0) {
+      //To be modified
+      inputInfo.state = "empty";
+    } else {
+      inputInfo.state = "modified";
+    }
+    assessInputState(inputInfo);
 
-    //To modify when we add buttons to the form
-    const assessInputState = (input: any) => {  
-      return input;
-  };  
-  
-const inputStates = data.sections.flatMap((section) =>   
-  section.inputs.filter(input=>input.value.length>0).map((input) => ({  
-        state: assessInputState(input).state,  
+    setData(data.copy());
+  };
+*/
+  //To modify when we add buttons to the form
+  const assessInputState = (input: input): input => {
+    return input;
+  };
+
+  const inputStates = data.sections.flatMap((section) =>
+    section.inputs
+      .filter((input) => input.value.length > 0)
+      .map((input) => ({
+        state: assessInputState(input).state,
         label: `${section.label}-${input.label}`,
-      })
-  )
-);
-/**
- *  
- */
-const validateFormInputs = () => {  
-  console.log('Validating form inputs... ');
-  let allApproved = true;  
-  // Itérer à travers chaque section et chaque input pour vérifier et mettre à jour l'état d'approbation  
-  data.sections.forEach((section) => {  
-    section.inputs.forEach((input) => {  
-      if(input.approved){
-        input.cssClass = ' '.trim();
-      }
-      else if (!input.approved) {  
-        allApproved = false;  
-        input.cssClass = 'input-error'
-      }
-    });  
-  });  
-  setData(data.copy()); // Mettre à jour l'état pour refléter les changements  
-  return allApproved;  
-};    
-    
+      })),
+  );
+  /**
+   *
+   */
+  const validateFormInputs = () => {
+    console.log("Validating form inputs... ");
+    let allApproved = true;
+    // Itérer à travers chaque section et chaque input pour vérifier et mettre à jour l'état d'approbation
+    data.sections.forEach((section) => {
+      section.inputs.forEach((input) => {
+        if (input.approved) {
+          input.cssClass = " ".trim();
+        } else if (!input.approved) {
+          allApproved = false;
+          input.cssClass = "input-error";
+        }
+      });
+    });
+    setData(data.copy()); // Mettre à jour l'état pour refléter les changements
+    return allApproved;
+  };
 
   useEffect(() => {
     textareas.forEach((textareaObj) => {
@@ -546,7 +549,6 @@ const validateFormInputs = () => {
       }
     });
   }, [textareas]);
-
 
   return (
     <StrictMode>
@@ -567,15 +569,19 @@ const validateFormInputs = () => {
               {[...data.sections].map((sectionInfo: section) => {
                 return sectionFactory(sectionInfo);
               })}
-               <button className='button' onClick={validateFormInputs}>Submit</button>  
+              <button className="button" onClick={validateFormInputs}>
+                Submit
+              </button>
             </div>
           )}
         </div>
-        {!loading?(
-        <div className="progress-wrapper">    
-          <ProgressBar sections={inputStates} />    
-        </div>
-        ):(<></>)}
+        {!loading ? (
+          <div className="progress-wrapper">
+            <ProgressBar sections={inputStates} />
+          </div>
+        ) : (
+          <></>
+        )}
       </div>
     </StrictMode>
   );

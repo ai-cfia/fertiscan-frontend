@@ -5,9 +5,8 @@
     background-color: #fff;
     border-radius: 8px;
     overflow: hidden;
-    position: absolute;
-    top: 0;
-    left: 0;
+    top: 10px;
+    left: 10px;
     z-index: 1;
     border:1px solid black;
   }
