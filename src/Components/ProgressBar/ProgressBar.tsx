@@ -3,7 +3,7 @@ import { FormClickActions } from '../../Utils/EventChannels';
 import Input from '../../Model/Input-Model';
 import React, { useEffect, useRef } from 'react';
 
-const ProgressBar = ({ sections }: { sections: any[] }) => {
+const ProgressBar = ({ sections }: { sections: {label:string}[] }) => {
 
 
   const sec:{

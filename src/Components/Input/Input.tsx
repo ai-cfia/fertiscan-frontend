@@ -1,3 +1,4 @@
+import "./Input.css"
 import React, { useState } from "react";
 import Input from "../../Model/Input-Model";
 import Section from "../../Model/Section-Model";
@@ -56,15 +57,16 @@ const InputComponent: React.FC<InputProps> = ({
   if (inputInfo.value == "") return <></>;
   return (
     <div className="input-container">
-      <label htmlFor={parent.label + "-" + inputInfo.label}>
+      <label htmlFor={inputInfo.id}>
         {parent.label.charAt(0).toUpperCase() + parent.label.slice(1)}{" "}
         {inputInfo.label.replace(/_/gi, " ")} :
       </label>
       <div className="textbox-container">
         <textarea
-          id={parent.label + "-" + inputInfo.label}
+          id={inputInfo.id}
           ref={textarea}
           value={inputInfo.value}
+          disabled={inputInfo.disabled}
           onChange={(event: React.ChangeEvent<HTMLTextAreaElement>) => {
             console.log(event);
             const current = event.target as HTMLTextAreaElement;

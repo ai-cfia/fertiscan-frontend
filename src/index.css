@@ -172,3 +172,24 @@ button:focus-visible {
 .switch.active .lever:after {
   left: 17px;
 }
+
+
+
+
+
+
+/** =================TEMP CSS================= */
+.curr-img{
+  width: 800px;
+}
+.curr-img img{
+  object-fit: contain;
+}
+.formPage-container{
+  grid-template-areas: "pics data progress" !important;
+  grid-template-columns: 52% 40% !important;
+}
+
+.next, .prev{
+  margin: auto -15px;
+}

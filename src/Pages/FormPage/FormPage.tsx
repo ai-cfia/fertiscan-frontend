@@ -1,5 +1,5 @@
 
-import React, { useState, useRef, useEffect, StrictMode, ChangeEvent } from "react";
+import React, { useState, useRef, useEffect, StrictMode } from "react";
 import "./FormPage.css";
 import Carousel from "../../Components/Carousel/Carousel";
 import { useLocation } from "react-router-dom";
@@ -7,22 +7,8 @@ import ProgressBar from '../../Components/ProgressBar/ProgressBar';
 import SectionComponent from "../../Components/Section/Section.tsx";
 import Section from "../../Model/Section-Model.tsx";
 import Input from "../../Model/Input-Model.tsx";
-                 
-class dataObject {      
-  sections: Section[];      
-  constructor(sections: Section[]) {      
-    this.sections = sections;      
-  }      
-  public push_section(newSections: Section) {      
-    this.sections.push(newSections);      
-  }      
-  public remove_sections(toRemove: Section) {      
-    this.sections = this.sections.filter((cur) => cur !== toRemove);      
-  }      
-  public copy() {      
-    return new dataObject(this.sections);      
-  }      
-}      
+import Data from "../../Model/Data-Model.tsx";                 
+
 
 
 const FormPage = () => {
@@ -75,9 +61,7 @@ const FormPage = () => {
 
   const location = useLocation();
   const files: File[] = location.state.data;
-  const [uploadStarted, startUpload] = useState(false);
   const [loading, setLoading] = useState(true);
-  const [isActive, setIsActive] = useState(false);
   // @ts-expect-error : has to be used to prompt user when error
   // eslint-disable-next-line
   const [fetchError, setError] = useState<Error | null>(null);
@@ -88,8 +72,9 @@ const FormPage = () => {
     }[]
   >([]);
 
-  const [data, setData] = useState<dataObject>(
-    new dataObject([
+  // this object describes how the formPage data will looks like
+  const [data, setData] = useState<Data>(
+    new Data([
       new Section("Company information", "company", [
         new Input("name", form.company_name,"company" ),
         new Input("address", form.company_address, "company"),
@@ -155,12 +140,7 @@ const FormPage = () => {
     ]),
   );
 
-  const resizeTextarea = (textarea: HTMLTextAreaElement | null) => {
-    if (textarea) {
-      textarea.style.height = "auto";
-      textarea.style.height = textarea.scrollHeight + "px";
-    }
-  };
+  
 
   const modals: {
     label: string;
@@ -189,12 +169,20 @@ const FormPage = () => {
     });
   });
 
-   
-
+  const resizeTextarea = (textarea: HTMLTextAreaElement | null) => {
+    if (textarea) {
+      textarea.style.height = "auto";
+      textarea.style.height = textarea.scrollHeight + "px";
+    }
+  };
 
   const api_url = process.env.API_URLs;
 
-  const poll_analyze = async () => {
+  /**
+   * Prepare and send request to backend for file analysis
+   * @returns data : the data retrieved from the backend
+   */
+  const analyse = async () => {
     const formData = new FormData();
     for (let i = 0; i < files.length; i++) {
       formData.append("images", files[i]);
@@ -216,6 +204,7 @@ const FormPage = () => {
   };
 
   useEffect(() => {
+    // load imgs for the carousel
     const tmpUrls: { url: string; title: string }[] = [];
       files.forEach((file) => {
         const reader = new FileReader();
@@ -229,8 +218,9 @@ const FormPage = () => {
         reader.readAsDataURL(file);
     });
 
-    console.log(process.env);
+    
     if (process.env.REACT_APP_ACTIVATE_USING_JSON == "true") {
+    // skip backend take answer.json as answer
       fetch("/answer.json").then((res) =>
         res.json().then((response) => {
           data.sections.forEach((section) => {
@@ -241,80 +231,57 @@ const FormPage = () => {
                   : "";
             });
           });
-          setData(data.copy());
-          setLoading(false);
-          console.log("just before update");
-          document.querySelectorAll("textarea").forEach((elem) => {
-            const nativeTAValueSetter = Object.getOwnPropertyDescriptor(
-              window.HTMLTextAreaElement.prototype,
-              "value",
-            )!.set;
-            const event = new Event("change", { bubbles: true });
-            nativeTAValueSetter!.call(elem, elem.value + " ");
-            elem.dispatchEvent(event);
-            nativeTAValueSetter!.call(elem, elem.value.slice(0, -1));
-            elem.dispatchEvent(event);
-          });
+        updateData()
+          
         }),
       );
     } else {
-      
-      if (!uploadStarted) {
-        startUpload(true);
-        poll_analyze()
-          .then((response) => {
-            data.sections.forEach((section) => {
-              section.inputs.forEach((input) => {
-                input.value =
-                  typeof response[section.label + "_" + input.label] ==
-                  "string"
-                    ? response[section.label + "_" + input.label]
-                    : "";
-              });
-            });
-            setData(data.copy());
-            setLoading(false);
-            console.log("just before update");
-            document.querySelectorAll("textarea").forEach((elem) => {
-              const nativeTAValueSetter = Object.getOwnPropertyDescriptor(
-                window.HTMLTextAreaElement.prototype,
-                "value",
-              )!.set;
-              const event = new Event("change", { bubbles: true });
-              nativeTAValueSetter!.call(elem, elem.value + " ");
-              elem.dispatchEvent(event);
-              nativeTAValueSetter!.call(elem, elem.value.slice(0, -1));
-              elem.dispatchEvent(event);
-            });
-          })
-          .catch((e) => {
-            setLoading(false);
-            setError(e);
-            console.log(e);
+    // fetch backend
+      analyse().then((response) => {
+        data.sections.forEach((section) => {
+          section.inputs.forEach((input) => {
+            input.value =
+              typeof response[section.label + "_" + input.label] ==
+              "string"
+                ? response[section.label + "_" + input.label]
+                : "";
           });
-      }
+        });
+        updateData()
+      }).catch((e) => {
+        setLoading(false);
+        setError(e);
+        console.log(e);
+      });
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
       
-  const handleTextareaSelection = (parent: Section, inputInfo: Input, event: ChangeEvent<HTMLTextAreaElement>) => {  
-    inputInfo.value = event.target.value;   
-    
+  const updateData=()=>{
+  // update data
+    setData(data.copy());
+    setLoading(false);
+    console.log("just before update");
 
-    assessInputState(inputInfo);
-    
-    setData(data.copy());  
-  };  
 
-    //To modify when we add buttons to the form
-  const assessInputState = (input: any) => {  
-    return input;
-  };  
+    //------------------------------ does this works and does it need to ------------------------------//
+    // TODO
+    document.querySelectorAll("textarea").forEach((elem) => {
+      const nativeTAValueSetter = Object.getOwnPropertyDescriptor(
+        window.HTMLTextAreaElement.prototype,
+        "value",
+      )!.set;
+      const event = new Event("change", { bubbles: true });
+      nativeTAValueSetter!.call(elem, elem.value + " ");
+      elem.dispatchEvent(event);
+      nativeTAValueSetter!.call(elem, elem.value.slice(0, -1));
+      elem.dispatchEvent(event);
+    });
+  }
   
   const inputStates = data.sections.flatMap((section) =>   
     section.inputs.filter(input=>input.value.length>0).map((input) => ({  
-      state: assessInputState(input).state,  
-      label: `${section.label}-${input.label}`,
+      label: input.id
     }))
   );
 
@@ -359,8 +326,8 @@ const validateFormInputs = () => {
             </div>
           ) : (
             <div>
-              {[...data.sections].map((sectionInfo: Section) => {
-                return <SectionComponent sectionInfo={sectionInfo} textareas={textareas} modals={modals} propagateChange={handleDataChange}></SectionComponent>
+              {[...data.sections].map((sectionInfo: Section,key:number) => {
+                return <SectionComponent key={key} sectionInfo={sectionInfo} textareas={textareas} modals={modals} propagateChange={handleDataChange}></SectionComponent>
               })}
                <button className='button' onClick={validateFormInputs}>Submit</button>  
             </div>

@@ -4,7 +4,7 @@ class Input {
     id: string;
     disabled: boolean;
 
-    constructor( label: string, value: string, parent_label: string, disabled = true) {    
+    constructor( label: string, value: string, parent_label: string, disabled = false) {    
       this.label = label;        
       this.value = value;        
       this.id = parent_label+"-"+this.label;

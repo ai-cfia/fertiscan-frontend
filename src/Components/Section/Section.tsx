@@ -35,7 +35,7 @@ const SectionComponent:React.FC<sectionPorps>=({sectionInfo, textareas, modals, 
       return (
         <div className={sectionInfo.label + "-container data-section"}>
           <h1 className="title underlined">{sectionInfo.title}</h1>
-          {[...sectionInfo.inputs].map((inputInfo: Input) => {
+          {[...sectionInfo.inputs].map((inputInfo: Input,key:number) => {
             const textarea = textareas.find(
               (obj) => obj.label === sectionInfo.label + inputInfo.label,
             )!.ref;
@@ -44,6 +44,7 @@ const SectionComponent:React.FC<sectionPorps>=({sectionInfo, textareas, modals, 
             )!.ref;
             return (
               <InputComponent
+                key={key}
                 inputInfo={inputInfo}
                 parent={sectionInfo}
                 textarea={textarea}
