@@ -218,10 +218,7 @@ const FormPage = () => {
     });
   });
 
-  
-   
-        //Need to be modified to "approve" but color dont work 
-    const handleClick_Modify = (inputInfo: any) => () => {    
+      const handleClick_Modify = (inputInfo: any) => () => {    
       console.log('Approved: ', inputInfo.label);  
       setIsActive(true);      
       inputInfo.state = 'approved';      
@@ -231,7 +228,6 @@ const FormPage = () => {
       setTimeout(() => setIsActive(false), 400);      
     };  
 
-      //Need to be modified to "modified" but color dont work
     const handleClick_Approve = (inputInfo: any) => () => {   
       console.log('modified: ', inputInfo.label);  
       setIsActive(true);      
@@ -241,6 +237,7 @@ const FormPage = () => {
       setData(data.copy());      
       setTimeout(() => setIsActive(false), 400);      
     };    
+    
   const inputFactory = (parent: section, inputInfo: input) => {
     if (inputInfo.value == "") return;
     return (
@@ -423,7 +420,9 @@ const FormPage = () => {
             elem.dispatchEvent(event);
             nativeTAValueSetter!.call(elem, elem.value.slice(0, -1));
             elem.dispatchEvent(event);
+            
           });
+          
         }),
       );
     } else {
