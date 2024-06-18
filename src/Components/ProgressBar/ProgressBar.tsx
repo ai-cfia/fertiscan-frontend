@@ -1,23 +1,13 @@
 import "./ProgressBar.css";
 
-interface Section {
-  label: string;
-  state: "modified" | "non-modified" | "approved";
-}
-
-interface ProgressBarProps {
-  sections: Section[];
-}
-
-const ProgressBar = ({ sections }: ProgressBarProps) => {
+const ProgressBar = ({ sections }: { sections: any[] }) => {
   const flash = (element: HTMLElement) => {
     element.style.boxShadow = "0 0 10px 5px white";
     setTimeout(() => {
       element.style.boxShadow = "none";
     }, 500);
   };
-
-  const give_focus = (section: Section) => {
+  const give_focus = (section: any) => {
     console.log(section);
     // focus on the selected section
     const element = document.getElementById(section.label) as HTMLElement;
