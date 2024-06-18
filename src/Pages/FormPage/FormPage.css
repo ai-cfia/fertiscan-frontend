@@ -7,9 +7,7 @@
 @media only screen and (min-width: 850px) {
   .formPage-container {
     grid-template-areas:
-      "pics data"
-      "pics open-icon"
-      "progress-bar";/* Add a new row for the open-icon */
+      "pics data progress-bar";
     grid-template-columns:  40% 50% 5%;
   }
 }
@@ -20,8 +18,7 @@
     grid-template-areas:
       "pics"
       "data"
-      "progress";
-    justify-content: center;
+      "progress-bar";
   }
 }
 
