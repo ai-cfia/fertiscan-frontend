@@ -124,4 +124,4 @@ const InputComponent: React.FC<InputProps> = ({
   );
 };
 
-export default InputComponent;
+export default InputComponent {InputComponent, handleState};

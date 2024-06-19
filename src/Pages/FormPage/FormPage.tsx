@@ -7,7 +7,7 @@ import SectionComponent from "../../Components/Section/Section.tsx";
 import Section from "../../Model/Section-Model.tsx";
 import Input from "../../Model/Input-Model.tsx";
 import Data from "../../Model/Data-Model.tsx";
-import handleState from "../../Components/Input/Input.tsx";
+import InputComponent from "../../Components/Input/Input.tsx";
 
 const FormPage = () => {
   // @ts-expect-error : setForm is going to be used when linked to db
@@ -362,7 +362,7 @@ const FormPage = () => {
         // Check for specific validation criteria for each input 
         if(input.property == "approved"){
           if(input.value.trim().length !> 0){
-            handleState(data.sections.inputs); // le problème est ici*****
+            data.sections.find(currentSection=>currentSection.label == section.label)!.inputs.find(currentInput=>currentInput.label==input.label)!.property ="rejected";
             allApproved = false;
           }
         }else{
@@ -370,7 +370,7 @@ const FormPage = () => {
         }
       });
     });
-    return allApproved;
+    return allApproved; //Mettre setData(data) dans submit fonction
   };
   
 
