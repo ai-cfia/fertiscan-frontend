@@ -7,7 +7,7 @@
   align-items: 'start';
 }
 
-@media only screen and (min-width: 1231px) {
+@media only screen and (min-width: 1231px) { /*the minimum place that need the form to have when he is in full page mode is 1231*/
   .formPage-container {
     grid-template-areas:
       "pics data progress-bar";
@@ -16,6 +16,8 @@
 }
 
 @media only screen and (max-width: 1230px) {
+  .formPage-container {
+    grid-template-areas:
       "pics data"
       "pics open-icon"
       "progress-bar"; /* Add a new row for the open-icon */
@@ -27,11 +29,10 @@
   grid-area: pics;
   margin-left: 10%;
 }
-
-}
 .progress-wrapper {
   grid-area: progress-bar;
   right: 0;
+}
 
 @media (prefers-color-scheme: dark) {
   .open-icon {
