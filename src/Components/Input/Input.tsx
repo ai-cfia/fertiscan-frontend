@@ -64,6 +64,7 @@ const InputComponent: React.FC<InputProps> = ({
       inputInfo.disabled = true;
       FormClickActions.emit("ApproveClick", inputInfo);
       setTimeout(() => setIsActive(false), 400);
+      textarea.current?.classList.remove("rejected");
 
     }else if(inputInfo.property === "default" ){
       console.log("Default");
@@ -79,6 +80,7 @@ const InputComponent: React.FC<InputProps> = ({
       inputInfo.disabled = false;
       FormClickActions.emit("Rejected", inputInfo);   
       setIsJustChanged(true);
+      textarea.current?.classList.add("rejected");
     } 
   };
 

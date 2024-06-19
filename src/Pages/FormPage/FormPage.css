@@ -160,6 +160,7 @@ textarea {
   z-index: 1;
 }
 .loader-container-form p {
+  color: white;
   position: relative;
   top: 7%;
 }
