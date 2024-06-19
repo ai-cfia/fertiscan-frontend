@@ -76,7 +76,7 @@ const ProgressBar = ({ sections }: { sections: { label: string }[] }) => {
   };
 
   const give_focus = (section: { label: string }) => {
-    console.log(section);
+    //console.log(section);
     // focus on the selected section
     const element = document.getElementById(section.label) as HTMLElement;
     if (element) {

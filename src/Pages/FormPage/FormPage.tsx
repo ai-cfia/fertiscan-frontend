@@ -1,13 +1,12 @@
 import React, { useState, useRef, useEffect, StrictMode } from "react";
 import "./FormPage.css";
 import Carousel from "../../Components/Carousel/Carousel";
-import { useLocation } from "react-router-dom";
+import { useLocation, useNavigate } from "react-router-dom";
 import ProgressBar from "../../Components/ProgressBar/ProgressBar";
 import SectionComponent from "../../Components/Section/Section.tsx";
 import Section from "../../Model/Section-Model.tsx";
 import Input from "../../Model/Input-Model.tsx";
 import Data from "../../Model/Data-Model.tsx";
-import InputComponent from "../../Components/Input/Input.tsx";
 
 const FormPage = () => {
   // @ts-expect-error : setForm is going to be used when linked to db
@@ -361,17 +360,27 @@ const FormPage = () => {
 
         // Check for specific validation criteria for each input 
         if(input.property == "approved"){
-          if(input.value.trim().length !> 0){
+          
+        }else{
+          if(input.value.trim().length > 0){
             data.sections.find(currentSection=>currentSection.label == section.label)!.inputs.find(currentInput=>currentInput.label==input.label)!.property ="rejected";
             allApproved = false;
           }
-        }else{
-          allApproved = false;
         }
       });
     });
     return allApproved; //Mettre setData(data) dans submit fonction
   };
+  
+  const navigate = useNavigate();
+  const submitForm=(event:React.MouseEvent<HTMLButtonElement>)=>{
+    let isValid = validateFormInputs()
+    console.log(isValid);
+    if(isValid){
+      setData(data.copy())
+      navigate("/Confirm", { state: { data: data } });
+    }
+  }
   
 
   useEffect(() => {
@@ -418,7 +427,7 @@ const FormPage = () => {
                   ></SectionComponent>
                 );
               })}
-              <button className="button" onClick={validateFormInputs}>
+              <button className="button" onClick={submitForm}>
                 Submit
               </button>
             </div>
