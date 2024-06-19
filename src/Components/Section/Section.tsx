@@ -13,6 +13,7 @@ interface sectionPorps {
     ref: React.MutableRefObject<HTMLDivElement | null>;
     label: string;
   }[];
+  imgs: { title: string; url: string }[];
   propagateChange: (section: Section) => void;
 }
 
@@ -20,6 +21,7 @@ const SectionComponent: React.FC<sectionPorps> = ({
   sectionInfo,
   textareas,
   modals,
+  imgs,
   propagateChange,
 }) => {
   const handleInputChange = (newInfo: Input) => {
@@ -52,6 +54,7 @@ const SectionComponent: React.FC<sectionPorps> = ({
             parent={sectionInfo}
             textarea={textarea}
             modal={modal}
+            imgs={imgs}
             propagateChange={handleInputChange}
           />
         );

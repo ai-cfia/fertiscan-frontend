@@ -1,5 +1,5 @@
 import "./Input.css";
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import Input from "../../Model/Input-Model";
 import Section from "../../Model/Section-Model";
 
@@ -15,6 +15,7 @@ interface InputProps {
   inputInfo: Input;
   textarea: React.MutableRefObject<HTMLTextAreaElement | null>;
   modal: React.MutableRefObject<HTMLDivElement | null>;
+  imgs: {title:string, url:string}[];
   propagateChange: (inputInfo: Input) => void;
 }
 
@@ -32,25 +33,54 @@ const InputComponent: React.FC<InputProps> = ({
   inputInfo,
   textarea,
   modal,
+  imgs,
   propagateChange,
 }) => {
   const [isActive, setIsActive] = useState(false);
+  const [isDefaultFirstTime, setIsDefaultFirstTime] = useState(false);
+  const [isJustChanged, setIsJustChanged] = useState(false);
 
+  useEffect(() => {
+    if(!isJustChanged){
+    handleState(inputInfo)();
+    }
+    setIsJustChanged(false);
+  },[inputInfo.property]);
+  
   // Export the handleState function
   const handleState = (inputInfo: Input) => () => {
-    if (inputInfo.property === "approved" || inputInfo.property === "default") {
+    if (inputInfo.property === "approved") {
       console.log("Approved");
       setIsActive(true);
       inputInfo.disabled = false;
       FormClickActions.emit("ModifyClick", inputInfo);
       setTimeout(() => setIsActive(false), 400);
+      setIsJustChanged(true);
+
     } else if (inputInfo.property === "modified") {
       console.log("Modified");
-      setIsActive(true);
+      setIsActive(false);
+      setIsJustChanged(true);
       inputInfo.disabled = true;
       FormClickActions.emit("ApproveClick", inputInfo);
       setTimeout(() => setIsActive(false), 400);
-    }
+
+    }else if(inputInfo.property === "default" ){
+      console.log("Default");
+      if(isDefaultFirstTime){
+        FormClickActions.emit("ApproveClick", inputInfo);
+      }
+      setIsDefaultFirstTime(true);
+      setIsJustChanged(true);
+      console.log(isJustChanged);
+      console.log(isDefaultFirstTime);
+
+    }else if(inputInfo.property === "rejected"){
+      console.log("Disabled");
+      inputInfo.disabled = false;
+      FormClickActions.emit("Rejected", inputInfo);   
+      setIsJustChanged(true);
+    } 
   };
 
   if (inputInfo.value == "") return <></>;
@@ -84,7 +114,7 @@ const InputComponent: React.FC<InputProps> = ({
           <button
             className={`button ${isActive ? "active" : ""}`}
             onClick={handleState(inputInfo)}>
-            {inputInfo.disabled ? <img src={editIcon} alt="Modifier" width="20" height="20" /> : <img src={acceptIcon} alt="Approuver" width="20" height="20" />}
+            {isActive ? <img src={editIcon} alt="Modifier" width="20" height="20" /> : <img src={acceptIcon} alt="Approuver" width="20" height="20" />}
           </button>
         </div>
       </div>
@@ -113,7 +143,7 @@ const InputComponent: React.FC<InputProps> = ({
                 inputInfo.value = event.target.value.toString();
                 propagateChange(inputInfo);
               }}
-              imgs={[]}
+              imgs={imgs}
               close={() => {
                 modal.current?.classList.remove("active");
               }}
@@ -124,4 +154,4 @@ const InputComponent: React.FC<InputProps> = ({
   );
 };
 
-export default InputComponent {InputComponent, handleState};
+export default InputComponent;

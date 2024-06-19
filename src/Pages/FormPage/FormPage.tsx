@@ -413,6 +413,7 @@ const FormPage = () => {
                     sectionInfo={sectionInfo}
                     textareas={textareas}
                     modals={modals}
+                    imgs={urls}
                     propagateChange={handleDataChange}
                   ></SectionComponent>
                 );
