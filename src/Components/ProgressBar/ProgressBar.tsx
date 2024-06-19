@@ -22,12 +22,14 @@ const ProgressBar = ({ sections }: { sections: { label: string }[] }) => {
     const unsubApprove = FormClickActions.on(
       "ApproveClick",
       (inputInfo: Input) => {
-        const section = sec.find((elem) => {
-          console.log(elem.label, inputInfo.id);
-          return elem.label == inputInfo.id;
-        });
-        console.log(section);
-        section!.ref.current!.classList.add("approved");
+        sec
+        .find((elem) => elem.label == inputInfo.id)!
+        .ref.current!.classList.remove(inputInfo.property);
+
+        inputInfo.property = "approved";
+      sec
+      .find((elem) => elem.label == inputInfo.id)!
+      .ref.current!.classList.add(inputInfo.property);
       },
     );
     // eslint-disable-next-line
@@ -35,8 +37,28 @@ const ProgressBar = ({ sections }: { sections: { label: string }[] }) => {
       "ModifyClick",
       (inputInfo: Input) => {
         sec
+        .find((elem) => elem.label == inputInfo.id)!
+        .ref.current!.classList.remove(inputInfo.property);
+
+        inputInfo.property = "modified";
+      sec
+      .find((elem) => elem.label == inputInfo.id)!
+      .ref.current!.classList.add(inputInfo.property);
+      },
+    );
+    // eslint-disable-next-line
+    // When the input is rejected because he is not in the good format ex: email, adress, etc
+    const unsubRejected = FormClickActions.on(
+      "Rejected",
+      (inputInfo: Input) => {
+          sec
+            .find((elem) => elem.label == inputInfo.id)!
+            .ref.current!.classList.remove(inputInfo.property);
+
+            inputInfo.property = "rejected";
+          sec
           .find((elem) => elem.label == inputInfo.id)!
-          .ref.current!.classList.remove("approved");
+          .ref.current!.classList.add(inputInfo.property);
       },
     );
     // eslint-disable-next-line

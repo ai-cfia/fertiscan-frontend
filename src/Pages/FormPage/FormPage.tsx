@@ -7,6 +7,7 @@ import SectionComponent from "../../Components/Section/Section.tsx";
 import Section from "../../Model/Section-Model.tsx";
 import Input from "../../Model/Input-Model.tsx";
 import Data from "../../Model/Data-Model.tsx";
+import handleState from "../../Components/Input/Input.tsx";
 
 const FormPage = () => {
   // @ts-expect-error : setForm is going to be used when linked to db
@@ -350,11 +351,28 @@ const FormPage = () => {
 
   const validateFormInputs = () => {
     console.log("Validating form inputs... ");
-    const allApproved = false;
-    // Itérer à travers chaque section et chaque input pour vérifier et mettre à jour l'état d'approbation
-    setData(data.copy()); // Mettre à jour l'état pour refléter les changements
+  
+    // Flag to track if all sections are approved
+    let allApproved = true;
+  
+    // Iterate through each section and its inputs
+    data.sections.forEach((section) => {
+      section.inputs.forEach((input) => {
+
+        // Check for specific validation criteria for each input 
+        if(input.property == "approved"){
+          if(input.value.trim().length !> 0){
+            handleState(data.sections.inputs); // le problème est ici*****
+            allApproved = false;
+          }
+        }else{
+          allApproved = false;
+        }
+      });
+    });
     return allApproved;
   };
+  
 
   useEffect(() => {
     textareas.forEach((textareaObj) => {

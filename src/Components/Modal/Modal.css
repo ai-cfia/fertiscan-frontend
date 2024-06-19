@@ -108,24 +108,6 @@
   background: transparent;
 }
 
-@media only screen and (min-width: 850px) {
-  .formPage-container {
-    grid-template-areas:
-      "pics data"
-      "pics open-icon"; /* Add a new row for the open-icon */
-    grid-template-columns: 42% 55%;
-  }
-}
-
-@media only screen and (max-width: 850px) {
-  .formPage-container {
-    grid-template-areas:
-      "pics"
-      "data";
-    justify-content: center;
-  }
-}
-
 .pic-container {
   grid-area: pics;
   margin-right: 10px;

@@ -18,8 +18,8 @@
 @media only screen and (max-width: 1230px) {
   .formPage-container {
     grid-template-areas:
-      "pics data"
-      "pics open-icon"
+      "pics"
+      "data"
       "progress-bar"; /* Add a new row for the open-icon */
     grid-template-columns: 40% 50% 5%;
   }

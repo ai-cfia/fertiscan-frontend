@@ -16,3 +16,9 @@
 .section.approved {
   background-color: rgb(18, 178, 18);
 }
+.section.modified{
+  background-color: rgb(255, 255, 0);
+}
+.section.rejected{
+  background-color: rgb(255, 0, 0);
+}
