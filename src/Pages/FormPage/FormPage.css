@@ -15,27 +15,29 @@
   }
 }
 
-
 @media only screen and (max-width: 1230px) {
-  .formPage-container {
-    grid-template-areas:
-      "pics"
-      "data"
-      "progress-bar";
-          grid-template-columns:  90% 10%;
+      "pics data"
+      "pics open-icon"
+      "progress-bar"; /* Add a new row for the open-icon */
+    grid-template-columns: 40% 50% 5%;
   }
 }
-
 
 .pic-container {
   grid-area: pics;
   margin-left: 10%;
+}
 
 }
 .progress-wrapper {
   grid-area: progress-bar;
   right: 0;
 
+@media (prefers-color-scheme: dark) {
+  .open-icon {
+    filter: invert(74%) sepia(37%) saturate(0%) hue-rotate(249deg)
+      brightness(101%) contrast(98%);
+  }
 }
 
 /* Text box container styles */
@@ -102,10 +104,10 @@ textarea {
 }
 
 .open-icon {
-  position:relative;
+  position: relative;
   margin-left: 30px;
-  width: 120%;  /* Make the label take up the full width of the textbox container */
-  font-size: 15px;  /* Set font size for the label */
+  width: 120%; /* Make the label take up the full width of the textbox container */
+  font-size: 15px; /* Set font size for the label */
   text-decoration: underline;
   color: darkgrey;
 }
@@ -134,19 +136,19 @@ textarea {
   width: 98%;
 }
 
-.button-container {  
-  display: flex;  
-  align-items: center;  
-  gap: 10px;  
+.button-container {
+  display: flex;
+  align-items: center;
+  gap: 10px;
   margin-left: 20px;
-}  
-
-.button{
-  background-color: #DCDCDC;
 }
-.input-error {  
-  border: 2px solid red; /* Entoure l'élément d'une bordure rouge */  
-}  
+
+.button {
+  background-color: #dcdcdc;
+}
+.input-error {
+  border: 2px solid red; /* Entoure l'élément d'une bordure rouge */
+}
 
 .loader-container-form.active {
   display: flex;

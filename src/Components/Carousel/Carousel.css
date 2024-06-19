@@ -3,8 +3,7 @@
   display: flex;
   width: 100%;
   height: 100%;
-    align-content: center;
-
+  align-content: center;
 }
 
 .main-img{
@@ -44,6 +43,15 @@
   }
 }
 
+.carousel-wrapper {
+  display: grid;
+  grid-template-areas:
+    "main main main"
+    ".  carousel  .";
+  grid-template-rows: 60% 30%;
+  align-content: center;
+}
+
 
 .carousel {
   position:static;
@@ -59,9 +67,10 @@
   border: solid 2px #ccc0;
   display: flex;
   transition: all 750ms linear;
-  width: 20%;
+  width: 100%;
   max-width: 150px;
-  height: auto;
+  height: fit-content;
+  max-height: 90px;
   object-fit: contain;
   z-index: 4;
 }
@@ -75,7 +84,7 @@
 .next {
   cursor: pointer;
   max-width: 10px;
-  max-height: 10px;
+  height: 40px;
   font-weight: bold;
   padding: 10px;
   font-size: 24px;

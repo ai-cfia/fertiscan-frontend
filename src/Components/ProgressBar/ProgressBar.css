@@ -9,5 +9,10 @@
     }
 
 .section {
-    flex: 1;
-    }
+  background-color: rgb(185, 185, 185);
+  flex: 1;
+}
+
+.section.approved {
+  background-color: rgb(18, 178, 18);
+}
