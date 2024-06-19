@@ -267,7 +267,6 @@ const FormPage = () => {
   };
 
   useEffect(() => {
-
     // load imgs for the carousel
     const tmpUrls: { url: string; title: string }[] = [];
     files.forEach((file) => {
