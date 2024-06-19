@@ -49,7 +49,7 @@ const Carousel: React.FC<CarouselProps> = ({ imgs }) => {
         <ImageZoomInOut
           className="main-img"
           imageUrl={imgList.length > 0 ? imgList[currImg].url : ""}
-          alt="No picture"
+          alt="no picture"
         />
         <a className="next" onClick={() => selectImg(currImg + 1)}>
           &#10095;

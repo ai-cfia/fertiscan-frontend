@@ -9,11 +9,10 @@
     grid-template-areas:
       "pics data"
       "pics open-icon"
-      "progress-bar";/* Add a new row for the open-icon */
-    grid-template-columns:  40% 50% 5%;
+      "progress-bar"; /* Add a new row for the open-icon */
+    grid-template-columns: 40% 50% 5%;
   }
 }
-
 
 @media only screen and (max-width: 850px) {
   .formPage-container {
@@ -25,20 +24,20 @@
   }
 }
 
-.formPage-container{
-  grid-template-columns: '1fr auto';
-  grid-gap: '1rem';
-  align-items: 'start';
+.formPage-container {
+  grid-template-columns: "1fr auto";
+  grid-gap: "1rem";
+  align-items: "start";
 }
 
 .pic-container {
   grid-area: pics;
-
 }
 
 @media (prefers-color-scheme: dark) {
   .open-icon {
-    filter: invert(74%) sepia(37%) saturate(0%) hue-rotate(249deg) brightness(101%) contrast(98%);
+    filter: invert(74%) sepia(37%) saturate(0%) hue-rotate(249deg)
+      brightness(101%) contrast(98%);
   }
 }
 
@@ -106,15 +105,15 @@ textarea {
 }
 
 .open-icon {
-  position:relative;
+  position: relative;
   margin-left: 30px;
-  width: 120%;  /* Make the label take up the full width of the textbox container */
-  font-size: 15px;  /* Set font size for the label */
+  width: 120%; /* Make the label take up the full width of the textbox container */
+  font-size: 15px; /* Set font size for the label */
   text-decoration: underline;
   color: darkgrey;
 }
 
-.show-more-container{
+.show-more-container {
   margin-left: 210px;
   margin-right: -30px;
   margin-top: -5px;
@@ -138,19 +137,19 @@ textarea {
   width: 98%;
 }
 
-.button-container {  
-  display: flex;  
-  align-items: center;  
-  gap: 10px;  
+.button-container {
+  display: flex;
+  align-items: center;
+  gap: 10px;
   margin-left: 20px;
-}  
-
-.button{
-  background-color: #DCDCDC;
 }
-.input-error {  
-  border: 2px solid red; /* Entoure l'élément d'une bordure rouge */  
-}  
+
+.button {
+  background-color: #dcdcdc;
+}
+.input-error {
+  border: 2px solid red; /* Entoure l'élément d'une bordure rouge */
+}
 
 .loader-container-form.active {
   display: flex;
