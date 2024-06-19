@@ -8,7 +8,6 @@ import Section from "../../Model/Section-Model.tsx";
 import Input from "../../Model/Input-Model.tsx";
 import Data from "../../Model/Data-Model.tsx";
 
-
 const FormPage = () => {
   // @ts-expect-error : setForm is going to be used when linked to db
   // eslint-disable-next-line
@@ -238,7 +237,6 @@ const FormPage = () => {
       textarea.style.height = "auto";
       textarea.style.height = textarea.scrollHeight + "px";
     }
-
   };
 
   const api_url = process.env.API_URLs;
@@ -367,7 +365,7 @@ const FormPage = () => {
     });
     // eslint-disable-next-line
   }, [textareas]);
-  
+
   const handleDataChange = (newSection: Section) => {
     const new_data = data.copy();
     new_data.sections.find((cur) => cur.label == newSection.label) !=

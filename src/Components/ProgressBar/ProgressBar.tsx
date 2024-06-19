@@ -53,7 +53,7 @@ const ProgressBar = ({ sections }: { sections: { label: string }[] }) => {
       element.style.boxShadow = "none";
     }, 500);
   };
-  
+
   const give_focus = (section: { label: string }) => {
     console.log(section);
     // focus on the selected section
