@@ -48,7 +48,6 @@ const ProgressBar = ({ sections }: { sections: { label: string }[] }) => {
       color = "white";
     }
     element.style.boxShadow = "0 0 10px 5px " + color;
-
     setTimeout(() => {
       element.style.boxShadow = "none";
     }, 500);

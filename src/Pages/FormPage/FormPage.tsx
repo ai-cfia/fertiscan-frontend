@@ -352,7 +352,6 @@ const FormPage = () => {
     console.log("Validating form inputs... ");
     const allApproved = false;
     // Itérer à travers chaque section et chaque input pour vérifier et mettre à jour l'état d'approbation
-
     setData(data.copy()); // Mettre à jour l'état pour refléter les changements
     return allApproved;
   };

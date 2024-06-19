@@ -2,11 +2,20 @@
   display: grid;
   justify-content: space-between;
   padding: 0 10px;
+  grid-template-columns: '1fr auto';
+  grid-gap: '1rem';
+  align-items: 'start';
 }
 
-@media only screen and (min-width: 850px) {
+@media only screen and (min-width: 1231px) {
   .formPage-container {
     grid-template-areas:
+      "pics data progress-bar";
+    grid-template-columns:  40% 50% 5%;
+  }
+}
+
+@media only screen and (max-width: 1230px) {
       "pics data"
       "pics open-icon"
       "progress-bar"; /* Add a new row for the open-icon */
@@ -14,25 +23,15 @@
   }
 }
 
-@media only screen and (max-width: 850px) {
-  .formPage-container {
-    grid-template-areas:
-      "pics"
-      "data"
-      "progress";
-    justify-content: center;
-  }
-}
-
-.formPage-container {
-  grid-template-columns: "1fr auto";
-  grid-gap: "1rem";
-  align-items: "start";
-}
-
 .pic-container {
   grid-area: pics;
+  margin-left: 10%;
 }
+
+}
+.progress-wrapper {
+  grid-area: progress-bar;
+  right: 0;
 
 @media (prefers-color-scheme: dark) {
   .open-icon {
@@ -64,14 +63,14 @@
 
 .data-container label {
   text-align: left;
-  margin-left: 30px;
+  margin-left: 20px;
 }
 
 .textbox-container {
   display: flex; /* Enable flexbox layout */
   justify-content: left; /* Center horizontally within the container */
   align-items: center; /* Center vertically within the container */
-  width: 100%; /* Make the container take up the full width */
+  width: 45vw; /* Make the container take up the full width */
   margin-left: 20px;
   flex-direction: row;
 }
@@ -85,7 +84,7 @@ textarea {
   border: 1px solid #ccc;
   border-radius: 10px;
   box-sizing: border-box;
-  width: 300px;
+  width: 100rem;
   height: auto;
   min-height: 40px;
   max-height: 97px;
@@ -113,10 +112,10 @@ textarea {
   color: darkgrey;
 }
 
-.show-more-container {
-  margin-left: 210px;
-  margin-right: -30px;
-  margin-top: -5px;
+.show-more-container{
+  display: flex-end;
+  width: 45vw;
+  align-self: end;
 }
 
 .data-section {

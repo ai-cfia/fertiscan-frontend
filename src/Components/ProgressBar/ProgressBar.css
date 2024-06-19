@@ -1,12 +1,12 @@
 .progress-bar-vertical {
-  flex-direction: column;
-  width: 30px;
-  height: 120%;
-  border-radius: 15px;
-  overflow: hidden;
-  position: sticky;
-  margin-top: 50px;
-}
+    flex-direction: column;
+    width: 35px;
+    height: 120%;
+    border-radius: 15px;
+    overflow: hidden;
+    position: sticky;
+    margin-top: 50px;
+    }
 
 .section {
   background-color: rgb(185, 185, 185);
