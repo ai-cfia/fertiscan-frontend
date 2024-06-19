@@ -69,11 +69,10 @@ const InputComponent: React.FC<InputProps> = ({
       console.log("Default");
       if(isDefaultFirstTime){
         FormClickActions.emit("ApproveClick", inputInfo);
+        inputInfo.disabled = true;
       }
       setIsDefaultFirstTime(true);
       setIsJustChanged(true);
-      console.log(isJustChanged);
-      console.log(isDefaultFirstTime);
 
     }else if(inputInfo.property === "rejected"){
       console.log("Disabled");
@@ -114,7 +113,17 @@ const InputComponent: React.FC<InputProps> = ({
           <button
             className={`button ${isActive ? "active" : ""}`}
             onClick={handleState(inputInfo)}>
-            {isActive ? <img src={editIcon} alt="Modifier" width="20" height="20" /> : <img src={acceptIcon} alt="Approuver" width="20" height="20" />}
+            {
+            inputInfo.property === 'default' ? (
+              <img src={acceptIcon} alt="Défaut" width="20" height="20" />
+            ) : inputInfo.property === 'approved' ? (
+              <img src={editIcon} alt="Approuver" width="20" height="20" />
+            ) : inputInfo.property === 'modified' ? (
+              <img src={acceptIcon} alt="Modifié" width="20" height="20" />
+            ) : (
+              <img src={editIcon} alt="Rejeté" width="20" height="20" />
+            )
+          }
           </button>
         </div>
       </div>
