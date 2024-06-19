@@ -375,9 +375,8 @@ const FormPage = () => {
   const navigate = useNavigate();
   const submitForm=(event:React.MouseEvent<HTMLButtonElement>)=>{
     let isValid = validateFormInputs()
-    console.log(isValid);
+    setData(data.copy())
     if(isValid){
-      setData(data.copy())
       navigate("/Confirm", { state: { data: data } });
     }
   }
