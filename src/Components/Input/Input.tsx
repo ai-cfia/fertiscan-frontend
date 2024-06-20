@@ -1,5 +1,5 @@
 import "./Input.css";
-import React, { useEffect, useState } from "react";
+import React, { useState } from "react";
 import Input from "../../Model/Input-Model";
 import Section from "../../Model/Section-Model";
 
@@ -9,14 +9,13 @@ import editIcon from "../../assets/edit1.svg";
 import acceptIcon from "../../assets/acceptIcon.svg";
 
 import { FormClickActions } from "../../Utils/EventChannels";
-import { Form } from "react-router-dom";
 
 interface InputProps {
   parent: Section;
   inputInfo: Input;
   textarea: React.MutableRefObject<HTMLTextAreaElement | null>;
   modal: React.MutableRefObject<HTMLDivElement | null>;
-  imgs: {title:string, url:string}[];
+  imgs: { title: string; url: string }[];
   propagateChange: (inputInfo: Input) => void;
 }
 
@@ -39,7 +38,6 @@ const InputComponent: React.FC<InputProps> = ({
 }) => {
   const [isActive, setIsActive] = useState(false);
   const [property, setProperty] = useState(inputInfo.property);
-
 
   const SyncChanges = (inputInfo: Input) => {
     if (inputInfo.property === "approved") {
@@ -64,10 +62,10 @@ const InputComponent: React.FC<InputProps> = ({
       textarea.current?.classList.add("rejected");
       setProperty("rejected");
     }
-  }
-  
+  };
+
   FormClickActions.on("Rejected", (rej: Input) => {
-    if(rej.id === inputInfo.id){
+    if (rej.id === inputInfo.id) {
       SyncChanges(inputInfo);
     }
   });
@@ -89,8 +87,7 @@ const InputComponent: React.FC<InputProps> = ({
       FormClickActions.emit("ApproveClick", inputInfo);
       setTimeout(() => setIsActive(false), 400);
       textarea.current?.classList.remove("rejected");
-
-    }else if(inputInfo.property === "default" ){
+    } else if (inputInfo.property === "default") {
       console.log("from default");
       setIsActive(true);
       FormClickActions.emit("ApproveClick", inputInfo);
@@ -98,14 +95,14 @@ const InputComponent: React.FC<InputProps> = ({
       inputInfo.property = "approved";
       setProperty("approved");
       setTimeout(() => setIsActive(false), 400);
-    }else if(inputInfo.property === "rejected"){
+    } else if (inputInfo.property === "rejected") {
       console.log("from rejected");
       inputInfo.disabled = true;
       inputInfo.property = "approved";
       setProperty("approved");
-      FormClickActions.emit("ApproveClick", inputInfo);   
+      FormClickActions.emit("ApproveClick", inputInfo);
       textarea.current?.classList.remove("rejected");
-    } 
+    }
     propagateChange(inputInfo);
   };
 
@@ -138,18 +135,17 @@ const InputComponent: React.FC<InputProps> = ({
         <div className="button-container">
           <button
             className={`button ${isActive ? "active" : ""}`}
-            onClick={()=>handleStateChange(inputInfo)}>
-            {
-            property === 'default' ? (
+            onClick={() => handleStateChange(inputInfo)}
+          >
+            {property === "default" ? (
               <img src={acceptIcon} alt="Défaut" width="20" height="20" />
-            ) : property === 'approved' ? (
+            ) : property === "approved" ? (
               <img src={editIcon} alt="Approuver" width="20" height="20" />
-            ) : property === 'modified' ? (
+            ) : property === "modified" ? (
               <img src={acceptIcon} alt="Modifié" width="20" height="20" />
             ) : (
               <img src={acceptIcon} alt="Rejeté" width="20" height="20" />
-            )
-          }
+            )}
           </button>
         </div>
       </div>
@@ -160,31 +156,31 @@ const InputComponent: React.FC<InputProps> = ({
           .map((line) => Math.floor(line.length / MAX_CHAR_IN_ROW))
           .reduce((sum, current) => sum + current) >
         3 && (
-          <div className="show-more-container">
-            <label
-              className="open-icon"
-              onClick={() => {
-                modal.current?.classList.add("active");
-              }}
-            >
-              Show more
-            </label>
-            <Modal
-              toRef={modal}
-              text={inputInfo.value}
-              handleTextChange={(event: {
-                target: { value: React.SetStateAction<string> };
-              }) => {
-                inputInfo.value = event.target.value.toString();
-                propagateChange(inputInfo);
-              }}
-              imgs={imgs}
-              close={() => {
-                modal.current?.classList.remove("active");
-              }}
-            />
-          </div>
-        )}
+        <div className="show-more-container">
+          <label
+            className="open-icon"
+            onClick={() => {
+              modal.current?.classList.add("active");
+            }}
+          >
+            Show more
+          </label>
+          <Modal
+            toRef={modal}
+            text={inputInfo.value}
+            handleTextChange={(event: {
+              target: { value: React.SetStateAction<string> };
+            }) => {
+              inputInfo.value = event.target.value.toString();
+              propagateChange(inputInfo);
+            }}
+            imgs={imgs}
+            close={() => {
+              modal.current?.classList.remove("active");
+            }}
+          />
+        </div>
+      )}
     </div>
   );
 };

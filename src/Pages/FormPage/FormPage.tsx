@@ -348,7 +348,7 @@ const FormPage = () => {
         label: input.id,
       })),
   );
-
+  // eslint-disable-next-line
   const flash = (element: HTMLElement) => {
     let color = "black";
     if (window.matchMedia("(prefers-color-scheme: dark)").matches) {
@@ -375,41 +375,44 @@ const FormPage = () => {
 
   const validateFormInputs = () => {
     console.log("Validating form inputs... ");
-  
+
     // Flag to track if all sections are approved
-    let rejected:Input[] = []
+    const rejected: Input[] = [];
     // Iterate through each section and its inputs
     data.sections.forEach((section) => {
       section.inputs.forEach((input) => {
-
-        // Check for specific validation criteria for each input 
-        if(input.property == "approved"){
-          
-        }else{
-          if(input.value.trim().length > 0){
-            data.sections.find(currentSection=>currentSection.label == section.label)!.inputs.find(currentInput=>currentInput.label==input.label)!.property ="rejected";
+        // Check for specific validation criteria for each input
+        if (input.property == "approved") {
+          console.log(input.label + "Has been approved.");
+        } else {
+          if (input.value.trim().length > 0) {
+            data.sections
+              .find((currentSection) => currentSection.label == section.label)!
+              .inputs.find(
+                (currentInput) => currentInput.label == input.label,
+              )!.property = "rejected";
             rejected.push(input);
             FormClickActions.emit("Rejected", input);
           }
         }
       });
     });
-    if(rejected.length>0){
+    if (rejected.length > 0) {
       give_focus(rejected[0]);
     }
-    return rejected.length===0;
+    return rejected.length === 0;
   };
-  
+
   const navigate = useNavigate();
-  const submitForm=(event:React.MouseEvent<HTMLButtonElement>)=>{
-    let isValid = validateFormInputs();
-    console.log(isValid)
-    setData(data.copy())
-    if(isValid){
+  // eslint-disable-next-line
+  const submitForm = (event: React.MouseEvent<HTMLButtonElement>) => {
+    const isValid = validateFormInputs();
+    console.log(isValid);
+    setData(data.copy());
+    if (isValid) {
       navigate("/Confirm", { state: { data: data } });
     }
-  }
-  
+  };
 
   useEffect(() => {
     textareas.forEach((textareaObj) => {

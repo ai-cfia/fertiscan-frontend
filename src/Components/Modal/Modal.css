@@ -122,8 +122,6 @@
   }
 }
 
-
-
 .overlay .pic-container{
   grid-area: pics;
   display: flex;

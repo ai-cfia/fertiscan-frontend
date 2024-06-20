@@ -22,9 +22,8 @@ const ProgressBar = ({ sections }: { sections: { label: string }[] }) => {
     const unsubApprove = FormClickActions.on(
       "ApproveClick",
       (inputInfo: Input) => {
-        sec
-          .find((elem) => elem.label == inputInfo.id)!
-          .ref.current!.className = "section approved";
+        sec.find((elem) => elem.label == inputInfo.id)!.ref.current!.className =
+          "section approved";
         inputInfo.property = "approved";
       },
     );
@@ -32,23 +31,21 @@ const ProgressBar = ({ sections }: { sections: { label: string }[] }) => {
     const unsubModify = FormClickActions.on(
       "ModifyClick",
       (inputInfo: Input) => {
-        sec
-          .find((elem) => elem.label == inputInfo.id)!
-          .ref.current!.className = "section modified";
+        sec.find((elem) => elem.label == inputInfo.id)!.ref.current!.className =
+          "section modified";
         inputInfo.property = "modified";
       },
     );
-    // eslint-disable-next-line
     // When the input is rejected because he is not in the good format ex: email, adress, etc
+    // eslint-disable-next-line
     const unsubRejected = FormClickActions.on(
       "Rejected",
       (inputInfo: Input) => {
         console.log("rejected");
-        console.log(inputInfo.id)
+        console.log(inputInfo.id);
         // remove all classes and add section and rejected
-        sec
-          .find((elem) => elem.label == inputInfo.id)!
-          .ref.current!.className = "section rejected";
+        sec.find((elem) => elem.label == inputInfo.id)!.ref.current!.className =
+          "section rejected";
         inputInfo.property = "rejected";
       },
     );
@@ -97,7 +94,7 @@ const ProgressBar = ({ sections }: { sections: { label: string }[] }) => {
               sec_index === sections.length - 1 ? "15px" : "0",
             borderBottom:
               sec_index === sections.length - 1 ? "none" : "2px solid ",
-            height: `${(window.innerHeight-140) / sections.length}px`,
+            height: `${(window.innerHeight - 140) / sections.length}px`,
             cursor: "pointer",
           }}
         ></div>
