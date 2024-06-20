@@ -242,7 +242,7 @@ const FormPage = () => {
 
   const api_url = process.env.API_URLs;
 
-  const approveAll = () => {
+  {/*const approveAll = () => {
     data.sections.forEach((section) => {
       section.inputs.forEach((input) => {
         input.property = "approved";
@@ -251,7 +251,7 @@ const FormPage = () => {
     });
     updateData();
   };
-  window.approveAll = approveAll;
+  window.approveAll = approveAll;*/}
 
 
   /**
