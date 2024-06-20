@@ -240,7 +240,7 @@ const FormPage = () => {
     }
   };
 
-  const api_url = process.env.API_URLs;
+  const api_url = "http://localhost:5000";
 
   {/*const approveAll = () => {
     data.sections.forEach((section) => {
@@ -360,17 +360,6 @@ const FormPage = () => {
         label: input.id,
       })),
   );
-  // eslint-disable-next-line
-  const flash = (element: HTMLElement) => {
-    let color = "black";
-    if (window.matchMedia("(prefers-color-scheme: dark)").matches) {
-      color = "white";
-    }
-    element.style.boxShadow = "0 0 10px 5px " + color;
-    setTimeout(() => {
-      element.style.boxShadow = "none";
-    }, 500);
-  };
 
   const give_focus = (input: Input) => {
     // focus on the selected section
@@ -395,7 +384,7 @@ const FormPage = () => {
       section.inputs.forEach((input) => {
         // Check for specific validation criteria for each input
         if (input.property == "approved") {
-          console.log(input.label + " has been approved.");
+          console.log(input.label + "Has been approved.");
         } else {
           if (input.value.trim().length > 0) {
             data.sections
@@ -417,7 +406,7 @@ const FormPage = () => {
 
   const navigate = useNavigate();
   // eslint-disable-next-line
-  const submitForm = (event: React.MouseEvent<HTMLButtonElement>) => {
+  const submitForm = ({/*event: React.MouseEvent<HTMLButtonElement>*/}) => {
     const isValid = validateFormInputs();
     console.log(isValid);
     setData(data.copy());

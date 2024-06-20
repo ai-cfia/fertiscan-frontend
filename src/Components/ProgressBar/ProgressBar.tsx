@@ -18,9 +18,17 @@ const ProgressBar = ({ sections }: { sections: { label: string }[] }) => {
   });
 
   useEffect(() => {
+    {
+      /* const unsubApprove = */
+    }
+    FormClickActions.on("ApproveClick", (inputInfo: Input) => {
+      sec.find((elem) => elem.label == inputInfo.id)!.ref.current!.className =
+        "section approved";
+      inputInfo.property = "approved";
+    });
     // eslint-disable-next-line
-    const unsubApprove = FormClickActions.on(
-      "ApproveClick",
+    {/* const unsubModify =*/} FormClickActions.on(
+      "ModifyClick",
       (inputInfo: Input) => {
         sec.find((elem) => elem.label == inputInfo.id)!.ref.current!.className =
           "section approved";
@@ -28,8 +36,8 @@ const ProgressBar = ({ sections }: { sections: { label: string }[] }) => {
       },
     );
     // eslint-disable-next-line
-    const unsubModify = FormClickActions.on(
-      "ModifyClick",
+    {/*const unsubRejected = */}FormClickActions.on(
+      "Rejected",
       (inputInfo: Input) => {
         sec.find((elem) => elem.label == inputInfo.id)!.ref.current!.className =
           "section modified";
