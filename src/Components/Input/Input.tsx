@@ -15,6 +15,7 @@ interface InputProps {
   inputInfo: Input;
   textarea: React.MutableRefObject<HTMLTextAreaElement | null>;
   modal: React.MutableRefObject<HTMLDivElement | null>;
+  imgs: { title: string; url: string }[];
   propagateChange: (inputInfo: Input) => void;
 }
 
@@ -32,26 +33,77 @@ const InputComponent: React.FC<InputProps> = ({
   inputInfo,
   textarea,
   modal,
+  imgs,
   propagateChange,
 }) => {
   const [isActive, setIsActive] = useState(false);
+  const [property, setProperty] = useState(inputInfo.property);
 
-  //Need to be modified to "approve" but color dont work
-  const handleClick_Modify = (inputInfo: Input) => () => {
-    console.log("modified: ", inputInfo.label);
-    setIsActive(true);
-    inputInfo.disabled = false;
-    FormClickActions.emit("ModifyClick", inputInfo);
-    setTimeout(() => setIsActive(false), 400);
+  const SyncChanges = (inputInfo: Input) => {
+    if (inputInfo.property === "approved") {
+      setIsActive(false);
+      inputInfo.disabled = true;
+      inputInfo.property = "approved";
+      setProperty("approved");
+    } else if (inputInfo.property === "modified") {
+      setIsActive(true);
+      inputInfo.disabled = false;
+      inputInfo.property = "modified";
+      setProperty("modified");
+    } else if (inputInfo.property === "default") {
+      setIsActive(true);
+      inputInfo.disabled = false;
+      inputInfo.property = "default";
+      setProperty("default");
+    } else if (inputInfo.property === "rejected") {
+      setIsActive(true);
+      inputInfo.disabled = false;
+      inputInfo.property = "rejected";
+      textarea.current?.classList.add("rejected");
+      setProperty("rejected");
+    }
   };
 
-  //Need to be modified to "modified" but color dont work
-  const handleClick_Approve = (inputInfo: Input) => () => {
-    console.log("approved: ", inputInfo.label);
-    setIsActive(true);
-    inputInfo.disabled = true;
-    FormClickActions.emit("ApproveClick", inputInfo);
-    setTimeout(() => setIsActive(false), 400);
+  FormClickActions.on("Rejected", (rej: Input) => {
+    if (rej.id === inputInfo.id) {
+      SyncChanges(inputInfo);
+    }
+  });
+  const handleStateChange = (inputInfo: Input) => {
+    if (inputInfo.property === "approved") {
+      console.log("from approved");
+      setIsActive(true);
+      inputInfo.disabled = false;
+      inputInfo.property = "modified";
+      setProperty("modified");
+      FormClickActions.emit("ModifyClick", inputInfo);
+      setTimeout(() => setIsActive(false), 400);
+    } else if (inputInfo.property === "modified") {
+      console.log("from modified");
+      setIsActive(false);
+      inputInfo.disabled = true;
+      inputInfo.property = "approved";
+      setProperty("approved");
+      FormClickActions.emit("ApproveClick", inputInfo);
+      setTimeout(() => setIsActive(false), 400);
+      textarea.current?.classList.remove("rejected");
+    } else if (inputInfo.property === "default") {
+      console.log("from default");
+      setIsActive(true);
+      FormClickActions.emit("ApproveClick", inputInfo);
+      inputInfo.disabled = true;
+      inputInfo.property = "approved";
+      setProperty("approved");
+      setTimeout(() => setIsActive(false), 400);
+    } else if (inputInfo.property === "rejected") {
+      console.log("from rejected");
+      inputInfo.disabled = true;
+      inputInfo.property = "approved";
+      setProperty("approved");
+      FormClickActions.emit("ApproveClick", inputInfo);
+      textarea.current?.classList.remove("rejected");
+    }
+    propagateChange(inputInfo);
   };
 
   if (inputInfo.value == "") return <></>;
@@ -68,7 +120,6 @@ const InputComponent: React.FC<InputProps> = ({
           value={inputInfo.value}
           disabled={inputInfo.disabled}
           onChange={(event: React.ChangeEvent<HTMLTextAreaElement>) => {
-            console.log(event);
             const current = event.target as HTMLTextAreaElement;
             resizeTextarea(current);
             inputInfo.value = event.target.value;
@@ -84,15 +135,17 @@ const InputComponent: React.FC<InputProps> = ({
         <div className="button-container">
           <button
             className={`button ${isActive ? "active" : ""}`}
-            onClick={handleClick_Approve(inputInfo)}
+            onClick={() => handleStateChange(inputInfo)}
           >
-            <img src={acceptIcon} alt="Modifier" width="20" height="20" />
-          </button>
-          <button
-            className={`button ${isActive ? "active" : ""}`}
-            onClick={handleClick_Modify(inputInfo)}
-          >
-            <img src={editIcon} alt="Modifier" width="20" height="20" />
+            {property === "default" ? (
+              <img src={acceptIcon} alt="Défaut" width="20" height="20" />
+            ) : property === "approved" ? (
+              <img src={editIcon} alt="Approuver" width="20" height="20" />
+            ) : property === "modified" ? (
+              <img src={acceptIcon} alt="Modifié" width="20" height="20" />
+            ) : (
+              <img src={acceptIcon} alt="Rejeté" width="20" height="20" />
+            )}
           </button>
         </div>
       </div>
@@ -121,7 +174,7 @@ const InputComponent: React.FC<InputProps> = ({
               inputInfo.value = event.target.value.toString();
               propagateChange(inputInfo);
             }}
-            imgs={[]}
+            imgs={imgs}
             close={() => {
               modal.current?.classList.remove("active");
             }}

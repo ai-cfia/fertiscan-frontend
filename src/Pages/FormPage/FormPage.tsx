@@ -1,12 +1,13 @@
 import React, { useState, useRef, useEffect, StrictMode } from "react";
 import "./FormPage.css";
 import Carousel from "../../Components/Carousel/Carousel";
-import { useLocation } from "react-router-dom";
+import { useLocation, useNavigate } from "react-router-dom";
 import ProgressBar from "../../Components/ProgressBar/ProgressBar";
 import SectionComponent from "../../Components/Section/Section.tsx";
 import Section from "../../Model/Section-Model.tsx";
 import Input from "../../Model/Input-Model.tsx";
 import Data from "../../Model/Data-Model.tsx";
+import { FormClickActions } from "../../Utils/EventChannels.tsx";
 
 const FormPage = () => {
   // @ts-expect-error : setForm is going to be used when linked to db
@@ -347,13 +348,70 @@ const FormPage = () => {
         label: input.id,
       })),
   );
+  // eslint-disable-next-line
+  {/*const flash = */}(element: HTMLElement) => {
+    let color = "black";
+    if (window.matchMedia("(prefers-color-scheme: dark)").matches) {
+      color = "white";
+    }
+    element.style.boxShadow = "0 0 10px 5px " + color;
+    setTimeout(() => {
+      element.style.boxShadow = "none";
+    }, 500);
+  };
+
+  const give_focus = (input: Input) => {
+    // focus on the selected section
+    const element = document.getElementById(input.id) as HTMLElement;
+    if (element) {
+      element.scrollIntoView({
+        behavior: "smooth",
+        block: "center",
+        inline: "nearest",
+      });
+      element.focus();
+    }
+  };
 
   const validateFormInputs = () => {
     console.log("Validating form inputs... ");
-    const allApproved = false;
-    // Itérer à travers chaque section et chaque input pour vérifier et mettre à jour l'état d'approbation
-    setData(data.copy()); // Mettre à jour l'état pour refléter les changements
-    return allApproved;
+
+    // Flag to track if all sections are approved
+    const rejected: Input[] = [];
+    // Iterate through each section and its inputs
+    data.sections.forEach((section) => {
+      section.inputs.forEach((input) => {
+        // Check for specific validation criteria for each input
+        if (input.property == "approved") {
+          console.log(input.label + "Has been approved.");
+        } else {
+          if (input.value.trim().length > 0) {
+            data.sections
+              .find((currentSection) => currentSection.label == section.label)!
+              .inputs.find(
+                (currentInput) => currentInput.label == input.label,
+              )!.property = "rejected";
+            rejected.push(input);
+            FormClickActions.emit("Rejected", input);
+          }
+        }
+      });
+    });
+    if (rejected.length > 0) {
+      give_focus(rejected[0]);
+    }
+    return rejected.length === 0;
+  };
+
+  const navigate = useNavigate();
+  // eslint-disable-next-line
+  const submitForm = ({/*event: React.MouseEvent<HTMLButtonElement>*/}) => {
+    const isValid = validateFormInputs();
+    console.log(isValid);
+    setData(data.copy());
+    if (isValid) {
+      navigate("/Confirm", { state: { data: data } });
+    }
   };
 
   useEffect(() => {
@@ -395,11 +453,12 @@ const FormPage = () => {
                     sectionInfo={sectionInfo}
                     textareas={textareas}
                     modals={modals}
+                    imgs={urls}
                     propagateChange={handleDataChange}
                   ></SectionComponent>
                 );
               })}
-              <button className="button" onClick={validateFormInputs}>
+              <button className="button" onClick={submitForm}>
                 Submit
               </button>
             </div>

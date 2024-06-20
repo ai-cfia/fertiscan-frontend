@@ -6,13 +6,26 @@
     overflow: hidden;
     position: sticky;
     margin-top: 50px;
-    }
+}
+
+.progress-wrapper{  
+  position: fixed;
+  right: 60px;
+  top:40px;
+}
 
 .section {
   background-color: rgb(185, 185, 185);
   flex: 1;
+  height: 5%;
 }
 
 .section.approved {
   background-color: rgb(18, 178, 18);
+}
+.section.modified{
+  background-color: rgb(255, 255, 0);
+}
+.section.rejected{
+  background-color: rgb(255, 0, 0);
 }

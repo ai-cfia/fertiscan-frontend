@@ -41,36 +41,34 @@ const Carousel: React.FC<CarouselProps> = ({ imgs }) => {
   };
 
   return (
-    <div>
-      <div className="carousel-wrapper">
-        <div className="curr-img">
-          <a className="prev" onClick={() => selectImg(currImg - 1)}>
-            &#10094;
-          </a>
-          <ImageZoomInOut
-            className="main-img"
-            imageUrl={imgList.length > 0 ? imgList[currImg].url : ""}
-            alt="No picture"
-          />
-          <a className="next" onClick={() => selectImg(currImg + 1)}>
-            &#10095;
-          </a>
-        </div>
-        <div className="carousel">
-          {imgList.map((img: imgObject) => {
-            return (
-              <img
-                src={img.url}
-                className={
-                  "carousel-img" + (img.index == currImg ? " current" : " ")
-                }
-                alt={imgList[currImg].title}
-                key={img.index}
-                onClick={() => selectImg(img.index)}
-              ></img>
-            );
-          })}
-        </div>
+    <div className="carousel-wrapper">
+      <div className="curr-img">
+        <a className="prev" onClick={() => selectImg(currImg - 1)}>
+          &#10094;
+        </a>
+        <ImageZoomInOut
+          className="main-img"
+          imageUrl={imgList.length > 0 ? imgList[currImg].url : ""}
+          alt="No picture"
+        />
+        <a className="next" onClick={() => selectImg(currImg + 1)}>
+          &#10095;
+        </a>
+      </div>
+      <div className="carousel">
+        {imgList.map((img: imgObject) => {
+          return (
+            <img
+              src={img.url}
+              className={
+                "carousel-img" + (img.index == currImg ? " current" : " ")
+              }
+              alt={imgList[currImg].title}
+              key={img.index}
+              onClick={() => selectImg(img.index)}
+            ></img>
+          );
+        })}
       </div>
     </div>
   );

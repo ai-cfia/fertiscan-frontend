@@ -15,7 +15,7 @@
   margin-top: 30px;
 }
 
-@media only screen and (min-width: 1231px) {
+@media only screen and (min-width: 1231px) { /*the minimum place that need the form to have when he is in full page mode is 1231*/
   .carousel-wrapper {
     position: fixed;
     display: grid;
@@ -30,7 +30,7 @@
 }
 
 
-@media only screen and (max-width: 1230px) {
+@media only screen and (max-width: 1230px) {/*the minimum place that need the form to have when he is in full page mode is 1231*/
   .carousel-wrapper {
     display: grid;
     grid-template-areas:
