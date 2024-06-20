@@ -349,7 +349,7 @@ const FormPage = () => {
       })),
   );
   // eslint-disable-next-line
-  const flash = (element: HTMLElement) => {
+  {/*const flash = */}(element: HTMLElement) => {
     let color = "black";
     if (window.matchMedia("(prefers-color-scheme: dark)").matches) {
       color = "white";
@@ -405,7 +405,7 @@ const FormPage = () => {
 
   const navigate = useNavigate();
   // eslint-disable-next-line
-  const submitForm = (event: React.MouseEvent<HTMLButtonElement>) => {
+  const submitForm = ({/*event: React.MouseEvent<HTMLButtonElement>*/}) => {
     const isValid = validateFormInputs();
     console.log(isValid);
     setData(data.copy());

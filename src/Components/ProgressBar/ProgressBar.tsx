@@ -18,8 +18,7 @@ const ProgressBar = ({ sections }: { sections: { label: string }[] }) => {
   });
 
   useEffect(() => {
-    // eslint-disable-next-line
-    const unsubApprove = FormClickActions.on(
+   {/* const unsubApprove = */}FormClickActions.on(
       "ApproveClick",
       (inputInfo: Input) => {
         sec.find((elem) => elem.label == inputInfo.id)!.ref.current!.className =
@@ -28,7 +27,7 @@ const ProgressBar = ({ sections }: { sections: { label: string }[] }) => {
       },
     );
     // eslint-disable-next-line
-    const unsubModify = FormClickActions.on(
+    {/* const unsubModify =*/} FormClickActions.on(
       "ModifyClick",
       (inputInfo: Input) => {
         sec.find((elem) => elem.label == inputInfo.id)!.ref.current!.className =
@@ -38,7 +37,7 @@ const ProgressBar = ({ sections }: { sections: { label: string }[] }) => {
     );
     // When the input is rejected because he is not in the good format ex: email, adress, etc
     // eslint-disable-next-line
-    const unsubRejected = FormClickActions.on(
+    {/*const unsubRejected = */}FormClickActions.on(
       "Rejected",
       (inputInfo: Input) => {
         console.log("rejected");
