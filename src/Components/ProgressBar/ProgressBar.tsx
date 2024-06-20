@@ -23,13 +23,9 @@ const ProgressBar = ({ sections }: { sections: { label: string }[] }) => {
       "ApproveClick",
       (inputInfo: Input) => {
         sec
-        .find((elem) => elem.label == inputInfo.id)!
-        .ref.current!.classList.remove(inputInfo.property);
-
+          .find((elem) => elem.label == inputInfo.id)!
+          .ref.current!.className = "section approved";
         inputInfo.property = "approved";
-      sec
-      .find((elem) => elem.label == inputInfo.id)!
-      .ref.current!.classList.add(inputInfo.property);
       },
     );
     // eslint-disable-next-line
@@ -37,13 +33,9 @@ const ProgressBar = ({ sections }: { sections: { label: string }[] }) => {
       "ModifyClick",
       (inputInfo: Input) => {
         sec
-        .find((elem) => elem.label == inputInfo.id)!
-        .ref.current!.classList.remove(inputInfo.property);
-
+          .find((elem) => elem.label == inputInfo.id)!
+          .ref.current!.className = "section modified";
         inputInfo.property = "modified";
-      sec
-      .find((elem) => elem.label == inputInfo.id)!
-      .ref.current!.classList.add(inputInfo.property);
       },
     );
     // eslint-disable-next-line
@@ -51,14 +43,13 @@ const ProgressBar = ({ sections }: { sections: { label: string }[] }) => {
     const unsubRejected = FormClickActions.on(
       "Rejected",
       (inputInfo: Input) => {
-          sec
-            .find((elem) => elem.label == inputInfo.id)!
-            .ref.current!.classList.remove(inputInfo.property);
-
-            inputInfo.property = "rejected";
-          sec
+        console.log("rejected");
+        console.log(inputInfo.id)
+        // remove all classes and add section and rejected
+        sec
           .find((elem) => elem.label == inputInfo.id)!
-          .ref.current!.classList.add(inputInfo.property);
+          .ref.current!.className = "section rejected";
+        inputInfo.property = "rejected";
       },
     );
     // eslint-disable-next-line
@@ -76,7 +67,6 @@ const ProgressBar = ({ sections }: { sections: { label: string }[] }) => {
   };
 
   const give_focus = (section: { label: string }) => {
-    //console.log(section);
     // focus on the selected section
     const element = document.getElementById(section.label) as HTMLElement;
     if (element) {

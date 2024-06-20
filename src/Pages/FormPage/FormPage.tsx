@@ -7,6 +7,7 @@ import SectionComponent from "../../Components/Section/Section.tsx";
 import Section from "../../Model/Section-Model.tsx";
 import Input from "../../Model/Input-Model.tsx";
 import Data from "../../Model/Data-Model.tsx";
+import { FormClickActions } from "../../Utils/EventChannels.tsx";
 
 const FormPage = () => {
   // @ts-expect-error : setForm is going to be used when linked to db
@@ -348,12 +349,35 @@ const FormPage = () => {
       })),
   );
 
+  const flash = (element: HTMLElement) => {
+    let color = "black";
+    if (window.matchMedia("(prefers-color-scheme: dark)").matches) {
+      color = "white";
+    }
+    element.style.boxShadow = "0 0 10px 5px " + color;
+    setTimeout(() => {
+      element.style.boxShadow = "none";
+    }, 500);
+  };
+
+  const give_focus = (input: Input) => {
+    // focus on the selected section
+    const element = document.getElementById(input.id) as HTMLElement;
+    if (element) {
+      element.scrollIntoView({
+        behavior: "smooth",
+        block: "center",
+        inline: "nearest",
+      });
+      element.focus();
+    }
+  };
+
   const validateFormInputs = () => {
     console.log("Validating form inputs... ");
   
     // Flag to track if all sections are approved
-    let allApproved = true;
-  
+    let rejected:Input[] = []
     // Iterate through each section and its inputs
     data.sections.forEach((section) => {
       section.inputs.forEach((input) => {
@@ -364,17 +388,22 @@ const FormPage = () => {
         }else{
           if(input.value.trim().length > 0){
             data.sections.find(currentSection=>currentSection.label == section.label)!.inputs.find(currentInput=>currentInput.label==input.label)!.property ="rejected";
-            allApproved = false;
+            rejected.push(input);
+            FormClickActions.emit("Rejected", input);
           }
         }
       });
     });
-    return allApproved; //Mettre setData(data) dans submit fonction
+    if(rejected.length>0){
+      give_focus(rejected[0]);
+    }
+    return rejected.length===0;
   };
   
   const navigate = useNavigate();
   const submitForm=(event:React.MouseEvent<HTMLButtonElement>)=>{
-    let isValid = validateFormInputs()
+    let isValid = validateFormInputs();
+    console.log(isValid)
     setData(data.copy())
     if(isValid){
       navigate("/Confirm", { state: { data: data } });
