@@ -240,7 +240,7 @@ const FormPage = () => {
     }
   };
 
-  const api_url = process.env.API_URLs;
+  const api_url = "http://localhost:5000";
 
   /**
    * Prepare and send request to backend for file analysis
