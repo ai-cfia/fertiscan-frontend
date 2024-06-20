@@ -14,7 +14,7 @@ const ConfirmPage = () => {
       title: string;
     }[]
   >(location.state.urls);
-
+  setUrls(location.state.urls);
   const renderSection = (section: Section) => (
     <div key={section.label}>
       <h2>{section.label}</h2>
