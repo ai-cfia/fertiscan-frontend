@@ -1,0 +1,19 @@
+.data-infos{
+    display: flex;
+    flex-direction: column;
+}
+.confirm-page-container{
+    display: grid;
+    grid-template-areas: "title title"
+                         "pics infos";
+    grid-template-columns: 1fr 1fr;
+}
+.confirm-page-container .carousel-wrapper{
+    grid-area: pics;
+}
+#confirm-title{
+    grid-area: title;
+}
+.confirm-container{
+    grid-area: infos;
+}

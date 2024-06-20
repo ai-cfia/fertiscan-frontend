@@ -242,6 +242,18 @@ const FormPage = () => {
 
   const api_url = process.env.API_URLs;
 
+  const approveAll = () => {
+    data.sections.forEach((section) => {
+      section.inputs.forEach((input) => {
+        input.property = "approved";
+        FormClickActions.emit("ApproveClick", input);
+      });
+    });
+    updateData();
+  };
+  window.approveAll = approveAll;
+
+
   /**
    * Prepare and send request to backend for file analysis
    * @returns data : the data retrieved from the backend
@@ -383,7 +395,7 @@ const FormPage = () => {
       section.inputs.forEach((input) => {
         // Check for specific validation criteria for each input
         if (input.property == "approved") {
-          console.log(input.label + "Has been approved.");
+          console.log(input.label + " has been approved.");
         } else {
           if (input.value.trim().length > 0) {
             data.sections
