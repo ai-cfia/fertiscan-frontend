@@ -422,7 +422,7 @@ const FormPage = () => {
     console.log(isValid);
     setData(data.copy());
     if (isValid) {
-      navigate("/Confirm", { state: { data: data } });
+      navigate("/Confirm", { state: { data: data, urls:urls } });
     }
   };
 

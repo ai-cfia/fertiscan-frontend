@@ -4,6 +4,8 @@ import { useLocation, useNavigate } from "react-router-dom";
 import SectionComponent from "../../Components/Section/Section.tsx";
 import Section from "../../Model/Section-Model.tsx";
 import "./ConfirmPage.css";
+
+
 const ConfirmPage = () => {
     const location = useLocation();
     const data = location.state.data;
@@ -12,7 +14,7 @@ const ConfirmPage = () => {
       url: string;
       title: string;
     }[]
-  >([]);
+  >(location.state.urls);
     
 
     const renderSection = (section: Section) => (
