@@ -407,11 +407,7 @@ const FormPage = () => {
 
   const navigate = useNavigate();
   // eslint-disable-next-line
-  const submitForm = (
-    {
-      /*event: React.MouseEvent<HTMLButtonElement>*/
-    },
-  ) => {
+  const submitForm = () => {
     const isValid = validateFormInputs();
     console.log(isValid);
     setData(data.copy());
