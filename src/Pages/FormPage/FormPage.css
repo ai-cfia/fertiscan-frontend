@@ -27,7 +27,7 @@
 
 .pic-container {
   grid-area: pics;
-  margin-left: 10%;
+  margin-left: 0;
 }
 .progress-wrapper {
   grid-area: progress-bar;

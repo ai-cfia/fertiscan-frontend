@@ -18,3 +18,12 @@
     padding: 10px;
     cursor: pointer;
   }
+
+.zoom-in-out{
+  cursor: grab;
+  height: 100%;
+}
+.zoom-in-out:active{
+  cursor: grabbing;
+}
+
