@@ -18,36 +18,34 @@ const ProgressBar = ({ sections }: { sections: { label: string }[] }) => {
   });
 
   useEffect(() => {
-   {/* const unsubApprove = */}FormClickActions.on(
-      "ApproveClick",
-      (inputInfo: Input) => {
-        sec.find((elem) => elem.label == inputInfo.id)!.ref.current!.className =
-          "section approved";
-        inputInfo.property = "approved";
-      },
-    );
+    {
+      /* const unsubApprove = */
+    }
+    FormClickActions.on("ApproveClick", (inputInfo: Input) => {
+      sec.find((elem) => elem.label == inputInfo.id)!.ref.current!.className =
+        "section approved";
+      inputInfo.property = "approved";
+    });
     // eslint-disable-next-line
     {/* const unsubModify =*/} FormClickActions.on(
       "ModifyClick",
       (inputInfo: Input) => {
-        sec.find((elem) => elem.label == inputInfo.id)!.ref.current!.className =
-          "section modified";
-        inputInfo.property = "modified";
-      },
-    );
+      sec.find((elem) => elem.label == inputInfo.id)!.ref.current!.className =
+        "section modified";
+      inputInfo.property = "modified";
+    });
     // When the input is rejected because he is not in the good format ex: email, adress, etc
     // eslint-disable-next-line
     {/*const unsubRejected = */}FormClickActions.on(
       "Rejected",
       (inputInfo: Input) => {
-        console.log("rejected");
-        console.log(inputInfo.id);
-        // remove all classes and add section and rejected
-        sec.find((elem) => elem.label == inputInfo.id)!.ref.current!.className =
-          "section rejected";
-        inputInfo.property = "rejected";
-      },
-    );
+      console.log("rejected");
+      console.log(inputInfo.id);
+      // remove all classes and add section and rejected
+      sec.find((elem) => elem.label == inputInfo.id)!.ref.current!.className =
+        "section rejected";
+      inputInfo.property = "rejected";
+    });
     // eslint-disable-next-line
   }, []);
 
