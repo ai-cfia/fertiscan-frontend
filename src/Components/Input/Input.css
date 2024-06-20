@@ -1,5 +1,5 @@
 textarea {
-  transition: box-shadow 1s ease-in-out;
+  transition: box-shadow 0.5s ease-in-out;
 }
 textarea:disabled {
   background-color: #4e4e4e7a;

@@ -114,9 +114,13 @@ textarea {
 }
 
 .show-more-container{
-  display: flex-end;
-  width: 45vw;
   align-self: end;
+  justify-self: end;
+  display: flex;
+  justify-content: flex-end;
+}
+.show-more-container label{
+  width: fit-content;
 }
 
 .data-section {
@@ -128,13 +132,33 @@ textarea {
 }
 
 .input-container {
-  display: inline-flex;
-  flex-direction: column;
-  width: 300px;
+  display: grid;
+  grid-template-areas: "label label ."
+                       "input input input"
+                       ". show-more .";
+
+  grid-template-columns: 20% 60% 20%;
+}
+.input-container label {
+  grid-area: label;
+  align-self: center;
+}
+.input-container .textbox-container {
+  grid-area: input;
 }
 
-.input-container input {
-  width: 98%;
+.input-container .show-more-container {
+  grid-area: show-more;
+  width: 100%;
+}
+.open-icon{
+  cursor: pointer;
+}
+/** for dark mode */
+@media (prefers-color-scheme: dark) {
+  .open-icon{
+    color: white;
+  }
 }
 
 .button-container {

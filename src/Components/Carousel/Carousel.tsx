@@ -41,7 +41,6 @@ const Carousel: React.FC<CarouselProps> = ({ imgs }) => {
   };
 
   return (
-    <div>
       <div className="carousel-wrapper">
         <div className="curr-img">
           <a className="prev" onClick={() => selectImg(currImg - 1)}>
@@ -72,7 +71,6 @@ const Carousel: React.FC<CarouselProps> = ({ imgs }) => {
           })}
         </div>
       </div>
-    </div>
   );
 };
 

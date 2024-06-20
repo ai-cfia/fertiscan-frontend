@@ -13,12 +13,14 @@
 }
 
 .overlay.active {
-  display: flex;
+  display: grid;
+  grid-template-areas: "pics card";
 }
 
 /* Styles de la carte */
 .card {
-  width: 50%;
+  grid-area: card;
+  width: 90%;
   max-width: 800px;
   background-color: white;
   padding: 20px;
@@ -118,4 +120,19 @@
     filter: invert(74%) sepia(37%) saturate(0%) hue-rotate(249deg)
       brightness(101%) contrast(98%);
   }
+}
+
+
+
+.overlay .pic-container{
+  grid-area: pics;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  margin-top: 20px;
+}
+
+.overlay .carousel-wrapper{
+  position: relative;
 }

@@ -97,7 +97,7 @@ const ProgressBar = ({ sections }: { sections: { label: string }[] }) => {
               sec_index === sections.length - 1 ? "15px" : "0",
             borderBottom:
               sec_index === sections.length - 1 ? "none" : "2px solid ",
-            height: "95px",
+            height: `${(window.innerHeight-140) / sections.length}px`,
             cursor: "pointer",
           }}
         ></div>
