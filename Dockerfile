@@ -11,6 +11,7 @@ COPY tsconfig.json .
 COPY tsconfig.node.json .
 COPY vite.config.ts .
 COPY index.html .
+COPY .env .
 
 # Install npm at a specific version, dependencies, build, and run tests
 RUN npm install --include=dev
