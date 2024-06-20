@@ -15,6 +15,7 @@
 .overlay.active {
   display: grid;
   grid-template-areas: "pics card";
+  grid-template-columns: 50% 50%
 }
 
 /* Styles de la carte */
