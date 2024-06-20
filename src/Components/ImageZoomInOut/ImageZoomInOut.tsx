@@ -1,21 +1,22 @@
-import { TransformWrapper, TransformComponent, useControls } from "react-zoom-pan-pinch";
+import {
+  TransformWrapper,
+  TransformComponent,
+  useControls,
+} from "react-zoom-pan-pinch";
 import "./ImageZoomInOut.css";
-import { useEffect, useState } from "react";
+import { useEffect } from "react";
 
-
-
-interface ControlsProps{
+interface ControlsProps {
   url: string;
 }
-const TransformControls = ({url}:ControlsProps) => {
+const TransformControls = ({ url }: ControlsProps) => {
   const { resetTransform } = useControls();
   useEffect(() => {
     resetTransform();
+    // eslint-disable-next-line
   }, [url]);
-  return (
-   <></>
-  );
-}
+  return <></>;
+};
 
 interface ImageProps {
   imageUrl: string;
@@ -25,15 +26,13 @@ interface ImageProps {
 }
 
 function ImageZoomInOut({ imageUrl, className, onClick, alt }: ImageProps) {
-
-
-
   return (
     <div className="zoom-in-out" onClick={onClick}>
       <TransformWrapper pinch={{ step: 1000 }}>
-        {({zoomIn, zoomOut, resetTransform, ...rest}) => (
+        {/* eslint-disable-next-line */}
+        {({ zoomIn, zoomOut, resetTransform, ...rest }) => (
           <>
-            <TransformControls url={imageUrl}/>
+            <TransformControls url={imageUrl} />
             <TransformComponent>
               <img src={imageUrl} alt={alt} className={className} />
             </TransformComponent>

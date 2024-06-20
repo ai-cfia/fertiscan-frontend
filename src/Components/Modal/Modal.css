@@ -15,7 +15,7 @@
 .overlay.active {
   display: grid;
   grid-template-areas: "pics card";
-  grid-template-columns: 50% 50%
+  grid-template-columns: 50% 50%;
 }
 
 /* Styles de la carte */
@@ -123,7 +123,7 @@
   }
 }
 
-.overlay .pic-container{
+.overlay .pic-container {
   grid-area: pics;
   display: flex;
   flex-direction: column;
@@ -132,6 +132,6 @@
   margin-top: 20px;
 }
 
-.overlay .carousel-wrapper{
+.overlay .carousel-wrapper {
   position: relative;
 }

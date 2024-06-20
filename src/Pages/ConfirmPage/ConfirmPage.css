@@ -1,39 +1,40 @@
-.data-infos{
-    display: flex;
-    flex-direction: column;
+.data-infos {
+  display: flex;
+  flex-direction: column;
 }
-.confirm-page-container{
-    display: grid;
-    grid-template-areas: "title title"
-                         "pics infos";
-    grid-template-columns: 1fr 1fr;
+.confirm-page-container {
+  display: grid;
+  grid-template-areas:
+    "title title"
+    "pics infos";
+  grid-template-columns: 1fr 1fr;
 }
-.confirm-page-container .carousel-wrapper{
-    grid-area: pics;
+.confirm-page-container .carousel-wrapper {
+  grid-area: pics;
 }
-#confirm-title{
-    grid-area: title;
-    text-align: center;
+#confirm-title {
+  grid-area: title;
+  text-align: center;
 }
-.confirm-container{
-    grid-area: infos;
-    border: 2px rgb(172, 170, 170) solid;
-    border-radius: 10px;
-    padding-left: 8%;
-    padding-right: 8%;
-    background-color: rgb(220, 219, 219);
-    text-overflow:ellipsis;
-    margin-right: 3%;
+.confirm-container {
+  grid-area: infos;
+  border: 2px rgb(172, 170, 170) solid;
+  border-radius: 10px;
+  padding-left: 8%;
+  padding-right: 8%;
+  background-color: rgb(220, 219, 219);
+  text-overflow: ellipsis;
+  margin-right: 3%;
 }
-.confirm-container h2{
-    text-align: left;
-    margin-bottom: 0px;
+.confirm-container h2 {
+  text-align: left;
+  margin-bottom: 0px;
 }
-.confirm-container ul{
-    padding-left: 20px;
+.confirm-container ul {
+  padding-left: 20px;
 }
-.confirm-container li{
-    margin-bottom: 10px;
-    font-size: 20px;
-    text-align: left;
+.confirm-container li {
+  margin-bottom: 10px;
+  font-size: 20px;
+  text-align: left;
 }

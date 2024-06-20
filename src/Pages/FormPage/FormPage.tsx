@@ -242,7 +242,8 @@ const FormPage = () => {
 
   const api_url = "http://localhost:5000";
 
-  {/*const approveAll = () => {
+  {
+    /*const approveAll = () => {
     data.sections.forEach((section) => {
       section.inputs.forEach((input) => {
         input.property = "approved";
@@ -251,8 +252,8 @@ const FormPage = () => {
     });
     updateData();
   };
-  window.approveAll = approveAll;*/}
-
+  window.approveAll = approveAll;*/
+  }
 
   /**
    * Prepare and send request to backend for file analysis
@@ -406,12 +407,16 @@ const FormPage = () => {
 
   const navigate = useNavigate();
   // eslint-disable-next-line
-  const submitForm = ({/*event: React.MouseEvent<HTMLButtonElement>*/}) => {
+  const submitForm = (
+    {
+      /*event: React.MouseEvent<HTMLButtonElement>*/
+    },
+  ) => {
     const isValid = validateFormInputs();
     console.log(isValid);
     setData(data.copy());
     if (isValid) {
-      navigate("/Confirm", { state: { data: data, urls:urls } });
+      navigate("/Confirm", { state: { data: data, urls: urls } });
     }
   };
 

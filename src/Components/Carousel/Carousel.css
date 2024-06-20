@@ -7,7 +7,7 @@
   align-content: center;
 }
 
-.main-img{
+.main-img {
   width: 100%;
   max-width: 400px;
   min-width: 150px;
@@ -16,7 +16,8 @@
   margin-top: 30px;
 }
 
-@media only screen and (min-width: 1231px) { /*the minimum place that need the form to have when he is in full page mode is 1231*/
+@media only screen and (min-width: 1231px) {
+  /*the minimum place that need the form to have when he is in full page mode is 1231*/
   .carousel-wrapper {
     position: fixed;
     display: grid;
@@ -28,8 +29,8 @@
   }
 }
 
-
-@media only screen and (max-width: 1230px) {/*the minimum place that need the form to have when he is in full page mode is 1231*/
+@media only screen and (max-width: 1230px) {
+  /*the minimum place that need the form to have when he is in full page mode is 1231*/
   .carousel-wrapper {
     display: grid;
     grid-template-areas:
@@ -42,12 +43,11 @@
   }
 }
 
-
 .carousel {
-  position:static;
+  position: static;
   grid-area: carousel;
-  width:auto;
-  display:inline-flex;
+  width: auto;
+  display: inline-flex;
   align-items: center;
   justify-content: center;
   gap: 8px;
@@ -108,8 +108,7 @@
   background-color: #bdbdbd;
 }
 
-
-.carousel-wrapper .react-transform-wrapper{
+.carousel-wrapper .react-transform-wrapper {
   height: 500px;
 }
 .carousel-wrapper .react-transform-wrapper img {
