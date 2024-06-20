@@ -27,18 +27,25 @@ const ProgressBar = ({ sections }: { sections: { label: string }[] }) => {
       inputInfo.property = "approved";
     });
     // eslint-disable-next-line
-    {/* const unsubModify =*/} FormClickActions.on(
-      "ModifyClick",
-      (inputInfo: Input) => {
+    {
+      /* const unsubModify =*/
+    }
+    FormClickActions.on("ModifyClick", (inputInfo: Input) => {
+      sec.find((elem) => elem.label == inputInfo.id)!.ref.current!.className =
+        "section modified";
+      inputInfo.property = "modified";
+    });
+    // eslint-disable-next-line
+    {
+      /*const unsubRejected = */
+    }
+    FormClickActions.on("Rejected", (inputInfo: Input) => {
       sec.find((elem) => elem.label == inputInfo.id)!.ref.current!.className =
         "section modified";
       inputInfo.property = "modified";
     });
     // When the input is rejected because he is not in the good format ex: email, adress, etc
-    // eslint-disable-next-line
-    {/*const unsubRejected = */}FormClickActions.on(
-      "Rejected",
-      (inputInfo: Input) => {
+    FormClickActions.on("Rejected", (inputInfo: Input) => {
       console.log("rejected");
       console.log(inputInfo.id);
       // remove all classes and add section and rejected

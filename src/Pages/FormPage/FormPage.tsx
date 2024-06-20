@@ -242,6 +242,19 @@ const FormPage = () => {
 
   const api_url = "http://localhost:5000";
 
+  {
+    /*const approveAll = () => {
+    data.sections.forEach((section) => {
+      section.inputs.forEach((input) => {
+        input.property = "approved";
+        FormClickActions.emit("ApproveClick", input);
+      });
+    });
+    updateData();
+  };
+  window.approveAll = approveAll;*/
+  }
+
   /**
    * Prepare and send request to backend for file analysis
    * @returns data : the data retrieved from the backend
@@ -348,17 +361,6 @@ const FormPage = () => {
         label: input.id,
       })),
   );
-  // eslint-disable-next-line
-  {/*const flash = */}(element: HTMLElement) => {
-    let color = "black";
-    if (window.matchMedia("(prefers-color-scheme: dark)").matches) {
-      color = "white";
-    }
-    element.style.boxShadow = "0 0 10px 5px " + color;
-    setTimeout(() => {
-      element.style.boxShadow = "none";
-    }, 500);
-  };
 
   const give_focus = (input: Input) => {
     // focus on the selected section
@@ -405,12 +407,12 @@ const FormPage = () => {
 
   const navigate = useNavigate();
   // eslint-disable-next-line
-  const submitForm = ({/*event: React.MouseEvent<HTMLButtonElement>*/}) => {
+  const submitForm = () => {
     const isValid = validateFormInputs();
     console.log(isValid);
     setData(data.copy());
     if (isValid) {
-      navigate("/Confirm", { state: { data: data } });
+      navigate("/Confirm", { state: { data: data, urls: urls } });
     }
   };
 

@@ -1,17 +1,17 @@
 .progress-bar-vertical {
-    flex-direction: column;
-    width: 35px;
-    height: 120%;
-    border-radius: 15px;
-    overflow: hidden;
-    position: sticky;
-    margin-top: 50px;
+  flex-direction: column;
+  width: 35px;
+  height: 120%;
+  border-radius: 15px;
+  overflow: hidden;
+  position: sticky;
+  margin-top: 50px;
 }
 
-.progress-wrapper{  
+.progress-wrapper {
   position: fixed;
   right: 60px;
-  top:40px;
+  top: 40px;
 }
 
 .section {
@@ -23,9 +23,9 @@
 .section.approved {
   background-color: rgb(18, 178, 18);
 }
-.section.modified{
+.section.modified {
   background-color: rgb(255, 255, 0);
 }
-.section.rejected{
+.section.rejected {
   background-color: rgb(255, 0, 0);
 }

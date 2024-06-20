@@ -2,16 +2,16 @@
   display: grid;
   justify-content: space-between;
   padding: 0 10px;
-  grid-template-columns: '1fr auto';
-  grid-gap: '1rem';
-  align-items: 'start';
+  grid-template-columns: "1fr auto";
+  grid-gap: "1rem";
+  align-items: "start";
 }
 
-@media only screen and (min-width: 1231px) { /*the minimum place that need the form to have when he is in full page mode is 1231*/
+@media only screen and (min-width: 1231px) {
+  /*the minimum place that need the form to have when he is in full page mode is 1231*/
   .formPage-container {
-    grid-template-areas:
-      "pics data progress-bar";
-    grid-template-columns:  40% 50% 5%;
+    grid-template-areas: "pics data progress-bar";
+    grid-template-columns: 40% 50% 5%;
   }
 }
 
@@ -27,7 +27,7 @@
 
 .pic-container {
   grid-area: pics;
-  margin-left: 10%;
+  margin-left: 0;
 }
 .progress-wrapper {
   grid-area: progress-bar;
@@ -113,13 +113,13 @@ textarea {
   color: darkgrey;
 }
 
-.show-more-container{
+.show-more-container {
   align-self: end;
   justify-self: end;
   display: flex;
   justify-content: flex-end;
 }
-.show-more-container label{
+.show-more-container label {
   width: fit-content;
 }
 
@@ -133,9 +133,10 @@ textarea {
 
 .input-container {
   display: grid;
-  grid-template-areas: "label label ."
-                       "input input input"
-                       ". show-more .";
+  grid-template-areas:
+    "label label ."
+    "input input input"
+    ". show-more .";
 
   grid-template-columns: 20% 60% 20%;
 }
@@ -151,12 +152,12 @@ textarea {
   grid-area: show-more;
   width: 100%;
 }
-.open-icon{
+.open-icon {
   cursor: pointer;
 }
 /** for dark mode */
 @media (prefers-color-scheme: dark) {
-  .open-icon{
+  .open-icon {
     color: white;
   }
 }
