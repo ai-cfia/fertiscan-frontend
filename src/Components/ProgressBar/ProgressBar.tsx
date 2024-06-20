@@ -31,8 +31,8 @@ const ProgressBar = ({ sections }: { sections: { label: string }[] }) => {
       "ModifyClick",
       (inputInfo: Input) => {
         sec.find((elem) => elem.label == inputInfo.id)!.ref.current!.className =
-          "section approved";
-        inputInfo.property = "approved";
+          "section modified";
+        inputInfo.property = "modified";
       },
     );
     // eslint-disable-next-line
