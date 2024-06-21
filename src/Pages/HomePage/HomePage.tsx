@@ -3,7 +3,7 @@ import "./HomePage.css";
 import DragDropFileInput from "../../Components/DragDropFileInput/DragDropFileInput";
 import FileList from "../../Components/FileList/FileList";
 import { useNavigate } from "react-router-dom";
-import { useTranslation } from 'react-i18next';
+import { useTranslation } from "react-i18next";
 
 function HomePage() {
   const { t } = useTranslation();
@@ -72,7 +72,7 @@ function HomePage() {
             mode={cameraMode}
           />
           <button className="submit-btn" type="submit" onClick={Submit}>
-            {t('submitButton')}
+            {t("submitButton")}
           </button>
           <div
             className={`switch ${cameraMode ? "active" : ""}`}
@@ -81,10 +81,10 @@ function HomePage() {
             onClick={handleCameraToggle}
           >
             <label>
-              {t('fileSelectionLabel')}
+              {t("fileSelectionLabel")}
               <input type="checkbox" />
               <span className="lever"></span>
-              {t('cameraLabel')}
+              {t("cameraLabel")}
             </label>
           </div>
           <FileList

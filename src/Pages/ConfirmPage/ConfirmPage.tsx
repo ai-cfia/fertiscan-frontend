@@ -3,7 +3,7 @@ import Carousel from "../../Components/Carousel/Carousel";
 import { useLocation } from "react-router-dom";
 import Section from "../../Model/Section-Model.tsx";
 import "./ConfirmPage.css";
-import { useTranslation } from 'react-i18next';
+import { useTranslation } from "react-i18next";
 
 const ConfirmPage = () => {
   const { t } = useTranslation();
@@ -39,8 +39,12 @@ const ConfirmPage = () => {
       <div className="confirm-container">
         {data.sections.map((section: Section) => renderSection(section))}
         <div className="button-container">
-          <button onClick={() => console.log("Cancel")}>{t("cancelButton")}</button>
-          <button onClick={() => console.log("Confirm")}>{t("confirmButton")}</button>
+          <button onClick={() => console.log("Cancel")}>
+            {t("cancelButton")}
+          </button>
+          <button onClick={() => console.log("Confirm")}>
+            {t("confirmButton")}
+          </button>
         </div>
       </div>
     </div>

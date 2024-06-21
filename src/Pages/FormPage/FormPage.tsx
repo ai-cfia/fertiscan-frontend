@@ -8,7 +8,7 @@ import Section from "../../Model/Section-Model.tsx";
 import Input from "../../Model/Input-Model.tsx";
 import Data from "../../Model/Data-Model.tsx";
 import { FormClickActions } from "../../Utils/EventChannels.tsx";
-import { useTranslation } from 'react-i18next';
+import { useTranslation } from "react-i18next";
 
 const FormPage = () => {
   const { t } = useTranslation();
@@ -74,49 +74,117 @@ const FormPage = () => {
 
   // this object describes how the formPage data will looks like
   const [data, setData] = useState<Data>(
-  new Data([
-    new Section("Company information", "company", [
-      new Input(t("name"), form.company_name, "company"),
-      new Input(t("address"), form.company_address, "company"),
-      new Input(t("website"), form.company_website, "company"),
-      new Input(t("phone_number"), form.company_phone_number, "company"),
+    new Data([
+      new Section("Company information", "company", [
+        new Input(t("name"), form.company_name, "company"),
+        new Input(t("address"), form.company_address, "company"),
+        new Input(t("website"), form.company_website, "company"),
+        new Input(t("phone_number"), form.company_phone_number, "company"),
+      ]),
+      new Section("Manufacturer information", "manufacturer", [
+        new Input(t("name"), form.manufacturer_name, "manufacturer"),
+        new Input(t("address"), form.manufacturer_address, "manufacturer"),
+        new Input(t("website"), form.manufacturer_website, "manufacturer"),
+        new Input(
+          t("phone_number"),
+          form.manufacturer_phone_number,
+          "manufacturer",
+        ),
+      ]),
+      new Section("Product information", "fertiliser", [
+        new Input(t("name"), form.fertiliser_name, "fertiliser"),
+        new Input(
+          t("registrationNumber"),
+          form.fertiliser_registration_number,
+          "fertiliser",
+        ),
+        new Input(t("lotNumber"), form.fertiliser_lot_number, "fertiliser"),
+        new Input(t("npk"), form.fertiliser_npk, "fertiliser"),
+        new Input(
+          t("precautionary_fr"),
+          form.fertiliser_precautionary_fr,
+          "fertiliser",
+        ),
+        new Input(
+          t("precautionary_en"),
+          form.fertiliser_precautionary_en,
+          "fertiliser",
+        ),
+        new Input(
+          t("instructions_fr"),
+          form.fertiliser_instructions_fr,
+          "fertiliser",
+        ),
+        new Input(
+          t("instructions_en"),
+          form.fertiliser_instructions_en,
+          "fertiliser",
+        ),
+        new Input(
+          t("ingredients_fr"),
+          form.fertiliser_ingredients_fr,
+          "fertiliser",
+        ),
+        new Input(
+          t("ingredients_en"),
+          form.fertiliser_ingredients_en,
+          "fertiliser",
+        ),
+        new Input(
+          t("specifications_fr"),
+          form.fertiliser_specifications_fr,
+          "fertiliser",
+        ),
+        new Input(
+          t("specifications_en"),
+          form.fertiliser_specifications_en,
+          "fertiliser",
+        ),
+        new Input(t("cautions_fr"), form.fertiliser_cautions_fr, "fertiliser"),
+        new Input(t("cautions_en"), form.fertiliser_cautions_en, "fertiliser"),
+        new Input(
+          t("recommendation_fr"),
+          form.fertiliser_recommendation_fr,
+          "fertiliser",
+        ),
+        new Input(
+          t("recommendation_en"),
+          form.fertiliser_recommendation_en,
+          "fertiliser",
+        ),
+        new Input(
+          t("first_aid_fr"),
+          form.fertiliser_first_aid_fr,
+          "fertiliser",
+        ),
+        new Input(
+          t("first_aid_en"),
+          form.fertiliser_first_aid_en,
+          "fertiliser",
+        ),
+        new Input(t("warranty_fr"), form.fertiliser_warranty_fr, "fertiliser"),
+        new Input(t("warranty_en"), form.fertiliser_warranty_en, "fertiliser"),
+        new Input(
+          t("guaranteed_analysis"),
+          form.fertiliser_guaranteed_analysis,
+          "fertiliser",
+        ),
+        new Input(
+          t("nutrient_in_guaranteed_analysis"),
+          form.nutrient_in_guaranteed_analysis,
+          "fertiliser",
+        ),
+        new Input(
+          t("percentage_in_guaranteed_analysis"),
+          form.percentage_in_guaranteed_analysis,
+          "fertiliser",
+        ),
+        new Input(t("weight"), form.fertiliser_weight, "fertiliser"),
+        new Input(t("density"), form.fertiliser_density, "fertiliser"),
+        new Input(t("volume"), form.fertiliser_volume, "fertiliser"),
+      ]),
     ]),
-    new Section("Manufacturer information", "manufacturer", [
-      new Input(t("name"), form.manufacturer_name, "manufacturer"),
-      new Input(t("address"), form.manufacturer_address, "manufacturer"),
-      new Input(t("website"), form.manufacturer_website, "manufacturer"),
-      new Input(t("phone_number"), form.manufacturer_phone_number, "manufacturer"),
-    ]),
-    new Section("Product information", "fertiliser", [
-      new Input(t("name"), form.fertiliser_name, "fertiliser"),
-      new Input(t("registrationNumber"), form.fertiliser_registration_number, "fertiliser"),
-      new Input(t("lotNumber"), form.fertiliser_lot_number, "fertiliser"),
-      new Input(t("npk"), form.fertiliser_npk, "fertiliser"),
-      new Input(t("precautionary_fr"), form.fertiliser_precautionary_fr, "fertiliser"),
-      new Input(t("precautionary_en"), form.fertiliser_precautionary_en, "fertiliser"),
-      new Input(t("instructions_fr"), form.fertiliser_instructions_fr, "fertiliser"),
-      new Input(t("instructions_en"), form.fertiliser_instructions_en, "fertiliser"),
-      new Input(t("ingredients_fr"), form.fertiliser_ingredients_fr, "fertiliser"),
-      new Input(t("ingredients_en"), form.fertiliser_ingredients_en, "fertiliser"),
-      new Input(t("specifications_fr"), form.fertiliser_specifications_fr, "fertiliser"),
-      new Input(t("specifications_en"), form.fertiliser_specifications_en, "fertiliser"),
-      new Input(t("cautions_fr"), form.fertiliser_cautions_fr, "fertiliser"),
-      new Input(t("cautions_en"), form.fertiliser_cautions_en, "fertiliser"),
-      new Input(t("recommendation_fr"), form.fertiliser_recommendation_fr, "fertiliser"),
-      new Input(t("recommendation_en"), form.fertiliser_recommendation_en, "fertiliser"),
-      new Input(t("first_aid_fr"), form.fertiliser_first_aid_fr, "fertiliser"),
-      new Input(t("first_aid_en"), form.fertiliser_first_aid_en, "fertiliser"),
-      new Input(t("warranty_fr"), form.fertiliser_warranty_fr, "fertiliser"),
-      new Input(t("warranty_en"), form.fertiliser_warranty_en, "fertiliser"),
-      new Input(t("guaranteed_analysis"), form.fertiliser_guaranteed_analysis, "fertiliser"),
-      new Input(t("nutrient_in_guaranteed_analysis"), form.nutrient_in_guaranteed_analysis, "fertiliser"),
-      new Input(t("percentage_in_guaranteed_analysis"), form.percentage_in_guaranteed_analysis, "fertiliser"),
-      new Input(t("weight"), form.fertiliser_weight, "fertiliser"),
-      new Input(t("density"), form.fertiliser_density, "fertiliser"),
-      new Input(t("volume"), form.fertiliser_volume, "fertiliser"),
-    ]),
-  ]),
-);
+  );
 
   const modals: {
     label: string;
@@ -354,9 +422,7 @@ const FormPage = () => {
           {loading ? (
             <div className={`loader-container-form ${loading ? "active" : ""}`}>
               <div className="spinner"></div>
-              <p>
-                {t('analyzingText')}
-              </p>
+              <p>{t("analyzingText")}</p>
             </div>
           ) : (
             <div>
@@ -373,7 +439,7 @@ const FormPage = () => {
                 );
               })}
               <button className="button" onClick={submitForm}>
-              {t('submitButton')}
+                {t("submitButton")}
               </button>
             </div>
           )}

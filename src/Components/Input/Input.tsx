@@ -9,7 +9,7 @@ import editIcon from "../../assets/edit1.svg";
 import acceptIcon from "../../assets/acceptIcon.svg";
 
 import { FormClickActions } from "../../Utils/EventChannels";
-import { useTranslation } from 'react-i18next';
+import { useTranslation } from "react-i18next";
 
 interface InputProps {
   parent: Section;
@@ -140,13 +140,33 @@ const InputComponent: React.FC<InputProps> = ({
             onClick={() => handleStateChange(inputInfo)}
           >
             {property === "default" ? (
-              <img src={acceptIcon} alt={t("approveButton")} width="20" height="20" />
+              <img
+                src={acceptIcon}
+                alt={t("approveButton")}
+                width="20"
+                height="20"
+              />
             ) : property === "approved" ? (
-              <img src={editIcon} alt={t("approveButton")} width="20" height="20" />
+              <img
+                src={editIcon}
+                alt={t("approveButton")}
+                width="20"
+                height="20"
+              />
             ) : property === "modified" ? (
-              <img src={acceptIcon} alt={t("modifyButton")} width="20" height="20" />
+              <img
+                src={acceptIcon}
+                alt={t("modifyButton")}
+                width="20"
+                height="20"
+              />
             ) : (
-              <img src={acceptIcon} alt={t("approveButton")} width="20" height="20" />
+              <img
+                src={acceptIcon}
+                alt={t("approveButton")}
+                width="20"
+                height="20"
+              />
             )}
           </button>
         </div>

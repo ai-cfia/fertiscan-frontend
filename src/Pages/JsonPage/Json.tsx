@@ -1,7 +1,7 @@
 import { useEffect, useState } from "react";
 import { useLocation } from "react-router-dom";
 import "./Json.css";
-import { useTranslation } from 'react-i18next';
+import { useTranslation } from "react-i18next";
 
 function JsonPage() {
   const { t } = useTranslation();
@@ -83,7 +83,7 @@ function JsonPage() {
     <div>
       <div className={`loader-container ${loading ? "active" : ""}`}>
         <div className="spinner"></div>
-        <p>{t('analyzingText')}</p>
+        <p>{t("analyzingText")}</p>
       </div>
       <pre>
         {fetchError ? (

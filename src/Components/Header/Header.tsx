@@ -1,7 +1,7 @@
 import { useRef } from "react";
 import cfia from "../../assets/CFIA_Banner.png";
 import "./Header.css";
-import { useTranslation } from 'react-i18next';
+import { useTranslation } from "react-i18next";
 
 const environment = {
   version: "0.0.1",
@@ -31,7 +31,10 @@ function Header() {
       <nav>
         <ul>
           <li>
-            <a href="https://inspection.canada.ca/" title={t("headerLinkTitle")}>
+            <a
+              href="https://inspection.canada.ca/"
+              title={t("headerLinkTitle")}
+            >
               <img
                 src={cfia}
                 id="header-img"

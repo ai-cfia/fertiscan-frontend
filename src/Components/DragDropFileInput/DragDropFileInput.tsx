@@ -1,6 +1,6 @@
 import React, { useState, useRef, useEffect } from "react";
 import "./DragDropFileInput.css";
-import { useTranslation } from 'react-i18next';
+import { useTranslation } from "react-i18next";
 
 interface FileInputProps {
   sendChange: (files: File[]) => void;
@@ -186,7 +186,9 @@ const DragDropFileInput: React.FC<FileInputProps> = ({
               {" "}
               {t("captureButton")}{" "}
             </button>
-            <button onClick={toggleCameraMode}>{t("switchCameraButton")}</button>
+            <button onClick={toggleCameraMode}>
+              {t("switchCameraButton")}
+            </button>
           </div>
           <canvas
             id="canvas"

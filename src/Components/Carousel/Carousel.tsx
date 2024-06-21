@@ -1,7 +1,7 @@
 import React, { useState } from "react";
 import "./Carousel.css";
 import ImageZoomInOut from "../ImageZoomInOut/ImageZoomInOut";
-import { useTranslation } from 'react-i18next';
+import { useTranslation } from "react-i18next";
 
 interface CarouselProps {
   imgs: {

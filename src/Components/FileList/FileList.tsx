@@ -1,7 +1,7 @@
 import React, { useState } from "react";
 import "./FileList.css";
 import FileElement from "./FileElement/FileElement";
-import { useTranslation } from 'react-i18next';
+import { useTranslation } from "react-i18next";
 
 interface FileListProps {
   files: File[];
