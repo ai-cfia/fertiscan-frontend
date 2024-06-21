@@ -7,8 +7,6 @@ import Header from "./Components/Header/Header";
 import FormPage from "./Pages/FormPage/FormPage";
 import { StrictMode } from "react";
 import ConfirmPage from "./Pages/ConfirmPage/ConfirmPage";
-import './i18n';
-
 
 function App() {
   return (
