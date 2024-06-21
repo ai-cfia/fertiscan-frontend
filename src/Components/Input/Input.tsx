@@ -10,7 +10,6 @@ import acceptIcon from "../../assets/acceptIcon.svg";
 
 import { FormClickActions } from "../../Utils/EventChannels";
 import { useTranslation } from 'react-i18next';
-const { t } = useTranslation();
 
 interface InputProps {
   parent: Section;
@@ -38,6 +37,7 @@ const InputComponent: React.FC<InputProps> = ({
   imgs,
   propagateChange,
 }) => {
+  const { t } = useTranslation();
   const [isActive, setIsActive] = useState(false);
   const [property, setProperty] = useState(inputInfo.property);
 

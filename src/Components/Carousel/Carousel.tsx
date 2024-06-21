@@ -3,7 +3,6 @@ import "./Carousel.css";
 import ImageZoomInOut from "../ImageZoomInOut/ImageZoomInOut";
 import { useTranslation } from 'react-i18next';
 
-const { t } = useTranslation();
 interface CarouselProps {
   imgs: {
     url: string;
@@ -23,6 +22,7 @@ class imgObject {
 }
 
 const Carousel: React.FC<CarouselProps> = ({ imgs }) => {
+  const { t } = useTranslation();
   const [currImg, setCurrImg] = useState<number>(0);
 
   const imgList: imgObject[] = [];

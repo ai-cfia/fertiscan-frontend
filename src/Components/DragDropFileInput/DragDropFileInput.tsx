@@ -2,7 +2,6 @@ import React, { useState, useRef, useEffect } from "react";
 import "./DragDropFileInput.css";
 import { useTranslation } from 'react-i18next';
 
-const { t } = useTranslation();
 interface FileInputProps {
   sendChange: (files: File[]) => void;
   file: string;
@@ -16,6 +15,7 @@ const DragDropFileInput: React.FC<FileInputProps> = ({
   file,
   mode,
 }) => {
+  const { t } = useTranslation();
   const [dragActive, setDragActive] = useState(false);
   const [stream, setStream] = useState<MediaStream | null>(null);
   const [cameraMode, setCameraMode] = useState<"environment" | "user">(

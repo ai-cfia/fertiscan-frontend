@@ -10,9 +10,8 @@ import Data from "../../Model/Data-Model.tsx";
 import { FormClickActions } from "../../Utils/EventChannels.tsx";
 import { useTranslation } from 'react-i18next';
 
-const { t } = useTranslation();
 const FormPage = () => {
-  
+  const { t } = useTranslation();
   // @ts-expect-error : setForm is going to be used when linked to db
   // eslint-disable-next-line
   const [form, setForm] = useState({

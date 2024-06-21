@@ -3,9 +3,10 @@ import Carousel from "../../Components/Carousel/Carousel";
 import { useLocation } from "react-router-dom";
 import Section from "../../Model/Section-Model.tsx";
 import "./ConfirmPage.css";
-import { t } from "i18next";
+import { useTranslation } from 'react-i18next';
 
 const ConfirmPage = () => {
+  const { t } = useTranslation();
   const location = useLocation();
   const data = location.state.data;
   // eslint-disable-next-line

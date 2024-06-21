@@ -3,7 +3,6 @@ import "./FileList.css";
 import FileElement from "./FileElement/FileElement";
 import { useTranslation } from 'react-i18next';
 
-const { t } = useTranslation();
 interface FileListProps {
   files: File[];
   onSelectedChange: (file: File | null) => void;
@@ -15,6 +14,7 @@ const FileList: React.FC<FileListProps> = ({
   onSelectedChange,
   propagateDelete,
 }) => {
+  const { t } = useTranslation();
   const [selectedFile, setSelectedFile] = useState<File | null>(null);
 
   const handleSelectFile = (file: File | null) => {

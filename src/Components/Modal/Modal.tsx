@@ -3,7 +3,6 @@ import "./Modal.css";
 import closeIcon from "../../assets/close_icon.png";
 import Carousel from "../Carousel/Carousel";
 import { useTranslation } from 'react-i18next';
-const { t } = useTranslation();
 interface ModalProps {
   text: string;
   imgs: Image[]; // Array of Image objects
@@ -26,6 +25,7 @@ const Modal: React.FC<ModalProps> = ({
   toRef,
   imgs,
 }) => {
+  const { t } = useTranslation();
   const [isEditing, setIsEditing] = useState(false); // Added state for edit mode
 
   const handleOverlayTextChange = (
