@@ -76,112 +76,61 @@ const FormPage = () => {
   const [data, setData] = useState<Data>(
     new Data([
       new Section("Company information", "company", [
-        new Input(t("name"), form.company_name, "company"),
-        new Input(t("address"), form.company_address, "company"),
-        new Input(t("website"), form.company_website, "company"),
-        new Input(t("phone_number"), form.company_phone_number, "company"),
+        new Input(t("name"), form.company_name, "company_name"),
+        new Input(t("address"), form.company_address, "company_address"),
+        new Input(t("website"), form.company_website, "company_website"),
+        new Input(t("phone_number"), form.company_phone_number, "company_phone_number"),
       ]),
       new Section("Manufacturer information", "manufacturer", [
-        new Input(t("name"), form.manufacturer_name, "manufacturer"),
-        new Input(t("address"), form.manufacturer_address, "manufacturer"),
-        new Input(t("website"), form.manufacturer_website, "manufacturer"),
-        new Input(
-          t("phone_number"),
-          form.manufacturer_phone_number,
-          "manufacturer",
+        new Input(t("name"), form.manufacturer_name, "manufacturer_name"),
+        new Input(t("address"), form.manufacturer_address, "manufacturer_address"),
+        new Input(t("website"), form.manufacturer_website, "manufacturer_website"),
+        new Input(t("phone_number"), form.manufacturer_phone_number, "manufacturer_phone_number"
         ),
       ]),
       new Section("Product information", "fertiliser", [
-        new Input(t("name"), form.fertiliser_name, "fertiliser"),
-        new Input(
-          t("registrationNumber"),
-          form.fertiliser_registration_number,
-          "fertiliser",
+        new Input(t("name"), form.fertiliser_name, "fertiliser_name"),
+        new Input(t("registrationNumber"), form.fertiliser_registration_number, "fertiliser_registrationNumber"
         ),
-        new Input(t("lotNumber"), form.fertiliser_lot_number, "fertiliser"),
-        new Input(t("npk"), form.fertiliser_npk, "fertiliser"),
-        new Input(
-          t("precautionary_fr"),
-          form.fertiliser_precautionary_fr,
-          "fertiliser",
+        new Input(t("lotNumber"), form.fertiliser_lot_number, "fertiliser_lotNumber"),
+        new Input(t("npk"), form.fertiliser_npk, "fertiliser_npk"),
+        new Input(t("precautionary_fr"), form.fertiliser_precautionary_fr, "fertiliser_precautionary_fr"
         ),
-        new Input(
-          t("precautionary_en"),
-          form.fertiliser_precautionary_en,
-          "fertiliser",
+        new Input(t("precautionary_en"), form.fertiliser_precautionary_en, "fertiliser_precautionary_en"
         ),
-        new Input(
-          t("instructions_fr"),
-          form.fertiliser_instructions_fr,
-          "fertiliser",
+        new Input(t("instructions_fr"), form.fertiliser_instructions_fr, "fertiliser_instructions_fr"
         ),
-        new Input(
-          t("instructions_en"),
-          form.fertiliser_instructions_en,
-          "fertiliser",
+        new Input(t("instructions_en"), form.fertiliser_instructions_en, "fertiliser_instructions_en"
         ),
-        new Input(
-          t("ingredients_fr"),
-          form.fertiliser_ingredients_fr,
-          "fertiliser",
+        new Input(t("ingredients_fr"), form.fertiliser_ingredients_fr, "fertiliser_ingredients_fr"
         ),
-        new Input(
-          t("ingredients_en"),
-          form.fertiliser_ingredients_en,
-          "fertiliser",
+        new Input(t("ingredients_en"), form.fertiliser_ingredients_en, "fertiliser_ingredients_en"
         ),
-        new Input(
-          t("specifications_fr"),
-          form.fertiliser_specifications_fr,
-          "fertiliser",
+        new Input(t("specifications_fr"), form.fertiliser_specifications_fr, "fertiliser_specifications_fr"
         ),
-        new Input(
-          t("specifications_en"),
-          form.fertiliser_specifications_en,
-          "fertiliser",
+        new Input(t("specifications_en"), form.fertiliser_specifications_en, "fertiliser_specifications_en"
         ),
-        new Input(t("cautions_fr"), form.fertiliser_cautions_fr, "fertiliser"),
-        new Input(t("cautions_en"), form.fertiliser_cautions_en, "fertiliser"),
-        new Input(
-          t("recommendation_fr"),
-          form.fertiliser_recommendation_fr,
-          "fertiliser",
+        new Input(t("cautions_fr"), form.fertiliser_cautions_fr, "fertiliser_cautions_fr"),
+        new Input(t("cautions_en"), form.fertiliser_cautions_en, "fertiliser_cautions_en"),
+        new Input(t("recommendation_fr"), form.fertiliser_recommendation_fr, "fertiliser_recommendation_fr"
         ),
-        new Input(
-          t("recommendation_en"),
-          form.fertiliser_recommendation_en,
-          "fertiliser",
+        new Input(t("recommendation_en"), form.fertiliser_recommendation_en, "fertiliser_recommendation_en"
         ),
-        new Input(
-          t("first_aid_fr"),
-          form.fertiliser_first_aid_fr,
-          "fertiliser",
+        new Input(t("first_aid_fr"), form.fertiliser_first_aid_fr, "fertiliser_first_aid_fr"
         ),
-        new Input(
-          t("first_aid_en"),
-          form.fertiliser_first_aid_en,
-          "fertiliser",
+        new Input(t("first_aid_en"), form.fertiliser_first_aid_en, "fertiliser_first_aid_en"
         ),
-        new Input(t("warranty_fr"), form.fertiliser_warranty_fr, "fertiliser"),
-        new Input(t("warranty_en"), form.fertiliser_warranty_en, "fertiliser"),
-        new Input(
-          t("guaranteed_analysis"),
-          form.fertiliser_guaranteed_analysis,
-          "fertiliser",
+        new Input(t("warranty_fr"), form.fertiliser_warranty_fr, "fertiliser_warranty_fr"),
+        new Input(t("warranty_en"), form.fertiliser_warranty_en, "fertiliser_warranty_en"),
+        new Input(t("guaranteed_analysis"), form.fertiliser_guaranteed_analysis, "fertiliser_guaranteed_analysis"
         ),
-        new Input(
-          t("nutrient_in_guaranteed_analysis"),
-          form.nutrient_in_guaranteed_analysis,
-          "fertiliser",
+        new Input(t("nutrient_in_guaranteed_analysis"), form.nutrient_in_guaranteed_analysis, "fertiliser_nutrient_in_guaranteed_analysis"
         ),
-        new Input(
-          t("percentage_in_guaranteed_analysis"),
-          form.percentage_in_guaranteed_analysis,
-          "fertiliser",
+        new Input(t("percentage_in_guaranteed_analysis"), form.percentage_in_guaranteed_analysis, "fertiliser_percentage_in_guaranteed_analysis"
         ),
-        new Input(t("weight"), form.fertiliser_weight, "fertiliser"),
-        new Input(t("density"), form.fertiliser_density, "fertiliser"),
-        new Input(t("volume"), form.fertiliser_volume, "fertiliser"),
+        new Input(t("weight"), form.fertiliser_weight, "fertiliser_weight"),
+        new Input(t("density"), form.fertiliser_density, "fertiliser_density"),
+        new Input(t("volume"), form.fertiliser_volume, "fertiliser_volume"),
       ]),
     ]),
   );
@@ -282,8 +231,8 @@ const FormPage = () => {
           data.sections.forEach((section) => {
             section.inputs.forEach((input) => {
               input.value =
-                typeof response[section.label + "_" + input.label] == "string"
-                  ? response[section.label + "_" + input.label]
+                typeof response[input.id] == "string"
+                  ? response[input.id]
                   : "";
             });
           });
@@ -297,8 +246,8 @@ const FormPage = () => {
           data.sections.forEach((section) => {
             section.inputs.forEach((input) => {
               input.value =
-                typeof response[section.label + "_" + input.label] == "string"
-                  ? response[section.label + "_" + input.label]
+                typeof response[input.id] == "string"
+                  ? response[input.id]
                   : "";
             });
           });
