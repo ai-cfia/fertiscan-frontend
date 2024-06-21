@@ -200,8 +200,8 @@ const DragDropFileInput: React.FC<FileInputProps> = ({
       <div className="drag-drop-inner">
         <p>
           {mode == FILE_MODE
-            ? "Drag & drop your files here or"
-            : "Take a picture or"}
+            ? t("dragAndDropFilePOption1")
+            : t("dragAndDropFilePOption2")}
         </p>
         <button type="button" onClick={selectFiles}>
           {" "}
