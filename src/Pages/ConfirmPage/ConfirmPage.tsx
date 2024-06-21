@@ -5,7 +5,6 @@ import "./ConfirmPage.css";
 import { useTranslation } from "react-i18next";
 
 const ConfirmPage = () => {
-  
   const location = useLocation();
   const { t } = useTranslation();
   const data = location.state.data;
