@@ -1,4 +1,3 @@
-import { useState } from "react";
 import Carousel from "../../Components/Carousel/Carousel";
 import { useLocation } from "react-router-dom";
 import Section from "../../Model/Section-Model.tsx";
