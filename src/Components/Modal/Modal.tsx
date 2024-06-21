@@ -2,6 +2,8 @@ import React, { useState } from "react";
 import "./Modal.css";
 import closeIcon from "../../assets/close_icon.png";
 import Carousel from "../Carousel/Carousel";
+import { useTranslation } from 'react-i18next';
+const { t } = useTranslation();
 interface ModalProps {
   text: string;
   imgs: Image[]; // Array of Image objects
@@ -55,7 +57,7 @@ const Modal: React.FC<ModalProps> = ({
       <div className="card">
         <img
           src={closeIcon}
-          alt="Fermer la carte"
+          alt= {t("closeCard")}
           className="close-icon"
           onClick={handleOverlayClick}
         />
@@ -76,7 +78,7 @@ const Modal: React.FC<ModalProps> = ({
         </div>
         <div className="card-footer">
           <button onClick={handleEditClick}>
-            {isEditing ? "Enregistrer" : "Modifier"}
+            {isEditing ? t("saveButton") : t("modifyButton")}
           </button>
         </div>
       </div>

@@ -3,10 +3,11 @@ import "./HomePage.css";
 import DragDropFileInput from "../../Components/DragDropFileInput/DragDropFileInput";
 import FileList from "../../Components/FileList/FileList";
 import { useNavigate } from "react-router-dom";
+import { useTranslation } from 'react-i18next';
 
 function HomePage() {
+  const { t } = useTranslation();
   const [files, setFiles] = useState<File[]>([]);
-
   const [toShow, setShow] = useState("");
   const [cameraMode, toggleCamera] = useState(false);
   const cameraSwitch = useRef<HTMLDivElement | null>(null);
@@ -71,7 +72,7 @@ function HomePage() {
             mode={cameraMode}
           />
           <button className="submit-btn" type="submit" onClick={Submit}>
-            Submit
+            {t('submitButton')}
           </button>
           <div
             className={`switch ${cameraMode ? "active" : ""}`}
@@ -80,10 +81,10 @@ function HomePage() {
             onClick={handleCameraToggle}
           >
             <label>
-              File Selction
+              {t('fileSelectionLabel')}
               <input type="checkbox" />
               <span className="lever"></span>
-              Camera
+              {t('cameraLabel')}
             </label>
           </div>
           <FileList

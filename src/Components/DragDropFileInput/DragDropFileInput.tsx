@@ -1,6 +1,8 @@
 import React, { useState, useRef, useEffect } from "react";
 import "./DragDropFileInput.css";
+import { useTranslation } from 'react-i18next';
 
+const { t } = useTranslation();
 interface FileInputProps {
   sendChange: (files: File[]) => void;
   file: string;
@@ -145,7 +147,7 @@ const DragDropFileInput: React.FC<FileInputProps> = ({
 
   return (
     <div className="drag-drop-container">
-      <h3 className="title">Attach a document</h3>
+      <h3 className="title">{t("dragAndDropFileH3")}</h3>
 
       <div className="entry-wrapper">
         <div className={`input-wrapper ${mode == FILE_MODE ? "active" : ""}`}>
@@ -182,9 +184,9 @@ const DragDropFileInput: React.FC<FileInputProps> = ({
           <div className="camera-controls">
             <button id="capture" onClick={handleCapture} disabled={!stream}>
               {" "}
-              Capture{" "}
+              {t("captureButton")}{" "}
             </button>
-            <button onClick={toggleCameraMode}>Switch Camera</button>
+            <button onClick={toggleCameraMode}>{t("switchCameraButton")}</button>
           </div>
           <canvas
             id="canvas"
@@ -203,11 +205,11 @@ const DragDropFileInput: React.FC<FileInputProps> = ({
         </p>
         <button type="button" onClick={selectFiles}>
           {" "}
-          Browse Files
+          {t("browseFileButton")}
         </button>
         <button type="button" onClick={handleCancel}>
           {" "}
-          Cancel{" "}
+          {t("cancelButton")}{" "}
         </button>
       </div>
     </div>

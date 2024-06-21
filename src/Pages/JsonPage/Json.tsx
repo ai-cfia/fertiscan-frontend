@@ -1,8 +1,10 @@
 import { useEffect, useState } from "react";
 import { useLocation } from "react-router-dom";
 import "./Json.css";
+import { useTranslation } from 'react-i18next';
 
 function JsonPage() {
+  const { t } = useTranslation();
   const [loading, setLoading] = useState(true);
   const [form, setForm] = useState({});
   const [fetchError, setError] = useState<Error | null>(null);
@@ -81,7 +83,7 @@ function JsonPage() {
     <div>
       <div className={`loader-container ${loading ? "active" : ""}`}>
         <div className="spinner"></div>
-        <p>Votre fichier est en cours d'analyse Your file is being analyzed</p>
+        <p>{t('analyzingText')}</p>
       </div>
       <pre>
         {fetchError ? (

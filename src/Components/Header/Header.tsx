@@ -1,6 +1,9 @@
 import { useRef } from "react";
 import cfia from "../../assets/CFIA_Banner.png";
 import "./Header.css";
+import { useTranslation } from 'react-i18next';
+
+const { t } = useTranslation();
 const environment = {
   version: "0.0.1",
 };
@@ -28,17 +31,17 @@ function Header() {
       <nav>
         <ul>
           <li>
-            <a href="https://inspection.canada.ca/" title="ACIA | CFIA">
+            <a href="https://inspection.canada.ca/" title={t("headerLinkTitle")}>
               <img
                 src={cfia}
                 id="header-img"
-                alt="CFIA logo"
-                aria-label="Link to CFIA | Lien à l'ACIA"
+                alt={t("CFIALogo")}
+                aria-label={t("textHeader")}
               />
             </a>
           </li>
           <li id="version">
-            Alpha Version{" "}
+            {t("headerAlphaVersionText")}{" "}
             {environment.version !== "" ? "v" + environment.version : ""}
           </li>
         </ul>
