@@ -9,6 +9,7 @@ import editIcon from "../../assets/edit1.svg";
 import acceptIcon from "../../assets/acceptIcon.svg";
 
 import { FormClickActions } from "../../Utils/EventChannels";
+import { useTranslation } from "react-i18next";
 
 interface InputProps {
   parent: Section;
@@ -36,6 +37,7 @@ const InputComponent: React.FC<InputProps> = ({
   imgs,
   propagateChange,
 }) => {
+  const { t } = useTranslation();
   const [isActive, setIsActive] = useState(false);
   const [property, setProperty] = useState(inputInfo.property);
 
@@ -138,13 +140,33 @@ const InputComponent: React.FC<InputProps> = ({
             onClick={() => handleStateChange(inputInfo)}
           >
             {property === "default" ? (
-              <img src={acceptIcon} alt="Défaut" width="20" height="20" />
+              <img
+                src={acceptIcon}
+                alt={t("approveButton")}
+                width="20"
+                height="20"
+              />
             ) : property === "approved" ? (
-              <img src={editIcon} alt="Approuver" width="20" height="20" />
+              <img
+                src={editIcon}
+                alt={t("approveButton")}
+                width="20"
+                height="20"
+              />
             ) : property === "modified" ? (
-              <img src={acceptIcon} alt="Modifié" width="20" height="20" />
+              <img
+                src={acceptIcon}
+                alt={t("modifyButton")}
+                width="20"
+                height="20"
+              />
             ) : (
-              <img src={acceptIcon} alt="Rejeté" width="20" height="20" />
+              <img
+                src={acceptIcon}
+                alt={t("approveButton")}
+                width="20"
+                height="20"
+              />
             )}
           </button>
         </div>
@@ -163,7 +185,7 @@ const InputComponent: React.FC<InputProps> = ({
               modal.current?.classList.add("active");
             }}
           >
-            Show more
+            {t("showMoreButton")}
           </label>
           <Modal
             toRef={modal}

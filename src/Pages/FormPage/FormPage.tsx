@@ -8,8 +8,10 @@ import Section from "../../Model/Section-Model.tsx";
 import Input from "../../Model/Input-Model.tsx";
 import Data from "../../Model/Data-Model.tsx";
 import { FormClickActions } from "../../Utils/EventChannels.tsx";
+import { useTranslation } from "react-i18next";
 
 const FormPage = () => {
+  const { t } = useTranslation();
   // @ts-expect-error : setForm is going to be used when linked to db
   // eslint-disable-next-line
   const [form, setForm] = useState({
@@ -74,134 +76,112 @@ const FormPage = () => {
   const [data, setData] = useState<Data>(
     new Data([
       new Section("Company information", "company", [
-        new Input("name", form.company_name, "company"),
-        new Input("address", form.company_address, "company"),
-        new Input("website", form.company_website, "company"),
-        new Input("phone_number", form.company_phone_number, "company"),
+        new Input(t("name"), form.company_name, "company"),
+        new Input(t("address"), form.company_address, "company"),
+        new Input(t("website"), form.company_website, "company"),
+        new Input(t("phone_number"), form.company_phone_number, "company"),
       ]),
       new Section("Manufacturer information", "manufacturer", [
-        new Input("name", form.manufacturer_name, "manufacturer"),
-        new Input("address", form.manufacturer_address, "manufacturer"),
-        new Input("website", form.manufacturer_website, "manufacturer"),
+        new Input(t("name"), form.manufacturer_name, "manufacturer"),
+        new Input(t("address"), form.manufacturer_address, "manufacturer"),
+        new Input(t("website"), form.manufacturer_website, "manufacturer"),
         new Input(
-          "phone_number",
+          t("phone_number"),
           form.manufacturer_phone_number,
           "manufacturer",
         ),
       ]),
-      new Section("Fertiliser information", "fertiliser", [
-        new Input("name", form.fertiliser_name, "fertiliser"),
+      new Section("Product information", "fertiliser", [
+        new Input(t("name"), form.fertiliser_name, "fertiliser"),
         new Input(
-          "registration_number",
+          t("registrationNumber"),
           form.fertiliser_registration_number,
           "fertiliser",
         ),
-        new Input("lot_number", form.fertiliser_lot_number, "fertiliser"),
-        new Input("npk", form.fertiliser_npk, "fertiliser"),
+        new Input(t("lotNumber"), form.fertiliser_lot_number, "fertiliser"),
+        new Input(t("npk"), form.fertiliser_npk, "fertiliser"),
         new Input(
-          "precautionary_fr",
+          t("precautionary_fr"),
           form.fertiliser_precautionary_fr,
           "fertiliser",
         ),
         new Input(
-          "precautionary_en",
+          t("precautionary_en"),
           form.fertiliser_precautionary_en,
           "fertiliser",
         ),
         new Input(
-          "instructions_fr",
+          t("instructions_fr"),
           form.fertiliser_instructions_fr,
           "fertiliser",
         ),
         new Input(
-          "instructions_en",
+          t("instructions_en"),
           form.fertiliser_instructions_en,
           "fertiliser",
         ),
         new Input(
-          "ingredients_fr",
+          t("ingredients_fr"),
           form.fertiliser_ingredients_fr,
           "fertiliser",
         ),
         new Input(
-          "ingredients_en",
+          t("ingredients_en"),
           form.fertiliser_ingredients_en,
           "fertiliser",
         ),
         new Input(
-          "specifications_fr",
+          t("specifications_fr"),
           form.fertiliser_specifications_fr,
           "fertiliser",
         ),
         new Input(
-          "specifications_en",
+          t("specifications_en"),
           form.fertiliser_specifications_en,
           "fertiliser",
         ),
-        new Input("cautions_fr", form.fertiliser_cautions_fr, "fertiliser"),
-        new Input("cautions_en", form.fertiliser_cautions_en, "fertiliser"),
+        new Input(t("cautions_fr"), form.fertiliser_cautions_fr, "fertiliser"),
+        new Input(t("cautions_en"), form.fertiliser_cautions_en, "fertiliser"),
         new Input(
-          "recommendation_fr",
+          t("recommendation_fr"),
           form.fertiliser_recommendation_fr,
           "fertiliser",
         ),
         new Input(
-          "recommendation_en",
+          t("recommendation_en"),
           form.fertiliser_recommendation_en,
           "fertiliser",
         ),
-        new Input("first_aid_fr", form.fertiliser_first_aid_fr, "fertiliser"),
-        new Input("first_aid_en", form.fertiliser_first_aid_en, "fertiliser"),
-        new Input("warranty_fr", form.fertiliser_warranty_fr, "fertiliser"),
-        new Input("warranty_en", form.fertiliser_warranty_en, "fertiliser"),
         new Input(
-          "guaranteed_analysis",
+          t("first_aid_fr"),
+          form.fertiliser_first_aid_fr,
+          "fertiliser",
+        ),
+        new Input(
+          t("first_aid_en"),
+          form.fertiliser_first_aid_en,
+          "fertiliser",
+        ),
+        new Input(t("warranty_fr"), form.fertiliser_warranty_fr, "fertiliser"),
+        new Input(t("warranty_en"), form.fertiliser_warranty_en, "fertiliser"),
+        new Input(
+          t("guaranteed_analysis"),
           form.fertiliser_guaranteed_analysis,
           "fertiliser",
         ),
         new Input(
-          "nutrient_in_guaranteed_analysis",
+          t("nutrient_in_guaranteed_analysis"),
           form.nutrient_in_guaranteed_analysis,
           "fertiliser",
         ),
         new Input(
-          "percentage_in_guaranteed_analysis",
+          t("percentage_in_guaranteed_analysis"),
           form.percentage_in_guaranteed_analysis,
           "fertiliser",
         ),
-        new Input("weight", form.fertiliser_weight, "fertiliser"),
-        new Input("density", form.fertiliser_density, "fertiliser"),
-        new Input("volume", form.fertiliser_volume, "fertiliser"),
-        new Input(
-          "label_all_other_text_fr",
-          form.fertiliser_label_all_other_text_fr,
-          "fertiliser",
-        ),
-        new Input(
-          "all_other_text_fr_1",
-          form.all_other_text_fr_1,
-          "fertiliser",
-        ),
-        new Input(
-          "all_other_text_fr_2",
-          form.all_other_text_fr_2,
-          "fertiliser",
-        ),
-        new Input(
-          "label_all_other_text_en",
-          form.fertiliser_label_all_other_text_en,
-          "fertiliser",
-        ),
-        new Input(
-          "all_other_text_en_1",
-          form.all_other_text_en_1,
-          "fertiliser",
-        ),
-        new Input(
-          "all_other_text_en_2",
-          form.all_other_text_en_2,
-          "fertiliser",
-        ),
+        new Input(t("weight"), form.fertiliser_weight, "fertiliser"),
+        new Input(t("density"), form.fertiliser_density, "fertiliser"),
+        new Input(t("volume"), form.fertiliser_volume, "fertiliser"),
       ]),
     ]),
   );
@@ -442,9 +422,7 @@ const FormPage = () => {
           {loading ? (
             <div className={`loader-container-form ${loading ? "active" : ""}`}>
               <div className="spinner"></div>
-              <p>
-                Votre fichier est en cours d'analyse Your file is being analyzed
-              </p>
+              <p>{t("analyzingText")}</p>
             </div>
           ) : (
             <div>
@@ -461,7 +439,7 @@ const FormPage = () => {
                 );
               })}
               <button className="button" onClick={submitForm}>
-                Submit
+                {t("submitButton")}
               </button>
             </div>
           )}

@@ -1,6 +1,8 @@
 import React, { useState } from "react";
 import "./Carousel.css";
 import ImageZoomInOut from "../ImageZoomInOut/ImageZoomInOut";
+import { useTranslation } from "react-i18next";
+
 interface CarouselProps {
   imgs: {
     url: string;
@@ -20,6 +22,7 @@ class imgObject {
 }
 
 const Carousel: React.FC<CarouselProps> = ({ imgs }) => {
+  const { t } = useTranslation();
   const [currImg, setCurrImg] = useState<number>(0);
 
   const imgList: imgObject[] = [];
@@ -49,7 +52,7 @@ const Carousel: React.FC<CarouselProps> = ({ imgs }) => {
         <ImageZoomInOut
           className="main-img"
           imageUrl={imgList.length > 0 ? imgList[currImg].url : ""}
-          alt="No picture"
+          alt={t("noPicture")}
         />
         <a className="next" onClick={() => selectImg(currImg + 1)}>
           &#10095;

@@ -1,6 +1,7 @@
 import React, { useState } from "react";
 import "./FileList.css";
 import FileElement from "./FileElement/FileElement";
+import { useTranslation } from "react-i18next";
 
 interface FileListProps {
   files: File[];
@@ -13,6 +14,7 @@ const FileList: React.FC<FileListProps> = ({
   onSelectedChange,
   propagateDelete,
 }) => {
+  const { t } = useTranslation();
   const [selectedFile, setSelectedFile] = useState<File | null>(null);
 
   const handleSelectFile = (file: File | null) => {
@@ -32,7 +34,7 @@ const FileList: React.FC<FileListProps> = ({
   return (
     <div className={`file-list ${files.length === 0 ? "empty" : ""}`}>
       <div className={`no-element ${files.length === 0 ? "active" : ""}`}>
-        No element to show
+        {t("fileListNoElement")}
       </div>
       {[...files].map((file: File, index: number) => (
         <FileElement

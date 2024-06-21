@@ -3,8 +3,10 @@ import Carousel from "../../Components/Carousel/Carousel";
 import { useLocation } from "react-router-dom";
 import Section from "../../Model/Section-Model.tsx";
 import "./ConfirmPage.css";
+import { useTranslation } from "react-i18next";
 
 const ConfirmPage = () => {
+  const { t } = useTranslation();
   const location = useLocation();
   const data = location.state.data;
   // eslint-disable-next-line
@@ -15,6 +17,8 @@ const ConfirmPage = () => {
     }[]
   >(location.state.urls);
   setUrls(location.state.urls);
+
+  // Traduction not done waiting on prompt changes
   const renderSection = (section: Section) => (
     <div key={section.label}>
       <h2>{section.label}</h2>
@@ -30,13 +34,17 @@ const ConfirmPage = () => {
 
   return (
     <div className="confirm-page-container">
-      <h1 id="confirm-title">Confirmation Page</h1>
+      <h1 id="confirm-title">{t("confirmationPage")}</h1>
       <Carousel imgs={urls} />
       <div className="confirm-container">
         {data.sections.map((section: Section) => renderSection(section))}
         <div className="button-container">
-          <button onClick={() => console.log("Cancel")}>Cancel</button>
-          <button onClick={() => console.log("Confirm")}>Confirm</button>
+          <button onClick={() => console.log("Cancel")}>
+            {t("cancelButton")}
+          </button>
+          <button onClick={() => console.log("Confirm")}>
+            {t("confirmButton")}
+          </button>
         </div>
       </div>
     </div>
