@@ -8,13 +8,13 @@ class Input {
   constructor(
     label: string,
     value: string,
-    parent_label: string,
+    id: string,
     disabled = false,
     property = "default",
   ) {
     this.label = label;
     this.value = value;
-    this.id = parent_label + "-" + this.label;
+    this.id = id;
     this.disabled = disabled;
     this.property = property;
   }
