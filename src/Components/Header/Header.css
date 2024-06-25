@@ -45,7 +45,7 @@ header nav {
   }
 }
 
-ul {
+header ul {
   list-style-type: none;
   display: flex;
 }

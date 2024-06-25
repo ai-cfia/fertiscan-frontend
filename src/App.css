@@ -6,3 +6,8 @@
 body {
   display: block;
 }
+
+.App{
+  padding-left: 60px;
+  transition: padding 0.5s;
+}
