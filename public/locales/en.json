@@ -53,5 +53,9 @@
     "percentage": "Percentage",
     "weight": "Weight",
     "density": "Density",
-    "volume": "Volume"
+    "volume": "Volume",
+    "settingH1":"Settings",
+    "languageLabel":"Language",
+    "fr":"French",
+    "en":"English"
 }

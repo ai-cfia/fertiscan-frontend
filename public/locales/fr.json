@@ -53,5 +53,9 @@
     "percentage_in_guaranteed_analysis": "Pourcentage",
     "weight": "Poids",
     "density": "Densité",
-    "volume": "Volume"
+    "volume": "Volume",
+    "settingH1":"Paramètres",
+    "languageLabel":"Langue",
+    "fr": "Français",
+    "en": "Anglais"
 }
