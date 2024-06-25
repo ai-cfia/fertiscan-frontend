@@ -80,7 +80,7 @@ function JsonPage() {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
   return (
-    <div>
+    <div className="${theme}">
       <div className={`loader-container ${loading ? "active" : ""}`}>
         <div className="spinner"></div>
         <p>{t("analyzingText")}</p>

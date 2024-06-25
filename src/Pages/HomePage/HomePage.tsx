@@ -64,7 +64,7 @@ function HomePage() {
 
   return (
     <StrictMode>
-      <div className="App">
+      <div className="App ${theme}">
         <div className="homePage-container">
           <DragDropFileInput
             sendChange={handlePhotoChange}
