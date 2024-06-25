@@ -29,14 +29,6 @@ const SectionComponent: React.FC<sectionPorps> = ({
       newInfo.value;
     propagateChange(sectionInfo);
   };
-
-  if (
-    sectionInfo.inputs
-      .map((input) => input.value)
-      .reduce((total, current) => total + current) == ""
-  ) {
-    return <></>;
-  }
   return (
     <div className={sectionInfo.label + "-container data-section"}>
       <h1 className="title underlined">{sectionInfo.title}</h1>

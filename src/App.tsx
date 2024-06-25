@@ -13,15 +13,15 @@ import i18next from "i18next";
 
 function App() {
   useEffect(() => {
-    const storedLanguage = localStorage.getItem('language');
-    i18next.changeLanguage(storedLanguage || 'en');
+    const storedLanguage = localStorage.getItem("language");
+    i18next.changeLanguage(storedLanguage || "en");
   }, []);
 
   return (
     <BrowserRouter>
       <StrictMode>
         <Header />
-        <SideMenu/>
+        <SideMenu />
       </StrictMode>
       <Routes>
         <Route path="/">

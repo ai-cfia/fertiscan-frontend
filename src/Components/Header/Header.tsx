@@ -19,18 +19,17 @@ function Header() {
 
   function toggleMenu() {
     flash(document.querySelector("#burger img") as HTMLElement);
-    if(menuOpen){
+    if (menuOpen) {
       MenuChannel.emit("CloseMenu");
       setMenuOpen(false);
-    }else{
-      MenuChannel.emit("OpenMenu")
+    } else {
+      MenuChannel.emit("OpenMenu");
       setMenuOpen(true);
     }
-      
   }
-  function flash(elem:HTMLElement){
+  function flash(elem: HTMLElement) {
     elem.classList.add("flash");
-    setTimeout(()=>elem.classList.remove("flash"), 300);
+    setTimeout(() => elem.classList.remove("flash"), 300);
   }
 
   // Add the sticky class to the header when you reach its scroll position. Remove "sticky" when you leave the scroll position
@@ -47,7 +46,11 @@ function Header() {
     <header role={"banner"} ref={header} className="">
       <nav>
         <ul>
-          <li id="burger"><a onClick={toggleMenu}><img src={burgerMenu}></img></a></li>
+          <li id="burger">
+            <a onClick={toggleMenu}>
+              <img src={burgerMenu}></img>
+            </a>
+          </li>
           <li>
             <a
               href="https://inspection.canada.ca/"

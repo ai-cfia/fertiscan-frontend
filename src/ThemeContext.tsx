@@ -1,16 +1,16 @@
-import React, { createContext, useState } from 'react';
+import { createContext, useState } from "react";
 import SettingPage from "./Pages/SettingPage/SettingPage";
 
 const ThemeContext = createContext({
-  theme: 'light',
+  theme: "light",
   toggleTheme: () => {},
 });
 
 const ThemeProvider = () => {
-  const [theme, setTheme] = useState('light');
+  const [theme, setTheme] = useState("light");
 
   const toggleTheme = () => {
-    setTheme(theme === 'light' ? 'dark' : 'light');
+    setTheme(theme === "light" ? "dark" : "light");
   };
 
   return (

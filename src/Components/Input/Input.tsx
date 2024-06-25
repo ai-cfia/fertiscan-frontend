@@ -108,7 +108,6 @@ const InputComponent: React.FC<InputProps> = ({
     propagateChange(inputInfo);
   };
 
-  if (inputInfo.value == "") return <></>;
   return (
     <div className="input-container">
       <label htmlFor={inputInfo.id}>

@@ -364,7 +364,6 @@ const FormPage = () => {
 
   const inputStates = data.sections.flatMap((section) =>
     section.inputs
-      .filter((input) => input.value.length > 0)
       .map((input) => ({
         label: input.id,
       })),
