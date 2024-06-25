@@ -7,12 +7,14 @@ import Header from "./Components/Header/Header";
 import FormPage from "./Pages/FormPage/FormPage";
 import { StrictMode } from "react";
 import ConfirmPage from "./Pages/ConfirmPage/ConfirmPage";
+import SideMenu from "./Components/SideMenu/SideMenu";
 
 function App() {
   return (
     <BrowserRouter>
       <StrictMode>
         <Header />
+        <SideMenu/>
       </StrictMode>
       <Routes>
         <Route path="/">

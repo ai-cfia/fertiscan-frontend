@@ -2,6 +2,7 @@ import { useRef } from "react";
 import cfia from "../../assets/CFIA_Banner.png";
 import "./Header.css";
 import { useTranslation } from "react-i18next";
+import burgerMenu from "../../assets/burger-menu.svg";
 
 const environment = {
   version: "0.0.1",
@@ -15,6 +16,15 @@ function Header() {
   window.onscroll = function () {
     myFunction();
   };
+
+  function openMenu() {
+    flash(document.querySelector("#burger img") as HTMLElement);
+    document.querySelector(".side-menu")!.classList.toggle("active");
+  }
+  function flash(elem:HTMLElement){
+    elem.classList.add("flash");
+    setTimeout(()=>elem.classList.remove("flash"), 300);
+  }
 
   // Add the sticky class to the header when you reach its scroll position. Remove "sticky" when you leave the scroll position
   function myFunction() {
@@ -30,6 +40,7 @@ function Header() {
     <header role={"banner"} ref={header} className="">
       <nav>
         <ul>
+          <li id="burger"><a onClick={openMenu}><img src={burgerMenu}></img></a></li>
           <li>
             <a
               href="https://inspection.canada.ca/"
