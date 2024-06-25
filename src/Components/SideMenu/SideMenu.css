@@ -7,7 +7,7 @@
     background-color: #05486c;
     color: #fff;
     transition: width 0.5s;
-    padding: 0 10px;
+    padding: 0 10px !important;
     z-index: 997;
 }
 
@@ -25,7 +25,7 @@
 .side-menu::before{
     content:"";
     position: absolute;
-    background-color: white;
+    background-color: transparent;
     right: -25px;
     height: 20px;
     width: 25px;
