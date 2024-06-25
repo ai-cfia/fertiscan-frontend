@@ -6,7 +6,7 @@ const ThemeContext = createContext({
   toggleTheme: () => {},
 });
 
-const ThemeProvider = ({ children }) => {
+const ThemeProvider = () => {
   const [theme, setTheme] = useState('light');
 
   const toggleTheme = () => {
