@@ -1,0 +1,22 @@
+.settings {
+    margin: 20px;
+    padding: 20px;
+    border: 1px solid #ccc;
+    border-radius: 5px;
+    display: flex;
+  }
+  
+  .settings label {
+    display: block;
+    margin-bottom: 5px;
+    margin-right: 20px;
+  }
+  
+  .settings select {
+    width: 50%;
+    padding: 5px;
+    border: 1px solid #ccc;
+    border-radius: 5px;
+  }
+
+  
