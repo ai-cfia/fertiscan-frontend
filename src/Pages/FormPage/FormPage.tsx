@@ -364,7 +364,6 @@ const FormPage = () => {
 
   const inputStates = data.sections.flatMap((section) =>
     section.inputs
-      .filter((input) => input.value.length > 0)
       .map((input) => ({
         label: input.id,
       })),
@@ -442,7 +441,7 @@ const FormPage = () => {
 
   return (
     <StrictMode>
-      <div className="formPage-container">
+      <div className="formPage-container ${theme}">
         <div className="pic-container">
           <Carousel imgs={urls}></Carousel>
         </div>

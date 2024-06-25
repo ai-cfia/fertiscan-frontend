@@ -11,7 +11,7 @@ const ConfirmPage = () => {
 
   // Traduction not done waiting on prompt changes
   const renderSection = (section: Section) => (
-    <div key={section.label}>
+    <div key={section.label} className="${theme}">
       <h2>{section.label}</h2>
       <ul className="data-infos">
         {section.inputs.map((input) => (
@@ -24,7 +24,7 @@ const ConfirmPage = () => {
   );
 
   return (
-    <div className="confirm-page-container">
+    <div className="confirm-page-container ${theme}">
       <h1 id="confirm-title">{t("confirmationPage")}</h1>
       <Carousel imgs={location.state.urls} />
       <div className="confirm-container">

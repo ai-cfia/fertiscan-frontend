@@ -6,3 +6,8 @@ export const FormClickActions = eventbus<{
   ApproveClick: (inputInfo: Input) => void;
   Rejected: (inputInfo: Input) => void;
 }>();
+
+export const MenuChannel = eventbus<{
+  OpenMenu: () => void;
+  CloseMenu: () => void;
+}>();
