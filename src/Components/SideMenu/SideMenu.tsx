@@ -1,6 +1,7 @@
 import "./SideMenu.css";
 import { useTranslation } from "react-i18next";
-import home from "../../assets/home.svg";
+import home from "../../assets/home.svg"
+import { MenuChannel } from "../../Utils/EventChannels";
 
 function SideMenu() {
   const { t } = useTranslation();
