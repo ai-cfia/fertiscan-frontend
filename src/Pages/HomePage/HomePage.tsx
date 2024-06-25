@@ -1,4 +1,4 @@
-import { StrictMode, useState, useRef } from "react";
+import { StrictMode, useState } from "react";
 import "./HomePage.css";
 import DragDropFileInput from "../../Components/DragDropFileInput/DragDropFileInput";
 import FileList from "../../Components/FileList/FileList";
@@ -9,8 +9,6 @@ function HomePage() {
   const { t } = useTranslation();
   const [files, setFiles] = useState<File[]>([]);
   const [toShow, setShow] = useState("");
-  const [cameraMode, toggleCamera] = useState(false);
-  const cameraSwitch = useRef<HTMLDivElement | null>(null);
   const reader = new FileReader();
   reader.onload = (e) => {
     const newFile = e!.target!.result! as string;
@@ -52,41 +50,15 @@ function HomePage() {
     }
   };
 
-  const handleCameraToggle = (event: React.MouseEvent<HTMLDivElement>) => {
-    event.preventDefault();
-    toggleCamera(!cameraMode);
-    if (cameraMode) {
-      cameraSwitch.current!.classList.add("active");
-    } else {
-      cameraSwitch.current!.classList.remove("active");
-    }
-  };
-
   return (
     <StrictMode>
       <div className="App ${theme}">
         <div className="homePage-container">
-          <DragDropFileInput
-            sendChange={handlePhotoChange}
-            file={toShow}
-            mode={cameraMode}
-          />
+          <DragDropFileInput sendChange={handlePhotoChange} file={toShow} />
           <button className="submit-btn" type="submit" onClick={Submit}>
             {t("submitButton")}
           </button>
-          <div
-            className={`switch ${cameraMode ? "active" : ""}`}
-            id="camera-switch"
-            ref={cameraSwitch}
-            onClick={handleCameraToggle}
-          >
-            <label>
-              {t("fileSelectionLabel")}
-              <input type="checkbox" />
-              <span className="lever"></span>
-              {t("cameraLabel")}
-            </label>
-          </div>
+
           <FileList
             files={files}
             onSelectedChange={handleSelectedChange}

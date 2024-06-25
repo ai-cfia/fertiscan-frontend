@@ -5,16 +5,11 @@ import { useTranslation } from "react-i18next";
 interface FileInputProps {
   sendChange: (files: File[]) => void;
   file: string;
-  mode: boolean;
 }
 const CAMERA_MODE = true;
 const FILE_MODE = false;
 
-const DragDropFileInput: React.FC<FileInputProps> = ({
-  sendChange,
-  file,
-  mode,
-}) => {
+const DragDropFileInput: React.FC<FileInputProps> = ({ sendChange, file }) => {
   const { t } = useTranslation();
   const [dragActive, setDragActive] = useState(false);
   const [stream, setStream] = useState<MediaStream | null>(null);
@@ -24,6 +19,8 @@ const DragDropFileInput: React.FC<FileInputProps> = ({
   const fileInput = useRef<HTMLInputElement>(null);
   const videoRef = useRef<HTMLVideoElement>(null);
   const canvasRef = useRef<HTMLCanvasElement>(null);
+  const [toggleMode, setToggleMode] = useState(false);
+  const cameraSwitch = useRef<HTMLDivElement | null>(null);
 
   useEffect(() => {
     if (file === "") {
@@ -45,14 +42,14 @@ const DragDropFileInput: React.FC<FileInputProps> = ({
   }, [stream]);
 
   useEffect(() => {
-    if (mode == CAMERA_MODE) {
+    if (toggleMode == CAMERA_MODE) {
       selectCamera();
     } else {
       setStream(null);
       stream?.getTracks().forEach((track) => track.stop());
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [mode]);
+  }, [toggleMode]);
 
   useEffect(() => {
     selectCamera();
@@ -87,14 +84,6 @@ const DragDropFileInput: React.FC<FileInputProps> = ({
     const files = event.target.files;
     if (files) {
       handleFileChange(Array.from(files));
-    }
-  };
-
-  const handleCancel = () => {
-    sendChange([]);
-    if (stream) {
-      stream.getTracks().forEach((track) => track.stop());
-      setStream(null);
     }
   };
 
@@ -145,12 +134,24 @@ const DragDropFileInput: React.FC<FileInputProps> = ({
     );
   };
 
+  const handleCameraToggle = (event: React.MouseEvent<HTMLDivElement>) => {
+    event.preventDefault();
+    setToggleMode(!toggleMode);
+    if (toggleMode) {
+      cameraSwitch.current!.classList.add("active");
+    } else {
+      cameraSwitch.current!.classList.remove("active");
+    }
+  };
+
   return (
     <div className="drag-drop-container">
       <h3 className="title">{t("dragAndDropFileH3")}</h3>
 
       <div className="entry-wrapper">
-        <div className={`input-wrapper ${mode == FILE_MODE ? "active" : ""}`}>
+        <div
+          className={`input-wrapper ${toggleMode == FILE_MODE ? "active" : ""}`}
+        >
           <input
             id="file-input"
             ref={fileInput}
@@ -172,14 +173,14 @@ const DragDropFileInput: React.FC<FileInputProps> = ({
         </div>
 
         <div
-          className={`camera-container ${mode == CAMERA_MODE ? "active" : ""}`}
+          className={`camera-container ${toggleMode == CAMERA_MODE ? "active" : ""}`}
         >
           <video
             id="player"
             ref={videoRef}
             autoPlay
             muted
-            style={{ width: "320px", height: "240px" }}
+            className="camera-feed"
           />
           <div className="camera-controls">
             <button id="capture" onClick={handleCapture} disabled={!stream}>
@@ -201,17 +202,26 @@ const DragDropFileInput: React.FC<FileInputProps> = ({
       </div>
       <div className="drag-drop-inner">
         <p>
-          {mode == FILE_MODE
+          {toggleMode == FILE_MODE
             ? t("dragAndDropFilePOption1")
             : t("dragAndDropFilePOption2")}
         </p>
+        <div
+          className={`switch ${toggleMode ? "active" : ""}`}
+          id="camera-switch"
+          ref={cameraSwitch}
+          onClick={handleCameraToggle}
+        >
+          <label>
+            {t("fileSelectionLabel")}
+            <input type="checkbox" />
+            <span className="lever"></span>
+            {t("cameraLabel")}
+          </label>
+        </div>
         <button type="button" onClick={selectFiles}>
           {" "}
           {t("browseFileButton")}
-        </button>
-        <button type="button" onClick={handleCancel}>
-          {" "}
-          {t("cancelButton")}{" "}
         </button>
       </div>
     </div>

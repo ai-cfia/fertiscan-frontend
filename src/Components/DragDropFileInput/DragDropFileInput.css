@@ -160,3 +160,7 @@ input[type="file"] {
 .input-wrapper.active {
   display: block;
 }
+.camera-feed{
+  max-width: 600px;
+  max-height: 600px;
+}
