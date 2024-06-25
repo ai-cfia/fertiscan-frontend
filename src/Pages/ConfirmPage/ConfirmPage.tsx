@@ -1,4 +1,3 @@
-import { useState } from "react";
 import Carousel from "../../Components/Carousel/Carousel";
 import { useLocation } from "react-router-dom";
 import Section from "../../Model/Section-Model.tsx";
@@ -6,17 +5,9 @@ import "./ConfirmPage.css";
 import { useTranslation } from "react-i18next";
 
 const ConfirmPage = () => {
-  const { t } = useTranslation();
   const location = useLocation();
+  const { t } = useTranslation();
   const data = location.state.data;
-  // eslint-disable-next-line
-  const [urls, setUrls] = useState<
-    {
-      url: string;
-      title: string;
-    }[]
-  >(location.state.urls);
-  setUrls(location.state.urls);
 
   // Traduction not done waiting on prompt changes
   const renderSection = (section: Section) => (
@@ -35,7 +26,7 @@ const ConfirmPage = () => {
   return (
     <div className="confirm-page-container">
       <h1 id="confirm-title">{t("confirmationPage")}</h1>
-      <Carousel imgs={urls} />
+      <Carousel imgs={location.state.urls} />
       <div className="confirm-container">
         {data.sections.map((section: Section) => renderSection(section))}
         <div className="button-container">
