@@ -1,9 +1,9 @@
-import { useRef } from "react";
+import { useRef, useState } from "react";
 import cfia from "../../assets/CFIA_Banner.png";
 import "./Header.css";
 import { useTranslation } from "react-i18next";
 import burgerMenu from "../../assets/burger-menu.svg";
-
+import { MenuChannel } from "../../Utils/EventChannels";
 const environment = {
   version: "0.0.1",
 };
@@ -11,15 +11,22 @@ const environment = {
 function Header() {
   const { t } = useTranslation();
   const header = useRef<HTMLElement | null>(null);
-
+  const [menuOpen, setMenuOpen] = useState(false);
   // When the user scrolls the page, execute myFunction
   window.onscroll = function () {
     myFunction();
   };
 
-  function openMenu() {
+  function toggleMenu() {
     flash(document.querySelector("#burger img") as HTMLElement);
-    document.querySelector(".side-menu")!.classList.toggle("active");
+    if(menuOpen){
+      MenuChannel.emit("CloseMenu");
+      setMenuOpen(false);
+    }else{
+      MenuChannel.emit("OpenMenu")
+      setMenuOpen(true);
+    }
+      
   }
   function flash(elem:HTMLElement){
     elem.classList.add("flash");
@@ -40,7 +47,7 @@ function Header() {
     <header role={"banner"} ref={header} className="">
       <nav>
         <ul>
-          <li id="burger"><a onClick={openMenu}><img src={burgerMenu}></img></a></li>
+          <li id="burger"><a onClick={toggleMenu}><img src={burgerMenu}></img></a></li>
           <li>
             <a
               href="https://inspection.canada.ca/"

@@ -1,24 +1,19 @@
 import "./SideMenu.css";
-
+import { useTranslation } from "react-i18next";
+import home from "../../assets/home.svg"
+import { MenuChannel } from "../../Utils/EventChannels";
 
 function SideMenu() {
 
+    const { t } = useTranslation();
+
+
     return (
         <div className="side-menu">
-            <div className="side-menu__header">
-                <div className="side-menu__header__logo">
-                    <img src="https://www.fertiscan.com/wp-content/uploads/2021/02/logo.png" alt="Fertiscan Logo" />
-                </div>
-                <div className="side-menu__header__title">
-                    <h1>Fertiscan</h1>
-                </div>
-            </div>
             <div className="side-menu__content">
                 <ul>
-                    <li>Home</li>
-                    <li>Dashboard</li>
-                    <li>Reports</li>
-                    <li>Settings</li>
+                    <li> <img className="menu-icon" src={home}></img> {false?t("Home"):""} </li>
+                    <li> <i></i> {t("Settings")} </li>
                 </ul>
             </div>
         </div>
