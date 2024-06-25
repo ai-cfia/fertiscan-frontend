@@ -43,6 +43,10 @@ header nav {
     flex-direction: column;
     align-items: center;
   }
+  header nav {
+    padding-left: 20%;
+    width: 80%;
+  }
 }
 
 header ul {
@@ -63,8 +67,9 @@ header ul {
 #burger{
   display: block;
   height: 50px;
-  position: absolute;
-  left: 2px;
+  position: fixed;
+  left: 13px;
+  top:3%;
   width: auto;
   object-fit: contain;
 }
