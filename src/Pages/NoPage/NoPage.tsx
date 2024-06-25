@@ -3,7 +3,7 @@ import "./NoPage.css";
 function NoPage() {
   return (
     <>
-      <p>404</p>
+      <p className="${theme}">404</p>
     </>
   );
 }

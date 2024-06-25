@@ -414,7 +414,7 @@ const FormPage = () => {
 
   return (
     <StrictMode>
-      <div className="formPage-container">
+      <div className="formPage-container ${theme}">
         <div className="pic-container">
           <Carousel imgs={urls}></Carousel>
         </div>

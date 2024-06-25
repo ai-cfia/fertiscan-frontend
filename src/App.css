@@ -1,8 +1,22 @@
 #root {
   text-align: center;
   width: 100%;
+  --light-background: #fff;
+  --light-text: #333;
+  --dark-background: #222;
+  --dark-text: #fff;
 }
 
 body {
   display: block;
+}
+
+.light-theme {
+  background-color: var(--light-background);
+  color: var(--light-text);
+}
+
+.dark-theme {
+  background-color: var(--dark-background);
+  color: var(--dark-text);
 }
