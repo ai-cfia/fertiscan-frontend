@@ -1,0 +1,18 @@
+.side-menu{
+    position: fixed;
+    top: 100px;
+    left: 0;
+    height: 100%;
+    width: 50px;
+    background-color: #05486c;
+    color: #fff;
+    transition: width 0.5s;
+}
+
+.side-menu.active{
+    width: 250px;
+}
+
+.side-menu.active ~ *{
+    padding-left: 250px;
+}
