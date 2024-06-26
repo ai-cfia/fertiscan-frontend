@@ -35,7 +35,7 @@ function ImageZoomInOut({ imageUrl, className, onClick, alt }: ImageProps) {
             {console.log(rest)}
             <TransformControls url={imageUrl} />
             <TransformComponent>
-              <img src={imageUrl} alt={alt} className={className} />
+              <img src={imageUrl} alt={alt} className="test" />
             </TransformComponent>
           </>
         )}
