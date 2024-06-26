@@ -1,4 +1,4 @@
-.curr-img {
+/*.curr-img {
   grid-area: main;
   display: flex;
   justify-content: center;
@@ -18,7 +18,7 @@
 
 @media only screen and (min-width: 1231px) {
   /*the minimum place that need the form to have when he is in full page mode is 1231*/
-  .carousel-wrapper {
+  /*.carousel-wrapper {
     position: fixed;
     display: grid;
     grid-template-areas:
@@ -31,7 +31,7 @@
 
 @media only screen and (max-width: 1230px) {
   /*the minimum place that need the form to have when he is in full page mode is 1231*/
-  .carousel-wrapper {
+  /*.carousel-wrapper {
     display: grid;
     grid-template-areas:
       "main main main"
@@ -107,7 +107,7 @@
 .next:hover {
   background-color: #bdbdbd;
 }
-
+/*
 .carousel-wrapper .react-transform-wrapper {
   height: 500px;
 }
