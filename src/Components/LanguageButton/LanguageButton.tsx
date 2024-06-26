@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import { useEffect, useState } from "react";
 import "./LanguageButton.css"; // Import CSS file for animations
 import { useTranslation } from "react-i18next";
 import i18next from "i18next";
