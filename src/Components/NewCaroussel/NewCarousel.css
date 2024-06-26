@@ -1,0 +1,111 @@
+/* Styles for the carousel wrapper */
+.carousel-wrapper {
+  display: flex;
+  overflow: hidden; /* This hides overflowing content */
+  position: relative; /* Needed for absolute positioning of arrows */
+  flex-direction: column;
+  width: 100%;
+  height: auto;
+  margin-left: 70px;
+  justify-content: center;
+  align-items: center;
+}
+
+/* Styles for the currently displayed image */
+.curr-img {
+  place-content: center;
+  width: 100%;
+  display: flex;
+  overflow: hidden; /* Hides overflowing content */
+  min-height: 400px; /* Adjust based on image height */
+}
+
+/* Styles for the previous and next arrow buttons */
+.prev,
+.next {
+  background-color: aqua;
+  transform: translateY(-50%); /* Centers buttons vertically */
+  color: white;
+  font-size: 2em;
+  padding: 10px;
+  cursor: pointer;
+  user-select: none; /* Prevents text selection on hover */
+  position:absolute;
+  }
+
+/* Styles for the image container with thumbnails */
+.carousel {
+  flex:1;
+  display: inline-flex;
+  width: 100%; /* Ensures thumbnails fill the available space */
+  max-width: 300px;
+  height: fit-content; /* Allows for dynamic thumbnail section height */
+  gap: 10px; /* Adds space between thumbnails */
+  overflow-x:scroll; /* Enables horizontal scrolling */
+  scroll-snap-align: start; /* Snaps thumbnails to the start */
+  overflow-y: hidden; /* Hides vertical overflow */
+  position: static;
+  width: auto;
+  display: inline-flex;
+  align-items: center;
+  z-index: 5;
+}
+
+/* Styles for individual carousel thumbnails */
+.carousel-img {
+  margin-top: 20px;
+  width: calc(100% / (number-of-images/3)); /* Adjust based on number of images */
+  object-fit: cover; /* Ensures thumbnails fill their container */
+  transition: transform 0.3s cubic-bezier(0.2, 0.6, 0.8, 1); /* Smooth transition */
+  display: flex;
+  height: fit-content;
+  max-height: 120px;
+}
+
+.carousel-img.current {
+  border: solid 4px #bab9b9;
+}
+
+.carousel-img:hover {
+  transform: scale(1.1); /* Slightly enlarge on hover */
+}
+
+/* Styles for the "current" image (selected thumbnail) */
+.carousel-img.current {
+  opacity: 0.7; /* Reduce opacity for non-selected thumbnails */
+}
+/* Styles for the scrollbar (customization optional) */
+.carousel::-webkit-scrollbar {
+  background: transparent;
+  height: 8px;
+  width: 8px;
+  padding: 20px;
+}
+
+.carousel::-webkit-scrollbar-thumb {
+  border-radius: 0.25rem;
+  background: rgb(118, 118, 118);
+}
+
+.carousel::-webkit-scrollbar-track {
+  margin-top: 3px;
+  padding-right: 10px;
+  background: transparent;
+}
+
+.curr-img .react-transform-wrapper .react-transform-component{
+  display: flex;
+  width: 100%;
+  height: auto;
+  background-color: rgb(118, 118, 118);
+  align-self: center;
+  }
+
+.curr-img .react-transform-wrapper{
+  min-height: 400px;
+}
+.curr-img .react-transform-wrapper img {
+  width: 100%;
+  max-height: 350px;
+}
+
