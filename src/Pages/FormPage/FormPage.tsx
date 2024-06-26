@@ -1,6 +1,6 @@
 import React, { useState, useRef, useEffect, StrictMode } from "react";
 import "./FormPage.css";
-import Carousel from "../../Components/Carousel/Carousel";
+import NewCarousel from "../../Components/NewCaroussel/NewCarousel.tsx";
 import { useLocation, useNavigate } from "react-router-dom";
 import ProgressBar from "../../Components/ProgressBar/ProgressBar";
 import SectionComponent from "../../Components/Section/Section.tsx";
@@ -442,7 +442,7 @@ const FormPage = () => {
     <StrictMode>
       <div className="formPage-container ${theme}">
         <div className="pic-container">
-          <Carousel imgs={urls}></Carousel>
+          <NewCarousel imgs={urls}></NewCarousel>
         </div>
         <div className="data-container">
           {loading ? (
