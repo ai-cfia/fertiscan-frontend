@@ -363,10 +363,9 @@ const FormPage = () => {
   };
 
   const inputStates = data.sections.flatMap((section) =>
-    section.inputs
-      .map((input) => ({
-        label: input.id,
-      })),
+    section.inputs.map((input) => ({
+      label: input.id,
+    })),
   );
 
   const give_focus = (input: Input) => {

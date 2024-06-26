@@ -1,12 +1,13 @@
 import "./SideMenu.css";
-import { useTranslation } from "react-i18next";
-import home from "../../assets/home.svg";
+//import { useTranslation } from "react-i18next";
+//import home from "../../assets/home.svg";
 
 function SideMenu() {
-  const { t } = useTranslation();
+  //const { t } = useTranslation();
 
   return (
     <div className="side-menu">
+      {/*
       <div className="side-menu__content">
         <ul>
           <li>
@@ -20,6 +21,7 @@ function SideMenu() {
           </li>
         </ul>
       </div>
+      */}
     </div>
   );
 }

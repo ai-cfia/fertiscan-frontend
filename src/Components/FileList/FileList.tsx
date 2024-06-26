@@ -32,21 +32,30 @@ const FileList: React.FC<FileListProps> = ({
   };
 
   return (
-    <div className={`file-list ${files.length === 0 ? "empty" : ""}`}>
-      <div className={`no-element ${files.length === 0 ? "active" : ""}`}>
-        {t("fileListNoElement")}
+    <div className={`file-list-container ${files.length === 0 ? "empty" : ""}`}>
+      <div
+        className="file-list"
+        style={{
+          position: "relative",
+          height: "500px", // Adjust this value to the original container height
+          overflowY: "auto",
+        }}
+      >
+        <div className={`no-element ${files.length === 0 ? "active" : ""}`}>
+          {t("fileListNoElement")}
+        </div>
+        {[...files].map((file: File, index: number) => (
+          <FileElement
+            key={index}
+            file={file}
+            position={index}
+            onClick={(selected) =>
+              selected ? handleSelectFile(file) : handleSelectFile(null)
+            }
+            onDelete={() => handleDelete(file)}
+          />
+        ))}
       </div>
-      {[...files].map((file: File, index: number) => (
-        <FileElement
-          key={index}
-          file={file}
-          position={index}
-          onClick={(selected) =>
-            selected ? handleSelectFile(file) : handleSelectFile(null)
-          }
-          onDelete={() => handleDelete(file)}
-        />
-      ))}
     </div>
   );
 };
