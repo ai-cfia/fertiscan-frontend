@@ -20,3 +20,8 @@ body {
   background-color: var(--dark-background);
   color: var(--dark-text);
 }
+
+.App {
+  padding-left: 60px;
+  transition: padding 0.5s;
+}

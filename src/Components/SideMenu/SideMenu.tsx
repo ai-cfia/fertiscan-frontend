@@ -1,27 +1,48 @@
 import "./SideMenu.css";
-//import { useTranslation } from "react-i18next";
-//import home from "../../assets/home.svg";
+import { useTranslation } from "react-i18next";
+import { MenuChannel } from "../../Utils/EventChannels";
+import { useRef } from "react";
+import { useNavigate } from "react-router-dom";
+import home from "../../assets/home.svg";
+import settings from "../../assets/settings.svg";
 
 function SideMenu() {
-  //const { t } = useTranslation();
+  const { t } = useTranslation();
+  const SideMenuRef = useRef<HTMLDivElement | null>(null);
+  MenuChannel.on("OpenMenu", () => {
+    SideMenuRef.current!.classList.add("active");
+  });
+  MenuChannel.on("CloseMenu", () => {
+    SideMenuRef.current!.classList.remove("active");
+  });
+  const navigate = useNavigate();
+  const goToHome = () => {
+    navigate("/");
+  };
+  const goToSettings = () => {
+    navigate("/Settings");
+  };
 
   return (
-    <div className="side-menu">
-      {/*
-      <div className="side-menu__content">
+    <div className="side-menu" ref={SideMenuRef}>
+      <div className="side-menu_content">
         <ul>
           <li>
             {" "}
-            <img className="menu-icon" src={home}></img>{" "}
-            {false ? t("Home") : ""}{" "}
+            <a className="side-menu_item" onClick={goToHome}>
+              <img className="menu-icon" src={home}></img>{" "}
+              <span>{t("home")}</span>
+            </a>{" "}
           </li>
           <li>
             {" "}
-            <i></i> {t("Settings")}{" "}
+            <a className="side-menu_item" onClick={goToSettings}>
+              <img className="menu-icon" src={settings}></img>{" "}
+              <span>{t("settings")}</span>
+            </a>{" "}
           </li>
         </ul>
       </div>
-      */}
     </div>
   );
 }
