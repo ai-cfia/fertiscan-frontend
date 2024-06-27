@@ -124,3 +124,50 @@
     padding-right: 10px;
     background: transparent;
   }
+  
+  /* Media queries to handle different screen sizes */
+  @media (max-width: 768px) {
+    .carousel-wrapper {
+      width: 95%;
+    }
+  
+    .curr-img {
+      min-height: 350px; /* Adjustment for larger size on tablets */
+    }
+  
+    .prev, .next {
+      font-size: 1.2em; /* Reduced size for the buttons on tablets */
+    }
+  
+    .carousel-wrapper .react-transform-wrapper img {
+      max-height: 75%; /* Adjust for better visibility on tablets */
+    }
+  
+    .carousel-wrapper .react-transform-wrapper {
+      max-height: 85%; /* Increases the size on tablets */
+    }
+  }
+  
+  @media (max-width: 480px) {
+    .carousel-wrapper {
+      width: 100%;
+    }
+  
+    .curr-img {
+      min-height: 250px; /* Adjustment for larger size on mobile */
+    }
+  
+    .prev, .next {
+      font-size: 1em; /* Reduced size for the buttons on mobile */
+      left: 5px;
+      right: 5px;
+    }
+  
+    .carousel-wrapper .react-transform-wrapper img {
+      max-height: 65%; /* Adjust for better visibility on mobiles */
+    }
+  
+    .carousel-wrapper .react-transform-wrapper {
+      max-height: 80%; /* Increases the size on mobiles */
+    }
+  }
