@@ -4,35 +4,35 @@ import FileElement from "./FileElement/FileElement";
 import { useTranslation } from "react-i18next";
 
 interface FileListProps {
-  files: File[];
-  onSelectedChange: (file: File | null) => void;
-  propagateDelete: (file: File, wasShown: boolean) => void;
+  blobs: {blob: string, name: string}[];
+  onSelectedChange: (selected: {blob:string,name:string} | null) => void;
+  propagateDelete: (deleted: {blob:string,name:string}, wasShown: boolean) => void;
 }
 
 const FileList: React.FC<FileListProps> = ({
-  files,
+  blobs,
   onSelectedChange,
   propagateDelete,
 }) => {
   const { t } = useTranslation();
-  const [selectedFile, setSelectedFile] = useState<File | null>(null);
+  const [selectedFile, setSelectedFile] = useState<{blob:string,name:string} | null>(null);
 
-  const handleSelectFile = (file: File | null) => {
-    setSelectedFile(file);
-    onSelectedChange(file);
+  const handleSelectFile = (selected: {blob:string, name:string} | null) => {
+    setSelectedFile(selected);
+    onSelectedChange(selected);
   };
 
-  const handleDelete = (file: File) => {
-    if (selectedFile === file) {
+  const handleDelete = (deleted: {blob:string,name:string}) => {
+    if (selectedFile === deleted) {
       setSelectedFile(null);
-      propagateDelete(file, false);
+      propagateDelete(deleted, false);
     } else {
-      propagateDelete(file, files[files.length - 1] === file);
+      propagateDelete(deleted, blobs[blobs.length - 1] ===  deleted);
     }
   };
 
   return (
-    <div className={`file-list-container ${files.length === 0 ? "empty" : ""}`}>
+    <div className={`file-list-container ${blobs.length === 0 ? "empty" : ""}`}>
       <div
         className="file-list"
         style={{
@@ -41,18 +41,18 @@ const FileList: React.FC<FileListProps> = ({
           overflowY: "auto",
         }}
       >
-        <div className={`no-element ${files.length === 0 ? "active" : ""}`}>
+        <div className={`no-element ${blobs.length === 0 ? "active" : ""}`}>
           {t("fileListNoElement")}
         </div>
-        {[...files].map((file: File, index: number) => (
+        {[...blobs].map((blob: {blob:string,name:string}, index: number) => (
           <FileElement
             key={index}
-            file={file}
+            blob={blob}
             position={index}
             onClick={(selected) =>
-              selected ? handleSelectFile(file) : handleSelectFile(null)
+              selected ? handleSelectFile(blob) : handleSelectFile(null)
             }
-            onDelete={() => handleDelete(file)}
+            onDelete={() => handleDelete(blob)}
           />
         ))}
       </div>

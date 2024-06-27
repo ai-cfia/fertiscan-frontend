@@ -1,7 +1,8 @@
-import React, { useState, useRef, useEffect, StrictMode } from "react";
+import React, { useState, useRef, useEffect, StrictMode, useContext } from "react";
 import "./FormPage.css";
+import { SessionContext, SetSessionContext } from "../../Utils/SessionContext.tsx";
 import Carousel from "../../Components/Carousel/Carousel";
-import { useLocation, useNavigate } from "react-router-dom";
+import { useNavigate } from "react-router-dom";
 import ProgressBar from "../../Components/ProgressBar/ProgressBar";
 import SectionComponent from "../../Components/Section/Section.tsx";
 import Section from "../../Model/Section-Model.tsx";
@@ -59,8 +60,11 @@ const FormPage = () => {
     all_other_text_en_2: "",
   });
 
-  const location = useLocation();
-  const files: File[] = location.state.data;
+  const {state} = useContext(SessionContext);
+  const {setState} = useContext(SetSessionContext);
+
+  const blobs = state.data.pics;
+
   const [loading, setLoading] = useState(true);
   // @ts-expect-error : has to be used to prompt user when error
   // eslint-disable-next-line
@@ -273,8 +277,9 @@ const FormPage = () => {
    */
   const analyse = async () => {
     const formData = new FormData();
-    for (let i = 0; i < files.length; i++) {
-      formData.append("images", files[i]);
+    for(let i = 0; i < blobs.length; i++){
+      let blobData = await fetch(blobs[i].blob).then((res) => res.blob());
+      formData.append("images", blobData, blobs[i].name);
     }
     const data = await (
       await fetch(api_url + "/analyze", {
@@ -294,17 +299,8 @@ const FormPage = () => {
 
   useEffect(() => {
     // load imgs for the carousel
-    const tmpUrls: { url: string; title: string }[] = [];
-    files.forEach((file) => {
-      const reader = new FileReader();
-      reader.onload = (e) => {
-        tmpUrls.push({
-          url: e!.target!.result as string,
-          title: file.name,
-        });
-      };
-      reader.onloadend = () => setUrls(tmpUrls);
-      reader.readAsDataURL(file);
+    blobs.forEach((blob) => {
+      setUrls([...urls, { url: blob.blob, title: blob.name }]);
     });
 
     if (process.env.REACT_APP_ACTIVATE_USING_JSON == "true") {
@@ -417,6 +413,7 @@ const FormPage = () => {
     const isValid = validateFormInputs();
     console.log(isValid);
     setData(data.copy());
+    setState({ ...state, data: { pics: blobs, form: data } });
     if (isValid) {
       navigate("/Confirm", { state: { data: data, urls: urls } });
     }
@@ -436,6 +433,7 @@ const FormPage = () => {
     new_data.sections.find((cur) => cur.label == newSection.label) !=
       newSection;
     setData(new_data);
+    setState({ ...state, data: { pics: blobs, form: new_data }});
   };
 
   return (
