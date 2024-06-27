@@ -57,5 +57,7 @@
   "settingH1": "Paramètres",
   "languageLabel": "Langue",
   "fr": "Français",
-  "en": "Anglais"
+  "en": "Anglais",
+  "home": "Accueil",
+  "settings": "Paramètres"
 }

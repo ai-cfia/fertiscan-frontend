@@ -31,14 +31,14 @@ function SideMenu() {
             {" "}
             <a className="side-menu_item" onClick={goToHome}>
               <img className="menu-icon" src={home}></img>{" "}
-              <span>{t("Home")}</span>
+              <span>{t("home")}</span>
             </a>{" "}
           </li>
           <li>
             {" "}
             <a className="side-menu_item" onClick={goToSettings}>
               <img className="menu-icon" src={settings}></img>{" "}
-              <span>{t("Settings")}</span>
+              <span>{t("settings")}</span>
             </a>{" "}
           </li>
         </ul>
