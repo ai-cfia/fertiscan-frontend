@@ -21,7 +21,7 @@ function App() {
     <BrowserRouter>
       <StrictMode>
         <Header />
-        <SideMenu/>
+        <SideMenu />
       </StrictMode>
       <Routes>
         <Route path="/">

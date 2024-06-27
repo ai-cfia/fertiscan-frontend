@@ -1,48 +1,48 @@
 .language-button {
-    background-color: #fff;
-    border: none;
-    padding: 10px 20px;
-    border-radius: 5px;
-    cursor: pointer;
-    transition: all 0.3s ease-in-out;
+  background-color: #fff;
+  border: none;
+  padding: 10px 20px;
+  border-radius: 5px;
+  cursor: pointer;
+  transition: all 0.3s ease-in-out;
+}
+
+.language-button.en {
+  background-color: #007bff;
+  color: #fff;
+}
+
+.language-button.fr {
+  background-color: #dc3545;
+  color: #fff;
+}
+
+.language-button:hover {
+  transform: scale(1.05);
+}
+
+.language-button.en.enter {
+  animation: swap-en 0.3s ease-in-out forwards;
+}
+
+.language-button.fr.enter {
+  animation: swap-fr 0.3s ease-in-out forwards;
+}
+
+@keyframes swap-en {
+  from {
+    transform: translateX(0);
   }
-  
-  .language-button.en {
-    background-color: #007bff;
-    color: #fff;
+  to {
+    transform: translateX(-100%);
   }
-  
-  .language-button.fr {
-    background-color: #dc3545;
-    color: #fff;
+}
+
+@keyframes swap-fr {
+  from {
+    transform: translateX(100%);
   }
-  
-  .language-button:hover {
-    transform: scale(1.05);
+  to {
+    transform: translateX(0);
   }
-  
-  .language-button.en.enter {
-    animation: swap-en 0.3s ease-in-out forwards;
-  }
-  
-  .language-button.fr.enter {
-    animation: swap-fr 0.3s ease-in-out forwards;
-  }
-  
-  @keyframes swap-en {
-    from {
-      transform: translateX(0);
-    }
-    to {
-      transform: translateX(-100%);
-    }
-  }
-  
-  @keyframes swap-fr {
-    from {
-      transform: translateX(100%);
-    }
-    to {
-      transform: translateX(0);
-    }
-  }
+}

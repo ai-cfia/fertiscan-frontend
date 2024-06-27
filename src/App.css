@@ -21,7 +21,7 @@ body {
   color: var(--dark-text);
 }
 
-.App{
+.App {
   padding-left: 60px;
   transition: padding 0.5s;
 }
