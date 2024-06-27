@@ -20,6 +20,10 @@
 .side-menu.active{
     width: 250px;
 }
+.side-menu ~ *{
+    transition: padding-left 0.5s;
+    padding-left: 80px;
+}
 
 
 .side-menu::before{
