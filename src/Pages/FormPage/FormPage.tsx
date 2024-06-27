@@ -11,6 +11,7 @@ import {
   SetSessionContext,
 } from "../../Utils/SessionContext.tsx";
 import NewCarousel from "../../Components/Carousel/Carousel.tsx";
+import Carousel from "../../Components/Carousel/Carousel.tsx";
 import ProgressBar from "../../Components/ProgressBar/ProgressBar";
 import SectionComponent from "../../Components/Section/Section.tsx";
 import Section from "../../Model/Section-Model.tsx";
@@ -358,7 +359,7 @@ const FormPage = () => {
     <StrictMode>
       <div className="formPage-container ${theme}">
         <div className="pic-container">
-          <NewCarousel imgs={urls}></NewCarousel>
+          <Carousel imgs={urls}></Carousel>
         </div>
         <div className="data-container">
           {loading ? (
