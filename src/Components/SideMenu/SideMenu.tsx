@@ -35,8 +35,7 @@ function SideMenu() {
                     </a> </li>
                 </ul>
             </div>
-        </div>
-    );
+        </
 }
 
 export default SideMenu;

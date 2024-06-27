@@ -27,8 +27,8 @@
 }
 
 .submit-btn {
-  margin-top: 50px;
   grid-area: c;
+  max-height: 42.19px;
 }
 
 #camera-switch {
