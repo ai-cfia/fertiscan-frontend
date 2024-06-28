@@ -23,6 +23,7 @@
 .side-menu ~ * {
   transition: padding-left 0.5s;
   padding-left: 80px;
+  margin-left: 30px;
 }
 
 .side-menu::before {
