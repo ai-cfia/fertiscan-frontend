@@ -1,11 +1,9 @@
-
-
 /* Styles for the carousel wrapper */
 .carousel-wrapper {
     display: flex;
     flex-direction: column;
-    width: 90%;
-    max-width: 1200px; /* Maximum width if you want to limit the width */
+    width: 100%;
+    max-width: 500px; /* Maximum width if you want to limit the width */
     margin: auto; /* Centers the carousel */
     justify-content: center;
     align-items: center;
@@ -20,7 +18,8 @@
     align-items: center;
     overflow: hidden;
     width: 100%;
-    min-height: 500px; /* Adjustment for larger size */
+    height: 100%;
+    max-height: 400px; /* Adjustment for larger size */
     position: relative;
   }
   
@@ -34,7 +33,6 @@
     font-size: 1.5em; /* Reduced size for the buttons */
     padding: 8px; /* Reduced padding for the buttons */
     user-select: none; /* Avoids text selection on hover */
-    position: relative;
     top: 50%;
     padding: 10px;
     transform: translateY(-50%);
@@ -86,7 +84,7 @@
     align-items: center;
     position: static;
     padding: 0 5px;
-    max-width: 300px;
+    max-width: 400px;
   }
   
   /* Styles for individual carousel thumbnails */
@@ -95,8 +93,7 @@
     object-fit: cover;
     transition: transform 0.3s;
     display: flex;
-    height: fit-content;
-    max-height: 120px;
+    min-height: 140px;
     width: calc((100% - 40px) / 3); /* Displays 3 images, including the space between them */
   }
   
@@ -126,51 +123,4 @@
     margin-top: 3px;
     padding-right: 10px;
     background: transparent;
-  }
-  
-  /* Media queries to handle different screen sizes */
-  @media (max-width: 768px) {
-    .carousel-wrapper {
-      width: 95%;
-    }
-  
-    .curr-img {
-      min-height: 350px; /* Adjustment for larger size on tablets */
-    }
-  
-    .prev, .next {
-      font-size: 1.2em; /* Reduced size for the buttons on tablets */
-    }
-  
-    .carousel-wrapper .react-transform-wrapper img {
-      max-height: 75%; /* Adjust for better visibility on tablets */
-    }
-  
-    .carousel-wrapper .react-transform-wrapper {
-      max-height: 85%; /* Increases the size on tablets */
-    }
-  }
-  
-  @media (max-width: 480px) {
-    .carousel-wrapper {
-      width: 100%;
-    }
-  
-    .curr-img {
-      min-height: 250px; /* Adjustment for larger size on mobile */
-    }
-  
-    .prev, .next {
-      font-size: 1em; /* Reduced size for the buttons on mobile */
-      left: 5px;
-      right: 5px;
-    }
-  
-    .carousel-wrapper .react-transform-wrapper img {
-      max-height: 65%; /* Adjust for better visibility on mobiles */
-    }
-  
-    .carousel-wrapper .react-transform-wrapper {
-      max-height: 80%; /* Increases the size on mobiles */
-    }
   }
