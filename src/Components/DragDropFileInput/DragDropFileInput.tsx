@@ -74,42 +74,118 @@ const DragDropFileInput: React.FC<FileInputProps> = ({ sendChange, file }) => {
     }
   };
 
-  const handleFileChange = (files: File[]) => {
+  const handleFileChange = async (files: File[]) => {
     if (files.length > 0) {
-      sendChange(files);
+      const processedFiles: File[] = [];
+
+      for (const file of files) {
+        await processImage(file, 400, 400, (newFile) => {
+          processedFiles.push(newFile);
+          if (processedFiles.length === files.length) {
+            sendChange(processedFiles);
+          }
+        });
+      }
     }
   };
 
   const onFileChange = (event: React.ChangeEvent<HTMLInputElement>) => {
-    const files = event.target.files;
-    if (files) {
+    const files = event.target?.files;
+    if (files && event.target) {
       handleFileChange(Array.from(files));
     }
   };
 
   const handleCapture = async () => {
-    if (canvasRef.current && videoRef.current) {
+    if (canvasRef.current && videoRef.current && videoRef.current.videoWidth && videoRef.current.videoHeight) {
+      const videoWidth = videoRef.current.videoWidth;
+      const videoHeight = videoRef.current.videoHeight;
+  
       const context = canvasRef.current.getContext("2d");
+  
       if (context) {
+        canvasRef.current.width = videoWidth;
+        canvasRef.current.height = videoHeight;
+  
+        // Dessiner la capture vidéo sur le canvas
         context.drawImage(
           videoRef.current,
           0,
           0,
-          canvasRef.current.width,
-          canvasRef.current.height,
-        );
-        const capturedImage = canvasRef.current.toDataURL("image/png");
-        const blob = await fetch(capturedImage).then((res) => res.blob());
-        const file = new File([blob], "capture.png", { type: "image/png" });
-        sendChange([file]);
-        if (stream) {
-          stream.getTracks().forEach((track) => track.stop());
-          setStream(null);
-
-          selectCamera();
-        }
+          videoWidth,
+          videoHeight
+        ); 
+  
+      // Utilisez toDataURL pour convertir le canvas en une image codée en base64
+      const capturedImage = canvasRef.current.toDataURL("image/png");
+  
+      processImageFromDataURL(capturedImage, 600, 600, (newFile) => {
+          sendChange([newFile]);
+        });
       }
+     
+    } else {
+      console.error("Les éléments canvas ou vidéo ne sont pas correctement référencés, ou la vidéo n'est pas encore chargée.");
     }
+  };
+
+  function processImage(file: File, width: number, height: number, callback: (newFile: File) => void) {
+    const reader = new FileReader();
+    reader.onload = (event: ProgressEvent<FileReader>) => {
+      const img = new Image();
+      img.onload = () => {
+        const canvas = document.createElement('canvas');
+        const ctx = canvas.getContext('2d');
+        canvas.width = width;
+        canvas.height = height;
+
+        // Calculer la mise à l'échelle tout en préservant les proportions
+        const scale = Math.min(width / img.width, height / img.height);
+        const x = (width / 2) - (img.width / 2) * scale;
+        const y = (height / 2) - (img.height / 2) * scale;
+        if(ctx){
+        ctx.drawImage(img, x, y, img.width * scale, img.height * scale);
+        }
+        // Convertir le canvas en fichier
+        canvas.toBlob((blob) => {
+          if(blob){
+          const processedFile = new File([blob], file.name, { type: file.type });
+          callback(processedFile);
+          }
+        }, "image/png");
+      };
+      if(event && event.target){
+      img.src = event.target.result as string;
+      }
+    };
+    reader.readAsDataURL(file);
+  }
+
+  function processImageFromDataURL(dataURL: string, width: number, height: number, callback: (newFile: File) => void) {
+    const img = new Image();
+    // Important pour le CORS si vous utilisez une image externe
+    img.crossOrigin = 'Anonymous';
+    img.onload = () => {
+      const canvas = document.createElement('canvas');
+      const ctx = canvas.getContext('2d');
+      canvas.width = width;
+      canvas.height = height;
+  
+      // Calculer la mise à l'échelle pour maintenir les proportions
+      const scale = Math.min(width / img.width, height / img.height);
+      const x = (width - img.width * scale) / 2;
+      const y = (height - img.height * scale) / 2;
+      if(ctx){
+      ctx.drawImage(img, x, y, img.width * scale, img.height * scale); // Dessine l'image
+      }
+      canvas.toBlob((blob) => {
+        if (blob !== null) {
+          const newFile = new File([blob], 'capture.png', { type: 'image/png' });
+          callback(newFile);
+        }
+      }, 'image/png');
+    };
+    img.src = dataURL;
   };
 
   const selectFiles = (e: React.MouseEvent<HTMLElement>) => {
