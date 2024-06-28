@@ -111,10 +111,7 @@
   background: transparent;
 }
 
-.pic-container {
-  grid-area: pics;
-  margin-right: 10px;
-}
+
 
 @media (prefers-color-scheme: dark) {
   .open-icon {
