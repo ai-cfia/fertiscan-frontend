@@ -1,16 +1,16 @@
 /* Styles for the carousel wrapper */
-.carousel-wrapper {
+@media screen and (max-width: 1230px) {
+  .carousel-wrapper {
     display: flex;
     flex-direction: column;
     width: 100%;
     max-width: 500px; /* Maximum width if you want to limit the width */
-    margin: auto; /* Centers the carousel */
     justify-content: center;
     align-items: center;
     overflow: hidden; /* This hides overflowing content */
     position: relative; /* Necessary for absolute positioning of the arrows */
   }
-  
+}
   /* Styles for the currently displayed image */
   .curr-img {
     display: flex;
