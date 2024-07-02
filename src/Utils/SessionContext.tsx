@@ -35,7 +35,7 @@ export const SessionProvider = ({ children }: React.PropsWithChildren<{}>) => {
     data: { pics: { blob: string; name: string }[]; form: Data };
   } = sessionStorage.getItem("state")
     ? JSON.parse(sessionStorage.getItem("state")!)
-    : { state: "captur", data: { pics: [], form: Data } };
+    : { state: "captur", data: { pics: [], form: new Data([]) } };
   const [state, setState] = useReducer(stateReducer, initialState);
 
   return (
