@@ -16,28 +16,43 @@ function CapturPage() {
   }, [state.data.pics]);
 
   const handlePhotoChange = (newFiles: File[]) => {
-    if (newFiles.length > 0) {
+    const newPics: { blob: string; name: string }[] = [];
+
+    // Cette fonction est appelée pour chaque nouveau fichier
+    const readAndAddPhoto = (file: File, callback: () => void) => {
       const reader = new FileReader();
       reader.onload = (e) => {
         if (e.target && e.target.result) {
           const newBlob = e.target.result as string;
-          setShow(newBlob);
-          setState({
-            ...state,
-            data: {
-              ...state.data,
-              pics: [...state.data.pics, { blob: newBlob, name: newFiles[0].name }],
-            },
-          });
+          newPics.push({ blob: newBlob, name: file.name });
+
+          // Si tous les fichiers ont été traités, mettez à jour l'état
+          if (newPics.length === newFiles.length) {
+            callback();
+          }
         }
       };
-      reader.readAsDataURL(newFiles[0]);
-    } else {
-      setShow("");
-    }
+      reader.readAsDataURL(file);
+    };
+
+    newFiles.forEach((file) =>
+      readAndAddPhoto(file, () => {
+        // Mettre à jour l'état une fois que tous les fichiers sont lus
+        setState({
+          ...state,
+          data: {
+            ...state.data,
+            // Ajoutez toutes les nouvelles photos à la liste existante
+            pics: [...state.data.pics, ...newPics],
+          },
+        });
+      }),
+    );
   };
 
-  const handleSelectedChange = (selection: { blob: string; name: string } | null) => {
+  const handleSelectedChange = (
+    selection: { blob: string; name: string } | null,
+  ) => {
     if (selection) {
       setShow(selection.blob);
     } else {
@@ -49,7 +64,10 @@ function CapturPage() {
     setState({ ...state, state: "form" });
   };
 
-  const handleDeletion = (toDelete: { blob: string; name: string }, wasShown: boolean) => {
+  const handleDeletion = (
+    toDelete: { blob: string; name: string },
+    wasShown: boolean,
+  ) => {
     setState({
       ...state,
       data: {
@@ -67,7 +85,7 @@ function CapturPage() {
       <div className={"App ${theme}"}>
         <div className="homePage-container">
           <DragDropFileInput sendChange={handlePhotoChange} file={toShow} />
-          {state.data.pics.length > 0 && ( 
+          {state.data.pics.length > 0 && (
             <button className="submit-btn" type="button" onClick={Submit}>
               {t("submitButton")}
             </button>

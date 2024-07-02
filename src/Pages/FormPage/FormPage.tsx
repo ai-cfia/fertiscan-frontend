@@ -306,9 +306,10 @@ const FormPage = () => {
 
   useEffect(() => {
     // load imgs for the carousel
-    blobs.forEach((blob) => {
-      setUrls([...urls, { url: blob.blob, title: blob.name }]);
-    });
+    const newUrls = blobs.map((blob) => ({ url: blob.blob, title: blob.name }));
+    // Set the urls state only once with all the transformations
+    setUrls(newUrls);
+
     // if no data in session, data has never been loaded and has to be fetched
     if (state.data.form.sections.length == 0) {
       if (process.env.REACT_APP_ACTIVATE_USING_JSON == "true") {
