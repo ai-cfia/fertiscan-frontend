@@ -1,9 +1,9 @@
-import { StrictMode, useState } from "react";
 import "./HomePage.css";
-import DragDropFileInput from "../../Components/DragDropFileInput/DragDropFileInput";
-import FileList from "../../Components/FileList/FileList";
-import { useNavigate } from "react-router-dom";
-import { useTranslation } from "react-i18next";
+import { useContext } from "react";
+import { SessionContext } from "../../Utils/SessionContext";
+import CapturPage from "../CapturPage/CapturPage";
+import FormPage from "../FormPage/FormPage";
+import ConfirmPage from "../ConfirmPage/ConfirmPage";
 
 function HomePage() {
   const { t } = useTranslation();
@@ -64,6 +64,13 @@ function HomePage() {
       </div>
     </StrictMode>
   );
+  const { state } = useContext(SessionContext);
+  if (state.state === "form") {
+    return <FormPage />;
+  } else if (state.state === "validation") {
+    return <ConfirmPage />;
+  }
+  return <CapturPage />;
 }
 
 export default HomePage;
