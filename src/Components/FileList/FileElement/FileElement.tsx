@@ -3,7 +3,7 @@ import "./FileElement.css";
 
 interface FileElementProps {
   key: number;
-  file: File;
+  blob: { blob: string; name: string };
   position: number;
   onClick: (selected: boolean) => void;
   onDelete: () => void;
@@ -11,7 +11,7 @@ interface FileElementProps {
 }
 
 const FileElement: React.FC<FileElementProps> = ({
-  file,
+  blob,
   position,
   onClick,
   onDelete,
@@ -20,10 +20,8 @@ const FileElement: React.FC<FileElementProps> = ({
   const [fileUrl, setFileUrl] = useState("");
   const fileCard = useRef<null | HTMLDivElement>(null);
   useEffect(() => {
-    const reader = new FileReader();
-    reader.onload = (e) => setFileUrl((e?.target?.result as string) || "");
-    reader.readAsDataURL(file);
-  }, [file]);
+    setFileUrl(blob.blob);
+  }, [blob]);
 
   const handleClick = (event: React.MouseEvent<HTMLDivElement>) => {
     event.preventDefault(); // Prevent default navigation
@@ -58,8 +56,8 @@ const FileElement: React.FC<FileElementProps> = ({
       onClick={handleClick}
       onContextMenu={onContextMenu}
     >
-      <img src={fileUrl} alt={file.name} />
-      <p className="file-title black bold unselectable">{file.name}</p>
+      <img src={fileUrl} alt={blob.name} />
+      <p className="file-title black bold unselectable">{blob.name}</p>
       <div className="cross" onClick={deleteImage}></div>
     </div>
   );
