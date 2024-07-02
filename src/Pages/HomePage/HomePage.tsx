@@ -15,12 +15,6 @@ function HomePage() {
     setShow(newFile);
   };
 
-  /**
-  const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    const field = e.target! as HTMLInputElement;
-    setForm({ ...form, [field.name]: field.value });
-  };
-  */
   const handlePhotoChange = (newFiles: File[]) => {
     if (newFiles!.length > 0) {
       setFiles([...files, ...newFiles]);
@@ -55,9 +49,11 @@ function HomePage() {
       <div className="App ${theme}">
         <div className="homePage-container">
           <DragDropFileInput sendChange={handlePhotoChange} file={toShow} />
-          <button className="submit-btn" type="submit" onClick={Submit}>
-            {t("submitButton")}
-          </button>
+          {files.length > 0 && (
+            <button className="submit-btn" type="submit" onClick={Submit}>
+              {t("submitButton")}
+            </button>
+          )}
 
           <FileList
             files={files}
