@@ -10,7 +10,6 @@ import {
   SessionContext,
   SetSessionContext,
 } from "../../Utils/SessionContext.tsx";
-import NewCarousel from "../../Components/Carousel/Carousel.tsx";
 import Carousel from "../../Components/Carousel/Carousel.tsx";
 import ProgressBar from "../../Components/ProgressBar/ProgressBar";
 import SectionComponent from "../../Components/Section/Section.tsx";
