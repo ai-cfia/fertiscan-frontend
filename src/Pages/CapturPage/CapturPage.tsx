@@ -4,48 +4,40 @@ import { SessionContext, SetSessionContext } from "../../Utils/SessionContext";
 import "./CapturPage.css";
 import DragDropFileInput from "../../Components/DragDropFileInput/DragDropFileInput";
 import FileList from "../../Components/FileList/FileList";
-import Data from "../../Model/Data-Model";
 
 function CapturPage() {
   const { t } = useTranslation();
   const [toShow, setShow] = useState("");
-  const [Blobs, setBlobs] = useState<{ blob: string; name: string }[]>([]);
   const { state } = useContext(SessionContext);
   const { setState } = useContext(SetSessionContext);
 
   useEffect(() => {
     setShow(state.data.pics[0]?.blob || "");
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, []);
-  /**
-  const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    const field = e.target! as HTMLInputElement;
-    setForm({ ...form, [field.name]: field.value });
-  };
-  */
+  }, [state.data.pics]);
+
   const handlePhotoChange = (newFiles: File[]) => {
-    if (newFiles!.length > 0) {
+    if (newFiles.length > 0) {
       const reader = new FileReader();
       reader.onload = (e) => {
-        const newFile = e!.target!.result! as string;
-        setShow(newFile);
-        setState({
-          ...state,
-          data: {
-            pics: [...Blobs, { blob: newFile, name: newFiles[0]!.name }],
-            form: new Data([]),
-          },
-        });
+        if (e.target && e.target.result) {
+          const newBlob = e.target.result as string;
+          setShow(newBlob);
+          setState({
+            ...state,
+            data: {
+              ...state.data,
+              pics: [...state.data.pics, { blob: newBlob, name: newFiles[0].name }],
+            },
+          });
+        }
       };
-      reader.readAsDataURL(newFiles[0]!);
+      reader.readAsDataURL(newFiles[0]);
     } else {
       setShow("");
     }
   };
 
-  const handleSelectedChange = (
-    selection: { blob: string; name: string } | null,
-  ) => {
+  const handleSelectedChange = (selection: { blob: string; name: string } | null) => {
     if (selection) {
       setShow(selection.blob);
     } else {
@@ -57,11 +49,14 @@ function CapturPage() {
     setState({ ...state, state: "form" });
   };
 
-  const handleDeletion = (
-    toDelete: { blob: string; name: string },
-    wasShown: boolean,
-  ) => {
-    setBlobs(Blobs.filter((blob) => blob.name !== toDelete.name));
+  const handleDeletion = (toDelete: { blob: string; name: string }, wasShown: boolean) => {
+    setState({
+      ...state,
+      data: {
+        ...state.data,
+        pics: state.data.pics.filter((pic) => pic.name !== toDelete.name),
+      },
+    });
     if (wasShown) {
       setShow("");
     }
@@ -69,12 +64,14 @@ function CapturPage() {
 
   return (
     <StrictMode>
-      <div className="App ${theme}">
+      <div className={"App ${theme}"}>
         <div className="homePage-container">
           <DragDropFileInput sendChange={handlePhotoChange} file={toShow} />
-          <button className="submit-btn" type="submit" onClick={Submit}>
-            {t("submitButton")}
-          </button>
+          {state.data.pics.length > 0 && ( 
+            <button className="submit-btn" type="button" onClick={Submit}>
+              {t("submitButton")}
+            </button>
+          )}
           <FileList
             blobs={state.data.pics}
             onSelectedChange={handleSelectedChange}
