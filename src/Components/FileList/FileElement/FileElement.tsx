@@ -2,7 +2,7 @@ import React, { useState, useEffect, useRef } from "react";
 import "./FileElement.css";
 interface FileElementProps {
   key: number;
-  blob: { blob: string; name: string};
+  blob: { blob: string; name: string };
   position: number;
   onClick: (selected: boolean) => void; // Function to be called on click
   onDelete: () => void;

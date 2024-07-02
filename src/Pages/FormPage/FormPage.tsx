@@ -1,8 +1,16 @@
-import React, { useState, useRef, useEffect, StrictMode, useContext } from "react";
+import React, {
+  useState,
+  useRef,
+  useEffect,
+  StrictMode,
+  useContext,
+} from "react";
 import "./FormPage.css";
-import { SessionContext, SetSessionContext } from "../../Utils/SessionContext.tsx";
+import {
+  SessionContext,
+  SetSessionContext,
+} from "../../Utils/SessionContext.tsx";
 import Carousel from "../../Components/Carousel/Carousel";
-import { useNavigate } from "react-router-dom";
 import ProgressBar from "../../Components/ProgressBar/ProgressBar";
 import SectionComponent from "../../Components/Section/Section.tsx";
 import Section from "../../Model/Section-Model.tsx";
@@ -60,8 +68,8 @@ const FormPage = () => {
     all_other_text_en_2: "",
   });
 
-  const {state} = useContext(SessionContext);
-  const {setState} = useContext(SetSessionContext);
+  const { state } = useContext(SessionContext);
+  const { setState } = useContext(SetSessionContext);
 
   const blobs = state.data.pics;
 
@@ -257,9 +265,8 @@ const FormPage = () => {
   };
 
   const api_url = "http://localhost:5000";
-
-  {
-    /*const approveAll = () => {
+  /**
+  const _approveAll = () => {
     data.sections.forEach((section) => {
       section.inputs.forEach((input) => {
         input.property = "approved";
@@ -268,17 +275,17 @@ const FormPage = () => {
     });
     updateData();
   };
-  window.approveAll = approveAll;*/
-  }
-
+  
+  window.approveAll = approveAll;
+  */
   /**
    * Prepare and send request to backend for file analysis
    * @returns data : the data retrieved from the backend
    */
   const analyse = async () => {
     const formData = new FormData();
-    for(let i = 0; i < blobs.length; i++){
-      let blobData = await fetch(blobs[i].blob).then((res) => res.blob());
+    for (let i = 0; i < blobs.length; i++) {
+      const blobData = await fetch(blobs[i].blob).then((res) => res.blob());
       formData.append("images", blobData, blobs[i].name);
     }
     const data = await (
@@ -302,37 +309,55 @@ const FormPage = () => {
     blobs.forEach((blob) => {
       setUrls([...urls, { url: blob.blob, title: blob.name }]);
     });
-
-    if (process.env.REACT_APP_ACTIVATE_USING_JSON == "true") {
-      // skip backend take answer.json as answer
-      fetch("/answer.json").then((res) =>
-        res.json().then((response) => {
-          data.sections.forEach((section) => {
-            section.inputs.forEach((input) => {
-              input.value =
-                typeof response[input.id] == "string" ? response[input.id] : "";
+    // if no data in session, data has never been loaded and has to be fetched
+    if (state.data.form.sections.length == 0) {
+      if (process.env.REACT_APP_ACTIVATE_USING_JSON == "true") {
+        // skip backend take answer.json as answer
+        fetch("/answer.json").then((res) =>
+          res.json().then((response) => {
+            data.sections.forEach((section) => {
+              section.inputs.forEach((input) => {
+                input.value =
+                  typeof response[input.id] == "string"
+                    ? response[input.id]
+                    : "";
+              });
             });
+            updateData();
+          }),
+        );
+      } else {
+        // fetch backend
+        analyse()
+          .then((response) => {
+            data.sections.forEach((section) => {
+              section.inputs.forEach((input) => {
+                input.value =
+                  typeof response[input.id] == "string"
+                    ? response[input.id]
+                    : "";
+              });
+            });
+            updateData();
+            setState({ ...state, data: { pics: blobs, form: data } });
+          })
+          .catch((e) => {
+            setLoading(false);
+            setError(e);
+            console.log(e);
           });
-          updateData();
-        }),
-      );
+      }
     } else {
-      // fetch backend
-      analyse()
-        .then((response) => {
-          data.sections.forEach((section) => {
-            section.inputs.forEach((input) => {
-              input.value =
-                typeof response[input.id] == "string" ? response[input.id] : "";
-            });
+      state.data.form.sections.forEach((section) => {
+        data.sections
+          .find((currentSection) => currentSection.label == section.label)!
+          .inputs.forEach((input) => {
+            input.value = section.inputs.find(
+              (currentInput: Input) => currentInput.id == input.id,
+            )!.value;
           });
-          updateData();
-        })
-        .catch((e) => {
-          setLoading(false);
-          setError(e);
-          console.log(e);
-        });
+      });
+      updateData();
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
@@ -407,7 +432,6 @@ const FormPage = () => {
     return rejected.length === 0;
   };
 
-  const navigate = useNavigate();
   // eslint-disable-next-line
   const submitForm = () => {
     const isValid = validateFormInputs();
@@ -415,7 +439,7 @@ const FormPage = () => {
     setData(data.copy());
     setState({ ...state, data: { pics: blobs, form: data } });
     if (isValid) {
-      navigate("/Confirm", { state: { data: data, urls: urls } });
+      setState({ ...state, state: "validation" });
     }
   };
 
@@ -433,7 +457,7 @@ const FormPage = () => {
     new_data.sections.find((cur) => cur.label == newSection.label) !=
       newSection;
     setData(new_data);
-    setState({ ...state, data: { pics: blobs, form: new_data }});
+    setState({ ...state, data: { pics: blobs, form: new_data } });
   };
 
   return (

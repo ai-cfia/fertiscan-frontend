@@ -4,9 +4,12 @@ import FileElement from "./FileElement/FileElement";
 import { useTranslation } from "react-i18next";
 
 interface FileListProps {
-  blobs: {blob: string, name: string}[];
-  onSelectedChange: (selected: {blob:string,name:string} | null) => void;
-  propagateDelete: (deleted: {blob:string,name:string}, wasShown: boolean) => void;
+  blobs: { blob: string; name: string }[];
+  onSelectedChange: (selected: { blob: string; name: string } | null) => void;
+  propagateDelete: (
+    deleted: { blob: string; name: string },
+    wasShown: boolean,
+  ) => void;
 }
 
 const FileList: React.FC<FileListProps> = ({
@@ -15,19 +18,24 @@ const FileList: React.FC<FileListProps> = ({
   propagateDelete,
 }) => {
   const { t } = useTranslation();
-  const [selectedFile, setSelectedFile] = useState<{blob:string,name:string} | null>(null);
+  const [selectedFile, setSelectedFile] = useState<{
+    blob: string;
+    name: string;
+  } | null>(null);
 
-  const handleSelectFile = (selected: {blob:string, name:string} | null) => {
+  const handleSelectFile = (
+    selected: { blob: string; name: string } | null,
+  ) => {
     setSelectedFile(selected);
     onSelectedChange(selected);
   };
 
-  const handleDelete = (deleted: {blob:string,name:string}) => {
+  const handleDelete = (deleted: { blob: string; name: string }) => {
     if (selectedFile === deleted) {
       setSelectedFile(null);
       propagateDelete(deleted, false);
     } else {
-      propagateDelete(deleted, blobs[blobs.length - 1] ===  deleted);
+      propagateDelete(deleted, blobs[blobs.length - 1] === deleted);
     }
   };
 
@@ -44,17 +52,19 @@ const FileList: React.FC<FileListProps> = ({
         <div className={`no-element ${blobs.length === 0 ? "active" : ""}`}>
           {t("fileListNoElement")}
         </div>
-        {[...blobs].map((blob: {blob:string,name:string}, index: number) => (
-          <FileElement
-            key={index}
-            blob={blob}
-            position={index}
-            onClick={(selected) =>
-              selected ? handleSelectFile(blob) : handleSelectFile(null)
-            }
-            onDelete={() => handleDelete(blob)}
-          />
-        ))}
+        {[...blobs].map(
+          (blob: { blob: string; name: string }, index: number) => (
+            <FileElement
+              key={index}
+              blob={blob}
+              position={index}
+              onClick={(selected) =>
+                selected ? handleSelectFile(blob) : handleSelectFile(null)
+              }
+              onDelete={() => handleDelete(blob)}
+            />
+          ),
+        )}
       </div>
     </div>
   );

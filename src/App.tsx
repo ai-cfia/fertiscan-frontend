@@ -24,7 +24,6 @@ function App() {
         </StrictMode>
         <Routes>
           <Route path="/">
-            
             <Route index element={<HomePage />} />
             <Route path="Settings" element={<SettingPage />} />
             <Route path="*" element={<NoPage />} />

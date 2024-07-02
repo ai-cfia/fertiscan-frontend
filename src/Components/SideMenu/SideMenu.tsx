@@ -6,11 +6,12 @@ import { useNavigate } from "react-router-dom";
 import home from "../../assets/home.svg";
 import settings from "../../assets/settings.svg";
 import { SessionContext, SetSessionContext } from "../../Utils/SessionContext";
+import Data from "../../Model/Data-Model";
 
 function SideMenu() {
   const { t } = useTranslation();
-  const {state} = useContext(SessionContext);
-  const {setState} = useContext(SetSessionContext);
+  const { state } = useContext(SessionContext);
+  const { setState } = useContext(SetSessionContext);
   const SideMenuRef = useRef<HTMLDivElement | null>(null);
   MenuChannel.on("OpenMenu", () => {
     SideMenuRef.current!.classList.add("active");
@@ -20,38 +21,41 @@ function SideMenu() {
   });
   const navigate = useNavigate();
   const goToHome = () => {
-    console.log(state.state)
+    console.log(state.state);
     switch (state.state) {
-        case "FromCaptur":
-            setState({...state,state:"captur"});
-            break;
-        case "FromForm":
-            setState({...state,state:"form"});
-            break;
-        case "FromValidation":
-            setState({...state,state:"validation"});
-            break;
-        default:
-            console.log("default")
-            setState({state:"captur",data:{pics:[],form:{}}});
-            console.log(state)
+      case "FromCaptur":
+        setState({ ...state, state: "captur" });
+        break;
+      case "FromForm":
+        setState({ ...state, state: "form" });
+        break;
+      case "FromValidation":
+        setState({ ...state, state: "validation" });
+        break;
+      default:
+        console.log("default");
+        setState({
+          state: "captur",
+          data: { pics: [], form: new Data([]) },
+        });
+        console.log(state);
     }
     navigate("/");
   };
   const goToSettings = () => {
-    console.log(state.state)
+    console.log(state.state);
     switch (state.state) {
-        case "captur":
-            setState({...state,state:"FromCaptur"});
-            break;
-        case "form":
-            setState({...state,state:"FromForm"});
-            break;
-        case "validation":
-            setState({...state,state:"FromValidation"});
-            break;
-        default:
-            break;
+      case "captur":
+        setState({ ...state, state: "FromCaptur" });
+        break;
+      case "form":
+        setState({ ...state, state: "FromForm" });
+        break;
+      case "validation":
+        setState({ ...state, state: "FromValidation" });
+        break;
+      default:
+        break;
     }
     navigate("/Settings");
   };
