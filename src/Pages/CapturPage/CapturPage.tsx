@@ -4,43 +4,50 @@ import { SessionContext, SetSessionContext } from "../../Utils/SessionContext";
 import "./CapturPage.css";
 import DragDropFileInput from "../../Components/DragDropFileInput/DragDropFileInput";
 import FileList from "../../Components/FileList/FileList";
-import Data from "../../Model/Data-Model";
 
 function CapturPage() {
   const { t } = useTranslation();
   const [toShow, setShow] = useState("");
-  const [Blobs, setBlobs] = useState<{ blob: string; name: string }[]>([]);
   const { state } = useContext(SessionContext);
   const { setState } = useContext(SetSessionContext);
 
   useEffect(() => {
     setShow(state.data.pics[0]?.blob || "");
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, []);
-  /**
-  const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    const field = e.target! as HTMLInputElement;
-    setForm({ ...form, [field.name]: field.value });
-  };
-  */
+  }, [state.data.pics]);
+
   const handlePhotoChange = (newFiles: File[]) => {
-    if (newFiles!.length > 0) {
+    const newPics: { blob: string; name: string }[] = [];
+
+    // Cette fonction est appelée pour chaque nouveau fichier
+    const readAndAddPhoto = (file: File, callback: () => void) => {
       const reader = new FileReader();
       reader.onload = (e) => {
-        const newFile = e!.target!.result! as string;
-        setShow(newFile);
+        if (e.target && e.target.result) {
+          const newBlob = e.target.result as string;
+          newPics.push({ blob: newBlob, name: file.name });
+
+          // Si tous les fichiers ont été traités, mettez à jour l'état
+          if (newPics.length === newFiles.length) {
+            callback();
+          }
+        }
+      };
+      reader.readAsDataURL(file);
+    };
+
+    newFiles.forEach((file) =>
+      readAndAddPhoto(file, () => {
+        // Mettre à jour l'état une fois que tous les fichiers sont lus
         setState({
           ...state,
           data: {
-            pics: [...Blobs, { blob: newFile, name: newFiles[0]!.name }],
-            form: new Data([]),
+            ...state.data,
+            // Ajoutez toutes les nouvelles photos à la liste existante
+            pics: [...state.data.pics, ...newPics],
           },
         });
-      };
-      reader.readAsDataURL(newFiles[0]!);
-    } else {
-      setShow("");
-    }
+      }),
+    );
   };
 
   const handleSelectedChange = (
@@ -61,7 +68,13 @@ function CapturPage() {
     toDelete: { blob: string; name: string },
     wasShown: boolean,
   ) => {
-    setBlobs(Blobs.filter((blob) => blob.name !== toDelete.name));
+    setState({
+      ...state,
+      data: {
+        ...state.data,
+        pics: state.data.pics.filter((pic) => pic.name !== toDelete.name),
+      },
+    });
     if (wasShown) {
       setShow("");
     }
@@ -69,12 +82,14 @@ function CapturPage() {
 
   return (
     <StrictMode>
-      <div className="App ${theme}">
+      <div className={"App ${theme}"}>
         <div className="homePage-container">
           <DragDropFileInput sendChange={handlePhotoChange} file={toShow} />
-          <button className="submit-btn" type="submit" onClick={Submit}>
-            {t("submitButton")}
-          </button>
+          {state.data.pics.length > 0 && (
+            <button className="submit-btn" type="button" onClick={Submit}>
+              {t("submitButton")}
+            </button>
+          )}
           <FileList
             blobs={state.data.pics}
             onSelectedChange={handleSelectedChange}
