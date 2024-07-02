@@ -1,45 +1,68 @@
 {
-  "company_name": "Cameron Chemicals, Inc.",
-  "company_address": "930 Old Dil Road. Suffolk VA 23434",
-  "company_website": null,
-  "company_phone_number": "(757) 487-0656",
-  "manufacturer_name": "Cameron Chemicals, Inc.",
-  "manufacturer_address": "930 Old Dil Road. Suffolk VA 23434",
-  "manufacturer_website": null,
-  "manufacturer_phone_number": "(757) 487-0656",
-  "fertiliser_name": "GRANULAR ZINC 20% GRANULAIRE",
-  "fertiliser_registration_number": "20150458",
-  "fertiliser_lot_number": "Lot 31923352",
-  "fertiliser_npk": "null",
-  "fertiliser_precautionary_fr": "Éviter de respirer les poussières/fumées/gaz/brouillards/vapeurs/aérosols. Laver la peau soigneusement après manipulation. Utiliser seulement en plein air ou dans un endroit bien ventilé. Porter des gants de protection/vêtements de protection/des yeux/protection/du visage. Conserver dans un endroit bien ventilé. Conserver le récipient bien fermé. Éliminer le contenu/les récipients dans un site d'élimination approuvé selon les réglementations nationales.",
-  "fertiliser_precautionary_en": "Avoid breathing dust/fumes/gas/mist/vapors/spray. Wash skin thoroughly after handling. Use only outdoors or in a well-ventilated area. Wear protective gloves/protective clothing/eye protection/face protection. Store in a well-ventilated place. Keep container tightly closed. Dispose of contents/containers to an approved disposal site in accordance with national regulations.",
-  "fertiliser_instructions_fr": "Pour emploi en mélange d'engrais pour application au sol seulement. Les applications devraient être basées sur les résultats d'analyses du sol ou des feuilles.",
-  "fertiliser_instructions_en": "To be used only in blending fertilizer for soil applications. Applications should be based on the results of soil or leaf analysis.",
-  "fertiliser_ingredients_fr": "Frabriqué à partir de : sulfate de Zinc, Oxide de zinc",
-  "fertiliser_ingredients_en": "Derived from: Zinc Sulphate and Zinc Oxide.",
-  "fertiliser_specifications_fr": null,
-  "fertiliser_specifications_en": null,
-  "fertiliser_cautions_fr": "AVERTISSEMENT Cet engrais renferme du Zinc et Soufre et ne doit être employé que de la manière recommandée. Il peut être nocif s'il est employé mal à propos. L'application de ce produit devrait être basée sur les résultats des analyses du sol ou des tissus.",
-  "fertiliser_cautions_en": "CAUTION this fertilizer contains Zinc and Sulphur and should be used only as recommended. It may prove harmful when misused. Applications of this product should be based on the results of soil and/or tissue analysis.",
-  "fertiliser_recommendation_fr": null,
-  "fertiliser_recommendation_en": null,
-  "fertiliser_first_aid_fr": "En cas de contact avec la peau, laver abondamment à l'eau. En cas d'inhalation, déplacer la personne à l'air frais et la maintenir au repos pour faciliter la respiration. En cas de contact avec les yeux, rincer avec précaution à l'eau pendant plusieurs minutes. Enlever les lentilles de contact, si présentes et faciles à enlever. Continuer à rincer. Appeler immédiatement un centre antipoison/un médecin. Traitement spécifique (voir les sections 4 à 5 sur cette étiquette et toute information supplémentaire sur cette étiquette). En cas d'irritation cutanée, demander un avis médical. Enlever les vêtements contaminés et les laver avant de les réutiliser.",
-  "fertiliser_first_aid_en": "If on skin, wash with plenty of water. If inhaled, remove person to fresh air and keep comfortable for breathing. If in eyes, rinse cautiously with water for several minutes. Remove contact lenses, if present and easy to do. Continue rinsing. Immediately call a poison center/doctor. Specific treatment (see sections 4 to 5 on this label and any additional information on this label). If skin irritation occurs, get medical advice/attention. Take off contaminated clothing and wash it before reuse.",
-  "fertiliser_warranty_fr": "La garantie de ce produit est limitée aux termes indiqués sur l'étiquette et sous réserve que l'acheteur assume les risques pour les personnes ou les biens résultant de l'utilisation ou de la manipulation de ce produit et accepte le produit dans son état actuel.",
-  "fertiliser_warranty_en": "The warranty for this product shall be limited to the terms set out on the label and subject to the buyer assuming the risks to persons or property arising from the use or handling of this product and accepting the product as is.",
-  "fertiliser_danger_fr": "Provoque une irritation de la peau. Provoque une irritation des yeux. Peut irriter les voies respiratoires.",
-  "fertiliser_danger_en": "Causes skin irritation. Causes serious eye irritation. May cause respiratory irritation.",
-  "fertiliser_guaranteed_analysis": {
-    "nutrient_in_guaranteed_analysis": ["Sulphur (S)", "Zinc (Zn)"],
-    "percentage_in_guaranteed_analysis": ["3.00%", "20.00%"]
-  },
-  "fertiliser_weight": "2000 lbs (907kg)",
-  "fertiliser_density": null,
-  "fertiliser_volume": null,
-  "fertiliser_label_all_other_text_fr": {
-    "other_text_fr_1": "| Chemical Name: Synonym(s): Product Code No: | Classified in Accordance with Appendix C OSHA Hazaro Communicator Standard 20 CFR 1910:1200 | | Classé conformément à TArése C OSHA Hazart Communication Standard 29 CFR 1910 1200 |\n|| Granular Zinc 20% \n|| None known| | Granulaire Zinc 20% || Aucun coena. 27M240000KDD:2ZN2A20008 50, 2ZN2A2000TO0, 2ZN2A2200B50, 22N2A2205T00; 2ZN2A2500B 50 | Codo prodali No:  2ZN2AD000K00, 2ZN2A2000850, 2ZN2A2600T00, 2ZN2A2200350 2ZN2A2200700. 2ZN2A2500850 |"
-  },
-  "fertiliser_label_all_other_text_en": {
-    "other_text_en_1": "| Chemical Name: Synonym(s): Product Code No: | Classified in Accordance with Appendix C OSHA Hazaro Communicator Standard 20 CFR 1910:1200 | | Classé conformément à TArése C OSHA Hazart Communication Standard 29 CFR 1910 1200 |\n|| Granular Zinc 20% \n|| None known| | Granulaire Zinc 20% || Aucun coena. 27M240000KDD:2ZN2A20008 50, 2ZN2A2000TO0, 2ZN2A2200B50, 22N2A2205T00; 2ZN2A2500B 50 | Codo prodali No:  2ZN2AD000K00, 2ZN2A2000850, 2ZN2A2600T00, 2ZN2A2200350 2ZN2A2200700. 2ZN2A2500850 |"
-  }
+  "company_name": "Example Company",
+  "company_address": "1234 Elm Street, Example City, EX 12345",
+  "company_website": "https://www.examplecompany.com",
+  "company_phone_number": "+1-234-567-8900",
+  "manufacturer_name": "Example Manufacturer",
+  "manufacturer_address": "5678 Oak Avenue, Example Town, EX 67890",
+  "manufacturer_website": "https://www.examplemanufacturer.com",
+  "manufacturer_phone_number": "+1-987-654-3210",
+  "fertiliser_name": "SuperGrow Fertiliser",
+  "registration_number": "REG-12345-678",
+  "lot_number": "LOT-2024-001",
+  "weight_kg": "50.0 kg",
+  "weight_lb": "110.23 lb",
+  "density": "1.2 g/cm³",
+  "volume": "40 L",
+  "npk": "10-20-30",
+  "warranty": "2 years from date of manufacture",
+  "cautions_en": [
+    "Keep out of reach of children.",
+    "Store in a cool, dry place."
+  ],
+  "instructions_en": [
+    "Mix 1 cup per gallon of water.",
+    "Apply every 2 weeks during growing season."
+  ],
+  "micronutrients_en": [
+    { "name": "Iron", "percentage": "0.1%" },
+    { "name": "Zinc", "percentage": "0.05%" }
+  ],
+  "organic_ingredients_en": [
+    { "name": "Compost", "percentage": "15%" },
+    { "name": "Bone Meal", "percentage": "10%" }
+  ],
+  "inert_ingredients_en": ["Sand", "Perlite"],
+  "specifications_en": [{ "humidity": "5%", "ph": "6.5", "solubility": "90%" }],
+  "first_aid_en": [
+    "If ingested, contact a doctor immediately.",
+    "In case of eye contact, rinse thoroughly with water."
+  ],
+  "cautions_fr": [
+    "Garder hors de portée des enfants.",
+    "Conserver dans un endroit frais et sec."
+  ],
+  "instructions_fr": [
+    "Mélanger 1 tasse par gallon d'eau.",
+    "Appliquer toutes les 2 semaines pendant la saison de croissance."
+  ],
+  "micronutrients_fr": [
+    { "name": "Fer", "percentage": "0.1%" },
+    { "name": "Zinc", "percentage": "0.05%" }
+  ],
+  "organic_ingredients_fr": [
+    { "name": "Compost", "percentage": "15%" },
+    { "name": "Farine d'os", "percentage": "10%" }
+  ],
+  "inert_ingredients_fr": ["Sable", "Perlite"],
+  "specifications_fr": [{ "humidity": "5%", "ph": "6.5", "solubility": "90%" }],
+  "first_aid_fr": [
+    "En cas d'ingestion, contacter immédiatement un médecin.",
+    "En cas de contact avec les yeux, rincer abondamment à l'eau."
+  ],
+  "guaranteed_analysis": [
+    { "nutrient": "Nitrogen", "percentage": "10%" },
+    { "nutrient": "Phosphorus", "percentage": "20%" },
+    { "nutrient": "Potassium", "percentage": "30%" }
+  ]
 }
