@@ -21,7 +21,9 @@ const DragDropFileInput: React.FC<FileInputProps> = ({ sendChange, file }) => {
   const canvasRef = useRef<HTMLCanvasElement>(null);
   const [toggleMode, setToggleMode] = useState(false);
   const cameraSwitch = useRef<HTMLDivElement | null>(null);
+  const [captureCounter, setCaptureCounter]= useState<number>(1);
 
+  
   useEffect(() => {
     if (file === "") {
       const input = fileInput!.current!;
@@ -87,6 +89,22 @@ const DragDropFileInput: React.FC<FileInputProps> = ({ sendChange, file }) => {
     }
   };
 
+  const calculateCaptureCounter = (pics: { blob: string; name: string }[]) => {
+    // Extract numbers from filenames that start with "capture" and followed by a number.
+    const captureNumbers = pics
+      .map((pic) => {
+        const match = pic.name.match(/^capture(\d+)\.png$/);
+        return match ? parseInt(match[1], 10) : null;
+      })
+      .filter((number) => number !== null) as number[];
+  
+    // Find the maximum number in the array of captureNumbers.
+    const maxNumber = captureNumbers.length > 0 ? Math.max(...captureNumbers) : 0;
+  
+    // The next counter should be one more than the maximum found.
+    return maxNumber + 1;
+  };
+
   const handleCapture = async () => {
     if (canvasRef.current && videoRef.current) {
       const context = canvasRef.current.getContext("2d");
@@ -100,13 +118,18 @@ const DragDropFileInput: React.FC<FileInputProps> = ({ sendChange, file }) => {
         );
         const capturedImage = canvasRef.current.toDataURL("image/png");
         const blob = await fetch(capturedImage).then((res) => res.blob());
-        const file = new File([blob], "capture.png", { type: "image/png" });
-        sendChange([file]);
+        // Use the captureCounter state directly for naming the new file
+        const file = new File([blob], `capture${captureCounter}.png`, { type: "image/png" });
+        setCaptureCounter(captureCounter + 1); // Increment the captureCounter after use
+        sendChange([file]); // Send the newly created file up to the parent component
+  
+        // Stop the camera stream and restart it if in CAMERA_MODE
         if (stream) {
           stream.getTracks().forEach((track) => track.stop());
           setStream(null);
-
-          selectCamera();
+          if (toggleMode === CAMERA_MODE) {
+            selectCamera();
+          }
         }
       }
     }

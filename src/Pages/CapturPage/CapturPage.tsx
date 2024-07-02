@@ -4,10 +4,14 @@ import { SessionContext, SetSessionContext } from "../../Utils/SessionContext";
 import "./CapturPage.css";
 import DragDropFileInput from "../../Components/DragDropFileInput/DragDropFileInput";
 import FileList from "../../Components/FileList/FileList";
+import RenameModal from "../../Components/RenameModal/RenameModal"; // Ajouter l'importation du composant RenameModal
 
 function CapturPage() {
   const { t } = useTranslation();
   const [toShow, setShow] = useState("");
+  const [renameModalOpen, setRenameModalOpen] = useState(false); // Ajouter l'état pour la visibilité de la modal
+  const [blobToRename, setBlobToRename] = useState<{ blob: string; name: string } | null>(null);
+  const [, setNewFileName] = useState(""); // Ajouter l'état pour le nouveau nom du fichier
   const { state } = useContext(SessionContext);
   const { setState } = useContext(SetSessionContext);
 
@@ -79,26 +83,67 @@ function CapturPage() {
       setShow("");
     }
   };
+ // Ajouter la fonction pour ouvrir la modal de renommage
+ const openRenameModal = (blob: { blob: string; name: string }) => {
+  setBlobToRename(blob);
+  setNewFileName(blob.name);
+  setRenameModalOpen(true);
+};
 
-  return (
-    <StrictMode>
-      <div className={"App ${theme}"}>
-        <div className="homePage-container">
-          <DragDropFileInput sendChange={handlePhotoChange} file={toShow} />
+// Ajouter la fonction pour gérer le renommage de blob
+const handleRename = (updatedFileData: { blob: string; name: string }) => {
+  const updatedPics = state.data.pics.map((pic) => {
+    if (pic.blob === updatedFileData.blob) {
+      return updatedFileData; // Use the updatedFileData provided by RenameModal
+    }
+    return pic;
+  });
+
+  setState({
+    ...state,
+    data: {
+      ...state.data,
+      pics: updatedPics,
+    },
+  });
+
+  setRenameModalOpen(false); // Close the modal after renaming
+};
+
+function updateNewFileName(): void {
+  if (blobToRename) {
+    setNewFileName(blobToRename.name);
+  }
+}
+
+return (
+  <StrictMode>
+    <div className={"App ${theme}"}>
+      <div className="homePage-container">
+        {renameModalOpen && blobToRename && (
+          <RenameModal
+            fileData={blobToRename}
+            handleRename={handleRename}
+            close={() => setRenameModalOpen(false)}
+            updateNewFileName={updateNewFileName}
+          />
+        )}
+         <DragDropFileInput sendChange={handlePhotoChange} file={toShow} />
           {state.data.pics.length > 0 && (
             <button className="submit-btn" type="button" onClick={Submit}>
               {t("submitButton")}
             </button>
           )}
-          <FileList
-            blobs={state.data.pics}
-            onSelectedChange={handleSelectedChange}
-            propagateDelete={handleDeletion}
-          />
-        </div>
+        <FileList
+          blobs={state.data.pics}
+          onSelectedChange={handleSelectedChange}
+          propagateDelete={handleDeletion}
+          onRenameClick={openRenameModal} // Ajouter la propriété onRenameClick pour ouvrir la modal de renommage
+        />
       </div>
-    </StrictMode>
-  );
+    </div>
+  </StrictMode>
+);
 }
 
 export default CapturPage;

@@ -76,6 +76,7 @@ const FileList: React.FC<FileListProps> = ({
           <FileElement
             key={index}
             blob={blob}  // Pass the actual blob string to the FileElement
+            position={index}
             onClick={() => handleSelectFile(blob)}
             onDelete={() => handleDelete(blob)}
             onContextMenu={(event) => handleRightClick(event, blob)}
