@@ -1,0 +1,37 @@
+.homePage-container {
+  display: grid;
+  grid-template-rows: auto;
+  grid-template-columns: auto;
+  gap: 10px;
+}
+
+@media only screen and (min-width: 850px) {
+  .homePage-container {
+    grid-template-areas:
+      "a b"
+      "c b";
+    grid-template-columns: 52% 33%;
+    justify-content: space-evenly;
+    padding: 0% 3%;
+  }
+}
+
+@media only screen and (max-width: 850px) {
+  .homePage-container {
+    grid-template-areas:
+      "a"
+      "c"
+      "b";
+    padding: 0% 10%;
+  }
+}
+
+.submit-btn {
+  grid-area: c;
+  max-height: 42.19px;
+}
+
+#camera-switch {
+  position: relative;
+  right: 20px;
+}

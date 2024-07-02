@@ -1,13 +1,14 @@
 import Carousel from "../../Components/Carousel/Carousel";
-import { useLocation } from "react-router-dom";
 import Section from "../../Model/Section-Model.tsx";
 import "./ConfirmPage.css";
 import { useTranslation } from "react-i18next";
+import { useContext } from "react";
+import { SessionContext } from "../../Utils/SessionContext";
 
 const ConfirmPage = () => {
-  const location = useLocation();
   const { t } = useTranslation();
-  const data = location.state.data;
+  const { state } = useContext(SessionContext);
+  const data = state.data.form;
 
   // Traduction not done waiting on prompt changes
   const renderSection = (section: Section) => (
@@ -26,7 +27,12 @@ const ConfirmPage = () => {
   return (
     <div className="confirm-page-container ${theme}">
       <h1 id="confirm-title">{t("confirmationPage")}</h1>
-      <Carousel imgs={location.state.urls} />
+      <Carousel
+        imgs={state.data.pics.map((blob) => ({
+          url: blob.blob,
+          title: blob.name,
+        }))}
+      />
       <div className="confirm-container">
         {data.sections.map((section: Section) => renderSection(section))}
         <div className="button-container">
