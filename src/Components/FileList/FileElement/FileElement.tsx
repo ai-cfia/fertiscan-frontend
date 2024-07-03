@@ -1,11 +1,13 @@
 import React, { useState, useEffect, useRef } from "react";
 import "./FileElement.css";
+
 interface FileElementProps {
   key: number;
   blob: { blob: string; name: string };
   position: number;
-  onClick: (selected: boolean) => void; // Function to be called on click
+  onClick: (selected: boolean) => void;
   onDelete: () => void;
+  onContextMenu?: (event: React.MouseEvent<HTMLDivElement, MouseEvent>) => void;
 }
 
 const FileElement: React.FC<FileElementProps> = ({
@@ -13,6 +15,7 @@ const FileElement: React.FC<FileElementProps> = ({
   position,
   onClick,
   onDelete,
+  onContextMenu,
 }) => {
   const [fileUrl, setFileUrl] = useState("");
   const fileCard = useRef<null | HTMLDivElement>(null);
@@ -51,6 +54,7 @@ const FileElement: React.FC<FileElementProps> = ({
       className="file-element"
       id={"file_" + position}
       onClick={handleClick}
+      onContextMenu={onContextMenu}
     >
       <img src={fileUrl} alt={blob.name} />
       <p className="file-title black bold unselectable">{blob.name}</p>
