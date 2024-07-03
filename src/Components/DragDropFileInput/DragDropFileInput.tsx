@@ -10,7 +10,11 @@ interface FileInputProps {
 const CAMERA_MODE = true;
 const FILE_MODE = false;
 
-const DragDropFileInput: React.FC<FileInputProps> = ({ sendChange, file, calculateCaptureCounter }) => {
+const DragDropFileInput: React.FC<FileInputProps> = ({
+  sendChange,
+  file,
+  calculateCaptureCounter,
+}) => {
   const { t } = useTranslation();
   const [dragActive, setDragActive] = useState(false);
   const [stream, setStream] = useState<MediaStream | null>(null);
@@ -22,9 +26,8 @@ const DragDropFileInput: React.FC<FileInputProps> = ({ sendChange, file, calcula
   const canvasRef = useRef<HTMLCanvasElement>(null);
   const [toggleMode, setToggleMode] = useState(false);
   const cameraSwitch = useRef<HTMLDivElement | null>(null);
-  const [captureCounter, setCaptureCounter]= useState<number>(1);
+  const [, setCaptureCounter] = useState<number>(1);
 
-  
   useEffect(() => {
     if (file === "") {
       const input = fileInput!.current!;
@@ -90,7 +93,6 @@ const DragDropFileInput: React.FC<FileInputProps> = ({ sendChange, file, calcula
     }
   };
 
-
   const handleCapture = async () => {
     if (canvasRef.current && videoRef.current) {
       const context = canvasRef.current.getContext("2d");
@@ -105,11 +107,13 @@ const DragDropFileInput: React.FC<FileInputProps> = ({ sendChange, file, calcula
         const capturedImage = canvasRef.current.toDataURL("image/png");
         const blob = await fetch(capturedImage).then((res) => res.blob());
         // Use the captureCounter state directly for naming the new file
-        let captureCounter = calculateCaptureCounter();
-        const file = new File([blob], `capture${captureCounter}.png`, { type: "image/png" });
+        const captureCounter = calculateCaptureCounter();
+        const file = new File([blob], `capture${captureCounter}.png`, {
+          type: "image/png",
+        });
         setCaptureCounter(captureCounter + 1); // Increment the captureCounter after use
         sendChange([file]); // Send the newly created file up to the parent component
-  
+
         // Stop the camera stream and restart it if in CAMERA_MODE
         if (stream) {
           stream.getTracks().forEach((track) => track.stop());

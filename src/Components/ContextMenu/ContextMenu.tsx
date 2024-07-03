@@ -1,5 +1,5 @@
-import React from 'react';
-import './ContextMenu.css';
+import React from "react";
+import "./ContextMenu.css";
 import { useTranslation } from "react-i18next";
 
 interface ContextMenuProps {
@@ -11,11 +11,11 @@ interface ContextMenuProps {
 }
 
 const ContextMenu: React.FC<ContextMenuProps> = ({
-  fileData,    // Renamed from file to fileData
+  fileData, // Renamed from file to fileData
   onRenameClick,
   mouseX,
   mouseY,
-  onClose
+  onClose,
 }) => {
   const handleClick = (event: React.MouseEvent) => {
     event.stopPropagation();
@@ -30,7 +30,11 @@ const ContextMenu: React.FC<ContextMenuProps> = ({
   const { t } = useTranslation();
 
   return (
-    <div className="context-menu" style={{ top: mouseY, left: mouseX }} onClick={handleClick}>
+    <div
+      className="context-menu"
+      style={{ top: mouseY, left: mouseX }}
+      onClick={handleClick}
+    >
       <ul>
         <li onClick={handleRename}>{t("rename")}</li>
       </ul>
