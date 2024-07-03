@@ -116,6 +116,23 @@ function updateNewFileName(): void {
   }
 }
 
+const calculateCaptureCounter = () => {
+  // Extract numbers from filenames that start with "capture" and followed by a number.
+  let pics = state.data.pics;
+  const captureNumbers = pics
+    .map((pic) => {
+      const match = pic.name.match(/^capture(\d+)\.png$/);
+      return match ? parseInt(match[1], 10) : null;
+    })
+    .filter((number) => number !== null) as number[];
+
+  // Find the maximum number in the array of captureNumbers.
+  const maxNumber = captureNumbers.length > 0 ? Math.max(...captureNumbers) : 0;
+
+  // The next counter should be one more than the maximum found.
+  return maxNumber + 1;
+};
+
 return (
   <StrictMode>
     <div className={"App ${theme}"}>
@@ -128,7 +145,7 @@ return (
             updateNewFileName={updateNewFileName}
           />
         )}
-         <DragDropFileInput sendChange={handlePhotoChange} file={toShow} />
+         <DragDropFileInput sendChange={handlePhotoChange} file={toShow} calculateCaptureCounter={calculateCaptureCounter} />
           {state.data.pics.length > 0 && (
             <button className="submit-btn" type="button" onClick={Submit}>
               {t("submitButton")}
