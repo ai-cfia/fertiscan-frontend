@@ -83,6 +83,7 @@ function CapturPage() {
       setShow("");
     }
   };
+
  // Ajouter la fonction pour ouvrir la modal de renommage
  const openRenameModal = (blob: { blob: string; name: string }) => {
   setBlobToRename(blob);
