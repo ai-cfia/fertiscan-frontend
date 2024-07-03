@@ -7,6 +7,10 @@
   align-items: "start";
 }
 
+.disable-scroll{
+  overflow:-moz-hidden-unscrollable;
+}
+
 @media only screen and (min-width: 1231px) {
   /*the minimum place that need the form to have when he is in full page mode is 1231*/
   .formPage-container {
@@ -34,13 +38,6 @@
   right: 0;
 }
 
-@media (prefers-color-scheme: dark) {
-  .open-icon {
-    filter: invert(74%) sepia(37%) saturate(0%) hue-rotate(249deg)
-      brightness(101%) contrast(98%);
-  }
-}
-
 /* Text box container styles */
 .data-container {
   grid-area: data;
@@ -54,126 +51,6 @@
   font-family: Arial, sans-serif, Bold;
   color: #000000;
   font-size: 20px;
-}
-
-.data-container h1 {
-  text-align: left;
-  margin-left: 20px;
-  font-size: 40px;
-}
-
-.data-container label {
-  text-align: left;
-  margin-left: 20px;
-}
-
-.textbox-container {
-  display: flex; /* Enable flexbox layout */
-  justify-content: left; /* Center horizontally within the container */
-  align-items: center; /* Center vertically within the container */
-  width: 45vw; /* Make the container take up the full width */
-  margin-left: 20px;
-  flex-direction: row;
-}
-
-.underlined {
-  text-decoration: underline;
-}
-
-/* Text box styles */
-textarea {
-  border: 1px solid #ccc;
-  border-radius: 10px;
-  box-sizing: border-box;
-  width: 100rem;
-  height: auto;
-  min-height: 40px;
-  max-height: 97px;
-  resize: none;
-  background-color: rgb(220, 219, 219);
-  overflow-y: hidden;
-  padding-top: 5px;
-  padding-left: 5px;
-  padding-right: 3px;
-  padding-bottom: 10px;
-  /* Text style properties */
-  font-family: Arial, sans-serif, Bold; /* Specify a fallback font */
-  font-size: 20px;
-  font-weight: 400; /* Normal weight */
-  color: #000000; /* Dark gray */
-  text-decoration: none;
-}
-
-.open-icon {
-  position: relative;
-  margin-left: 30px;
-  width: 120%; /* Make the label take up the full width of the textbox container */
-  font-size: 15px; /* Set font size for the label */
-  text-decoration: underline;
-  color: darkgrey;
-}
-
-.show-more-container {
-  align-self: end;
-  justify-self: end;
-  display: flex;
-  justify-content: flex-end;
-}
-.show-more-container label {
-  width: fit-content;
-}
-
-.data-section {
-  display: flex;
-  flex-direction: column;
-  justify-content: left;
-  align-items: left;
-  gap: 10px;
-}
-
-.input-container {
-  display: grid;
-  grid-template-areas:
-    "label label ."
-    "input input input"
-    ". show-more .";
-
-  grid-template-columns: 20% 60% 20%;
-}
-.input-container label {
-  grid-area: label;
-  align-self: center;
-}
-.input-container .textbox-container {
-  grid-area: input;
-}
-
-.input-container .show-more-container {
-  grid-area: show-more;
-  width: 100%;
-}
-.open-icon {
-  cursor: pointer;
-}
-/** for dark mode */
-@media (prefers-color-scheme: dark) {
-  .open-icon {
-    color: white;
-  }
-}
-
-.button-container {
-  display: flex;
-  align-items: center;
-  gap: 10px;
-  margin-left: 20px;
-}
-
-.button {
-  background-color: #dcdcdc;
-}
-.input-error {
-  border: 2px solid red; /* Entoure l'élément d'une bordure rouge */
 }
 
 .loader-container-form.active {

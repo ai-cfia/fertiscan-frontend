@@ -354,6 +354,20 @@ const FormPage = () => {
     setState({ ...state, data: { pics: blobs, form: new_data } });
   };
 
+  const [isAnyModalOpen, setIsAnyModalOpen] = useState(false);
+  const handleModalStateChange = (isOpen: boolean) => {
+    setIsAnyModalOpen(isOpen);
+  };
+
+  // Prevent scrolling when a modal is open
+  useEffect(() => {
+    if (isAnyModalOpen) {
+      document.body.style.overflow = "hidden";
+    } else {
+      document.body.style.overflow = "visible";
+    }
+  }, [isAnyModalOpen]);
+
   return (
     <StrictMode>
       <div className="formPage-container ${theme}">
@@ -377,14 +391,15 @@ const FormPage = () => {
                     modals={modals}
                     imgs={urls}
                     propagateChange={handleDataChange}
+                    onModalStateChange={handleModalStateChange}
                   ></SectionComponent>
                 );
               })}
-              <button className="button" onClick={submitForm}>
-                {t("submitButton")}
-              </button>
             </div>
           )}
+          <button className="button" onClick={submitForm}>
+            {t("submitButton")}
+          </button>
         </div>
         {!loading ? (
           <div className="progress-wrapper">
