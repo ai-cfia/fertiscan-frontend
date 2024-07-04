@@ -1,37 +1,60 @@
 .formPage-container {
   display: grid;
   justify-content: space-between;
-  padding: 0 10px;
-  grid-template-columns: "1fr auto";
-  grid-gap: "1rem";
-  align-items: "start";
+  padding: 100 10px !important;
+  grid-template-columns: 1fr auto; /* Use correct grid column definition */
+  grid-gap: 1rem;
+  align-items: start;
 }
 
 @media only screen and (min-width: 1231px) {
-  /*the minimum place that need the form to have when he is in full page mode is 1231*/
   .formPage-container {
     grid-template-areas: "pics data progress-bar";
-    grid-template-columns: 40% 50% 5%;
+    grid-template-columns: 43% 50% 7%; /* Allocates space for progress bar next to the form */
+  }
+  .pic-container {
+    position: fixed;
   }
 }
 
 @media only screen and (max-width: 1230px) {
   .formPage-container {
+    grid-template-columns: 4fr 0fr;
     grid-template-areas:
-      "pics"
-      "data"
-      "progress-bar"; /* Add a new row for the open-icon */
-    grid-template-columns: 40% 50% 5%;
+      "pics test"
+      "data progress-bar"; /* This line places progress-bar next to data if space allows */
+    justify-content: normal;
+    justify-items: stretch;
+    justify-items: center;
+  }
+  .progress-wrapper {
+    justify-self: start; /* Align the progress-bar to the right */
   }
 }
 
 .pic-container {
-  grid-area: pics;
-  margin-left: 0;
+  display: block;
+  margin: 30px 35px;
+  width: 94%;
+  transform: scale(0.45) translate(-66%, -62%);
+  transition: 0.6s ease;
 }
+
+@media only screen and (min-width: 1250px) {
+  .carousel-wrapper {
+    width: 100%;
+    height: auto !important;
+    transition: 0.6s ease;
+  }
+  .curr-img img {
+    width: calc(100%) !important;
+    height: auto !important;
+  }
+}
+
 .progress-wrapper {
   grid-area: progress-bar;
-  right: 0;
+  /* Position is not fixed; it will move with the grid layout */
 }
 
 @media (prefers-color-scheme: dark) {
@@ -48,7 +71,6 @@
   flex-direction: column;
   min-height: 100%;
   padding-bottom: 60px;
-  /* Add justify-content: space-between to position elements at the top and bottom */
   justify-content: space-between;
   align-items: left;
   font-family: Arial, sans-serif, Bold;
@@ -68,10 +90,10 @@
 }
 
 .textbox-container {
-  display: flex; /* Enable flexbox layout */
-  justify-content: left; /* Center horizontally within the container */
-  align-items: center; /* Center vertically within the container */
-  width: 45vw; /* Make the container take up the full width */
+  display: flex;
+  justify-content: left;
+  align-items: center;
+  width: 96%;
   margin-left: 20px;
   flex-direction: row;
 }
@@ -85,32 +107,29 @@ textarea {
   border: 1px solid #ccc;
   border-radius: 10px;
   box-sizing: border-box;
-  width: 100rem;
+  width: 100%;
   height: auto;
   min-height: 40px;
   max-height: 97px;
   resize: none;
   background-color: rgb(220, 219, 219);
   overflow-y: hidden;
-  padding-top: 5px;
-  padding-left: 5px;
-  padding-right: 3px;
-  padding-bottom: 10px;
-  /* Text style properties */
-  font-family: Arial, sans-serif, Bold; /* Specify a fallback font */
+  padding: 5px;
+  font-family: Arial, sans-serif, Bold;
   font-size: 20px;
-  font-weight: 400; /* Normal weight */
-  color: #000000; /* Dark gray */
+  font-weight: 400;
+  color: #000000;
   text-decoration: none;
 }
 
 .open-icon {
   position: relative;
   margin-left: 30px;
-  width: 120%; /* Make the label take up the full width of the textbox container */
-  font-size: 15px; /* Set font size for the label */
+  width: 120%;
+  font-size: 15px;
   text-decoration: underline;
   color: darkgrey;
+  cursor: pointer;
 }
 
 .show-more-container {
@@ -119,6 +138,7 @@ textarea {
   display: flex;
   justify-content: flex-end;
 }
+
 .show-more-container label {
   width: fit-content;
 }
@@ -137,13 +157,14 @@ textarea {
     "label label ."
     "input input input"
     ". show-more .";
-
   grid-template-columns: 20% 60% 20%;
 }
+
 .input-container label {
   grid-area: label;
   align-self: center;
 }
+
 .input-container .textbox-container {
   grid-area: input;
 }
@@ -152,10 +173,8 @@ textarea {
   grid-area: show-more;
   width: 100%;
 }
-.open-icon {
-  cursor: pointer;
-}
-/** for dark mode */
+
+/* For dark mode */
 @media (prefers-color-scheme: dark) {
   .open-icon {
     color: white;
@@ -172,8 +191,9 @@ textarea {
 .button {
   background-color: #dcdcdc;
 }
+
 .input-error {
-  border: 2px solid red; /* Entoure l'élément d'une bordure rouge */
+  border: 2px solid red; /* Outlines the element with a red border */
 }
 
 .loader-container-form.active {
@@ -182,13 +202,20 @@ textarea {
   justify-content: center;
   height: 100vh;
   background: rgba(0, 0, 0, 0.834) url("../../assets/6.svg") center no-repeat;
-  z-index: 1;
 }
+
 .loader-container-form p {
   color: white;
   position: relative;
   top: 7%;
 }
+
 .loader-container-form {
   display: none;
+}
+.progress-container {
+  position: sticky;
+  top: 20px; /* Adjust the value as needed */
+  height: 100%;
+  width: 200px; /* Adjust the width as needed */
 }

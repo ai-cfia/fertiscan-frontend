@@ -8,7 +8,7 @@
   gap: 2%;
   align-items: center;
   width: 95%;
-  margin:10px 2%;
+  margin: 10px 2%;
   transition: box-shadow 0.3s ease;
   transition: border-color 0.3s ease;
 }
@@ -23,7 +23,7 @@
 }
 
 .file-element img {
-  flex:1;
+  flex: 1;
   max-width: 100px;
   margin: 5px;
   height: auto;

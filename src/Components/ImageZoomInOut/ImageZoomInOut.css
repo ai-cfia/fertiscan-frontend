@@ -22,7 +22,14 @@
 .zoom-in-out {
   cursor: grab;
   height: 100%;
+  width: 50%;
 }
 .zoom-in-out:active {
   cursor: grabbing;
+}
+.test {
+  width: 50%;
+}
+.transform-component-module_wrapper__SPB86 {
+  width: 100%;
 }

@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useEffect, useRef, useState } from "react";
 import "./Carousel.css";
 import ImageZoomInOut from "../ImageZoomInOut/ImageZoomInOut";
 import { useTranslation } from "react-i18next";
@@ -10,71 +10,83 @@ interface CarouselProps {
   }[];
 }
 
-class imgObject {
-  index: number;
-  url: string;
-  title: string;
-  constructor(index: number, url: string, title: string) {
-    this.index = index;
-    this.url = url;
-    this.title = title;
-  }
-}
-
-const Carousel: React.FC<CarouselProps> = ({ imgs }) => {
+const NewCarousel: React.FC<CarouselProps> = ({ imgs }) => {
   const { t } = useTranslation();
   const [currImg, setCurrImg] = useState<number>(0);
-
-  const imgList: imgObject[] = [];
-  imgs.forEach((imgData, index) => {
-    imgList.push(new imgObject(index, imgData.url, imgData.title));
-  });
+  const imgRefs = useRef<(HTMLImageElement | null)[]>([]);
+  const carouselRef = useRef<HTMLDivElement>(null);
 
   const selectImg = (idx: number) => {
-    if (imgList.length == 1) return setCurrImg(0);
+    let newIdx = idx;
+
     if (idx < 0) {
-      while (idx < 0) {
-        idx = imgList.length + idx;
-      }
+      newIdx = imgs.length - 1; // Si l'index est négatif, on passe à la dernière image
+    } else if (idx >= imgs.length) {
+      newIdx = 0; // Si l'index dépasse la longueur, on retourne à la première image
     }
-    if (idx > imgList.length - 1) {
-      idx %= imgList.length;
-    }
-    setCurrImg(idx);
+
+    setCurrImg(newIdx); // Actualise l'index de l'image courante
+
+    // S'assure que l'image sélectionnée est centrée
+    scrollToImg(newIdx);
   };
+
+  const scrollToImg = (idx: number) => {
+    const imgRef = imgRefs.current[idx];
+    if (imgRef && carouselRef.current) {
+      // Calculer la largeur disponible pour le contenu visible dans le conteneur du carousel
+      const visibleWidth = carouselRef.current.offsetWidth;
+
+      // Calculer le décalage à appliquer pour centrer l'image
+      const offset = imgRef.offsetLeft - carouselRef.current.offsetLeft;
+      const centerOffset = offset - (visibleWidth / 2 - imgRef.offsetWidth / 2);
+
+      // Défiler jusqu'à la nouvelle position calculée pour centrer l'image
+      carouselRef.current.scrollTo({
+        left: centerOffset,
+        behavior: "smooth",
+      });
+    }
+  };
+
+  useEffect(() => {
+    // Effectue un défilement initial pour centrer l'image courante lors du chargement du composant
+    scrollToImg(currImg);
+  }, [currImg]);
 
   return (
     <div className="carousel-wrapper">
       <div className="curr-img">
-        <a className="prev" onClick={() => selectImg(currImg - 1)}>
-          &#10094;
-        </a>
+        <div>
+          <a className="prev" onClick={() => selectImg(currImg - 1)}>
+            &#10094;
+          </a>
+        </div>
         <ImageZoomInOut
-          className="main-img"
-          imageUrl={imgList.length > 0 ? imgList[currImg].url : ""}
+          className="curr-img"
+          imageUrl={imgs[currImg] ? imgs[currImg].url : ""}
           alt={t("noPicture")}
         />
-        <a className="next" onClick={() => selectImg(currImg + 1)}>
-          &#10095;
-        </a>
+        <div>
+          <a className="next" onClick={() => selectImg(currImg + 1)}>
+            &#10095;
+          </a>
+        </div>
       </div>
-      <div className="carousel">
-        {imgList.map((img: imgObject) => {
-          return (
-            <img
-              src={img.url}
-              className={
-                "carousel-img" + (img.index == currImg ? " current" : " ")
-              }
-              alt={imgList[currImg].title}
-              key={img.index}
-              onClick={() => selectImg(img.index)}
-            ></img>
-          );
-        })}
+      <div className="carousel" ref={carouselRef}>
+        {imgs.map((img, index) => (
+          <img
+            ref={(el) => (imgRefs.current[index] = el)}
+            src={img.url}
+            className={`carousel-img ${index === currImg ? " current" : ""}`}
+            alt={img.title}
+            key={index} // Les clés utilisent l'index pour s'assurer que chaque image est unique
+            onClick={() => selectImg(index)}
+          />
+        ))}
       </div>
     </div>
   );
 };
 
-export default Carousel;
+export default NewCarousel;
