@@ -124,7 +124,6 @@ const DragDropFileInput: React.FC<FileInputProps> = ({
         // Utilisez toDataURL pour convertir le canvas en une image codée en base64
         const capturedImage = canvasRef.current.toDataURL("image/png");
 
-        
         processImageFromDataURL(capturedImage, 400, 400, (newFile) => {
           sendChange([newFile]); // Send the newly created file up to the parent component
         });
