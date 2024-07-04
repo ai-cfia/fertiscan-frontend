@@ -5,9 +5,7 @@ textarea:disabled {
   background-color: #4e4e4e7a;
   border: solid 2px black;
 }
-.rejected {
-  border: solid 2px red;
-}
+
 @media (prefers-color-schem: light) {
   textarea {
     box-shadow: 0 0 0 0 black;

@@ -29,7 +29,7 @@ function ImageZoomInOut({ imageUrl, alt }: ImageProps) {
   return (
     <TransformWrapper pinch={{ step: 1000 }}>
       {/* eslint-disable-next-line */}
-        {({ zoomIn, zoomOut, resetTransform, ...rest }) => (
+      {({ zoomIn, zoomOut, resetTransform, ...rest }) => (
         <>
           {console.log(rest)}
           <TransformControls url={imageUrl} />

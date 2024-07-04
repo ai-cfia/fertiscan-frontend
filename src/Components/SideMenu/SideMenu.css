@@ -13,7 +13,7 @@
 
 @media screen and (min-width: 850px) {
   .side-menu.active ~ * {
-    padding-left: 250px;
+    padding-left: 270px;
   }
 }
 
@@ -23,7 +23,6 @@
 .side-menu ~ * {
   transition: padding-left 0.5s;
   padding-left: 80px;
-  margin-left: 30px;
 }
 
 .side-menu::before {

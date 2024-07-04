@@ -111,8 +111,6 @@
   background: transparent;
 }
 
-
-
 @media (prefers-color-scheme: dark) {
   .open-icon {
     filter: invert(74%) sepia(37%) saturate(0%) hue-rotate(249deg)
