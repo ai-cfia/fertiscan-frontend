@@ -30,6 +30,7 @@
   text-align: left;
 }
 
+
 @media (prefers-color-scheme: dark) {
   .card {
     background: #333;
@@ -129,4 +130,92 @@
 
 .overlay .carousel-wrapper {
   position: relative;
+}
+
+/* Styles de rename modal */
+.overlay-rename {
+  display: none;
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background-color: rgba(0, 0, 0, 0.7);
+  justify-content: center;
+  align-items: center;
+  z-index: 998;
+}
+
+.overlay-rename.active {
+  display: flex;
+}
+
+/* Styles de la carte */
+.card-rename {
+  width: 90%;
+  max-width: 800px;
+  background-color: white;
+  padding: 20px;
+  border-radius: 5px;
+  box-shadow: 0 2px 5px rgba(0, 0, 0, 0.3);
+  text-align: left;
+}
+rename-textarea{
+  overflow-y: auto;
+}
+
+/* Styles de rename modal */
+.overlay-rename {
+  display: none;
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background-color: rgba(0, 0, 0, 0.7);
+  justify-content: center;
+  align-items: center;
+  z-index: 998;
+}
+
+.overlay-rename.active {
+  display: flex;
+}
+
+/* Styles de la carte */
+.card-rename {
+  width: 90%;
+  max-width: 800px;
+  background-color: white;
+  padding: 20px;
+  border-radius: 5px;
+  box-shadow: 0 2px 5px rgba(0, 0, 0, 0.3);
+  text-align: left;
+}
+rename-textarea{
+  overflow-y: auto;
+}
+
+.extension-label {
+  user-select: none; /* empêche l'extension d'être sélectionnée */
+}
+.rename-input-container {
+  display: flex;
+  align-items: center;
+  gap: 4px; /* Espace entre le textarea et l'extension */
+}
+
+.rename-textarea {
+  flex-grow: 1;
+  border: 1px solid #ccc; /* Assurez-vous que cela correspond au style existant */
+  border-radius: 4px; /* Assurez-vous que cela correspond au style existant */
+  padding: .375rem .75rem; /* Assurez-vous que cela correspond au style existant */
+  height: 40px; /* Hauteur définie précédemment */
+}
+
+.file-extension {
+  background-color: transparent; /* Pour un fond transparent */
+  color: black; /* Assurez-vous que cela correspond au style existant */
+  user-select: none; /* Empêcher la sélection de texte de l'extension */
+  flex-direction: end;
 }

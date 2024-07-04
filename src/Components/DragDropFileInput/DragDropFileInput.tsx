@@ -5,11 +5,16 @@ import { useTranslation } from "react-i18next";
 interface FileInputProps {
   sendChange: (files: File[]) => void;
   file: string;
+  calculateCaptureCounter: () => number;
 }
 const CAMERA_MODE = true;
 const FILE_MODE = false;
 
-const DragDropFileInput: React.FC<FileInputProps> = ({ sendChange, file }) => {
+const DragDropFileInput: React.FC<FileInputProps> = ({
+  sendChange,
+  file,
+  calculateCaptureCounter,
+}) => {
   const { t } = useTranslation();
   const [dragActive, setDragActive] = useState(false);
   const [stream, setStream] = useState<MediaStream | null>(null);
@@ -21,6 +26,7 @@ const DragDropFileInput: React.FC<FileInputProps> = ({ sendChange, file }) => {
   const canvasRef = useRef<HTMLCanvasElement>(null);
   const [toggleMode, setToggleMode] = useState(false);
   const cameraSwitch = useRef<HTMLDivElement | null>(null);
+  const [, setCaptureCounter] = useState<number>(1);
 
   useEffect(() => {
     if (file === "") {
@@ -118,9 +124,24 @@ const DragDropFileInput: React.FC<FileInputProps> = ({ sendChange, file }) => {
         // Utilisez toDataURL pour convertir le canvas en une image codée en base64
         const capturedImage = canvasRef.current.toDataURL("image/png");
 
-        processImageFromDataURL(capturedImage, 400, 400, (newFile) => {
-          sendChange([newFile]);
+        const blob = await fetch(capturedImage).then((res) => res.blob());
+        // Use the captureCounter state directly for naming the new file
+        const captureCounter = calculateCaptureCounter();
+        const file = new File([blob], `capture${captureCounter}.png`, {
+          type: "image/png",
         });
+        setCaptureCounter(captureCounter + 1); // Increment the captureCounter after use
+        processImageFromDataURL(capturedImage, 400, 400, (newFile) => {
+          sendChange([newFile]); // Send the newly created file up to the parent component
+        });
+        // Stop the camera stream and restart it if in CAMERA_MODE
+        if (stream) {
+          stream.getTracks().forEach((track) => track.stop());
+          setStream(null);
+          if (toggleMode === CAMERA_MODE) {
+            selectCamera();
+          }
+        }
       }
     } else {
       console.error(
