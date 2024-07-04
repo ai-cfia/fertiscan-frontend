@@ -34,8 +34,8 @@
 
 .pic-container {
   display: block;
-  margin: 33px;
-  width: inherit;
+  margin: 30px 35px;
+  width: 94%;
   transform: scale(0.45) translate(-66%, -62%);
   transition: 0.6s ease;
 }

@@ -60,7 +60,7 @@
 /* Styles for the image container with thumbnails */
 .carousel {
   display: flex;
-  justify-content: center;
+  justify-content: space-around;
   gap: 10px;
   overflow-y: hidden;
   overflow-x: auto;

@@ -124,13 +124,7 @@ const DragDropFileInput: React.FC<FileInputProps> = ({
         // Utilisez toDataURL pour convertir le canvas en une image codée en base64
         const capturedImage = canvasRef.current.toDataURL("image/png");
 
-        const blob = await fetch(capturedImage).then((res) => res.blob());
-        // Use the captureCounter state directly for naming the new file
-        const captureCounter = calculateCaptureCounter();
-        const file = new File([blob], `capture${captureCounter}.png`, {
-          type: "image/png",
-        });
-        setCaptureCounter(captureCounter + 1); // Increment the captureCounter after use
+        
         processImageFromDataURL(capturedImage, 400, 400, (newFile) => {
           sendChange([newFile]); // Send the newly created file up to the parent component
         });
@@ -213,9 +207,12 @@ const DragDropFileInput: React.FC<FileInputProps> = ({
       }
       canvas.toBlob((blob) => {
         if (blob !== null) {
-          const newFile = new File([blob], "capture.png", {
+          // Use the captureCounter state directly for naming the new file
+          const captureCounter = calculateCaptureCounter();
+          const newFile = new File([blob], `capture${captureCounter}.png`, {
             type: "image/png",
           });
+          setCaptureCounter(captureCounter + 1); // Increment the captureCounter after use
           callback(newFile);
         }
       }, "image/png");
