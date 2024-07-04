@@ -124,6 +124,7 @@
   flex-direction: column;
   justify-content: center;
   align-items: center;
+  transform: scale(0.5) translate(-50%, 4%);
   margin-top: 20px;
 }
 
