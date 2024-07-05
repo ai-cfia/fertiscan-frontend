@@ -359,24 +359,24 @@ const FormPage = () => {
     setIsAnyModalOpen(isOpen);
   };
 
-  // Prevent scrolling when a modal is open
+  // Prevent scrolling useEffect
   useEffect(() => {
-    if (isAnyModalOpen) {
+    if (isAnyModalOpen || loading) {
       document.body.style.overflow = "hidden";
     } else {
       document.body.style.overflow = "visible";
     }
-  }, [isAnyModalOpen]);
+  }, [isAnyModalOpen, loading]);
 
   return (
     <StrictMode>
-      <div className="formPage-container ${theme}">
+      <div className={"formPage-container ${theme}" }>
         <div className="pic-container">
           <Carousel imgs={urls}></Carousel>
         </div>
         <div className="data-container">
           {loading ? (
-            <div className={`loader-container-form ${loading ? "active" : ""}`}>
+            <div className={`loader-container-form ${loading ? "active " : ""}`}>
               <div className="spinner"></div>
               <p>{t("analyzingText")}</p>
             </div>
