@@ -123,10 +123,6 @@ const FormPage = () => {
     ]),
   );
 
-  const modals: {
-    label: string;
-    ref: React.MutableRefObject<HTMLDivElement | null>;
-  }[] = [];
   // eslint-disable-next-line
   const textareas: {
     label: string;
@@ -135,12 +131,6 @@ const FormPage = () => {
 
   data.sections.forEach((sectionInfo) => {
     sectionInfo.inputs.forEach((inputInfo) => {
-      // eslint-disable-next-line
-      const modal = useRef<HTMLDivElement | null>(null);
-      modals.push({
-        label: sectionInfo.label + inputInfo.label,
-        ref: modal,
-      });
       // eslint-disable-next-line
       const textarea = useRef<HTMLTextAreaElement | null>(null);
       textareas.push({
@@ -390,7 +380,6 @@ const FormPage = () => {
                     key={key}
                     sectionInfo={sectionInfo}
                     textareas={textareas}
-                    modals={modals}
                     imgs={urls}
                     propagateChange={handleDataChange}
                     onModalStateChange={handleModalStateChange}
