@@ -1,5 +1,5 @@
 import "./Input.css";
-import React, { useState } from "react";
+import React, { useRef, useState } from "react";
 import Input from "../../Model/Input-Model";
 import Section from "../../Model/Section-Model";
 
@@ -15,10 +15,10 @@ interface InputProps {
   parent: Section;
   inputInfo: Input;
   textarea: React.MutableRefObject<HTMLTextAreaElement | null>;
-  modal: React.MutableRefObject<HTMLDivElement | null>;
   imgs: { title: string; url: string }[];
   propagateChange: (inputInfo: Input) => void;
 }
+
 
 const MAX_CHAR_IN_ROW = 37;
 
@@ -33,14 +33,13 @@ const InputComponent: React.FC<InputProps> = ({
   parent,
   inputInfo,
   textarea,
-  modal,
   imgs,
   propagateChange,
 }) => {
   const { t } = useTranslation();
   const [isActive, setIsActive] = useState(false);
   const [property, setProperty] = useState(inputInfo.property);
-
+  const modal = useRef<HTMLDivElement | null>(null);
   const SyncChanges = (inputInfo: Input) => {
     if (inputInfo.property === "approved") {
       setIsActive(false);
