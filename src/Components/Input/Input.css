@@ -27,8 +27,7 @@ textarea:disabled {
   border: solid 2px red;
 }
 
-/* Light mode box shadow */
-@media (prefers-color-scheme: light) {
+@media (prefers-color-schem: light) {
   textarea {
     box-shadow: 0 0 0 0 black;
   }

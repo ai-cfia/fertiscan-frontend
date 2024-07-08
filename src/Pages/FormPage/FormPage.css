@@ -8,33 +8,60 @@
 
 .disable-scroll{
   overflow:-moz-hidden-unscrollable;
+  padding: 100 10px !important;
+  grid-template-columns: 1fr auto; /* Use correct grid column definition */
+  grid-gap: 1rem;
+  align-items: start;
 }
 
 @media only screen and (min-width: 1231px) {
-  /*the minimum place that need the form to have when he is in full page mode is 1231*/
   .formPage-container {
     grid-template-areas: "pics data progress-bar";
-    grid-template-columns: 40% 50% 5%;
+    grid-template-columns: 43% 50% 7%; /* Allocates space for progress bar next to the form */
+  }
+  .pic-container {
+    position: fixed;
   }
 }
 
 @media only screen and (max-width: 1230px) {
   .formPage-container {
+    grid-template-columns: 4fr 0fr;
     grid-template-areas:
-      "pics"
-      "data"
-      "progress-bar"; /* Add a new row for the open-icon */
-    grid-template-columns: 40% 50% 5%;
+      "pics test"
+      "data progress-bar"; /* This line places progress-bar next to data if space allows */
+    justify-content: normal;
+    justify-items: stretch;
+    justify-items: center;
+  }
+  .progress-wrapper {
+    justify-self: start; /* Align the progress-bar to the right */
   }
 }
 
 .pic-container {
-  grid-area: pics;
-  margin-left: 0;
+  display: block;
+  margin: 30px 35px;
+  width: 94%;
+  transform: scale(0.45) translate(-66%, -62%);
+  transition: 0.6s ease;
 }
+
+@media only screen and (min-width: 1250px) {
+  .carousel-wrapper {
+    width: 100%;
+    height: auto !important;
+    transition: 0.6s ease;
+  }
+  .curr-img img {
+    width: calc(100%) !important;
+    height: auto !important;
+  }
+}
+
 .progress-wrapper {
   grid-area: progress-bar;
-  right: 0;
+  /* Position is not fixed; it will move with the grid layout */
 }
 
 /* Text box container styles */
@@ -44,12 +71,14 @@
   flex-direction: column;
   min-height: 100%;
   padding-bottom: 60px;
-  /* Add justify-content: space-between to position elements at the top and bottom */
   justify-content: space-between;
   align-items: left;
   font-family: Arial, sans-serif, Bold;
   color: #000000;
   font-size: 20px;
+}
+.input-error {
+  border: 2px solid red; /* Outlines the element with a red border */
 }
 
 .loader-container-form.active {
@@ -58,13 +87,14 @@
   justify-content: center;
   height: 100vh;
   background: rgba(0, 0, 0, 0.834) url("../../assets/6.svg") center no-repeat;
-  z-index: 1;
 }
+
 .loader-container-form p {
   color: white;
   position: relative;
   top: 7%;
 }
+
 .loader-container-form {
   display: none;
 }
@@ -73,4 +103,10 @@
   background-color: #dcdcdc;
   margin-top: 20px;
   width: 50%;
+}
+.progress-container {
+  position: sticky;
+  top: 20px; /* Adjust the value as needed */
+  height: 100%;
+  width: 200px; /* Adjust the width as needed */
 }

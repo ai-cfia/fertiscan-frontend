@@ -25,22 +25,20 @@ interface ImageProps {
   alt?: string; // Optional alt text
 }
 
-function ImageZoomInOut({ imageUrl, className, onClick, alt }: ImageProps) {
+function ImageZoomInOut({ imageUrl, alt }: ImageProps) {
   return (
-    <div className="zoom-in-out" onClick={onClick}>
-      <TransformWrapper pinch={{ step: 1000 }}>
-        {/* eslint-disable-next-line */}
-        {({ zoomIn, zoomOut, resetTransform, ...rest }) => (
-          <>
-            {console.log(rest)}
-            <TransformControls url={imageUrl} />
-            <TransformComponent>
-              <img src={imageUrl} alt={alt} className={className} />
-            </TransformComponent>
-          </>
-        )}
-      </TransformWrapper>
-    </div>
+    <TransformWrapper pinch={{ step: 1000 }}>
+      {/* eslint-disable-next-line */}
+      {({ zoomIn, zoomOut, resetTransform, ...rest }) => (
+        <>
+          {console.log(rest)}
+          <TransformControls url={imageUrl} />
+          <TransformComponent>
+            <img src={imageUrl} alt={alt} className="test" />
+          </TransformComponent>
+        </>
+      )}
+    </TransformWrapper>
   );
 }
 

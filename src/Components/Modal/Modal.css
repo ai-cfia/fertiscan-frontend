@@ -30,7 +30,6 @@
   text-align: left;
 }
 
-
 @media (prefers-color-scheme: dark) {
   .card {
     background: #333;
@@ -118,11 +117,6 @@
   background: transparent;
 }
 
-.pic-container {
-  grid-area: pics;
-  margin-right: 10px;
-}
-
 @media (prefers-color-scheme: dark) {
   .open-icon {
     filter: invert(74%) sepia(37%) saturate(0%) hue-rotate(249deg)
@@ -171,7 +165,7 @@
   box-shadow: 0 2px 5px rgba(0, 0, 0, 0.3);
   text-align: left;
 }
-rename-textarea{
+rename-textarea {
   overflow-y: auto;
 }
 
@@ -203,7 +197,7 @@ rename-textarea{
   box-shadow: 0 2px 5px rgba(0, 0, 0, 0.3);
   text-align: left;
 }
-rename-textarea{
+rename-textarea {
   overflow-y: auto;
 }
 
@@ -220,7 +214,7 @@ rename-textarea{
   flex-grow: 1;
   border: 1px solid #ccc; /* Assurez-vous que cela correspond au style existant */
   border-radius: 4px; /* Assurez-vous que cela correspond au style existant */
-  padding: .375rem .75rem; /* Assurez-vous que cela correspond au style existant */
+  padding: 0.375rem 0.75rem; /* Assurez-vous que cela correspond au style existant */
   height: 40px; /* Hauteur définie précédemment */
 }
 

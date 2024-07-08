@@ -1,17 +1,28 @@
-.carousel-wrapper {
-  display: flex;
-  flex-direction: column;
+/* Styles for the carousel wrapper */
+@media screen and (max-width: 1230px) {
+  .carousel-wrapper {
+    display: flex;
+    flex-direction: column;
+    width: 100%;
+    max-width: 500px; /* Maximum width if you want to limit the width */
+    justify-content: center;
+    align-items: center;
+    overflow: hidden; /* This hides overflowing content */
+    position: relative; /* Necessary for absolute positioning of the arrows */
+  }
 }
-
 /* Styles for the currently displayed image */
 .curr-img {
   display: flex;
+  justify-content: center;
   align-items: center;
-}
-.curr-img img {
+  overflow: hidden;
   width: 100%;
-  height: auto;
+  height: 100%;
+  max-height: 400px; /* Adjustment for larger size */
+  position: relative;
 }
+
 /* Fixed 'prev' and 'next' buttons on the sides of the carousel */
 .prev,
 .next {
@@ -19,7 +30,7 @@
   background-color: #dcdada;
   color: white;
   font-weight: bold;
-  font-size: 4em; /* Reduced size for the buttons */
+  font-size: 1.5em; /* Reduced size for the buttons */
   padding: 8px; /* Reduced padding for the buttons */
   user-select: none; /* Avoids text selection on hover */
   top: 50%;
@@ -33,14 +44,14 @@
   left: 0;
   margin-right: 4px;
   margin-left: 3px;
-  border-radius: 18px 0 0 18px;
+  border-radius: 6px 0 0 6px;
 }
 
 .next {
   right: 0;
   margin-left: 4px;
   margin-right: 3px;
-  border-radius: 0 18px 18px 0;
+  border-radius: 0 6px 6px 0;
 }
 
 .prev:hover,
@@ -48,22 +59,31 @@
   background-color: #bdbdbd;
 }
 
-.react-transform-component,
-.react-transform-wrapper {
-  width: 100% !important; /* Width at 100% of .curr-img */
+.carousel-wrapper .react-transform-wrapper {
+  width: 100%; /* Width at 100% of .curr-img */
+  height: 100%; /* Height at 100% of .curr-img */
+  display: flex;
 }
 
 .carousel-wrapper .react-transform-wrapper img {
-  width: inherit;
+  width: 100%; /* Width at maximum of .react-transform-wrapper */
+  height: 100%; /* Height at maximum of .react-transform-wrapper */
+  object-fit: contain; /* Maintains aspect ratio without cropping the image */
+  margin: auto; /* Centers the image along both axes */
 }
 
 /* Styles for the image container with thumbnails */
 .carousel {
+  flex: 1;
   display: flex;
-  justify-content: space-around;
+  width: 100%;
+  overflow-x: scroll;
   gap: 10px;
   overflow-y: hidden;
-  overflow-x: auto;
+  align-items: center;
+  position: static;
+  padding: 0 5px;
+  max-width: 400px;
 }
 
 /* Styles for individual carousel thumbnails */
@@ -72,6 +92,7 @@
   object-fit: cover;
   transition: transform 0.3s;
   display: flex;
+  min-height: 140px;
   width: calc(
     (100% - 40px) / 3
   ); /* Displays 3 images, including the space between them */
@@ -84,8 +105,6 @@
 /* Styles for the "current" image (selected thumbnail) */
 .carousel-img.current {
   border: solid 4px #bab9b9;
-}
-.carousel-img:not(.current) {
   opacity: 0.7;
 }
 
