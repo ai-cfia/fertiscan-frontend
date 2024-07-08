@@ -2,12 +2,9 @@ import "./Input.css";
 import React, { useState } from "react";
 import Input from "../../Model/Input-Model";
 import Section from "../../Model/Section-Model";
-
 import Modal from "../Modal/Modal";
-
 import editIcon from "../../assets/edit1.svg";
 import acceptIcon from "../../assets/acceptIcon.svg";
-
 import { FormClickActions } from "../../Utils/EventChannels";
 import { useTranslation } from "react-i18next";
 
@@ -18,6 +15,7 @@ interface InputProps {
   modal: React.MutableRefObject<HTMLDivElement | null>;
   imgs: { title: string; url: string }[];
   propagateChange: (inputInfo: Input) => void;
+  onModalStateChange: (isOpen: boolean) => void;
 }
 
 const MAX_CHAR_IN_ROW = 37;
@@ -36,6 +34,7 @@ const InputComponent: React.FC<InputProps> = ({
   modal,
   imgs,
   propagateChange,
+  onModalStateChange,
 }) => {
   const { t } = useTranslation();
   const [isActive, setIsActive] = useState(false);
@@ -109,66 +108,28 @@ const InputComponent: React.FC<InputProps> = ({
   };
 
   return (
-    <div className="input-container">
-      <label htmlFor={inputInfo.id}>
+    <div className="input-grid-container">
+      <label htmlFor={inputInfo.id} className="input-label">
         {parent.label.charAt(0).toUpperCase() + parent.label.slice(1)}{" "}
         {inputInfo.label.replace(/_/gi, " ")} :
       </label>
-      <div className="textbox-container">
+      <div className="textarea-container">
         <textarea
           id={inputInfo.id}
           ref={textarea}
           value={inputInfo.value}
           disabled={inputInfo.disabled}
-          onChange={(event: React.ChangeEvent<HTMLTextAreaElement>) => {
-            const current = event.target as HTMLTextAreaElement;
-            resizeTextarea(current);
+          onChange={(event) => {
             inputInfo.value = event.target.value;
             propagateChange(inputInfo);
+            resizeTextarea(textarea.current);
           }}
-          onInput={(event: React.FormEvent<HTMLTextAreaElement>) => {
-            const current = event.target as HTMLTextAreaElement;
-            resizeTextarea(current); // Added here
+          onInput={() => {
+            resizeTextarea(textarea.current);
           }}
           className="text-box"
           rows={1}
         />
-        <div className="button-container">
-          <button
-            className={`button ${isActive ? "active" : ""}`}
-            onClick={() => handleStateChange(inputInfo)}
-          >
-            {property === "default" ? (
-              <img
-                src={acceptIcon}
-                alt={t("approveButton")}
-                width="20"
-                height="20"
-              />
-            ) : property === "approved" ? (
-              <img
-                src={editIcon}
-                alt={t("approveButton")}
-                width="20"
-                height="20"
-              />
-            ) : property === "modified" ? (
-              <img
-                src={acceptIcon}
-                alt={t("modifyButton")}
-                width="20"
-                height="20"
-              />
-            ) : (
-              <img
-                src={acceptIcon}
-                alt={t("approveButton")}
-                width="20"
-                height="20"
-              />
-            )}
-          </button>
-        </div>
       </div>
       {/* Show more functionality moved here for better separation */}
       {inputInfo.value.split("\n").length +
@@ -182,6 +143,7 @@ const InputComponent: React.FC<InputProps> = ({
             className="open-icon"
             onClick={() => {
               modal.current?.classList.add("active");
+              onModalStateChange(true);
             }}
           >
             {t("showMoreButton")}
@@ -198,10 +160,47 @@ const InputComponent: React.FC<InputProps> = ({
             imgs={imgs}
             close={() => {
               modal.current?.classList.remove("active");
+              onModalStateChange(false);
             }}
           />
         </div>
       )}
+      <div className="button-container">
+        <button
+          className={`button ${isActive ? "active" : ""}`}
+          onClick={() => handleStateChange(inputInfo)}
+        >
+          {property === "default" ? (
+            <img
+              src={acceptIcon}
+              alt={t("approveButton")}
+              width="20"
+              height="20"
+            />
+          ) : property === "approved" ? (
+            <img
+              src={editIcon}
+              alt={t("approveButton")}
+              width="20"
+              height="20"
+            />
+          ) : property === "modified" ? (
+            <img
+              src={acceptIcon}
+              alt={t("modifyButton")}
+              width="20"
+              height="20"
+            />
+          ) : (
+            <img
+              src={acceptIcon}
+              alt={t("approveButton")}
+              width="20"
+              height="20"
+            />
+          )}
+        </button>
+      </div>
     </div>
   );
 };

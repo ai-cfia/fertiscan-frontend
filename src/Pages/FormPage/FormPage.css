@@ -1,6 +1,13 @@
 .formPage-container {
   display: grid;
   justify-content: space-between;
+  padding: 0 10px;
+  grid-template-columns: "1fr auto";
+  grid-gap: 1rem;
+}
+
+.disable-scroll{
+  overflow:-moz-hidden-unscrollable;
   padding: 100 10px !important;
   grid-template-columns: 1fr auto; /* Use correct grid column definition */
   grid-gap: 1rem;
@@ -57,13 +64,6 @@
   /* Position is not fixed; it will move with the grid layout */
 }
 
-@media (prefers-color-scheme: dark) {
-  .open-icon {
-    filter: invert(74%) sepia(37%) saturate(0%) hue-rotate(249deg)
-      brightness(101%) contrast(98%);
-  }
-}
-
 /* Text box container styles */
 .data-container {
   grid-area: data;
@@ -77,121 +77,6 @@
   color: #000000;
   font-size: 20px;
 }
-
-.data-container h1 {
-  text-align: left;
-  margin-left: 20px;
-  font-size: 40px;
-}
-
-.data-container label {
-  text-align: left;
-  margin-left: 20px;
-}
-
-.textbox-container {
-  display: flex;
-  justify-content: left;
-  align-items: center;
-  width: 96%;
-  margin-left: 20px;
-  flex-direction: row;
-}
-
-.underlined {
-  text-decoration: underline;
-}
-
-/* Text box styles */
-textarea {
-  border: 1px solid #ccc;
-  border-radius: 10px;
-  box-sizing: border-box;
-  width: 100%;
-  height: auto;
-  min-height: 40px;
-  max-height: 97px;
-  resize: none;
-  background-color: rgb(220, 219, 219);
-  overflow-y: hidden;
-  padding: 5px;
-  font-family: Arial, sans-serif, Bold;
-  font-size: 20px;
-  font-weight: 400;
-  color: #000000;
-  text-decoration: none;
-}
-
-.open-icon {
-  position: relative;
-  margin-left: 30px;
-  width: 120%;
-  font-size: 15px;
-  text-decoration: underline;
-  color: darkgrey;
-  cursor: pointer;
-}
-
-.show-more-container {
-  align-self: end;
-  justify-self: end;
-  display: flex;
-  justify-content: flex-end;
-}
-
-.show-more-container label {
-  width: fit-content;
-}
-
-.data-section {
-  display: flex;
-  flex-direction: column;
-  justify-content: left;
-  align-items: left;
-  gap: 10px;
-}
-
-.input-container {
-  display: grid;
-  grid-template-areas:
-    "label label ."
-    "input input input"
-    ". show-more .";
-  grid-template-columns: 20% 60% 20%;
-}
-
-.input-container label {
-  grid-area: label;
-  align-self: center;
-}
-
-.input-container .textbox-container {
-  grid-area: input;
-}
-
-.input-container .show-more-container {
-  grid-area: show-more;
-  width: 100%;
-}
-
-/* For dark mode */
-@media (prefers-color-scheme: dark) {
-  .open-icon {
-    color: white;
-  }
-}
-
-.button-container {
-  display: flex;
-  align-items: center;
-  gap: 10px;
-  margin-left: 20px;
-}
-
-.button {
-  background-color: #dcdcdc;
-}
-
 .input-error {
   border: 2px solid red; /* Outlines the element with a red border */
 }
@@ -212,6 +97,12 @@ textarea {
 
 .loader-container-form {
   display: none;
+}
+
+.submit-button{
+  background-color: #dcdcdc;
+  margin-top: 20px;
+  width: 50%;
 }
 .progress-container {
   position: sticky;
