@@ -96,7 +96,8 @@ textarea:disabled {
   display: grid;
   grid-template-rows: auto 1fr auto;
   grid-template-columns: 2fr auto;
-  column-gap: 30px;                           
+  column-gap: 30px;             
+}              
 
 .input-label {
   margin-top: 10px;

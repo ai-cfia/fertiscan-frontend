@@ -395,11 +395,12 @@ const FormPage = () => {
                   ></SectionComponent>
                 );
               })}
-            </div>
-          )}
-          <button className="button" onClick={submitForm}>
+          <button className="submit-button" onClick={submitForm}>
             {t("submitButton")}
           </button>
+            </div>
+            
+          )}
         </div>
         {!loading ? (
           <div className="progress-wrapper">

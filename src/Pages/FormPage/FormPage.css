@@ -3,8 +3,7 @@
   justify-content: space-between;
   padding: 0 10px;
   grid-template-columns: "1fr auto";
-  grid-gap: "1rem";
-  align-items: "start";
+  grid-gap: 1rem;
 }
 
 .disable-scroll{
@@ -68,4 +67,10 @@
 }
 .loader-container-form {
   display: none;
+}
+
+.submit-button{
+  background-color: #dcdcdc;
+  margin-top: 20px;
+  width: 50%;
 }
