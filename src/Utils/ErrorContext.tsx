@@ -8,7 +8,7 @@ export interface ErrorContextType {
 
 export const ErrorContext = createContext<ErrorContextType>({
   message: "",
-    // @ts-expect-error : need to be implemented
+  // @ts-expect-error : need to be implemented
   // eslint-disable-next-line
   showAlert: (msg: string) => {},
   clearAlert: () => {},
