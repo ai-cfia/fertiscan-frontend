@@ -19,18 +19,18 @@ function App() {
   return (
     <SessionProvider>
       <BrowserRouter>
-      <ErrorProvider>
-        <StrictMode>
-          <Header />
-          <SideMenu />
-        </StrictMode>
-        <Routes>
-          <Route path="/">
-            <Route index element={<HomePage />} />
-            <Route path="Settings" element={<SettingPage />} />
-            <Route path="*" element={<NoPage />} />
-          </Route>
-        </Routes>
+        <ErrorProvider>
+          <StrictMode>
+            <Header />
+            <SideMenu />
+          </StrictMode>
+          <Routes>
+            <Route path="/">
+              <Route index element={<HomePage />} />
+              <Route path="Settings" element={<SettingPage />} />
+              <Route path="*" element={<NoPage />} />
+            </Route>
+          </Routes>
         </ErrorProvider>
       </BrowserRouter>
     </SessionProvider>

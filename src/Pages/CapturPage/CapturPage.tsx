@@ -134,14 +134,14 @@ function CapturPage() {
     return maxNumber + 1;
   };
 
-    // Prevent scrolling useEffect
-    useEffect(() => {
-      if (renameModalOpen) {
-        document.body.style.overflow = "hidden";
-      } else {
-        document.body.style.overflow = "visible";
-      }
-    }, [renameModalOpen]);
+  // Prevent scrolling useEffect
+  useEffect(() => {
+    if (renameModalOpen) {
+      document.body.style.overflow = "hidden";
+    } else {
+      document.body.style.overflow = "visible";
+    }
+  }, [renameModalOpen]);
 
   return (
     <StrictMode>

@@ -1,7 +1,7 @@
 import React, { useState, useRef, useEffect } from "react";
 import "./DragDropFileInput.css";
 import { useTranslation } from "react-i18next";
-import {Error} from "../../Utils/ErrorContext";
+import { Error } from "../../Utils/ErrorContext";
 
 interface FileInputProps {
   sendChange: (files: File[]) => void;
@@ -230,9 +230,13 @@ const DragDropFileInput: React.FC<FileInputProps> = ({
 
   // This function gets the camera permission status
   const getCameraPermission = async () => {
-    try{
-    setHasPermission(await navigator.mediaDevices.getUserMedia({ video: true }) ? true : false);
-    }catch(err){
+    try {
+      setHasPermission(
+        (await navigator.mediaDevices.getUserMedia({ video: true }))
+          ? true
+          : false,
+      );
+    } catch (err) {
       setHasPermission(false);
     }
   };
@@ -250,7 +254,7 @@ const DragDropFileInput: React.FC<FileInputProps> = ({
     } else if (!hasPermission) {
       return; // Don't attempt to access the camera if permission is denied
     }
-    
+
     // Now we are sure that permission has been granted, access the camera
     const constraints = { video: { facingMode: { exact: cameraMode } } };
     const newStream = await navigator.mediaDevices.getUserMedia(constraints);
@@ -263,13 +267,15 @@ const DragDropFileInput: React.FC<FileInputProps> = ({
     );
   };
 
-  const handleCameraToggle = async (event: React.MouseEvent<HTMLDivElement>) => {
+  const handleCameraToggle = async (
+    event: React.MouseEvent<HTMLDivElement>,
+  ) => {
     event.preventDefault();
     getCameraPermission();
-      if (!hasPermission) {
-        showAlert(t("cameraPermissionError"));
-        return; // If we don't get permission, do not proceed
-      }
+    if (!hasPermission) {
+      showAlert(t("cameraPermissionError"));
+      return; // If we don't get permission, do not proceed
+    }
     // Now that we know we have permission, we can toggle the camera mode
     setToggleMode((currentMode) => !currentMode);
   };

@@ -1,4 +1,4 @@
-import { createContext, useState, useContext, SetStateAction } from 'react';
+import { createContext, useState, useContext, SetStateAction } from "react";
 
 export interface ErrorContextType {
   message: string;
@@ -7,15 +7,15 @@ export interface ErrorContextType {
 }
 
 export const ErrorContext = createContext<ErrorContextType>({
-  message: '',
+  message: "",
   showAlert: (_msg: string) => {},
-  clearAlert: () => {}
+  clearAlert: () => {},
 });
 
 export const Error = () => useContext(ErrorContext);
 
 export const ErrorProvider = ({ children }: { children: React.ReactNode }) => {
-  const [message, setMessage] = useState('');
+  const [message, setMessage] = useState("");
 
   const showAlert = (msg: SetStateAction<string>) => {
     console.log("msg");
@@ -23,7 +23,7 @@ export const ErrorProvider = ({ children }: { children: React.ReactNode }) => {
   };
 
   const clearAlert = () => {
-    setMessage('');
+    setMessage("");
   };
 
   return (
