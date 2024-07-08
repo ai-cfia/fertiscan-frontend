@@ -60,5 +60,6 @@
   "en": "English",
   "home": "Home",
   "settings": "Settings",
-  "rename": "Rename"
+  "rename": "Rename",
+  "cameraPermissionError": "Please allow camera access"
 }

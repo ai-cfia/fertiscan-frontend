@@ -61,7 +61,7 @@ function SideMenu() {
   };
 
   return (
-    <div className="side-menu" ref={SideMenuRef}>
+    <div className="side-menu notAffectedTopPadding" ref={SideMenuRef}>
       <div className="side-menu_content">
         <ul>
           <li>
