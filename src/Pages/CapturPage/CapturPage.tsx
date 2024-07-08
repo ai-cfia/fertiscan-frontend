@@ -151,9 +151,14 @@ function CapturPage() {
             file={toShow}
             calculateCaptureCounter={calculateCaptureCounter}
           />
-            <button className="submit-btn" type="button" onClick={Submit} disabled={state.data.pics.length === 0}>
-              {t("submitButton")}
-            </button>
+          <button
+            className="submit-btn"
+            type="button"
+            onClick={Submit}
+            disabled={state.data.pics.length === 0}
+          >
+            {t("submitButton")}
+          </button>
           <FileList
             blobs={state.data.pics}
             onSelectedChange={handleSelectedChange}

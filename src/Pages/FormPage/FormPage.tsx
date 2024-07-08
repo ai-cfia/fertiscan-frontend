@@ -370,13 +370,15 @@ const FormPage = () => {
 
   return (
     <StrictMode>
-      <div className={"formPage-container ${theme}" }>
+      <div className={"formPage-container ${theme}"}>
         <div className="pic-container">
           <Carousel imgs={urls}></Carousel>
         </div>
         <div className="data-container">
           {loading ? (
-            <div className={`loader-container-form ${loading ? "active " : ""}`}>
+            <div
+              className={`loader-container-form ${loading ? "active " : ""}`}
+            >
               <div className="spinner"></div>
               <p>{t("analyzingText")}</p>
             </div>
@@ -395,11 +397,10 @@ const FormPage = () => {
                   ></SectionComponent>
                 );
               })}
-          <button className="submit-button" onClick={submitForm}>
-            {t("submitButton")}
-          </button>
+              <button className="submit-button" onClick={submitForm}>
+                {t("submitButton")}
+              </button>
             </div>
-            
           )}
         </div>
         {!loading ? (
