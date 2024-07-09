@@ -60,6 +60,7 @@
   "en": "Anglais",
   "home": "Accueil",
   "settings": "Paramètres",
-  "rename": "Renommer",
-  "cameraPermissionError":"Veuillez autoriser l'accès à la caméra"
+  "DoubleClickNewButton": "Double-cliquez pour ajouter",
+  "cameraPermissionError":"Veuillez autoriser l'accès à la caméra",
+  "rename": "Renommer"
 }

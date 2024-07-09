@@ -60,6 +60,7 @@
   "en": "English",
   "home": "Home",
   "settings": "Settings",
-  "rename": "Rename",
-  "cameraPermissionError": "Please allow camera access"
+  "DoubleClickNewButton": "Double click to add",
+  "cameraPermissionError": "Please allow camera access",
+  "rename":"Rename"
 }
