@@ -35,3 +35,7 @@
   position: relative;
   right: 20px;
 }
+
+.disable-scroll{
+  overflow:-moz-hidden-unscrollable;
+}

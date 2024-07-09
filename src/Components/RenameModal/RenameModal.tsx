@@ -45,17 +45,17 @@ const RenameModal: React.FC<RenameModalProps> = ({
 
   return (
     <div className="overlay-rename active">
-      <div className="card-rename" style={{ width: "100%", height: "100px" }}>
+      <div className="card-rename">
         <div
           className="card-content"
-          style={{ width: "100%", height: "40px", overflow: "hidden" }}
+          style={{ width: "100%", height: "60px", overflow: "hidden" }}
         >
           <div className="rename-input-container">
             <textarea
               className="rename-textarea"
               value={newFileName}
               onChange={handleChange}
-              style={{ width: "100%", height: "40px", overflow: "hidden" }}
+              style={{ overflowY: "hidden" }}
               rows={1}
             />
             <span
@@ -66,7 +66,7 @@ const RenameModal: React.FC<RenameModalProps> = ({
             </span>
           </div>
         </div>
-        <div className="card-footer">
+        <div className="card-footer" style={{ marginTop: "20px" }}>
           <button onClick={close}>{t("cancelButton")}</button>
           <button className="saveButton" onClick={handleSaveClick}>
             {t("confirmButton")}
