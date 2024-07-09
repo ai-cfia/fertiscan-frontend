@@ -5,17 +5,12 @@ import InputComponent from "../Input/Input";
 
 interface sectionPorps {
   sectionInfo: Section;
-  textareas: {
-    ref: React.MutableRefObject<HTMLTextAreaElement | null>;
-    label: string;
-  }[];
   imgs: { title: string; url: string }[];
   propagateChange: (section: Section) => void;
 }
 
 const SectionComponent: React.FC<sectionPorps> = ({
   sectionInfo,
-  textareas,
   imgs,
   propagateChange,
 }) => {
@@ -28,15 +23,11 @@ const SectionComponent: React.FC<sectionPorps> = ({
     <div className={sectionInfo.label + "-container data-section"}>
       <h1 className="title underlined">{sectionInfo.title}</h1>
       {[...sectionInfo.inputs].map((inputInfo: Input, key: number) => {
-        const textarea = textareas.find(
-          (obj) => obj.label === sectionInfo.label + inputInfo.label,
-        )!.ref;
         return (
           <InputComponent
             key={key}
             inputInfo={inputInfo}
             parent={sectionInfo}
-            textarea={textarea}
             imgs={imgs}
             propagateChange={handleInputChange}
           />

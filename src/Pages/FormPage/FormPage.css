@@ -108,6 +108,7 @@ textarea {
   border-radius: 10px;
   box-sizing: border-box;
   width: 100%;
+  justify-content: center;
   height: auto;
   min-height: 40px;
   max-height: 97px;

@@ -1,4 +1,5 @@
 textarea {
+  grid-area: input ;
   transition: box-shadow 0.5s ease-in-out;
 }
 textarea:disabled {
@@ -15,4 +16,84 @@ textarea:disabled {
   textarea {
     box-shadow: 0 0 0 0 white;
   }
+}
+
+.single-textarea-container{
+  width: 100%;
+  display: grid;
+  grid-template-areas:
+    "input input delete"
+    ". show-more .";
+  grid-template-columns: 35% 60% 5%;
+  align-items: center;
+}
+.list-input{
+  width: 100%;
+  height: fit-content;
+  border-radius: 5px;
+}
+.textareas-wrapper{
+  height: fit-content;
+  border-radius: 5px;
+  padding: 10px;
+  background-color: rgb(214, 212, 212);
+  display:flex ;
+  flex-direction: column;
+}
+.add-button{
+  align-self: end;
+  width: 10%;
+  background-color: #4e4e4e00;
+  position: relative;
+  right: 0;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+.delete-button{
+  grid-area: delete;
+  display:flex;
+  cursor: pointer;
+}
+.unselectable{
+  user-select: none;
+}
+
+.table-container {
+  width: 100%;
+  border-collapse: collapse;
+  height: fit-content;
+  border-radius: 5px;
+  
+}
+
+table {
+  flex-direction: column;
+  width: 100%;
+  border-radius: 5px;
+  background-color: rgb(214, 212, 212);
+
+}
+
+.object-input table input{
+  background-color: rgb(214, 212, 212);
+}
+
+tr{
+  display: flex;
+}
+
+tr{
+  min-width: 70px;
+  flex: 1; /* Donne une largeur égale à chaque th et td */
+  text-align: center; /* Centre le texte horizontalement */
+  padding: 10px 7px; /* Espacement entre le contenu et les bordures des cellules */
+}
+
+input{
+  text-align: center; /* Centre le texte horizontalement */
+  padding: 10px 0; /* Espacement entre le contenu et les bordures des cellules */
+  background-color: rgb(214, 212, 212);
+  font-size: 1em;
+  width: 100%;
 }
