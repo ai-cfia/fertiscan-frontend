@@ -224,6 +224,20 @@ const InputComponent: React.FC<InputProps> = ({
       </div>
     )
   }
+
+  const adjustFontSize = (inputElement: HTMLInputElement) => {
+    const tdElement = inputElement.parentElement as HTMLTableCellElement;
+    const maxWidth: number = tdElement.offsetWidth;
+    console.log(maxWidth);
+    const actualWidth: number = inputElement.scrollWidth;
+    const currentFontSize: number = parseFloat(window.getComputedStyle(inputElement, null).getPropertyValue('font-size'));
+    if (actualWidth > maxWidth && currentFontSize > 10) {
+      inputElement.style.fontSize = `${currentFontSize * 0.8}px`;
+    } else if (actualWidth < maxWidth && currentFontSize < 16) {
+      inputElement.style.fontSize = `${currentFontSize * 1.1}px`;
+    }
+  };
+
   const createObjectInput = () => {
     const keys = Object.keys((inputInfo.value as {}[])[0]);
     return (
@@ -235,23 +249,28 @@ const InputComponent: React.FC<InputProps> = ({
               <col span={1} style={{width: "15%"}}/>
             </colgroup>
           <thead>
-              {keys.map((key, index) => {
+          {keys.map((key, index) => {
                 return <th key={index}>{key}</th>;
               })}
           </thead>
           <tbody>
-            {inputInfo.value.map((obj, index) => {
+            {inputInfo.value.map((_obj, index) => {
               return (
                 <tr key={index}>
-                  <td>
+                  <td class>
                     <input
                     id="input1"
                       type="text"
                       value={(inputInfo.value[index] as {[key:string]:string})[keys[0]]}
                       disabled={inputInfo.disabled}
                       onChange={(event) => {
-                        (obj as any)[keys[0]] = event.target.value;
+                        let newValue = { ...(inputInfo.value[index] as {[key:string]:string}), [keys[0]]: event.target.value };
+                        inputInfo.value[index] = newValue;
                         propagateChange(inputInfo);
+                      }}
+                        onInput={(event) => {
+                        const input = event.currentTarget;
+                        adjustFontSize(input);
                       }}
                     />
                   </td>
@@ -261,8 +280,13 @@ const InputComponent: React.FC<InputProps> = ({
                       value={(inputInfo.value[index] as {[key:string]:string})[keys[1]]}
                       disabled={inputInfo.disabled}
                       onChange={(event) => {
-                        (obj as any)[keys[1]] = event.target.value;
+                        let newValue = { ...(inputInfo.value[index] as {[key:string]:string}), [keys[1]]: event.target.value };
+                        inputInfo.value[index] = newValue;
                         propagateChange(inputInfo);
+                      }}
+                        onInput={(event) => {
+                        const input = event.currentTarget;
+                        adjustFontSize(input);
                       }}
                     />
                   </td>
@@ -272,8 +296,13 @@ const InputComponent: React.FC<InputProps> = ({
                       value={(inputInfo.value[index] as {[key:string]:string})[keys[2]]}
                       disabled={inputInfo.disabled}
                       onChange={(event) => {
-                        (obj as any)[keys[2]] = event.target.value;
+                        let newValue = { ...(inputInfo.value[index] as {[key:string]:string}), [keys[2]]: event.target.value };
+                        inputInfo.value[index] = newValue;
                         propagateChange(inputInfo);
+                      }}
+                        onInput={(event) => {
+                        const input = event.currentTarget;
+                        adjustFontSize(input);
                       }}
                     />
                   </td>
@@ -281,13 +310,13 @@ const InputComponent: React.FC<InputProps> = ({
               )
             })}
           </tbody>
-            <div onDoubleClick={()=>{
+        </table>
+        <div onDoubleClick={()=>{
               (inputInfo.value as string[]).push(""); // Explicitly type inputInfo.value as string[]
               propagateChange(inputInfo);
             }} className="textarea unselectable">
               {t("DoubleClickNewButton")}
           </div>
-        </table>
       </div>
     )
   }
