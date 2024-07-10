@@ -184,24 +184,33 @@ textarea:disabled {
 table {
   flex-direction: column;
   width: 100%;
+  border-collapse: collapse;
+  background: rgb(214, 212, 212);
+
+}
+
+.object-input{
+  background: rgb(214, 212, 212);
   border-radius: 5px;
-  background-color: rgb(214, 212, 212);
+  padding: 0px 7px;
 
 }
 
-.object-input table input{
-  background-color: rgb(214, 212, 212);
-}
-
-tr{
-  display: flex;
-}
-
-tr{
+tr {
+  display: table-row; /* Retour au comportement de tableau par défaut */
   min-width: 70px;
-  flex: 1; /* Donne une largeur égale à chaque th et td */
+  text-align: center;
+  padding: 10px 7px;
+}
+
+/* Si vous avez besoin que vos cellules aient une certaine flexibilité tout en respectant les largeurs de colonnes du colgroup */
+td, th {
+  flex-grow: 1;
+  flex-basis: 0;
   text-align: center; /* Centre le texte horizontalement */
-  padding: 10px 7px; /* Espacement entre le contenu et les bordures des cellules */
+}
+td{
+  min-height: 47px;
 }
 
 input{
