@@ -2,11 +2,20 @@ textarea {
   grid-area: input ;
   transition: box-shadow 0.5s ease-in-out;
 }
-textarea:disabled {
+textarea:disabled,input:disabled{
   background-color: #4e4e4e7a;
   border: solid 2px black;
+  color: black;
 }
 
+.delete-button:disabled img{
+  visibility: hidden;
+  cursor:default;
+}
+.delete-button:disabled:hover{
+    border: 1px solid transparent;
+    cursor:default;
+}
 @media (prefers-color-schem: light) {
   textarea {
     box-shadow: 0 0 0 0 black;
@@ -40,20 +49,29 @@ textarea:disabled {
   display:flex ;
   flex-direction: column;
 }
-.add-button{
-  align-self: end;
-  width: 10%;
-  background-color: #4e4e4e00;
-  position: relative;
-  right: 0;
-  display: flex;
-  justify-content: center;
-  align-items: center;
-}
+
 .delete-button{
   grid-area: delete;
   display:flex;
   cursor: pointer;
+  background-color: #4e4e4e00;
+  padding: 0;
+  width: 100%;
+  height: 100%;
+  min-height: 48px;
+  justify-items: center;
+  align-items: center;
+}
+
+.add-div{
+  margin-top: 10px;
+  background-color: rgba(113, 113, 113, 0.478);
+  border-radius: 5px;
+  cursor: pointer;
+}
+
+.disabled{
+  visibility:hidden;
 }
 .unselectable{
   user-select: none;
@@ -64,7 +82,6 @@ textarea:disabled {
   border-collapse: collapse;
   height: fit-content;
   border-radius: 5px;
-  
 }
 
 table {
@@ -72,14 +89,13 @@ table {
   width: 100%;
   border-collapse: collapse;
   background: rgb(214, 212, 212);
-
 }
 
 .object-input{
   background: rgb(214, 212, 212);
   border-radius: 5px;
-  padding: 0px 7px;
-
+  padding: 10px;
+  width: 100%;
 }
 
 tr {
@@ -103,6 +119,12 @@ input{
   text-align: center; /* Centre le texte horizontalement */
   padding: 10px 0; /* Espacement entre le contenu et les bordures des cellules */
   background-color: rgb(214, 212, 212);
-  font-size: 1em;
+  font-size: 20px;
   width: 100%;
 }
+
+.rejected {
+  border: solid 2px red;
+}
+
+

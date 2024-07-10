@@ -1,5 +1,5 @@
 import "./Input.css";
-import React, { useRef, useState } from "react";
+import React, { useEffect, useRef, useState } from "react";
 import Input from "../../Model/Input-Model";
 import Section from "../../Model/Section-Model";
 
@@ -42,10 +42,14 @@ const InputComponent: React.FC<InputProps> = ({
   const modal = useRef<HTMLDivElement | null>(null);
   const ref = useRef<HTMLElement | null>(null);
   const textarea = {
-      ref: ref,
-      label:inputInfo.id
+    ref: ref,
+    label: inputInfo.id
   }
-  
+
+  useEffect(() => {
+    FormClickActions.emit("SyncProgress", inputInfo);
+  }, []);
+
   const SyncChanges = (inputInfo: Input) => {
     if (inputInfo.property === "approved") {
       setIsActive(false);
@@ -113,40 +117,39 @@ const InputComponent: React.FC<InputProps> = ({
     propagateChange(inputInfo);
   };
 
-  const createModal = (idx:number) => {
+  const createModal = (idx: number) => {
     return (inputInfo.value[idx] as string).split("\n").length +
       (inputInfo.value[idx] as string)
         .split("\n")
-        .map((line:string) => Math.floor(line.length / MAX_CHAR_IN_ROW))
-        .reduce((sum:number, current:number) => sum + current) >
+        .map((line: string) => Math.floor(line.length / MAX_CHAR_IN_ROW))
+        .reduce((sum: number, current: number) => sum + current) >
       3 && (
-      <div className="show-more-container">
-        <label
-          className="open-icon"
-          onClick={() => {
-            modal.current?.classList.add("active");
-          }}
-        >
-          {t("showMoreButton")}
-        </label>
-        <Modal
-          toRef={modal}
-          text={inputInfo.value[idx] as string}
-          handleTextChange={(event: {
-            target: { value: React.SetStateAction<string> };
-          }) => {
-            inputInfo.value[idx] = event.target.value.toString();
-            propagateChange(inputInfo);
-          }}
-          imgs={imgs}
-          close={() => {
-            modal.current?.classList.remove("active");
-          }}
-        />
-      </div>
-    )
+        <div className="show-more-container">
+          <label
+            className="open-icon"
+            onClick={() => {
+              modal.current?.classList.add("active");
+            }}
+          >
+            {t("showMoreButton")}
+          </label>
+          <Modal
+            toRef={modal}
+            text={inputInfo.value[idx] as string}
+            handleTextChange={(event: {
+              target: { value: React.SetStateAction<string> };
+            }) => {
+              inputInfo.value[idx] = event.target.value.toString();
+              propagateChange(inputInfo);
+            }}
+            imgs={imgs}
+            close={() => {
+              modal.current?.classList.remove("active");
+            }}
+          />
+        </div>
+      )
   }
-
   const createSimpleInput = () => {
     return (
       <div className="single-textarea-container">
@@ -172,53 +175,60 @@ const InputComponent: React.FC<InputProps> = ({
       </ div>
     )
   }
-
-  
   const createListInput = () => {
     return (
       <div id={inputInfo.id} className="list-input" ref={textarea.ref as React.MutableRefObject<HTMLDivElement>}>
         <div className="textareas-wrapper">
           {
-            inputInfo.value.map((_,index)=>{
-            return (
-            <div className="single-textarea-container" key={index}>
-              <textarea
-                value={(inputInfo.value as string[])[index]}
-                disabled={inputInfo.disabled}
-                onChange={(event: React.ChangeEvent<HTMLTextAreaElement>) => {
-                  const current = event.target as HTMLTextAreaElement;
-                  resizeTextarea(current);
-                  inputInfo.value[index] = event.target.value;
-                  propagateChange(inputInfo);
-                }}
-                onInput={(event: React.FormEvent<HTMLTextAreaElement>) => {
-                  const current = event.target as HTMLTextAreaElement;
-                  resizeTextarea(current); // Added here
-                }}
-                className="text-box"
-                rows={1}
-              />
-              <a className="delete-button">
-                <img
-                  src={deleteIcon}
-                  alt={t("approveButton")}
-                  width="20"
-                  height="20"
-                  onClick={() => {
-                    inputInfo.value.splice(index, 1);
-                    propagateChange(inputInfo);
-                  }}
-                />
-              </a>
-              {createModal(index)}
-            </div>
-            )})
+            inputInfo.value.map((_, index) => {
+              return (
+                <div className="single-textarea-container" key={index}>
+                  <textarea
+                    value={(inputInfo.value as string[])[index]}
+                    disabled={inputInfo.disabled}
+                    onChange={(event: React.ChangeEvent<HTMLTextAreaElement>) => {
+                      const current = event.target as HTMLTextAreaElement;
+                      resizeTextarea(current);
+                      inputInfo.value[index] = event.target.value;
+                      propagateChange(inputInfo);
+                    }}
+                    onInput={(event: React.FormEvent<HTMLTextAreaElement>) => {
+                      const current = event.target as HTMLTextAreaElement;
+                      resizeTextarea(current); // Added here
+                    }}
+                    className="text-box"
+                    rows={1}
+                  />
+                  <button
+                      className={`delete-button ${inputInfo.disabled ? 'disabled' : ''}`}
+                      disabled={inputInfo.disabled}
+                    >
+                      <img
+                        src={deleteIcon}
+                        className={`delete-img ${inputInfo.disabled ? 'disabled' : ''}`}
+                        alt={t("approveButton")}
+                        width="20"
+                        height="20"
+                        style={{ marginLeft: "15px" }}
+                        onClick={() => {
+                          inputInfo.value.splice(index, 1);
+                          propagateChange(inputInfo);
+                        }}
+                      />
+                    </button>
+                  {createModal(index)}
+                </div>
+              )
+            })
           }
-          <div onDoubleClick={()=>{
-              (inputInfo.value as string[]).push(""); // Explicitly type inputInfo.value as string[]
-              propagateChange(inputInfo);
-            }} className="textarea unselectable">
-              {t("DoubleClickNewButton")}
+          <div 
+          onDoubleClick={() => {
+            (inputInfo.value as string[]).push("");
+            propagateChange(inputInfo);
+          }} 
+          className={`textarea unselectable add-div ${inputInfo.disabled ? 'disabled' : ''}`}
+          >
+            <strong>{t("DoubleClickNewButton")}</strong>
           </div>
         </div>
       </div>
@@ -226,49 +236,48 @@ const InputComponent: React.FC<InputProps> = ({
   }
 
   const adjustFontSize = (inputElement: HTMLInputElement) => {
-    const tdElement = inputElement.parentElement as HTMLTableCellElement;
-    const maxWidth: number = tdElement.offsetWidth;
-    console.log(maxWidth);
-    const actualWidth: number = inputElement.scrollWidth;
-    const currentFontSize: number = parseFloat(window.getComputedStyle(inputElement, null).getPropertyValue('font-size'));
-    if (actualWidth > maxWidth && currentFontSize > 10) {
-      inputElement.style.fontSize = `${currentFontSize * 0.8}px`;
-    } else if (actualWidth < maxWidth && currentFontSize < 16) {
-      inputElement.style.fontSize = `${currentFontSize * 1.1}px`;
+    const maxWidth = (inputElement.parentElement as HTMLElement).offsetWidth;
+    const actualWidth = inputElement.scrollWidth;
+    const currentFontSize = parseFloat(window.getComputedStyle(inputElement, null).getPropertyValue('font-size'));
+    if (actualWidth > maxWidth && currentFontSize > 10) { // Ne pas dépasser une taille minimale.
+      inputElement.style.fontSize = `${currentFontSize * 0.9}px`; // Réduire la taille d'environ 10%
+    } else if (actualWidth < maxWidth && currentFontSize > 20) {
+      inputElement.style.fontSize = `${currentFontSize * 1.1}px`; // Augmenter la taille d'environ 10%
     }
   };
 
   const createObjectInput = () => {
     const keys = Object.keys((inputInfo.value as {}[])[0]);
     return (
-      <div id={inputInfo.id} className="object-input" ref={textarea.ref as React.MutableRefObject<HTMLDivElement|null>}>
+      <div id={inputInfo.id} className="object-input" ref={textarea.ref as React.MutableRefObject<HTMLDivElement | null>}>
         <table>
-            <colgroup>
-              <col span={1} style={{width:"40%"}}/>
-              <col span={1} style={{width: "20%"}}/>
-              <col span={1} style={{width: "15%"}}/>
-            </colgroup>
+          <colgroup>
+            <col span={1} style={{ width: "40%" }} />
+            <col span={1} style={{ width: "20%" }} />
+            <col span={1} style={{ width: "15%" }} />
+            <col span={1} style={{ width: "5%" }} />
+          </colgroup>
           <thead>
-          {keys.map((key, index) => {
-                return <th key={index}>{key}</th>;
-              })}
+            {keys.map((key, index) => {
+              return <th key={index}>{key}</th>;
+            })}
           </thead>
           <tbody>
-            {inputInfo.value.map((_obj, index) => {
+            {inputInfo.value.map((_, index) => {
               return (
                 <tr key={index}>
-                  <td class>
+                  <td>
                     <input
-                    id="input1"
+                      id="input1"
                       type="text"
-                      value={(inputInfo.value[index] as {[key:string]:string})[keys[0]]}
+                      value={(inputInfo.value[index] as { [key: string]: string })[keys[0]]}
                       disabled={inputInfo.disabled}
                       onChange={(event) => {
-                        let newValue = { ...(inputInfo.value[index] as {[key:string]:string}), [keys[0]]: event.target.value };
+                        let newValue = { ...(inputInfo.value[index] as { [key: string]: string }), [keys[0]]: event.target.value };
                         inputInfo.value[index] = newValue;
                         propagateChange(inputInfo);
                       }}
-                        onInput={(event) => {
+                      onInput={(event) => {
                         const input = event.currentTarget;
                         adjustFontSize(input);
                       }}
@@ -277,56 +286,82 @@ const InputComponent: React.FC<InputProps> = ({
                   <td>
                     <input
                       type="text"
-                      value={(inputInfo.value[index] as {[key:string]:string})[keys[1]]}
+                      value={(inputInfo.value[index] as { [key: string]: string })[keys[1]]}
                       disabled={inputInfo.disabled}
                       onChange={(event) => {
-                        let newValue = { ...(inputInfo.value[index] as {[key:string]:string}), [keys[1]]: event.target.value };
+                        let newValue = { ...(inputInfo.value[index] as { [key: string]: string }), [keys[1]]: event.target.value };
                         inputInfo.value[index] = newValue;
                         propagateChange(inputInfo);
                       }}
-                        onInput={(event) => {
+                      onInput={(event) => {
                         const input = event.currentTarget;
                         adjustFontSize(input);
                       }}
                     />
                   </td>
                   <td>
-                  <input
+                    <input
                       type="text"
-                      value={(inputInfo.value[index] as {[key:string]:string})[keys[2]]}
+                      value={(inputInfo.value[index] as { [key: string]: string })[keys[2]]}
                       disabled={inputInfo.disabled}
                       onChange={(event) => {
-                        let newValue = { ...(inputInfo.value[index] as {[key:string]:string}), [keys[2]]: event.target.value };
+                        let newValue = { ...(inputInfo.value[index] as { [key: string]: string }), [keys[2]]: event.target.value };
                         inputInfo.value[index] = newValue;
                         propagateChange(inputInfo);
                       }}
-                        onInput={(event) => {
+                      onInput={(event) => {
                         const input = event.currentTarget;
                         adjustFontSize(input);
                       }}
                     />
+                  </td>
+                  <td>
+                    <button
+                      className={`delete-button ${inputInfo.disabled ? 'disabled' : ''}`}
+                      disabled={inputInfo.disabled}
+                    >
+                      <img
+                        src={deleteIcon}
+                        className={`delete-img ${inputInfo.disabled ? 'disabled' : ''}`}
+                        alt={t("approveButton")}
+                        width="20"
+                        height="20"
+                        style={{ marginLeft: "15px" }}
+                        onClick={() => {
+                          if(inputInfo.value.length === 1) {
+                            inputInfo.value = [{ [keys[0]]: "", [keys[1]]: "", [keys[2]]: "" }]; // Explicitly type inputInfo.value as string[]
+                          }else{
+                            inputInfo.value.splice(index, 1);
+                          }
+                          propagateChange(inputInfo);
+                        }}
+                      />
+                    </button>
                   </td>
                 </tr>
               )
             })}
           </tbody>
         </table>
-        <div onDoubleClick={()=>{
-              (inputInfo.value as string[]).push(""); // Explicitly type inputInfo.value as string[]
-              propagateChange(inputInfo);
-            }} className="textarea unselectable">
-              {t("DoubleClickNewButton")}
-          </div>
+        <div 
+          onDoubleClick={() => {
+            (inputInfo.value as string[]).push("");
+            propagateChange(inputInfo);
+          }} 
+          className={`textarea unselectable add-div ${inputInfo.disabled ? 'disabled' : ''}`}
+        >
+          <strong>{t("DoubleClickNewButton")}</strong>
+        </div>
       </div>
     )
   }
 
-  const inputCreator = ()=>{
-    if(inputInfo.isInputObjectList){
+  const inputCreator = () => {
+    if (inputInfo.isInputObjectList) {
       return createObjectInput()
-    }else if(inputInfo.isAlreadyTable){
+    } else if (inputInfo.isAlreadyTable) {
       return createListInput()
-    }else{
+    } else {
       return createSimpleInput()
     }
   }
@@ -375,8 +410,7 @@ const InputComponent: React.FC<InputProps> = ({
           </button>
         </div>
       </div>
-      {/* Show more functionality moved here for better separation */}
-      
+
     </div>
   );
 };

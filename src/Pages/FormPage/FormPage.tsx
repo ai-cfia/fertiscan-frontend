@@ -1,6 +1,5 @@
-import React, {
+import {
   useState,
-  useRef,
   useEffect,
   StrictMode,
   useContext,
@@ -134,16 +133,9 @@ const FormPage = () => {
   );
 
 
-  const resizeTextarea = (textarea: HTMLTextAreaElement | null) => {
-    if (textarea) {
-      textarea.style.height = "auto";
-      textarea.style.height = textarea.scrollHeight + "px";
-    }
-  };
-
   const api_url = "http://localhost:5000";
-  /**
-  const _approveAll = () => {
+  
+  const approveAll = () => {
     data.sections.forEach((section) => {
       section.inputs.forEach((input) => {
         input.property = "approved";
@@ -154,7 +146,7 @@ const FormPage = () => {
   };
   
   window.approveAll = approveAll;
-  */
+  
   /**
    * Prepare and send request to backend for file analysis
    * @returns data : the data retrieved from the backend
