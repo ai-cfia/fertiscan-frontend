@@ -18,7 +18,7 @@ interface InputProps {
   onModalStateChange: (isOpen: boolean) => void;
 }
 
-
+ 
 const MAX_CHAR_IN_ROW = 37;
 
 const resizeTextarea = (textarea: HTMLElement | null) => {
