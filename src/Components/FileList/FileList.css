@@ -4,11 +4,11 @@
   grid-area: b;
   padding: 5px;
   width: 100%;
-  margin-top: 67px; /* Adjust margin to be at the same height of the draganddroptComponent */
+  margin-top: 67px;
   overflow-x: hidden;
 }
 
-@media only screen and (min-width: 850px) {
+@media only screen and (min-width: 1093px) {
   .file-list.empty {
     width: 100%;
     display: flex;
@@ -18,7 +18,7 @@
   }
 }
 
-@media only screen and (max-width: 850px) {
+@media only screen and (max-width: 1092px) {
   .file-list.empty {
     width: 96%;
     display: flex;
@@ -28,7 +28,7 @@
   }
   .file-list {
     display: flex;
-    justify-content: center;
+    justify-content: flex-start;
     flex-direction: column;
   }
 }
@@ -47,19 +47,19 @@
 }
 
 .overlay {
-  position: absolute; /* Positioned absolutely within FileList */
+  position: absolute;
   top: 0;
-  left: 0; /* Initial position (can be adjusted based on selection) */
-  width: 100%; /* Adjust width/height as needed */
+  left: 0;
+  width: 100%;
   height: 100%;
-  background-color: rgba(0, 0, 0, 0.5); /* Gray overlay with opacity */
-  display: flex; /* Center image content horizontally and vertically */
+  background-color: rgba(0, 0, 0, 0.5);
+  display: flex;
   align-items: center;
   justify-content: center;
-  z-index: 1; /* Ensure overlay is above FileElement components */
-  visibility: hidden; /* Initially hidden */
+  z-index: 1;
+  visibility: hidden;
 }
 
 .overlay.active {
-  visibility: visible; /* Show overlay when an image is selected */
+  visibility: visible;
 }

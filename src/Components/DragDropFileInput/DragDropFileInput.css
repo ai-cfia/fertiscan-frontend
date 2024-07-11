@@ -107,7 +107,6 @@ input[type="file"] {
 }
 
 .camera-container {
-  display: none;
   flex-direction: column;
   align-items: center;
 }

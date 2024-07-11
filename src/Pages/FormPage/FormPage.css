@@ -169,9 +169,6 @@ textarea {
   margin-left: 20px;
 }
 
-.button {
-  background-color: #dcdcdc;
-}
 
 .input-error {
   border: 2px solid red; /* Outlines the element with a red border */
