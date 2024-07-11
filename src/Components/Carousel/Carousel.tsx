@@ -4,13 +4,14 @@ import ImageZoomInOut from "../ImageZoomInOut/ImageZoomInOut";
 import { useTranslation } from "react-i18next";
 
 interface CarouselProps {
+  id:string;
   imgs: {
     url: string;
     title: string;
   }[];
 }
 
-const NewCarousel: React.FC<CarouselProps> = ({ imgs }) => {
+const NewCarousel: React.FC<CarouselProps> = ({ id, imgs }) => {
   const { t } = useTranslation();
   const [currImg, setCurrImg] = useState<number>(0);
   const imgRefs = useRef<(HTMLImageElement | null)[]>([]);
@@ -55,23 +56,19 @@ const NewCarousel: React.FC<CarouselProps> = ({ imgs }) => {
   }, [currImg]);
 
   return (
-    <div className="carousel-wrapper">
+    <div id={id} className="carousel-wrapper">
       <div className="curr-img">
-        <div>
           <a className="prev" onClick={() => selectImg(currImg - 1)}>
             &#10094;
           </a>
-        </div>
         <ImageZoomInOut
           className="curr-img"
           imageUrl={imgs[currImg] ? imgs[currImg].url : ""}
           alt={t("noPicture")}
         />
-        <div>
           <a className="next" onClick={() => selectImg(currImg + 1)}>
             &#10095;
           </a>
-        </div>
       </div>
       <div className="carousel" ref={carouselRef}>
         {imgs.map((img, index) => (

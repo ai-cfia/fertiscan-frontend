@@ -239,6 +239,31 @@ const FormPage = () => {
     });
   };
 
+  const elementToFix = document.getElementById('carousel') as HTMLDivElement;
+  let lastKnownScrollPosition = 0;
+  let ticking = false;
+  
+  function setElementPosition(scrollPos: number): void {
+    // Ici, il n'y a pas de calcul lourd ou d'interrogation du DOM; juste une simple assignation
+    elementToFix.style.transform = `translateY(${scrollPos}px)`;
+  }
+  
+  window.addEventListener('scroll', function() {
+    lastKnownScrollPosition = window.scrollY;
+  
+    // On ne change pas la position de l'élément directement ici pour éviter les jank
+    if (!ticking) {
+      window.requestAnimationFrame(function() {
+        // Mettez à jour la position de l'élément dans le callback de requestAnimationFrame
+        setElementPosition(lastKnownScrollPosition);
+        ticking = false;
+      });
+  
+      ticking = true;
+    }
+  });
+
+
   const inputStates = data.sections.flatMap((section) =>
     section.inputs.map((input) => ({
       label: input.id,
@@ -307,9 +332,7 @@ const FormPage = () => {
   return (
     <StrictMode>
       <div className={"formPage-container ${theme}"}>
-        <div className="pic-container">
-          <Carousel imgs={urls}></Carousel>
-        </div>
+          <Carousel id="carousel" imgs={urls}></Carousel>
         <div className="data-container">
           {loading ? (
             <div
