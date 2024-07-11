@@ -8,6 +8,7 @@ import SideMenu from "./Components/SideMenu/SideMenu";
 import SettingPage from "./Pages/SettingPage/SettingPage";
 import i18next from "i18next";
 import { SessionProvider } from "./Utils/SessionContext";
+import { ErrorProvider } from "./Utils/ErrorContext";
 
 function App() {
   useEffect(() => {
@@ -18,17 +19,19 @@ function App() {
   return (
     <SessionProvider>
       <BrowserRouter>
-        <StrictMode>
-          <Header />
-          <SideMenu />
-        </StrictMode>
-        <Routes>
-          <Route path="/">
-            <Route index element={<HomePage />} />
-            <Route path="Settings" element={<SettingPage />} />
-            <Route path="*" element={<NoPage />} />
-          </Route>
-        </Routes>
+        <ErrorProvider>
+          <StrictMode>
+            <Header />
+            <SideMenu />
+          </StrictMode>
+          <Routes>
+            <Route path="/">
+              <Route index element={<HomePage />} />
+              <Route path="Settings" element={<SettingPage />} />
+              <Route path="*" element={<NoPage />} />
+            </Route>
+          </Routes>
+        </ErrorProvider>
       </BrowserRouter>
     </SessionProvider>
   );

@@ -1,8 +1,9 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import "./Modal.css";
 import closeIcon from "../../assets/close_icon.png";
 import Carousel from "../Carousel/Carousel";
 import { useTranslation } from "react-i18next";
+
 interface ModalProps {
   text: string;
   imgs: Image[]; // Array of Image objects
@@ -14,8 +15,8 @@ interface ModalProps {
 }
 
 interface Image {
-  url: string; // Image URL
-  title: string; // Image title (optional)
+  url: string;
+  title: string;
 }
 
 const Modal: React.FC<ModalProps> = ({
@@ -26,8 +27,7 @@ const Modal: React.FC<ModalProps> = ({
   imgs,
 }) => {
   const { t } = useTranslation();
-  const [isEditing, setIsEditing] = useState(false); // Added state for edit mode
-
+  const [isEditing, setIsEditing] = useState(false);
   const handleOverlayTextChange = (
     event: React.ChangeEvent<HTMLTextAreaElement>,
   ) => {
@@ -49,6 +49,18 @@ const Modal: React.FC<ModalProps> = ({
     setIsEditing(!isEditing); // Toggle edit mode
   };
 
+  useEffect(() => {
+    const divElements = document.querySelectorAll(".card-content");
+
+    divElements.forEach((div) => {
+      if (isEditing) {
+        div.classList.add("no-scrollBar");
+      } else {
+        div.classList.remove("no-scrollBar");
+      }
+    });
+  }, [isEditing]);
+
   return (
     <div className="overlay" onClick={handleOverlayClick} ref={toRef}>
       <div className="pic-container">
@@ -65,7 +77,7 @@ const Modal: React.FC<ModalProps> = ({
           {isEditing ? (
             <textarea
               value={text} // Use the current text state value
-              onChange={handleOverlayTextChange} // Update text state here
+              onChange={handleOverlayTextChange}
               style={{ width: "100%", height: "300px" }}
             />
           ) : (

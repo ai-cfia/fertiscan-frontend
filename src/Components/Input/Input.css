@@ -1,9 +1,31 @@
 textarea {
   transition: box-shadow 0.5s ease-in-out;
+  border: 1px solid #ccc;
+  border-radius: 10px;
+  box-sizing: border-box;
+  width: 100%; /* Sets textarea width to be 100% of its parent container. */
+  height: auto;
+  min-height: 40px;
+  max-height: 97px;
+  resize: none;
+  background-color: rgb(220, 219, 219);
+  overflow-y: hidden;
+  padding: 5px;
+  font-family: Arial, sans-serif;
+  font-size: 20px;
+  font-weight: 400; /* Normal weight */
+  color: #000000; /* Dark gray */
+  text-decoration: none;
 }
+
 textarea:disabled {
   background-color: #4e4e4e7a;
   border: solid 2px black;
+}
+
+
+.rejected {
+  border: solid 2px red;
 }
 
 @media (prefers-color-schem: light) {
@@ -11,8 +33,101 @@ textarea:disabled {
     box-shadow: 0 0 0 0 black;
   }
 }
-@media (prefers-color-schem: dark) {
+
+/* Dark mode box shadow */
+@media (prefers-color-scheme: dark) {
   textarea {
     box-shadow: 0 0 0 0 white;
   }
+  .open-icon {
+    color: white;
+  }
+}
+
+/* Show more button container */
+.show-more-container {
+  align-self: end;
+  justify-self: end;
+  display: flex;
+  justify-content: flex-end;
+}
+
+.show-more-container label {
+  width: fit-content;
+}
+
+.underlined {
+  text-decoration: underline;
+}
+
+.data-container h1 {
+  grid-column: 1;
+  grid-row: 1 / span 2;
+  text-align: left;
+  margin-left: 10px;
+  font-size: 35px;
+  width: 100%;
+}
+
+.open-icon {
+  cursor: pointer;
+  font-size: 15px;
+  text-decoration: underline;
+  color: darkgrey;
+}
+
+.button {
+  background-color: #dcdcdc;
+}
+
+.input-error {
+  border: 2px solid red; /* Outline element with a red border */
+}
+
+/* Grid container for the input elements */
+.input-grid-container {
+  display: grid;
+  grid-template-columns: auto 1fr; /* Two columns layout */
+  grid-template-rows: auto 1fr auto; /* Three rows layout */
+  gap: 11px;
+}
+
+.input-grid-container {
+  display: grid;
+  grid-template-rows: auto 1fr auto;
+  grid-template-columns: 2fr auto;
+  column-gap: 30px;             
+}              
+
+.input-label {
+  margin-top: 10px;
+  grid-column: 1;
+  grid-row: 1;
+  text-align: left;
+  margin-left: 10px;
+  font-weight: bold;
+}
+
+.textarea-container {
+  grid-column: 1;
+  grid-row: 2 / span 2; 
+  justify-content: left;
+  align-items: center; 
+  width: 100%; 
+  margin-left: 10px;
+}
+
+.button-container {
+  margin-top: -5px;
+  align-items: center;
+  align-self: center;
+  grid-column: 2;
+  grid-row: 2;
+  justify-self: start; /* Aligner le button-container au début de la colonne */
+}
+
+.show-more-container {
+  margin-bottom: -15px;
+  grid-column: 1;
+  grid-row: 3;
 }

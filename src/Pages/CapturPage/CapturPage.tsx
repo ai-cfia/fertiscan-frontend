@@ -134,6 +134,15 @@ function CapturPage() {
     return maxNumber + 1;
   };
 
+  // Prevent scrolling useEffect
+  useEffect(() => {
+    if (renameModalOpen) {
+      document.body.style.overflow = "hidden";
+    } else {
+      document.body.style.overflow = "visible";
+    }
+  }, [renameModalOpen]);
+
   return (
     <StrictMode>
       <div className={"App ${theme}"}>
@@ -151,11 +160,14 @@ function CapturPage() {
             file={toShow}
             calculateCaptureCounter={calculateCaptureCounter}
           />
-          {state.data.pics.length > 0 && (
-            <button className="submit-btn" type="button" onClick={Submit}>
-              {t("submitButton")}
-            </button>
-          )}
+          <button
+            className="submit-btn"
+            type="button"
+            onClick={Submit}
+            disabled={state.data.pics.length === 0}
+          >
+            {t("submitButton")}
+          </button>
           <FileList
             blobs={state.data.pics}
             onSelectedChange={handleSelectedChange}

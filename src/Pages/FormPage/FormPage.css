@@ -1,6 +1,14 @@
 .formPage-container {
   display: grid;
   justify-content: space-between;
+
+  padding: 0 10px;
+  grid-template-columns: "1fr auto";
+  grid-gap: 1rem;
+}
+
+.disable-scroll{
+  overflow:-moz-hidden-unscrollable;
   padding: 100 10px !important;
   grid-template-columns: 1fr auto; /* Use correct grid column definition */
   grid-gap: 1rem;
@@ -212,6 +220,12 @@ textarea {
 
 .loader-container-form {
   display: none;
+}
+
+.submit-button{
+  background-color: #dcdcdc;
+  margin-top: 20px;
+  width: 50%;
 }
 .progress-container {
   position: sticky;

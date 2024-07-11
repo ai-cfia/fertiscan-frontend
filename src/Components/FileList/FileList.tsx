@@ -71,7 +71,7 @@ const FileList: React.FC<FileListProps> = ({
       onContextMenu={(e) => e.preventDefault()}
     >
       <div
-        className="file-list"
+        className={`file-list ${blobs.length === 0 ? "empty" : ""}`}
         style={{
           position: "relative",
           height: "500px",

@@ -354,15 +354,31 @@ const FormPage = () => {
     setState({ ...state, data: { pics: blobs, form: new_data } });
   };
 
+  const [isAnyModalOpen, setIsAnyModalOpen] = useState(false);
+  const handleModalStateChange = (isOpen: boolean) => {
+    setIsAnyModalOpen(isOpen);
+  };
+
+  // Prevent scrolling useEffect
+  useEffect(() => {
+    if (isAnyModalOpen || loading) {
+      document.body.style.overflow = "hidden";
+    } else {
+      document.body.style.overflow = "visible";
+    }
+  }, [isAnyModalOpen, loading]);
+
   return (
     <StrictMode>
-      <div className="formPage-container ${theme}">
+      <div className={"formPage-container ${theme}"}>
         <div className="pic-container">
           <Carousel imgs={urls}></Carousel>
         </div>
         <div className="data-container">
           {loading ? (
-            <div className={`loader-container-form ${loading ? "active" : ""}`}>
+            <div
+              className={`loader-container-form ${loading ? "active " : ""}`}
+            >
               <div className="spinner"></div>
               <p>{t("analyzingText")}</p>
             </div>
@@ -377,10 +393,11 @@ const FormPage = () => {
                     modals={modals}
                     imgs={urls}
                     propagateChange={handleDataChange}
+                    onModalStateChange={handleModalStateChange}
                   ></SectionComponent>
                 );
               })}
-              <button className="button" onClick={submitForm}>
+              <button className="submit-button" onClick={submitForm}>
                 {t("submitButton")}
               </button>
             </div>
