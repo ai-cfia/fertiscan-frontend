@@ -39,10 +39,12 @@ const resizeTextarea = (textarea: HTMLElement | null) => {
 };
 
 const InputComponent: React.FC<InputProps> = ({
+  // eslint-disable-next-line
   parent,
   inputInfo,
   imgs,
   propagateChange,
+  // eslint-disable-next-line
   onModalStateChange,
 }) => {
   const { t } = useTranslation();
@@ -211,10 +213,9 @@ const InputComponent: React.FC<InputProps> = ({
                       disabled={inputInfo.disabled}
                       onClick={() => {
                         if(inputInfo.value.length > 1) {
-                          inputInfo.value.splice(index, 1); // This will remove the item at the given index
+                          inputInfo.value.splice(index, 1); 
                           propagateChange(inputInfo);
                         }
-                        // Otherwise, do nothing when the length of the array is 1 to avoid deleting the parent
                       }}
                     >
                       <img
@@ -244,47 +245,44 @@ const InputComponent: React.FC<InputProps> = ({
     )
   }
 
-  const adjustFontSize = (inputElement: HTMLInputElement) => {
+  const [lastWidth, setLastWidth] = useState(window.innerWidth);
+  
+  const adjustFontSize = (inputElement: HTMLInputElement, isWindowEnlarged: boolean|null) => {
     const maxWidth = (inputElement.parentElement as HTMLElement).offsetWidth;
     const actualWidth = inputElement.scrollWidth;
-    const currentFontSize = parseFloat(window.getComputedStyle(inputElement, null).getPropertyValue('font-size'));
-    if (actualWidth >= maxWidth && currentFontSize) { 
-      console.log(currentFontSize);
-      if(currentFontSize -0.5>7){
-        inputElement.style.fontSize = `${currentFontSize -0.5}px`; 
-      }
-    } else if (actualWidth < maxWidth && currentFontSize < 15) {
-      inputElement.style.fontSize = `${currentFontSize * 1.1}px`;
-      if(inputElement.style.fontSize >= "15px") {
-        inputElement.style.fontSize = "14.58px";
-      }
+    const currentFontSize = parseFloat(window.getComputedStyle(inputElement).getPropertyValue('font-size'));
+    
+    if ((!isWindowEnlarged && actualWidth >= maxWidth && currentFontSize > 7)|| !isWindowEnlarged==null && actualWidth >= maxWidth && currentFontSize > 7) {
+      // Réduction de la police si la fenêtre est réduite et que la largeur du contenu est supérieure à la largeur maximale autorisée.
+      inputElement.style.fontSize = `${currentFontSize - 0.9}px`;
+    } else if ((isWindowEnlarged && actualWidth < maxWidth && currentFontSize < 20)|| isWindowEnlarged==null && actualWidth < maxWidth && currentFontSize < 20) {
+      // Augmentation de la police si la fenêtre est agrandie et que la largeur du contenu est inférieure à la largeur maximale autorisée.
+      inputElement.style.fontSize = `${Math.min(currentFontSize + 0.9, 20)}px`;
     }
   };
 
-  const [windowWidth, setWindowWidth] = useState(window.innerWidth);
+  const [_windowWidth, setWindowWidth] = useState(window.innerWidth);
 
   useEffect(() => {
     const handleResize = () => {
       const newWidth = window.innerWidth;
-      if (newWidth !== windowWidth) {
+      if (newWidth !== lastWidth) {
         setWindowWidth(newWidth);
         
         const inputElements = objectInputRef.current?.querySelectorAll('input');
-        
         inputElements?.forEach(inputElement => {
           if (inputElement instanceof HTMLInputElement) {
-            adjustFontSize(inputElement);
+            adjustFontSize(inputElement, newWidth > lastWidth);
           }
         });
+        
+        setLastWidth(newWidth);
       }
     };
   
     window.addEventListener('resize', handleResize);
-  
-    return () => {
-      window.removeEventListener('resize', handleResize);
-    };
-  }, [windowWidth]);
+    return () => window.removeEventListener('resize', handleResize);
+  }, [lastWidth]);
 
   const createObjectInput = () => {
     const keys = Object.keys((inputInfo.value as {}[])[0]);
@@ -319,7 +317,7 @@ const InputComponent: React.FC<InputProps> = ({
                       }}
                       onInput={(event) => {
                         const input = event.currentTarget;
-                        adjustFontSize(input);
+                        adjustFontSize(input, null);
                       }}
                     />
                   </td>
@@ -335,7 +333,7 @@ const InputComponent: React.FC<InputProps> = ({
                       }}
                       onInput={(event) => {
                         const input = event.currentTarget;
-                        adjustFontSize(input);
+                        adjustFontSize(input,null);
                       }}
                     />
                   </td>
@@ -351,7 +349,7 @@ const InputComponent: React.FC<InputProps> = ({
                       }}
                       onInput={(event) => {
                         const input = event.currentTarget;
-                        adjustFontSize(input);
+                        adjustFontSize(input,null);
                       }}
                     />
                   </td>
