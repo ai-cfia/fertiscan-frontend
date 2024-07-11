@@ -48,7 +48,7 @@ const InputComponent: React.FC<InputProps> = ({
   const { t } = useTranslation();
   const [isActive, setIsActive] = useState(false);
   const [property, setProperty] = useState(inputInfo.property);
-
+  const objectInputRef = useRef<HTMLDivElement>(null);
   const modal = useRef<HTMLDivElement | null>(null);
   const ref = useRef<HTMLElement | null>(null);
   const textarea = {
@@ -248,17 +248,48 @@ const InputComponent: React.FC<InputProps> = ({
     const maxWidth = (inputElement.parentElement as HTMLElement).offsetWidth;
     const actualWidth = inputElement.scrollWidth;
     const currentFontSize = parseFloat(window.getComputedStyle(inputElement, null).getPropertyValue('font-size'));
-    if (actualWidth > maxWidth && currentFontSize > 10) { // Ne pas dépasser une taille minimale.
-      inputElement.style.fontSize = `${currentFontSize * 0.9}px`; // Réduire la taille d'environ 10%
-    } else if (actualWidth < maxWidth && currentFontSize > 20) {
-      inputElement.style.fontSize = `${currentFontSize * 1.1}px`; // Augmenter la taille d'environ 10%
+    if (actualWidth >= maxWidth && currentFontSize) { 
+      console.log(currentFontSize);
+      if(currentFontSize -0.5>7){
+        inputElement.style.fontSize = `${currentFontSize -0.5}px`; 
+      }
+    } else if (actualWidth < maxWidth && currentFontSize < 15) {
+      inputElement.style.fontSize = `${currentFontSize * 1.1}px`;
+      if(inputElement.style.fontSize >= "15px") {
+        inputElement.style.fontSize = "14.58px";
+      }
     }
   };
+
+  const [windowWidth, setWindowWidth] = useState(window.innerWidth);
+
+  useEffect(() => {
+    const handleResize = () => {
+      const newWidth = window.innerWidth;
+      if (newWidth !== windowWidth) {
+        setWindowWidth(newWidth);
+        
+        const inputElements = objectInputRef.current?.querySelectorAll('input');
+        
+        inputElements?.forEach(inputElement => {
+          if (inputElement instanceof HTMLInputElement) {
+            adjustFontSize(inputElement);
+          }
+        });
+      }
+    };
+  
+    window.addEventListener('resize', handleResize);
+  
+    return () => {
+      window.removeEventListener('resize', handleResize);
+    };
+  }, [windowWidth]);
 
   const createObjectInput = () => {
     const keys = Object.keys((inputInfo.value as {}[])[0]);
     return (
-      <div id={inputInfo.id} className="object-input" ref={textarea.ref as React.MutableRefObject<HTMLDivElement | null>}>
+      <div id={inputInfo.id} className="object-input" ref={objectInputRef}>
         <table>
           <colgroup>
             <col span={1} style={{ width: "45%" }} />

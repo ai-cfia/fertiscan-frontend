@@ -1,11 +1,12 @@
 textarea {
-  grid-area: input ;
+  grid-area: input;
   grid-column: 1;
   transition: box-shadow 0.5s ease-in-out;
   border: 1px solid #ccc;
   border-radius: 10px;
   box-sizing: border-box;
-  width: 100%; /* Sets textarea width to be 100% of its parent container. */
+  width: 100%;
+  /* Sets textarea width to be 100% of its parent container. */
   height: auto;
   min-height: 40px;
   max-height: 97px;
@@ -15,24 +16,29 @@ textarea {
   padding: 5px;
   font-family: Arial, sans-serif;
   font-size: 20px;
-  font-weight: 400; /* Normal weight */
-  color: #000000; /* Dark gray */
+  font-weight: 400;
+  /* Normal weight */
+  color: #000000;
+  /* Dark gray */
   text-decoration: none;
 }
-textarea:disabled,input:disabled{
+
+textarea:disabled, input:disabled {
   background-color: #4e4e4e7a;
   border: solid 2px black;
   color: black;
 }
 
-.delete-button:disabled img{
+.delete-button:disabled img {
   visibility: hidden;
-  cursor:default;
+  cursor: default;
 }
-.delete-button:disabled:hover{
-    border: 1px solid transparent;
-    cursor:default;
+
+.delete-button:disabled:hover {
+  border: 1px solid transparent;
+  cursor: default;
 }
+
 .rejected {
   border: solid 2px red;
 }
@@ -48,6 +54,7 @@ textarea:disabled,input:disabled{
   textarea {
     box-shadow: 0 0 0 0 white;
   }
+
   .open-icon {
     color: white;
   }
@@ -90,14 +97,17 @@ textarea:disabled,input:disabled{
 }
 
 .input-error {
-  border: 2px solid red; /* Outline element with a red border */
+  border: 2px solid red;
+  /* Outline element with a red border */
 }
 
 /* Grid container for the input elements */
 .input-grid-container {
   display: grid;
-  grid-template-columns: auto 1fr; /* Two columns layout */
-  grid-template-rows: auto 1fr auto; /* Three rows layout */
+  grid-template-columns: auto 1fr;
+  /* Two columns layout */
+  grid-template-rows: auto 1fr auto;
+  /* Three rows layout */
   gap: 11px;
 }
 
@@ -106,8 +116,8 @@ textarea:disabled,input:disabled{
   display: grid;
   grid-template-rows: auto 1fr auto;
   grid-template-columns: 2fr auto;
-  column-gap: 30px;             
-}              
+  column-gap: 30px;
+}
 
 .input-label {
   margin-top: 10px;
@@ -120,25 +130,28 @@ textarea:disabled,input:disabled{
 
 .textarea-container {
   grid-column: 1;
-  grid-row: 2 / span 2; 
+  grid-row: 2 / span 2;
   justify-content: left;
-  align-items: center; 
-  width: 100%; 
+  align-items: center;
+  width: 100%;
   margin-left: 10px;
 }
-textarea{
-  padding: 5px 0!important;
+
+textarea {
+  padding: 5px 0 !important;
 }
 
 .button-container {
-  grid-area:button;
-align-self: center;}
+  grid-area: button;
+  align-self: center;
+}
 
 .show-more-container {
   margin-bottom: -15px;
   grid-column: 1;
   grid-row: 3;
 }
+
 /*Containers*/
 .input-container {
   display: grid;
@@ -150,22 +163,28 @@ align-self: center;}
 }
 
 /*Only for the textarea*/
-.single-textarea-container{
+.single-textarea-container {
   display: grid;
   grid-template-areas:
-    "input input input"
-    ". show-more .";
+    "input"
+    "show-more";
 }
+
 /*Only for list table*/
-.table-textarea-container{
+.table-textarea-container {
   display: grid;
   grid-template-areas:
     "input delete"
     ". show-more";
-    grid-template-columns: 90% 10%;
+  grid-template-columns: 90% 10%;
 }
+
+.button{
+  margin-top: 20%;
+}
+
 /*Only for list object table*/
-.object-input{
+.object-input {
   background: rgb(214, 212, 212);
   border-radius: 5px;
   padding: 10px;
@@ -179,51 +198,52 @@ align-self: center;}
   width: 100%;
 }
 
-.list-input{
+.list-input {
   width: 100%;
   border-radius: 5px;
 }
-.textareas-wrapper{
+
+.textareas-wrapper {
   background-color: rgb(214, 212, 212);
   border-radius: 5px;
   padding: 10px;
 }
-.test-button{
+
+.test-button {
   display: grid;
-  grid-template-areas: 
-  "inputcontainer button";
+  grid-template-areas:
+    "inputcontainer button";
   grid-template-columns: 80% 20%;
   align-items: center;
 }
 
-.delete-button{
+.delete-button {
   grid-area: delete;
   grid-column: 2;
   cursor: pointer;
   background-color: #4e4e4e00;
   padding: 0;
-  width: 100%;
   min-width: 30px;
   height: 100%;
   min-height: 40px;
+  width: 80%;
+  aspect-ratio: 1 / 1;
   justify-items: center;
   align-items: center;
 }
-.delete-button img{
-  margin-left: 5px;
-}
 
-.add-div{
+.add-div {
   margin-top: 10px;
   background-color: rgba(113, 113, 113, 0.478);
   border-radius: 5px;
   cursor: pointer;
 }
 
-.disabled{
+.disabled {
   display: none;
 }
-.unselectable{
+
+.unselectable {
   user-select: none;
 }
 
@@ -254,15 +274,17 @@ td, th {
   text-align: center;
 }
 
-th{
+th {
   font-size: 25px;
 }
-td{
+
+td {
   min-height: 47px;
 }
 
-input{
+input {
   text-align: center;
+  min-height: 24px;
   padding: 10px 0;
   background-color: rgb(214, 212, 212);
   font-size: 20px;
@@ -272,5 +294,3 @@ input{
 .rejected {
   border: solid 2px red;
 }
-
-
