@@ -76,7 +76,7 @@ const FormPage = () => {
   // this object describes how the formPage data will looks like
   const [data, setData] = useState<Data>(
     new Data([
-      new Section("Company information", "company", [
+      new Section(t("compagnieHeader"), "company", [
         new Input(t("name"), "company_name"),
         new Input(t("address"), "company_address"),
         new Input(t("website"), "company_website"),
@@ -85,7 +85,7 @@ const FormPage = () => {
           "company_phone_number",
         ),
       ]),
-      new Section("Manufacturer information", "manufacturer", [
+      new Section(t("manufacturerHeader"), "manufacturer", [
         new Input(t("name"), "manufacturer_name"),
         new Input(
           t("address"),
@@ -100,7 +100,7 @@ const FormPage = () => {
           "manufacturer_phone_number",
         ),
       ]),
-      new Section("Product information", "fertiliser", [
+      new Section(t("productHeader"), "fertiliser", [
         new Input(t("name"), "fertiliser_name"),
         new Input(
           t("registrationNumber"),

@@ -17,6 +17,30 @@ const ProgressBar = ({ sections }: { sections: { label: string }[] }) => {
     });
   });
 
+  const updateProgressBarHeight = () => {
+    const totalAvailableHeight = window.innerHeight -140;
+    const sectionHeight = `${totalAvailableHeight / (sections.length+0.5)}px`;
+
+    sec.forEach((sectionObj) => {
+      const sectionElem = sectionObj.ref.current;
+      if (sectionElem) {
+        sectionElem.style.height = sectionHeight;
+      }
+    });
+  };
+
+  useEffect(() => {
+    //This event is for when the app is resized:
+    const resizeHandler = () => updateProgressBarHeight();
+    window.addEventListener('resize', resizeHandler);
+
+    resizeHandler();
+
+    return () => {
+      window.removeEventListener('resize', resizeHandler);
+    };
+  },[sections]);
+
   useEffect(() => {
     FormClickActions.on("ApproveClick", (inputInfo: Input) => {
       sec.find((elem) => elem.label == inputInfo.id)!.ref.current!.className =
@@ -78,21 +102,13 @@ const ProgressBar = ({ sections }: { sections: { label: string }[] }) => {
     <div className="progress-bar-vertical">
       {sections.map((section, sec_index) => (
         <div
+          id={`progress-section-${sec_index}`}
           onClick={() => give_focus(section)}
           key={`${sec_index}`}
           className={`section `}
           ref={sec.find((elem) => elem.label == section.label)!.ref}
           style={{
-            borderTopLeftRadius: sec_index === 0 ? "15px" : "0",
-            borderTopRightRadius: sec_index === 0 ? "15px" : "0",
-            borderBottomLeftRadius:
-              sec_index === sections.length - 1 ? "15px" : "0",
-            borderBottomRightRadius:
-              sec_index === sections.length - 1 ? "15px" : "0",
-            borderBottom:
-              sec_index === sections.length - 1 ? "none" : "2px solid ",
-            height: `${(window.innerHeight - 140) / sections.length}px`,
-            cursor: "pointer",
+            height: `${(window.innerHeight - 115) / sections.length+0.5}px`,
           }}
         ></div>
       ))}

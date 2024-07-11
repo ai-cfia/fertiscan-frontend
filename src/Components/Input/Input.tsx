@@ -168,7 +168,7 @@ const InputComponent: React.FC<InputProps> = ({
           onInput={() => {
             resizeTextarea(textarea.ref.current);
           }}
-          className="text-box"
+          className="textarea"
           rows={1}
         />
         {createModal(0)}
@@ -196,7 +196,7 @@ const InputComponent: React.FC<InputProps> = ({
                       const current = event.target as HTMLTextAreaElement;
                       resizeTextarea(current); // Added here
                     }}
-                    className="text-box"
+                    className="textarea"
                     rows={1}
                   />
                   <button
@@ -209,7 +209,6 @@ const InputComponent: React.FC<InputProps> = ({
                         alt={t("approveButton")}
                         width="20"
                         height="20"
-                        style={{ marginLeft: "15px" }}
                         onClick={() => {
                           inputInfo.value.splice(index, 1);
                           propagateChange(inputInfo);
@@ -222,13 +221,13 @@ const InputComponent: React.FC<InputProps> = ({
             })
           }
           <div 
-          onDoubleClick={() => {
+          onClick={() => {
             (inputInfo.value as string[]).push("");
             propagateChange(inputInfo);
           }} 
           className={`textarea unselectable add-div ${inputInfo.disabled ? 'disabled' : ''}`}
           >
-            <strong>{t("DoubleClickNewButton")}</strong>
+            <strong>{t("clickNewButton")}</strong>
           </div>
         </div>
       </div>
@@ -253,7 +252,7 @@ const InputComponent: React.FC<InputProps> = ({
         <table>
           <colgroup>
             <col span={1} style={{ width: "40%" }} />
-            <col span={1} style={{ width: "20%" }} />
+            <col span={1} style={{ width: "40%" }} />
             <col span={1} style={{ width: "15%" }} />
             <col span={1} style={{ width: "5%" }} />
           </colgroup>
@@ -344,13 +343,13 @@ const InputComponent: React.FC<InputProps> = ({
           </tbody>
         </table>
         <div 
-          onDoubleClick={() => {
+          onClick={() => {
             (inputInfo.value as string[]).push("");
             propagateChange(inputInfo);
           }} 
           className={`textarea unselectable add-div ${inputInfo.disabled ? 'disabled' : ''}`}
         >
-          <strong>{t("DoubleClickNewButton")}</strong>
+          <strong>{t("clickNewButton")}</strong>
         </div>
       </div>
     )
