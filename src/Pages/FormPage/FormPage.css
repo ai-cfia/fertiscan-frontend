@@ -86,16 +86,11 @@
 
 .data-container label {
   text-align: left;
-  margin-left: 20px;
 }
 
 .textbox-container {
-  display: flex;
-  justify-content: left;
-  align-items: center;
-  width: 96%;
-  margin-left: 20px;
-  flex-direction: row;
+  grid-area: input;
+  
 }
 
 .underlined {
@@ -150,20 +145,6 @@ textarea {
   justify-content: left;
   align-items: left;
   gap: 10px;
-}
-
-.input-container {
-  display: grid;
-  grid-template-areas:
-    "label label ."
-    "input input input"
-    ". show-more .";
-  grid-template-columns: 20% 60% 20%;
-}
-
-.input-container label {
-  grid-area: label;
-  align-self: center;
 }
 
 .input-container .textbox-container {

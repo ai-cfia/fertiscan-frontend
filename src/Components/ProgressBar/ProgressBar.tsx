@@ -59,8 +59,6 @@ const ProgressBar = ({ sections }: { sections: { label: string }[] }) => {
     });
     // When the input is rejected because he is not in the good format ex: email, adress, etc
     FormClickActions.on("Rejected", (inputInfo: Input) => {
-      console.log("rejected");
-      console.log(inputInfo.id);
       // remove all classes and add section and rejected
       sec.find((elem) => elem.label == inputInfo.id)!.ref.current!.className =
         "section rejected";
@@ -108,7 +106,7 @@ const ProgressBar = ({ sections }: { sections: { label: string }[] }) => {
           className={`section `}
           ref={sec.find((elem) => elem.label == section.label)!.ref}
           style={{
-            height: `${(window.innerHeight - 115) / sections.length+0.5}px`,
+            height: `${(window.innerHeight - 115) / sections.length}px`,
           }}
         ></div>
       ))}

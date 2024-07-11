@@ -57,7 +57,6 @@ function JsonPage() {
     return data;
   };
   useEffect(() => {
-    console.log(uploadStarted);
     if (!uploadStarted) {
       startUpload(true);
       upload_all()

@@ -237,7 +237,6 @@ const FormPage = () => {
     // update data
     setData(data.copy());
     setLoading(false);
-    console.log("just before update");
 
     //------------------------------ does this works and does it need to ------------------------------//
     // TODO
@@ -274,7 +273,6 @@ const FormPage = () => {
   };
 
   const validateFormInputs = () => {
-    console.log("Validating form inputs... ");
 
     // Flag to track if all sections are approved
     const rejected: Input[] = [];
@@ -283,7 +281,6 @@ const FormPage = () => {
       section.inputs.forEach((input) => {
         // Check for specific validation criteria for each input
         if (input.property == "approved") {
-          console.log(input.label + "Has been approved.");
         } else {
           if (input.value.length > 0) {
             data.sections
@@ -306,7 +303,6 @@ const FormPage = () => {
   // eslint-disable-next-line
   const submitForm = () => {
     const isValid = validateFormInputs();
-    console.log(isValid);
     setData(data.copy());
     setState({ ...state, data: { pics: blobs, form: data } });
     if (isValid) {

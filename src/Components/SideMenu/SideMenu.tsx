@@ -21,7 +21,6 @@ function SideMenu() {
   });
   const navigate = useNavigate();
   const goToHome = () => {
-    console.log(state.state);
     switch (state.state) {
       case "FromCaptur":
         setState({ ...state, state: "captur" });
@@ -33,17 +32,14 @@ function SideMenu() {
         setState({ ...state, state: "validation" });
         break;
       default:
-        console.log("default");
         setState({
           state: "captur",
           data: { pics: [], form: new Data([]) },
         });
-        console.log(state);
     }
     navigate("/");
   };
   const goToSettings = () => {
-    console.log(state.state);
     switch (state.state) {
       case "captur":
         setState({ ...state, state: "FromCaptur" });

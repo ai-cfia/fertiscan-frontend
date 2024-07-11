@@ -20,7 +20,6 @@ export const ErrorProvider = ({ children }: { children: React.ReactNode }) => {
   const [message, setMessage] = useState("");
 
   const showAlert = (msg: SetStateAction<string>) => {
-    console.log("msg");
     setMessage(msg);
   };
 

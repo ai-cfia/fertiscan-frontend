@@ -23,8 +23,18 @@ const MAX_CHAR_IN_ROW = 37;
 
 const resizeTextarea = (textarea: HTMLElement | null) => {
   if (textarea) {
-    textarea.style.height = "auto";
-    textarea.style.height = textarea.scrollHeight + "px";
+    if(textarea.classList.contains("list-input")) {
+      let tas = textarea.getElementsByClassName("textarea")
+      Array.from(tas).forEach((ta: Element) => {
+        let toModify = ta as HTMLTextAreaElement;
+        toModify.style.height = "auto";
+        toModify.style.height = ta.scrollHeight + "px";
+      })
+    }else{
+      textarea.style.height = "auto";
+      textarea.style.height = textarea.scrollHeight + "px";
+    }
+
   }
 };
 
@@ -48,6 +58,7 @@ const InputComponent: React.FC<InputProps> = ({
 
   useEffect(() => {
     FormClickActions.emit("SyncProgress", inputInfo);
+    resizeTextarea(textarea.ref.current);
   }, []);
 
   const SyncChanges = (inputInfo: Input) => {
@@ -82,7 +93,6 @@ const InputComponent: React.FC<InputProps> = ({
   });
   const handleStateChange = (inputInfo: Input) => {
     if (inputInfo.property === "approved") {
-      console.log("from approved");
       setIsActive(true);
       inputInfo.disabled = false;
       inputInfo.property = "modified";
@@ -90,7 +100,6 @@ const InputComponent: React.FC<InputProps> = ({
       FormClickActions.emit("ModifyClick", inputInfo);
       setTimeout(() => setIsActive(false), 400);
     } else if (inputInfo.property === "modified") {
-      console.log("from modified");
       setIsActive(false);
       inputInfo.disabled = true;
       inputInfo.property = "approved";
@@ -99,7 +108,6 @@ const InputComponent: React.FC<InputProps> = ({
       setTimeout(() => setIsActive(false), 400);
       textarea.ref.current?.classList.remove("rejected");
     } else if (inputInfo.property === "default") {
-      console.log("from default");
       setIsActive(true);
       FormClickActions.emit("ApproveClick", inputInfo);
       inputInfo.disabled = true;
@@ -107,7 +115,6 @@ const InputComponent: React.FC<InputProps> = ({
       setProperty("approved");
       setTimeout(() => setIsActive(false), 400);
     } else if (inputInfo.property === "rejected") {
-      console.log("from rejected");
       inputInfo.disabled = true;
       inputInfo.property = "approved";
       setProperty("approved");
@@ -182,7 +189,7 @@ const InputComponent: React.FC<InputProps> = ({
           {
             inputInfo.value.map((_, index) => {
               return (
-                <div className="single-textarea-container" key={index}>
+                <div className="table-textarea-container" key={index}>
                   <textarea
                     value={(inputInfo.value as string[])[index]}
                     disabled={inputInfo.disabled}
@@ -202,6 +209,13 @@ const InputComponent: React.FC<InputProps> = ({
                   <button
                       className={`delete-button ${inputInfo.disabled ? 'disabled' : ''}`}
                       disabled={inputInfo.disabled}
+                      onClick={() => {
+                        if(inputInfo.value.length > 1) {
+                          inputInfo.value.splice(index, 1); // This will remove the item at the given index
+                          propagateChange(inputInfo);
+                        }
+                        // Otherwise, do nothing when the length of the array is 1 to avoid deleting the parent
+                      }}
                     >
                       <img
                         src={deleteIcon}
@@ -209,10 +223,6 @@ const InputComponent: React.FC<InputProps> = ({
                         alt={t("approveButton")}
                         width="20"
                         height="20"
-                        onClick={() => {
-                          inputInfo.value.splice(index, 1);
-                          propagateChange(inputInfo);
-                        }}
                       />
                     </button>
                   {createModal(index)}
@@ -251,10 +261,10 @@ const InputComponent: React.FC<InputProps> = ({
       <div id={inputInfo.id} className="object-input" ref={textarea.ref as React.MutableRefObject<HTMLDivElement | null>}>
         <table>
           <colgroup>
-            <col span={1} style={{ width: "40%" }} />
-            <col span={1} style={{ width: "40%" }} />
-            <col span={1} style={{ width: "15%" }} />
-            <col span={1} style={{ width: "5%" }} />
+            <col span={1} style={{ width: "45%" }} />
+            <col span={1} style={{ width: "35%" }} />
+            <col span={1} style={{ width: "10%" }} />
+            <col span={1} style={{ width: "10%" }} />
           </colgroup>
           <thead>
             {keys.map((key, index) => {
@@ -318,6 +328,13 @@ const InputComponent: React.FC<InputProps> = ({
                     <button
                       className={`delete-button ${inputInfo.disabled ? 'disabled' : ''}`}
                       disabled={inputInfo.disabled}
+                      onClick={() => {
+                        if(inputInfo.value.length > 1) {
+                          inputInfo.value.splice(index, 1); // This will remove the item at the given index
+                          propagateChange(inputInfo);
+                        }
+                        // Otherwise, do nothing when the length of the array is 1 to avoid deleting the parent
+                      }}
                     >
                       <img
                         src={deleteIcon}
@@ -325,15 +342,6 @@ const InputComponent: React.FC<InputProps> = ({
                         alt={t("approveButton")}
                         width="20"
                         height="20"
-                        style={{ marginLeft: "15px" }}
-                        onClick={() => {
-                          if(inputInfo.value.length === 1) {
-                            inputInfo.value = [{ [keys[0]]: "", [keys[1]]: "", [keys[2]]: "" }]; // Explicitly type inputInfo.value as string[]
-                          }else{
-                            inputInfo.value.splice(index, 1);
-                          }
-                          propagateChange(inputInfo);
-                        }}
                       />
                     </button>
                   </td>
@@ -344,7 +352,7 @@ const InputComponent: React.FC<InputProps> = ({
         </table>
         <div 
           onClick={() => {
-            (inputInfo.value as string[]).push("");
+            (inputInfo.value as {}[]).push({ [keys[0]]: "", [keys[1]]: "", [keys[2]]: "" });
             propagateChange(inputInfo);
           }} 
           className={`textarea unselectable add-div ${inputInfo.disabled ? 'disabled' : ''}`}
@@ -366,50 +374,51 @@ const InputComponent: React.FC<InputProps> = ({
   }
 
   return (
-    <div className="input-container">
-      <label htmlFor={inputInfo.id}>
-        {inputInfo.label.replace(/_/gi, " ")} :
-      </label>
-      <div className="textbox-container">
-        {inputCreator()}
-        <div className="button-container">
-          <button
-            className={`button ${isActive ? "active" : ""}`}
-            onClick={() => handleStateChange(inputInfo)}
-          >
-            {property === "default" ? (
-              <img
-                src={acceptIcon}
-                alt={t("approveButton")}
-                width="20"
-                height="20"
-              />
-            ) : property === "approved" ? (
-              <img
-                src={editIcon}
-                alt={t("approveButton")}
-                width="20"
-                height="20"
-              />
-            ) : property === "modified" ? (
-              <img
-                src={acceptIcon}
-                alt={t("modifyButton")}
-                width="20"
-                height="20"
-              />
-            ) : (
-              <img
-                src={acceptIcon}
-                alt={t("approveButton")}
-                width="20"
-                height="20"
-              />
-            )}
-          </button>
+    <div className="test-button">
+      <div className="input-container">
+        <label htmlFor={inputInfo.id}>
+          {inputInfo.label.replace(/_/gi, " ")} :
+        </label>
+        <div className="textbox-container">
+          {inputCreator()}
         </div>
       </div>
-
+      <div className="button-container">
+            <button
+              className={`button ${isActive ? "active" : ""}`}
+              onClick={() => handleStateChange(inputInfo)}
+            >
+              {property === "default" ? (
+                <img
+                  src={acceptIcon}
+                  alt={t("approveButton")}
+                  width="20"
+                  height="20"
+                />
+              ) : property === "approved" ? (
+                <img
+                  src={editIcon}
+                  alt={t("approveButton")}
+                  width="20"
+                  height="20"
+                />
+              ) : property === "modified" ? (
+                <img
+                  src={acceptIcon}
+                  alt={t("modifyButton")}
+                  width="20"
+                  height="20"
+                />
+              ) : (
+                <img
+                  src={acceptIcon}
+                  alt={t("approveButton")}
+                  width="20"
+                  height="20"
+                />
+              )}
+            </button>
+      </div>
     </div>
   );
 };

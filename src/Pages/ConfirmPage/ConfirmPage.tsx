@@ -77,7 +77,7 @@ const ConfirmPage = () => {
   // Traduction not done waiting on prompt changes
   const renderSection = (section: Section) => (
     <div key={section.label} className="${theme}">
-      <h2>{section.label}</h2>
+      <h2>{t(section.title)}</h2>
       <ul className="data-infos">
         {section.inputs.map((input) => (
           <li key={input.id}>

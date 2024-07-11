@@ -31,7 +31,7 @@ function ImageZoomInOut({ imageUrl, alt }: ImageProps) {
       {/* eslint-disable-next-line */}
       {({ zoomIn, zoomOut, resetTransform, ...rest }) => (
         <>
-          {console.log(rest)}
+          {/*console.log(rest)*/}
           <TransformControls url={imageUrl} />
           <TransformComponent>
             <img src={imageUrl} alt={alt} className="test" />
