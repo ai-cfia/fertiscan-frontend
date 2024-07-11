@@ -11,7 +11,6 @@ module.exports = {
   plugins: ["react-refresh", "@typescript-eslint", "prettier"],
   rules: {
     "react/prop-types": "off",
-    "react/": "off",
     "react/react-in-jsx-scope": "off",
     "prettier/prettier": [
       "error",
