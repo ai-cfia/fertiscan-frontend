@@ -1,9 +1,12 @@
 textarea {
+  grid-area: input;
+  grid-column: 1;
   transition: box-shadow 0.5s ease-in-out;
   border: 1px solid #ccc;
   border-radius: 10px;
   box-sizing: border-box;
-  width: 100%; /* Sets textarea width to be 100% of its parent container. */
+  width: 100%;
+  /* Sets textarea width to be 100% of its parent container. */
   height: auto;
   min-height: 40px;
   max-height: 97px;
@@ -13,14 +16,28 @@ textarea {
   padding: 5px;
   font-family: Arial, sans-serif;
   font-size: 20px;
-  font-weight: 400; /* Normal weight */
-  color: #000000; /* Dark gray */
+  font-weight: 400;
+  /* Normal weight */
+  color: #000000;
+  /* Dark gray */
   text-decoration: none;
 }
 
-textarea:disabled {
+textarea:disabled,
+input:disabled {
   background-color: #4e4e4e7a;
   border: solid 2px black;
+  color: black;
+}
+
+.delete-button:disabled img {
+  visibility: hidden;
+  cursor: default;
+}
+
+.delete-button:disabled:hover {
+  border: 1px solid transparent;
+  cursor: default;
 }
 
 .rejected {
@@ -38,6 +55,7 @@ textarea:disabled {
   textarea {
     box-shadow: 0 0 0 0 white;
   }
+
   .open-icon {
     color: white;
   }
@@ -80,23 +98,27 @@ textarea:disabled {
 }
 
 .input-error {
-  border: 2px solid red; /* Outline element with a red border */
+  border: 2px solid red;
+  /* Outline element with a red border */
 }
 
 /* Grid container for the input elements */
 .input-grid-container {
   display: grid;
-  grid-template-columns: auto 1fr; /* Two columns layout */
-  grid-template-rows: auto 1fr auto; /* Three rows layout */
+  grid-template-columns: auto 1fr;
+  /* Two columns layout */
+  grid-template-rows: auto 1fr auto;
+  /* Three rows layout */
   gap: 11px;
 }
 
 .input-grid-container {
+  grid-area: inputcontainer;
   display: grid;
   grid-template-rows: auto 1fr auto;
   grid-template-columns: 2fr auto;
-  column-gap: 30px;             
-}              
+  column-gap: 30px;
+}
 
 .input-label {
   margin-top: 10px;
@@ -109,24 +131,167 @@ textarea:disabled {
 
 .textarea-container {
   grid-column: 1;
-  grid-row: 2 / span 2; 
+  grid-row: 2 / span 2;
   justify-content: left;
-  align-items: center; 
-  width: 100%; 
+  align-items: center;
+  width: 100%;
   margin-left: 10px;
 }
 
+textarea {
+  padding: 5px 0 !important;
+}
+
 .button-container {
-  margin-top: -5px;
-  align-items: center;
+  grid-area: button;
   align-self: center;
-  grid-column: 2;
-  grid-row: 2;
-  justify-self: start; /* Aligner le button-container au début de la colonne */
 }
 
 .show-more-container {
   margin-bottom: -15px;
   grid-column: 1;
   grid-row: 3;
+}
+
+/*Containers*/
+.input-container {
+  display: grid;
+  grid-template-areas:
+    "label"
+    "input"
+    "show-more";
+  grid-template-columns: 100%;
+}
+
+/*Only for the textarea*/
+.single-textarea-container {
+  display: grid;
+  grid-template-areas:
+    "input"
+    "show-more";
+}
+
+/*Only for list table*/
+.table-textarea-container {
+  display: grid;
+  grid-template-areas:
+    "input delete"
+    ". show-more";
+  grid-template-columns: 90% 10%;
+}
+
+.button {
+  margin-top: 20%;
+}
+
+/*Only for list object table*/
+.object-input {
+  background: rgb(214, 212, 212);
+  border-radius: 5px;
+  padding: 10px;
+}
+
+/*Input container component*/
+.input-container label {
+  grid-area: label;
+  grid-row: 1;
+  align-self: center;
+  width: 100%;
+}
+
+.list-input {
+  width: 100%;
+  border-radius: 5px;
+}
+
+.textareas-wrapper {
+  background-color: rgb(214, 212, 212);
+  border-radius: 5px;
+  padding: 10px;
+}
+
+.test-button {
+  display: grid;
+  grid-template-areas: "inputcontainer button";
+  grid-template-columns: 80% 20%;
+  align-items: center;
+}
+
+.delete-button {
+  grid-area: delete;
+  grid-column: 2;
+  cursor: pointer;
+  background-color: #4e4e4e00;
+  padding: 0;
+  min-width: 30px;
+  height: 100%;
+  min-height: 40px;
+  width: 80%;
+  aspect-ratio: 1 / 1;
+  justify-items: center;
+  align-items: center;
+}
+
+.add-div {
+  margin-top: 10px;
+  background-color: rgba(113, 113, 113, 0.478);
+  border-radius: 5px;
+  cursor: pointer;
+}
+
+.disabled {
+  display: none;
+}
+
+.unselectable {
+  user-select: none;
+}
+
+.table-container {
+  width: 100%;
+  border-collapse: collapse;
+  height: fit-content;
+  border-radius: 5px;
+}
+
+table {
+  flex-direction: column;
+  width: 100%;
+  border-collapse: collapse;
+  background: rgb(214, 212, 212);
+}
+
+tr {
+  display: table-row;
+  min-width: 70px;
+  text-align: center;
+  padding: 10px 0;
+}
+
+td,
+th {
+  flex-grow: 1;
+  flex-basis: 0;
+  text-align: center;
+}
+
+th {
+  font-size: 25px;
+}
+
+td {
+  min-height: 47px;
+}
+
+input {
+  text-align: center;
+  min-height: 24px;
+  padding: 10px 0;
+  background-color: rgb(214, 212, 212);
+  font-size: 20px;
+  width: 100%;
+}
+
+.rejected {
+  border: solid 2px red;
 }

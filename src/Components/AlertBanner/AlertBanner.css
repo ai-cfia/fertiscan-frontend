@@ -1,20 +1,20 @@
 .error-banner {
   display: none; /* Initially hide the banner */
   justify-content: center; /* Center content horizontally if necessary */
-  position: fixed; 
-  top: 99.96px ; /* A fixed top position */
+  position: fixed;
+  top: 99.96px; /* A fixed top position */
   left: 50%;
   transform: translateX(-50%); /* Center horizontally */
-  background-color: #f4201182; 
-  color: white; 
-  text-align: center; 
-  z-index: 9999; 
+  background-color: #f4201182;
+  color: white;
+  text-align: center;
+  z-index: 9999;
   width: 30vw;
-  height: 7vh!important;
+  height: 7vh !important;
   border-radius: 10px;
   flex-direction: row;
-  padding: 0px!important;
-  padding-top: 0px!important ;
+  padding: 0px !important;
+  padding-top: 0px !important ;
   height: fit-content;
 }
 

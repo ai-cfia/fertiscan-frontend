@@ -1,22 +1,29 @@
 .progress-bar-vertical {
   flex-direction: column;
   width: 35px;
-  height: 120%;
-  border-radius: 15px;
-  overflow: hidden;
+  height: calc(100vh - 115px);
   position: sticky;
+  overflow: hidden;
+  margin-top: -2px;
+  display: flex;
 }
 
 .progress-wrapper {
   position: fixed;
   right: 20px;
-  top: 60px;
+  border: 2px solid black;
+  border-radius: 18px;
+  border-bottom: 2px solid black;
+  overflow: hidden;
 }
 
 .section {
-  background-color: rgb(185, 185, 185);
   flex: 1;
-  height: 5%;
+  border-top: 2px solid black;
+  background-color: rgb(185, 185, 185);
+  flex-grow: 1;
+  transition: background-color 0.2s;
+  cursor: pointer;
 }
 
 .section.approved {
