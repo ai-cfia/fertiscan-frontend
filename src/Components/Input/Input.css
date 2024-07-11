@@ -23,7 +23,8 @@ textarea {
   text-decoration: none;
 }
 
-textarea:disabled, input:disabled {
+textarea:disabled,
+input:disabled {
   background-color: #4e4e4e7a;
   border: solid 2px black;
   color: black;
@@ -179,7 +180,7 @@ textarea {
   grid-template-columns: 90% 10%;
 }
 
-.button{
+.button {
   margin-top: 20%;
 }
 
@@ -211,8 +212,7 @@ textarea {
 
 .test-button {
   display: grid;
-  grid-template-areas:
-    "inputcontainer button";
+  grid-template-areas: "inputcontainer button";
   grid-template-columns: 80% 20%;
   align-items: center;
 }
@@ -268,7 +268,8 @@ tr {
   padding: 10px 0;
 }
 
-td, th {
+td,
+th {
   flex-grow: 1;
   flex-basis: 0;
   text-align: center;

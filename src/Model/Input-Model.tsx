@@ -1,21 +1,20 @@
-
 export class Input {
   label: string;
-  value: string[]|{[key:string]:string}[];
+  value: string[] | { [key: string]: string }[];
   id: string;
   disabled: boolean;
   property: string;
-  isAlreadyTable:boolean;
-  isInputObjectList:boolean;
+  isAlreadyTable: boolean;
+  isInputObjectList: boolean;
 
   constructor(
     label: string,
     id: string,
-    value: string[]|{[key:string]:string}[] = [],
+    value: string[] | { [key: string]: string }[] = [],
     disabled = false,
     property = "default",
     isAlreadyTable = false,
-    isInputObjectList = false
+    isInputObjectList = false,
   ) {
     this.label = label;
     this.id = id;
@@ -27,4 +26,4 @@ export class Input {
   }
 }
 
-export default Input
+export default Input;

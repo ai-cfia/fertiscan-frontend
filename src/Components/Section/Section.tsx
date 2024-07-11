@@ -7,22 +7,17 @@ interface sectionPorps {
   sectionInfo: Section;
   imgs: { title: string; url: string }[];
   propagateChange: (section: Section) => void;
-  onModalStateChange: (isOpen: boolean) => void;
 }
 
 const SectionComponent: React.FC<sectionPorps> = ({
   sectionInfo,
   imgs,
   propagateChange,
-  onModalStateChange,
 }) => {
   const handleInputChange = (newInfo: Input) => {
     sectionInfo.inputs.find((cur) => cur.label == newInfo.label)!.value =
       newInfo.value;
     propagateChange(sectionInfo);
-  };
-  const handleModalStateChange = (isOpen: boolean) => {
-    onModalStateChange(isOpen);
   };
 
   return (
@@ -33,10 +28,8 @@ const SectionComponent: React.FC<sectionPorps> = ({
           <InputComponent
             key={key}
             inputInfo={inputInfo}
-            parent={sectionInfo}
             imgs={imgs}
             propagateChange={handleInputChange}
-            onModalStateChange={handleModalStateChange}
           />
         );
       })}

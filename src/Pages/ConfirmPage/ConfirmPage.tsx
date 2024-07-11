@@ -12,67 +12,82 @@ const ConfirmPage = () => {
   const { setState } = useContext(SetSessionContext);
   const data = state.data.form;
 
-
-
-
-  const renderListInput = (inputInfo : Input) => {
-    return(
+  const renderListInput = (inputInfo: Input) => {
+    return (
       <ul>
-        {inputInfo.value.map((value,index) => (
+        {inputInfo.value.map((value, index) => (
           <li key={index}>{value as string}</li>
         ))}
       </ul>
-    )
-  }
+    );
+  };
 
-  const renderObjectInput = (inputInfo : Input) => {
-    const keys = Object.keys((inputInfo.value as {}[])[0]);
+  const renderObjectInput = (inputInfo: Input) => {
+    const keys = Object.keys(
+      (inputInfo.value as { [key: string]: string }[])[0],
+    );
     return (
       <div id={inputInfo.id} className="object-input">
         <table>
-            <colgroup>
-              <col span={1} style={{width:"40%"}}/>
-              <col span={1} style={{width: "20%"}}/>
-              <col span={1} style={{width: "15%"}}/>
-            </colgroup>
+          <colgroup>
+            <col span={1} style={{ width: "40%" }} />
+            <col span={1} style={{ width: "20%" }} />
+            <col span={1} style={{ width: "15%" }} />
+          </colgroup>
           <thead>
-              {keys.map((key, index) => {
-                return <th key={index}>{key}</th>;
-              })}
+            {keys.map((key, index) => {
+              return <th key={index}>{key}</th>;
+            })}
           </thead>
           <tbody>
-            {inputInfo.value.map((obj, index) => {
+            {inputInfo.value.map((_obj, index) => {
               return (
                 <tr key={index}>
                   <td>
-                    <p>{(inputInfo.value[index] as {[key:string]:string})[keys[0]]}</p>
+                    <p>
+                      {
+                        (inputInfo.value[index] as { [key: string]: string })[
+                          keys[0]
+                        ]
+                      }
+                    </p>
                   </td>
                   <td>
-                    <p>{(inputInfo.value[index] as {[key:string]:string})[keys[1]]}</p>
+                    <p>
+                      {
+                        (inputInfo.value[index] as { [key: string]: string })[
+                          keys[1]
+                        ]
+                      }
+                    </p>
                   </td>
                   <td>
-                    <p>{(inputInfo.value[index] as {[key:string]:string})[keys[2]]}</p>
-                      
+                    <p>
+                      {
+                        (inputInfo.value[index] as { [key: string]: string })[
+                          keys[2]
+                        ]
+                      }
+                    </p>
                   </td>
                 </tr>
-              )
+              );
             })}
           </tbody>
         </table>
       </div>
-    )
-  }
+    );
+  };
 
-
-  const renderInput = (inputInfo : Input) =>{
-    if(inputInfo.isAlreadyTable){
+  const renderInput = (inputInfo: Input) => {
+    if (inputInfo.isAlreadyTable) {
       return renderListInput(inputInfo);
-    }else if(inputInfo.isInputObjectList){
+    } else if (inputInfo.isInputObjectList) {
       return renderObjectInput(inputInfo);
-    }else{
+    } else {
       return inputInfo.value as unknown as string;
     }
-  }
+  };
 
   // Traduction not done waiting on prompt changes
   const renderSection = (section: Section) => (
@@ -104,9 +119,7 @@ const ConfirmPage = () => {
       <div className="confirm-container">
         {data.sections.map((section: Section) => renderSection(section))}
         <div className="button-container">
-          <button onClick={() => cancel()}>
-            {t("cancelButton")}
-          </button>
+          <button onClick={() => cancel()}>{t("cancelButton")}</button>
           <button onClick={() => console.log("Confirm")}>
             {t("confirmButton")}
           </button>

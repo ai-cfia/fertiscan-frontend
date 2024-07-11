@@ -42,7 +42,7 @@ const ProgressBar = ({ sections }: { sections: { label: string }[] }) => {
     });
     FormClickActions.on("SyncProgress", (inputInfo: Input) => {
       sec.find((elem) => elem.label == inputInfo.id)!.ref.current!.className =
-        "section "+inputInfo.property;
+        "section " + inputInfo.property;
     });
     // eslint-disable-next-line
   }, []);
@@ -81,7 +81,6 @@ const ProgressBar = ({ sections }: { sections: { label: string }[] }) => {
           key={`${sec_index}`}
           className={`section `}
           ref={sec.find((elem) => elem.label == section.label)!.ref}
-
         ></div>
       ))}
     </div>

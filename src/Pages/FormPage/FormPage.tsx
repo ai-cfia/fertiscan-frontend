@@ -1,9 +1,4 @@
-import {
-  useState,
-  useEffect,
-  StrictMode,
-  useContext,
-} from "react";
+import { useState, useEffect, StrictMode, useContext } from "react";
 import "./FormPage.css";
 import {
   SessionContext,
@@ -80,32 +75,17 @@ const FormPage = () => {
         new Input(t("name"), "company_name"),
         new Input(t("address"), "company_address"),
         new Input(t("website"), "company_website"),
-        new Input(
-          t("phone_number"),
-          "company_phone_number",
-        ),
+        new Input(t("phone_number"), "company_phone_number"),
       ]),
       new Section(t("manufacturerHeader"), "manufacturer", [
         new Input(t("name"), "manufacturer_name"),
-        new Input(
-          t("address"),
-          "manufacturer_address",
-        ),
-        new Input(
-          t("website"),
-          "manufacturer_website",
-        ),
-        new Input(
-          t("phone_number"),
-          "manufacturer_phone_number",
-        ),
+        new Input(t("address"), "manufacturer_address"),
+        new Input(t("website"), "manufacturer_website"),
+        new Input(t("phone_number"), "manufacturer_phone_number"),
       ]),
       new Section(t("productHeader"), "fertiliser", [
         new Input(t("name"), "fertiliser_name"),
-        new Input(
-          t("registrationNumber"),
-          "registration_number",
-        ),
+        new Input(t("registrationNumber"), "registration_number"),
         new Input(t("lotNumber"), "lot_number"),
         new Input(t("weightKg"), "weight_kg"),
         new Input(t("weightLb"), "weight_lb"),
@@ -132,9 +112,9 @@ const FormPage = () => {
     ]),
   );
 
-
   const api_url = "http://localhost:5000";
-  
+
+  /*
   const approveAll = () => {
     data.sections.forEach((section) => {
       section.inputs.forEach((input) => {
@@ -145,8 +125,8 @@ const FormPage = () => {
     updateData();
   };
   
-  window.approveAll = approveAll;
-  
+  window.approveAll = approveAll;*/
+
   /**
    * Prepare and send request to backend for file analysis
    * @returns data : the data retrieved from the backend
@@ -172,24 +152,30 @@ const FormPage = () => {
     ).json();
     return data;
   };
-
-  const populateForm = (response:any)=>{
-      data.sections.forEach((section) => {
-        section.inputs.forEach((input) => {
-          if(typeof response[input.id] == "string"){
-            input.value = [response[input.id]];
-          }else if(Array.isArray(response[input.id]) && typeof response[input.id][0] == "string"){  
-            input.value = response[input.id];
-            input.isAlreadyTable = true;
-          }else if(Array.isArray(response[input.id]) && typeof response[input.id][0] == "object"){
-            input.value = response[input.id];
-            input.isInputObjectList = true;
-          }
-        });
+  // eslint-disable-next-line
+  const populateForm = (response: any) => {
+    data.sections.forEach((section) => {
+      section.inputs.forEach((input) => {
+        if (typeof response[input.id] == "string") {
+          input.value = [response[input.id]];
+        } else if (
+          Array.isArray(response[input.id]) &&
+          typeof response[input.id][0] == "string"
+        ) {
+          input.value = response[input.id];
+          input.isAlreadyTable = true;
+        } else if (
+          Array.isArray(response[input.id]) &&
+          typeof response[input.id][0] == "object"
+        ) {
+          input.value = response[input.id];
+          input.isInputObjectList = true;
+        }
       });
-      updateData();
-      setState({ ...state, data: { pics: blobs, form: data } });
-  }
+    });
+    updateData();
+    setState({ ...state, data: { pics: blobs, form: data } });
+  };
 
   useEffect(() => {
     // load imgs for the carousel
@@ -201,7 +187,7 @@ const FormPage = () => {
     if (state.data.form.sections.length == 0) {
       if (process.env.REACT_APP_ACTIVATE_USING_JSON == "true") {
         // skip backend take answer.json as answer
-        fetch("/answer.json").then(res=>res.json().then(populateForm));
+        fetch("/answer.json").then((res) => res.json().then(populateForm));
       } else {
         // fetch backend
         analyse()
@@ -273,13 +259,13 @@ const FormPage = () => {
   };
 
   const validateFormInputs = () => {
-
     // Flag to track if all sections are approved
     const rejected: Input[] = [];
     // Iterate through each section and its inputs
     data.sections.forEach((section) => {
       section.inputs.forEach((input) => {
         // Check for specific validation criteria for each input
+        // eslint-disable-next-line
         if (input.property == "approved") {
         } else {
           if (input.value.length > 0) {
@@ -310,7 +296,6 @@ const FormPage = () => {
     }
   };
 
-
   const handleDataChange = (newSection: Section) => {
     const new_data = data.copy();
     new_data.sections.find((cur) => cur.label == newSection.label) !=
@@ -318,20 +303,6 @@ const FormPage = () => {
     setData(new_data);
     setState({ ...state, data: { pics: blobs, form: new_data } });
   };
-
-  const [isAnyModalOpen, setIsAnyModalOpen] = useState(false);
-  const handleModalStateChange = (isOpen: boolean) => {
-    setIsAnyModalOpen(isOpen);
-  };
-
-  // Prevent scrolling useEffect
-  useEffect(() => {
-    if (isAnyModalOpen || loading) {
-      document.body.style.overflow = "hidden";
-    } else {
-      document.body.style.overflow = "visible";
-    }
-  }, [isAnyModalOpen, loading]);
 
   return (
     <StrictMode>
@@ -356,7 +327,6 @@ const FormPage = () => {
                     sectionInfo={sectionInfo}
                     imgs={urls}
                     propagateChange={handleDataChange}
-                    onModalStateChange={handleModalStateChange}
                   ></SectionComponent>
                 );
               })}
