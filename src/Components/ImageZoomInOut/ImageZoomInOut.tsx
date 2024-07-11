@@ -28,6 +28,7 @@ interface ImageProps {
 
 function ImageZoomInOut({ imageUrl, alt }: ImageProps) {
   //sorry for the hack, but I can't find a way to avoid the error
+  // eslint-disable-next-line
   const useVarForNoError = (_: {
     instance: ReactZoomPanPinchContext;
     setTransform: ReturnType<
