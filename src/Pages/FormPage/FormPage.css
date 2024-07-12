@@ -23,9 +23,8 @@
   .carousel-wrapper{
     grid-area: pics;
     left:10%;
-    margin-top: 40%;
+    margin-top: 30%;
     max-width: 80%!important;
-  
   }
     
 }
@@ -33,6 +32,7 @@
 @media only screen and (max-width: 1230px) {
   .formPage-container {
     grid-template-rows: 10% 80%;
+    grid-gap: 10px;
     grid-template-areas:
       "pics"
       "data";
@@ -83,37 +83,12 @@
   font-size: 40px;
 }
 
-.data-container label {
-  text-align: left;
-}
-
 .textbox-container {
   grid-area: input;
 }
 
 .underlined {
   text-decoration: underline;
-}
-
-/* Text box styles */
-textarea {
-  border: 1px solid #ccc;
-  border-radius: 10px;
-  box-sizing: border-box;
-  width: 100%;
-  justify-content: center;
-  height: auto;
-  min-height: 40px;
-  max-height: 97px;
-  resize: none;
-  background-color: rgb(220, 219, 219);
-  overflow-y: hidden;
-  padding: 5px;
-  font-family: Arial, sans-serif, Bold;
-  font-size: 20px;
-  font-weight: 400;
-  color: #000000;
-  text-decoration: none;
 }
 
 .open-icon {
@@ -145,33 +120,11 @@ textarea {
   gap: 10px;
 }
 
-.input-container .textbox-container {
-  grid-area: input;
-}
-
 .input-container .show-more-container {
   grid-area: show-more;
   width: 100%;
 }
 
-/* For dark mode */
-@media (prefers-color-scheme: dark) {
-  .open-icon {
-    color: white;
-  }
-}
-
-.button-container {
-  display: flex;
-  align-items: center;
-  gap: 10px;
-  margin-left: 20px;
-}
-
-/*State when an input has not been confirm before submit*/
-.input-error {
-  border: 2px solid red;
-}
 
 .loader-container-form.active {
   display: flex;
@@ -197,9 +150,10 @@ textarea {
   width: 50%;
   margin-right: 20%;
 }
+
 .progress-container {
   position: sticky;
-  top: 20px; /* Adjust the value as needed */
+  top: 20px;
   height: 100%;
-  width: 200px; /* Adjust the width as needed */
+  width: 200px;
 }

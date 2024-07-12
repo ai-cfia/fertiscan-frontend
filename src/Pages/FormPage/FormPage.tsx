@@ -244,17 +244,17 @@ const FormPage = () => {
   let ticking = false;
   
   function setElementPosition(scrollPos: number): void {
-    // Ici, il n'y a pas de calcul lourd ou d'interrogation du DOM; juste une simple assignation
     elementToFix.style.transform = `translateY(${scrollPos}px)`;
   }
   
   window.addEventListener('scroll', function() {
     lastKnownScrollPosition = window.scrollY;
   
-    // On ne change pas la position de l'élément directement ici pour éviter les jank
     if (!ticking) {
+      if(this.window.innerWidth<1230) {
+        return;
+      }
       window.requestAnimationFrame(function() {
-        // Mettez à jour la position de l'élément dans le callback de requestAnimationFrame
         setElementPosition(lastKnownScrollPosition);
         ticking = false;
       });

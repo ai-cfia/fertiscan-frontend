@@ -6,21 +6,19 @@ textarea {
   border-radius: 10px;
   box-sizing: border-box;
   width: 100%;
-  /* Sets textarea width to be 100% of its parent container. */
   height: auto;
   min-height: 40px;
   max-height: 97px;
   resize: none;
   background-color: rgb(220, 219, 219);
   overflow-y: hidden;
-  padding: 5px;
-  font-family: Arial, sans-serif;
+  padding-left: 10px;
+  font-family: Arial, sans-serif, Bold;
   font-size: 20px;
   font-weight: 400;
-  /* Normal weight */
   color: #000000;
-  /* Dark gray */
   text-decoration: none;
+  align-content: center;
 }
 
 textarea:disabled,
@@ -44,22 +42,6 @@ input:disabled {
   border: solid 2px red;
 }
 
-@media (prefers-color-schem: light) {
-  textarea {
-    box-shadow: 0 0 0 0 black;
-  }
-}
-
-/* Dark mode box shadow */
-@media (prefers-color-scheme: dark) {
-  textarea {
-    box-shadow: 0 0 0 0 white;
-  }
-
-  .open-icon {
-    color: white;
-  }
-}
 
 /* Show more button container */
 .show-more-container {
@@ -138,13 +120,17 @@ input:disabled {
   margin-left: 10px;
 }
 
-textarea {
-  padding: 5px 0 !important;
+/*State when an input has not been confirm before submit*/
+.input-error {
+  border: 2px solid red;
 }
+
 
 .button-container {
   grid-area: button;
   align-self: center;
+  margin-left: 20px;
+
 }
 
 .show-more-container {
@@ -169,6 +155,7 @@ textarea {
   grid-template-areas:
     "input"
     "show-more";
+    padding-left: 10px;
 }
 
 /*Only for list table*/
@@ -178,6 +165,7 @@ textarea {
     "input delete"
     ". show-more";
   grid-template-columns: 90% 10%;
+  align-items: center;
 }
 
 .button {
@@ -197,6 +185,8 @@ textarea {
   grid-row: 1;
   align-self: center;
   width: 100%;
+  text-align: left;
+padding-left: 10px;
 }
 
 .list-input {

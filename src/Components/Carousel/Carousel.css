@@ -1,4 +1,5 @@
 .carousel-wrapper {
+  grid-area: pics;
   display: flex;
   max-width: 50%;
   height: fit-content;
@@ -13,7 +14,6 @@
                         "    .         .           .    ";
   grid-template-rows: 0% 100% 0%;
   grid-template-columns: 10% 80% 10%;
-  
   align-items: center;
   justify-content: center;
   overflow: hidden;
@@ -24,26 +24,22 @@
 /* Fixed 'prev' and 'next' buttons on the sides of the carousel */
 .prev,
 .next {
+  display: flex;
+  justify-content: center;
+  margin-top: 50%;
   cursor: pointer;
   background-color: #dcdada;
   color: white;
   font-weight: bold;
-  font-size: 1em;
+  font-size: 16px;
   padding: 8px;
   user-select: none;
-  top: 50%;
-  padding: 10px;
   transform: translateY(-50%);
   transition: 0.6s ease;
   z-index: 10;
-  grid-area: arrowRight;
-  grid-row: 2;
-  grid-column: 3;
 }
 
 .prev {
-  margin-right: 4px;
-  margin-left: 3px;
   border-radius: 18px 0 0 18px;
   grid-area: arrowLeft;
   grid-row: 2;
@@ -51,9 +47,10 @@
 }
 
 .next {
-  margin-left: 4px;
-  margin-right: 3px;
   border-radius: 0 18px 18px 0;
+  grid-area: arrowRight;
+  grid-row: 2;
+  grid-column: 3;
 }
 
 .prev:hover,
