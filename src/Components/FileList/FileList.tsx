@@ -1,21 +1,14 @@
 import React, { useState } from "react";
-import "./FileList.css";
-import FileElement from "./FileElement/FileElement";
 import { useTranslation } from "react-i18next";
+import BlobData from "../../interfaces/BlobData";
 import ContextMenu from "../ContextMenu/ContextMenu";
-
-interface BlobData {
-  blob: string;
-  name: string;
-}
+import FileElement from "./FileElement/FileElement";
+import "./FileList.css";
 
 interface FileListProps {
-  blobs: { blob: string; name: string }[];
-  onSelectedChange: (selected: { blob: string; name: string } | null) => void;
-  propagateDelete: (
-    deleted: { blob: string; name: string },
-    wasShown: boolean,
-  ) => void;
+  blobs: BlobData[];
+  onSelectedChange: (selected: BlobData | null) => void;
+  propagateDelete: (deleted: BlobData, wasShown: boolean) => void;
   onRenameClick: (fileData: BlobData) => void; // Updated type definition
 }
 
@@ -36,14 +29,12 @@ const FileList: React.FC<FileListProps> = ({
     fileData: BlobData;
   } | null>(null);
 
-  const handleSelectFile = (
-    selected: { blob: string; name: string } | null,
-  ) => {
+  const handleSelectFile = (selected: BlobData | null) => {
     setSelectedFile(selected);
     onSelectedChange(selected);
   };
 
-  const handleDelete = (deleted: { blob: string; name: string }) => {
+  const handleDelete = (deleted: BlobData) => {
     if (selectedFile === deleted) {
       setSelectedFile(null);
       propagateDelete(deleted, false);
@@ -80,20 +71,18 @@ const FileList: React.FC<FileListProps> = ({
         <div className={`no-element ${blobs.length === 0 ? "active" : ""}`}>
           {t("fileListNoElement")}
         </div>
-        {[...blobs].map(
-          (blob: { blob: string; name: string }, index: number) => (
-            <FileElement
-              key={index}
-              blob={blob}
-              position={index}
-              onClick={(selected) =>
-                selected ? handleSelectFile(blob) : handleSelectFile(null)
-              }
-              onDelete={() => handleDelete(blob)}
-              onContextMenu={(event) => handleRightClick(event, blob)}
-            />
-          ),
-        )}
+        {[...blobs].map((blob: BlobData, index: number) => (
+          <FileElement
+            key={index}
+            blob={blob} // Pass the actual blob string to the FileElement
+            position={index}
+            onClick={(selected) =>
+              selected ? handleSelectFile(blob) : handleSelectFile(null)
+            }
+            onDelete={() => handleDelete(blob)}
+            onContextMenu={(event) => handleRightClick(event, blob)}
+          />
+        ))}
       </div>
       {contextMenuInfo && (
         <ContextMenu
