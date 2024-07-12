@@ -1,10 +1,11 @@
 import React from "react";
-import "./ContextMenu.css";
 import { useTranslation } from "react-i18next";
+import "./ContextMenu.css";
+import BlobData from "../../interfaces/BlobData";
 
 interface ContextMenuProps {
-  fileData: { blob: string; name: string }; // Updated to accept an object with blob and name
-  onRenameClick: (fileData: { blob: string; name: string }) => void; // Update type definition
+  fileData: BlobData; // Updated to accept an object with blob and name
+  onRenameClick: (fileData: BlobData) => void; // Update type definition
   mouseX: number;
   mouseY: number;
   onClose: () => void;

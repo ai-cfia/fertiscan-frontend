@@ -1,19 +1,21 @@
 import { StrictMode, useContext, useEffect, useState } from "react";
 import { useTranslation } from "react-i18next";
-import { SessionContext, SetSessionContext } from "../../Utils/SessionContext";
-import "./CapturPage.css";
 import DragDropFileInput from "../../Components/DragDropFileInput/DragDropFileInput";
 import FileList from "../../Components/FileList/FileList";
 import RenameModal from "../../Components/RenameModal/RenameModal";
+import BlobData from "../../interfaces/BlobData";
+import { SessionContext, SetSessionContext } from "../../Utils/SessionContext";
+import {
+  calculateStateObjectSize,
+  STATE_OBJECT_SIZE_LIMIT,
+} from "../../Utils/stateObject";
+import "./CapturPage.css";
 
 function CapturPage() {
   const { t } = useTranslation();
   const [toShow, setShow] = useState("");
   const [renameModalOpen, setRenameModalOpen] = useState(false);
-  const [blobToRename, setBlobToRename] = useState<{
-    blob: string;
-    name: string;
-  } | null>(null);
+  const [blobToRename, setBlobToRename] = useState<BlobData | null>(null);
   const [, setNewFileName] = useState("");
   const { state } = useContext(SessionContext);
   const { setState } = useContext(SetSessionContext);
@@ -23,15 +25,14 @@ function CapturPage() {
   }, [state.data.pics]);
 
   const handlePhotoChange = (newFiles: File[]) => {
-    const newPics: { blob: string; name: string }[] = [];
+    const newPics: BlobData[] = [];
 
-    // Cette fonction est appelée pour chaque nouveau fichier
     const readAndAddPhoto = (file: File, callback: () => void) => {
       const reader = new FileReader();
       reader.onload = (e) => {
         if (e.target && e.target.result) {
           const newBlob = e.target.result as string;
-          newPics.push({ blob: newBlob, name: file.name });
+          newPics.push({ blob: newBlob, name: file.name, size: file.size });
 
           if (newPics.length === newFiles.length) {
             callback();
@@ -54,9 +55,7 @@ function CapturPage() {
     );
   };
 
-  const handleSelectedChange = (
-    selection: { blob: string; name: string } | null,
-  ) => {
+  const handleSelectedChange = (selection: BlobData | null) => {
     if (selection) {
       setShow(selection.blob);
     } else {
@@ -68,10 +67,7 @@ function CapturPage() {
     setState({ ...state, state: "form" });
   };
 
-  const handleDeletion = (
-    toDelete: { blob: string; name: string },
-    wasShown: boolean,
-  ) => {
+  const handleDeletion = (toDelete: BlobData, wasShown: boolean) => {
     setState({
       ...state,
       data: {
@@ -84,17 +80,16 @@ function CapturPage() {
     }
   };
 
-  const openRenameModal = (blob: { blob: string; name: string }) => {
+  const openRenameModal = (blob: BlobData) => {
     setBlobToRename(blob);
     setNewFileName(blob.name);
     setRenameModalOpen(true);
   };
 
-  // Ajouter la fonction pour gérer le renommage de blob
-  const handleRename = (updatedFileData: { blob: string; name: string }) => {
+  const handleRename = (updatedFileData: BlobData) => {
     const updatedPics = state.data.pics.map((pic) => {
       if (pic.blob === updatedFileData.blob) {
-        return updatedFileData; // Use the updatedFileData provided by RenameModal
+        return updatedFileData;
       }
       return pic;
     });
@@ -117,7 +112,6 @@ function CapturPage() {
   }
 
   const calculateCaptureCounter = () => {
-    // Extract numbers from filenames that start with "capture" and followed by a number.
     const pics = state.data.pics;
     const captureNumbers = pics
       .map((pic) => {
@@ -126,15 +120,12 @@ function CapturPage() {
       })
       .filter((number) => number !== null) as number[];
 
-    // Find the maximum number in the array of captureNumbers.
     const maxNumber =
       captureNumbers.length > 0 ? Math.max(...captureNumbers) : 0;
 
-    // The next counter should be one more than the maximum found.
     return maxNumber + 1;
   };
 
-  // Prevent scrolling useEffect
   useEffect(() => {
     if (renameModalOpen) {
       document.body.style.overflow = "hidden";
@@ -174,6 +165,7 @@ function CapturPage() {
             propagateDelete={handleDeletion}
             onRenameClick={openRenameModal}
           />
+          <label>{`TODO: Indicator of current state object size: ${calculateStateObjectSize(state).megabytes.toFixed(2)} / ${(STATE_OBJECT_SIZE_LIMIT / (1024 * 1024)).toFixed(2)} MB`}</label>
         </div>
       </div>
     </StrictMode>
