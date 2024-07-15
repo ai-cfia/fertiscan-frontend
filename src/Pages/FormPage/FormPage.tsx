@@ -57,7 +57,6 @@ const FormPage = () => {
   const { setState } = useContext(SetSessionContext);
   const blobs = state.data.pics;
   const [loading, setLoading] = useState(true);
-  const elementToFix = document.getElementById("carousel") as HTMLDivElement;
   // @ts-expect-error : has to be used to prompt user when error
   // eslint-disable-next-line
   const [fetchError, setError] = useState<Error | null>(null);
@@ -67,8 +66,6 @@ const FormPage = () => {
       title: string;
     }[]
   >([]);
-  let lastKnownScrollPosition = 0;
-  let ticking = false;
 
   // This object describes how the formPage data will looks like
   const [data, setData] = useState<Data>(
@@ -265,10 +262,6 @@ const FormPage = () => {
     setState({ ...state, data: { pics: blobs, form: new_data } });
   };
 
-  function setElementPosition(scrollPos: number): void {
-    elementToFix.style.transform = `translateY(${scrollPos}px)`;
-  }
-
   useEffect(() => {
     // load imgs for the carousel
     const newUrls = blobs.map((blob) => ({ url: blob.blob, title: blob.name }));
@@ -311,25 +304,9 @@ const FormPage = () => {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
-  window.addEventListener("scroll", function () {
-    lastKnownScrollPosition = window.scrollY;
-
-    if (!ticking) {
-      if (this.window.innerWidth < 1230) {
-        return;
-      }
-      window.requestAnimationFrame(function () {
-        setElementPosition(lastKnownScrollPosition);
-        ticking = false;
-      });
-
-      ticking = true;
-    }
-  });
-
   return (
     <StrictMode>
-      <div className={"formPage-container ${theme}"}>
+      <div className={"formPage-container ${theme} disable-scroll"}>
         <Carousel id="carousel" imgs={urls}></Carousel>
         <div className="data-container">
           {loading ? (
@@ -340,7 +317,7 @@ const FormPage = () => {
               <p>{t("analyzingText")}</p>
             </div>
           ) : (
-            <div>
+            <div className="background">
               {[...data.sections].map((sectionInfo: Section, key: number) => {
                 return (
                   <SectionComponent

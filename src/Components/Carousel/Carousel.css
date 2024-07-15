@@ -45,6 +45,7 @@
   grid-area: arrowLeft;
   grid-row: 2;
   grid-column: 1;
+  margin-right: 15px;
 }
 
 .next {
@@ -52,6 +53,7 @@
   grid-area: arrowRight;
   grid-row: 2;
   grid-column: 3;
+  margin-left: 15px;
 }
 
 .prev:hover,
