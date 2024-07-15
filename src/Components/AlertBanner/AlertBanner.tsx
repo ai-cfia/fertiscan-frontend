@@ -5,11 +5,11 @@ import errorIcon from "../../assets/errorIcon.png";
 import confirmIcon from "../../assets/confirmIcon.svg";
 
 const AlertBanner = () => {
-  const { message, type, clearAlert } = useContext(AlertContext);  
+  const { message, type, clearAlert } = useContext(AlertContext);
   const [isActive, setIsActive] = useState(false);
 
   useEffect(() => {
-    let timer:  ReturnType<typeof setTimeout>;
+    let timer: ReturnType<typeof setTimeout>;
     if (message) {
       setIsActive(true);
       timer = setTimeout(() => {
@@ -25,7 +25,11 @@ const AlertBanner = () => {
   return (
     <div className={`banner ${type} ${isActive ? "show" : ""}`}>
       <div className="alert">
-        <img className="icon" src={type === 'error' ? errorIcon : confirmIcon} alt={`${type} Icon`} />
+        <img
+          className="icon"
+          src={type === "error" ? errorIcon : confirmIcon}
+          alt={`${type} Icon`}
+        />
         <span className="message">{message}</span>
       </div>
     </div>

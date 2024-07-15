@@ -1,7 +1,7 @@
 import React, { createContext, useState, useContext, ReactNode } from "react";
 
 // Types for an alert
-type AlertType = 'confirm' | 'error';
+type AlertType = "confirm" | "error";
 
 // Shape of the AlertContext
 interface AlertContextType {
@@ -31,9 +31,12 @@ interface AlertProviderProps {
 
 // Provider component that manages the alert state and provides the context to children
 export const AlertProvider: React.FC<AlertProviderProps> = ({ children }) => {
-  const [alert, setAlert] = useState<{ message: string; type: AlertType | null }>({
+  const [alert, setAlert] = useState<{
+    message: string;
+    type: AlertType | null;
+  }>({
     message: "",
-    type: null
+    type: null,
   });
 
   const showAlert = (msg: string, type: AlertType) => {
@@ -45,7 +48,14 @@ export const AlertProvider: React.FC<AlertProviderProps> = ({ children }) => {
   };
 
   return (
-    <AlertContext.Provider value={{ message: alert.message, type: alert.type, showAlert, clearAlert }}>
+    <AlertContext.Provider
+      value={{
+        message: alert.message,
+        type: alert.type,
+        showAlert,
+        clearAlert,
+      }}
+    >
       {children}
     </AlertContext.Provider>
   );
