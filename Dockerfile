@@ -2,6 +2,11 @@ FROM node:20.12.2-alpine AS build
 
 WORKDIR /code
 
+# Define build arguments
+ARG ARG_API_URL
+ARG ARG_REACT_APP_ACTIVATE_USING_JSON
+ARG ARG_REACT_APP_STATE_OBJECT_SIZE_LIMIT
+
 # Copy files
 COPY ./src ./src
 COPY ./public ./public
@@ -11,8 +16,11 @@ COPY tsconfig.json .
 COPY tsconfig.node.json .
 COPY vite.config.ts .
 COPY index.html .
-# TODO: this is a temporary solution
-COPY .env.template ./.env
+
+# Set environment variables based on build arguments
+ENV REACT_APP_ACTIVATE_USING_JSON=${ARG_REACT_APP_ACTIVATE_USING_JSON:-true}
+ENV API_URL=${ARG_API_URL:-http://127.0.0.1:5000}
+ENV REACT_APP_STATE_OBJECT_SIZE_LIMIT=${ARG_REACT_APP_STATE_OBJECT_SIZE_LIMIT:-4194304}
 
 # Install npm at a specific version, dependencies, build, and run tests
 RUN npm install --include=dev
