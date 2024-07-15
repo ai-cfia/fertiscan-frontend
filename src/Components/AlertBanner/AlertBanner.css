@@ -1,12 +1,11 @@
-.error-banner {
-  display: none; /* Initially hide the banner */
-  justify-content: center; /* Center content horizontally if necessary */
+.banner {
+  display: none; 
+  justify-content: center; 
   position: fixed;
-  top: 99.96px; /* A fixed top position */
+  top: 99.96px; 
   left: 50%;
-  transform: translateX(-50%); /* Center horizontally */
-  background-color: #f4201182;
-  color: white;
+  transform: translateX(-50%); 
+  color: black;
   text-align: center;
   z-index: 9999;
   width: 30vw;
@@ -18,22 +17,30 @@
   height: fit-content;
 }
 
-.error-banner.show {
-  display: flex; /* Show the banner when 'show' class is added */
+.banner.show {
+  display: flex;
 }
 
-.error-alert {
-  background-color: transparent; /* Removed non-transparent color */
-  color: #fff;
+.alert {
+  background-color: transparent;
+  color: black;
   border-radius: 4px;
   display: flex;
   align-items: center;
-  width: 100%; /* Make sure alert takes full width */
+  width: 100%;
+}
+
+.banner.confirm{ 
+  background-color: #155724;
+}
+
+.banner.error{
+  background-color: #f4201182;
 }
 
 .error-alert__icon {
-  width: 10%; /* Set width matching original inline style */
-  margin-right: 15px; /* Give some space after the icon */
+  width: 10%; 
+  margin-right: 15px;
   margin-left: 10px;
 }
 

@@ -8,7 +8,7 @@ import SideMenu from "./Components/SideMenu/SideMenu";
 import SettingPage from "./Pages/SettingPage/SettingPage";
 import i18next from "i18next";
 import { SessionProvider } from "./Utils/SessionContext";
-import { ErrorProvider } from "./Utils/ErrorContext";
+import { AlertProvider } from "./Utils/AlertContext";
 
 function App() {
   useEffect(() => {
@@ -19,7 +19,7 @@ function App() {
   return (
     <SessionProvider>
       <BrowserRouter>
-        <ErrorProvider>
+        <AlertProvider>
           <StrictMode>
             <Header />
             <SideMenu />
@@ -31,7 +31,7 @@ function App() {
               <Route path="*" element={<NoPage />} />
             </Route>
           </Routes>
-        </ErrorProvider>
+        </AlertProvider>
       </BrowserRouter>
     </SessionProvider>
   );
