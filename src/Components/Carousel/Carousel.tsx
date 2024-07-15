@@ -19,30 +19,21 @@ const NewCarousel: React.FC<CarouselProps> = ({ id, imgs }) => {
 
   const selectImg = (idx: number) => {
     let newIdx = idx;
-
     if (idx < 0) {
-      newIdx = imgs.length - 1; // Si l'index est négatif, on passe à la dernière image
+      newIdx = imgs.length - 1;
     } else if (idx >= imgs.length) {
-      newIdx = 0; // Si l'index dépasse la longueur, on retourne à la première image
+      newIdx = 0;
     }
-
-    setCurrImg(newIdx); // Actualise l'index de l'image courante
-
-    // S'assure que l'image sélectionnée est centrée
+    setCurrImg(newIdx);
     scrollToImg(newIdx);
   };
 
   const scrollToImg = (idx: number) => {
-    const imgRef = imgRefs.current[idx];
+    let imgRef = imgRefs.current[idx];
     if (imgRef && carouselRef.current) {
-      // Calculer la largeur disponible pour le contenu visible dans le conteneur du carousel
-      const visibleWidth = carouselRef.current.offsetWidth;
-
-      // Calculer le décalage à appliquer pour centrer l'image
-      const offset = imgRef.offsetLeft - carouselRef.current.offsetLeft;
-      const centerOffset = offset - (visibleWidth / 2 - imgRef.offsetWidth / 2);
-
-      // Défiler jusqu'à la nouvelle position calculée pour centrer l'image
+      let visibleWidth = carouselRef.current.offsetWidth;
+      let offset = imgRef.offsetLeft - carouselRef.current.offsetLeft;
+      let centerOffset = offset - (visibleWidth / 2 - imgRef.offsetWidth / 2);
       carouselRef.current.scrollTo({
         left: centerOffset,
         behavior: "smooth",
@@ -51,7 +42,6 @@ const NewCarousel: React.FC<CarouselProps> = ({ id, imgs }) => {
   };
 
   useEffect(() => {
-    // Effectue un défilement initial pour centrer l'image courante lors du chargement du composant
     scrollToImg(currImg);
   }, [currImg]);
 
@@ -77,7 +67,7 @@ const NewCarousel: React.FC<CarouselProps> = ({ id, imgs }) => {
             src={img.url}
             className={`carousel-img ${index === currImg ? " current" : ""}`}
             alt={img.title}
-            key={index} // Les clés utilisent l'index pour s'assurer que chaque image est unique
+            key={index}
             onClick={() => selectImg(index)}
           />
         ))}

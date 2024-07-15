@@ -4,7 +4,6 @@ import "./AlertBanner.css";
 import editIcon from "../../assets/errorIcon.png";
 
 const AlertBanner = () => {
-  // Assuming ErrorContext is the proper React context you want to use.
   const { message, clearAlert } = useContext(ErrorContext);
   const [isActive, setIsActive] = useState(false);
 

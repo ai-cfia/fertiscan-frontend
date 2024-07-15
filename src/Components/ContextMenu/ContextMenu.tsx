@@ -3,32 +3,32 @@ import "./ContextMenu.css";
 import { useTranslation } from "react-i18next";
 
 interface ContextMenuProps {
-  fileData: { blob: string; name: string }; // Updated to accept an object with blob and name
-  onRenameClick: (fileData: { blob: string; name: string }) => void; // Update type definition
+  fileData: { blob: string; name: string };
+  onRenameClick: (fileData: { blob: string; name: string }) => void;
   mouseX: number;
   mouseY: number;
   onClose: () => void;
 }
 
 const ContextMenu: React.FC<ContextMenuProps> = ({
-  fileData, // Renamed from file to fileData
+  fileData,
   onRenameClick,
   mouseX,
   mouseY,
   onClose,
 }) => {
+  const { t } = useTranslation();
+
   const handleClick = (event: React.MouseEvent) => {
     event.stopPropagation();
     onClose();
   };
 
   const handleRename = () => {
-    onRenameClick(fileData); // Pass the fileData object instead
+    onRenameClick(fileData);
     onClose();
   };
-
-  const { t } = useTranslation();
-
+  
   return (
     <div
       className="context-menu"
