@@ -23,7 +23,7 @@ const FileElement: React.FC<FileElementProps> = ({
 
   const handleClick = (event: React.MouseEvent<HTMLDivElement>) => {
     event.preventDefault(); // Prevent default navigation
-    let element = event.target as HTMLElement;
+    const element = event.target as HTMLElement;
     if (element.className !== "cross") {
       document
         .querySelectorAll(".file-element")
@@ -52,9 +52,9 @@ const FileElement: React.FC<FileElementProps> = ({
 
   // This useEffect will adjust the font size of the title to fit the container
   useEffect(() => {
-    let adjustFontSize = () => {
+    const adjustFontSize = () => {
       if (titleRef.current) {
-        let maxWidth = fileCard.current ? fileCard.current.offsetWidth : 0;
+        const maxWidth = fileCard.current ? fileCard.current.offsetWidth : 0;
         let fontSize = parseInt(
           window.getComputedStyle(titleRef.current).fontSize,
           10,

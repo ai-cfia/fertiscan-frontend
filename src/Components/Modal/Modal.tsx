@@ -37,7 +37,7 @@ const Modal: React.FC<ModalProps> = ({
   };
 
   const handleOverlayClick = (event: React.MouseEvent<HTMLElement>) => {
-    let element = event!.target as HTMLElement;
+    const element = event!.target as HTMLElement;
     if (
       element.className == "overlay active" ||
       element.className == "close-icon"
@@ -51,7 +51,7 @@ const Modal: React.FC<ModalProps> = ({
   };
 
   useEffect(() => {
-    let divElements = document.querySelectorAll(".card-content");
+    const divElements = document.querySelectorAll(".card-content");
     divElements.forEach((div) => {
       if (isEditing) {
         div.classList.add("no-scrollBar");

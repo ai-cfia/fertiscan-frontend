@@ -32,7 +32,7 @@ function Header() {
   // Add the sticky class to the header when you reach its scroll position. Remove "sticky" when you leave the scroll position
   function myFunction() {
     // Get the offset position of the navbar
-    let sticky = header.current!.offsetTop;
+    const sticky = header.current!.offsetTop;
     if (window.scrollY > sticky) {
       header.current!.classList.add("sticky");
     } else {

@@ -12,7 +12,7 @@ interface ControlsProps {
 }
 
 const TransformControls = ({ url }: ControlsProps) => {
-  let { resetTransform } = useControls();
+  const { resetTransform } = useControls();
   useEffect(() => {
     resetTransform();
     // eslint-disable-next-line
@@ -29,6 +29,7 @@ interface ImageProps {
 
 function ImageZoomInOut({ imageUrl, alt }: ImageProps) {
   //sorry for the hack, but I can't find a way to avoid the error
+  // eslint-disable-next-line
   const varForNoError = (_: {
     instance: ReactZoomPanPinchContext;
     setTransform: ReturnType<

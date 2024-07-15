@@ -22,7 +22,7 @@ const ProgressBar = ({ sections }: { sections: { label: string }[] }) => {
 
   // focus on the selected section
   const give_focus = (section: { label: string }) => {
-    let element = document.getElementById(section.label) as HTMLElement;
+    const element = document.getElementById(section.label) as HTMLElement;
     if (element) {
       element.scrollIntoView({
         behavior: "smooth",

@@ -27,10 +27,10 @@ const RenameModal: React.FC<RenameModalProps> = ({
 
   const handleSaveClick = () => {
     if (newFileName !== undefined) {
-      let updatedName = extension
+      const updatedName = extension
         ? `${newFileName}.${extension}`
         : newFileName;
-      let updatedFileData = { ...fileData, name: updatedName };
+      const updatedFileData = { ...fileData, name: updatedName };
       handleRename(updatedFileData);
       close();
     }

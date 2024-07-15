@@ -15,12 +15,12 @@ const LanguageButton = () => {
   };
 
   const handleLanguageSwap = () => {
-    let newLanguage = language === "en" ? "fr" : "en";
+    const newLanguage = language === "en" ? "fr" : "en";
     changeLanguage(newLanguage);
   };
 
   useEffect(() => {
-    let storedLanguage = localStorage.getItem("language");
+    const storedLanguage = localStorage.getItem("language");
     if (storedLanguage) {
       setLanguage(storedLanguage);
       i18next.changeLanguage(storedLanguage);

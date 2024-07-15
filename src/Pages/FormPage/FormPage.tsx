@@ -58,8 +58,6 @@ const FormPage = () => {
   const blobs = state.data.pics;
   const [loading, setLoading] = useState(true);
   const elementToFix = document.getElementById("carousel") as HTMLDivElement;
-  let lastKnownScrollPosition = 0;
-  let ticking = false;
   // @ts-expect-error : has to be used to prompt user when error
   // eslint-disable-next-line
   const [fetchError, setError] = useState<Error | null>(null);
@@ -69,6 +67,9 @@ const FormPage = () => {
       title: string;
     }[]
   >([]);
+  let lastKnownScrollPosition = 0;
+  let ticking = false;
+
   // This object describes how the formPage data will looks like
   const [data, setData] = useState<Data>(
     new Data([
@@ -137,6 +138,7 @@ const FormPage = () => {
       const blobData = await fetch(blobs[i].blob).then((res) => res.blob());
       formData.append("images", blobData, blobs[i].name);
     }
+
     const data = await (
       await fetch(api_url + "/analyze", {
         method: "POST",
@@ -152,6 +154,7 @@ const FormPage = () => {
     ).json();
     return data;
   };
+
   // eslint-disable-next-line
   const populateForm = (response: any) => {
     data.sections.forEach((section) => {
@@ -266,22 +269,6 @@ const FormPage = () => {
     elementToFix.style.transform = `translateY(${scrollPos}px)`;
   }
 
-  window.addEventListener("scroll", function () {
-    lastKnownScrollPosition = window.scrollY;
-
-    if (!ticking) {
-      if (this.window.innerWidth < 1230) {
-        return;
-      }
-      window.requestAnimationFrame(function () {
-        setElementPosition(lastKnownScrollPosition);
-        ticking = false;
-      });
-
-      ticking = true;
-    }
-  });
-
   useEffect(() => {
     // load imgs for the carousel
     const newUrls = blobs.map((blob) => ({ url: blob.blob, title: blob.name }));
@@ -323,6 +310,22 @@ const FormPage = () => {
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
+
+  window.addEventListener("scroll", function () {
+    lastKnownScrollPosition = window.scrollY;
+
+    if (!ticking) {
+      if (this.window.innerWidth < 1230) {
+        return;
+      }
+      window.requestAnimationFrame(function () {
+        setElementPosition(lastKnownScrollPosition);
+        ticking = false;
+      });
+
+      ticking = true;
+    }
+  });
 
   return (
     <StrictMode>

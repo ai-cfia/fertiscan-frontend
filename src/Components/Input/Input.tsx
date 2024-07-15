@@ -18,9 +18,9 @@ const MAX_CHAR_IN_ROW = 37;
 const resizeTextarea = (textarea: HTMLElement | null) => {
   if (textarea) {
     if (textarea.classList.contains("list-input")) {
-      let tas = textarea.getElementsByClassName("textarea");
+      const tas = textarea.getElementsByClassName("textarea");
       Array.from(tas).forEach((ta: Element) => {
-        let toModify = ta as HTMLTextAreaElement;
+        const toModify = ta as HTMLTextAreaElement;
         toModify.style.height = "auto";
         toModify.style.height = ta.scrollHeight + "px";
       });
@@ -153,7 +153,7 @@ const InputComponent: React.FC<InputProps> = ({
           value={(inputInfo.value as string[])[0]}
           disabled={inputInfo.disabled}
           onChange={(event: React.ChangeEvent<HTMLTextAreaElement>) => {
-            let current = event.target as HTMLTextAreaElement;
+            const current = event.target as HTMLTextAreaElement;
             resizeTextarea(current);
             inputInfo.value = [event.target.value];
             propagateChange(inputInfo);
@@ -185,13 +185,13 @@ const InputComponent: React.FC<InputProps> = ({
                   value={(inputInfo.value as string[])[index]}
                   disabled={inputInfo.disabled}
                   onChange={(event: React.ChangeEvent<HTMLTextAreaElement>) => {
-                    let current = event.target as HTMLTextAreaElement;
+                    const current = event.target as HTMLTextAreaElement;
                     resizeTextarea(current);
                     inputInfo.value[index] = event.target.value;
                     propagateChange(inputInfo);
                   }}
                   onInput={(event: React.FormEvent<HTMLTextAreaElement>) => {
-                    let current = event.target as HTMLTextAreaElement;
+                    const current = event.target as HTMLTextAreaElement;
                     resizeTextarea(current); // Added here
                   }}
                   className="textarea"
@@ -237,9 +237,9 @@ const InputComponent: React.FC<InputProps> = ({
     inputElement: HTMLInputElement,
     isWindowEnlarged: boolean | null,
   ) => {
-    let maxWidth = (inputElement.parentElement as HTMLElement).offsetWidth;
-    let actualWidth = inputElement.scrollWidth;
-    let currentFontSize = parseFloat(
+    const maxWidth = (inputElement.parentElement as HTMLElement).offsetWidth;
+    const actualWidth = inputElement.scrollWidth;
+    const currentFontSize = parseFloat(
       window.getComputedStyle(inputElement).getPropertyValue("font-size"),
     );
 
@@ -263,7 +263,7 @@ const InputComponent: React.FC<InputProps> = ({
   };
 
   const createObjectInput = () => {
-    let keys = Object.keys(
+    const keys = Object.keys(
       (inputInfo.value as { [key: string]: string }[])[0],
     );
     return (
@@ -295,7 +295,7 @@ const InputComponent: React.FC<InputProps> = ({
                       }
                       disabled={inputInfo.disabled}
                       onChange={(event) => {
-                        let newValue = {
+                        const newValue = {
                           ...(inputInfo.value[index] as {
                             [key: string]: string;
                           }),
@@ -305,7 +305,7 @@ const InputComponent: React.FC<InputProps> = ({
                         propagateChange(inputInfo);
                       }}
                       onInput={(event) => {
-                        let input = event.currentTarget;
+                        const input = event.currentTarget;
                         adjustFontSize(input, null);
                       }}
                     />
@@ -320,7 +320,7 @@ const InputComponent: React.FC<InputProps> = ({
                       }
                       disabled={inputInfo.disabled}
                       onChange={(event) => {
-                        let newValue = {
+                        const newValue = {
                           ...(inputInfo.value[index] as {
                             [key: string]: string;
                           }),
@@ -330,7 +330,7 @@ const InputComponent: React.FC<InputProps> = ({
                         propagateChange(inputInfo);
                       }}
                       onInput={(event) => {
-                        let input = event.currentTarget;
+                        const input = event.currentTarget;
                         adjustFontSize(input, null);
                       }}
                     />
@@ -345,7 +345,7 @@ const InputComponent: React.FC<InputProps> = ({
                       }
                       disabled={inputInfo.disabled}
                       onChange={(event) => {
-                        let newValue = {
+                        const newValue = {
                           ...(inputInfo.value[index] as {
                             [key: string]: string;
                           }),
@@ -355,7 +355,7 @@ const InputComponent: React.FC<InputProps> = ({
                         propagateChange(inputInfo);
                       }}
                       onInput={(event) => {
-                        let input = event.currentTarget;
+                        const input = event.currentTarget;
                         adjustFontSize(input, null);
                       }}
                     />
@@ -425,12 +425,12 @@ const InputComponent: React.FC<InputProps> = ({
   }, []);
 
   useEffect(() => {
-    let handleResize = () => {
-      let newWidth = window.innerWidth;
+    const handleResize = () => {
+      const newWidth = window.innerWidth;
       if (newWidth !== lastWidth) {
         setWindowWidth(newWidth);
 
-        let inputElements = objectInputRef.current?.querySelectorAll("input");
+        const inputElements = objectInputRef.current?.querySelectorAll("input");
         inputElements?.forEach((inputElement) => {
           if (inputElement instanceof HTMLInputElement) {
             adjustFontSize(inputElement, newWidth > lastWidth);
