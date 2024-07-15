@@ -12,6 +12,20 @@ const ConfirmPage = () => {
   const { setState } = useContext(SetSessionContext);
   const data = state.data.form;
 
+  const renderInput = (inputInfo: Input) => {
+    if (inputInfo.isAlreadyTable) {
+      return renderListInput(inputInfo);
+    } else if (inputInfo.isInputObjectList) {
+      return renderObjectInput(inputInfo);
+    } else {
+      return inputInfo.value as unknown as string;
+    }
+  };
+
+  const cancel = () => {
+    setState({ ...state, state: "form" });
+  };
+
   const renderListInput = (inputInfo: Input) => {
     return (
       <ul>
@@ -79,17 +93,6 @@ const ConfirmPage = () => {
     );
   };
 
-  const renderInput = (inputInfo: Input) => {
-    if (inputInfo.isAlreadyTable) {
-      return renderListInput(inputInfo);
-    } else if (inputInfo.isInputObjectList) {
-      return renderObjectInput(inputInfo);
-    } else {
-      return inputInfo.value as unknown as string;
-    }
-  };
-
-  // Traduction not done waiting on prompt changes
   const renderSection = (section: Section) => (
     <div key={section.label} className="${theme}">
       <h2>{t(section.title)}</h2>
@@ -103,10 +106,6 @@ const ConfirmPage = () => {
     </div>
   );
 
-  const cancel = () => {
-    setState({ ...state, state: "form" });
-  };
-
   return (
     <div className="confirm-page-container ${theme}">
       <h1 id="confirm-title">{t("confirmationPage")}</h1>
@@ -115,6 +114,7 @@ const ConfirmPage = () => {
           url: blob.blob,
           title: blob.name,
         }))}
+        id={"carousel"}
       />
       <div className="confirm-container">
         {data.sections.map((section: Section) => renderSection(section))}

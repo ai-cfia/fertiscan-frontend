@@ -12,10 +12,6 @@ function Header() {
   const { t } = useTranslation();
   const header = useRef<HTMLElement | null>(null);
   const [menuOpen, setMenuOpen] = useState(false);
-  // When the user scrolls the page, execute myFunction
-  window.onscroll = function () {
-    myFunction();
-  };
 
   function toggleMenu() {
     flash(document.querySelector("#burger img") as HTMLElement);
@@ -27,6 +23,7 @@ function Header() {
       setMenuOpen(true);
     }
   }
+
   function flash(elem: HTMLElement) {
     elem.classList.add("flash");
     setTimeout(() => elem.classList.remove("flash"), 300);
@@ -42,6 +39,11 @@ function Header() {
       header.current!.classList.remove("sticky");
     }
   }
+
+  // When the user scrolls the page, execute myFunction
+  window.onscroll = function () {
+    myFunction();
+  };
   return (
     <header role={"banner"} ref={header} className="">
       <nav>

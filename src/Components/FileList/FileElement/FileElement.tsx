@@ -21,6 +21,31 @@ const FileElement: React.FC<FileElementProps> = ({
   const fileCard = useRef<null | HTMLDivElement>(null);
   const titleRef = useRef<null | HTMLParagraphElement>(null);
 
+  const handleClick = (event: React.MouseEvent<HTMLDivElement>) => {
+    event.preventDefault(); // Prevent default navigation
+    const element = event.target as HTMLElement;
+    if (element.className !== "cross") {
+      document
+        .querySelectorAll(".file-element")
+        .forEach(
+          (div) =>
+            div.id != fileCard.current?.id && div.classList.remove("selected"),
+        );
+      if (fileCard.current?.classList.contains("selected")) {
+        onClick?.(false);
+        fileCard.current?.classList.remove("selected");
+      } else {
+        onClick?.(true);
+        fileCard.current?.classList.add("selected");
+      }
+    }
+  };
+
+  const deleteImage = (event: React.MouseEvent<HTMLDivElement>) => {
+    event.preventDefault();
+    onDelete();
+  };
+
   useEffect(() => {
     setFileUrl(blob.blob);
   }, [blob]);
@@ -47,31 +72,6 @@ const FileElement: React.FC<FileElementProps> = ({
     window.addEventListener("resize", adjustFontSize);
     return () => window.removeEventListener("resize", adjustFontSize);
   }, []);
-
-  const handleClick = (event: React.MouseEvent<HTMLDivElement>) => {
-    event.preventDefault(); // Prevent default navigation
-    const element = event.target as HTMLElement;
-    if (element.className !== "cross") {
-      document
-        .querySelectorAll(".file-element")
-        .forEach(
-          (div) =>
-            div.id != fileCard.current?.id && div.classList.remove("selected"),
-        );
-      if (fileCard.current?.classList.contains("selected")) {
-        onClick?.(false);
-        fileCard.current?.classList.remove("selected");
-      } else {
-        onClick?.(true);
-        fileCard.current?.classList.add("selected");
-      }
-    }
-  };
-
-  const deleteImage = (event: React.MouseEvent<HTMLDivElement>) => {
-    event.preventDefault();
-    onDelete();
-  };
 
   return (
     <div

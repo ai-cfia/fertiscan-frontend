@@ -13,13 +13,8 @@ function SideMenu() {
   const { state } = useContext(SessionContext);
   const { setState } = useContext(SetSessionContext);
   const SideMenuRef = useRef<HTMLDivElement | null>(null);
-  MenuChannel.on("OpenMenu", () => {
-    SideMenuRef.current!.classList.add("active");
-  });
-  MenuChannel.on("CloseMenu", () => {
-    SideMenuRef.current!.classList.remove("active");
-  });
   const navigate = useNavigate();
+
   const goToHome = () => {
     switch (state.state) {
       case "FromCaptur":
@@ -39,6 +34,7 @@ function SideMenu() {
     }
     navigate("/");
   };
+
   const goToSettings = () => {
     switch (state.state) {
       case "captur":
@@ -55,6 +51,13 @@ function SideMenu() {
     }
     navigate("/Settings");
   };
+
+  MenuChannel.on("OpenMenu", () => {
+    SideMenuRef.current!.classList.add("active");
+  });
+  MenuChannel.on("CloseMenu", () => {
+    SideMenuRef.current!.classList.remove("active");
+  });
 
   return (
     <div className="side-menu notAffectedTopPadding" ref={SideMenuRef}>

@@ -1,57 +1,61 @@
+/*The form section of the form page*/
 .formPage-container {
   display: grid;
-  justify-content: space-between;
   padding: 0 10px;
-  grid-template-columns: "1fr auto";
-  grid-gap: 1rem;
+  grid-gap: 3rem;
 }
 
+/*for deactivating the scroll of the page*/
 .disable-scroll {
   overflow: -moz-hidden-unscrollable;
   padding: 100 10px !important;
-  grid-template-columns: 1fr auto; /* Use correct grid column definition */
+  grid-template-columns: 1fr auto;
   grid-gap: 1rem;
   align-items: start;
 }
 
-@media only screen and (min-width: 1231px) {
+@media only screen and (min-width: 1230px) {
   .formPage-container {
     grid-template-areas: "pics data progress-bar";
-    grid-template-columns: 43% 50% 7%; /* Allocates space for progress bar next to the form */
+    grid-template-columns: 40% 50% 10%;
+    justify-items: center;
   }
-  .pic-container {
-    position: fixed;
+  .carousel-wrapper{
+    grid-area: pics;
+    left:10%;
+    margin-top: 30%;
+    max-width: 80%!important;
   }
+    
 }
 
 @media only screen and (max-width: 1230px) {
   .formPage-container {
-    grid-template-columns: 4fr 0fr;
+    grid-template-rows: 10% 80%;
+    grid-gap: 10px;
     grid-template-areas:
-      "pics test"
-      "data progress-bar"; /* This line places progress-bar next to data if space allows */
-    justify-content: normal;
-    justify-items: stretch;
+      "pics"
+      "data";
     justify-items: center;
   }
-  .progress-wrapper {
-    justify-self: start; /* Align the progress-bar to the right */
-  }
-}
 
-.pic-container {
-  display: block;
-  margin: 30px 35px;
-  width: 94%;
-  transform: scale(0.45) translate(-66%, -62%);
-  transition: 0.6s ease;
+  .curr-img:not(.data-container){
+    margin-top: 10%;
+  }
+  .carousel-wrapper{
+    grid-area: pics;
+    height: 75vh!important;
+  }
 }
 
 @media only screen and (min-width: 1250px) {
   .carousel-wrapper {
     width: 100%;
     height: auto !important;
-    transition: 0.6s ease;
+  }
+  .carousel-wrapper{
+    width: 100%;
+    height: auto !important;
   }
   .curr-img img {
     width: calc(100%) !important;
@@ -61,7 +65,6 @@
 
 .progress-wrapper {
   grid-area: progress-bar;
-  /* Position is not fixed; it will move with the grid layout */
 }
 
 /* Text box container styles */
@@ -84,37 +87,12 @@
   font-size: 40px;
 }
 
-.data-container label {
-  text-align: left;
-}
-
 .textbox-container {
   grid-area: input;
 }
 
 .underlined {
   text-decoration: underline;
-}
-
-/* Text box styles */
-textarea {
-  border: 1px solid #ccc;
-  border-radius: 10px;
-  box-sizing: border-box;
-  width: 100%;
-  justify-content: center;
-  height: auto;
-  min-height: 40px;
-  max-height: 97px;
-  resize: none;
-  background-color: rgb(220, 219, 219);
-  overflow-y: hidden;
-  padding: 5px;
-  font-family: Arial, sans-serif, Bold;
-  font-size: 20px;
-  font-weight: 400;
-  color: #000000;
-  text-decoration: none;
 }
 
 .open-icon {
@@ -146,36 +124,11 @@ textarea {
   gap: 10px;
 }
 
-.input-container .textbox-container {
-  grid-area: input;
-}
-
 .input-container .show-more-container {
   grid-area: show-more;
   width: 100%;
 }
 
-/* For dark mode */
-@media (prefers-color-scheme: dark) {
-  .open-icon {
-    color: white;
-  }
-}
-
-.button-container {
-  display: flex;
-  align-items: center;
-  gap: 10px;
-  margin-left: 20px;
-}
-
-.button {
-  background-color: #dcdcdc;
-}
-
-.input-error {
-  border: 2px solid red; /* Outlines the element with a red border */
-}
 
 .loader-container-form.active {
   display: flex;
@@ -201,9 +154,10 @@ textarea {
   width: 50%;
   margin-right: 20%;
 }
+
 .progress-container {
   position: sticky;
-  top: 20px; /* Adjust the value as needed */
+  top: 20px;
   height: 100%;
-  width: 200px; /* Adjust the width as needed */
+  width: 200px;
 }

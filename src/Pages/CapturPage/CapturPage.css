@@ -1,11 +1,10 @@
 .homePage-container {
   display: grid;
   grid-template-rows: auto;
-  grid-template-columns: auto;
   gap: 10px;
 }
 
-@media only screen and (min-width: 850px) {
+@media only screen and (min-width: 1093px) {
   .homePage-container {
     grid-template-areas:
       "a b"
@@ -16,7 +15,7 @@
   }
 }
 
-@media only screen and (max-width: 850px) {
+@media only screen and (max-width: 1092px) {
   .homePage-container {
     grid-template-areas:
       "a"
@@ -32,8 +31,10 @@
 }
 
 #camera-switch {
+  display: flex;
   position: relative;
-  right: 20px;
+  justify-content: center;
+
 }
 
 .disable-scroll {

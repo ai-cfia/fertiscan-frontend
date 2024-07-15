@@ -33,7 +33,7 @@ const FileList: React.FC<FileListProps> = ({
   const [contextMenuInfo, setContextMenuInfo] = useState<{
     mouseX: number;
     mouseY: number;
-    fileData: BlobData; // Updated to accept BlobData
+    fileData: BlobData;
   } | null>(null);
 
   const handleSelectFile = (
@@ -55,9 +55,9 @@ const FileList: React.FC<FileListProps> = ({
   const handleRightClick = (event: React.MouseEvent, fileData: BlobData) => {
     event.preventDefault(); // Prevent the browser context menu from opening
     setContextMenuInfo({
-      mouseX: event.clientX - 2, // Border offset
-      mouseY: event.clientY - 4, // Border + padding offset
-      fileData, // Store the blob data instead of file
+      mouseX: event.clientX - 2,
+      mouseY: event.clientY - 4,
+      fileData,
     });
   };
 
@@ -85,7 +85,7 @@ const FileList: React.FC<FileListProps> = ({
           (blob: { blob: string; name: string }, index: number) => (
             <FileElement
               key={index}
-              blob={blob} // Pass the actual blob string to the FileElement
+              blob={blob}
               position={index}
               onClick={(selected) =>
                 selected ? handleSelectFile(blob) : handleSelectFile(null)
@@ -98,8 +98,8 @@ const FileList: React.FC<FileListProps> = ({
       </div>
       {contextMenuInfo && (
         <ContextMenu
-          fileData={contextMenuInfo.fileData} // Updated to fileData
-          onRenameClick={onRenameClick} // Pass the original handler
+          fileData={contextMenuInfo.fileData}
+          onRenameClick={onRenameClick}
           mouseX={contextMenuInfo.mouseX}
           mouseY={contextMenuInfo.mouseY}
           onClose={closeContextMenu}

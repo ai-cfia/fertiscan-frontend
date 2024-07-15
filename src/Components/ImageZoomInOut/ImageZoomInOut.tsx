@@ -10,6 +10,7 @@ import { useEffect } from "react";
 interface ControlsProps {
   url: string;
 }
+
 const TransformControls = ({ url }: ControlsProps) => {
   const { resetTransform } = useControls();
   useEffect(() => {
@@ -21,9 +22,9 @@ const TransformControls = ({ url }: ControlsProps) => {
 
 interface ImageProps {
   imageUrl: string;
-  className?: string; // Optional class name
-  onClick?: () => void; // Optional click handler function
-  alt?: string; // Optional alt text
+  className?: string;
+  onClick?: () => void;
+  alt?: string;
 }
 
 function ImageZoomInOut({ imageUrl, alt }: ImageProps) {
@@ -104,6 +105,7 @@ function ImageZoomInOut({ imageUrl, alt }: ImageProps) {
       ) => void
     >;
   }) => {};
+
   return (
     <TransformWrapper pinch={{ step: 1000 }}>
       {/* eslint-disable-next-line */}

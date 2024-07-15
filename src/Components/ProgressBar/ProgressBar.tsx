@@ -9,13 +9,30 @@ const ProgressBar = ({ sections }: { sections: { label: string }[] }) => {
     ref: React.MutableRefObject<HTMLDivElement | null>;
   }[] = [];
 
-  sections.forEach((section) => {
-    sec.push({
-      label: section.label,
-      // eslint-disable-next-line
-      ref: useRef(null),
-    });
-  });
+  const flash = (element: HTMLElement) => {
+    let color = "black";
+    if (window.matchMedia("(prefers-color-scheme: dark)").matches) {
+      color = "white";
+    }
+    element.style.boxShadow = "0 0 10px 5px " + color;
+    setTimeout(() => {
+      element.style.boxShadow = "none";
+    }, 500);
+  };
+
+  // focus on the selected section
+  const give_focus = (section: { label: string }) => {
+    const element = document.getElementById(section.label) as HTMLElement;
+    if (element) {
+      element.scrollIntoView({
+        behavior: "smooth",
+        block: "center",
+        inline: "nearest",
+      });
+      element.focus();
+      flash(element);
+    }
+  };
 
   useEffect(() => {
     FormClickActions.on("ApproveClick", (inputInfo: Input) => {
@@ -47,30 +64,13 @@ const ProgressBar = ({ sections }: { sections: { label: string }[] }) => {
     // eslint-disable-next-line
   }, []);
 
-  const flash = (element: HTMLElement) => {
-    let color = "black";
-    if (window.matchMedia("(prefers-color-scheme: dark)").matches) {
-      color = "white";
-    }
-    element.style.boxShadow = "0 0 10px 5px " + color;
-    setTimeout(() => {
-      element.style.boxShadow = "none";
-    }, 500);
-  };
-
-  const give_focus = (section: { label: string }) => {
-    // focus on the selected section
-    const element = document.getElementById(section.label) as HTMLElement;
-    if (element) {
-      element.scrollIntoView({
-        behavior: "smooth",
-        block: "center",
-        inline: "nearest",
-      });
-      element.focus();
-      flash(element);
-    }
-  };
+  sections.forEach((section) => {
+    sec.push({
+      label: section.label,
+      // eslint-disable-next-line
+      ref: useRef(null),
+    });
+  });
 
   return (
     <div className="progress-bar-vertical">

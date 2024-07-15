@@ -1,7 +1,6 @@
 .side-menu {
   position: fixed;
   top: 100px;
-  left: 0;
   height: 100%;
   width: 60px;
   background-color: #05486c;
@@ -13,12 +12,12 @@
 
 @media screen and (min-width: 850px) {
   .side-menu.active ~ * {
-    padding-left: 270px;
+    padding-left: 200px;
   }
 }
 
 .side-menu.active {
-  width: 250px;
+  width: 180px;
 }
 .side-menu ~ * {
   transition: padding-left 0.5s;

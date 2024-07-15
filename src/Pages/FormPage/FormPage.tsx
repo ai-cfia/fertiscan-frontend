@@ -14,6 +14,8 @@ import { FormClickActions } from "../../Utils/EventChannels.tsx";
 import { useTranslation } from "react-i18next";
 
 const FormPage = () => {
+  // For local development
+  const api_url = "http://localhost:5000";
   const { t } = useTranslation();
   // @ts-expect-error : setForm is going to be used when linked to db
   // eslint-disable-next-line
@@ -51,13 +53,11 @@ const FormPage = () => {
     first_aid_fr: [],
     guaranteed_analysis: [],
   });
-
   const { state } = useContext(SessionContext);
   const { setState } = useContext(SetSessionContext);
-
   const blobs = state.data.pics;
-
   const [loading, setLoading] = useState(true);
+  const elementToFix = document.getElementById("carousel") as HTMLDivElement;
   // @ts-expect-error : has to be used to prompt user when error
   // eslint-disable-next-line
   const [fetchError, setError] = useState<Error | null>(null);
@@ -67,8 +67,10 @@ const FormPage = () => {
       title: string;
     }[]
   >([]);
+  let lastKnownScrollPosition = 0;
+  let ticking = false;
 
-  // this object describes how the formPage data will looks like
+  // This object describes how the formPage data will looks like
   const [data, setData] = useState<Data>(
     new Data([
       new Section(t("compagnieHeader"), "company", [
@@ -112,8 +114,7 @@ const FormPage = () => {
     ]),
   );
 
-  const api_url = "http://localhost:5000";
-
+  // command to approve all inputs only working in dev mode and always need to be put in comment before commit
   /*
   const approveAll = () => {
     data.sections.forEach((section) => {
@@ -137,6 +138,7 @@ const FormPage = () => {
       const blobData = await fetch(blobs[i].blob).then((res) => res.blob());
       formData.append("images", blobData, blobs[i].name);
     }
+
     const data = await (
       await fetch(api_url + "/analyze", {
         method: "POST",
@@ -152,6 +154,7 @@ const FormPage = () => {
     ).json();
     return data;
   };
+
   // eslint-disable-next-line
   const populateForm = (response: any) => {
     data.sections.forEach((section) => {
@@ -176,48 +179,6 @@ const FormPage = () => {
     updateData();
     setState({ ...state, data: { pics: blobs, form: data } });
   };
-
-  useEffect(() => {
-    // load imgs for the carousel
-    const newUrls = blobs.map((blob) => ({ url: blob.blob, title: blob.name }));
-    // Set the urls state only once with all the transformations
-    setUrls(newUrls);
-
-    // if no data in session, data has never been loaded and has to be fetched
-    if (state.data.form.sections.length == 0) {
-      if (process.env.REACT_APP_ACTIVATE_USING_JSON == "true") {
-        // skip backend take answer.json as answer
-        fetch("/answer.json").then((res) => res.json().then(populateForm));
-      } else {
-        // fetch backend
-        analyse()
-          .then(populateForm)
-          .catch((e) => {
-            setLoading(false);
-            setError(e);
-            console.log(e);
-          });
-      }
-    } else {
-      state.data.form.sections.forEach((stateSection) => {
-        data.sections
-          .find((currentSection) => currentSection.label == stateSection.label)!
-          .inputs.forEach((input) => {
-            const stateInput = stateSection.inputs.find(
-              (currentInput: Input) => currentInput.id == input.id,
-            )!;
-            input.value = stateInput.value;
-            input.isAlreadyTable = stateInput.isAlreadyTable;
-            input.isInputObjectList = stateInput.isInputObjectList;
-            input.property = stateInput.property;
-            input.disabled = stateInput.disabled;
-          });
-      });
-      setData(data.copy());
-      updateData();
-    }
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, []);
 
   const updateData = () => {
     // update data
@@ -304,12 +265,72 @@ const FormPage = () => {
     setState({ ...state, data: { pics: blobs, form: new_data } });
   };
 
+  function setElementPosition(scrollPos: number): void {
+    elementToFix.style.transform = `translateY(${scrollPos}px)`;
+  }
+
+  useEffect(() => {
+    // load imgs for the carousel
+    const newUrls = blobs.map((blob) => ({ url: blob.blob, title: blob.name }));
+    // Set the urls state only once with all the transformations
+    setUrls(newUrls);
+
+    // if no data in session, data has never been loaded and has to be fetched
+    if (state.data.form.sections.length == 0) {
+      if (process.env.REACT_APP_ACTIVATE_USING_JSON == "true") {
+        // skip backend take answer.json as answer
+        fetch("/answer.json").then((res) => res.json().then(populateForm));
+      } else {
+        // fetch backend
+        analyse()
+          .then(populateForm)
+          .catch((e) => {
+            setLoading(false);
+            setError(e);
+            console.log(e);
+          });
+      }
+    } else {
+      state.data.form.sections.forEach((stateSection) => {
+        data.sections
+          .find((currentSection) => currentSection.label == stateSection.label)!
+          .inputs.forEach((input) => {
+            const stateInput = stateSection.inputs.find(
+              (currentInput: Input) => currentInput.id == input.id,
+            )!;
+            input.value = stateInput.value;
+            input.isAlreadyTable = stateInput.isAlreadyTable;
+            input.isInputObjectList = stateInput.isInputObjectList;
+            input.property = stateInput.property;
+            input.disabled = stateInput.disabled;
+          });
+      });
+      setData(data.copy());
+      updateData();
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
+
+  window.addEventListener("scroll", function () {
+    lastKnownScrollPosition = window.scrollY;
+
+    if (!ticking) {
+      if (this.window.innerWidth < 1230) {
+        return;
+      }
+      window.requestAnimationFrame(function () {
+        setElementPosition(lastKnownScrollPosition);
+        ticking = false;
+      });
+
+      ticking = true;
+    }
+  });
+
   return (
     <StrictMode>
       <div className={"formPage-container ${theme}"}>
-        <div className="pic-container">
-          <Carousel imgs={urls}></Carousel>
-        </div>
+        <Carousel id="carousel" imgs={urls}></Carousel>
         <div className="data-container">
           {loading ? (
             <div

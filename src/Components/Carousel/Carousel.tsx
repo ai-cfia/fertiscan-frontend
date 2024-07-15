@@ -4,13 +4,14 @@ import ImageZoomInOut from "../ImageZoomInOut/ImageZoomInOut";
 import { useTranslation } from "react-i18next";
 
 interface CarouselProps {
+  id: string;
   imgs: {
     url: string;
     title: string;
   }[];
 }
 
-const NewCarousel: React.FC<CarouselProps> = ({ imgs }) => {
+const NewCarousel: React.FC<CarouselProps> = ({ id, imgs }) => {
   const { t } = useTranslation();
   const [currImg, setCurrImg] = useState<number>(0);
   const imgRefs = useRef<(HTMLImageElement | null)[]>([]);
@@ -18,30 +19,21 @@ const NewCarousel: React.FC<CarouselProps> = ({ imgs }) => {
 
   const selectImg = (idx: number) => {
     let newIdx = idx;
-
     if (idx < 0) {
-      newIdx = imgs.length - 1; // Si l'index est négatif, on passe à la dernière image
+      newIdx = imgs.length - 1;
     } else if (idx >= imgs.length) {
-      newIdx = 0; // Si l'index dépasse la longueur, on retourne à la première image
+      newIdx = 0;
     }
-
-    setCurrImg(newIdx); // Actualise l'index de l'image courante
-
-    // S'assure que l'image sélectionnée est centrée
+    setCurrImg(newIdx);
     scrollToImg(newIdx);
   };
 
   const scrollToImg = (idx: number) => {
     const imgRef = imgRefs.current[idx];
     if (imgRef && carouselRef.current) {
-      // Calculer la largeur disponible pour le contenu visible dans le conteneur du carousel
       const visibleWidth = carouselRef.current.offsetWidth;
-
-      // Calculer le décalage à appliquer pour centrer l'image
       const offset = imgRef.offsetLeft - carouselRef.current.offsetLeft;
       const centerOffset = offset - (visibleWidth / 2 - imgRef.offsetWidth / 2);
-
-      // Défiler jusqu'à la nouvelle position calculée pour centrer l'image
       carouselRef.current.scrollTo({
         left: centerOffset,
         behavior: "smooth",
@@ -50,28 +42,23 @@ const NewCarousel: React.FC<CarouselProps> = ({ imgs }) => {
   };
 
   useEffect(() => {
-    // Effectue un défilement initial pour centrer l'image courante lors du chargement du composant
     scrollToImg(currImg);
   }, [currImg]);
 
   return (
-    <div className="carousel-wrapper">
+    <div id={id} className="carousel-wrapper">
       <div className="curr-img">
-        <div>
-          <a className="prev" onClick={() => selectImg(currImg - 1)}>
-            &#10094;
-          </a>
-        </div>
+        <a className="prev" onClick={() => selectImg(currImg - 1)}>
+          &#10094;
+        </a>
         <ImageZoomInOut
           className="curr-img"
           imageUrl={imgs[currImg] ? imgs[currImg].url : ""}
           alt={t("noPicture")}
         />
-        <div>
-          <a className="next" onClick={() => selectImg(currImg + 1)}>
-            &#10095;
-          </a>
-        </div>
+        <a className="next" onClick={() => selectImg(currImg + 1)}>
+          &#10095;
+        </a>
       </div>
       <div className="carousel" ref={carouselRef}>
         {imgs.map((img, index) => (
@@ -80,7 +67,7 @@ const NewCarousel: React.FC<CarouselProps> = ({ imgs }) => {
             src={img.url}
             className={`carousel-img ${index === currImg ? " current" : ""}`}
             alt={img.title}
-            key={index} // Les clés utilisent l'index pour s'assurer que chaque image est unique
+            key={index}
             onClick={() => selectImg(index)}
           />
         ))}

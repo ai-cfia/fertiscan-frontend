@@ -18,10 +18,6 @@ function CapturPage() {
   const { state } = useContext(SessionContext);
   const { setState } = useContext(SetSessionContext);
 
-  useEffect(() => {
-    setShow(state.data.pics[0]?.blob || "");
-  }, [state.data.pics]);
-
   const handlePhotoChange = (newFiles: File[]) => {
     const newPics: { blob: string; name: string }[] = [];
 
@@ -110,12 +106,6 @@ function CapturPage() {
     setRenameModalOpen(false);
   };
 
-  function updateNewFileName(): void {
-    if (blobToRename) {
-      setNewFileName(blobToRename.name);
-    }
-  }
-
   const calculateCaptureCounter = () => {
     // Extract numbers from filenames that start with "capture" and followed by a number.
     const pics = state.data.pics;
@@ -133,6 +123,16 @@ function CapturPage() {
     // The next counter should be one more than the maximum found.
     return maxNumber + 1;
   };
+
+  function updateNewFileName(): void {
+    if (blobToRename) {
+      setNewFileName(blobToRename.name);
+    }
+  }
+
+  useEffect(() => {
+    setShow(state.data.pics[0]?.blob || "");
+  }, [state.data.pics]);
 
   // Prevent scrolling useEffect
   useEffect(() => {

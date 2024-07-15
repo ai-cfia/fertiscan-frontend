@@ -1,4 +1,3 @@
-import "./HomePage.css";
 import { useContext } from "react";
 import { SessionContext } from "../../Utils/SessionContext";
 import CapturPage from "../CapturPage/CapturPage";
