@@ -10,8 +10,9 @@ import { useEffect } from "react";
 interface ControlsProps {
   url: string;
 }
+
 const TransformControls = ({ url }: ControlsProps) => {
-  const { resetTransform } = useControls();
+  let { resetTransform } = useControls();
   useEffect(() => {
     resetTransform();
     // eslint-disable-next-line
@@ -21,14 +22,13 @@ const TransformControls = ({ url }: ControlsProps) => {
 
 interface ImageProps {
   imageUrl: string;
-  className?: string; // Optional class name
-  onClick?: () => void; // Optional click handler function
-  alt?: string; // Optional alt text
+  className?: string;
+  onClick?: () => void;
+  alt?: string;
 }
 
 function ImageZoomInOut({ imageUrl, alt }: ImageProps) {
   //sorry for the hack, but I can't find a way to avoid the error
-  // eslint-disable-next-line
   const varForNoError = (_: {
     instance: ReactZoomPanPinchContext;
     setTransform: ReturnType<
@@ -104,6 +104,7 @@ function ImageZoomInOut({ imageUrl, alt }: ImageProps) {
       ) => void
     >;
   }) => {};
+
   return (
     <TransformWrapper pinch={{ step: 1000 }}>
       {/* eslint-disable-next-line */}

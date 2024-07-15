@@ -5,7 +5,6 @@ import Modal from "../Modal/Modal";
 import editIcon from "../../assets/edit1.svg";
 import acceptIcon from "../../assets/acceptIcon.svg";
 import deleteIcon from "../../assets/deleteIcon.svg";
-
 import { FormClickActions } from "../../Utils/EventChannels";
 import { useTranslation } from "react-i18next";
 
@@ -16,13 +15,12 @@ interface InputProps {
 }
 
 const MAX_CHAR_IN_ROW = 37;
-
 const resizeTextarea = (textarea: HTMLElement | null) => {
   if (textarea) {
     if (textarea.classList.contains("list-input")) {
-      const tas = textarea.getElementsByClassName("textarea");
+      let tas = textarea.getElementsByClassName("textarea");
       Array.from(tas).forEach((ta: Element) => {
-        const toModify = ta as HTMLTextAreaElement;
+        let toModify = ta as HTMLTextAreaElement;
         toModify.style.height = "auto";
         toModify.style.height = ta.scrollHeight + "px";
       });
@@ -44,16 +42,13 @@ const InputComponent: React.FC<InputProps> = ({
   const objectInputRef = useRef<HTMLDivElement>(null);
   const modal = useRef<HTMLDivElement | null>(null);
   const ref = useRef<HTMLElement | null>(null);
+  const [lastWidth, setLastWidth] = useState(window.innerWidth);
+  // eslint-disable-next-line
+  const [_windowWidth, setWindowWidth] = useState(window.innerWidth);
   const textarea = {
     ref: ref,
     label: inputInfo.id,
   };
-
-  useEffect(() => {
-    FormClickActions.emit("SyncProgress", inputInfo);
-    resizeTextarea(textarea.ref.current);
-    // eslint-disable-next-line
-  }, []);
 
   const SyncChanges = (inputInfo: Input) => {
     if (inputInfo.property === "approved") {
@@ -80,11 +75,6 @@ const InputComponent: React.FC<InputProps> = ({
     }
   };
 
-  FormClickActions.on("Rejected", (rej: Input) => {
-    if (rej.id === inputInfo.id) {
-      SyncChanges(inputInfo);
-    }
-  });
   const handleStateChange = (inputInfo: Input) => {
     if (inputInfo.property === "approved") {
       setIsActive(true);
@@ -153,6 +143,7 @@ const InputComponent: React.FC<InputProps> = ({
       )
     );
   };
+
   const createSimpleInput = () => {
     return (
       <div className="single-textarea-container">
@@ -162,7 +153,7 @@ const InputComponent: React.FC<InputProps> = ({
           value={(inputInfo.value as string[])[0]}
           disabled={inputInfo.disabled}
           onChange={(event: React.ChangeEvent<HTMLTextAreaElement>) => {
-            const current = event.target as HTMLTextAreaElement;
+            let current = event.target as HTMLTextAreaElement;
             resizeTextarea(current);
             inputInfo.value = [event.target.value];
             propagateChange(inputInfo);
@@ -178,6 +169,7 @@ const InputComponent: React.FC<InputProps> = ({
       </div>
     );
   };
+
   const createListInput = () => {
     return (
       <div
@@ -193,13 +185,13 @@ const InputComponent: React.FC<InputProps> = ({
                   value={(inputInfo.value as string[])[index]}
                   disabled={inputInfo.disabled}
                   onChange={(event: React.ChangeEvent<HTMLTextAreaElement>) => {
-                    const current = event.target as HTMLTextAreaElement;
+                    let current = event.target as HTMLTextAreaElement;
                     resizeTextarea(current);
                     inputInfo.value[index] = event.target.value;
                     propagateChange(inputInfo);
                   }}
                   onInput={(event: React.FormEvent<HTMLTextAreaElement>) => {
-                    const current = event.target as HTMLTextAreaElement;
+                    let current = event.target as HTMLTextAreaElement;
                     resizeTextarea(current); // Added here
                   }}
                   className="textarea"
@@ -241,15 +233,13 @@ const InputComponent: React.FC<InputProps> = ({
     );
   };
 
-  const [lastWidth, setLastWidth] = useState(window.innerWidth);
-
   const adjustFontSize = (
     inputElement: HTMLInputElement,
     isWindowEnlarged: boolean | null,
   ) => {
-    const maxWidth = (inputElement.parentElement as HTMLElement).offsetWidth;
-    const actualWidth = inputElement.scrollWidth;
-    const currentFontSize = parseFloat(
+    let maxWidth = (inputElement.parentElement as HTMLElement).offsetWidth;
+    let actualWidth = inputElement.scrollWidth;
+    let currentFontSize = parseFloat(
       window.getComputedStyle(inputElement).getPropertyValue("font-size"),
     );
 
@@ -271,32 +261,9 @@ const InputComponent: React.FC<InputProps> = ({
       inputElement.style.fontSize = `${Math.min(currentFontSize + 0.9, 20)}px`;
     }
   };
-  // eslint-disable-next-line
-  const [_windowWidth, setWindowWidth] = useState(window.innerWidth);
-
-  useEffect(() => {
-    const handleResize = () => {
-      const newWidth = window.innerWidth;
-      if (newWidth !== lastWidth) {
-        setWindowWidth(newWidth);
-
-        const inputElements = objectInputRef.current?.querySelectorAll("input");
-        inputElements?.forEach((inputElement) => {
-          if (inputElement instanceof HTMLInputElement) {
-            adjustFontSize(inputElement, newWidth > lastWidth);
-          }
-        });
-
-        setLastWidth(newWidth);
-      }
-    };
-
-    window.addEventListener("resize", handleResize);
-    return () => window.removeEventListener("resize", handleResize);
-  }, [lastWidth]);
 
   const createObjectInput = () => {
-    const keys = Object.keys(
+    let keys = Object.keys(
       (inputInfo.value as { [key: string]: string }[])[0],
     );
     return (
@@ -328,7 +295,7 @@ const InputComponent: React.FC<InputProps> = ({
                       }
                       disabled={inputInfo.disabled}
                       onChange={(event) => {
-                        const newValue = {
+                        let newValue = {
                           ...(inputInfo.value[index] as {
                             [key: string]: string;
                           }),
@@ -338,7 +305,7 @@ const InputComponent: React.FC<InputProps> = ({
                         propagateChange(inputInfo);
                       }}
                       onInput={(event) => {
-                        const input = event.currentTarget;
+                        let input = event.currentTarget;
                         adjustFontSize(input, null);
                       }}
                     />
@@ -353,7 +320,7 @@ const InputComponent: React.FC<InputProps> = ({
                       }
                       disabled={inputInfo.disabled}
                       onChange={(event) => {
-                        const newValue = {
+                        let newValue = {
                           ...(inputInfo.value[index] as {
                             [key: string]: string;
                           }),
@@ -363,7 +330,7 @@ const InputComponent: React.FC<InputProps> = ({
                         propagateChange(inputInfo);
                       }}
                       onInput={(event) => {
-                        const input = event.currentTarget;
+                        let input = event.currentTarget;
                         adjustFontSize(input, null);
                       }}
                     />
@@ -378,7 +345,7 @@ const InputComponent: React.FC<InputProps> = ({
                       }
                       disabled={inputInfo.disabled}
                       onChange={(event) => {
-                        const newValue = {
+                        let newValue = {
                           ...(inputInfo.value[index] as {
                             [key: string]: string;
                           }),
@@ -388,7 +355,7 @@ const InputComponent: React.FC<InputProps> = ({
                         propagateChange(inputInfo);
                       }}
                       onInput={(event) => {
-                        const input = event.currentTarget;
+                        let input = event.currentTarget;
                         adjustFontSize(input, null);
                       }}
                     />
@@ -399,10 +366,9 @@ const InputComponent: React.FC<InputProps> = ({
                       disabled={inputInfo.disabled}
                       onClick={() => {
                         if (inputInfo.value.length > 1) {
-                          inputInfo.value.splice(index, 1); // This will remove the item at the given index
+                          inputInfo.value.splice(index, 1);
                           propagateChange(inputInfo);
                         }
-                        // Otherwise, do nothing when the length of the array is 1 to avoid deleting the parent
                       }}
                     >
                       <img
@@ -445,6 +411,39 @@ const InputComponent: React.FC<InputProps> = ({
       return createSimpleInput();
     }
   };
+
+  FormClickActions.on("Rejected", (rej: Input) => {
+    if (rej.id === inputInfo.id) {
+      SyncChanges(inputInfo);
+    }
+  });
+
+  useEffect(() => {
+    FormClickActions.emit("SyncProgress", inputInfo);
+    resizeTextarea(textarea.ref.current);
+    // eslint-disable-next-line
+  }, []);
+
+  useEffect(() => {
+    let handleResize = () => {
+      let newWidth = window.innerWidth;
+      if (newWidth !== lastWidth) {
+        setWindowWidth(newWidth);
+
+        let inputElements = objectInputRef.current?.querySelectorAll("input");
+        inputElements?.forEach((inputElement) => {
+          if (inputElement instanceof HTMLInputElement) {
+            adjustFontSize(inputElement, newWidth > lastWidth);
+          }
+        });
+
+        setLastWidth(newWidth);
+      }
+    };
+
+    window.addEventListener("resize", handleResize);
+    return () => window.removeEventListener("resize", handleResize);
+  }, [lastWidth]);
 
   return (
     <div className="test-button">
