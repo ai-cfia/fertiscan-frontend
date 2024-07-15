@@ -4,6 +4,7 @@
   max-width: 50%;
   height: fit-content;
   flex-direction: column;
+  height: 50vh;
 }
 
 /* Styles for the currently displayed image */
