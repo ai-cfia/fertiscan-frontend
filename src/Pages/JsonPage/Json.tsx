@@ -11,13 +11,13 @@ function JsonPage() {
   const location = useLocation();
   const files: File[] = location.state.data;
   const [uploadStarted, startUpload] = useState(false);
-
   const api_url = "https://shiny-goggles-75q6p5xj4wwfp6gg-5000.app.github.dev";
+  const sleep = (ms: number) => new Promise((r) => setTimeout(r, ms));
 
   const upload_all = async () => {
-    const res = [];
+    let res = [];
     for (let i = 0; i < files.length; i++) {
-      const formData = new FormData();
+      let formData = new FormData();
       formData.append("file", files[i]);
       res.push(
         await fetch(api_url + "/upload", {
@@ -36,7 +36,6 @@ function JsonPage() {
     }
     return res;
   };
-  const sleep = (ms: number) => new Promise((r) => setTimeout(r, ms));
 
   const poll_analyze = async () => {
     let data = await (
@@ -56,6 +55,7 @@ function JsonPage() {
     }
     return data;
   };
+
   useEffect(() => {
     if (!uploadStarted) {
       startUpload(true);
@@ -78,6 +78,7 @@ function JsonPage() {
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
+  
   return (
     <div className="${theme}">
       <div className={`loader-container ${loading ? "active" : ""}`}>

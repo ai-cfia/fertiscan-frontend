@@ -18,19 +18,16 @@ function CapturPage() {
   const { state } = useContext(SessionContext);
   const { setState } = useContext(SetSessionContext);
 
-  useEffect(() => {
-    setShow(state.data.pics[0]?.blob || "");
-  }, [state.data.pics]);
 
   const handlePhotoChange = (newFiles: File[]) => {
-    const newPics: { blob: string; name: string }[] = [];
+    let newPics: { blob: string; name: string }[] = [];
 
     // Cette fonction est appelée pour chaque nouveau fichier
-    const readAndAddPhoto = (file: File, callback: () => void) => {
-      const reader = new FileReader();
+    let readAndAddPhoto = (file: File, callback: () => void) => {
+      let reader = new FileReader();
       reader.onload = (e) => {
         if (e.target && e.target.result) {
-          const newBlob = e.target.result as string;
+          let newBlob = e.target.result as string;
           newPics.push({ blob: newBlob, name: file.name });
 
           if (newPics.length === newFiles.length) {
@@ -92,7 +89,7 @@ function CapturPage() {
 
   // Ajouter la fonction pour gérer le renommage de blob
   const handleRename = (updatedFileData: { blob: string; name: string }) => {
-    const updatedPics = state.data.pics.map((pic) => {
+    let updatedPics = state.data.pics.map((pic) => {
       if (pic.blob === updatedFileData.blob) {
         return updatedFileData; // Use the updatedFileData provided by RenameModal
       }
@@ -110,29 +107,33 @@ function CapturPage() {
     setRenameModalOpen(false);
   };
 
-  function updateNewFileName(): void {
-    if (blobToRename) {
-      setNewFileName(blobToRename.name);
-    }
-  }
-
   const calculateCaptureCounter = () => {
     // Extract numbers from filenames that start with "capture" and followed by a number.
-    const pics = state.data.pics;
-    const captureNumbers = pics
+    let pics = state.data.pics;
+    let captureNumbers = pics
       .map((pic) => {
-        const match = pic.name.match(/^capture(\d+)\.png$/);
+        let match = pic.name.match(/^capture(\d+)\.png$/);
         return match ? parseInt(match[1], 10) : null;
       })
       .filter((number) => number !== null) as number[];
 
     // Find the maximum number in the array of captureNumbers.
-    const maxNumber =
+    let maxNumber =
       captureNumbers.length > 0 ? Math.max(...captureNumbers) : 0;
 
     // The next counter should be one more than the maximum found.
     return maxNumber + 1;
   };
+
+  function updateNewFileName(): void {
+    if (blobToRename) {
+      setNewFileName(blobToRename.name);
+    }
+  }
+  
+  useEffect(() => {
+    setShow(state.data.pics[0]?.blob || "");
+  }, [state.data.pics]);
 
   // Prevent scrolling useEffect
   useEffect(() => {
