@@ -14,6 +14,7 @@ const SectionComponent: React.FC<sectionPorps> = ({
   imgs,
   propagateChange,
 }) => {
+  
   const handleInputChange = (newInfo: Input) => {
     sectionInfo.inputs.find((cur) => cur.label == newInfo.label)!.value =
       newInfo.value;

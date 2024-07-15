@@ -8,8 +8,8 @@ interface BlobData {
 }
 
 interface RenameModalProps {
-  fileData: BlobData; // Updated to handle BlobData
-  handleRename: (updatedFileData: BlobData) => void; // Updated type signature
+  fileData: BlobData;
+  handleRename: (updatedFileData: BlobData) => void;
   close: () => void;
   updateNewFileName: (newName: string) => void;
 }
@@ -20,28 +20,29 @@ const RenameModal: React.FC<RenameModalProps> = ({
   close,
 }) => {
   const { t } = useTranslation();
+  const [newFileName, setNewFileName] = useState<string | undefined>(undefined);
   const [nameWithoutExtension, extension] =
     // eslint-disable-next-line
     fileData.name.split(/\.(?=[^\.]+$)/);
-  const [newFileName, setNewFileName] = useState<string | undefined>(undefined);
-  useEffect(() => {
-    setNewFileName(nameWithoutExtension);
-  }, [fileData.name, nameWithoutExtension]);
 
   const handleSaveClick = () => {
     if (newFileName !== undefined) {
-      // Include the file extension if it exists
-      const updatedName = extension
+      let updatedName = extension
         ? `${newFileName}.${extension}`
         : newFileName;
-      const updatedFileData = { ...fileData, name: updatedName }; // Use updatedName instead of text
+      let updatedFileData = { ...fileData, name: updatedName };
       handleRename(updatedFileData);
       close();
     }
   };
+
   const handleChange = (e: React.ChangeEvent<HTMLTextAreaElement>) => {
     setNewFileName(e.target.value);
   };
+
+  useEffect(() => {
+    setNewFileName(nameWithoutExtension);
+  }, [fileData.name, nameWithoutExtension]);
 
   return (
     <div className="overlay-rename active">
