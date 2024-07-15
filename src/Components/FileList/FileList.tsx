@@ -74,7 +74,6 @@ const FileList: React.FC<FileListProps> = ({
         className={`file-list ${blobs.length === 0 ? "empty" : ""}`}
         style={{
           position: "relative",
-          height: "500px",
           overflowY: "auto",
         }}
       >

@@ -1,17 +1,26 @@
 .file-list {
-  border: 2px solid #ccc;
   border-radius: 5px;
-  grid-area: b;
+  grid-row: 2;
   padding: 5px;
   width: 100%;
-  margin-top: 67px;
   overflow-x: hidden;
+  height: 100%;
+}
+
+.file-list-container{
+  display: flex;
+  grid-area: b;
+  border: 2px solid #ccc;
+  border-radius: 5px;
+  width: 100%;
+  margin-top: 20px;
+  overflow-x: hidden;
+  grid-row: 1 / span 2
 }
 
 @media only screen and (min-width: 1093px) {
   .file-list.empty {
     width: 100%;
-    display: flex;
     flex-direction: column;
     justify-content: center;
     align-items: center;
@@ -21,10 +30,8 @@
 @media only screen and (max-width: 1092px) {
   .file-list.empty {
     width: 96%;
-    display: flex;
     flex-direction: column;
     justify-content: center;
-    align-items: center;
   }
   .file-list {
     display: flex;
@@ -36,6 +43,7 @@
 .file-list.empty {
   display: flex;
   align-items: center;
+  height: 100%;
 }
 
 .no-element {

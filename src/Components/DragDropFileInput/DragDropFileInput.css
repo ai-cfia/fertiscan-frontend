@@ -8,14 +8,19 @@
   border: 2px solid #ccc; /* Gray border color */
   border-radius: 5px; /* Rounded corners */
   cursor: pointer;
+  margin-top: 20px;
   position: relative; /* To position the plus sign */
 }
+.drag-drop-file-input p{
+  margin-bottom: -50px;
+  color: #ccc;
+}
 
-.drag-drop-file-input:hover {
+.drag-drop-file-input:hover{
   border: 2px solid #777; /* Gray border color */
 }
 
-.drag-drop-file-input.active {
+.drag-drop-file-input.active{
   border: 2px solid #777;
 }
 
@@ -29,7 +34,8 @@
   transform: translate(-50%, -50%); /* Center the plus sign */
 }
 
-.drag-drop-file-input:hover::before {
+.drag-drop-file-input:hover::before,
+.drag-drop-file-input:hover p {
   color: #777; /* Change the color of the plus sign on hover */
 }
 
@@ -109,6 +115,7 @@ input[type="file"] {
   display: none;
   flex-direction: column;
   align-items: center;
+  margin-top: 20px;
 }
 
 .camera-container.active {
@@ -162,4 +169,5 @@ input[type="file"] {
 .camera-feed {
   max-width: 600px;
   max-height: 600px;
+  min-height: 400px;
 }
