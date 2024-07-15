@@ -1,14 +1,15 @@
 import { useEffect, useContext, useState } from "react";
-import { ErrorContext } from "../../Utils/ErrorContext";
+import { AlertContext } from "../../Utils/AlertContext";
 import "./AlertBanner.css";
-import editIcon from "../../assets/errorIcon.png";
+import errorIcon from "../../assets/errorIcon.png";
+import confirmIcon from "../../assets/confirmIcon.svg";
 
 const AlertBanner = () => {
-  const { message, clearAlert } = useContext(ErrorContext);
+  const { message, type, clearAlert } = useContext(AlertContext);  
   const [isActive, setIsActive] = useState(false);
 
   useEffect(() => {
-    let timer: string | number | NodeJS.Timeout | undefined;
+    let timer:  ReturnType<typeof setTimeout>;
     if (message) {
       setIsActive(true);
       timer = setTimeout(() => {
@@ -16,18 +17,16 @@ const AlertBanner = () => {
         clearAlert();
       }, 5000);
     }
-    return () => {
-      if (timer) clearTimeout(timer);
-    };
+    return () => timer && clearTimeout(timer);
   }, [message, clearAlert]);
 
+  if (!isActive) return null;
+
   return (
-    <div
-      className={`error-banner notAffectedTopPadding ${isActive ? "show" : ""}`}
-    >
-      <div className="error-alert">
-        <img className="error-alert__icon" src={editIcon} alt="Error Icon" />
-        <span className="error-alert__message">{message}</span>
+    <div className={`banner ${type} ${isActive ? "show" : ""}`}>
+      <div className="alert">
+        <img className="icon" src={type === 'error' ? errorIcon : confirmIcon} alt={`${type} Icon`} />
+        <span className="message">{message}</span>
       </div>
     </div>
   );
