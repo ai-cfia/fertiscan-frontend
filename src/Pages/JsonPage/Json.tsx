@@ -15,9 +15,9 @@ function JsonPage() {
   const sleep = (ms: number) => new Promise((r) => setTimeout(r, ms));
 
   const upload_all = async () => {
-    let res = [];
+    const res = [];
     for (let i = 0; i < files.length; i++) {
-      let formData = new FormData();
+      const formData = new FormData();
       formData.append("file", files[i]);
       res.push(
         await fetch(api_url + "/upload", {
@@ -78,7 +78,7 @@ function JsonPage() {
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
-  
+
   return (
     <div className="${theme}">
       <div className={`loader-container ${loading ? "active" : ""}`}>

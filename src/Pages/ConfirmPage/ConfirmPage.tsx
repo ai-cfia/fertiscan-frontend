@@ -25,7 +25,7 @@ const ConfirmPage = () => {
   const cancel = () => {
     setState({ ...state, state: "form" });
   };
-  
+
   const renderListInput = (inputInfo: Input) => {
     return (
       <ul>
@@ -37,7 +37,7 @@ const ConfirmPage = () => {
   };
 
   const renderObjectInput = (inputInfo: Input) => {
-    let keys = Object.keys(
+    const keys = Object.keys(
       (inputInfo.value as { [key: string]: string }[])[0],
     );
     return (
@@ -113,7 +113,9 @@ const ConfirmPage = () => {
         imgs={state.data.pics.map((blob) => ({
           url: blob.blob,
           title: blob.name,
-        }))} id={"carousel"}      />
+        }))}
+        id={"carousel"}
+      />
       <div className="confirm-container">
         {data.sections.map((section: Section) => renderSection(section))}
         <div className="button-container">

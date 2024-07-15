@@ -8,8 +8,6 @@ interface FileInputProps {
   file: string;
   calculateCaptureCounter: () => number;
 }
-const CAMERA_MODE = true;
-const FILE_MODE = false;
 
 const DragDropFileInput: React.FC<FileInputProps> = ({
   sendChange,
@@ -27,42 +25,11 @@ const DragDropFileInput: React.FC<FileInputProps> = ({
   const canvasRef = useRef<HTMLCanvasElement>(null);
   const [toggleMode, setToggleMode] = useState(false);
   const cameraSwitch = useRef<HTMLDivElement | null>(null);
+  const [hasPermission, setHasPermission] = useState<boolean>(false);
   const [, setCaptureCounter] = useState<number>(1);
   const { showAlert } = Error();
-
-  useEffect(() => {
-    if (file === "") {
-      const input = fileInput!.current!;
-      input.value = "";
-    }
-  }, [file]);
-
-  useEffect(() => {
-    if (stream && videoRef.current) {
-      videoRef.current.srcObject = stream;
-    }
-
-    return () => {
-      if (stream) {
-        stream.getTracks().forEach((track) => track.stop());
-      }
-    };
-  }, [stream]);
-
-  useEffect(() => {
-    if (toggleMode == CAMERA_MODE) {
-      selectCamera();
-    } else {
-      setStream(null);
-      stream?.getTracks().forEach((track) => track.stop());
-    }
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [toggleMode]);
-
-  useEffect(() => {
-    selectCamera();
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [cameraMode]);
+  const CAMERA_MODE = true;
+  const FILE_MODE = false;
 
   const handleDrag = (event: React.DragEvent<HTMLLabelElement>) => {
     event.preventDefault();
@@ -159,15 +126,12 @@ const DragDropFileInput: React.FC<FileInputProps> = ({
         const ctx = canvas.getContext("2d");
         canvas.width = width;
         canvas.height = height;
-
-        // Calculer la mise à l'échelle tout en préservant les proportions
         const scale = Math.min(width / img.width, height / img.height);
         const x = width / 2 - (img.width / 2) * scale;
         const y = height / 2 - (img.height / 2) * scale;
         if (ctx) {
           ctx.drawImage(img, x, y, img.width * scale, img.height * scale);
         }
-        // Convertir le canvas en fichier
         canvas.toBlob((blob) => {
           if (blob) {
             const processedFile = new File([blob], file.name, {
@@ -191,42 +155,37 @@ const DragDropFileInput: React.FC<FileInputProps> = ({
     callback: (newFile: File) => void,
   ) {
     const img = new Image();
-    // Important pour le CORS si vous utilisez une image externe
     img.crossOrigin = "Anonymous";
     img.onload = () => {
       const canvas = document.createElement("canvas");
       const ctx = canvas.getContext("2d");
       canvas.width = width;
       canvas.height = height;
-
-      // Calculer la mise à l'échelle pour maintenir les proportions
       const scale = Math.min(width / img.width, height / img.height);
       const x = (width - img.width * scale) / 2;
       const y = (height - img.height * scale) / 2;
       if (ctx) {
-        ctx.drawImage(img, x, y, img.width * scale, img.height * scale); // Dessine l'image
+        ctx.drawImage(img, x, y, img.width * scale, img.height * scale);
       }
       canvas.toBlob((blob) => {
         if (blob !== null) {
-          // Use the captureCounter state directly for naming the new file
           const captureCounter = calculateCaptureCounter();
           const newFile = new File([blob], `capture${captureCounter}.png`, {
             type: "image/png",
           });
-          setCaptureCounter(captureCounter + 1); // Increment the captureCounter after use
+          setCaptureCounter(captureCounter + 1);
           callback(newFile);
         }
       }, "image/png");
     };
     img.src = dataURL;
   }
+
   const selectFiles = (e: React.MouseEvent<HTMLElement>) => {
     e.preventDefault();
     const input = fileInput.current!;
     input.click();
   };
-
-  const [hasPermission, setHasPermission] = useState<boolean>(false);
 
   // This function gets the camera permission status
   const getCameraPermission = async () => {
@@ -241,21 +200,14 @@ const DragDropFileInput: React.FC<FileInputProps> = ({
     }
   };
 
-  // Check camera permissions when the component mounts
-  useEffect(() => {
-    getCameraPermission();
-  }, []);
-
   const selectCamera = async () => {
     if (hasPermission === null) {
-      // If permission hasn't been requested check if it can be obtained
       await getCameraPermission();
-      if (!hasPermission) return; // If permission denied, don't continue
+      if (!hasPermission) return;
     } else if (!hasPermission) {
-      return; // Don't attempt to access the camera if permission is denied
+      return;
     }
 
-    // Now we are sure that permission has been granted, access the camera
     const constraints = { video: { facingMode: { exact: cameraMode } } };
     const newStream = await navigator.mediaDevices.getUserMedia(constraints);
     setStream(newStream);
@@ -274,19 +226,56 @@ const DragDropFileInput: React.FC<FileInputProps> = ({
     getCameraPermission();
     if (!hasPermission) {
       showAlert(t("cameraPermissionError"));
-      return; // If we don't get permission, do not proceed
+      return;
     }
-    // Now that we know we have permission, we can toggle the camera mode
     setToggleMode((currentMode) => !currentMode);
   };
+
+  // Check camera permissions when the component mounts
   useEffect(() => {
-    // Perform DOM manipulation in response to state changes rather than directly in event handlers
+    getCameraPermission();
+  }, []);
+
+  useEffect(() => {
     if (toggleMode && cameraSwitch.current) {
       cameraSwitch.current.classList.add("active");
     } else if (cameraSwitch.current) {
       cameraSwitch.current.classList.remove("active");
     }
   }, [toggleMode]);
+
+  useEffect(() => {
+    if (file === "") {
+      const input = fileInput!.current!;
+      input.value = "";
+    }
+  }, [file]);
+
+  useEffect(() => {
+    if (stream && videoRef.current) {
+      videoRef.current.srcObject = stream;
+    }
+    return () => {
+      if (stream) {
+        stream.getTracks().forEach((track) => track.stop());
+      }
+    };
+  }, [stream]);
+
+  useEffect(() => {
+    if (toggleMode == CAMERA_MODE) {
+      selectCamera();
+    } else {
+      setStream(null);
+      stream?.getTracks().forEach((track) => track.stop());
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [toggleMode]);
+
+  useEffect(() => {
+    selectCamera();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [cameraMode]);
 
   return (
     <div className="drag-drop-container">

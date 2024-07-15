@@ -28,7 +28,7 @@ const ContextMenu: React.FC<ContextMenuProps> = ({
     onRenameClick(fileData);
     onClose();
   };
-  
+
   return (
     <div
       className="context-menu"

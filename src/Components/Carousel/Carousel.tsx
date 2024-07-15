@@ -4,7 +4,7 @@ import ImageZoomInOut from "../ImageZoomInOut/ImageZoomInOut";
 import { useTranslation } from "react-i18next";
 
 interface CarouselProps {
-  id:string;
+  id: string;
   imgs: {
     url: string;
     title: string;
@@ -29,11 +29,11 @@ const NewCarousel: React.FC<CarouselProps> = ({ id, imgs }) => {
   };
 
   const scrollToImg = (idx: number) => {
-    let imgRef = imgRefs.current[idx];
+    const imgRef = imgRefs.current[idx];
     if (imgRef && carouselRef.current) {
-      let visibleWidth = carouselRef.current.offsetWidth;
-      let offset = imgRef.offsetLeft - carouselRef.current.offsetLeft;
-      let centerOffset = offset - (visibleWidth / 2 - imgRef.offsetWidth / 2);
+      const visibleWidth = carouselRef.current.offsetWidth;
+      const offset = imgRef.offsetLeft - carouselRef.current.offsetLeft;
+      const centerOffset = offset - (visibleWidth / 2 - imgRef.offsetWidth / 2);
       carouselRef.current.scrollTo({
         left: centerOffset,
         behavior: "smooth",
@@ -48,17 +48,17 @@ const NewCarousel: React.FC<CarouselProps> = ({ id, imgs }) => {
   return (
     <div id={id} className="carousel-wrapper">
       <div className="curr-img">
-          <a className="prev" onClick={() => selectImg(currImg - 1)}>
-            &#10094;
-          </a>
+        <a className="prev" onClick={() => selectImg(currImg - 1)}>
+          &#10094;
+        </a>
         <ImageZoomInOut
           className="curr-img"
           imageUrl={imgs[currImg] ? imgs[currImg].url : ""}
           alt={t("noPicture")}
         />
-          <a className="next" onClick={() => selectImg(currImg + 1)}>
-            &#10095;
-          </a>
+        <a className="next" onClick={() => selectImg(currImg + 1)}>
+          &#10095;
+        </a>
       </div>
       <div className="carousel" ref={carouselRef}>
         {imgs.map((img, index) => (

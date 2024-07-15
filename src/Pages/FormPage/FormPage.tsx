@@ -57,7 +57,7 @@ const FormPage = () => {
   const { setState } = useContext(SetSessionContext);
   const blobs = state.data.pics;
   const [loading, setLoading] = useState(true);
-  const elementToFix = document.getElementById('carousel') as HTMLDivElement;
+  const elementToFix = document.getElementById("carousel") as HTMLDivElement;
   let lastKnownScrollPosition = 0;
   let ticking = false;
   // @ts-expect-error : has to be used to prompt user when error
@@ -132,12 +132,12 @@ const FormPage = () => {
    * @returns data : the data retrieved from the backend
    */
   const analyse = async () => {
-    let formData = new FormData();
+    const formData = new FormData();
     for (let i = 0; i < blobs.length; i++) {
-      let blobData = await fetch(blobs[i].blob).then((res) => res.blob());
+      const blobData = await fetch(blobs[i].blob).then((res) => res.blob());
       formData.append("images", blobData, blobs[i].name);
     }
-    let data = await (
+    const data = await (
       await fetch(api_url + "/analyze", {
         method: "POST",
         headers: {
@@ -185,11 +185,11 @@ const FormPage = () => {
     //------------------------------ does this works and does it need to ------------------------------//
     // TODO
     document.querySelectorAll("textarea").forEach((elem) => {
-      let nativeTAValueSetter = Object.getOwnPropertyDescriptor(
+      const nativeTAValueSetter = Object.getOwnPropertyDescriptor(
         window.HTMLTextAreaElement.prototype,
         "value",
       )!.set;
-      let event = new Event("change", { bubbles: true });
+      const event = new Event("change", { bubbles: true });
       nativeTAValueSetter!.call(elem, elem.value + " ");
       elem.dispatchEvent(event);
       nativeTAValueSetter!.call(elem, elem.value.slice(0, -1));
@@ -205,7 +205,7 @@ const FormPage = () => {
 
   const give_focus = (input: Input) => {
     // focus on the selected section
-    let element = document.getElementById(input.id) as HTMLElement;
+    const element = document.getElementById(input.id) as HTMLElement;
     if (element) {
       element.scrollIntoView({
         behavior: "smooth",
@@ -218,7 +218,7 @@ const FormPage = () => {
 
   const validateFormInputs = () => {
     // Flag to track if all sections are approved
-    let rejected: Input[] = [];
+    const rejected: Input[] = [];
     // Iterate through each section and its inputs
     data.sections.forEach((section) => {
       section.inputs.forEach((input) => {
@@ -246,7 +246,7 @@ const FormPage = () => {
 
   // eslint-disable-next-line
   const submitForm = () => {
-    let isValid = validateFormInputs();
+    const isValid = validateFormInputs();
     setData(data.copy());
     setState({ ...state, data: { pics: blobs, form: data } });
     if (isValid) {
@@ -255,7 +255,7 @@ const FormPage = () => {
   };
 
   const handleDataChange = (newSection: Section) => {
-    let new_data = data.copy();
+    const new_data = data.copy();
     new_data.sections.find((cur) => cur.label == newSection.label) !=
       newSection;
     setData(new_data);
@@ -265,26 +265,26 @@ const FormPage = () => {
   function setElementPosition(scrollPos: number): void {
     elementToFix.style.transform = `translateY(${scrollPos}px)`;
   }
-  
-  window.addEventListener('scroll', function() {
+
+  window.addEventListener("scroll", function () {
     lastKnownScrollPosition = window.scrollY;
-  
+
     if (!ticking) {
-      if(this.window.innerWidth<1230) {
+      if (this.window.innerWidth < 1230) {
         return;
       }
-      window.requestAnimationFrame(function() {
+      window.requestAnimationFrame(function () {
         setElementPosition(lastKnownScrollPosition);
         ticking = false;
       });
-  
+
       ticking = true;
     }
   });
-  
+
   useEffect(() => {
     // load imgs for the carousel
-    let newUrls = blobs.map((blob) => ({ url: blob.blob, title: blob.name }));
+    const newUrls = blobs.map((blob) => ({ url: blob.blob, title: blob.name }));
     // Set the urls state only once with all the transformations
     setUrls(newUrls);
 
@@ -308,7 +308,7 @@ const FormPage = () => {
         data.sections
           .find((currentSection) => currentSection.label == stateSection.label)!
           .inputs.forEach((input) => {
-            let stateInput = stateSection.inputs.find(
+            const stateInput = stateSection.inputs.find(
               (currentInput: Input) => currentInput.id == input.id,
             )!;
             input.value = stateInput.value;
@@ -327,7 +327,7 @@ const FormPage = () => {
   return (
     <StrictMode>
       <div className={"formPage-container ${theme}"}>
-          <Carousel id="carousel" imgs={urls}></Carousel>
+        <Carousel id="carousel" imgs={urls}></Carousel>
         <div className="data-container">
           {loading ? (
             <div
