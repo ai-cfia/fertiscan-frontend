@@ -22,14 +22,14 @@
     grid-template-columns: 37% 55% 10%;
     justify-items: center;
   }
-  .carousel-wrapper{
+  .formPage-container .carousel-wrapper{
     grid-area: pics;
     left:10%;
     max-width: 80%!important;
     height: auto !important;
     margin-top: 20%;
   }
-  .curr-img img {
+  .formPage-container .curr-img img {
     width: calc(100%) !important;
     height: auto !important;
   }  
@@ -45,10 +45,10 @@
     justify-items: center;
   }
 
-  .curr-img:not(.data-container){
+  .formPage-container .curr-img:not(.data-container){
     margin-top: 10%;
   }
-  .carousel-wrapper{
+  .formPage-container .carousel-wrapper{
     grid-area: pics;
     height: 75vh!important;
   }
