@@ -38,6 +38,7 @@ const InputComponent: React.FC<InputProps> = ({
   const [property, setProperty] = useState(inputInfo.property);
   const objectInputRef = useRef<HTMLDivElement>(null);
   const ref = useRef<HTMLElement | null>(null);
+  const textareaRefs: React.MutableRefObject<HTMLTextAreaElement | null>[] = [];
   const [lastWidth, setLastWidth] = useState(window.innerWidth);
   // eslint-disable-next-line
   const [_windowWidth, setWindowWidth] = useState(window.innerWidth);
@@ -111,7 +112,7 @@ const InputComponent: React.FC<InputProps> = ({
   };
 
   const createSimpleInput = () => {
-    let ref= textarea.ref as React.MutableRefObject<HTMLTextAreaElement>;
+    const ref = textarea.ref as React.MutableRefObject<HTMLTextAreaElement>;
     return (
       <div className="single-textarea-container">
         <textarea
@@ -127,8 +128,8 @@ const InputComponent: React.FC<InputProps> = ({
             resizeTextarea(textarea.ref.current);
           }}
           style={{
-            maxHeight: isExpanded ? 'fit-content' : '97px', 
-            overflow: isExpanded ? 'hidden' : 'auto',
+            maxHeight: isExpanded ? "fit-content" : "97px",
+            overflow: isExpanded ? "hidden" : "auto",
           }}
           onInput={() => {
             resizeTextarea(textarea.ref.current);
@@ -136,36 +137,28 @@ const InputComponent: React.FC<InputProps> = ({
           className="textarea"
           rows={1}
         />
-        {/* Show more button */
-        ref.current &&(
-          ref.current.scrollHeight > 97&&(
-
-        <div className="show-more-container">
-            <label
-              className="open-icon"
-              onClick={handleToggleExpand}
-            >
-              {isExpanded ? t("showLess") : t("showMoreButton")}
-            </label>
-          </div>
-        )
-      )
+        {
+          /* Show more button */
+          ref.current && ref.current.scrollHeight > 97 && (
+            <div className="show-more-container">
+              <label className="open-icon" onClick={handleToggleExpand}>
+                {isExpanded ? t("showLess") : t("showMoreButton")}
+              </label>
+            </div>
+          )
         }
       </div>
     );
   };
 
-  const textareaRefs: React.MutableRefObject<HTMLTextAreaElement|null>[] = [];
-
   const createListInput = () => {
-    inputInfo.value.forEach((_)=>{
-      textareaRefs.push(useRef<HTMLTextAreaElement | null>(null))
-    })
+  // eslint-disable-next-line
+  inputInfo.value.forEach((_) => {
+    // eslint-disable-next-line
+    textareaRefs.push(useRef<HTMLTextAreaElement | null>(null));
+  });
     return (
-      <div
-        id={inputInfo.id}
-        className="list-input"
-      >
+      <div id={inputInfo.id} className="list-input">
         <div className="textareas-wrapper">
           {inputInfo.value.map((_, index) => {
             return (
@@ -175,8 +168,8 @@ const InputComponent: React.FC<InputProps> = ({
                   disabled={inputInfo.disabled}
                   ref={textareaRefs[index]}
                   style={{
-                    maxHeight: isExpanded ? 'fit-content' : '97px',
-                    overflow: isExpanded ? 'hidden' : 'auto',
+                    maxHeight: isExpanded ? "fit-content" : "97px",
+                    overflow: isExpanded ? "hidden" : "auto",
                   }}
                   onChange={(event: React.ChangeEvent<HTMLTextAreaElement>) => {
                     const current = event.target as HTMLTextAreaElement;
@@ -191,11 +184,12 @@ const InputComponent: React.FC<InputProps> = ({
                   className="textarea"
                   rows={1}
                 />
-                 {/* Show more button */
-                 
-                 textareaRefs[index].current && (
-                  textareaRefs[index].current.scrollHeight > 97 &&(
-                    <div className="show-more-container">
+                {
+                  /* Show more button */
+
+                  textareaRefs[index].current &&
+                    textareaRefs[index].current.scrollHeight > 97 && (
+                      <div className="show-more-container">
                         <label
                           className="open-icon"
                           onClick={handleToggleExpand}
@@ -204,8 +198,7 @@ const InputComponent: React.FC<InputProps> = ({
                         </label>
                       </div>
                     )
-                  )
-                  }
+                }
                 <button
                   className={`delete-button ${inputInfo.disabled ? "disabled" : ""}`}
                   disabled={inputInfo.disabled}
