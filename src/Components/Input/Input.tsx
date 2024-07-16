@@ -6,6 +6,7 @@ import acceptIcon from "../../assets/acceptIcon.svg";
 import deleteIcon from "../../assets/deleteIcon.svg";
 import { FormClickActions } from "../../Utils/EventChannels";
 import { useTranslation } from "react-i18next";
+import TableTextarea from "./TableTextarea/TableTextarea";
 
 interface InputProps {
   inputInfo: Input;
@@ -15,17 +16,8 @@ interface InputProps {
 
 const resizeTextarea = (textarea: HTMLElement | null) => {
   if (textarea) {
-    if (textarea.classList.contains("list-input")) {
-      const tas = textarea.getElementsByClassName("textarea");
-      Array.from(tas).forEach((ta: Element) => {
-        const toModify = ta as HTMLTextAreaElement;
-        toModify.style.height = "auto";
-        toModify.style.height = ta.scrollHeight + "px";
-      });
-    } else {
       textarea.style.height = "auto";
       textarea.style.height = textarea.scrollHeight + "px";
-    }
   }
 };
 
@@ -135,76 +127,18 @@ const InputComponent: React.FC<InputProps> = ({
   };
 
   const createListInput = () => {
-    // eslint-disable-next-line
-    inputInfo.value.forEach((_) => {
-      // eslint-disable-next-line
-      textareaRefs.push(useRef<HTMLTextAreaElement | null>(null));
-    });
+  
     return (
       <div id={inputInfo.id} className="list-input">
         <div className={`textareas-wrapper form-input ${inputInfo.property}`}>
-          {inputInfo.value.map((_, index) => {
-            return (
-              <div className="table-textarea-container" key={index}>
-                <textarea
-                  value={(inputInfo.value as string[])[index]}
-                  disabled={inputInfo.disabled}
-                  ref={textareaRefs[index]}
-                  style={{
-                    maxHeight: isExpanded ? "fit-content" : "97px",
-                    overflow: isExpanded ? "hidden" : "auto",
-                  }}
-                  onChange={(event: React.ChangeEvent<HTMLTextAreaElement>) => {
-                    const current = event.target as HTMLTextAreaElement;
-                    resizeTextarea(current);
-                    inputInfo.value[index] = event.target.value;
-                    propagateChange(inputInfo);
-                  }}
-                  onInput={(event: React.FormEvent<HTMLTextAreaElement>) => {
-                    const current = event.target as HTMLTextAreaElement;
-                    resizeTextarea(current);
-                  }}
-                  onFocus={setFocus}
-                  onBlur={unsetFocus}
-                  className="textarea"
-                  rows={1}
-                />
-                {
-                  /* Show more button */
-
-                  textareaRefs[index].current &&
-                    textareaRefs[index].current!.scrollHeight > 97 && (
-                      <div className="show-more-container">
-                        <label
-                          className="open-icon"
-                          onClick={handleToggleExpand}
-                        >
-                          {isExpanded ? t("showLess") : t("showMoreButton")}
-                        </label>
-                      </div>
-                    )
-                }
-                <button
-                  className={`delete-button ${inputInfo.disabled ? "disabled" : ""}`}
-                  disabled={inputInfo.disabled}
-                  onClick={() => {
-                    if (inputInfo.value.length > 1) {
-                      inputInfo.value.splice(index, 1);
-                      propagateChange(inputInfo);
-                    }
-                  }}
-                >
-                  <img
-                    src={deleteIcon}
-                    className={`delete-img ${inputInfo.disabled ? "disabled" : ""}`}
-                    alt={t("approveButton")}
-                    width="20"
-                    height="20"
-                  />
-                </button>
-              </div>
-            );
-          })}
+          {inputInfo.value.map((_, index) => <TableTextarea
+              index={index}
+              inputInfo={inputInfo}
+              propagateChange={propagateChange}
+              setFocus={setFocus}
+              unsetFocus={unsetFocus}
+            />
+          )}
           <div
             onClick={() => {
               (inputInfo.value as string[]).push("");
