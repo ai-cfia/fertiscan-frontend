@@ -50,10 +50,10 @@ const InputComponent: React.FC<InputProps> = ({
   };
 
   const SyncChanges = (inputInfo: Input) => {
-    // if property is approved then 
+    // if property is approved then
     //        input isnt active and is disabled
     //        else input is active and not disabled
-    setIsActive(inputInfo.property!== "approved");
+    setIsActive(inputInfo.property !== "approved");
     inputInfo.disabled = inputInfo.property === "approved";
     setProperty(inputInfo.property);
   };
@@ -65,7 +65,7 @@ const InputComponent: React.FC<InputProps> = ({
   const unsetFocus = () => {
     console.log("unfocus");
     FormClickActions.emit("UnFocus", inputInfo);
-  }
+  };
 
   const handleStateChange = (inputInfo: Input) => {
     switch (inputInfo.property) {
@@ -73,9 +73,11 @@ const InputComponent: React.FC<InputProps> = ({
         inputInfo.property = "default";
         FormClickActions.emit("ModifyClick", inputInfo);
         break;
-      case "rejected":// rejected is the same as default with the next line in addition
+      case "rejected":
         textarea.ref.current?.classList.remove("rejected");
-        /* FALLTHROUGH */
+        inputInfo.property = "approved";
+        FormClickActions.emit("ApproveClick", inputInfo);
+        break;
       case "default":
         inputInfo.property = "approved";
         FormClickActions.emit("ApproveClick", inputInfo);
@@ -251,7 +253,11 @@ const InputComponent: React.FC<InputProps> = ({
       (inputInfo.value as { [key: string]: string }[])[0],
     );
     return (
-      <div id={inputInfo.id} className={`object-input form-input ${inputInfo.property}`} ref={objectInputRef}>
+      <div
+        id={inputInfo.id}
+        className={`object-input form-input ${inputInfo.property}`}
+        ref={objectInputRef}
+      >
         <table>
           <colgroup>
             <col span={1} style={{ width: "45%" }} />
