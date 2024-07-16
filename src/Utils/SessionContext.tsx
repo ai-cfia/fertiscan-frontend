@@ -8,7 +8,6 @@ import {
   calculateStateObjectSize,
   stateObjectExceedsLimit,
 } from "./stateObject";
-import { t } from "i18next";
 
 interface SessionContextType {
   state: StateType;
@@ -29,22 +28,6 @@ export const SetSessionContext = createContext({
   }) => {},
 });
 
-function stateReducer(_state: StateType, newState: StateType) {
-  const { showAlert } = useAlert();
-  if (stateObjectExceedsLimit(newState)) {
-    showAlert(i18n.t("exceedsLimit"), "error");
-    return _state;
-  }
-
-  try {
-    sessionStorage.setItem("state", JSON.stringify(newState));
-  } catch (e) {
-    console.error(e);
-    console.log("state object size", calculateStateObjectSize(newState));
-  }
-  return newState;
-}
-
 // eslint-disable-next-line @typescript-eslint/ban-types
 export const SessionProvider = ({ children }: React.PropsWithChildren<{}>) => {
   const initialState: {
@@ -53,6 +36,23 @@ export const SessionProvider = ({ children }: React.PropsWithChildren<{}>) => {
   } = sessionStorage.getItem("state")
     ? JSON.parse(sessionStorage.getItem("state")!)
     : { state: "captur", data: { pics: [], form: new Data([]) } };
+  const { showAlert } = useAlert();
+
+  const stateReducer = (_state: StateType, newState: StateType) => {
+    if (stateObjectExceedsLimit(newState)) {
+      showAlert(i18n.t("exceedsLimit"), "error");
+      return _state;
+    }
+
+    try {
+      sessionStorage.setItem("state", JSON.stringify(newState));
+    } catch (e) {
+      console.error(e);
+      console.log("state object size", calculateStateObjectSize(newState));
+    }
+    return newState;
+  };
+
   const [state, setState] = useReducer(stateReducer, initialState);
 
   return (
