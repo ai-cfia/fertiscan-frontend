@@ -1,46 +1,43 @@
----
-name: Bug report
-about: Create a report to help us improve
-title: As a [stakeholder], I want to [description of the desired outcome].
-labels: bug
-assignees: ''
+---  
+name: Bug report  
+about: Create a report to help us improve  
+title: As a [stakeholder], I want to [description of the desired outcome].  
+labels: bug  
+assignees: ""  
+---  
 
----
+## Description  
 
-# Bug Report
+**Bug Summary:** [Provide a brief but clear summary of the bug. Add visuals  
+like screenshots and GIFs if possible.]  
 
-## Description
+**Steps to Reproduce:**  
+[Outline the steps to reproduce the bug, being as detailed as possible.]  
 
-**Bug Summary**
-[Provide a brief but clear summary of the bug. Add visuals like screenshots and GIFs if possible.]
+**Expected Behavior:**  
+[Describe what you expected to happen.]  
 
-**Steps to Reproduce**
-[Outline the steps to reproduce the bug, being as detailed as possible.]
+**Actual Behavior:**  
+[Describe what actually happened.]  
 
-**Expected Behavior**
-[Describe what you expected to happen.]
+**Environment:**  
 
-**Actual Behavior**
-[Describe what actually happened.]
+**Commit Hash:** [e.g., 1cb3d1876a7b4c2435b4a5067e5ae53631063948]  
 
-## Environment
+**OS Version:** [e.g., Windows 10, macOS 11.2]  
 
-**Commit Hash:** [e.g., 1cb3d1876a7b4c2435b4a5067e5ae53631063948]
-**Browser Version:** [e.g., Chrome 91.0.4472.77]
+**Browser Version:** [e.g., Chrome 91.0.4472.77]  
 
-## Logs and Screenshots
+**Logs and Screenshots:**  
 
-**Browser Console Logs**
-[Include relevant browser console logs, if applicable]
+**Browser Console Logs:**  
+[Include relevant browser console logs, if applicable]  
 
-**Extra Screenshots**
-[Attach any relevant extra screenshots]
+**Extra Screenshots:**  
+[Attach any relevant extra screenshots]  
 
+**Additional Context:**  
+[Include any other context about the problem here.]  
 
-## Extras
-
-**Additional Context**
-[Include any other context about the problem here.]
-
-**Suggested Fix** (Optional)
-[If you have an idea of how to fix the bug, describe it here.]
+**Suggested Fix:** (facultatif)  
+[If you have an idea of how to fix the bug, describe it here.]  
