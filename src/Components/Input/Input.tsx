@@ -188,7 +188,7 @@ const InputComponent: React.FC<InputProps> = ({
                   /* Show more button */
 
                   textareaRefs[index].current &&
-                    textareaRefs[index].current.scrollHeight > 97 && (
+                    textareaRefs[index].current!.scrollHeight > 97 && (
                       <div className="show-more-container">
                         <label
                           className="open-icon"
