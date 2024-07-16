@@ -3,6 +3,9 @@ import Data from "../Model/Data-Model";
 import BlobData from "../interfaces/BlobData";
 import StateType from "../interfaces/StateType";
 import { stateObjectExceedsLimit } from "./stateObject";
+import { Error } from "./ErrorContext";
+import { useTranslation } from "react-i18next";
+
 
 interface SessionContextType {
   state: StateType;
@@ -24,8 +27,10 @@ export const SetSessionContext = createContext({
 });
 
 function stateReducer(_state: StateType, newState: StateType) {
+  const {showAlert} = Error()
+  const t = useTranslation().t
   if (stateObjectExceedsLimit(newState)) {
-    alert("TODO: Limit exceeded message");
+    showAlert(t("exceedsLimit"))
     return _state;
   }
 

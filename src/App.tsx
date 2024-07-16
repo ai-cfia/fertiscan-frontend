@@ -17,9 +17,9 @@ function App() {
   }, []);
 
   return (
-    <SessionProvider>
-      <BrowserRouter>
-        <ErrorProvider>
+    <ErrorProvider>
+      <SessionProvider>
+        <BrowserRouter>
           <StrictMode>
             <Header />
             <SideMenu />
@@ -31,9 +31,9 @@ function App() {
               <Route path="*" element={<NoPage />} />
             </Route>
           </Routes>
-        </ErrorProvider>
-      </BrowserRouter>
-    </SessionProvider>
+        </BrowserRouter>
+      </SessionProvider>
+    </ErrorProvider>
   );
 }
 

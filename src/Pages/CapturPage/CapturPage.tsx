@@ -166,7 +166,7 @@ function CapturPage() {
             propagateDelete={handleDeletion}
             onRenameClick={openRenameModal}
           />
-          <label>{`TODO: Indicator of current state object size: ${calculateStateObjectSize(state).megabytes.toFixed(2)} / ${(STATE_OBJECT_SIZE_LIMIT / (1024 * 1024)).toFixed(2)} MB`}</label>
+          <label>{`${t("currentStateSize")} : ${calculateStateObjectSize(state).megabytes.toFixed(2)} / ${(STATE_OBJECT_SIZE_LIMIT / (1024 * 1024)).toFixed(2)} MB`}</label>
         </div>
       </div>
     </StrictMode>
