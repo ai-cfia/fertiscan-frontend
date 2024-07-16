@@ -50,10 +50,9 @@
   }
   .formPage-container .carousel-wrapper{
     grid-area: pics;
-    height: 75vh!important;
+    height: 75vh !important;
   }
 }
-
 
 .progress-wrapper {
   grid-area: progress-bar;
@@ -130,7 +129,6 @@ html{
   grid-area: show-more;
   width: 100%;
 }
-
 
 .loader-container-form.active {
   display: flex;

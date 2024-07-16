@@ -11,6 +11,7 @@
       "c b";
     grid-template-columns: 52% 33%;
     justify-content: space-evenly;
+    grid-template-rows: auto auto; /* Hauteur de ligne déterminée par le contenu */
     padding: 0% 3%;
   }
 }
@@ -34,7 +35,6 @@
   display: flex;
   position: relative;
   justify-content: center;
-
 }
 
 .disable-scroll {

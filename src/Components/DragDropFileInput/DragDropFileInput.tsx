@@ -279,8 +279,6 @@ const DragDropFileInput: React.FC<FileInputProps> = ({
 
   return (
     <div className="drag-drop-container">
-      <h3 className="title">{t("dragAndDropFileH3")}</h3>
-
       <div className="entry-wrapper">
         <div
           className={`input-wrapper ${toggleMode == FILE_MODE ? "active" : ""}`}
@@ -301,6 +299,11 @@ const DragDropFileInput: React.FC<FileInputProps> = ({
             onClick={selectFiles}
             className={`drag-drop-file-input ${dragActive ? "active" : ""} ${file ? "hasFile" : ""}`}
           >
+            <p className={file ? "p1 active" : "p1 "}>
+              {t("AccessFile")}
+              <br />
+              {t("dragAndDropFilePOption1")}
+            </p>
             <embed id="preview" src={file} className={file ? "active" : ""} />
           </label>
         </div>
@@ -334,11 +337,6 @@ const DragDropFileInput: React.FC<FileInputProps> = ({
         </div>
       </div>
       <div className="drag-drop-inner">
-        <p>
-          {toggleMode == FILE_MODE
-            ? t("dragAndDropFilePOption1")
-            : t("dragAndDropFilePOption2")}
-        </p>
         <div
           className={`switch ${toggleMode ? "active" : ""}`}
           id="camera-switch"
@@ -352,10 +350,6 @@ const DragDropFileInput: React.FC<FileInputProps> = ({
             {t("cameraLabel")}
           </label>
         </div>
-        <button type="button" onClick={selectFiles}>
-          {" "}
-          {t("browseFileButton")}
-        </button>
       </div>
     </div>
   );
