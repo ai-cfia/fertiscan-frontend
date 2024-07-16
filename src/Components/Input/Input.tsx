@@ -16,8 +16,17 @@ interface InputProps {
 
 const resizeTextarea = (textarea: HTMLElement | null) => {
   if (textarea) {
+    if (textarea.classList.contains("list-input")) {
+      const tas = textarea.getElementsByClassName("textarea");
+      Array.from(tas).forEach((ta: Element) => {
+        const toModify = ta as HTMLTextAreaElement;
+        toModify.style.height = "auto";
+        toModify.style.height = ta.scrollHeight + "px";
+      });
+    } else {
       textarea.style.height = "auto";
       textarea.style.height = textarea.scrollHeight + "px";
+    }
   }
 };
 
@@ -28,9 +37,7 @@ const InputComponent: React.FC<InputProps> = ({
   const { t } = useTranslation();
   const [isActive, setIsActive] = useState(false);
   const [property, setProperty] = useState(inputInfo.property);
-  const objectInputRef = useRef<HTMLDivElement>(null);
   const ref = useRef<HTMLElement | null>(null);
-  const textareaRefs: React.MutableRefObject<HTMLTextAreaElement | null>[] = [];
   const [lastWidth, setLastWidth] = useState(window.innerWidth);
   // eslint-disable-next-line
   const [_windowWidth, setWindowWidth] = useState(window.innerWidth);
@@ -64,6 +71,13 @@ const InputComponent: React.FC<InputProps> = ({
       case "approved":
         inputInfo.property = "default";
         FormClickActions.emit("ModifyClick", inputInfo);
+        textarea.ref.current!.focus();
+        setTimeout(() => {
+          textarea.ref.current!.focus();
+          if (textarea.ref.current instanceof HTMLTextAreaElement){
+            (textarea.ref.current! as HTMLTextAreaElement).select();
+          }
+        }, 100);
         break;
       case "rejected":
         textarea.ref.current?.classList.remove("rejected");
@@ -85,12 +99,11 @@ const InputComponent: React.FC<InputProps> = ({
   };
 
   const createSimpleInput = () => {
-    const ref = textarea.ref as React.MutableRefObject<HTMLTextAreaElement>;
     return (
       <div className="single-textarea-container form-input">
         <textarea
           id={inputInfo.id}
-          ref={ref}
+          ref={textarea.ref as React.RefObject<HTMLTextAreaElement>}
           value={(inputInfo.value as string[])[0]}
           disabled={inputInfo.disabled}
           onChange={(event: React.ChangeEvent<HTMLTextAreaElement>) => {
@@ -114,7 +127,7 @@ const InputComponent: React.FC<InputProps> = ({
         />
         {
           /* Show more button */
-          ref.current && ref.current.scrollHeight > 97 && (
+          textarea.ref.current && textarea.ref.current.scrollHeight > 97 && (
             <div className="show-more-container">
               <label className="open-icon" onClick={handleToggleExpand}>
                 {isExpanded ? t("showLess") : t("showMoreButton")}
@@ -130,13 +143,17 @@ const InputComponent: React.FC<InputProps> = ({
   
     return (
       <div id={inputInfo.id} className="list-input">
-        <div className={`textareas-wrapper form-input ${inputInfo.property}`}>
+        <div 
+          ref={textarea.ref as React.RefObject<HTMLDivElement>} 
+          className={`textareas-wrapper form-input ${inputInfo.property}`}
+        >
           {inputInfo.value.map((_, index) => <TableTextarea
               index={index}
               inputInfo={inputInfo}
               propagateChange={propagateChange}
               setFocus={setFocus}
               unsetFocus={unsetFocus}
+              resizeTextarea={resizeTextarea}
             />
           )}
           <div
@@ -190,7 +207,7 @@ const InputComponent: React.FC<InputProps> = ({
       <div
         id={inputInfo.id}
         className={`object-input form-input ${inputInfo.property}`}
-        ref={objectInputRef}
+        ref={textarea.ref as React.RefObject<HTMLDivElement>}
       >
         <table>
           <colgroup>
@@ -360,7 +377,7 @@ const InputComponent: React.FC<InputProps> = ({
       if (newWidth !== lastWidth) {
         setWindowWidth(newWidth);
 
-        const inputElements = objectInputRef.current?.querySelectorAll("input");
+        const inputElements = textarea.ref.current?.querySelectorAll("input");
         inputElements?.forEach((inputElement) => {
           if (inputElement instanceof HTMLInputElement) {
             adjustFontSize(inputElement, newWidth > lastWidth);
@@ -386,7 +403,10 @@ const InputComponent: React.FC<InputProps> = ({
       <div className="button-container">
         <button
           className={`button ${isActive ? "active" : ""}`}
-          onClick={() => handleStateChange(inputInfo)}
+          onClick={(event) => {
+            event.preventDefault();
+            handleStateChange(inputInfo)
+          }}
         >
           {property === "default" ? (
             <img

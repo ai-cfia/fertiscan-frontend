@@ -9,8 +9,8 @@ const ProgressBar = ({ sections }: { sections: { label: string }[] }) => {
     ref: React.MutableRefObject<HTMLDivElement | null>;
   }[] = [];
 
+  let color = "black";
   const flash = (element: HTMLElement) => {
-    let color = "black";
     if (window.matchMedia("(prefers-color-scheme: dark)").matches) {
       color = "white";
     }

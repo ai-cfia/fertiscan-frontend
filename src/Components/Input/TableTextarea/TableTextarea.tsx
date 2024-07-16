@@ -9,6 +9,7 @@ interface TableTextareaProps {
     propagateChange: (inputInfo: Input) => void;
     setFocus: () => void;
     unsetFocus: () => void;
+    resizeTextarea: (current: HTMLTextAreaElement) => void;
 }
 
 
@@ -18,6 +19,7 @@ const TableTextarea = ({
     propagateChange,
     setFocus,
     unsetFocus,
+    resizeTextarea,
 }: TableTextareaProps) => {
 
     const [isExpanded, setIsExpanded] = useState(false)
@@ -25,12 +27,9 @@ const TableTextarea = ({
     const ref = useRef<HTMLTextAreaElement>(null);
     const { t } = useTranslation();
 
+
     const handleToggleExpand = () => {
-        console.log("handleToggleExpand")
-        setIsExpanded((prevIsExpanded) => {
-            console.log("prevIsExpanded", prevIsExpanded)
-            return !prevIsExpanded;
-        });
+        setIsExpanded((prevIsExpanded) => !prevIsExpanded);
     };
 
 
@@ -46,13 +45,13 @@ const TableTextarea = ({
             }}
             onChange={(event: React.ChangeEvent<HTMLTextAreaElement>) => {
               const current = event.target as HTMLTextAreaElement;
-              //resizeTextarea(current);
+              resizeTextarea(current);
               inputInfo.value[index] = event.target.value;
               propagateChange(inputInfo);
             }}
             onInput={(event: React.FormEvent<HTMLTextAreaElement>) => {
               const current = event.target as HTMLTextAreaElement;
-              //resizeTextarea(current);
+              resizeTextarea(current);
             }}
             onFocus={setFocus}
             onBlur={unsetFocus}
