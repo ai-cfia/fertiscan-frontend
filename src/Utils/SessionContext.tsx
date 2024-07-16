@@ -4,7 +4,7 @@ import BlobData from "../interfaces/BlobData";
 import StateType from "../interfaces/StateType";
 import { stateObjectExceedsLimit } from "./stateObject";
 import { Error } from "./ErrorContext";
-import { useTranslation } from "react-i18next";
+import i18n from "../i18n";
 
 interface SessionContextType {
   state: StateType;
@@ -25,11 +25,10 @@ export const SetSessionContext = createContext({
   }) => {},
 });
 
-function useStateReducer(_state: StateType, newState: StateType) {
+function stateReducer(_state: StateType, newState: StateType) {
   const { showAlert } = Error();
-  const { t } = useTranslation();
   if (stateObjectExceedsLimit(newState)) {
-    showAlert(t("exceedsLimit"));
+    showAlert(i18n.t("exceedsLimit"));
     return _state;
   }
 
@@ -45,7 +44,7 @@ export const SessionProvider = ({ children }: React.PropsWithChildren<{}>) => {
   } = sessionStorage.getItem("state")
     ? JSON.parse(sessionStorage.getItem("state")!)
     : { state: "captur", data: { pics: [], form: new Data([]) } };
-  const [state, setState] = useReducer(useStateReducer, initialState);
+  const [state, setState] = useReducer(stateReducer, initialState);
 
   return (
     <SessionContext.Provider value={{ state: state }}>
