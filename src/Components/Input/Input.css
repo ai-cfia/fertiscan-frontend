@@ -122,6 +122,8 @@ input:disabled {
     "input"
     "show-more";
   grid-template-columns: 100%;
+  padding-left: 10px;
+
 }
 
 /*Only for the textarea*/
@@ -130,7 +132,6 @@ input:disabled {
   grid-template-areas:
     "input"
     "show-more";
-  padding-left: 10px;
 }
 
 /*Only for list table*/
