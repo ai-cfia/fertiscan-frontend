@@ -20,13 +20,12 @@
     grid-template-columns: 40% 50% 10%;
     justify-items: center;
   }
-  .carousel-wrapper{
+  .carousel-wrapper {
     grid-area: pics;
-    left:10%;
+    left: 10%;
     margin-top: 30%;
-    max-width: 80%!important;
+    max-width: 80% !important;
   }
-    
 }
 
 @media only screen and (max-width: 1230px) {
@@ -39,12 +38,12 @@
     justify-items: center;
   }
 
-  .curr-img:not(.data-container){
+  .curr-img:not(.data-container) {
     margin-top: 10%;
   }
-  .carousel-wrapper{
+  .carousel-wrapper {
     grid-area: pics;
-    height: 75vh!important;
+    height: 75vh !important;
   }
 }
 
@@ -53,7 +52,7 @@
     width: 100%;
     height: auto !important;
   }
-  .carousel-wrapper{
+  .carousel-wrapper {
     width: 100%;
     height: auto !important;
   }
@@ -128,7 +127,6 @@
   grid-area: show-more;
   width: 100%;
 }
-
 
 .loader-container-form.active {
   display: flex;
