@@ -6,15 +6,15 @@
   overflow: hidden;
   margin-top: -2px;
   display: flex;
+  border: 2px solid black;
+  border-radius: 18px;
+  border-bottom: 2px solid black;
+  overflow: hidden;
 }
 
 .progress-wrapper {
   position: fixed;
   right: 20px;
-  border: 2px solid black;
-  border-radius: 18px;
-  border-bottom: 2px solid black;
-  overflow: hidden;
 }
 
 .section {
@@ -24,6 +24,7 @@
   flex-grow: 1;
   transition: background-color 0.2s;
   cursor: pointer;
+  margin-top: -2px;
 }
 
 .section.approved {

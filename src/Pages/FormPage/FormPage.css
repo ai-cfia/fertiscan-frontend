@@ -56,6 +56,8 @@
 
 .progress-wrapper {
   grid-area: progress-bar;
+  display: flex;
+  flex-direction:row ;
 }
 
 /* Text box container styles */
@@ -105,7 +107,15 @@ html{
   color: darkgrey;
   cursor: pointer;
 }
-
+.Test-top{
+  width: fit-content;
+  height: fit-content;
+  align-self: end;
+  margin-bottom: 40px;
+  margin-right: 5px;
+  font-size: 16px;
+  font-: ;
+}
 .show-more-container {
   align-self: end;
   justify-self: end;

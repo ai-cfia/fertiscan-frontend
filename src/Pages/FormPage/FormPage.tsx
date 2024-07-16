@@ -336,6 +336,7 @@ const FormPage = () => {
         </div>
         {!loading ? (
           <div className="progress-wrapper">
+            <button className="Test-top">&#x2191;</button>
             <ProgressBar sections={inputStates} />
           </div>
         ) : (
