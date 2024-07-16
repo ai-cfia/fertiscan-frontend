@@ -39,22 +39,32 @@
   text-align: left;
 }
 
-/* InputComponent.css */
 .checkbox-container {
   display: flex;
   align-items: center; 
-  padding-left: 20px;
 }
 
 .checkbox-input {
-  /* Should be smaller than the default input size, change as per your need */
   width: 20px;
   height: 20px;
-  margin-right: 10px; /* Add space between checkbox and label */
-  /* Other styling can be added here, possibly customizing the appearance */
+  margin-right: 10px; 
 }
 
 .checkbox-label {
   font-size: 16px;
   text-align: justify;
+}
+
+.button-container-confirmPage {  
+  display: flex;
+  width: 100%;
+  margin-top: 30px;
+  margin-bottom: 20px;
+  justify-content: right;
+  gap: 10px;
+}
+
+.button-confirmPage{
+  border: 1px solid black;
+  background-color: #bdbbbb;
 }

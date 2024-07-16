@@ -142,11 +142,14 @@ const ConfirmPage = () => {
           {t("confirmationCheckbox")}
         </label>
       </div>
-        <div className="button-container">
-          <button onClick={() => cancel()}>{t("cancelButton")}</button>
-          <button onClick={() => console.log("Confirm")}>
-            {t("confirmButton")}
-          </button>
+        <div className="button-container-confirmPage">
+          <button className="button-confirmPage" onClick={() => cancel()}>{t("cancelButton")}</button>
+          <button className="button-confirmPage"
+            onClick={() => console.log("Confirm")}
+            disabled={!isChecked} 
+          >
+          {t("confirmButton")}
+        </button>
         </div>
       </div>
     </div>
