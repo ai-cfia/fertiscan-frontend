@@ -25,6 +25,7 @@
   background-color: rgb(220, 219, 219);
   text-overflow: ellipsis;
   margin-right: 3%;
+  max-height: fit-content;
 }
 .confirm-container h2 {
   text-align: left;
@@ -67,7 +68,7 @@
 .button-confirmPage{
   border: 1px solid black;
   background-color: #bdbbbb;
-  transition: border 0.3, background-color 0.3s, color 0.3s, box-shadow 0.3s;
+  transition: border 0.3s, background-color 0.3s, color 0.3s, box-shadow 0.3s;
 }
 
 .button-confirmPage:hover {

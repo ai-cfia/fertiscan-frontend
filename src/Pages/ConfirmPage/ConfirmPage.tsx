@@ -108,14 +108,14 @@ const ConfirmPage = () => {
 
   const [isChecked, setIsChecked] = useState(false);
 
-  const handleChange = (event: { target: { checked: any; }; }) => {
-      // Actualiser l'état avec la nouvelle valeur de la case à cocher
-      setIsChecked(event.target.checked);
-      if (event.target.checked) {
-          console.log('Checkbox is checked.');
-      } else {
-          console.log('Checkbox is not checked.');
-      }
+  const handleChange = (event: { target: { checked: any } }) => {
+    // Actualiser l'état avec la nouvelle valeur de la case à cocher
+    setIsChecked(event.target.checked);
+    if (event.target.checked) {
+      console.log("Checkbox is checked.");
+    } else {
+      console.log("Checkbox is not checked.");
+    }
   };
 
   return (
@@ -131,25 +131,28 @@ const ConfirmPage = () => {
       <div className="confirm-container">
         {data.sections.map((section: Section) => renderSection(section))}
         <div className="checkbox-container">
-        <input
-          id="confirmation-checkbox"
-          type="checkbox"
-          checked={isChecked}
-          onChange={handleChange}
-          className="checkbox-input"
-        />
-        <label htmlFor="confirmation-checkbox" className="checkbox-label">
-          {t("confirmationCheckbox")}
-        </label>
-      </div>
+          <input
+            id="confirmation-checkbox"
+            type="checkbox"
+            checked={isChecked}
+            onChange={handleChange}
+            className="checkbox-input"
+          />
+          <label htmlFor="confirmation-checkbox" className="checkbox-label">
+            {t("confirmationCheckbox")}
+          </label>
+        </div>
         <div className="button-container-confirmPage">
-          <button className="button-confirmPage" onClick={() => cancel()}>{t("cancelButton")}</button>
-          <button className="button-confirmPage"
+          <button className="button-confirmPage" onClick={() => cancel()}>
+            {t("cancelButton")}
+          </button>
+          <button
+            className="button-confirmPage"
             onClick={() => console.log("Confirm")}
-            disabled={!isChecked} 
+            disabled={!isChecked}
           >
-          {t("confirmButton")}
-        </button>
+            {t("confirmButton")}
+          </button>
         </div>
       </div>
     </div>
