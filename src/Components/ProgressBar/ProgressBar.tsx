@@ -17,20 +17,23 @@ const ProgressBar = ({ sections }: { sections: { label: string }[] }) => {
     element.style.boxShadow = "0 0 10px 5px " + color;
     setTimeout(() => {
       element.style.boxShadow = "none";
-    }, 500);
+    }, 1000);
   };
 
   // focus on the selected section
   const give_focus = (section: { label: string }) => {
-    const element = document.getElementById(section.label) as HTMLElement;
-    if (element) {
-      element.scrollIntoView({
+    const dataContainer = document.getElementById("data-container");
+    const element = document.getElementById(section.label);
+    if (element && dataContainer) {
+      const elementRect = element.getBoundingClientRect();
+      const dataContainerRect = dataContainer.getBoundingClientRect();
+        const scrollPosition = elementRect.top - dataContainerRect.top + dataContainer.scrollTop  + (elementRect.height / 2)-200;
+        dataContainer.scroll({
+        top: scrollPosition,
         behavior: "smooth",
-        block: "center",
-        inline: "nearest",
       });
-      element.focus();
-      flash(element);
+        element.focus({ preventScroll: true });
+        flash(element);
     }
   };
 
