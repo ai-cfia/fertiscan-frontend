@@ -4,7 +4,7 @@ import Input from "../../Model/Input-Model";
 import editIcon from "../../assets/edit1.svg";
 import acceptIcon from "../../assets/acceptIcon.svg";
 import deleteIcon from "../../assets/deleteIcon.svg";
-import { FormClickActions } from "../../Utils/EventChannels";
+import { FormClickActions } from "../../Utils/EventChannels.tsx";
 import { useTranslation } from "react-i18next";
 
 interface InputProps {
@@ -83,13 +83,17 @@ const InputComponent: React.FC<InputProps> = ({
       FormClickActions.emit("ModifyClick", inputInfo);
       setTimeout(() => setIsActive(false), 400);
     } else if (inputInfo.property === "modified") {
+
+
       setIsActive(false);
       inputInfo.disabled = true;
       inputInfo.property = "approved";
       setProperty("approved");
-      FormClickActions.emit("ApproveClick", inputInfo);
+      FormClickActions.emit("ModifyClick", inputInfo);
       setTimeout(() => setIsActive(false), 400);
       textarea.ref.current?.classList.remove("rejected");
+
+      
     } else if (inputInfo.property === "default") {
       setIsActive(true);
       FormClickActions.emit("ApproveClick", inputInfo);
@@ -131,6 +135,16 @@ const InputComponent: React.FC<InputProps> = ({
             maxHeight: isExpanded ? "fit-content" : "97px",
             overflow: isExpanded ? "hidden" : "auto",
           }}
+          onClick={(_event) => {
+            inputInfo.property ="modified"
+            console.log("test");
+            propagateChange({...inputInfo, property: "modified"});
+          }}
+          onFocus={(_event: React.FocusEvent<HTMLTextAreaElement>) => {
+            setProperty("modified")
+            let updatedInputInfo = {...inputInfo, property: "modified"};
+            propagateChange(updatedInputInfo);
+          }}
           onInput={() => {
             resizeTextarea(textarea.ref.current);
           }}
@@ -171,6 +185,16 @@ const InputComponent: React.FC<InputProps> = ({
                     maxHeight: isExpanded ? "fit-content" : "97px",
                     overflow: isExpanded ? "hidden" : "auto",
                   }}
+                  onClick={(_even) => {
+                    inputInfo.property ="modified"
+                    console.log("test");
+                    propagateChange({...inputInfo, property: "modified"});
+                  }}
+                  onFocus={(_event: React.FocusEvent<HTMLTextAreaElement>) => {
+                    setProperty("modified")
+                    let updatedInputInfo = {...inputInfo, property: "modified"};
+                    propagateChange(updatedInputInfo);
+                  }}
                   onChange={(event: React.ChangeEvent<HTMLTextAreaElement>) => {
                     const current = event.target as HTMLTextAreaElement;
                     resizeTextarea(current);
@@ -186,7 +210,6 @@ const InputComponent: React.FC<InputProps> = ({
                 />
                 {
                   /* Show more button */
-
                   textareaRefs[index].current &&
                     textareaRefs[index].current!.scrollHeight > 97 && (
                       <div className="show-more-container">
