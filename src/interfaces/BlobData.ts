@@ -7,8 +7,6 @@ interface BlobData {
   blob: string;
   /** The name of the image file. */
   name: string;
-  /** The size of the image file in bytes. */
-  size: number;
 }
 
 export default BlobData;

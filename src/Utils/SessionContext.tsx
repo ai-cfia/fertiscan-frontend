@@ -1,10 +1,13 @@
 import { createContext, useReducer } from "react";
 import Data from "../Model/Data-Model";
+import i18n from "../i18n";
 import BlobData from "../interfaces/BlobData";
 import StateType from "../interfaces/StateType";
-import { stateObjectExceedsLimit } from "./stateObject";
 import { Error } from "./ErrorContext";
-import i18n from "../i18n";
+import {
+  calculateStateObjectSize,
+  stateObjectExceedsLimit,
+} from "./stateObject";
 
 interface SessionContextType {
   state: StateType;
@@ -32,7 +35,12 @@ function stateReducer(_state: StateType, newState: StateType) {
     return _state;
   }
 
-  sessionStorage.setItem("state", JSON.stringify(newState));
+  try {
+    sessionStorage.setItem("state", JSON.stringify(newState));
+  } catch (e) {
+    console.error(e);
+    console.log("state object size", calculateStateObjectSize(newState));
+  }
   return newState;
 }
 

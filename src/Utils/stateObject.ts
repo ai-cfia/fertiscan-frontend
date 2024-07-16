@@ -18,12 +18,7 @@ export function calculateStateObjectSize(state: StateType): {
   bytes: number;
   megabytes: number;
 } {
-  // Currently, the size of the state object is calculated by summing the sizes of all the blob data.
-  // This could include additional data in the future.
-  const totalSize = state.data.pics.reduce(
-    (acc, blobData) => acc + blobData.size,
-    0,
-  );
+  const totalSize = new TextEncoder().encode(JSON.stringify(state)).length;
   const megabytes = totalSize / (1024 * 1024);
 
   return {

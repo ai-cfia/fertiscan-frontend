@@ -28,7 +28,7 @@ function CapturPage() {
       reader.onload = (e) => {
         if (e.target && e.target.result) {
           const newBlob = e.target.result as string;
-          newPics.push({ blob: newBlob, name: file.name, size: file.size });
+          newPics.push({ blob: newBlob, name: file.name });
 
           if (newPics.length === newFiles.length) {
             callback();
