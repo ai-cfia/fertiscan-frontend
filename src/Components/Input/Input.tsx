@@ -1,7 +1,6 @@
 import "./Input.css";
 import React, { useEffect, useRef, useState } from "react";
 import Input from "../../Model/Input-Model";
-import Modal from "../Modal/Modal";
 import editIcon from "../../assets/edit1.svg";
 import acceptIcon from "../../assets/acceptIcon.svg";
 import deleteIcon from "../../assets/deleteIcon.svg";
@@ -14,7 +13,6 @@ interface InputProps {
   propagateChange: (inputInfo: Input) => void;
 }
 
-const MAX_CHAR_IN_ROW = 37;
 const resizeTextarea = (textarea: HTMLElement | null) => {
   if (textarea) {
     if (textarea.classList.contains("list-input")) {
@@ -33,18 +31,19 @@ const resizeTextarea = (textarea: HTMLElement | null) => {
 
 const InputComponent: React.FC<InputProps> = ({
   inputInfo,
-  imgs,
   propagateChange,
 }) => {
   const { t } = useTranslation();
   const [isActive, setIsActive] = useState(false);
   const [property, setProperty] = useState(inputInfo.property);
   const objectInputRef = useRef<HTMLDivElement>(null);
-  const modal = useRef<HTMLDivElement | null>(null);
   const ref = useRef<HTMLElement | null>(null);
+  const textareaRefs: React.MutableRefObject<HTMLTextAreaElement | null>[] = [];
   const [lastWidth, setLastWidth] = useState(window.innerWidth);
   // eslint-disable-next-line
   const [_windowWidth, setWindowWidth] = useState(window.innerWidth);
+  const [isExpanded, setIsExpanded] = useState(false);
+
   const textarea = {
     ref: ref,
     label: inputInfo.id,
@@ -108,48 +107,17 @@ const InputComponent: React.FC<InputProps> = ({
     propagateChange(inputInfo);
   };
 
-  const createModal = (idx: number) => {
-    return (
-      (inputInfo.value[idx] as string).split("\n").length +
-        (inputInfo.value[idx] as string)
-          .split("\n")
-          .map((line: string) => Math.floor(line.length / MAX_CHAR_IN_ROW))
-          .reduce((sum: number, current: number) => sum + current) >
-        3 && (
-        <div className="show-more-container">
-          <label
-            className="open-icon"
-            onClick={() => {
-              modal.current?.classList.add("active");
-            }}
-          >
-            {t("showMoreButton")}
-          </label>
-          <Modal
-            toRef={modal}
-            text={inputInfo.value[idx] as string}
-            handleTextChange={(event: {
-              target: { value: React.SetStateAction<string> };
-            }) => {
-              inputInfo.value[idx] = event.target.value.toString();
-              propagateChange(inputInfo);
-            }}
-            imgs={imgs}
-            close={() => {
-              modal.current?.classList.remove("active");
-            }}
-          />
-        </div>
-      )
-    );
+  const handleToggleExpand = () => {
+    setIsExpanded((prevIsExpanded) => !prevIsExpanded);
   };
 
   const createSimpleInput = () => {
+    const ref = textarea.ref as React.MutableRefObject<HTMLTextAreaElement>;
     return (
       <div className="single-textarea-container">
         <textarea
           id={inputInfo.id}
-          ref={textarea.ref as React.MutableRefObject<HTMLTextAreaElement>}
+          ref={ref}
           value={(inputInfo.value as string[])[0]}
           disabled={inputInfo.disabled}
           onChange={(event: React.ChangeEvent<HTMLTextAreaElement>) => {
@@ -159,24 +127,38 @@ const InputComponent: React.FC<InputProps> = ({
             propagateChange(inputInfo);
             resizeTextarea(textarea.ref.current);
           }}
+          style={{
+            maxHeight: isExpanded ? "fit-content" : "97px",
+            overflow: isExpanded ? "hidden" : "auto",
+          }}
           onInput={() => {
             resizeTextarea(textarea.ref.current);
           }}
           className="textarea"
           rows={1}
         />
-        {createModal(0)}
+        {
+          /* Show more button */
+          ref.current && ref.current.scrollHeight > 97 && (
+            <div className="show-more-container">
+              <label className="open-icon" onClick={handleToggleExpand}>
+                {isExpanded ? t("showLess") : t("showMoreButton")}
+              </label>
+            </div>
+          )
+        }
       </div>
     );
   };
 
   const createListInput = () => {
+    // eslint-disable-next-line
+    inputInfo.value.forEach((_) => {
+      // eslint-disable-next-line
+      textareaRefs.push(useRef<HTMLTextAreaElement | null>(null));
+    });
     return (
-      <div
-        id={inputInfo.id}
-        className="list-input"
-        ref={textarea.ref as React.MutableRefObject<HTMLDivElement>}
-      >
+      <div id={inputInfo.id} className="list-input">
         <div className="textareas-wrapper">
           {inputInfo.value.map((_, index) => {
             return (
@@ -184,6 +166,11 @@ const InputComponent: React.FC<InputProps> = ({
                 <textarea
                   value={(inputInfo.value as string[])[index]}
                   disabled={inputInfo.disabled}
+                  ref={textareaRefs[index]}
+                  style={{
+                    maxHeight: isExpanded ? "fit-content" : "97px",
+                    overflow: isExpanded ? "hidden" : "auto",
+                  }}
                   onChange={(event: React.ChangeEvent<HTMLTextAreaElement>) => {
                     const current = event.target as HTMLTextAreaElement;
                     resizeTextarea(current);
@@ -192,11 +179,26 @@ const InputComponent: React.FC<InputProps> = ({
                   }}
                   onInput={(event: React.FormEvent<HTMLTextAreaElement>) => {
                     const current = event.target as HTMLTextAreaElement;
-                    resizeTextarea(current); // Added here
+                    resizeTextarea(current);
                   }}
                   className="textarea"
                   rows={1}
                 />
+                {
+                  /* Show more button */
+
+                  textareaRefs[index].current &&
+                    textareaRefs[index].current!.scrollHeight > 97 && (
+                      <div className="show-more-container">
+                        <label
+                          className="open-icon"
+                          onClick={handleToggleExpand}
+                        >
+                          {isExpanded ? t("showLess") : t("showMoreButton")}
+                        </label>
+                      </div>
+                    )
+                }
                 <button
                   className={`delete-button ${inputInfo.disabled ? "disabled" : ""}`}
                   disabled={inputInfo.disabled}
@@ -215,7 +217,6 @@ const InputComponent: React.FC<InputProps> = ({
                     height="20"
                   />
                 </button>
-                {createModal(index)}
               </div>
             );
           })}

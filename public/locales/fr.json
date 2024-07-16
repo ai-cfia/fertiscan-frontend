@@ -18,7 +18,7 @@
   "fileListNoElement": "Aucun élément ajouté",
   "dragAndDropFileH3": "Ajouter un document",
   "captureButton": "Prendre",
-  "AccessFile":"Cliquer ici ou",
+  "AccessFile": "Cliquez ici ou",
   "dragAndDropFilePOption1": "Glissez et déposez vos fichiers ",
   "dragAndDropFilePOption2": "Prendre une photo",
   "browseFileButton": "Parcourir les fichiers",
@@ -70,5 +70,6 @@
   "settings": "Paramètres",
   "clickNewButton": "Cliquez pour ajouter une ligne",
   "cameraPermissionError": "Veuillez autoriser l'accès à la caméra",
-  "rename": "Renommer"
+  "rename": "Renommer",
+  "showLess": "Voir moins"
 }
