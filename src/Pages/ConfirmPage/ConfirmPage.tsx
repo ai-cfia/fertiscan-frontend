@@ -116,6 +116,7 @@ const ConfirmPage = () => {
     } else {
       console.log("Checkbox is not checked.");
     }
+
   };
 
   return (

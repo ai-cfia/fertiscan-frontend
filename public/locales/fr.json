@@ -71,6 +71,6 @@
   "clickNewButton": "Cliquez pour ajouter une ligne",
   "cameraPermissionError": "Veuillez autoriser l'accès à la caméra",
   "rename": "Renommer",
-  "confirmationCheckbox":"En cochant cette case, je confirme avoir vérifié toutes les informations présentes sur cette page et je m'engage en toute responsabilité en cas d'erreurs éventuelles.",
-  "showLess": "Voir moins"
+  "showLess": "Voir moins",
+  "confirmationCheckbox":"En cochant cette case, je confirme avoir vérifié toutes les informations présentes sur cette page et je m'engage en toute responsabilité en cas d'erreurs éventuelles."
 }

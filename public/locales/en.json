@@ -71,6 +71,6 @@
   "clickNewButton": "Click to add row",
   "cameraPermissionError": "Please allow camera access",
   "rename": "Rename",
-  "confirmationCheckbox":"By checking this box, I confirm that I have verified all the information on this page and I take full responsibility for any errors that may be present.",
-  "showLess": "Show Less"
+  "showLess": "Show Less",
+  "confirmationCheckbox":"By checking this box, I confirm that I have verified all the information on this page and I take full responsibility for any errors that may be present."
 }
