@@ -45,14 +45,9 @@ input:disabled {
 
 /* Show more button container */
 .show-more-container {
-  align-self: end;
-  justify-self: end;
-  display: flex;
-  justify-content: flex-end;
-}
-
-.show-more-container label {
-  width: fit-content;
+  grid-area: show-more;
+  align-self: right;
+  justify-self: right;
 }
 
 .underlined {
@@ -81,17 +76,6 @@ input:disabled {
 
 .input-error {
   border: 2px solid red;
-  /* Outline element with a red border */
-}
-
-/* Grid container for the input elements */
-.input-grid-container {
-  display: grid;
-  grid-template-columns: auto 1fr;
-  /* Two columns layout */
-  grid-template-rows: auto 1fr auto;
-  /* Three rows layout */
-  gap: 11px;
 }
 
 .input-grid-container {
@@ -131,12 +115,6 @@ input:disabled {
   align-self: center;
   margin-left: 20px;
 
-}
-
-.show-more-container {
-  margin-bottom: -15px;
-  grid-column: 1;
-  grid-row: 3;
 }
 
 /*Containers*/
@@ -182,12 +160,18 @@ input:disabled {
 
 /*Input container component*/
 .input-container label {
-  grid-area: label;
-  grid-row: 1;
-  align-self: center;
   width: 100%;
   text-align: left;
-padding-left: 10px;
+  padding-left: 10px;
+}
+
+.input-container .show-more-container label{
+  width: 100%;
+  text-align: right;
+}
+
+.table-textarea-container .show-more-container{
+  grid-column: 1;
 }
 
 .list-input {

@@ -70,5 +70,6 @@
   "settings": "Settings",
   "clickNewButton": "Click to add row",
   "cameraPermissionError": "Please allow camera access",
-  "rename": "Rename"
+  "rename": "Rename",
+  "showLess": "Show Less"
 }
