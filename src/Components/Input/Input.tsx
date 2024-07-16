@@ -152,11 +152,11 @@ const InputComponent: React.FC<InputProps> = ({
   };
 
   const createListInput = () => {
-  // eslint-disable-next-line
-  inputInfo.value.forEach((_) => {
     // eslint-disable-next-line
-    textareaRefs.push(useRef<HTMLTextAreaElement | null>(null));
-  });
+    inputInfo.value.forEach((_) => {
+      // eslint-disable-next-line
+      textareaRefs.push(useRef<HTMLTextAreaElement | null>(null));
+    });
     return (
       <div id={inputInfo.id} className="list-input">
         <div className="textareas-wrapper">

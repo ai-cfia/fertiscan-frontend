@@ -42,7 +42,6 @@ input:disabled {
   border: solid 2px red;
 }
 
-
 /* Show more button container */
 .show-more-container {
   grid-area: show-more;
@@ -109,12 +108,10 @@ input:disabled {
   border: 2px solid red;
 }
 
-
 .button-container {
   grid-area: button;
   align-self: center;
   margin-left: 20px;
-
 }
 
 /*Containers*/
@@ -135,6 +132,7 @@ input:disabled {
   grid-template-areas:
     "input"
     "show-more";
+  padding-left: 10px;
 }
 
 /*Only for list table*/
@@ -165,12 +163,12 @@ input:disabled {
   padding-left: 10px;
 }
 
-.input-container .show-more-container label{
+.input-container .show-more-container label {
   width: 100%;
   text-align: right;
 }
 
-.table-textarea-container .show-more-container{
+.table-textarea-container .show-more-container {
   grid-column: 1;
 }
 

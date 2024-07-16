@@ -7,7 +7,7 @@
   height: 100%;
 }
 
-.file-list-container{
+.file-list-container {
   display: flex;
   grid-area: b;
   border: 2px solid #ccc;
@@ -15,7 +15,7 @@
   width: 100%;
   margin-top: 20px;
   overflow-x: hidden;
-  grid-row: 1 / span 2
+  grid-row: 1 / span 2;
 }
 
 @media only screen and (min-width: 1093px) {
