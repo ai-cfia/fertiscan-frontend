@@ -11,16 +11,16 @@
   margin-top: 20px;
   position: relative; /* To position the plus sign */
 }
-.drag-drop-file-input p{
+.drag-drop-file-input p {
   margin-bottom: -50px;
   color: #ccc;
 }
 
-.drag-drop-file-input:hover{
+.drag-drop-file-input:hover {
   border: 2px solid #777; /* Gray border color */
 }
 
-.drag-drop-file-input.active{
+.drag-drop-file-input.active {
   border: 2px solid #777;
 }
 

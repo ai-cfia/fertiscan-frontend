@@ -8,6 +8,8 @@
     "title title"
     "pics infos";
   grid-template-columns: 1fr 1fr;
+  overflow: hidden;
+
 }
 .confirm-page-container .carousel-wrapper {
   grid-area: pics;
@@ -15,6 +17,8 @@
 #confirm-title {
   grid-area: title;
   text-align: center;
+  font-size: 30px;
+  margin-bottom: 0;
 }
 .confirm-container {
   grid-area: infos;
@@ -25,7 +29,16 @@
   background-color: rgb(220, 219, 219);
   text-overflow: ellipsis;
   margin-right: 3%;
+  overflow-y: auto!important;
+  overflow-x: hidden;
+  padding-bottom: 5%!important;
+  height: 70vh;
 }
+
+html{
+  overflow-y: hidden;
+}
+
 .confirm-container h2 {
   text-align: left;
   margin-bottom: 0px;
@@ -37,4 +50,22 @@
   margin-bottom: 10px;
   font-size: 20px;
   text-align: left;
+}
+
+@media only screen and (min-width: 1230px) {
+  .carousel-wrapper{
+    grid-area: pics;
+    left:10%;
+    max-width: 70%!important;
+    height: auto !important;
+    margin-top: 0;
+    margin-left: 5%;
+  }
+  .curr-img img {
+    width: calc(100%) !important;
+    height: auto !important;
+  }
+  .confirm-page-container .carousel-img{
+    width:20% ;
+  }
 }

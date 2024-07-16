@@ -107,7 +107,7 @@ const ConfirmPage = () => {
   );
 
   return (
-    <div className="confirm-page-container ${theme}">
+    <div className="confirm-page-container ${theme} disable-scroll">
       <h1 id="confirm-title">{t("confirmationPage")}</h1>
       <Carousel
         imgs={state.data.pics.map((blob) => ({

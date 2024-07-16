@@ -19,7 +19,7 @@
   "dragAndDropFileH3": "Attach a document",
   "captureButton": "Capture",
   "switchCameraButton": "Switch Camera",
-  "AccessFile":"Click here or",
+  "AccessFile": "Click here or",
   "dragAndDropFilePOption1": "Drag & drop your files ",
   "dragAndDropFilePOption2": "Take a picture",
   "browseFileButton": "Browse Files",
@@ -72,5 +72,6 @@
   "cameraPermissionError": "Please allow camera access",
   "rename": "Rename",
   "exceedsLimit": "The images you uploaded exceed the limit of 4MB",
-  "currentStateSize": "Upload limit"
+  "currentStateSize": "Upload limit",
+  "showLess": "Show Less"
 }

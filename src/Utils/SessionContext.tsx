@@ -3,11 +3,12 @@ import Data from "../Model/Data-Model";
 import i18n from "../i18n";
 import BlobData from "../interfaces/BlobData";
 import StateType from "../interfaces/StateType";
-import { Error } from "./ErrorContext";
+import { useAlert } from "./AlertContext";
 import {
   calculateStateObjectSize,
   stateObjectExceedsLimit,
 } from "./stateObject";
+import { t } from "i18next";
 
 interface SessionContextType {
   state: StateType;
@@ -29,9 +30,9 @@ export const SetSessionContext = createContext({
 });
 
 function stateReducer(_state: StateType, newState: StateType) {
-  const { showAlert } = Error();
+  const { showAlert } = useAlert();
   if (stateObjectExceedsLimit(newState)) {
-    showAlert(i18n.t("exceedsLimit"));
+    showAlert(i18n.t("exceedsLimit"), "error");
     return _state;
   }
 
