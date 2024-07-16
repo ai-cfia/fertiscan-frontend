@@ -70,5 +70,6 @@
   "settings": "Paramètres",
   "clickNewButton": "Cliquez pour ajouter une ligne",
   "cameraPermissionError": "Veuillez autoriser l'accès à la caméra",
-  "rename": "Renommer"
+  "rename": "Renommer",
+  "showLess": "Voir moins"
 }
