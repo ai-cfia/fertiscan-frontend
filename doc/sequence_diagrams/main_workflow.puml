@@ -1,0 +1,65 @@
+@startuml main_workflow
+title Main Workflow
+
+actor User
+Participant Navigator
+Participant Router
+Participant HomePage
+Participant SessionContext
+Participant CapturPage
+Participant FormPage
+Participant ConfirmPage
+Participant "Header/SideNav" as hs
+
+User -> Navigator: goes to /
+activate Navigator
+Navigator -> Router: goToHomePage()
+activate Router
+Router -> HomePage: render()
+activate HomePage
+HomePage -> hs: render() 
+HomePage -> HomePage: chooseToRender()
+activate HomePage
+HomePage -> SessionContext: getState()
+activate SessionContext
+HomePage <-- SessionContext: state
+deactivate SessionContext
+alt state.state == "captur"
+    HomePage -> CapturPage: render()
+    activate CapturPage
+    note right of CapturPage
+        when submit button is clicked
+    end note
+    CapturPage -> SessionContext: setState(data = { ...state, state: "form" })
+    deactivate CapturPage
+    activate SessionContext
+    SessionContext -> HomePage: update()
+    deactivate SessionContext
+    activate HomePage
+    HomePage -> HomePage: chooseToRender()
+    deactivate HomePage
+else state.state == "form"
+    HomePage -> FormPage: render()
+    activate FormPage
+    note right of FormPage
+        when submit button is clicked
+    end note
+    FormPage -> SessionContext: setState(data = { ...state, state: "confirm" })
+    note bottom
+        ...
+    end note
+    deactivate FormPage
+else state.state == "confirm"
+    HomePage -> ConfirmPage: render()
+    activate ConfirmPage
+    note right of ConfirmPage
+        when submit button is clicked
+    end note
+    ConfirmPage -> SessionContext: setState(data = { ...state, state: "captur" })
+    note bottom
+        ...
+    end note
+    deactivate ConfirmPage
+end
+
+@enduml

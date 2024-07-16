@@ -1,0 +1,42 @@
+@startuml validate_input
+title Validate Input
+actor User
+participant "Navigator" as Navigator
+participant "input4 : InputComponent" as Input
+participant "FormClickActions" as Bus
+participant ProgressBar
+participant "section : SectionComponent" as Section
+participant FormPage
+
+
+User -> Navigator: Click validation button on input 4
+activate Navigator
+Navigator -> Input: clickEvent()
+activate Input
+Input -> Input: handleStateChange()
+activate Input
+Input -> Navigator: change()
+Input -> Bus: emit(\n event:"ApproveClick"|"ModifyClick",\n inputInfo:input4\n)
+activate Bus
+deactivate Input
+Bus -> ProgressBar: triggerListener(data)
+activate ProgressBar
+deactivate Bus
+ProgressBar -> ProgressBar: findSection(inputInfo).update(data)
+ProgressBar -> Navigator: change()
+Input -> Input: propagateChange(inputInfo)
+activate Input
+Input -> Section: propagateChange(inputInfo)
+activate Section
+Section -> FormPage: handleDataChange(sectionInfo)
+activate FormPage
+FormPage -> SessionContext: setState(data = { ...state, data: { pics: blobs, form: new_data } });
+activate SessionContext
+SessionContext -> sessionStorage: setItem('state', data)
+deactivate SessionContext
+deactivate FormPage
+deactivate Section
+deactivate Input 
+deactivate ProgressBar
+
+@enduml
