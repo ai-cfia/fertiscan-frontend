@@ -69,5 +69,6 @@
   "settings": "Settings",
   "clickNewButton": "Click to add row",
   "cameraPermissionError": "Please allow camera access",
-  "rename": "Rename"
+  "rename": "Rename",
+  "confirmationCheckbox":"By checking this box, I confirm that I have verified all the information on this page and I take full responsibility for any errors that may be present."
 }

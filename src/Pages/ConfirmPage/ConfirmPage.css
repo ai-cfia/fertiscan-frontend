@@ -38,3 +38,23 @@
   font-size: 20px;
   text-align: left;
 }
+
+/* InputComponent.css */
+.checkbox-container {
+  display: flex;
+  align-items: center; 
+  padding-left: 20px;
+}
+
+.checkbox-input {
+  /* Should be smaller than the default input size, change as per your need */
+  width: 20px;
+  height: 20px;
+  margin-right: 10px; /* Add space between checkbox and label */
+  /* Other styling can be added here, possibly customizing the appearance */
+}
+
+.checkbox-label {
+  font-size: 16px;
+  text-align: justify;
+}
