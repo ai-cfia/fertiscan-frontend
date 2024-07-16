@@ -50,60 +50,39 @@ const InputComponent: React.FC<InputProps> = ({
   };
 
   const SyncChanges = (inputInfo: Input) => {
-    if (inputInfo.property === "approved") {
-      setIsActive(false);
-      inputInfo.disabled = true;
-      inputInfo.property = "approved";
-      setProperty("approved");
-    } else if (inputInfo.property === "modified") {
-      setIsActive(true);
-      inputInfo.disabled = false;
-      inputInfo.property = "modified";
-      setProperty("modified");
-    } else if (inputInfo.property === "default") {
-      setIsActive(true);
-      inputInfo.disabled = false;
-      inputInfo.property = "default";
-      setProperty("default");
-    } else if (inputInfo.property === "rejected") {
-      setIsActive(true);
-      inputInfo.disabled = false;
-      inputInfo.property = "rejected";
-      textarea.ref.current?.classList.add("rejected");
-      setProperty("rejected");
-    }
+    // if property is approved then 
+    //        input isnt active and is disabled
+    //        else input is active and not disabled
+    setIsActive(inputInfo.property!== "approved");
+    inputInfo.disabled = inputInfo.property === "approved";
+    setProperty(inputInfo.property);
   };
 
+  const setFocus = () => {
+    console.log("focus");
+    FormClickActions.emit("Focus", inputInfo);
+  };
+  const unsetFocus = () => {
+    console.log("unfocus");
+    FormClickActions.emit("UnFocus", inputInfo);
+  }
+
   const handleStateChange = (inputInfo: Input) => {
-    if (inputInfo.property === "approved") {
-      setIsActive(true);
-      inputInfo.disabled = false;
-      inputInfo.property = "modified";
-      setProperty("modified");
-      FormClickActions.emit("ModifyClick", inputInfo);
-      setTimeout(() => setIsActive(false), 400);
-    } else if (inputInfo.property === "modified") {
-      setIsActive(false);
-      inputInfo.disabled = true;
-      inputInfo.property = "approved";
-      setProperty("approved");
-      FormClickActions.emit("ApproveClick", inputInfo);
-      setTimeout(() => setIsActive(false), 400);
-      textarea.ref.current?.classList.remove("rejected");
-    } else if (inputInfo.property === "default") {
-      setIsActive(true);
-      FormClickActions.emit("ApproveClick", inputInfo);
-      inputInfo.disabled = true;
-      inputInfo.property = "approved";
-      setProperty("approved");
-      setTimeout(() => setIsActive(false), 400);
-    } else if (inputInfo.property === "rejected") {
-      inputInfo.disabled = true;
-      inputInfo.property = "approved";
-      setProperty("approved");
-      FormClickActions.emit("ApproveClick", inputInfo);
-      textarea.ref.current?.classList.remove("rejected");
+    switch (inputInfo.property) {
+      case "approved":
+        inputInfo.property = "default";
+        FormClickActions.emit("ModifyClick", inputInfo);
+        break;
+      case "rejected":// rejected is the same as default with the next line in addition
+        textarea.ref.current?.classList.remove("rejected");
+        /* FALLTHROUGH */
+      case "default":
+        inputInfo.property = "approved";
+        FormClickActions.emit("ApproveClick", inputInfo);
+        break;
     }
+    SyncChanges(inputInfo);
+    setTimeout(() => setIsActive(false), 400);
     propagateChange(inputInfo);
   };
 
@@ -114,7 +93,7 @@ const InputComponent: React.FC<InputProps> = ({
   const createSimpleInput = () => {
     const ref = textarea.ref as React.MutableRefObject<HTMLTextAreaElement>;
     return (
-      <div className="single-textarea-container">
+      <div className="single-textarea-container form-input">
         <textarea
           id={inputInfo.id}
           ref={ref}
@@ -134,7 +113,9 @@ const InputComponent: React.FC<InputProps> = ({
           onInput={() => {
             resizeTextarea(textarea.ref.current);
           }}
-          className="textarea"
+          onFocus={setFocus}
+          onBlur={unsetFocus}
+          className={`textarea form-input ${inputInfo.property}`}
           rows={1}
         />
         {
@@ -159,7 +140,7 @@ const InputComponent: React.FC<InputProps> = ({
     });
     return (
       <div id={inputInfo.id} className="list-input">
-        <div className="textareas-wrapper">
+        <div className={`textareas-wrapper form-input ${inputInfo.property}`}>
           {inputInfo.value.map((_, index) => {
             return (
               <div className="table-textarea-container" key={index}>
@@ -181,6 +162,8 @@ const InputComponent: React.FC<InputProps> = ({
                     const current = event.target as HTMLTextAreaElement;
                     resizeTextarea(current);
                   }}
+                  onFocus={setFocus}
+                  onBlur={unsetFocus}
                   className="textarea"
                   rows={1}
                 />
@@ -268,7 +251,7 @@ const InputComponent: React.FC<InputProps> = ({
       (inputInfo.value as { [key: string]: string }[])[0],
     );
     return (
-      <div id={inputInfo.id} className="object-input" ref={objectInputRef}>
+      <div id={inputInfo.id} className={`object-input form-input ${inputInfo.property}`} ref={objectInputRef}>
         <table>
           <colgroup>
             <col span={1} style={{ width: "45%" }} />
@@ -309,6 +292,8 @@ const InputComponent: React.FC<InputProps> = ({
                         const input = event.currentTarget;
                         adjustFontSize(input, null);
                       }}
+                      onFocus={setFocus}
+                      onBlur={unsetFocus}
                     />
                   </td>
                   <td>
@@ -334,6 +319,8 @@ const InputComponent: React.FC<InputProps> = ({
                         const input = event.currentTarget;
                         adjustFontSize(input, null);
                       }}
+                      onFocus={setFocus}
+                      onBlur={unsetFocus}
                     />
                   </td>
                   <td>
@@ -359,6 +346,8 @@ const InputComponent: React.FC<InputProps> = ({
                         const input = event.currentTarget;
                         adjustFontSize(input, null);
                       }}
+                      onFocus={setFocus}
+                      onBlur={unsetFocus}
                     />
                   </td>
                   <td>
@@ -452,7 +441,7 @@ const InputComponent: React.FC<InputProps> = ({
         <label htmlFor={inputInfo.id}>
           {inputInfo.label.replace(/_/gi, " ")} :
         </label>
-        <div className="textbox-container">{inputCreator()}</div>
+        <div className={`textbox-container`}>{inputCreator()}</div>
       </div>
       <div className="button-container">
         <button
@@ -470,13 +459,6 @@ const InputComponent: React.FC<InputProps> = ({
             <img
               src={editIcon}
               alt={t("approveButton")}
-              width="20"
-              height="20"
-            />
-          ) : property === "modified" ? (
-            <img
-              src={acceptIcon}
-              alt={t("modifyButton")}
               width="20"
               height="20"
             />

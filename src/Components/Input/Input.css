@@ -38,7 +38,7 @@ input:disabled {
   cursor: default;
 }
 
-.rejected {
+.form-input.rejected {
   border: solid 2px red;
 }
 
@@ -264,6 +264,3 @@ input {
   width: 100%;
 }
 
-.rejected {
-  border: solid 2px red;
-}
