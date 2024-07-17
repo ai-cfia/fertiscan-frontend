@@ -47,14 +47,14 @@ const NewCarousel: React.FC<CarouselProps> = ({ id, imgs }) => {
 
   return (
     <div id={id} className="carousel-wrapper">
-      <div className="curr-img">
+      <div id="curr-img" className="curr-img">
         <a className="prev" onClick={() => selectImg(currImg - 1)}>
           &#10094;
         </a>
         <ImageZoomInOut
-          className="curr-img"
+          className={`curr-img`}
           imageUrl={imgs[currImg] ? imgs[currImg].url : ""}
-          alt={t("noPicture")}
+          alt={t("nopicture")}
         />
         <a className="next" onClick={() => selectImg(currImg + 1)}>
           &#10095;
