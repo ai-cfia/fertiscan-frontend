@@ -159,6 +159,7 @@ input:disabled {
 .input-container label {
   width: 100%;
   text-align: left;
+  padding-left: 10px;
 }
 
 .input-container .show-more-container label {

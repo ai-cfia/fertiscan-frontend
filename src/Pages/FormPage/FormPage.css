@@ -55,6 +55,7 @@
   }  
   .formPage-container .carousel{
     display: none;
+    height: 75vh !important;
   }
 }
 
