@@ -71,5 +71,7 @@
   "clickNewButton": "Cliquez pour ajouter une ligne",
   "cameraPermissionError": "Veuillez autoriser l'accès à la caméra",
   "rename": "Renommer",
+  "exceedsLimit": "Les images que vous venez d'envoyer dépassent la limite de 4Mo",
+  "currentStateSize": "Limite de téléchargement",
   "showLess": "Voir moins"
 }

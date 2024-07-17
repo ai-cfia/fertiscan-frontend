@@ -71,5 +71,7 @@
   "clickNewButton": "Click to add row",
   "cameraPermissionError": "Please allow camera access",
   "rename": "Rename",
+  "exceedsLimit": "The images you uploaded exceed the limit of 4MB",
+  "currentStateSize": "Upload limit",
   "showLess": "Show Less"
 }
