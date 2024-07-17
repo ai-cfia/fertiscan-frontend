@@ -74,9 +74,6 @@ const InputComponent: React.FC<InputProps> = ({
         textarea.ref.current!.focus();
         setTimeout(() => {
           textarea.ref.current!.focus();
-          if (textarea.ref.current instanceof HTMLTextAreaElement){
-            (textarea.ref.current! as HTMLTextAreaElement).select();
-          }
         }, 100);
         break;
       case "rejected":
@@ -100,7 +97,7 @@ const InputComponent: React.FC<InputProps> = ({
 
   const createSimpleInput = () => {
     return (
-      <div className="single-textarea-container form-input">
+      <div className="single-textarea-container">
         <textarea
           id={inputInfo.id}
           ref={textarea.ref as React.RefObject<HTMLTextAreaElement>}
@@ -154,12 +151,20 @@ const InputComponent: React.FC<InputProps> = ({
               setFocus={setFocus}
               unsetFocus={unsetFocus}
               resizeTextarea={resizeTextarea}
+              deleteRow={()=>{
+                setTimeout(() => {
+                    resizeTextarea(textarea.ref.current);
+                }, 50);
+              }}
             />
           )}
           <div
             onClick={() => {
               (inputInfo.value as string[]).push("");
               propagateChange(inputInfo);
+              setTimeout(() => {
+                resizeTextarea(textarea.ref.current);
+              }, 50);
             }}
             className={`textarea unselectable add-div ${inputInfo.disabled ? "disabled" : ""}`}
           >
@@ -315,6 +320,9 @@ const InputComponent: React.FC<InputProps> = ({
                         if (inputInfo.value.length > 1) {
                           inputInfo.value.splice(index, 1);
                           propagateChange(inputInfo);
+                          setTimeout(() => {
+                            resizeTextarea(textarea.ref.current);
+                          }, 50);
                         }
                       }}
                     >
@@ -340,6 +348,9 @@ const InputComponent: React.FC<InputProps> = ({
               [keys[2]]: "",
             });
             propagateChange(inputInfo);
+            setTimeout(() => {
+                resizeTextarea(textarea.ref.current);
+            }, 50);
           }}
           className={`textarea unselectable add-div ${inputInfo.disabled ? "disabled" : ""}`}
         >

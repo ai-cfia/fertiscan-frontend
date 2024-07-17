@@ -10,6 +10,7 @@ interface TableTextareaProps {
     setFocus: () => void;
     unsetFocus: () => void;
     resizeTextarea: (current: HTMLTextAreaElement) => void;
+    deleteRow: () => void;
 }
 
 
@@ -20,6 +21,7 @@ const TableTextarea = ({
     setFocus,
     unsetFocus,
     resizeTextarea,
+    deleteRow,
 }: TableTextareaProps) => {
 
     const [isExpanded, setIsExpanded] = useState(false)
@@ -80,6 +82,7 @@ const TableTextarea = ({
               if (inputInfo.value.length > 1) {
                 inputInfo.value.splice(index, 1);
                 propagateChange(inputInfo);
+                deleteRow();
               }
             }}
           >
