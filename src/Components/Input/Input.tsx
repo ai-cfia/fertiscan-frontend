@@ -401,7 +401,7 @@ const InputComponent: React.FC<InputProps> = ({
 
     window.addEventListener("resize", handleResize);
     return () => window.removeEventListener("resize", handleResize);
-  }, [lastWidth,textarea.ref]);
+  }, [lastWidth, textarea.ref]);
 
   return (
     <div className="test-button">
