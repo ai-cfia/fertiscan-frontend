@@ -5,7 +5,7 @@ import {
   ReactZoomPanPinchContext,
 } from "react-zoom-pan-pinch";
 import "./ImageZoomInOut.css";
-import { useEffect, useState } from "react";
+import { useEffect } from "react";
 
 interface ControlsProps {
   url: string;
@@ -19,6 +19,7 @@ const TransformControls = ({ url }: ControlsProps) => {
   }, [url]);
   return <></>;
 };
+
 interface ImageProps {
   imageUrl: string;
   className?: string;
@@ -105,32 +106,8 @@ function ImageZoomInOut({ imageUrl, alt }: ImageProps) {
     >;
   }) => {};
 
-  const [isDragging, setIsDragging] = useState(false);
-
-  const handlePanning = () => {
-    // Basculer l'état de "dragging"
-    setIsDragging(!isDragging);
-  };
-
-  useEffect(() => {
-    const transformWrapperElement = document.querySelector(
-      ".react-transform-component",
-    );
-    if (transformWrapperElement) {
-      if (isDragging) {
-        transformWrapperElement.classList.add("on-drag");
-      } else {
-        transformWrapperElement.classList.remove("on-drag");
-      }
-    }
-  }, [isDragging]);
-
   return (
-    <TransformWrapper
-      pinch={{ step: 1000 }}
-      onPanningStart={handlePanning}
-      onPanningStop={handlePanning}
-    >
+    <TransformWrapper pinch={{ step: 1000 }}>
       {/* eslint-disable-next-line */}
       {({ zoomIn, zoomOut, resetTransform, ...rest }) => (
         <>
