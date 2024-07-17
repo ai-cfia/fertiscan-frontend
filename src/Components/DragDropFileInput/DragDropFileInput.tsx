@@ -1,7 +1,7 @@
 import React, { useState, useRef, useEffect } from "react";
 import "./DragDropFileInput.css";
 import { useTranslation } from "react-i18next";
-import { Error } from "../../Utils/ErrorContext";
+import { useAlert } from "../../Utils/AlertContext";
 
 interface FileInputProps {
   sendChange: (files: File[]) => void;
@@ -27,7 +27,7 @@ const DragDropFileInput: React.FC<FileInputProps> = ({
   const cameraSwitch = useRef<HTMLDivElement | null>(null);
   const [hasPermission, setHasPermission] = useState<boolean>(false);
   const [, setCaptureCounter] = useState<number>(1);
-  const { showAlert } = Error();
+  const { showAlert } = useAlert();
   const CAMERA_MODE = true;
   const FILE_MODE = false;
 
@@ -225,7 +225,7 @@ const DragDropFileInput: React.FC<FileInputProps> = ({
     event.preventDefault();
     getCameraPermission();
     if (!hasPermission) {
-      showAlert(t("cameraPermissionError"));
+      showAlert(t("cameraPermissionError"), "error");
       return;
     }
     setToggleMode((currentMode) => !currentMode);
@@ -299,7 +299,7 @@ const DragDropFileInput: React.FC<FileInputProps> = ({
             onClick={selectFiles}
             className={`drag-drop-file-input ${dragActive ? "active" : ""} ${file ? "hasFile" : ""}`}
           >
-            <p className={file ? "p1 active" : "p1 "}>
+            <p className={file ? "hasFile" : ""}>
               {t("AccessFile")}
               <br />
               {t("dragAndDropFilePOption1")}

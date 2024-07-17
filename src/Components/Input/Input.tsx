@@ -209,7 +209,9 @@ const InputComponent: React.FC<InputProps> = ({
                   rows={1}
                 />
                 {
+                  
                   /* Show more button */
+
                   textareaRefs[index].current &&
                     textareaRefs[index].current!.scrollHeight > 97 && (
                       <div className="show-more-container">
