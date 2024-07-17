@@ -20,6 +20,7 @@
   justify-content: center;
   overflow: hidden;
 }
+
 .curr-img img {
   height: auto;
 }
@@ -66,6 +67,9 @@
 .react-transform-wrapper {
   width: 100% !important; /* Width at 100% of .curr-img */
 }
+.on-drag{
+  cursor: grabbing !important;;
+}
 
 .transform-component-module_wrapper__SPB86 {
   grid-area: imgCurrent;
@@ -73,6 +77,7 @@
   grid-column: 2;
   display: inline;
   aspect-ratio: 1 / 1;
+  cursor: url('../../assets/zoomInOutCursor.svg') 50 50, auto;
 }
 react-transform-wrapper {
   height: 100% !important;
@@ -85,7 +90,7 @@ react-transform-wrapper {
   object-fit: contain;
   object-position: center;
   border-radius: 10px;
-  transition: 0.6s ease;
+  transition: 0.2s ease;
 }
 
 .carousel-wrapper .react-transform-wrapper img {
