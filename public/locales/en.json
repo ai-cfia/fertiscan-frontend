@@ -19,8 +19,9 @@
   "dragAndDropFileH3": "Attach a document",
   "captureButton": "Capture",
   "switchCameraButton": "Switch Camera",
-  "dragAndDropFilePOption1": "Drag & drop your files here or",
-  "dragAndDropFilePOption2": "Take a picture or",
+  "AccessFile": "Click here or",
+  "dragAndDropFilePOption1": "Drag & drop your files ",
+  "dragAndDropFilePOption2": "Take a picture",
   "browseFileButton": "Browse Files",
   "noPicture": "No picture",
   "compagnieHeader": "Companie Information",
@@ -69,5 +70,6 @@
   "settings": "Settings",
   "clickNewButton": "Click to add row",
   "cameraPermissionError": "Please allow camera access",
-  "rename": "Rename"
+  "rename": "Rename",
+  "showLess": "Show Less"
 }

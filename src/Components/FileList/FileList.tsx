@@ -16,7 +16,7 @@ interface FileListProps {
     deleted: { blob: string; name: string },
     wasShown: boolean,
   ) => void;
-  onRenameClick: (fileData: BlobData) => void; // Updated type definition
+  onRenameClick: (fileData: BlobData) => void;
 }
 
 const FileList: React.FC<FileListProps> = ({
@@ -69,12 +69,12 @@ const FileList: React.FC<FileListProps> = ({
     <div
       className={`file-list-container ${blobs.length === 0 ? "empty" : ""}`}
       onContextMenu={(e) => e.preventDefault()}
+      onClick={closeContextMenu}
     >
       <div
         className={`file-list ${blobs.length === 0 ? "empty" : ""}`}
         style={{
           position: "relative",
-          height: "500px",
           overflowY: "auto",
         }}
       >
