@@ -6,6 +6,8 @@ export const FormClickActions = eventbus<{
   ApproveClick: (inputInfo: Input) => void;
   Rejected: (inputInfo: Input) => void;
   SyncProgress: (inputInfo: Input) => void;
+  Focus: (inputInfo: Input) => void;
+  UnFocus: (inputInfo: Input) => void;
 }>();
 
 export const MenuChannel = eventbus<{

@@ -29,10 +29,9 @@
 .section.approved {
   background-color: rgb(18, 178, 18);
 }
-.section.modified {
-  background-color: rgb(255, 255, 0);
+.section.focus {
+  background-color: rgb(116, 164, 231);
 }
 .section.rejected {
   background-color: rgb(255, 0, 0);
-  border-top: 2px solid black;
 }
