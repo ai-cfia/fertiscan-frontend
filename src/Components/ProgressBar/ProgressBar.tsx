@@ -27,13 +27,18 @@ const ProgressBar = ({ sections }: { sections: { label: string }[] }) => {
     if (element && dataContainer) {
       const elementRect = element.getBoundingClientRect();
       const dataContainerRect = dataContainer.getBoundingClientRect();
-        const scrollPosition = elementRect.top - dataContainerRect.top + dataContainer.scrollTop  + (elementRect.height / 2)-200;
-        dataContainer.scroll({
+      const scrollPosition =
+        elementRect.top -
+        dataContainerRect.top +
+        dataContainer.scrollTop +
+        elementRect.height / 2 -
+        200;
+      dataContainer.scroll({
         top: scrollPosition,
         behavior: "smooth",
       });
-        element.focus({ preventScroll: true });
-        flash(element);
+      element.focus({ preventScroll: true });
+      flash(element);
     }
   };
 

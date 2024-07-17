@@ -21,15 +21,15 @@ const FormPage = () => {
   const dataContainerRef = useRef<HTMLDivElement>(null);
   const [showScrollUp, setShowScrollUp] = useState(false);
 
-  const handleScroll = (event: { target: any; }) => {
-    const target = event.target;
+  const handleScroll = (event: React.UIEvent<HTMLDivElement>) => {
+    const target = event.target as HTMLDivElement;
     const shouldShow = target.scrollTop > 10;
     setShowScrollUp(shouldShow);
   };
 
   const scrollToTop = () => {
     if (dataContainerRef.current) {
-      dataContainerRef.current.scrollTo({ top: 0, behavior: 'smooth' });
+      dataContainerRef.current.scrollTo({ top: 0, behavior: "smooth" });
     }
   };
   // @ts-expect-error : setForm is going to be used when linked to db
@@ -323,7 +323,11 @@ const FormPage = () => {
     <StrictMode>
       <div className={"formPage-container ${theme} disable-scroll"}>
         <Carousel id="carousel" imgs={urls}></Carousel>
-        <div id="data-container" className="data-container" ref={dataContainerRef} onScroll={handleScroll}
+        <div
+          id="data-container"
+          className="data-container"
+          ref={dataContainerRef}
+          onScroll={handleScroll}
         >
           {loading ? (
             <div
@@ -344,7 +348,7 @@ const FormPage = () => {
                   ></SectionComponent>
                 );
               })}
-                <button className="submit-button" onClick={submitForm}>
+              <button className="submit-button" onClick={submitForm}>
                 {t("submitButton")}
               </button>
             </div>
@@ -352,7 +356,7 @@ const FormPage = () => {
         </div>
         {!loading ? (
           <div className="progress-wrapper">
-           {showScrollUp && ( 
+            {showScrollUp && (
               <button className="button-top" onClick={scrollToTop}>
                 <img src={goUpIcon} alt="Go Up" />
               </button>
