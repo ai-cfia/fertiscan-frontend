@@ -22,6 +22,13 @@
     grid-template-columns: 37% 55% 10%;
     justify-items: center;
   }
+  .carousel-wrapper {
+    grid-area: pics;
+    left: 10%;
+    margin-top: 30%;
+    max-width: 80% !important;
+  }
+
   .formPage-container .carousel-wrapper{
     grid-area: pics;
     left:10%;
@@ -33,6 +40,7 @@
     width: calc(100%) !important;
     height: auto !important;
   }  
+ main
 }
 
 @media only screen and (max-width: 1230px) {
@@ -44,6 +52,28 @@
       "data";
     justify-items: center;
   }
+
+  .curr-img:not(.data-container) {
+    margin-top: 10%;
+  }
+  .carousel-wrapper {
+    grid-area: pics;
+    height: 75vh !important;
+  }
+}
+
+@media only screen and (min-width: 1250px) {
+  .carousel-wrapper {
+    width: 100%;
+    height: auto !important;
+  }
+  .carousel-wrapper {
+    width: 100%;
+    height: auto !important;
+  }
+  .curr-img img {
+    width: calc(100%) !important;
+    height: auto !important;
 
   .formPage-container .curr-img:not(.data-container){
     margin-top: 10%;

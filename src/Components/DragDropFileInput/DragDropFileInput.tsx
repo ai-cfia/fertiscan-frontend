@@ -350,10 +350,6 @@ const DragDropFileInput: React.FC<FileInputProps> = ({
             {t("cameraLabel")}
           </label>
         </div>
-        <button type="button" onClick={selectFiles}>
-          {" "}
-          {t("browseFileButton")}
-        </button>
       </div>
     </div>
   );
