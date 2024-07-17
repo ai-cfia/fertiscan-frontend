@@ -105,15 +105,17 @@ function ImageZoomInOut({ imageUrl, alt }: ImageProps) {
     >;
   }) => {};
 
-const [isDragging, setIsDragging] = useState(false);
+  const [isDragging, setIsDragging] = useState(false);
 
-const handlePanning = () => {
-  // Basculer l'état de "dragging"
-  setIsDragging(!isDragging);
-}
+  const handlePanning = () => {
+    // Basculer l'état de "dragging"
+    setIsDragging(!isDragging);
+  };
 
-useEffect(()=>{
-    const transformWrapperElement = document.querySelector(".react-transform-component");
+  useEffect(() => {
+    const transformWrapperElement = document.querySelector(
+      ".react-transform-component",
+    );
     if (transformWrapperElement) {
       if (isDragging) {
         transformWrapperElement.classList.add("on-drag");
@@ -123,9 +125,12 @@ useEffect(()=>{
     }
   }, [isDragging]);
 
-
   return (
-    <TransformWrapper pinch={{ step: 1000 }} onPanningStart={handlePanning} onPanningStop={handlePanning}>
+    <TransformWrapper
+      pinch={{ step: 1000 }}
+      onPanningStart={handlePanning}
+      onPanningStop={handlePanning}
+    >
       {/* eslint-disable-next-line */}
       {({ zoomIn, zoomOut, resetTransform, ...rest }) => (
         <>
