@@ -137,27 +137,27 @@ const InputComponent: React.FC<InputProps> = ({
   };
 
   const createListInput = () => {
-  
     return (
       <div id={inputInfo.id} className="list-input">
-        <div 
-          ref={textarea.ref as React.RefObject<HTMLDivElement>} 
+        <div
+          ref={textarea.ref as React.RefObject<HTMLDivElement>}
           className={`textareas-wrapper form-input ${inputInfo.property}`}
         >
-          {inputInfo.value.map((_, index) => <TableTextarea
+          {inputInfo.value.map((_, index) => (
+            <TableTextarea
               index={index}
               inputInfo={inputInfo}
               propagateChange={propagateChange}
               setFocus={setFocus}
               unsetFocus={unsetFocus}
               resizeTextarea={resizeTextarea}
-              deleteRow={()=>{
+              resizeParent={() => {
                 setTimeout(() => {
-                    resizeTextarea(textarea.ref.current);
+                  resizeTextarea(textarea.ref.current);
                 }, 50);
               }}
             />
-          )}
+          ))}
           <div
             onClick={() => {
               (inputInfo.value as string[]).push("");
@@ -349,7 +349,7 @@ const InputComponent: React.FC<InputProps> = ({
             });
             propagateChange(inputInfo);
             setTimeout(() => {
-                resizeTextarea(textarea.ref.current);
+              resizeTextarea(textarea.ref.current);
             }, 50);
           }}
           className={`textarea unselectable add-div ${inputInfo.disabled ? "disabled" : ""}`}
@@ -401,7 +401,7 @@ const InputComponent: React.FC<InputProps> = ({
 
     window.addEventListener("resize", handleResize);
     return () => window.removeEventListener("resize", handleResize);
-  }, [lastWidth]);
+  }, [lastWidth,textarea.ref]);
 
   return (
     <div className="test-button">
@@ -416,7 +416,7 @@ const InputComponent: React.FC<InputProps> = ({
           className={`button ${isActive ? "active" : ""}`}
           onClick={(event) => {
             event.preventDefault();
-            handleStateChange(inputInfo)
+            handleStateChange(inputInfo);
           }}
         >
           {property === "default" ? (
