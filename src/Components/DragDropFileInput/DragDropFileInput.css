@@ -16,6 +16,10 @@
   color: #ccc;
 }
 
+.drag-drop-file-input p.hasFile {
+  display: none;
+}
+
 .drag-drop-file-input:hover {
   border: 2px solid #777; /* Gray border color */
 }
