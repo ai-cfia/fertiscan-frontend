@@ -65,10 +65,10 @@
 
 .react-transform-component,
 .react-transform-wrapper {
-  width: 100% !important; /* Width at 100% of .curr-img */
+  width: 100% !important; 
 }
 .on-drag{
-  cursor: grabbing !important;;
+  cursor: grabbing !important;
 }
 
 .transform-component-module_wrapper__SPB86 {
