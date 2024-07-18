@@ -20,7 +20,8 @@ RUN npm run build
 # Setup for production
 FROM node:20.12.2-alpine AS runtime
 
-RUN addgroup -S fertiscangroup && adduser -S fertiscanuser -G fertiscangroup
+RUN getent group fertiscangroup || addgroup -S fertiscangroup && \
+    id -u fertiscanuser &>/dev/null || adduser -S fertiscanuser -G fertiscangroup
 
 # Install serve globally
 RUN npm install -g serve
