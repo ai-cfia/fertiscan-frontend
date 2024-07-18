@@ -40,7 +40,6 @@
     width: calc(100%) !important;
     height: auto !important;
   }  
- main
 }
 
 @media only screen and (max-width: 1230px) {
@@ -189,4 +188,5 @@ html{
   top: 20px;
   height: 100%;
   width: 200px;
+}
 }

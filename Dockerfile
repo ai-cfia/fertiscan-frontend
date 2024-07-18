@@ -1,7 +1,5 @@
 FROM node:20.12.2-alpine AS build
 
-RUN groupadd -r fertiscangroup && useradd -r -g fertiscangroup fertiscanuser 
-
 WORKDIR /code
 
 # Copy files
@@ -22,6 +20,8 @@ RUN npm run build
 # Setup for production
 FROM node:20.12.2-alpine AS runtime
 
+RUN addgroup -S fertiscangroup && adduser -S fertiscanuser -G fertiscangroup
+
 # Install serve globally
 RUN npm install -g serve
 
@@ -33,7 +33,7 @@ COPY --from=build /code/dist /app
 
 EXPOSE 3000
 
-RUN chown -R fertiscanuser:fertiscangroup /code
+RUN chown -R fertiscanuser:fertiscangroup /app
 
 USER fertiscanuser
 
