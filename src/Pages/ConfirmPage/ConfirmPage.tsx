@@ -108,6 +108,7 @@ const ConfirmPage = () => {
 
   const [isChecked, setIsChecked] = useState(false);
 
+  // eslint-disable-next-line
   const handleChange = (event: { target: { checked: any } }) => {
     // Actualiser l'état avec la nouvelle valeur de la case à cocher
     setIsChecked(event.target.checked);
@@ -116,7 +117,6 @@ const ConfirmPage = () => {
     } else {
       console.log("Checkbox is not checked.");
     }
-
   };
 
   return (

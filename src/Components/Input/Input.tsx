@@ -83,8 +83,6 @@ const InputComponent: React.FC<InputProps> = ({
       FormClickActions.emit("ModifyClick", inputInfo);
       setTimeout(() => setIsActive(false), 400);
     } else if (inputInfo.property === "modified") {
-
-
       setIsActive(false);
       inputInfo.disabled = true;
       inputInfo.property = "approved";
@@ -92,8 +90,6 @@ const InputComponent: React.FC<InputProps> = ({
       FormClickActions.emit("ModifyClick", inputInfo);
       setTimeout(() => setIsActive(false), 400);
       textarea.ref.current?.classList.remove("rejected");
-
-      
     } else if (inputInfo.property === "default") {
       setIsActive(true);
       FormClickActions.emit("ApproveClick", inputInfo);
@@ -135,14 +131,16 @@ const InputComponent: React.FC<InputProps> = ({
             maxHeight: isExpanded ? "fit-content" : "97px",
             overflow: isExpanded ? "hidden" : "auto",
           }}
+          // eslint-disable-next-line
           onClick={(_event) => {
-            inputInfo.property ="modified"
+            inputInfo.property = "modified";
             console.log("test");
-            propagateChange({...inputInfo, property: "modified"});
+            propagateChange({ ...inputInfo, property: "modified" });
           }}
+          // eslint-disable-next-line
           onFocus={(_event: React.FocusEvent<HTMLTextAreaElement>) => {
-            setProperty("modified")
-            let updatedInputInfo = {...inputInfo, property: "modified"};
+            setProperty("modified");
+            const updatedInputInfo = { ...inputInfo, property: "modified" };
             propagateChange(updatedInputInfo);
           }}
           onInput={() => {
@@ -185,14 +183,19 @@ const InputComponent: React.FC<InputProps> = ({
                     maxHeight: isExpanded ? "fit-content" : "97px",
                     overflow: isExpanded ? "hidden" : "auto",
                   }}
+                  // eslint-disable-next-line
                   onClick={(_even) => {
-                    inputInfo.property ="modified"
+                    inputInfo.property = "modified";
                     console.log("test");
-                    propagateChange({...inputInfo, property: "modified"});
+                    propagateChange({ ...inputInfo, property: "modified" });
                   }}
+                  // eslint-disable-next-line
                   onFocus={(_event: React.FocusEvent<HTMLTextAreaElement>) => {
-                    setProperty("modified")
-                    let updatedInputInfo = {...inputInfo, property: "modified"};
+                    setProperty("modified");
+                    const updatedInputInfo = {
+                      ...inputInfo,
+                      property: "modified",
+                    };
                     propagateChange(updatedInputInfo);
                   }}
                   onChange={(event: React.ChangeEvent<HTMLTextAreaElement>) => {
@@ -209,7 +212,6 @@ const InputComponent: React.FC<InputProps> = ({
                   rows={1}
                 />
                 {
-                  
                   /* Show more button */
 
                   textareaRefs[index].current &&
