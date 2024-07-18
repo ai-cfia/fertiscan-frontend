@@ -1,4 +1,4 @@
-import { useState, useEffect, StrictMode, useContext } from "react";
+import { useState, useEffect, StrictMode, useContext, useRef } from "react";
 import "./FormPage.css";
 import {
   SessionContext,
@@ -12,11 +12,26 @@ import Input from "../../Model/Input-Model.tsx";
 import Data from "../../Model/Data-Model.tsx";
 import { FormClickActions } from "../../Utils/EventChannels.tsx";
 import { useTranslation } from "react-i18next";
+import goUpIcon from "../../assets/goUpIcon.svg";
 
 const FormPage = () => {
   // For local development
   const api_url = "http://localhost:5000";
   const { t } = useTranslation();
+  const dataContainerRef = useRef<HTMLDivElement>(null);
+  const [showScrollUp, setShowScrollUp] = useState(false);
+
+  const handleScroll = (event: React.UIEvent<HTMLDivElement>) => {
+    const target = event.target as HTMLDivElement;
+    const shouldShow = target.scrollTop > 10;
+    setShowScrollUp(shouldShow);
+  };
+
+  const scrollToTop = () => {
+    if (dataContainerRef.current) {
+      dataContainerRef.current.scrollTo({ top: 0, behavior: "smooth" });
+    }
+  };
   // @ts-expect-error : setForm is going to be used when linked to db
   // eslint-disable-next-line
   const [form, setForm] = useState({
@@ -308,7 +323,12 @@ const FormPage = () => {
     <StrictMode>
       <div className={"formPage-container ${theme} disable-scroll"}>
         <Carousel id="carousel" imgs={urls}></Carousel>
-        <div className="data-container">
+        <div
+          id="data-container"
+          className="data-container"
+          ref={dataContainerRef}
+          onScroll={handleScroll}
+        >
           {loading ? (
             <div
               className={`loader-container-form ${loading ? "active " : ""}`}
@@ -336,6 +356,11 @@ const FormPage = () => {
         </div>
         {!loading ? (
           <div className="progress-wrapper">
+            {showScrollUp && (
+              <button className="button-top" onClick={scrollToTop}>
+                <img src={goUpIcon} alt="Go Up" />
+              </button>
+            )}
             <ProgressBar sections={inputStates} />
           </div>
         ) : (
