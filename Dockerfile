@@ -1,5 +1,7 @@
 FROM node:20.12.2-alpine AS build
 
+RUN groupadd -r fertiscangroup && useradd -r -g fertiscangroup fertiscanuser 
+
 WORKDIR /code
 
 # Copy files
@@ -30,6 +32,10 @@ WORKDIR /app
 COPY --from=build /code/dist /app
 
 EXPOSE 3000
+
+RUN chown -R fertiscanuser:fertiscangroup /code
+
+USER fertiscanuser
 
 # Serve your app
 ENTRYPOINT ["serve", "-s", "/app"]
