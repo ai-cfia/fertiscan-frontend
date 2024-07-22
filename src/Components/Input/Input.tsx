@@ -20,7 +20,6 @@ interface InputProps {
 // nore too long so the user is disturbed by the lack of changes after their action
 const SYNC_TIMEOUT = 50;
 
-
 const resizeTextarea = (textarea: HTMLElement | null) => {
   if (textarea) {
     if (textarea.classList.contains("list-input")) {
