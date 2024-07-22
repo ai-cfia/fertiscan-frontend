@@ -378,11 +378,13 @@ const InputComponent: React.FC<InputProps> = ({
 
   useEffect(() => {
     FormClickActions.emit("SyncProgress", inputInfo);
-    if(inputInfo.isAlreadyTable) {
-      document.querySelectorAll(`#${inputInfo.id} textarea`).forEach((textarea) => {
-        resizeTextarea(textarea as HTMLElement);
-      });
-    }else{
+    if (inputInfo.isAlreadyTable) {
+      document
+        .querySelectorAll(`#${inputInfo.id} textarea`)
+        .forEach((textarea) => {
+          resizeTextarea(textarea as HTMLElement);
+        });
+    } else {
       resizeTextarea(textarea.ref.current);
     }
     // eslint-disable-next-line
