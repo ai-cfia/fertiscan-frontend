@@ -4,7 +4,7 @@ import Input from "../../Model/Input-Model";
 import editIcon from "../../assets/edit1.svg";
 import acceptIcon from "../../assets/acceptIcon.svg";
 import deleteIcon from "../../assets/deleteIcon.svg";
-import { FormClickActions } from "../../Utils/EventChannels";
+import { FormClickActions } from "../../Utils/EventChannels.tsx";
 import { useTranslation } from "react-i18next";
 import TableTextarea from "./TableTextarea/TableTextarea";
 
@@ -119,10 +119,22 @@ const InputComponent: React.FC<InputProps> = ({
             maxHeight: isExpanded ? "fit-content" : "97px",
             overflow: isExpanded ? "hidden" : "auto",
           }}
+          // eslint-disable-next-line
+          onClick={(_event) => {
+            inputInfo.property = "modified";
+            console.log("test");
+            propagateChange({ ...inputInfo, property: "modified" });
+          }}
+          // eslint-disable-next-line
+          onFocus={(_event: React.FocusEvent<HTMLTextAreaElement>) => {
+            setProperty("modified");
+            const updatedInputInfo = { ...inputInfo, property: "modified" };
+            propagateChange(updatedInputInfo);
+            setFocus();
+          }}
           onInput={() => {
             resizeTextarea(textarea.ref.current);
           }}
-          onFocus={setFocus}
           onBlur={unsetFocus}
           className={`textarea form-input ${inputInfo.property}`}
           rows={1}

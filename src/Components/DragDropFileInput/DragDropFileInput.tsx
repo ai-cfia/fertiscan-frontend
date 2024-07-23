@@ -299,7 +299,7 @@ const DragDropFileInput: React.FC<FileInputProps> = ({
             onClick={selectFiles}
             className={`drag-drop-file-input ${dragActive ? "active" : ""} ${file ? "hasFile" : ""}`}
           >
-            <p className={file ? "p1 active" : "p1 "}>
+            <p className={file ? "hasFile" : ""}>
               {t("AccessFile")}
               <br />
               {t("dragAndDropFilePOption1")}

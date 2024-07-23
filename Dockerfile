@@ -29,6 +29,9 @@ RUN npm run build
 # Setup for production
 FROM node:20.12.2-alpine AS runtime
 
+RUN getent group fertiscangroup || addgroup -S fertiscangroup && \
+    id -u fertiscanuser &>/dev/null || adduser -S fertiscanuser -G fertiscangroup
+
 # Install serve globally
 RUN npm install -g serve
 
@@ -39,6 +42,10 @@ WORKDIR /app
 COPY --from=build /code/dist /app
 
 EXPOSE 3000
+
+RUN chown -R fertiscanuser:fertiscangroup /app
+
+USER fertiscanuser
 
 # Serve your app
 ENTRYPOINT ["serve", "-s", "/app"]

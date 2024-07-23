@@ -22,14 +22,22 @@ const ProgressBar = ({ sections }: { sections: { label: string }[] }) => {
 
   // focus on the selected section
   const give_focus = (section: { label: string }) => {
-    const element = document.getElementById(section.label) as HTMLElement;
-    if (element) {
-      element.scrollIntoView({
+    const dataContainer = document.getElementById("data-container");
+    const element = document.getElementById(section.label);
+    if (element && dataContainer) {
+      const elementRect = element.getBoundingClientRect();
+      const dataContainerRect = dataContainer.getBoundingClientRect();
+      const scrollPosition =
+        elementRect.top -
+        dataContainerRect.top +
+        dataContainer.scrollTop +
+        elementRect.height / 2 -
+        200;
+      dataContainer.scroll({
+        top: scrollPosition,
         behavior: "smooth",
-        block: "center",
-        inline: "nearest",
       });
-      element.focus();
+      element.focus({ preventScroll: true });
       flash(element);
     }
   };

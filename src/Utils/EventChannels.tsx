@@ -4,6 +4,7 @@ import Input from "../Model/Input-Model";
 export const FormClickActions = eventbus<{
   ModifyClick: (inputInfo: Input) => void;
   ApproveClick: (inputInfo: Input) => void;
+  DefaultClick: (inputInfo: Input) => void;
   Rejected: (inputInfo: Input) => void;
   SyncProgress: (inputInfo: Input) => void;
   Focus: (inputInfo: Input) => void;

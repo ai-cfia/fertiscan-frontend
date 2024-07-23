@@ -60,6 +60,7 @@ const FileList: React.FC<FileListProps> = ({
     <div
       className={`file-list-container ${blobs.length === 0 ? "empty" : ""}`}
       onContextMenu={(e) => e.preventDefault()}
+      onClick={closeContextMenu}
     >
       <div
         className={`file-list ${blobs.length === 0 ? "empty" : ""}`}
