@@ -9,8 +9,8 @@ const ProgressBar = ({ sections }: { sections: { label: string }[] }) => {
     ref: React.MutableRefObject<HTMLDivElement | null>;
   }[] = [];
 
-  let color = "black";
   const flash = (element: HTMLElement) => {
+    let color = "black";
     if (window.matchMedia("(prefers-color-scheme: dark)").matches) {
       color = "white";
     }
@@ -50,8 +50,13 @@ const ProgressBar = ({ sections }: { sections: { label: string }[] }) => {
     });
     FormClickActions.on("ModifyClick", (inputInfo: Input) => {
       sec.find((elem) => elem.label == inputInfo.id)!.ref.current!.className =
-        "section default";
-      inputInfo.property = "default";
+        "section modified";
+      inputInfo.property = "modified";
+    });
+    FormClickActions.on("Rejected", (inputInfo: Input) => {
+      sec.find((elem) => elem.label == inputInfo.id)!.ref.current!.className =
+        "section modified";
+      inputInfo.property = "modified";
     });
     // When the input is rejected because he is not in the good format ex: email, adress, etc
     FormClickActions.on("Rejected", (inputInfo: Input) => {
@@ -61,14 +66,6 @@ const ProgressBar = ({ sections }: { sections: { label: string }[] }) => {
       inputInfo.property = "rejected";
     });
     FormClickActions.on("SyncProgress", (inputInfo: Input) => {
-      sec.find((elem) => elem.label == inputInfo.id)!.ref.current!.className =
-        "section " + inputInfo.property;
-    });
-    FormClickActions.on("Focus", (inputInfo: Input) => {
-      sec.find((elem) => elem.label == inputInfo.id)!.ref.current!.className =
-        "section focus";
-    });
-    FormClickActions.on("UnFocus", (inputInfo: Input) => {
       sec.find((elem) => elem.label == inputInfo.id)!.ref.current!.className =
         "section " + inputInfo.property;
     });

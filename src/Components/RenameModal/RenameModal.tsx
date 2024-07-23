@@ -1,7 +1,11 @@
 import React, { useEffect, useState } from "react";
-import { useTranslation } from "react-i18next";
-import BlobData from "../../interfaces/BlobData";
 import "../Modal/Modal.css";
+import { useTranslation } from "react-i18next";
+
+interface BlobData {
+  blob: string;
+  name: string;
+}
 
 interface RenameModalProps {
   fileData: BlobData;

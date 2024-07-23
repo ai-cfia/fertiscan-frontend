@@ -1,10 +1,9 @@
-import React, { useEffect, useRef, useState } from "react";
-import BlobData from "../../../interfaces/BlobData";
+import React, { useState, useEffect, useRef } from "react";
 import "./FileElement.css";
 
 interface FileElementProps {
   key: number;
-  blob: BlobData;
+  blob: { blob: string; name: string };
   position: number;
   onClick: (selected: boolean) => void;
   onDelete: () => void;
