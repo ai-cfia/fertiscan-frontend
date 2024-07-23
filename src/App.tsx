@@ -1,14 +1,14 @@
-import { BrowserRouter, Routes, Route } from "react-router-dom";
-import HomePage from "./Pages/HomePage/HomePage";
-import NoPage from "./Pages/NoPage/NoPage";
+import i18next from "i18next";
+import { StrictMode, useEffect } from "react";
+import { BrowserRouter, Route, Routes } from "react-router-dom";
 import "./App.css";
 import Header from "./Components/Header/Header";
-import { StrictMode, useEffect } from "react";
 import SideMenu from "./Components/SideMenu/SideMenu";
+import HomePage from "./Pages/HomePage/HomePage";
+import NoPage from "./Pages/NoPage/NoPage";
 import SettingPage from "./Pages/SettingPage/SettingPage";
-import i18next from "i18next";
-import { SessionProvider } from "./Utils/SessionContext";
 import { AlertProvider } from "./Utils/AlertContext";
+import { SessionProvider } from "./Utils/SessionContext";
 
 function App() {
   useEffect(() => {
@@ -17,9 +17,9 @@ function App() {
   }, []);
 
   return (
-    <SessionProvider>
-      <BrowserRouter>
-        <AlertProvider>
+    <AlertProvider>
+      <SessionProvider>
+        <BrowserRouter>
           <StrictMode>
             <Header />
             <SideMenu />
@@ -31,9 +31,9 @@ function App() {
               <Route path="*" element={<NoPage />} />
             </Route>
           </Routes>
-        </AlertProvider>
-      </BrowserRouter>
-    </SessionProvider>
+        </BrowserRouter>
+      </SessionProvider>
+    </AlertProvider>
   );
 }
 

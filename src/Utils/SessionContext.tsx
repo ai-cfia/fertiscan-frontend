@@ -1,13 +1,13 @@
 import { createContext, useReducer } from "react";
 import Data from "../Model/Data-Model";
-
-interface StateType {
-  state: string;
-  data: {
-    pics: { blob: string; name: string }[];
-    form: Data;
-  };
-}
+import i18n from "../i18n";
+import BlobData from "../interfaces/BlobData";
+import StateType from "../interfaces/StateType";
+import { useAlert } from "./AlertContext";
+import {
+  calculateStateObjectSize,
+  stateObjectExceedsLimit,
+} from "./stateObject";
 
 interface SessionContextType {
   state: StateType;
@@ -22,7 +22,7 @@ export const SetSessionContext = createContext({
   setState: (_state: {
     state: string;
     data: {
-      pics: { blob: string; name: string }[];
+      pics: BlobData[];
       form: Data;
     };
   }) => {},
@@ -32,10 +32,27 @@ export const SetSessionContext = createContext({
 export const SessionProvider = ({ children }: React.PropsWithChildren<{}>) => {
   const initialState: {
     state: string;
-    data: { pics: { blob: string; name: string }[]; form: Data };
+    data: { pics: BlobData[]; form: Data };
   } = sessionStorage.getItem("state")
     ? JSON.parse(sessionStorage.getItem("state")!)
     : { state: "captur", data: { pics: [], form: new Data([]) } };
+  const { showAlert } = useAlert();
+
+  const stateReducer = (_state: StateType, newState: StateType) => {
+    if (stateObjectExceedsLimit(newState)) {
+      showAlert(i18n.t("exceedsLimit"), "error");
+      return _state;
+    }
+
+    try {
+      sessionStorage.setItem("state", JSON.stringify(newState));
+    } catch (e) {
+      console.error(e);
+      console.log("state object size", calculateStateObjectSize(newState));
+    }
+    return newState;
+  };
+
   const [state, setState] = useReducer(stateReducer, initialState);
 
   return (
@@ -46,8 +63,3 @@ export const SessionProvider = ({ children }: React.PropsWithChildren<{}>) => {
     </SessionContext.Provider>
   );
 };
-
-function stateReducer(_state: StateType, newState: StateType) {
-  sessionStorage.setItem("state", JSON.stringify(newState));
-  return newState;
-}
