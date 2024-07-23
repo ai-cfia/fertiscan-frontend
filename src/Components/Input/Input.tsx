@@ -6,7 +6,6 @@ import acceptIcon from "../../assets/acceptIcon.svg";
 import deleteIcon from "../../assets/deleteIcon.svg";
 import { FormClickActions } from "../../Utils/EventChannels.tsx";
 import { useTranslation } from "react-i18next";
-import TableTextarea from "./TableTextarea/TableTextarea";
 
 interface InputProps {
   inputInfo: Input;
@@ -37,7 +36,9 @@ const InputComponent: React.FC<InputProps> = ({
   const { t } = useTranslation();
   const [isActive, setIsActive] = useState(false);
   const [property, setProperty] = useState(inputInfo.property);
+  const objectInputRef = useRef<HTMLDivElement>(null);
   const ref = useRef<HTMLElement | null>(null);
+  const textareaRefs: React.MutableRefObject<HTMLTextAreaElement | null>[] = [];
   const [lastWidth, setLastWidth] = useState(window.innerWidth);
   // eslint-disable-next-line
   const [_windowWidth, setWindowWidth] = useState(window.innerWidth);
@@ -49,45 +50,60 @@ const InputComponent: React.FC<InputProps> = ({
   };
 
   const SyncChanges = (inputInfo: Input) => {
-    // if property is approved then
-    //        input isnt active and is disabled
-    //        else input is active and not disabled
-    setIsActive(inputInfo.property !== "approved");
-    inputInfo.disabled = inputInfo.property === "approved";
-    setProperty(inputInfo.property);
-  };
-
-  const setFocus = () => {
-    console.log("focus");
-    FormClickActions.emit("Focus", inputInfo);
-  };
-  const unsetFocus = () => {
-    console.log("unfocus");
-    FormClickActions.emit("UnFocus", inputInfo);
+    if (inputInfo.property === "approved") {
+      setIsActive(false);
+      inputInfo.disabled = true;
+      inputInfo.property = "approved";
+      setProperty("approved");
+    } else if (inputInfo.property === "modified") {
+      setIsActive(true);
+      inputInfo.disabled = false;
+      inputInfo.property = "modified";
+      setProperty("modified");
+    } else if (inputInfo.property === "default") {
+      setIsActive(true);
+      inputInfo.disabled = false;
+      inputInfo.property = "default";
+      setProperty("default");
+    } else if (inputInfo.property === "rejected") {
+      setIsActive(true);
+      inputInfo.disabled = false;
+      inputInfo.property = "rejected";
+      textarea.ref.current?.classList.add("rejected");
+      setProperty("rejected");
+    }
   };
 
   const handleStateChange = (inputInfo: Input) => {
-    switch (inputInfo.property) {
-      case "approved":
-        inputInfo.property = "default";
-        FormClickActions.emit("ModifyClick", inputInfo);
-        textarea.ref.current!.focus();
-        setTimeout(() => {
-          textarea.ref.current!.focus();
-        }, 100);
-        break;
-      case "rejected":
-        textarea.ref.current?.classList.remove("rejected");
-        inputInfo.property = "approved";
-        FormClickActions.emit("ApproveClick", inputInfo);
-        break;
-      case "default":
-        inputInfo.property = "approved";
-        FormClickActions.emit("ApproveClick", inputInfo);
-        break;
+    if (inputInfo.property === "approved") {
+      setIsActive(true);
+      inputInfo.disabled = false;
+      inputInfo.property = "modified";
+      setProperty("modified");
+      FormClickActions.emit("ModifyClick", inputInfo);
+      setTimeout(() => setIsActive(false), 400);
+    } else if (inputInfo.property === "modified") {
+      setIsActive(false);
+      inputInfo.disabled = true;
+      inputInfo.property = "approved";
+      setProperty("approved");
+      FormClickActions.emit("ModifyClick", inputInfo);
+      setTimeout(() => setIsActive(false), 400);
+      textarea.ref.current?.classList.remove("rejected");
+    } else if (inputInfo.property === "default") {
+      setIsActive(true);
+      FormClickActions.emit("ApproveClick", inputInfo);
+      inputInfo.disabled = true;
+      inputInfo.property = "approved";
+      setProperty("approved");
+      setTimeout(() => setIsActive(false), 400);
+    } else if (inputInfo.property === "rejected") {
+      inputInfo.disabled = true;
+      inputInfo.property = "approved";
+      setProperty("approved");
+      FormClickActions.emit("ApproveClick", inputInfo);
+      textarea.ref.current?.classList.remove("rejected");
     }
-    SyncChanges(inputInfo);
-    setTimeout(() => setIsActive(false), 400);
     propagateChange(inputInfo);
   };
 
@@ -96,11 +112,12 @@ const InputComponent: React.FC<InputProps> = ({
   };
 
   const createSimpleInput = () => {
+    const ref = textarea.ref as React.MutableRefObject<HTMLTextAreaElement>;
     return (
       <div className="single-textarea-container">
         <textarea
           id={inputInfo.id}
-          ref={textarea.ref as React.RefObject<HTMLTextAreaElement>}
+          ref={ref}
           value={(inputInfo.value as string[])[0]}
           disabled={inputInfo.disabled}
           onChange={(event: React.ChangeEvent<HTMLTextAreaElement>) => {
@@ -129,14 +146,12 @@ const InputComponent: React.FC<InputProps> = ({
           onInput={() => {
             resizeTextarea(textarea.ref.current);
           }}
-          onFocus={setFocus}
-          onBlur={unsetFocus}
-          className={`textarea form-input ${inputInfo.property}`}
+          className="textarea"
           rows={1}
         />
         {
           /* Show more button */
-          textarea.ref.current && textarea.ref.current.scrollHeight > 97 && (
+          ref.current && ref.current.scrollHeight > 97 && (
             <div className="show-more-container">
               <label className="open-icon" onClick={handleToggleExpand}>
                 {isExpanded ? t("showLess") : t("showMoreButton")}
@@ -149,34 +164,93 @@ const InputComponent: React.FC<InputProps> = ({
   };
 
   const createListInput = () => {
+    // eslint-disable-next-line
+    inputInfo.value.forEach((_) => {
+      // eslint-disable-next-line
+      textareaRefs.push(useRef<HTMLTextAreaElement | null>(null));
+    });
     return (
       <div id={inputInfo.id} className="list-input">
-        <div
-          ref={textarea.ref as React.RefObject<HTMLDivElement>}
-          className={`textareas-wrapper form-input ${inputInfo.property}`}
-        >
-          {inputInfo.value.map((_, index) => (
-            <TableTextarea
-              index={index}
-              inputInfo={inputInfo}
-              propagateChange={propagateChange}
-              setFocus={setFocus}
-              unsetFocus={unsetFocus}
-              resizeTextarea={resizeTextarea}
-              resizeParent={() => {
-                setTimeout(() => {
-                  resizeTextarea(textarea.ref.current);
-                }, 50);
-              }}
-            />
-          ))}
+        <div className="textareas-wrapper">
+          {inputInfo.value.map((_, index) => {
+            return (
+              <div className="table-textarea-container" key={index}>
+                <textarea
+                  value={(inputInfo.value as string[])[index]}
+                  disabled={inputInfo.disabled}
+                  ref={textareaRefs[index]}
+                  style={{
+                    maxHeight: isExpanded ? "fit-content" : "97px",
+                    overflow: isExpanded ? "hidden" : "auto",
+                  }}
+                  // eslint-disable-next-line
+                  onClick={(_even) => {
+                    inputInfo.property = "modified";
+                    console.log("test");
+                    propagateChange({ ...inputInfo, property: "modified" });
+                  }}
+                  // eslint-disable-next-line
+                  onFocus={(_event: React.FocusEvent<HTMLTextAreaElement>) => {
+                    setProperty("modified");
+                    const updatedInputInfo = {
+                      ...inputInfo,
+                      property: "modified",
+                    };
+                    propagateChange(updatedInputInfo);
+                  }}
+                  onChange={(event: React.ChangeEvent<HTMLTextAreaElement>) => {
+                    const current = event.target as HTMLTextAreaElement;
+                    resizeTextarea(current);
+                    inputInfo.value[index] = event.target.value;
+                    propagateChange(inputInfo);
+                  }}
+                  onInput={(event: React.FormEvent<HTMLTextAreaElement>) => {
+                    const current = event.target as HTMLTextAreaElement;
+                    resizeTextarea(current);
+                  }}
+                  className="textarea"
+                  rows={1}
+                />
+                {
+                  /* Show more button */
+
+                  textareaRefs[index].current &&
+                    textareaRefs[index].current!.scrollHeight > 97 && (
+                      <div className="show-more-container">
+                        <label
+                          className="open-icon"
+                          onClick={handleToggleExpand}
+                        >
+                          {isExpanded ? t("showLess") : t("showMoreButton")}
+                        </label>
+                      </div>
+                    )
+                }
+                <button
+                  className={`delete-button ${inputInfo.disabled ? "disabled" : ""}`}
+                  disabled={inputInfo.disabled}
+                  onClick={() => {
+                    if (inputInfo.value.length > 1) {
+                      inputInfo.value.splice(index, 1);
+                      propagateChange(inputInfo);
+                    }
+                  }}
+                >
+                  <img
+                    src={deleteIcon}
+                    className={`delete-img ${inputInfo.disabled ? "disabled" : ""}`}
+                    alt={t("approveButton")}
+                    width="20"
+                    height="20"
+                  />
+                </button>
+              </div>
+            );
+          })}
           <div
             onClick={() => {
               (inputInfo.value as string[]).push("");
               propagateChange(inputInfo);
-              setTimeout(() => {
-                resizeTextarea(textarea.ref.current);
-              }, 50);
             }}
             className={`textarea unselectable add-div ${inputInfo.disabled ? "disabled" : ""}`}
           >
@@ -221,11 +295,7 @@ const InputComponent: React.FC<InputProps> = ({
       (inputInfo.value as { [key: string]: string }[])[0],
     );
     return (
-      <div
-        id={inputInfo.id}
-        className={`object-input form-input ${inputInfo.property}`}
-        ref={textarea.ref as React.RefObject<HTMLDivElement>}
-      >
+      <div id={inputInfo.id} className="object-input" ref={objectInputRef}>
         <table>
           <colgroup>
             <col span={1} style={{ width: "45%" }} />
@@ -266,8 +336,6 @@ const InputComponent: React.FC<InputProps> = ({
                         const input = event.currentTarget;
                         adjustFontSize(input, null);
                       }}
-                      onFocus={setFocus}
-                      onBlur={unsetFocus}
                     />
                   </td>
                   <td>
@@ -293,8 +361,6 @@ const InputComponent: React.FC<InputProps> = ({
                         const input = event.currentTarget;
                         adjustFontSize(input, null);
                       }}
-                      onFocus={setFocus}
-                      onBlur={unsetFocus}
                     />
                   </td>
                   <td>
@@ -320,8 +386,6 @@ const InputComponent: React.FC<InputProps> = ({
                         const input = event.currentTarget;
                         adjustFontSize(input, null);
                       }}
-                      onFocus={setFocus}
-                      onBlur={unsetFocus}
                     />
                   </td>
                   <td>
@@ -332,9 +396,6 @@ const InputComponent: React.FC<InputProps> = ({
                         if (inputInfo.value.length > 1) {
                           inputInfo.value.splice(index, 1);
                           propagateChange(inputInfo);
-                          setTimeout(() => {
-                            resizeTextarea(textarea.ref.current);
-                          }, 50);
                         }
                       }}
                     >
@@ -360,9 +421,6 @@ const InputComponent: React.FC<InputProps> = ({
               [keys[2]]: "",
             });
             propagateChange(inputInfo);
-            setTimeout(() => {
-              resizeTextarea(textarea.ref.current);
-            }, 50);
           }}
           className={`textarea unselectable add-div ${inputInfo.disabled ? "disabled" : ""}`}
         >
@@ -400,7 +458,7 @@ const InputComponent: React.FC<InputProps> = ({
       if (newWidth !== lastWidth) {
         setWindowWidth(newWidth);
 
-        const inputElements = textarea.ref.current?.querySelectorAll("input");
+        const inputElements = objectInputRef.current?.querySelectorAll("input");
         inputElements?.forEach((inputElement) => {
           if (inputElement instanceof HTMLInputElement) {
             adjustFontSize(inputElement, newWidth > lastWidth);
@@ -413,7 +471,7 @@ const InputComponent: React.FC<InputProps> = ({
 
     window.addEventListener("resize", handleResize);
     return () => window.removeEventListener("resize", handleResize);
-  }, [lastWidth, textarea.ref]);
+  }, [lastWidth]);
 
   return (
     <div className="test-button">
@@ -421,15 +479,12 @@ const InputComponent: React.FC<InputProps> = ({
         <label htmlFor={inputInfo.id}>
           {inputInfo.label.replace(/_/gi, " ")} :
         </label>
-        <div className={`textbox-container`}>{inputCreator()}</div>
+        <div className="textbox-container">{inputCreator()}</div>
       </div>
       <div className="button-container">
         <button
           className={`button ${isActive ? "active" : ""}`}
-          onClick={(event) => {
-            event.preventDefault();
-            handleStateChange(inputInfo);
-          }}
+          onClick={() => handleStateChange(inputInfo)}
         >
           {property === "default" ? (
             <img
@@ -442,6 +497,13 @@ const InputComponent: React.FC<InputProps> = ({
             <img
               src={editIcon}
               alt={t("approveButton")}
+              width="20"
+              height="20"
+            />
+          ) : property === "modified" ? (
+            <img
+              src={acceptIcon}
+              alt={t("modifyButton")}
               width="20"
               height="20"
             />
