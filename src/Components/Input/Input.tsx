@@ -14,6 +14,12 @@ interface InputProps {
   propagateChange: (inputInfo: Input) => void;
 }
 
+// updating data with useState is asynchronous yet takes a little time
+// to avoid issues with unsynced data we use the setTimeout function
+// after some tries, we found that 50ms is neither too short the changes have the time to be updated
+// nore too long so the user is disturbed by the lack of changes after their action
+const SYNC_TIMEOUT = 50;
+
 const resizeTextarea = (textarea: HTMLElement | null) => {
   if (textarea) {
     if (textarea.classList.contains("list-input")) {
@@ -71,10 +77,9 @@ const InputComponent: React.FC<InputProps> = ({
       case "approved":
         inputInfo.property = "default";
         FormClickActions.emit("ModifyClick", inputInfo);
-        textarea.ref.current!.focus();
         setTimeout(() => {
           textarea.ref.current!.focus();
-        }, 100);
+        }, SYNC_TIMEOUT);
         break;
       case "rejected":
         textarea.ref.current?.classList.remove("rejected");
@@ -87,7 +92,7 @@ const InputComponent: React.FC<InputProps> = ({
         break;
     }
     SyncChanges(inputInfo);
-    setTimeout(() => setIsActive(false), 400);
+    setTimeout(() => setIsActive(false), SYNC_TIMEOUT);
     propagateChange(inputInfo);
   };
 
@@ -166,7 +171,7 @@ const InputComponent: React.FC<InputProps> = ({
               resizeParent={() => {
                 setTimeout(() => {
                   resizeTextarea(textarea.ref.current);
-                }, 50);
+                }, SYNC_TIMEOUT);
               }}
             />
           ))}
@@ -176,7 +181,7 @@ const InputComponent: React.FC<InputProps> = ({
               propagateChange(inputInfo);
               setTimeout(() => {
                 resizeTextarea(textarea.ref.current);
-              }, 50);
+              }, SYNC_TIMEOUT);
             }}
             className={`textarea unselectable add-div ${inputInfo.disabled ? "disabled" : ""}`}
           >
@@ -334,7 +339,7 @@ const InputComponent: React.FC<InputProps> = ({
                           propagateChange(inputInfo);
                           setTimeout(() => {
                             resizeTextarea(textarea.ref.current);
-                          }, 50);
+                          }, SYNC_TIMEOUT);
                         }
                       }}
                     >
@@ -362,7 +367,7 @@ const InputComponent: React.FC<InputProps> = ({
             propagateChange(inputInfo);
             setTimeout(() => {
               resizeTextarea(textarea.ref.current);
-            }, 50);
+            }, SYNC_TIMEOUT);
           }}
           className={`textarea unselectable add-div ${inputInfo.disabled ? "disabled" : ""}`}
         >

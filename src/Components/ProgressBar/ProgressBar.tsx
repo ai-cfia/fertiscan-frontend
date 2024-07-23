@@ -17,7 +17,7 @@ const ProgressBar = ({ sections }: { sections: { label: string }[] }) => {
     element.style.boxShadow = "0 0 10px 5px " + color;
     setTimeout(() => {
       element.style.boxShadow = "none";
-    }, 1000);
+    }, 300);
   };
 
   // focus on the selected section
