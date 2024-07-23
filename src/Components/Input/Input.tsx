@@ -125,11 +125,11 @@ const InputComponent: React.FC<InputProps> = ({
             setProperty("modified");
             const updatedInputInfo = { ...inputInfo, property: "modified" };
             propagateChange(updatedInputInfo);
+            setFocus();
           }}
           onInput={() => {
             resizeTextarea(textarea.ref.current);
           }}
-          onFocus={setFocus}
           onBlur={unsetFocus}
           className={`textarea form-input ${inputInfo.property}`}
           rows={1}
