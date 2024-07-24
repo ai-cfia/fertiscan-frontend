@@ -50,14 +50,14 @@ const DragDropFileInput: React.FC<FileInputProps> = ({
   };
 
   const handleFileChange = async (files: File[]) => {
-    const imageTypes = ['image/png', 'image/jpeg', 'image/jpg', 'image/heif']; // Accept file extention
+    const imageTypes = ["image/png", "image/jpeg", "image/jpg", "image/heif"]; // Accept file extention
     const processedFiles: File[] = [];
     if (files.length > 0) {
       for (const file of files) {
-        if(!imageTypes.includes(file.type)){
-          console.log(t("invalidImageTypeAlert")+": "+file.name);
-          showAlert(t("invalidImageTypeAlert")+": "+file.name, "error");
-        }else{
+        if (!imageTypes.includes(file.type)) {
+          console.log(t("invalidImageTypeAlert") + ": " + file.name);
+          showAlert(t("invalidImageTypeAlert") + ": " + file.name, "error");
+        } else {
           await processImage(file, 900, 900, (newFile) => {
             processedFiles.push(newFile);
             if (processedFiles.length === files.length) {
