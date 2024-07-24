@@ -19,12 +19,12 @@
 @media only screen and (min-width: 1230px) {
   .formPage-container {
     grid-template-areas: "pics data progress-bar";
-    grid-template-columns: 35% 53% 12%;
+    grid-template-columns: 40% 53% 12%;
     justify-items: center;
   }
   .carousel-wrapper {
     grid-area: pics;
-    left: 10%;
+    margin-left: 15%!important;
     margin-top: 30%;
     max-width: 80% !important;
   }
@@ -51,17 +51,31 @@
       "data";
     justify-items: center;
   }
-
-  .curr-img:not(.data-container) {
-    margin-top: 10%;
-  }
   .carousel-wrapper {
     grid-area: pics;
-    height: 75vh !important;
+    height: 50vh !important;
+    margin-top: -20px;
+  }
+  .curr-img img {
+    width: calc(70%) !important;
+    min-width: calc(70%)!important;
+    height: auto !important;
+    margin-left: calc(15%);
+  }
+  .curr-img{
+    min-width: 440px;
+    max-height: 375px!important;
+    margin-bottom: 55px;
+  }
+  .carousel{
+    display: none!important;
+  }
+  .data-container{
+    width: 75%!important;
   }
 }
 
-@media only screen and (min-width: 1250px) {
+@media only screen and (min-width: 1230px) {
   .carousel-wrapper {
     width: 100%;
     height: auto !important;
@@ -73,7 +87,7 @@
   .curr-img img {
     width: calc(100%) !important;
     height: auto !important;
-
+  }
   .formPage-container .curr-img:not(.data-container){
     margin-top: 10%;
   }
@@ -108,6 +122,7 @@
   color: #000000;
   font-size: 20px;
   height: 80vh!important;
+  width: 100%;
   overflow-y: auto!important;
   overflow-x: hidden;
   padding-bottom: 100%!important;
@@ -207,5 +222,4 @@ html{
   top: 20px;
   height: 100%;
   width: 200px;
-}
 }
