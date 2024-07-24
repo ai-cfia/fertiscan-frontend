@@ -2,8 +2,10 @@ import "./ProgressBar.css";
 import { FormClickActions } from "../../Utils/EventChannels";
 import Input from "../../Model/Input-Model";
 import React, { useEffect, useRef } from "react";
+import { useTranslation } from "react-i18next";
 
 const ProgressBar = ({ sections }: { sections: { label: string }[] }) => {
+  const { t } = useTranslation();
   const sec: {
     label: string;
     ref: React.MutableRefObject<HTMLDivElement | null>;
@@ -92,6 +94,7 @@ const ProgressBar = ({ sections }: { sections: { label: string }[] }) => {
           key={`${sec_index}`}
           className={`section `}
           ref={sec.find((elem) => elem.label == section.label)!.ref}
+          title={t(section.label)}
         ></div>
       ))}
     </div>
