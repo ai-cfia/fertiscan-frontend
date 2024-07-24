@@ -74,5 +74,8 @@
   "confirmationCheckbox":"En cochant cette case, je confirme avoir vérifié toutes les informations présentes sur cette page et je m'engage en toute responsabilité en cas d'erreurs éventuelles.",
   "exceedsLimit": "Les images que vous venez d'envoyer dépassent la limite de 4Mo",
   "currentStateSize": "Limite de téléchargement",
-  "showLess": "Voir Moins"
+  "showLess": "Voir Moins",
+  "fileElementToolTip":"Click droit pour afficher le menu d'options",
+  "delete":"Supprimer",
+  "invalidImageTypeAlert":"Type de fichier non valide (Accepter: JPG/PNG/HEIF)"
 }
