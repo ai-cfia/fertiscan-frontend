@@ -7,11 +7,14 @@ import deleteIcon from "../../assets/deleteIcon.svg";
 import { FormClickActions } from "../../Utils/EventChannels.tsx";
 import { useTranslation } from "react-i18next";
 import TableTextarea from "./TableTextarea/TableTextarea";
+import Skeleton from "react-loading-skeleton";
+import "react-loading-skeleton/dist/skeleton.css";
 
 interface InputProps {
   inputInfo: Input;
   imgs: { title: string; url: string }[];
   propagateChange: (inputInfo: Input) => void;
+  isLoading: boolean;
 }
 
 // updating data with useState is asynchronous yet takes a little time
@@ -39,6 +42,7 @@ const resizeTextarea = (textarea: HTMLElement | null) => {
 const InputComponent: React.FC<InputProps> = ({
   inputInfo,
   propagateChange,
+  isLoading,
 }) => {
   const { t } = useTranslation();
   const [isActive, setIsActive] = useState(false);
@@ -430,44 +434,61 @@ const InputComponent: React.FC<InputProps> = ({
 
   return (
     <div className="test-button">
-      <div className="input-container">
-        <label htmlFor={inputInfo.id}>
-          {inputInfo.label.replace(/_/gi, " ")} :
-        </label>
-        <div className={`textbox-container`}>{inputCreator()}</div>
-      </div>
-      <div className="button-container">
-        <button
-          className={`button ${isActive ? "active" : ""}`}
-          onClick={(event) => {
-            event.preventDefault();
-            handleStateChange(inputInfo);
-          }}
-        >
-          {property === "default" ? (
-            <img
-              src={acceptIcon}
-              alt={t("approveButton")}
-              width="20"
-              height="20"
-            />
-          ) : property === "approved" ? (
-            <img
-              src={editIcon}
-              alt={t("approveButton")}
-              width="20"
-              height="20"
-            />
-          ) : (
-            <img
-              src={acceptIcon}
-              alt={t("approveButton")}
-              width="20"
-              height="20"
-            />
-          )}
-        </button>
-      </div>
+      {isLoading ? (
+        <>
+          <div className="input-container">
+            <Skeleton width={100} className="label-skeleton" />
+            <div className={`textbox-container`}>
+              <Skeleton height={40} className="textbox-skeleton" />
+            </div>
+          </div>
+          <div className="button-container">
+            <Skeleton width={40} className="skeleton-button" />
+          </div>
+        </>
+      ) : (
+        // When isLoading is false, render actual content
+        <>
+          <div className="input-container">
+            <label htmlFor={inputInfo.id}>
+              {inputInfo.label.replace(/_/gi, " ")} :
+            </label>
+            <div className={`textbox-container`}>{inputCreator()}</div>
+          </div>
+          <div className="button-container">
+            <button
+              className={`button ${isActive ? "active" : ""}`}
+              onClick={(event) => {
+                event.preventDefault();
+                handleStateChange(inputInfo);
+              }}
+            >
+              {property === "default" ? (
+                <img
+                  src={acceptIcon}
+                  alt={t("approveButton")}
+                  width="20"
+                  height="20"
+                />
+              ) : property === "approved" ? (
+                <img
+                  src={editIcon}
+                  alt={t("approveButton")}
+                  width="20"
+                  height="20"
+                />
+              ) : (
+                <img
+                  src={acceptIcon}
+                  alt={t("approveButton")}
+                  width="20"
+                  height="20"
+                />
+              )}
+            </button>
+          </div>
+        </>
+      )}
     </div>
   );
 };
