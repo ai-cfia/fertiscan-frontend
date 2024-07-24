@@ -1,6 +1,7 @@
 import React, { useEffect, useRef, useState } from "react";
 import BlobData from "../../../interfaces/BlobData";
 import "./FileElement.css";
+import { t } from "i18next";
 
 interface FileElementProps {
   key: number;
@@ -81,6 +82,7 @@ const FileElement: React.FC<FileElementProps> = ({
       id={"file_" + position}
       onClick={handleClick}
       onContextMenu={onContextMenu}
+      title={t("fileElementToolTip")}
     >
       <img src={fileUrl} alt={blob.name} />
       <p
