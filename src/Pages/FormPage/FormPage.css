@@ -108,6 +108,7 @@
   color: #000000;
   font-size: 20px;
   height: 80vh!important;
+  width: 100%!important;
   overflow-y: auto!important;
   overflow-x: hidden;
   padding-bottom: 100%!important;

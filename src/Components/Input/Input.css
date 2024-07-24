@@ -53,7 +53,37 @@ input:disabled {
   text-decoration: underline;
 }
 
+.textbox-skeleton{
+  grid-area: input;
+  grid-column: 1;
+  transition: box-shadow 0.5s ease-in-out;
+  border: 1px solid #ccc;
+  border-radius: 10px;
+  box-sizing: border-box;
+  width: 100%;
+  height: auto;
+  min-height: 40px;
+  max-height: 97px;
+  resize: none;
+  background-color: rgb(220, 219, 219);
+  overflow-y: hidden;
+  padding-left: 10px;
+  font-family: Arial, sans-serif, Bold;
+  font-size: 20px;
+  font-weight: 400;
+  color: #000000;
+  text-decoration: none;
+  align-content: center;
+}
 .data-container h1 {
+  grid-column: 1;
+  grid-row: 1 / span 2;
+  text-align: left;
+  margin-left: 10px;
+  font-size: 35px;
+  width: 100%;
+}
+.h1-skeleton{
   grid-column: 1;
   grid-row: 1 / span 2;
   text-align: left;
@@ -166,6 +196,21 @@ input:disabled {
 .input-container .show-more-container label {
   width: 100%;
   text-align: right;
+}
+.label-skeleton{
+  width: 100%;
+  place-self: left;
+  padding-left: 10px;
+}
+
+.skeleton-button{
+  margin-top: 40px;
+  border: none;
+  color: #737373;
+  background-color: #fff;
+  padding: 10px;
+  cursor: pointer;
+  height: 20px;
 }
 
 .table-textarea-container .show-more-container {

@@ -329,14 +329,6 @@ const FormPage = () => {
           ref={dataContainerRef}
           onScroll={handleScroll}
         >
-          {loading ? (
-            <div
-              className={`loader-container-form ${loading ? "active " : ""}`}
-            >
-              <div className="spinner"></div>
-              <p>{t("analyzingText")}</p>
-            </div>
-          ) : (
             <div className="background">
               {[...data.sections].map((sectionInfo: Section, key: number) => {
                 return (
@@ -345,6 +337,7 @@ const FormPage = () => {
                     sectionInfo={sectionInfo}
                     imgs={urls}
                     propagateChange={handleDataChange}
+                    isLoading={loading}
                   ></SectionComponent>
                 );
               })}
@@ -352,7 +345,6 @@ const FormPage = () => {
                 {t("submitButton")}
               </button>
             </div>
-          )}
         </div>
         {!loading ? (
           <div className="progress-wrapper">
