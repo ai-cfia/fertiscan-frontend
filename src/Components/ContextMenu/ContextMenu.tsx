@@ -4,8 +4,8 @@ import BlobData from "../../interfaces/BlobData";
 
 interface ContextMenuProps {
   fileData: BlobData;
-  onRenameClick: (fileData: BlobData) => void; 
-  onDeleteClick: (fileData:BlobData) => void;
+  onRenameClick: (fileData: BlobData) => void;
+  onDeleteClick: (fileData: BlobData) => void;
   onMouseLeave: () => void;
   mouseX: number;
   mouseY: number;
@@ -36,7 +36,7 @@ const ContextMenu: React.FC<ContextMenuProps> = ({
   const handleDelete = () => {
     onDeleteClick(fileData);
     onClose();
-  }
+  };
 
   return (
     <div
