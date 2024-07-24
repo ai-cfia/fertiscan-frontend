@@ -70,6 +70,14 @@
   .data-container{
     width: 75%!important;
   }
+  .formPage-container .carousel{
+    display: none;
+    height: 75vh !important;
+  }
+  .formPage-container .carousel-wrapper{
+    grid-area: pics;
+    height: 40vh !important;
+  }
 }
 
 @media only screen and (min-width: 1230px) {
@@ -88,19 +96,11 @@
   .formPage-container .curr-img:not(.data-container){
     margin-top: 10%;
   }
-  .formPage-container .carousel-wrapper{
-    grid-area: pics;
-    height: 40vh !important;
-  }
   .formPage-container .curr-img img {
     width: calc(80%) !important;
     height: auto !important;
     margin-left: 10%;
   }  
-  .formPage-container .carousel{
-    display: none;
-    height: 75vh !important;
-  }
 }
 
 .progress-wrapper {
