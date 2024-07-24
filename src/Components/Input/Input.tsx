@@ -7,14 +7,14 @@ import deleteIcon from "../../assets/deleteIcon.svg";
 import { FormClickActions } from "../../Utils/EventChannels.tsx";
 import { useTranslation } from "react-i18next";
 import TableTextarea from "./TableTextarea/TableTextarea";
-import Skeleton from 'react-loading-skeleton';
-import 'react-loading-skeleton/dist/skeleton.css';
+import Skeleton from "react-loading-skeleton";
+import "react-loading-skeleton/dist/skeleton.css";
 
 interface InputProps {
   inputInfo: Input;
   imgs: { title: string; url: string }[];
   propagateChange: (inputInfo: Input) => void;
-  isLoading:boolean;
+  isLoading: boolean;
 }
 
 // updating data with useState is asynchronous yet takes a little time
@@ -436,15 +436,15 @@ const InputComponent: React.FC<InputProps> = ({
     <div className="test-button">
       {isLoading ? (
         <>
-        <div className="input-container">
-          <Skeleton width={100}  className="label-skeleton" /> 
-          <div className={`textbox-container`}>
-          <Skeleton height={40} className="textbox-skeleton" />
+          <div className="input-container">
+            <Skeleton width={100} className="label-skeleton" />
+            <div className={`textbox-container`}>
+              <Skeleton height={40} className="textbox-skeleton" />
+            </div>
           </div>
-        </div>
-        <div className="button-container">
-          <Skeleton width={40}  className="skeleton-button" />
-        </div>
+          <div className="button-container">
+            <Skeleton width={40} className="skeleton-button" />
+          </div>
         </>
       ) : (
         // When isLoading is false, render actual content
