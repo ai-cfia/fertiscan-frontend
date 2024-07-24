@@ -77,6 +77,9 @@
     grid-area: pics;
     height: 40vh !important;
   }
+  .data-container{
+    height: 50%!important;
+  }
 }
 
 @media only screen and (min-width: 1230px) {
@@ -117,11 +120,11 @@
   font-family: Arial, sans-serif, Bold;
   color: #000000;
   font-size: 20px;
-  height: 80vh!important;
+  height: 80vh;
   width: 100%;
   overflow-y: auto!important;
   overflow-x: hidden;
-  padding-bottom: 100%!important;
+  padding-bottom: 100%;
 }
 
 html{
