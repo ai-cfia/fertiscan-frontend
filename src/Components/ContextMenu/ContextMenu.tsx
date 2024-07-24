@@ -41,7 +41,7 @@ const ContextMenu: React.FC<ContextMenuProps> = ({
   return (
     <div
       className="context-menu"
-      style={{ top: mouseY-25, left: mouseX-20 }}
+      style={{ top: mouseY - 25, left: mouseX - 20 }}
       onClick={handleClick}
       onMouseLeave={onMouseLeave}
     >
