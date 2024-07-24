@@ -50,16 +50,21 @@ const DragDropFileInput: React.FC<FileInputProps> = ({
   };
 
   const handleFileChange = async (files: File[]) => {
+    const imageTypes = ["image/png", "image/jpeg", "image/jpg", "image/heif"]; // Accept file extention
+    const processedFiles: File[] = [];
     if (files.length > 0) {
-      const processedFiles: File[] = [];
-
       for (const file of files) {
-        await processImage(file, 900, 900, (newFile) => {
-          processedFiles.push(newFile);
-          if (processedFiles.length === files.length) {
-            sendChange(processedFiles);
-          }
-        });
+        if (!imageTypes.includes(file.type)) {
+          console.log(t("invalidImageTypeAlert") + ": " + file.name);
+          showAlert(t("invalidImageTypeAlert") + ": " + file.name, "error");
+        } else {
+          await processImage(file, 900, 900, (newFile) => {
+            processedFiles.push(newFile);
+            if (processedFiles.length === files.length) {
+              sendChange(processedFiles);
+            }
+          });
+        }
       }
     }
   };
@@ -87,10 +92,7 @@ const DragDropFileInput: React.FC<FileInputProps> = ({
         canvasRef.current.width = videoWidth;
         canvasRef.current.height = videoHeight;
 
-        // Dessiner la capture vidéo sur le canvas
         context.drawImage(videoRef.current, 0, 0, videoWidth, videoHeight);
-
-        // Utilisez toDataURL pour convertir le canvas en une image codée en base64
         const capturedImage = canvasRef.current.toDataURL("image/png");
 
         processImageFromDataURL(capturedImage, 400, 400, (newFile) => {
@@ -287,6 +289,7 @@ const DragDropFileInput: React.FC<FileInputProps> = ({
             id="file-input"
             ref={fileInput}
             type="file"
+            accept="image/*"
             multiple
             onChange={onFileChange}
             style={{ display: "none" }}

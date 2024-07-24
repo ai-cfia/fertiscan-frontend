@@ -76,5 +76,6 @@
   "currentStateSize": "Limite de téléchargement",
   "showLess": "Voir Moins",
   "fileElementToolTip":"Click droit pour afficher le menu d'options",
-  "delete":"Supprimer"
+  "delete":"Supprimer",
+  "invalidImageTypeAlert":"Type de fichier non valide (Accepter: JPG/PNG/HEIF)"
 }
