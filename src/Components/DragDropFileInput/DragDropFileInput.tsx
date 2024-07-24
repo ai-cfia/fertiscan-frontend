@@ -289,6 +289,7 @@ const DragDropFileInput: React.FC<FileInputProps> = ({
             id="file-input"
             ref={fileInput}
             type="file"
+            accept="image/*"
             multiple
             onChange={onFileChange}
             style={{ display: "none" }}
