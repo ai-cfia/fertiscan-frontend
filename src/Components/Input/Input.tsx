@@ -437,7 +437,7 @@ const InputComponent: React.FC<InputProps> = ({
       {isLoading ? (
         <>
         <div className="input-container">
-          <Skeleton width={40}  className="label-skeleton" /> 
+          <Skeleton width={100}  className="label-skeleton" /> 
           <div className={`textbox-container`}>
           <Skeleton height={40} className="textbox-skeleton" />
           </div>

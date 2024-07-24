@@ -4,6 +4,7 @@ import Section from "../../Model/Section-Model";
 import InputComponent from "../Input/Input";
 import Skeleton from 'react-loading-skeleton';
 import 'react-loading-skeleton/dist/skeleton.css';
+import "./Section.css"
 
 interface sectionPorps {
   sectionInfo: Section;

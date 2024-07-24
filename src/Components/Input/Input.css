@@ -75,21 +75,9 @@ input:disabled {
   text-decoration: none;
   align-content: center;
 }
-.data-container h1 {
-  grid-column: 1;
-  grid-row: 1 / span 2;
-  text-align: left;
-  margin-left: 10px;
-  font-size: 35px;
-  width: 100%;
-}
-.h1-skeleton{
-  grid-column: 1;
-  grid-row: 1 / span 2;
-  text-align: left;
-  margin-left: 10px;
-  font-size: 35px;
-  width: 100%;
+
+span:has(.label-skeleton){
+  display:flex;
 }
 
 .open-icon {
