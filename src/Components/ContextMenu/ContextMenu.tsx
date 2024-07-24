@@ -41,14 +41,16 @@ const ContextMenu: React.FC<ContextMenuProps> = ({
   return (
     <div
       className="context-menu"
-      style={{ top: mouseY, left: mouseX }}
+      style={{ top: mouseY-25, left: mouseX-20 }}
       onClick={handleClick}
       onMouseLeave={onMouseLeave}
     >
-      <ul>
-        <li onClick={handleRename}>{t("rename")}</li>
-        <li onClick={handleDelete}>{t("delete")}</li>
-      </ul>
+      <div className="background-context-menu">
+        <ul>
+          <li onClick={handleRename}>{t("rename")}</li>
+          <li onClick={handleDelete}>{t("delete")}</li>
+        </ul>
+      </div>
     </div>
   );
 };
