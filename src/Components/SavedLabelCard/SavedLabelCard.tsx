@@ -1,14 +1,13 @@
 import React, { useEffect, useRef, useState } from "react";
 //import BlobData from "../../../interfaces/BlobData";
 import "./SavedLabelCard.css";
+import { t } from "i18next";
 
-interface FileElementProps {
+interface SavedLabelCardProps {
   key: number;
-  onClick: () => void;
 }
 
-const FileElement: React.FC<FileElementProps> = ({
-  onClick,
+const SavedLabelCard: React.FC<SavedLabelCardProps> = ({
 }) => {
   const fileCard = useRef<null | HTMLDivElement>(null);
   const titleRef = useRef<null | HTMLParagraphElement>(null);
@@ -36,14 +35,35 @@ const FileElement: React.FC<FileElementProps> = ({
     return () => window.removeEventListener("resize", adjustFontSize);
   }, []);
 
-  const handleClick()
+  const handleClick = () => {
+    return () => {
+      console.log("Clicked");
+    };
+  }
+
   return (
     <div
       ref={fileCard}
-      className="test-card"
+      className="card-test"
       onClick={handleClick()}>
+        <p className="company-label">{t("Company Name")}</p>
+        <p className="company-result">/Company Name/</p>
+        <p className="fertilizer-label">{t("fertilizer Name")}</p>
+        <p className="fertilizer-result">/Fertilizer Name/</p>
+        <p className="registration-label">{t("registration Number")}</p>
+        <p className="registration-result">/Registration Number/</p>
+        <p className="lot-number-label">{t("lot Number")}</p>
+        <p className="lot-number-result">/Lot Number/</p>
+        <div className="user-grid">
+          <p className="user-label">{t("User")}</p>
+          <p className="user-result">/User/</p>
+        </div>
+        <div className="upload-grid">
+          <p className="date-label">{t("Date")}</p>
+          <p className="date-result">/Date/</p>
+          </div>
     </div>
   );
 };
 
-export default FileElement;
+export default SavedLabelCard;

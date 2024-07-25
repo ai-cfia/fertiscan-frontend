@@ -74,5 +74,9 @@
   "showLess": "Show Less",
   "confirmationCheckbox":"By checking this box, I confirm that I have verified all the information on this page and I take full responsibility for any errors that may be present.",
   "exceedsLimit": "The images you uploaded exceed the limit of 4MB",
-  "currentStateSize": "Upload limit"
+  "currentStateSize": "Upload limit",
+  "fertilizer-name": "Fertilizer Name",
+  "company-name": "Company Name",
+  "user": "User",
+  "date": "Upload Date"
 }
