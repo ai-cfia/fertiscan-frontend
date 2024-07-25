@@ -5,8 +5,10 @@ import { useContext, useRef } from "react";
 import { useNavigate } from "react-router-dom";
 import home from "../../assets/home.svg";
 import settings from "../../assets/settings.svg";
+import list from "../../assets/list.svg";
 import { SessionContext, SetSessionContext } from "../../Utils/SessionContext";
 import Data from "../../Model/Data-Model";
+
 
 function SideMenu() {
   const { t } = useTranslation();
@@ -51,6 +53,9 @@ function SideMenu() {
     }
     navigate("/Settings");
   };
+  const goToSavedList = () => {
+    navigate("/Saved");
+  }
 
   MenuChannel.on("OpenMenu", () => {
     SideMenuRef.current!.classList.add("active");
@@ -68,6 +73,13 @@ function SideMenu() {
             <a className="side-menu_item" onClick={goToHome}>
               <img className="menu-icon" src={home}></img>{" "}
               <span>{t("home")}</span>
+            </a>{" "}
+          </li>
+          <li>
+            {" "}
+            <a className="side-menu_item" onClick={goToSavedList}>
+              <img className="menu-icon" src={list}></img>{" "}
+              <span>savedList</span>
             </a>{" "}
           </li>
           <li>
