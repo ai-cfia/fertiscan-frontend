@@ -80,4 +80,9 @@
   "fileElementToolTip":"Right click to see the options menu",
   "delete":"Delete",
   "invalidImageTypeAlert":"File type not valid (Accepted: JPG/PNG/HEIF)"
+  "currentStateSize": "Upload limit",
+  "fertilizer-name": "Fertilizer Name",
+  "company-name": "Company Name",
+  "user": "User",
+  "date": "Upload Date"
 }
