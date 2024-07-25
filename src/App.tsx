@@ -7,6 +7,7 @@ import SideMenu from "./Components/SideMenu/SideMenu";
 import HomePage from "./Pages/HomePage/HomePage";
 import NoPage from "./Pages/NoPage/NoPage";
 import SettingPage from "./Pages/SettingPage/SettingPage";
+import SavedLabelPage from "./Pages/SavedLabelPage/SavedLabelPage";
 import { AlertProvider } from "./Utils/AlertContext";
 import { SessionProvider } from "./Utils/SessionContext";
 
@@ -28,6 +29,7 @@ function App() {
             <Route path="/">
               <Route index element={<HomePage />} />
               <Route path="Settings" element={<SettingPage />} />
+              <Route path="Saved" element={<SavedLabelPage />} />
               <Route path="*" element={<NoPage />} />
             </Route>
           </Routes>

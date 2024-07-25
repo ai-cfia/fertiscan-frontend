@@ -1,4 +1,102 @@
 .card-test{
-  width: 100%;
+  width: 70%;
   height:25vh;
+  border-radius: 10px;
+  border: 1px solid #e0e0e0;
+  background: #848484;
+  margin: 10px 0;
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  grid-template-rows: 1fr 1fr 1fr 1fr 1fr 1fr 1fr 1fr;
+  grid-template-areas: 
+    " company-label company-result"
+    " fertilizer-label fertilizer-result"
+    " registration-label registration-result"
+    " lot-number-label lot-number-result"
+    " . ."
+    " . ."
+    " . . "
+    "user-grid upload-grid";
+}
+.company-label{
+  grid-area: company-label;
+  font-size: 1rem;
+  font-weight: bold;
+  margin: 10px;
+  justify-self: start;
+}
+.company-result{
+  grid-area: company-result;
+  font-size: 1rem;
+  margin: 10px;
+  justify-self: start;
+}
+.fertilizer-label{
+  grid-area: fertilizer-label;
+  font-size: 1rem;
+  font-weight: bold;
+  margin: 10px;
+}
+.fertilizer-result{
+  grid-area: fertilizer-result;
+  font-size: 1rem;
+  margin: 10px;
+}
+.registration-label{
+  grid-area: registration-label;
+  font-size: 0.8rem;
+  font-weight: bold;
+  margin: 10px;
+}
+.registration-result{
+  grid-area: registration-result;
+  font-size: 0.7rem;
+  margin: 10px;
+}
+.lot-number-label{
+  grid-area: lot-number-label;
+  font-size: 0.8rem;
+  font-weight: bold;
+  margin: 10px;
+}
+.lot-number-result{
+  grid-area: lot-number-result;
+  font-size: 0.7rem;
+  margin: 10px;
+}
+.user-grid{
+  grid-area: user-grid;
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  grid-template-areas: 
+    "user-label user-result";
+}
+.user-label{
+  grid-area: user-label;
+  font-size: 1rem;
+  font-weight: bold;
+  margin: 10px;
+}
+.user-result{
+  grid-area: user-result;
+  font-size: 1rem;
+  margin: 10px;
+}
+.upload-grid{
+  grid-area: upload-grid;
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  grid-template-areas: 
+    "date-label date-result";
+}
+.date-label{
+  grid-area: date-label;
+  font-size: 1rem;
+  font-weight: bold;
+  margin: 10px;
+}
+.date-result{
+  grid-area: date-result;
+  font-size: 1rem;
+  margin: 10px;
 }
