@@ -1,0 +1,138 @@
+[
+    {
+      "label_id": "001",
+      "company_name": "GreenGrow Fertilizers Inc.",
+      "fertiliser_name": "SuperGrow 20-20-20",
+      "registration_number": "REG-0001",
+      "lot_number": "L00001",
+      "user": "user1",
+      "upload_date": "2024-07-01"
+    },
+    {
+      "label_id": "002",
+      "company_name": "GreenGrow Fertilizers Inc.",
+      "fertiliser_name": "GreenBoost 20-20-20",
+      "registration_number": "",
+      "lot_number": "L00002",
+      "user": "user2",
+      "upload_date": "2024-07-01"
+    },
+    {
+      "label_id": "003",
+      "company_name": "AgroBloom Corp.",
+      "fertiliser_name": "BloomBooster 10-30-20",
+      "registration_number": "REG-0003",
+      "lot_number": "L00003",
+      "user": "user3",
+      "upload_date": "2024-07-02"
+    },
+    {
+      "label_id": "004",
+      "company_name": "NutrientPlus Ltd.",
+      "fertiliser_name": "NutrientMix 15-15-15",
+      "registration_number": "",
+      "lot_number": "L00004",
+      "user": "user4",
+      "upload_date": "2024-07-03"
+    },
+    {
+      "label_id": "005",
+      "company_name": "EcoFert Solutions",
+      "fertiliser_name": "EcoGrow 5-5-5",
+      "registration_number": "REG-0005",
+      "lot_number": "L00005",
+      "user": "user2",
+      "upload_date": "2024-07-04"
+    },
+    {
+      "label_id": "006",
+      "company_name": "GreenLeaf Enterprises",
+      "fertiliser_name": "LeafEnhancer 8-8-8",
+      "registration_number": "REG-0006",
+      "lot_number": "L00006",
+      "user": "user5",
+      "upload_date": "2024-07-05"
+    },
+    {
+      "label_id": "007",
+      "company_name": "GreenGrow Fertilizers Inc.",
+      "fertiliser_name": "PlantMagic 20-20-20",
+      "registration_number": "",
+      "lot_number": "L00007",
+      "user": "user6",
+      "upload_date": "2024-07-01"
+    },
+    {
+      "label_id": "008",
+      "company_name": "OrganicBoost Co.",
+      "fertiliser_name": "BoostOrganics 3-3-3",
+      "registration_number": "REG-0008",
+      "lot_number": "L00008",
+      "user": "user8",
+      "upload_date": "2024-07-08"
+    },
+    {
+      "label_id": "009",
+      "company_name": "AgriHealth Products",
+      "fertiliser_name": "HealthBoost 12-12-12",
+      "registration_number": "",
+      "lot_number": "L00009",
+      "user": "user4",
+      "upload_date": "2024-07-03"
+    },
+    {
+      "label_id": "010",
+      "company_name": "GreenLeaf Enterprises",
+      "fertiliser_name": "LeafMagic 8-8-8",
+      "registration_number": "REG-0010",
+      "lot_number": "L00010",
+      "user": "user10",
+      "upload_date": "2024-07-05"
+    },
+    {
+      "label_id": "011",
+      "company_name": "CropCare Enterprises",
+      "fertiliser_name": "CropMax 6-6-6",
+      "registration_number": "REG-0011",
+      "lot_number": "L00011",
+      "user": "user11",
+      "upload_date": "2024-07-11"
+    },
+    {
+      "label_id": "012",
+      "company_name": "YieldYard Co.",
+      "fertiliser_name": "YieldEnhance 13-13-13",
+      "registration_number": "REG-0012",
+      "lot_number": "L00012",
+      "user": "user12",
+      "upload_date": "2024-07-12"
+    },
+    {
+      "label_id": "013",
+      "company_name": "AgriHealth Products",
+      "fertiliser_name": "PlantPower 20-20-20",
+      "registration_number": "",
+      "lot_number": "L00013",
+      "user": "user6",
+      "upload_date": "2024-07-01"
+    },
+    {
+      "label_id": "014",
+      "company_name": "FloraFert Ltd.",
+      "fertiliser_name": "FloraBoost 9-9-9",
+      "registration_number": "REG-0014",
+      "lot_number": "L00014",
+      "user": "user14",
+      "upload_date": "2024-07-14"
+    },
+    {
+      "label_id": "015",
+      "company_name": "AgriAdvantage Corp.",
+      "fertiliser_name": "AdvantageGrow 11-11-11",
+      "registration_number": "REG-0015",
+      "lot_number": "L00015",
+      "user": "user15",
+      "upload_date": "2024-07-15"
+    }
+  ]
+  

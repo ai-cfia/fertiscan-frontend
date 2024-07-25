@@ -6,17 +6,25 @@
   background: #848484;
   margin: 10px 0;
   display: grid;
-  grid-template-columns: 1fr 1fr;
   grid-template-rows: 1fr 1fr 1fr 1fr 1fr 1fr 1fr 1fr;
   grid-template-areas: 
-    " company-label company-result"
-    " fertilizer-label fertilizer-result"
-    " registration-label registration-result"
-    " lot-number-label lot-number-result"
-    " . ."
-    " . ."
-    " . . "
-    "user-grid upload-grid";
+    " company-grid"
+    " fertilizer-grid"
+    " registration-grid"
+    " lot-number-grid"
+    " ."
+    " ."
+    " . "
+    "footer-grid";
+}
+/*Grid positioning*/
+/*Company*/
+.company-grid{
+  grid-area: company-grid;
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  grid-template-areas: 
+    "company-label company-result";
 }
 .company-label{
   grid-area: company-label;
@@ -31,6 +39,14 @@
   margin: 10px;
   justify-self: start;
 }
+/*Fertilizer*/
+.fertilizer-grid{
+  grid-area: fertilizer-grid;
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  grid-template-areas: 
+    "fertilizer-label fertilizer-result";
+}
 .fertilizer-label{
   grid-area: fertilizer-label;
   font-size: 1rem;
@@ -41,6 +57,14 @@
   grid-area: fertilizer-result;
   font-size: 1rem;
   margin: 10px;
+}
+/*Registration*/
+.registration-grid{
+  grid-area: registration-grid;
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  grid-template-areas: 
+    "registration-label registration-result";
 }
 .registration-label{
   grid-area: registration-label;
@@ -53,6 +77,15 @@
   font-size: 0.7rem;
   margin: 10px;
 }
+
+/*Lot number*/
+.lot-number-grid{
+  grid-area: lot-number-grid;
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  grid-template-areas: 
+    "lot-number-label lot-number-result";
+}
 .lot-number-label{
   grid-area: lot-number-label;
   font-size: 0.8rem;
@@ -64,6 +97,15 @@
   font-size: 0.7rem;
   margin: 10px;
 }
+
+.footer-grid{
+  grid-area: footer-grid;
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  grid-template-areas: 
+    "user-grid upload-grid";
+}
+/*Inspector*/
 .user-grid{
   grid-area: user-grid;
   display: grid;
@@ -82,6 +124,8 @@
   font-size: 1rem;
   margin: 10px;
 }
+
+/*Upload*/
 .upload-grid{
   grid-area: upload-grid;
   display: grid;
@@ -100,3 +144,4 @@
   font-size: 1rem;
   margin: 10px;
 }
+/*End of grid positioning*/

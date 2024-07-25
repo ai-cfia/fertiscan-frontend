@@ -1,4 +1,5 @@
 //import { useTranslation } from "react-i18next";
+import { useEffect } from "react";
 import "./SavedLabelPage.css"; 
 import SavedLabelCard from "../../Components/SavedLabelCard/SavedLabelCard";
 
@@ -7,6 +8,11 @@ const SavedLabelPage = () => {
     //const api_url = "http://localhost:5000";
     //const { t } = useTranslation();
 
+    useEffect(()=>{
+        if(process.env){
+            
+        }
+    },[])
 return (
     <div className="saved-label-list">
         <SavedLabelCard key={1} />
