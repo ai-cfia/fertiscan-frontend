@@ -7,9 +7,10 @@ import SideMenu from "./Components/SideMenu/SideMenu";
 import HomePage from "./Pages/HomePage/HomePage";
 import NoPage from "./Pages/NoPage/NoPage";
 import SettingPage from "./Pages/SettingPage/SettingPage";
-import SavedLabelPage from "./Pages/SavedLabelPage/SavedLabelPage";
+import SavedListPage from "./Pages/SavedListPage/SavedListPage";
 import { AlertProvider } from "./Utils/AlertContext";
 import { SessionProvider } from "./Utils/SessionContext";
+import LabelPage from "./Pages/LabelPage/LabelPage";
 
 function App() {
   useEffect(() => {
@@ -29,7 +30,8 @@ function App() {
             <Route path="/">
               <Route index element={<HomePage />} />
               <Route path="Settings" element={<SettingPage />} />
-              <Route path="Saved" element={<SavedLabelPage />} />
+              <Route path="Saved" element={<SavedListPage />} />
+              <Route path="Label/:labelId" element={<LabelPage />} />
               <Route path="*" element={<NoPage />} />
             </Route>
           </Routes>

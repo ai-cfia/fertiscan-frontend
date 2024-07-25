@@ -83,6 +83,7 @@
   "showLess": "Voir Moins",
   "fertilizer-name": "Nom de l'engrais",
   "company-name": "Nom de la compagnie",
-  "user": "Utilisateur",
-  "date": "Date D'Enregistrement"
+  "user": "Inspecteur",
+  "date": "Date D'enregistrement",
+  "not-defined": "Non défini"
 }
