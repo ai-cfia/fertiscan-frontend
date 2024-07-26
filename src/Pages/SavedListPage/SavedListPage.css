@@ -1,17 +1,17 @@
 .saved-label-list{
     display: flex;
     flex-direction: row;
-    flex-wrap: wrap;
-    justify-content: center;
+    flex-wrap: wrap; 
     margin: 0 auto;
     width: 100%;
     height: calc(100vh - var(--header-height));
     overflow-y: auto;
+    overflow-x: hidden;
     padding-bottom: 20px;
 }
 
 .pagination-container {
-    flex-basis: 100%;
+    flex-basis: 75%;
     display: flex;
     justify-content: center;
     padding: 10px 0; /* Example padding, adjust as needed */
