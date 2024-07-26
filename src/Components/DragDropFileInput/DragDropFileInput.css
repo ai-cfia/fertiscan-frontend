@@ -17,6 +17,13 @@
     min-height: 350px!important;
   }
 }
+
+@media only screen and (min-width: 1092px) {
+  .camera-controls{
+    margin-top: -20px;
+  }
+}
+
 .drag-drop-file-input p {
   margin-bottom: -50px;
   color: #ccc;
@@ -126,7 +133,6 @@ input[type="file"] {
   display: none;
   flex-direction: column;
   align-items: center;
-  margin-top: 20px;
   min-height: 100%
 }
 
