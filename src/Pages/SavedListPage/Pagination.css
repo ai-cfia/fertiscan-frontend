@@ -1,0 +1,47 @@
+/* Pagination container */
+.pagination {
+    display: flex;
+    list-style-type: none;
+    justify-content: center;
+    padding: 0;
+  }
+  
+  /* Pagination items */
+  .pagination li {
+    padding: 5px;
+    margin: 0 2px;
+    border-radius: 5px;
+    cursor: pointer;
+  }
+  
+  /* Links inside pagination items */
+  .pagination li a {
+    text-decoration: none;
+    color: #007bff;
+  }
+  
+  /* Active page */
+  .pagination .active a {
+    color: white;
+    background-color: #007bff;
+  }
+  
+  /* Disabled links */
+  .pagination .disabled a {
+    color: grey;
+  }
+  
+  /* Previous and Next page links */
+  .pagination li.previous, .pagination li.next {
+    font-weight: bold;
+  }
+  
+  /* Break view label "..." */
+  .pagination li.break {
+    cursor: default;
+  }
+  
+  /* Optional: Hover state */
+  .pagination li a:hover {
+    text-decoration: underline;
+  }
