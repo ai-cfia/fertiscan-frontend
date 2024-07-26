@@ -1,5 +1,6 @@
 .saved-label-list{
     display: flex;
+    flex-direction: row;
     flex-wrap: wrap;
     justify-content: center;
     margin: 0 auto;
@@ -8,3 +9,11 @@
     overflow-y: auto;
     padding-bottom: 20px;
 }
+
+.pagination-container {
+    flex-basis: 100%;
+    display: flex;
+    justify-content: center;
+    padding: 10px 0; /* Example padding, adjust as needed */
+  }
+
