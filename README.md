@@ -1,14 +1,11 @@
 # Fertiscan Frontend
-
 ## Available Scripts
 
 In the project directory, you can run:
 
 - `npm run dev`
 
-  Starts the development server. Open `localhost:5173` to view it in your
-  browser. The app will automatically reload if you make changes to the code.
-  You will see build errors and lint warnings in the console.
+  Starts the development server. Open `localhost:5173` to view it in your browser. The app will automatically reload if you make changes to the code. You will see build errors and lint warnings in the console.
 
 - `npm run dev:host`
 
@@ -16,9 +13,7 @@ In the project directory, you can run:
 
 - `npm run build`
 
-  Compiles TypeScript and builds the app for production to the `dist` folder. It
-  correctly bundles React in production mode and optimizes the build for the
-  best performance. Your app is ready to be deployed!
+  Compiles TypeScript and builds the app for production to the `dist` folder. It correctly bundles React in production mode and optimizes the build for the best performance. Your app is ready to be deployed!
 
 - `npm run lint`
 
@@ -46,8 +41,7 @@ In the project directory, you can run:
 
 ## Running the App Using Docker
 
-- For local testing, build the Docker image with default values: `docker build
--t fertiscan-frontend .`
+- For local testing, build the Docker image with default values: `docker build -t fertiscan-frontend .`
 
 - Production build:
 
@@ -55,8 +49,7 @@ In the project directory, you can run:
 docker build -t fertiscan-frontend .
 ```
 
-- Run the image (on port 3001 for example): `docker run -p 3001:3000
-fertiscan-frontend`
+- Run the image (on port 3001 for example): `docker run -p 3001:3000 fertiscan-frontend`
 
 ## Comprehensive Guide for New Users: Uploading a New Label
 
@@ -174,3 +167,4 @@ This guide will take you through the simple process of viewing all the labels yo
 
 1. Upon clicking the icon, you'll be directed to the page displaying the setting.
 2. Click on the button to switch the language between French and English.
+
