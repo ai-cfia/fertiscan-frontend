@@ -107,7 +107,7 @@ the camera switch button:
 
 Once uploaded, your file will appear in the list where you can:
 
-- Delete the file by right-clicking it and selecting "Delete" or by clicking 
+- Delete the file by right-clicking it and selecting "Delete" or by clicking
 the "X" button when you hover over it:
 
   - ![image](https://github.com/user-attachments/assets/2e56d725-82da-48a2-a1b5-166079872399)
