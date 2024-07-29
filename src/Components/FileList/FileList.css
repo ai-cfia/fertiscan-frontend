@@ -11,6 +11,20 @@
   body, html{
     overflow-y: scroll!important;
   }
+.file-list .active{
+  color:black;
+  background-color: #cccccc00!important;
+}
+
+.file-list-container {
+  display: flex;
+  grid-area: b;
+  border: 2px solid #ccc;
+  border-radius: 5px;
+  width: 100%;
+  margin-top: 20px;
+  overflow-x: hidden;
+  height: 100%;
 }
 .file-list-container {
   display: flex;
