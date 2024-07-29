@@ -58,9 +58,6 @@ docker build -t fertiscan-frontend .
 - Run the image (on port 3001 for example): `docker run -p 3001:3000
 fertiscan-frontend`
 
-
-
-
 # Comprehensive Guide for New Users: Uploading a New Label
 
 Welcome to our step-by-step guide designed to help new users like yourself effortlessly add new labels and become familiar with our platform's functionality. Let's get started.
@@ -68,18 +65,22 @@ Welcome to our step-by-step guide designed to help new users like yourself effor
 ## Saving a New Label
 
 ### Step 1: Accessing the Website
+
 Navigate to [FertiScan Inspection Portal](https://fertiscan.inspection.alpha.canada.ca/). Upon loading the page, you should see the following:
 
 ![image](https://github.com/user-attachments/assets/57b59947-13bf-4f2e-bb58-c730c2745a2e)
 
 ### Step 2: Choosing Upload Method
+
 You have two options to proceed:
+
 - Use the camera feature
 - Upload a file
 
 To toggle between the camera and file upload options, follow these steps:
 
-#### Using the Camera Feature:
+#### Using the Camera Feature :
+
 1. Grant camera access to your browser:
 
 ![image](https://github.com/user-attachments/assets/c1613265-acf5-4030-80eb-0c3e57bddf27)
@@ -93,6 +94,7 @@ To toggle between the camera and file upload options, follow these steps:
 4. When ready, capture your picture by clicking on "Capture."
 
 #### Uploading a File:
+
 1. Click on the large upload area:
 
 ![image](https://github.com/user-attachments/assets/e3e9736f-0da4-440f-b19b-cac49bc602cb)
@@ -100,12 +102,13 @@ To toggle between the camera and file upload options, follow these steps:
 2. Select the desired file from your computer and confirm by clicking "Open."
 
 ### Step 3: Managing Uploaded Files
+
 Once uploaded, your file will appear in the list where you can:
+
 - Delete the file by right-clicking it and selecting "Delete" or by clicking the "X" button when you hover over it:
 
 ![image](https://github.com/user-attachments/assets/2e56d725-82da-48a2-a1b5-166079872399)
 ![image](https://github.com/user-attachments/assets/8458e45d-1b24-4981-9bb8-9b41c643a121)
-
 
 - Rename the file by right-clicking and choosing "Rename." Confirm the new name by clicking "Confirm":
 
@@ -113,11 +116,14 @@ Once uploaded, your file will appear in the list where you can:
 ![image](https://github.com/user-attachments/assets/8c9fa0eb-3fc9-4bdb-ace9-199f4e055bc7)
 
 ### Step 4: Submitting Your Label(s)
+
 After uploading all necessary files, click "Submit" at the bottom of the page:
 
 ### Step 5: Approving Label Information
+
 A new page will display, requiring you to verify each information field:
 ![image](https://github.com/user-attachments/assets/5c1f0c14-0422-4989-92ac-5de0c685cc8f)
+
 1. Confirm every field by clicking the checkmark next to it. A green indicator on the progress bar signifies approval:
 
 ![image](https://github.com/user-attachments/assets/495d90db-2088-4365-b125-e9d6281d27d0)
@@ -130,7 +136,9 @@ A new page will display, requiring you to verify each information field:
 ![image](https://github.com/user-attachments/assets/409607e0-f8f2-435c-b67b-c7fd9eaa611a)
 
 ### Step 6: Final Confirmation Before Submission
+
 After approving all fields, click on the "Submit" button to proceed:
+
 1. Review the confirmation page thoroughly:
 
 ![image](https://github.com/user-attachments/assets/30ffee47-fddf-46e7-9e0f-3d879c4130a4)
@@ -150,11 +158,13 @@ Congratulations! You have successfully learned how to upload and manage new labe
 This guide will take you through the simple process of viewing all the labels you've previously saved. Follow these easy steps to get started.
 
 ### Step 1: Accessing the Labels Overview
+
 1. Locate and click on the second icon in the side menu:
 
 ![image](https://github.com/user-attachments/assets/f27a1dd6-6861-4e0a-9c04-16a2d538a33c)
 
 ### Step 2: Browsing Your Saved Labels
+
 1. Upon clicking the icon, you'll be directed to the page displaying all the saved labels:
 
 ![image](https://github.com/user-attachments/assets/66e7b0ce-36da-4cb0-b0f8-b6ef1aa6d6b2)
@@ -168,17 +178,12 @@ This guide will take you through the simple process of viewing all the labels yo
 ## How to switch application language
 
 ### Step 1: Accessing the Labels Overview
+
 1. Locathe and click on the third icon in the side menu
 
 ![image](https://github.com/user-attachments/assets/d27c121e-ebc6-4b2d-8ef4-18d1867ced64)
 
 ### Step 2: Change the language
+
 1. Upon clicking the icon, you'll be directed to the page displaying the setting.
 2. Click on the button to switch the language between French and English.
-
-
-
-
-
-
-
