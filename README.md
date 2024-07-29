@@ -137,9 +137,9 @@ A new page will display, requiring you to verify each information field:
 
 After approving all fields, click on the "Submit" button to proceed:
 
-1. Review the confirmation page thoroughly: 
+1. Review the confirmation page thoroughly:
     - ![image](https://github.com/user-attachments/assets/30ffee47-fddf-46e7-9e0f-3d879c4130a4)
-2. If an error is spotted, select "Cancel" to go back. 
+2. If an error is spotted, select "Cancel" to go back.
     - ![image](https://github.com/user-attachments/assets/3021ba01-b4d0-42cd-8790-81e623bf808c)
 
 Once all information is verified, check the confirmation box at the bottom of the page.
