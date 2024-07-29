@@ -1,19 +1,25 @@
 # Fertiscan Frontend
+
 ## Available Scripts
 
 In the project directory, you can run:
 
 - `npm run dev`
 
-  Starts the development server. Open `localhost:5173` to view it in your browser. The app will automatically reload if you make changes to the code. You will see build errors and lint warnings in the console.
+  Starts the development server. Open `localhost:5173` to view it in your
+  browser. The app will automatically reload if you make changes to the code.
+  You will see build errors and lint warnings in the console.
 
 - `npm run dev:host`
 
-  Starts the development server and makes it accessible over your local network.
+  Starts the development server and makes it accessible over your local
+  network.
 
 - `npm run build`
 
-  Compiles TypeScript and builds the app for production to the `dist` folder. It correctly bundles React in production mode and optimizes the build for the best performance. Your app is ready to be deployed!
+  Compiles TypeScript and builds the app for production to the `dist` folder.
+  It correctly bundles React in production mode and optimizes the build for the
+  best performance. Your app is ready to be deployed!
 
 - `npm run lint`
 
@@ -41,7 +47,8 @@ In the project directory, you can run:
 
 ## Running the App Using Docker
 
-- For local testing, build the Docker image with default values: `docker build -t fertiscan-frontend .`
+- For local testing, build the Docker image with default values: `docker build
+-t fertiscan-frontend .`
 
 - Production build:
 
@@ -49,17 +56,23 @@ In the project directory, you can run:
 docker build -t fertiscan-frontend .
 ```
 
-- Run the image (on port 3001 for example): `docker run -p 3001:3000 fertiscan-frontend`
+- Run the image (on port 3001 for example): `docker run -p 3001:3000
+fertiscan-frontend`
 
 ## Comprehensive Guide for New Users: Uploading a New Label
 
-Welcome to our step-by-step guide designed to help new users like yourself effortlessly add new labels and become familiar with our platform's functionality. Let's get started.
+Welcome to our step-by-step guide designed to help new users like yourself
+effortlessly add new labels and become familiar with our platform's
+functionality.
+ Let's get started.
 
 ### Saving a New Label
 
 #### Step 1: Accessing the Website
 
-Navigate to [FertiScan Inspection Portal](https://fertiscan.inspection.alpha.canada.ca/). Upon loading the page, you should see the following:
+Navigate to
+[FertiScan Inspection Portal](https://fertiscan.inspection.alpha.canada.ca/).
+Upon loading the page, you should see the following:
 
 - ![image](https://github.com/user-attachments/assets/57b59947-13bf-4f2e-bb58-c730c2745a2e)
 
@@ -80,7 +93,8 @@ To toggle between the camera and file upload options, follow these steps:
   
 2. Click the "Switch" button to activate the camera:
     - ![image](https://github.com/user-attachments/assets/1f720f81-c27e-429c-b569-290faa01aba7)
-3. Once in the camera view, you can switch between front and rear cameras using the camera switch button:
+3. Once in the camera view, you can switch between front and rear cameras using
+the camera switch button:
 4. When ready, capture your picture by clicking on "Capture."
 
 ##### Uploading a File
@@ -93,12 +107,14 @@ To toggle between the camera and file upload options, follow these steps:
 
 Once uploaded, your file will appear in the list where you can:
 
-- Delete the file by right-clicking it and selecting "Delete" or by clicking the "X" button when you hover over it:
+- Delete the file by right-clicking it and selecting "Delete" or by clicking 
+the "X" button when you hover over it:
 
   - ![image](https://github.com/user-attachments/assets/2e56d725-82da-48a2-a1b5-166079872399)
   - ![image](https://github.com/user-attachments/assets/8458e45d-1b24-4981-9bb8-9b41c643a121)
 
-- Rename the file by right-clicking and choosing "Rename." Confirm the new name by clicking "Confirm":
+- Rename the file by right-clicking and choosing "Rename." Confirm the new name
+ by clicking "Confirm":
 
   - ![image](https://github.com/user-attachments/assets/93a603ba-2d3d-4f94-a784-bebef5722e25)
   - ![image](https://github.com/user-attachments/assets/8c9fa0eb-3fc9-4bdb-ace9-199f4e055bc7)
@@ -113,7 +129,8 @@ A new page will display, requiring you to verify each information field:
 
 - ![image](https://github.com/user-attachments/assets/5c1f0c14-0422-4989-92ac-5de0c685cc8f)
 
-1. Confirm every field by clicking the checkmark next to it. A green indicator on the progress bar signifies approval:
+1. Confirm every field by clicking the checkmark next to it. A green indicator
+on the progress bar signifies approval:
     - ![image](https://github.com/user-attachments/assets/495d90db-2088-4365-b125-e9d6281d27d0)
 2. Click on the progress bar sections to jump to specific fields as needed.
 3. Zoom in on images for a clearer view.
@@ -131,14 +148,19 @@ After approving all fields, click on the "Submit" button to proceed:
 2. If an error is spotted, select "Cancel" to go back.
     - ![image](https://github.com/user-attachments/assets/3021ba01-b4d0-42cd-8790-81e623bf808c)
 
-Once all information is verified, check the confirmation box at the bottom of the page.
-The final step is to click "Confirm" to send the new label information to our database.
+Once all information is verified, check the confirmation box at the bottom
+of the page.
+The final step is to click "Confirm" to send the new label information to our
+database.
 
-Congratulations! You have successfully learned how to upload and manage new labels on our platform. If you require further assistance or have any questions, don't hesitate to reach out for support.
+Congratulations! You have successfully learned how to upload and manage new
+labels on our platform. If you require further assistance or have any questions
+, don't hesitate to reach out for support.
 
 ### How to View Saved Labels
 
-This guide will take you through the simple process of viewing all the labels you've previously saved. Follow these easy steps to get started.
+This guide will take you through the simple process of viewing all the labels
+you've previously saved. Follow these easy steps to get started.
 
 #### Step 1: Accessing the Labels Overview
 
@@ -148,10 +170,13 @@ This guide will take you through the simple process of viewing all the labels yo
 
 #### Step 2: Browsing Your Saved Labels
 
-1. Upon clicking the icon, you'll be directed to the page displaying all the saved labels:
+1. Upon clicking the icon, you'll be directed to the page displaying all the
+saved labels:
     - ![image](https://github.com/user-attachments/assets/66e7b0ce-36da-4cb0-b0f8-b6ef1aa6d6b2)
-2. Scroll down to review all available labels. Pagination options may be available if you have multiple pages of saved labels.
-3. To see detailed information for a specific label, simply click on the label entry you are interested in.
+2. Scroll down to review all available labels. Pagination options may be
+available if you have multiple pages of saved labels.
+3. To see detailed information for a specific label, simply click on the label
+entry you are interested in.
 
     - ![image](https://github.com/user-attachments/assets/c9db9320-ee98-4a63-9908-9865475ee77c)
 
@@ -165,6 +190,6 @@ This guide will take you through the simple process of viewing all the labels yo
 
 ### Step 2: Change the language
 
-1. Upon clicking the icon, you'll be directed to the page displaying the setting.
+1. Upon clicking the icon, you'll be directed to the page displaying the
+setting.
 2. Click on the button to switch the language between French and English.
-
