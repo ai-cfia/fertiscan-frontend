@@ -75,7 +75,9 @@ functionality.
 #### Step 1: Accessing the Website
 
 Navigate to
-[FertiScan Inspection Portal](https://fertiscan.inspection.alpha.canada.ca/).
+
+<!--https://fertiscan.inspection.alpha.canada.ca/-->
+
 Upon loading the page, you should see the following:
 
 - ![image](https://github.com/user-attachments/assets/57b59947-13bf-4f2e-bb58-c730c2745a2e)
