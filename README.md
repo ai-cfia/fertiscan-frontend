@@ -118,7 +118,8 @@ After uploading all necessary files, click "Submit" at the bottom of the page:
 #### Step 5: Approving Label Information
 
 A new page will display, requiring you to verify each information field:
-    - ![image](https://github.com/user-attachments/assets/5c1f0c14-0422-4989-92ac-5de0c685cc8f)
+
+- ![image](https://github.com/user-attachments/assets/5c1f0c14-0422-4989-92ac-5de0c685cc8f)
 
 1. Confirm every field by clicking the checkmark next to it. A green indicator on the progress bar signifies approval:
     - ![image](https://github.com/user-attachments/assets/495d90db-2088-4365-b125-e9d6281d27d0)
