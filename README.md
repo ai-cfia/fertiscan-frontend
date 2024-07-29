@@ -82,14 +82,19 @@ To toggle between the camera and file upload options, follow these steps:
 
 ##### Using the Camera Feature
 
-1. Grant camera access to your browser:![image](https://github.com/user-attachments/assets/c1613265-acf5-4030-80eb-0c3e57bddf27)
-2. Click the "Switch" button to activate the camera:![image](https://github.com/user-attachments/assets/1f720f81-c27e-429c-b569-290faa01aba7)
+1. Grant camera access to your browser:
+
+    - ![image](https://github.com/user-attachments/assets/c1613265-acf5-4030-80eb-0c3e57bddf27)
+  
+2. Click the "Switch" button to activate the camera:
+    - ![image](https://github.com/user-attachments/assets/1f720f81-c27e-429c-b569-290faa01aba7)
 3. Once in the camera view, you can switch between front and rear cameras using the camera switch button:
 4. When ready, capture your picture by clicking on "Capture."
 
 ##### Uploading a File
 
-1. Click on the large upload area:![image](https://github.com/user-attachments/assets/e3e9736f-0da4-440f-b19b-cac49bc602cb)
+1. Click on the large upload area:
+    - ![image](https://github.com/user-attachments/assets/e3e9736f-0da4-440f-b19b-cac49bc602cb)
 2. Select the desired file from your computer and confirm by clicking "Open."
 
 #### Step 3: Managing Uploaded Files
@@ -98,8 +103,8 @@ Once uploaded, your file will appear in the list where you can:
 
 - Delete the file by right-clicking it and selecting "Delete" or by clicking the "X" button when you hover over it:
 
-- Delete the file by right-clicking it and selecting "Delete" or by clicking
-the "X" button when you hover over it:
+  - ![image](https://github.com/user-attachments/assets/2e56d725-82da-48a2-a1b5-166079872399)
+  - ![image](https://github.com/user-attachments/assets/8458e45d-1b24-4981-9bb8-9b41c643a121)
 
 - Rename the file by right-clicking and choosing "Rename." Confirm the new name by clicking "Confirm":
 
@@ -113,9 +118,10 @@ After uploading all necessary files, click "Submit" at the bottom of the page:
 #### Step 5: Approving Label Information
 
 A new page will display, requiring you to verify each information field:
-![image](https://github.com/user-attachments/assets/5c1f0c14-0422-4989-92ac-5de0c685cc8f)
+    - ![image](https://github.com/user-attachments/assets/5c1f0c14-0422-4989-92ac-5de0c685cc8f)
 
-1. Confirm every field by clicking the checkmark next to it. A green indicator on the progress bar signifies approval: ![image](https://github.com/user-attachments/assets/495d90db-2088-4365-b125-e9d6281d27d0)
+1. Confirm every field by clicking the checkmark next to it. A green indicator on the progress bar signifies approval:
+    - ![image](https://github.com/user-attachments/assets/495d90db-2088-4365-b125-e9d6281d27d0)
 2. Click on the progress bar sections to jump to specific fields as needed.
 3. Zoom in on images for a clearer view.
 4. Ensure that all information in each field is accurate.
@@ -127,8 +133,10 @@ A new page will display, requiring you to verify each information field:
 
 After approving all fields, click on the "Submit" button to proceed:
 
-1. Review the confirmation page thoroughly: ![image](https://github.com/user-attachments/assets/30ffee47-fddf-46e7-9e0f-3d879c4130a4)
-2. If an error is spotted, select "Cancel" to go back. ![image](https://github.com/user-attachments/assets/3021ba01-b4d0-42cd-8790-81e623bf808c)
+1. Review the confirmation page thoroughly: 
+    - ![image](https://github.com/user-attachments/assets/30ffee47-fddf-46e7-9e0f-3d879c4130a4)
+2. If an error is spotted, select "Cancel" to go back. 
+    - ![image](https://github.com/user-attachments/assets/3021ba01-b4d0-42cd-8790-81e623bf808c)
 
 Once all information is verified, check the confirmation box at the bottom of the page.
 The final step is to click "Confirm" to send the new label information to our database.
@@ -147,11 +155,12 @@ This guide will take you through the simple process of viewing all the labels yo
 
 #### Step 2: Browsing Your Saved Labels
 
-1. Upon clicking the icon, you'll be directed to the page displaying all the saved labels:![image](https://github.com/user-attachments/assets/66e7b0ce-36da-4cb0-b0f8-b6ef1aa6d6b2)
+1. Upon clicking the icon, you'll be directed to the page displaying all the saved labels:
+    - ![image](https://github.com/user-attachments/assets/66e7b0ce-36da-4cb0-b0f8-b6ef1aa6d6b2)
 2. Scroll down to review all available labels. Pagination options may be available if you have multiple pages of saved labels.
 3. To see detailed information for a specific label, simply click on the label entry you are interested in.
 
-### How to switch application language
+    - ![image](https://github.com/user-attachments/assets/c9db9320-ee98-4a63-9908-9865475ee77c)
 
 ### How to switch application language
 
