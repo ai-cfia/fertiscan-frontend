@@ -7,6 +7,11 @@
   width: 100%;
 }
 
+.file-list .active{
+  color:black;
+  background-color: #cccccc00!important;
+}
+
 .file-list-container {
   display: flex;
   grid-area: b;
