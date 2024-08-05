@@ -10,6 +10,9 @@ const useCustomHook = () => {
   return hookState;
 };
 
+const testErreur = "test";
+
+//main component
 const GoodComponent: React.FC<Props> = ({ message }) => {
   const hookState = useCustomHook();
   const [count, setCount] = useState(0);

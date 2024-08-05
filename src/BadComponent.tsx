@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from 'react';
 
+//main component
 const BadComponent: React.FC = () => {
   const renderConditionally = () => {
     if (count > 5) return <div>Count is high!</div>;

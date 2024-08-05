@@ -3,9 +3,9 @@ import reactLogo from './assets/react.svg'
 import viteLogo from '/vite.svg'
 import './App.css'
 
+//main component
 function App() {
   const [count, setCount] = useState(0)
-
   return (
     <>
       <div>
@@ -31,5 +31,39 @@ function App() {
     </>
   )
 }
+enum Color {
+  Red = 'red',
+  Green = 'green',
+  Blue = 'blue',
+}
+
+type UseCounterHook = {
+  count: number;
+  increment: () => void;
+  decrement: () => void;
+  reset: (value?: number) => void;
+}
+
+function useCounter(initialValue: number = 0): UseCounterHook {
+  const [count, setCount] = useState<number>(initialValue);
+
+  const increment = () => {
+      setCount((prevCount) => prevCount + 1);
+  };
+
+  const decrement = () => {
+      setCount((prevCount) => prevCount - 1);
+  };
+
+  const reset = (value: number = initialValue) => {
+      setCount(value);
+  };
+
+  // Return the state and the functions to mutate it
+  return { count, increment, decrement, reset };
+}
+
+const testErreur = "test";
+
 
 export default App
