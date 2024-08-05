@@ -84,34 +84,53 @@ function createStateTracker() {
     hasDefaultProps: false,
     hasReturnInSameComponent: false,
     hasExports: false,
+    hasMainComponent: false,
+    mainComponentPath: null,
   };
 }
 
 function isReactComponent(path) {
   let isComponent = false;
   let isMainComponent = false;
+  let componentName = "";
+  
+  // Check for function declarations and variable declarations
+  if (path.isFunctionDeclaration() || path.isVariableDeclaration()) {
+    let name;
+    let typeAnnotation;
 
-  if (path.isFunctionDeclaration() && /^[A-Z]/.test(path.get('id').node.name)) {
-    // Recognizes function App() { ... }
-    isComponent = true;
-  } else if (path.isFunctionExpression() || path.isArrowFunctionExpression()) {
-    const declarator = path.findParent(p => p.isVariableDeclarator());
-    const assignment = path.findParent(p => p.isAssignmentExpression());
-    const isDefaultExported = path.findParent(p => p.isExportDefaultDeclaration());
-    if ((declarator && /^[A-Z]/.test(declarator.get('id').node.name)) ||
-        (assignment && /^[A-Z]/.test(assignment.get('left').node.name)) ||
-        isDefaultExported) {
-      // Recognizes const App = function() { ... } or const App = () => { ... }
-      // or export default function App() { ... } or export default () => { ... }
-      isComponent = true;
+    if (path.isFunctionDeclaration()) {
+      name = path.get('id').node.name;
+      typeAnnotation = path.get('returnType').node;
+    } else if (path.isVariableDeclaration()) {
+      const declarator = path.get('declarations')[0];
+      if (declarator.isVariableDeclarator()) {
+        const id = declarator.get('id');
+        if (id.isIdentifier()) {
+          name = id.node.name;
+          typeAnnotation = id.getTypeAnnotation().typeAnnotation;
+        }
+      }
+    }
+
+    // Check if the name starts with a capital letter and if there's a React.FC type annotation
+    if (name && /^[A-Z]/.test(name) && typeAnnotation) {
+      const typeName = typeAnnotation.typeName || typeAnnotation.id;
+      if (
+        typeName &&
+        (typeName.name === 'FC' || typeName.name === 'FunctionComponent')
+      ) {
+        isComponent = true;
+        componentName = name;
+      }
     }
   }
 
+  // Check for proceeding comments that indicate a main component
   if (isComponent) {
-    // Check for preceding comment // main component
     const leadingComments = path.node.leadingComments;
     isMainComponent = leadingComments && leadingComments.some(
-      comment => comment.type === "CommentLine" && comment.value.trim() === "main component"
+      comment => comment.type === "CommentLine" && comment.value.includes("main component")
     );
   }
 
@@ -119,6 +138,7 @@ function isReactComponent(path) {
     isComponent,
     isMainComponent,
     path: isComponent ? path : null,
+    componentName
   };
 }
 
@@ -134,29 +154,74 @@ function isArrowFunctionExpression(node) {
   return node.type === 'ArrowFunctionExpression';
 }
 
-function isMainComponentByExport(path, state) {
-  // The original function for checking the naming convention is no longer needed
-  // Instead, we check if there's an export statement explicitly relating to the current component
-  const isExported = path.findParent((p) => p.isExportDefaultDeclaration() || p.isExportNamedDeclaration());
-  const isFunctionDeclarationExported = isExported && path.isFunctionDeclaration();
-  const isFunctionExpressionExported = isExported && (path.isFunctionExpression() || path.isArrowFunctionExpression());
+// For reconising the main by export at the end of the file
+function isFunctionExportedWithName(path, functionName) {
+  // Get the ExportNamedDeclaration paths that are siblings of the function declaration
+  const exportPaths = path.container.filter(p => (p.type === 'ExportNamedDeclaration'));
 
-  // We need to handle differently based on the kind of declaration
-  if (isFunctionDeclarationExported) {
-    // Directly export function declarations like: export default function MyComponent() {}
+  // Check if any of the exports contain the function name
+  return exportPaths.some(exportPath => {
+    // If the export has a specifiers property, it's a named export and may look like:
+    // export { myFunction };
+    // export { myFunction as differentName };
+    if (exportPath.specifiers) {
+      return exportPath.specifiers.some(specifier => {
+        const exportedName = specifier.exported.name;
+        const localName = specifier.local.name;
+        return exportedName === functionName || localName === functionName;
+      });
+    }
+
+    // If the export has a declaration property, it's a direct export which may look like:
+    // export function myFunction() {}
+    if (exportPath.declaration) {
+      if (exportPath.declaration.id) {
+        return exportPath.declaration.id.name === functionName;
+      }
+      // Check if it's a variable being exported directly 
+      // (though this case should be covered by the outer function's logic)
+      if (exportPath.declaration.declarations) {
+        return exportPath.declaration.declarations.some(declaration => {
+          return declaration.id.name === functionName;
+        });
+      }
+    }
+    
+    return false;
+  });
+}
+
+function isInFunctionScope(path) {
+  // Check if path is inside a function by finding its parent function, if any
+  const functionParent = path.findParent(p =>
+    p.isFunctionDeclaration() || p.isFunctionExpression() || p.isArrowFunctionExpression()
+  );
+  return Boolean(functionParent);
+}
+
+// TODO: make it work
+function isMainComponentByExport(path) {
+  if (path.isFunctionDeclaration()) {
+    // Directly exported function declarations like: `export default function MyComponent() {}`
     return true;
-  } else if (isFunctionExpressionExported) {
-    // Variables that are exported: export { MyComponent as default };
-    // or export default MyComponent; where MyComponent is a function expression or arrow function
-    const declaration = path.parentPath.parentPath.node.declaration;
-    if (declaration && (declaration.type === 'Identifier' || declaration.type === 'ObjectExpression')) {
-      const identifiers = path.scope.bindings[declaration.name];
-      return identifiers && identifiers.path === path;
+  } else if (path.isFunctionExpression() || path.isArrowFunctionExpression()) {
+    // Arrow functions or function expressions could be variable declarators
+    if (path.parentPath.isVariableDeclarator()) {
+      // Here we should ensure that the declarator has an identifier
+      const declarator = path.parentPath.node;
+      if (declarator.id && declarator.id.name) {
+        // We check if variable declarators are directly exported
+        const parentExport = path.parentPath.parentPath.parentPath;
+        if (isExportDeclarationWithName(parentExport, declarator.id.name)) {
+          return true;  // This confirms the export contains the function
+        }
+      }
     }
   }
   return false;
 }
 
+// Is working as expected
 function generateErrorMessage(description, state, filePath) {
   const messages = [];
 
@@ -179,8 +244,9 @@ function generateErrorMessage(description, state, filePath) {
   return "";
 }
 
-
+// is Working as expected
 function handleImportDeclaration(path, state, filePath) {
+  console.log('Import statement detected:', path.node.type); 
   // Check for anything that should come after the imports
   if (state.hasConstants || state.hasTypes || state.hasInterfaces || state.hasEnums ||
       state.hasHelperFunctions || state.hasCustomHooks || state.hasReactComponent ||
@@ -197,6 +263,7 @@ function handleImportDeclaration(path, state, filePath) {
 
 // Not working as now
 function handleGlobalConstanteDeclaration(path, state, filePath) {
+  console.log('Global constant declaration detected:', path.node.type);
   // Check if certain conditions are met to set hasGlobalConstants state property
   if (state.hasHelperFunctions || state.hasCustomHooks || state.hasReactComponent || state.hasEnums || state.hasTypes || state.hasInterfaces || state.hasExports) {
     const errorMessage = generateErrorMessage("Global constante", state, filePath);
@@ -209,8 +276,9 @@ function handleGlobalConstanteDeclaration(path, state, filePath) {
     }
   }
 }
-
+//TODO: TEST
 function handleTSEnumDeclaration(path, state, filePath) {
+  console.log('Enum declaration detected:', path.node.type);
   if (state.hasHelperFunctions || state.hasCustomHooks || state.hasReactComponent) {
     const errorMessage = generateErrorMessage("Enums",state, filePath);
     if (errorMessage) {
@@ -219,13 +287,49 @@ function handleTSEnumDeclaration(path, state, filePath) {
   }
   state.hasEnums = true;
 }
+//TODO: TEST
+function handleTSTypeAliasDeclaration(path, state, filePath) {
+  console.log('Type alias declaration detected:', path.node.type);
+  if (state.hasInterfaces || state.hasEnums || state.hasHelperFunctions || state.hasCustomHooks || state.hasReactComponent) {
+const errorMessage = generateErrorMessage("Type alias",state, filePath);
+    if (errorMessage) {
+      reportError(path.node, errorMessage);
+    }
+  } 
+  state.hasTypes = true;
+}
+//TODO: TEST
+function handleTSInterfaceDeclaration(path, state, filePath) {
+  console.log('Interface declaration detected:', path.node.type);
+  if (state.hasEnums || state.hasHelperFunctions || state.hasCustomHooks || state.hasReactComponent) {
+    const errorMessage = generateErrorMessage("Interface",state, filePath);
+    if (errorMessage) {
+      reportError(path.node, errorMessage);
+    }
+  }   
+  state.hasInterfaces = true;
+}
+//TODO: is working as expected
 function handleCustomHookDeclaration(path, state, filePath) {
+  let functionName = "";
   // Check if the function is a custom hook by its naming convention
-  const functionName = path.node.id && path.node.id.name;
+  if (path.node.type === 'VariableDeclaration') {
+    path.node.declarations.forEach(declarator => {
+      // Check if the initialization (`init`) is a function expression
+      const initializer = declarator.init;
+      if (initializer && (initializer.type === 'FunctionExpression' || initializer.type === 'ArrowFunctionExpression')) {
+        // Now we have a function, so we can grab the `id` from `declarator`
+        functionName = declarator.id.name;
+      }
+    });
+  }
   if (isCustomHook(functionName)) {
-    console.log(`Custom hook detected: ${functionName}`);
+    console.log('Custom hook declaration detected:', path.node.type, filePath);
     // Ensure custom hooks are declared in the right order
-    if (state.hasHelperFunctions  || state.hasReactComponent){
+    if (state.hasHelperFunctions || state.hasReactComponent || state.hasEnums || 
+      state.hasTypes || state.hasInterfaces || state.hasReactComponent || 
+      state.hasExports || state.hasPropTypes || state.hasDefaultProps || 
+      state.hasMainComponent){
       const errorMessage = generateErrorMessage("Custom Hooks",state, filePath);
       if (errorMessage) {
         reportError(path.node, errorMessage);
@@ -234,45 +338,65 @@ function handleCustomHookDeclaration(path, state, filePath) {
     state.hasCustomHooks = true;
   }
 }
+
 function handleConstanteDeclaration(path, state, filePath) {
-  // Check if we are inside the main React component function
-  if (isInMainComponent(path, state)) {
+  console.log('Constant declaration detected:', path.node.type);
+  // Check if we are inside any function or component
+  if (path.scope.path.type !== 'Program') {
     // Constants should be declared after the import statements and any custom hook definitions,
     // and before any hook calls (like useState, useEffect, etc.), handler functions, and before rendering logic and JSX.
-    if (state.hasImports && !state.hasStateHooks && !state.hasContextHooks && !state.hasEffectHooks && !state.hasHandlerFunctions && !state.hasConditionalRenderLogic) {
-      state.hasConstants = true; // Set the flag indicating that component-specific constants are declared
-    } else {
-      // If constants are not in the correct order, report an error
-      reportError(path.node, 'Component-specific constants must be declared at the beginning of the component, after imports and before state/context/effect hooks and render logic.', filePath);
+
+    if (state.hasStateHooks || state.hasContextHooks || state.hasEffectHooks || state.hasHandlerFunctions) {
+      const errorMessage = generateErrorMessage("Constante", state, filePath);
+      if (errorMessage) {
+        reportError(path.node, errorMessage);
+      }
     }
+    state.hasConstants = true;
   }
-  // If the variable declaration is not within a component, check if it's a global constant instead
+  // If the variable declaration is not within a function, consider it as a global constant
   else if (path.scope.path.type === 'Program') {
-    handleGlobalConstantsDeclaration(path, state, filePath); // Assuming you've defined this function
+    handleGlobalConstanteDeclaration(path, state, filePath); // Assumes you've defined this function
   }
 }
 
+// Rest of your helper functions and script logic...
 
-function handleTypeAliasDeclaration(path, state) {
-  if (state.hasInterfaces || state.hasEnums || state.hasHelperFunctions || state.hasCustomHooks || state.hasReactComponent) {
-    reportError(path.node, 'Type aliases must be declared after import statements and before interfaces, enums, and functions.');
+function handleMainReactComponent(path, state, filePath) {
+  console.log('Main React component detected:', path.node.id.name);
+  // Check if we're encountering the first React component, which we designate as the main component
+  if (!state.hasReactComponent && isReactComponent(path)) {
+    state.hasReactComponent = true; // Mark that we've found the React component
+    state.hasMainComponent = true; // Mark that this is the main component
+    state.mainComponentPath = path;
+    enterReactComponent(state);
+    
+
+    // TODO: Add traversal logic for the main component
+    path.traverse({
+      ReturnStatement(innerPath) {
+        handleReturnStatement(innerPath, state, filePath); // Only handle the main return statement
+      },
+      FunctionExpression(innerPath) {
+        handleFunctionExpressionsAndArrowFunctions(innerPath, state, filePath);
+      },
+      ArrowFunctionExpression(innerPath) {
+        handleFunctionExpressionsAndArrowFunctions(innerPath, state, filePath);
+      },
+      // Here you can traverse other node types as needed specifically for the main component
+      // ...
+      exit(innerPath) {
+        if (innerPath === path) { // Exit from the main component
+          exitReactComponent(state);
+        }
+      },
+    });
   }
-  state.hasTypes = true;
-}
-function handleTSTypeAliasDeclaration(path, state, filePath) {
-  if (state.hasInterfaces || state.hasEnums || state.hasHelperFunctions || state.hasCustomHooks || state.hasReactComponent) {
-    reportError(path.node, 'Type aliases must be declared after import statements and before interfaces, enums, and functions.', filePath);
-  }
-  state.hasTypes = true;
-}
-function handleTSInterfaceDeclaration(path, state, filePath) {
-  if (state.hasEnums || state.hasHelperFunctions || state.hasCustomHooks || state.hasReactComponent) {
-    reportError(path.node, 'Interfaces must be declared after type aliases and before enums, functions, and the React component.', filePath);
-  }
-  state.hasInterfaces = true;
+  state.hasMainComponent = true;
 }
 
 
+// TODO: Not working (Not implemented)
 function handleHelperFunctionDeclaration(path, state, filePath) {
     // Function declarations could be either helper functions, or the main component itself.
     const functionName = path.node.id && path.node.id.name;
@@ -291,8 +415,9 @@ function handleHelperFunctionDeclaration(path, state, filePath) {
     }
   }
 
-
+// Is working as expected
 function handleFunctionTypeDeclarations(path, state, filePath) {
+  console.log('Function declaration detected:', path.node.type);
   const componentCheck = isReactComponent(path);
   
   if (componentCheck.isComponent && !state.insideReactComponent) {
@@ -343,6 +468,7 @@ function handleFunctionTypeDeclarations(path, state, filePath) {
 
 
 function handleFunctionExpressionsAndArrowFunctions(innerPath, state, filePath) {
+ console.log('Function expression detected:', innerPath.node.type);
   const functionName = innerPath.node.id && innerPath.node.id.name;
   if (functionName && /^use[A-Z]/.test(functionName)) {
     // Detected a hook
@@ -361,48 +487,28 @@ function handleFunctionExpressionsAndArrowFunctions(innerPath, state, filePath) 
   }
 }
 
-// This function can be called inside FunctionDeclaration or arrow function expression
-// which might represent a React component.
-function handleReactComponentFunction(path, state, filePath) {
-  // Check if `path` is a React component
-  if (isReactComponent(path)) {
-    path.traverse({
-      'FunctionExpression|ArrowFunctionExpression': function(innerPath) {
-        handleFunctionExpressionsAndArrowFunctions(innerPath, state, filePath);
-      },
-      // Add handlers for other relevant node types, such as JSXElement, ReturnStatement, etc.
+function isExportDeclarationWithName(path, componentName) {
+  if (path.isExportDefaultDeclaration() && path.has('declaration')) {
+    const declaration = path.get('declaration');
+    if (declaration.isIdentifier()) {
+      return declaration.node.name === componentName;
+    }
+  } else if (path.isExportNamedDeclaration() && path.has('specifiers')) {
+    return path.get('specifiers').some(specifier => {
+      // We consider both normal named exports and exports with aliases
+      return specifier.get('exported').node.name === componentName || 
+             specifier.get('local').node.name === componentName;
     });
   }
-}
-function handleMainReactComponent(path, state, filePath) {
-  // Check if we're encountering the first React component, which we designate as the main component
-  if (!state.hasReactComponent && isReactComponent(path)) {
-    state.hasReactComponent = true; // Mark that we've found the main React component
-    state.mainComponentPath = path;
-    enterReactComponent(state);
-    
-    path.traverse({
-      ReturnStatement(innerPath) {
-        handleReturnStatement(innerPath, state, filePath); // Only handle the main return statement
-      },
-      FunctionExpression(innerPath) {
-        handleFunctionExpressionsAndArrowFunctions(innerPath, state, filePath);
-      },
-      ArrowFunctionExpression(innerPath) {
-        handleFunctionExpressionsAndArrowFunctions(innerPath, state, filePath);
-      },
-      // Here you can traverse other node types as needed specifically for the main component
-      // ...
-      exit(innerPath) {
-        if (innerPath === path) { // Exit from the main component
-          exitReactComponent(state);
-        }
-      },
-    });
-  }
+  return false;
 }
 
 function handleExportDeclarations(path, state, filePath) {
+  console.log('Export statement detected:', path.node.type);
+  if (state.mainComponentName && isExportDeclarationWithName(path, state.mainComponentName)) {
+    console.log(`Main component ${state.mainComponentName} is exported.`);
+    state.hasExportedMainComponent = true;
+  }
   state.hasExports = true;
 }
 
@@ -412,22 +518,24 @@ function setupTraverse(state, filePath) {
       handleImportDeclaration(path, state, filePath);
     },
     VariableDeclaration(path) {
-      // Check for custom hooks first, because they might as well be in the global scope
       path.node.declarations.forEach(declarator => {
-        if (declarator.init && (isFunctionExpression(declarator.init) || isArrowFunctionExpression(declarator.init))) {
-          if (isCustomHook(declarator.id.name)) {
-            // It's a custom hook, handle accordingly
+        // Check if the variable is a function (should cover custom hooks)
+        const isFunction = declarator.init && (isFunctionExpression(declarator.init) || isArrowFunctionExpression(declarator.init));
+        if (isFunction) {
+          const id = declarator.id ?? {};
+          const name = id.name || "";
+          if (isCustomHook(name)) {
             handleCustomHookDeclaration(path, state, filePath);
+            return;  // Exit early since we've identified and handled this as a custom hook
+          } else if (state.hasReactComponent && /^[A-Z]/.test(name)) {
+            handleHelperFunctionDeclaration(path, state, filePath);
+          } else {
+            handleGlobalConstanteDeclaration(path, state, filePath);
           }
+        } else {
+          handleConstanteDeclaration(path, state, filePath);
         }
       });
-      // Use your logic for handling global constants here if applicable
-      if (path.parentPath.type === 'Program') {
-        handleGlobalConstanteDeclaration(path, state, filePath);
-      } else if (path.scope.path.type !== 'Program') {
-        // Handle non-global constant declaration here
-        handleConstanteDeclaration(path, state, filePath);
-      }
     },
     TSTypeAliasDeclaration(path) {
       handleTSTypeAliasDeclaration(path, state, filePath);
@@ -438,28 +546,51 @@ function setupTraverse(state, filePath) {
     TSEnumDeclaration(path) {
       handleTSEnumDeclaration(path, state, filePath);
     },
-    'FunctionDeclaration|ArrowFunctionExpression|FunctionExpression|VariableDeclaration'(path) {
+    FunctionDeclaration(path) {
       const componentCheck = isReactComponent(path);
       if (componentCheck.isComponent) {
-        // The first React component encountered is considered the main component.
-        if (!state.hasReactComponent && componentCheck.isMainComponent) {
-          handleMainReactComponent(componentCheck.path, state, filePath);
-          state.mainComponentPath = componentCheck.path; // Keep a reference to the main component
-          state.hasReactComponent = true;
+        const isMain = isMainComponentByExport(path, state);
+        if (isMain) {
+          handleMainReactComponent(path, state, filePath);
+          state.mainComponentName = componentCheck.componentName; // Similarly, use state.mainComponentName to keep track
+          state.hasMainComponent = true; // Only set this to true if this is the main component
         } else {
-          // If there's already a main component, handle as nested or other type of function.
-          handleFunctionTypeDeclarations(componentCheck.path, state, filePath);
+          handleFunctionTypeDeclarations(path, state, filePath);
+        }
+      } else {
+        handleHelperFunctionDeclaration(path, state, filePath);
+      }
+    },
+    'ArrowFunctionExpression|FunctionExpression': {
+      enter(path) {
+        if (path.parentPath.isVariableDeclarator()) {
+          const variableDeclarator = path.parentPath.node;
+          const id = variableDeclarator.id ?? {};
+          const name = id.name || "";
+          const componentCheck = isReactComponent(path);
+
+          if (componentCheck.isComponent && /^[A-Z]/.test(name)) {
+            const isMain = isMainComponentByExport(path, state);
+            if (isMain) {
+              handleMainReactComponent(path, state, filePath);
+              state.mainComponentName = componentCheck.componentName;
+              state.hasMainComponent = true;
+            } else {
+              handleHelperFunctionDeclaration(path, state, filePath);
+            }
+          } else if (isCustomHook(name)) {
+            handleCustomHookDeclaration(path, state, filePath);
+          } else {
+            handleHelperFunctionDeclaration(path, state, filePath);
+          }
         }
       }
     },
     'ExportNamedDeclaration|ExportDefaultDeclaration'(path) {
       handleExportDeclarations(path, state, filePath);
     },
-    // ...rest of your AST node type handlers...
   };
 }
-// You can add more handlers here based on other specific AST node types and logic you have in your original code
-
 async function checkFile(filePath) {
   console.log(`Reading file: ${filePath}`);
   const content = readFileSync(filePath, 'utf-8');
@@ -469,6 +600,8 @@ async function checkFile(filePath) {
   traverse(ast, setupTraverse(state, filePath));
 
   console.log(`File ${filePath} checked.`);
+  console.log("------------------------------------------------------------")
+  console.log('\n');
 }
 
 function handleJSXElement(innerPath, state, filePath) {

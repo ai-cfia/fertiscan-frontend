@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 
-//main component
+// main component
 const BadComponent: React.FC = () => {
   const renderConditionally = () => {
     if (count > 5) return <div>Count is high!</div>;
@@ -25,7 +25,7 @@ const BadComponent: React.FC = () => {
   );
 };
 
-export const useBadHook = () => {
+const useBadHook = () => {
   useEffect(() => {
     console.log('This is a bad side effect placement.');
   }, []);
