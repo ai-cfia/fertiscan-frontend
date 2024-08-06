@@ -72,7 +72,7 @@
   "cameraPermissionError": "Please allow camera access",
   "rename": "Rename",
   "showLess": "Show Less",
-  "confirmationCheckbox":"By checking this box, I confirm that I have verified all the information on this page and I take full responsibility for any errors that may be present.",
+  "confirmationCheckbox": "By checking this box, I confirm that I have verified all the information on this page and I take full responsibility for any errors that may be present.",
   "exceedsLimit": "The images you uploaded exceed the limit of 4MB",
   "currentStateSize": "Upload limit",
   "confirmSuccess": "The label has been successfully submitted",
@@ -85,5 +85,8 @@
   "company-name": "Company Name",
   "user": "Inspector",
   "date": "Upload Date",
-  "not-define": "Not defined"
+  "not-define": "Not defined",
+  "fileElementToolTip": "Right click to see the options menu",
+  "delete": "Delete",
+  "invalidImageTypeAlert": "File type not valid (Accepted: JPG/PNG/HEIF)"
 }
