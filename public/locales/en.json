@@ -79,5 +79,8 @@
   "company-name": "Company Name",
   "user": "Inspector",
   "date": "Upload Date",
-  "not-define": "Not defined"
+  "not-define": "Not defined",
+  "fileElementToolTip":"Right click to see the options menu",
+  "delete":"Delete",
+  "invalidImageTypeAlert":"File type not valid (Accepted: JPG/PNG/HEIF)"
 }

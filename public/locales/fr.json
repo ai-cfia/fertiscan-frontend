@@ -79,5 +79,8 @@
   "company-name": "Nom de la compagnie",
   "user": "Inspecteur",
   "date": "Date D'enregistrement",
-  "not-defined": "Non défini"
+  "not-defined": "Non défini",
+  "fileElementToolTip":"Click droit pour afficher le menu d'options",
+  "delete":"Supprimer",
+  "invalidImageTypeAlert":"Type de fichier non valide (Accepter: JPG/PNG/HEIF)"
 }
