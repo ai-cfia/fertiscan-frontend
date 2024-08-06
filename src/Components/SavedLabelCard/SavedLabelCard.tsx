@@ -8,24 +8,19 @@ interface SavedLabelCardProps {
   label: LabelPreview;
 }
 
-const SavedLabelCard: React.FC<SavedLabelCardProps> = ({
-  label
-}) => {
-
+const SavedLabelCard: React.FC<SavedLabelCardProps> = ({ label }) => {
   const { t } = useTranslation();
   const navigate = useNavigate();
 
   const handleClick = () => {
     return () => {
-      console.log("Clicked"+label.label_id);
+      console.log("Clicked" + label.label_id);
       navigate(`/label/${label.label_id}`);
     };
-  }
+  };
 
   return (
-    <div
-      className="card"
-      onClick={handleClick()}>
+    <div className="card" onClick={handleClick()}>
       <div className="company-grid">
         <p className="company-label">{t("company-name")}:</p>
         <p className="company-result">{label.company_name}</p>
@@ -36,7 +31,11 @@ const SavedLabelCard: React.FC<SavedLabelCardProps> = ({
       </div>
       <div className="registration-grid">
         <p className="registration-label">{t("registrationNumber")}:</p>
-        <p className="registration-result">{label.registration_number ? label.registration_number : t("not-define")}</p>
+        <p className="registration-result">
+          {label.registration_number
+            ? label.registration_number
+            : t("not-define")}
+        </p>
       </div>
       <div className="lot-number-grid">
         <p className="lot-number-label">{t("lotNumber")}:</p>
