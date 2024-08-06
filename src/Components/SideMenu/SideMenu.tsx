@@ -9,7 +9,6 @@ import list from "../../assets/list.svg";
 import { SessionContext, SetSessionContext } from "../../Utils/SessionContext";
 import Data from "../../Model/Data-Model";
 
-
 function SideMenu() {
   const { t } = useTranslation();
   const { state } = useContext(SessionContext);
@@ -55,7 +54,7 @@ function SideMenu() {
   };
   const goToSavedList = () => {
     navigate("/Saved");
-  }
+  };
 
   MenuChannel.on("OpenMenu", () => {
     SideMenuRef.current!.classList.add("active");

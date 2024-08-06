@@ -93,7 +93,7 @@ const FormPage = () => {
     return data;
   };
 
-  const setForm = (response: any) => {
+  const setForm = (response: unknown) => {
     setData(populateFromJSON(data, response));
     updateData();
     setState({ ...state, data: { pics: blobs, form: data } });
