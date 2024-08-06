@@ -1,16 +1,19 @@
 import Carousel from "../../Components/Carousel/Carousel";
 import Section from "../../Model/Section-Model.tsx";
 import Input from "../../Model/Input-Model.tsx";
+import Data from "../../Model/Data-Model.tsx";
 import "./ConfirmPage.css";
 import { useTranslation } from "react-i18next";
 import { useContext, useState } from "react";
 import { SessionContext, SetSessionContext } from "../../Utils/SessionContext";
+import { useAlert } from "../../Utils/AlertContext.tsx";
 
 const ConfirmPage = () => {
   const { t } = useTranslation();
   const { state } = useContext(SessionContext);
   const { setState } = useContext(SetSessionContext);
   const data = state.data.form;
+  const { showAlert } = useAlert();
 
   const renderInput = (inputInfo: Input) => {
     if (inputInfo.isAlreadyTable) {
@@ -25,6 +28,27 @@ const ConfirmPage = () => {
   const cancel = () => {
     setState({ ...state, state: "form" });
   };
+
+  const submitForm = () => {
+    fetch(process.env.API_URL + "/forms", {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+        Authorization: "Basic " + "user1:password1",
+      },
+      body: JSON.stringify(state.data),
+    })
+      .then((response) => response.json())
+      .then((data) => {
+        console.log("Success:", data);
+        setState({ state: "capture", data: { pics: [], form: new Data([]) } });
+        showAlert(t("confirmSuccess"), "confirm");
+      })
+      .catch((error) => {
+        console.error("Error:", error);
+        showAlert(t("confirmError")+` : ${error}`, "error");
+    })
+  }
 
   const renderListInput = (inputInfo: Input) => {
     return (
@@ -149,7 +173,7 @@ const ConfirmPage = () => {
           </button>
           <button
             className="button-confirmPage"
-            onClick={() => console.log("Confirm")}
+            onClick={() => submitForm()}
             disabled={!isChecked}
           >
             {t("confirmButton")}

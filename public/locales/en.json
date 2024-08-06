@@ -74,5 +74,7 @@
   "showLess": "Show Less",
   "confirmationCheckbox":"By checking this box, I confirm that I have verified all the information on this page and I take full responsibility for any errors that may be present.",
   "exceedsLimit": "The images you uploaded exceed the limit of 4MB",
-  "currentStateSize": "Upload limit"
+  "currentStateSize": "Upload limit",
+  "confirmSuccess": "The label has been successfully submitted",
+  "confirmErros": "An error occurred while submitting the label"
 }

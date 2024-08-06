@@ -127,7 +127,6 @@ const FormPage = () => {
   );
 
   // command to approve all inputs only working in dev mode and always need to be put in comment before commit
-  /*
   const approveAll = () => {
     data.sections.forEach((section) => {
       section.inputs.forEach((input) => {
@@ -137,8 +136,10 @@ const FormPage = () => {
     });
     updateData();
   };
-  
-  window.approveAll = approveAll;*/
+
+  // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+  // @ts-expect-error
+  window.approveAll = approveAll;
 
   /**
    * Prepare and send request to backend for file analysis
