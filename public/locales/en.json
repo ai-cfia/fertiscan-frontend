@@ -76,5 +76,8 @@
   "exceedsLimit": "The images you uploaded exceed the limit of 4MB",
   "currentStateSize": "Upload limit",
   "confirmSuccess": "The label has been successfully submitted",
-  "confirmErros": "An error occurred while submitting the label"
+  "confirmErros": "An error occurred while submitting the label",
+  "fileElementToolTip":"Right click to see the options menu",
+  "delete":"Delete",
+  "invalidImageTypeAlert":"File type not valid (Accepted: JPG/PNG/HEIF)"
 }

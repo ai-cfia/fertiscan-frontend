@@ -77,4 +77,7 @@
   "showLess": "Voir Moins",
   "confirmSuccess": "Le label a été enregistré avec succès",
   "confirmError": "Une erreur est survenue lors de l'enregistrement du label"
+  "fileElementToolTip":"Click droit pour afficher le menu d'options",
+  "delete":"Supprimer",
+  "invalidImageTypeAlert":"Type de fichier non valide (Accepter: JPG/PNG/HEIF)"
 }
