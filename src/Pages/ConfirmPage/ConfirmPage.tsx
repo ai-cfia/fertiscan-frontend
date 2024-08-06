@@ -46,9 +46,9 @@ const ConfirmPage = () => {
       })
       .catch((error) => {
         console.error("Error:", error);
-        showAlert(t("confirmError")+` : ${error}`, "error");
-    })
-  }
+        showAlert(t("confirmError") + ` : ${error}`, "error");
+      });
+  };
 
   const renderListInput = (inputInfo: Input) => {
     return (
