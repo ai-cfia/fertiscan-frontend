@@ -1,11 +1,12 @@
-import Data from "../Model/Data-Model"
-import Input from "../Model/Input-Model"
-import Section from "../Model/Section-Model"
-import i18n from "../i18n"
+import Data from "../Model/Data-Model";
+import Input from "../Model/Input-Model";
+import Section from "../Model/Section-Model";
+import i18n from "../i18n";
 
-const t = i18n.t
+const t = i18n.t;
 
-export const FertiliserForm = () => new Data([
+export const FertiliserForm = () =>
+  new Data([
     new Section(t("compagnieHeader"), "company", [
       new Input(t("name"), "company_name"),
       new Input(t("address"), "company_address"),
@@ -44,29 +45,29 @@ export const FertiliserForm = () => new Data([
       new Input(t("firstAid_fr"), "first_aid_fr"),
       new Input(t("guaranteedAnalysis"), "guaranteed_analysis"),
     ]),
-])
+  ]);
 
-
+// eslint-disable-next-line
 export const populateFromJSON = (form: Data, data: any) => {
-    form.sections.forEach((section) => {
-        section.inputs.forEach((input) => {
-          if (typeof data[input.id] == "string") {
-            input.value = [data[input.id]];
-          } else if (
-            Array.isArray(data[input.id]) &&
-            typeof data[input.id][0] == "string"
-          ) {
-            input.value = data[input.id];
-            input.isAlreadyTable = true;
-          } else if (
-            Array.isArray(data[input.id]) &&
-            typeof data[input.id][0] == "object"
-          ) {
-            input.value = data[input.id];
-            input.isInputObjectList = true;
-          }
-        });
-      });
-    // for state update the function must return a new object
-    return form.copy();
-}
+  form.sections.forEach((section) => {
+    section.inputs.forEach((input) => {
+      if (typeof data[input.id] == "string") {
+        input.value = [data[input.id]];
+      } else if (
+        Array.isArray(data[input.id]) &&
+        typeof data[input.id][0] == "string"
+      ) {
+        input.value = data[input.id];
+        input.isAlreadyTable = true;
+      } else if (
+        Array.isArray(data[input.id]) &&
+        typeof data[input.id][0] == "object"
+      ) {
+        input.value = data[input.id];
+        input.isInputObjectList = true;
+      }
+    });
+  });
+  // for state update the function must return a new object
+  return form.copy();
+};

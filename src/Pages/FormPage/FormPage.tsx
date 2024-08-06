@@ -49,7 +49,7 @@ const FormPage = () => {
   >([]);
 
   // This object describes how the formPage data will looks like
-  const [data, setData] = useState<Data>( FertiliserForm());
+  const [data, setData] = useState<Data>(FertiliserForm());
 
   // command to approve all inputs only working in dev mode and always need to be put in comment before commit
   /*
@@ -92,7 +92,7 @@ const FormPage = () => {
     return data;
   };
 
-  const setForm = (response: any) => {
+  const setForm = (response: unknown) => {
     setData(populateFromJSON(data, response));
     updateData();
     setState({ ...state, data: { pics: blobs, form: data } });

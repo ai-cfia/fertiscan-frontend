@@ -15,8 +15,6 @@ const ConfirmPage = () => {
     setState({ ...state, state: "form" });
   };
 
-
-
   const [isChecked, setIsChecked] = useState(false);
 
   // eslint-disable-next-line
