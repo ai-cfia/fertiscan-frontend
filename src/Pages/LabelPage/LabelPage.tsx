@@ -5,26 +5,30 @@ import { FertiliserForm, populateFromJSON } from "../../Utils/FormCreator";
 import Data from "../../Model/Data-Model";
 import "./LabelPage.css";
 
-
 function LabelPage() {
-
   const params = useParams();
   const labelId = params.labelId;
   const [label, setLabel] = useState<Data>(FertiliserForm());
-  console.log
   useEffect(() => {
-    if(process.env.REACT_APP_ACTIVATE_USING_JSON=="true"){
-      fetch("/debug/"+labelId+".json")
-      .then(response => response.json())
-      .then(data => {
-        setLabel(populateFromJSON(label,data));
-      });
+    if (process.env.REACT_APP_ACTIVATE_USING_JSON == "true") {
+      fetch("/debug/" + labelId + ".json")
+        .then((response) => response.json())
+        .then((data) => {
+          setLabel(populateFromJSON(label, data));
+        });
+    } else {
+      fetch(process.env.API_URL + "/labels/" + labelId)
+        .then((r) => r.json())
+        .then((data) => {
+          setLabel(populateFromJSON(label, data));
+        });
     }
+    // eslint-disable-next-line
   }, [labelId]);
 
   return (
     <div className="label-page confirm-container">
-      <Label sections={label.sections}/>
+      <Label sections={label.sections} />
     </div>
   );
 }
