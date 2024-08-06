@@ -14,7 +14,7 @@ interface SessionContextType {
 }
 
 export const SessionContext = createContext<SessionContextType>({
-  state: { state: "captur", data: { pics: [], form: new Data([]) } },
+  state: { state: "capture", data: { pics: [], form: new Data([]) } },
 });
 
 export const SetSessionContext = createContext({
@@ -35,7 +35,7 @@ export const SessionProvider = ({ children }: React.PropsWithChildren<{}>) => {
     data: { pics: BlobData[]; form: Data };
   } = sessionStorage.getItem("state")
     ? JSON.parse(sessionStorage.getItem("state")!)
-    : { state: "captur", data: { pics: [], form: new Data([]) } };
+    : { state: "capture", data: { pics: [], form: new Data([]) } };
   const { showAlert } = useAlert();
 
   const stateReducer = (_state: StateType, newState: StateType) => {
