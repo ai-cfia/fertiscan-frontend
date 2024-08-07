@@ -5,7 +5,7 @@ import { useTranslation } from "react-i18next";
 import burgerMenu from "../../assets/burger-menu.svg";
 import { MenuChannel } from "../../Utils/EventChannels";
 const environment = {
-  version: "0.0.1",
+  version: "0.1.0",
 };
 
 function Header() {
