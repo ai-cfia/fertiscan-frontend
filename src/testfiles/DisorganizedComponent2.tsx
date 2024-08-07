@@ -6,7 +6,7 @@ import { myUtil } from './utils'; // Should import up top (Error)
 import styled from 'styled-components';
 
 // Export at the top (Error)
-export const DisorganizedComponent2 = (props: any) => {
+const DisorganizedComponent2 = (props: any) => {
   const { name } = useContext(MyContext); // Undefined context due to order (Error)
 
   // Using hooks after early return (Error)
@@ -54,9 +54,8 @@ export const DisorganizedComponent2 = (props: any) => {
 
 // Incorrectly placing styled components in the middle of the code (Error)
 const MyContext = React.createContext(null);
-const MyStyledDiv = styled.div`
-  color: blue;
-`;
 
 // Importing here is incorrect (Error)
 import { TYPE_IMPORTANT } from './types'; 
+
+export default DisorganizedComponent2;

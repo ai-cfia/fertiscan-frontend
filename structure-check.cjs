@@ -894,6 +894,32 @@ function recognizeType(path, state, filePath) {
   return 'unknown';
 }
 
+// Function to check if the context is being used before it's defined
+function checkForContextUsageOrder(path) {
+  // Check if the expression is a call to useContext
+  if (t.isCallExpression(path) && t.isIdentifier(path.node.callee, { name: 'useContext' })) {
+    // Retrieve the name of the context
+    const contextIdentifier = path.get('arguments')[0];
+    if (t.isIdentifier(contextIdentifier)) {
+      const contextName = contextIdentifier.node.name;
+      // Traverse upwards to check if the context identifier is defined
+      let isDefinedBeforeUsage = false;
+      path.findParent((parentPath) => {
+        if (parentPath.scope.hasBinding(contextName)) {
+          isDefinedBeforeUsage = true;
+          return true; // Stops traversing further up
+        }
+        return false;
+      });
+
+      // Throw an error if the context is used before it's defined
+      if (!isDefinedBeforeUsage) {
+        throw path.buildCodeFrameError(`Context \`${contextName}\` is undefined due to order. (Error)`);
+      }
+    }
+  }
+}
+
 // Do the same thing as the previous function 
 /**
  * Routes the AST path to the appropriate handler function based on the identified function type within the code. 
@@ -1164,13 +1190,13 @@ function handleGlobalConstantDeclaration(path, state, filePath) {
   // Check if the path is directly under the Program node (not nested inside any function/component)
   if (path.scope.path.type === 'Program') {
     if (state.hasHelperFunctions || state.hasCustomHooks || state.hasReactComponent ||
-        state.hasExports) {
+        state.hasExports || state.hasPropTypes || state.hasDefaultProps|| state.hasTypes || state.hasInterfaces || state.hasEnums||state.hasHooks) {
       const errorMessage = generateErrorMessage("Global constant", state, filePath);
       if (errorMessage) {
         reportError(path.node, errorMessage, filePath);
       }
-      state.hasGlobalConstants = true;
     } 
+    state.hasGlobalConstants = true;
   }
 }
 
@@ -1302,6 +1328,11 @@ function handleCustomHookDeclaration(path, state, filePath) {
         handleVariableDeclarator(innerPath, state, filePath);
         }
       },
+      CallExpression(path) {
+        if (!hasDisableCheckComment(path)) {
+        checkForContextUsageOrder(path);
+        }
+      },
       ReturnStatement(innerPath) {
         if (!hasDisableCheckComment(path)) {
         handleReturnStatement(innerPath, state, filePath);
@@ -1393,6 +1424,11 @@ function handleMainReactComponent(path, state, filePath) {
         handleVariableDeclarator(innerPath, state, filePath);
         }
       },
+      CallExpression(path) {
+        if (!hasDisableCheckComment(path)) {
+        checkForContextUsageOrder(path);
+        }
+      },
       ReturnStatement(innerPath) {
         if (!hasDisableCheckComment(path)) {
         handleReturnStatement(innerPath, state, filePath); // Only handle the main return statement
@@ -1452,6 +1488,11 @@ function handleHelperFunctionDeclaration(path, state, filePath) {
       VariableDeclarator(innerPath) {
         if (!hasDisableCheckComment(path)) {
         handleVariableDeclarator(innerPath, state, filePath);
+        }
+      },
+      CallExpression(path) {
+        if (!hasDisableCheckComment(path)) {
+        checkForContextUsageOrder(path);
         }
       },
       ReturnStatement(innerPath) {
