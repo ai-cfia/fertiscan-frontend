@@ -1,0 +1,6 @@
+# structure-check.ignore
+.test.
+.spec.
+Mock
+.config.
+vite-env.d.ts

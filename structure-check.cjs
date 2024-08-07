@@ -8,6 +8,9 @@ const { readdir, stat } = fsPromises;
 const readFileSync = fs.readFileSync;
 const projectPath = 'src';
 const filePattern = /\.(ts|tsx)$/; // Use a regex pattern for matching file extensions
+const ignoreFilePath = 'structure-check.ignore';
+const util = require('util');
+const readFile = util.promisify(fs.readFile);
 
 // ---------------------- File processing functions ----------------------
 
@@ -20,17 +23,22 @@ const filePattern = /\.(ts|tsx)$/; // Use a regex pattern for matching file exte
  * @param {RegExp} pattern - The file pattern to search for.
  * @returns {Promise<string[]>} A promise that resolves to an array of file paths matching the pattern.
  */
-async function findFilesRecursive(dir, pattern, fileList = []) {
+async function findFilesRecursive(dir, pattern, fileList = [], ignorePattern) {
   const files = await readdir(dir);
 
   for (const file of files) {
     const fullPath = path.join(dir, file);
     const fileStat = await stat(fullPath);
 
+    // Test the ignorePattern against the full path
+    if (ignorePattern && ignorePattern.test(fullPath)) {
+      continue; // Skip ignored files or directories
+    }
+
     if (fileStat.isDirectory()) {
-      await findFilesRecursive(fullPath, pattern, fileList); // recurse into subdirectories
+      await findFilesRecursive(fullPath, pattern, fileList, ignorePattern); // Recurse into subdirectories
     } else if (pattern.test(file)) {
-      fileList.push(fullPath); // add to list if file matches pattern
+      fileList.push(fullPath); // Add to list if file matches the pattern
     }
   }
 
@@ -50,8 +58,8 @@ async function findFilesRecursive(dir, pattern, fileList = []) {
 async function checkProjectStructure() {
   try {
     console.log('Recherche des fichiers .ts et .tsx dans le projet...');
-    
-    const files = await findFilesRecursive(projectPath, filePattern);
+    const ignorePattern = await compileIgnorePattern(ignoreFilePath);
+    const files = await findFilesRecursive(projectPath, filePattern, [], ignorePattern);
 
     if (files.length === 0) {
       console.log(`Aucun fichier correspondant trouvé avec le motif "${filePattern}".`);
@@ -107,9 +115,37 @@ async function checkFile(filePath) {
 
   traverse(ast, setupTraverse(state, filePath));
 
+  // Once the AST traversal is complete, check if the main component's name matches the file name
+  if (state.hasMainComponent) {
+    const mainComponentName = getMainComponentNameFromFileName(filePath);
+    if (!isExportDeclarationWithName(state.mainComponentPath, mainComponentName)) {
+      console.error(`Error in ${filePath}: No main detected as the main is detected by the fileName please rename your main component to match the file name.`);
+    }
+  }else{
+    console.error(`Error in ${filePath}: No main detected as the main (Function/Component/Class) is detected by the fileName please rename your main component to match the file name.`);
+  }
+
   console.log(`File ${filePath} checked.`);
   console.log("------------------------------------------------------------")
   console.log('\n');
+}
+
+// Function to read ignore patterns and compile them into a regex
+async function compileIgnorePattern(ignoreFilePath) {
+  try {
+    const fileContent = await readFile(ignoreFilePath, 'utf-8');
+    const patterns = fileContent
+      .split('\n')
+      .filter(Boolean) // Remove empty lines
+      .filter(line => !line.startsWith('#')) // Remove comments
+      .map(pattern => pattern.trim())
+      .map(pattern => pattern.replace(/\./g, '\\.')) // Escape dots for regex
+      .join('|'); // Combine into a single regex pattern
+    return new RegExp(patterns);
+  } catch (error) {
+    console.error(`Error reading '${ignoreFilePath}': ${error.message}`);
+    return new RegExp(''); // Return an empty regex if error occurs
+  }
 }
 
 // ---------------------- State tracker functions ----------------------
@@ -129,6 +165,7 @@ function createStateTracker() {
     hasImports: false,
     hasGlobalConstants: false,
     hasHelperFunctions: false,
+    hasHandlers: false,
     hasCustomHooks: false,
     hasConstants: false,
     hasTypes: false,
@@ -143,6 +180,7 @@ function createStateTracker() {
     hasMainComponent: false,
     mainComponentPath: null,
     hasEncounteredOtherComponent : false,
+    dontContainMainComponentSameNameAsFile : false,
   };
 }
 
@@ -160,7 +198,6 @@ function createStateTracker() {
  */
 function reportError(node, message, filePath) {
   const location = node.loc.start;
-  // Adjust the format to suit your editor if necessary; the following should work for VSCode and compatible terminals:
   console.error(`Error in ${filePath} :${location.line}:${location.column} - ${message}`);
 }
 
@@ -331,33 +368,6 @@ function isFunctionExpression(node) {
  */
 function isArrowFunctionExpression(node) {
   return node.type === 'ArrowFunctionExpression';
-}
-
-/**
- * Determines if a given path represents a main component that is exported.
- *
- * @param {Path} path - The path to check.
- * @returns {boolean} - True if the path represents a main component that is exported, false otherwise.
- */
-function isMainComponentByExport(path) {
-  if (path.isFunctionDeclaration()) {
-    // Directly exported function declarations like: `export default function MyComponent() {}`
-    return true;
-  } else if (path.isFunctionExpression() || path.isArrowFunctionExpression()) {
-    // Arrow functions or function expressions could be variable declarators
-    if (path.parentPath.isVariableDeclarator()) {
-      // Here we should ensure that the declarator has an identifier
-      const declarator = path.parentPath.node;
-      if (declarator.id && declarator.id.name) {
-        // We check if variable declarators are directly exported
-        const parentExport = path.parentPath.parentPath.parentPath;
-        if (isExportDeclarationWithName(parentExport, declarator.id.name)) {
-          return true;  // This confirms the export contains the function
-        }
-      }
-    }
-  }
-  return false;
 }
 
 /**
@@ -575,6 +585,30 @@ function isMainFunctionComponent(path, state, filePath) {
     return true;
   }
 
+  return false;
+}
+
+function isExportDeclarationWithName(path, componentName) {
+  if (path.isExportDefaultDeclaration() && path.has('declaration')) {
+    const declaration = path.get('declaration');
+    if (declaration.isIdentifier()) {
+      // Directly checks the identifier name when exporting a default identifier
+      return declaration.node.name === componentName;
+    } else if (declaration.isFunctionDeclaration() || declaration.isClassDeclaration()) {
+      // Check the function or class name for default function/class exports
+      return declaration.node.id && declaration.node.id.name === componentName;
+    }
+  } else if (path.isExportNamedDeclaration()) {
+    // For named exports, check specifiers to see if the exported name matches the component name
+    return path.node.specifiers.some(specifier => {
+      return (
+        (specifier.exported.name === componentName) && // Exported name matches
+        // Optional: If you want to check if the local name matches the exported name
+        (specifier.local ? specifier.local.name === componentName : true) 
+      );
+    });
+  }
+  // Return false if the path is neither default nor named export
   return false;
 }
 
@@ -1185,10 +1219,7 @@ function handleTSEnumDeclaration(path, state, filePath) {
  *                            developers with the context needed to locate and address code organization issues.
  *
  * Note: The function currently outputs a console log for diagnostic purposes and assumes a specific order of type declarations. Modifications
- * may be required if the code organization conventions change. Furthermore, the error reporting mechanism should be reviewed for effective 
- * developer communication.
- * TODO: Consider refining the ordering logic and improving error reporting features to accommodate different project standards or style guides.
- * It may be beneficial to integrate this functionality with a linter or other developer tools for streamlined issue resolution workflows.
+ * may be required if the code organization conventions change.
  */
 function handleTSTypeAliasDeclaration(path, state, filePath) {
   console.log('Type alias declaration detected:', path.node.type);
@@ -1250,7 +1281,7 @@ function handleCustomHookDeclaration(path, state, filePath) {
   }
   // Call isCustomHook to check if the function name matches the custom hook pattern
   if (isCustomHook(functionName)) {
-    console.log('Custom hook declaration detected:', path.node.type, filePath);
+    console.log('Custom hook declaration detected:', path.node.type);
     // Ensure custom hooks are declared in the right order
     if (state.hasHelperFunctions || state.hasReactComponent || state.hasEnums || 
       state.hasTypes || state.hasInterfaces || state.hasReactComponent || 
@@ -1262,6 +1293,32 @@ function handleCustomHookDeclaration(path, state, filePath) {
       }
     } 
     state.hasCustomHooks = true;
+    enterReactComponent(state);
+  
+    // Traverse the  component for additional logic specific to React component structure
+    path.traverse({
+      VariableDeclarator(innerPath) {
+        handleVariableDeclarator(innerPath, state, filePath);
+      },
+      ReturnStatement(innerPath) {
+        handleReturnStatement(innerPath, state, filePath);
+      },
+      JSXElement(innerPath) {
+        handleJSXElement(innerPath, state, filePath);
+      },
+      FunctionExpression(innerPath) {
+        handleFunctionExpressionsAndArrowFunctions(innerPath, state, filePath);
+      },
+      ArrowFunctionExpression(innerPath) {
+        handleFunctionExpressionsAndArrowFunctions(innerPath, state, filePath);
+      },
+
+      exit(innerPath) {
+        if (innerPath === path) { // Exit from the component
+          exitReactComponent(state);
+        }
+      },
+    });
   }
 }
 
@@ -1321,9 +1378,6 @@ function handleMainReactComponent(path, state, filePath) {
   
     // Traverse the main component for additional logic specific to React component structure
     path.traverse({
-      ImportDeclaration(innerPath) {
-        handleImportDeclaration(innerPath, state, filePath);
-      },
       VariableDeclarator(innerPath) {
         handleVariableDeclarator(innerPath, state, filePath);
       },
@@ -1339,11 +1393,6 @@ function handleMainReactComponent(path, state, filePath) {
       ArrowFunctionExpression(innerPath) {
         handleFunctionExpressionsAndArrowFunctions(innerPath, state, filePath);
       },
-      ClassDeclaration(innerPath) {
-        // If you have logic for class components
-      },
-      // Here you can traverse other node types as needed specifically for the main component
-      // ...
 
       exit(innerPath) {
         if (innerPath === path) { // Exit from the main component
@@ -1351,8 +1400,6 @@ function handleMainReactComponent(path, state, filePath) {
         }
       },
     });
-  } else {
-    // Logic when the main component is not found, or if we find a secondary component in the file
   }
 }
 
@@ -1373,16 +1420,42 @@ function handleHelperFunctionDeclaration(path, state, filePath) {
     console.log('Helper function declaration detected:', path.node.type);
     if (!state.hasConstants && !state.hasCustomHooks && !state.hasReactComponent&& !state.hasExports&& !state.hasPropTypes&& !state.hasDefaultProps) {
         state.hasHelperFunctions = true;
-
-        }else{
-          const errorMessage = generateErrorMessage("Helper Functions",state, filePath);
-          if (errorMessage) {
-            reportError(path.node, errorMessage);
-          }
-          state.hasHelperFunctions = true;
+    }else{
+      const errorMessage = generateErrorMessage("Helper Functions",state, filePath);
+      if (errorMessage) {
+        reportError(path.node, errorMessage);
+      }
+      state.hasHelperFunctions = true;
     }
+    enterReactComponent(state);
+  
+    // Traverse the function for additional logic specific to React function structure
+    path.traverse({
+      VariableDeclarator(innerPath) {
+        handleVariableDeclarator(innerPath, state, filePath);
+      },
+      ReturnStatement(innerPath) {
+        handleReturnStatement(innerPath, state, filePath);
+      },
+      JSXElement(innerPath) {
+        handleJSXElement(innerPath, state, filePath);
+      },
+      FunctionExpression(innerPath) {
+        handleFunctionExpressionsAndArrowFunctions(innerPath, state, filePath);
+      },
+      ArrowFunctionExpression(innerPath) {
+        handleFunctionExpressionsAndArrowFunctions(innerPath, state, filePath);
+      },
+
+      exit(innerPath) {
+        if (innerPath === path) { // Exit from the function
+          exitReactComponent(state);
+        }
+      },
+    });
 }
 
+// TODO: Ajouter la gestion de ce handler dans les autre composants
 /**
  * Processes function expressions and arrow functions, evaluating their names to categorize them as hooks or handler functions.
  * Hooks should precede handler functions and render logic within a component structure. This function enforces the correct
@@ -1411,7 +1484,7 @@ function handleFunctionExpressionsAndArrowFunctions(innerPath, state, filePath) 
     } else if (state.hasConditionalRender || state.hasReturn) {
       reportError(innerPath.node, 'Handlers should be defined before render logic and return statement.', filePath);
     }
-    state.hasHandlers = true; // Assumes state contains a hasHandlers flag
+    state.hasHandlers = true;
   }
 }
 
@@ -1611,6 +1684,7 @@ function enterReactComponent(state) {
 function exitReactComponent(state) {
   state.insideReactComponent = false;
 }
+
 
 // Call the async check function
 checkProjectStructure();
