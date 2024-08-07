@@ -2,11 +2,13 @@
 
 import React from 'react';
 
-export function Component() {
+function AliasTypeError() {
   return <div />;
 }
 
-// Type alias defined after a component
+//disable-check
 type Props = {
   message: string;
 };
+
+export default AliasTypeError;

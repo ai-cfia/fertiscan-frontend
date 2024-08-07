@@ -3,7 +3,7 @@
 import React from 'react';
 
 
-function Component(props: ComponentProps) {
+function PropType(props: ComponentProps) {
   return <div>{props.message}</div>;
 }
 // Prop types defined after a component (Incorrect as per rules)
@@ -12,4 +12,4 @@ type ComponentProps = {
 };
 
 
-export default Component;
+export default PropType;

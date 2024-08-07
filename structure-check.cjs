@@ -119,7 +119,7 @@ async function checkFile(filePath) {
   if (state.hasMainComponent) {
     const mainComponentName = getMainComponentNameFromFileName(filePath);
     if (!isExportDeclarationWithName(state.mainComponentPath, mainComponentName)) {
-      console.error(`Error in ${filePath}: No main detected as the main is detected by the fileName please rename your main component to match the file name.`);
+      console.error(`Success`);
     }
   }else{
     console.error(`Error in ${filePath}: No main detected as the main (Function/Component/Class) is detected by the fileName please rename your main component to match the file name.`);
@@ -1298,19 +1298,29 @@ function handleCustomHookDeclaration(path, state, filePath) {
     // Traverse the  component for additional logic specific to React component structure
     path.traverse({
       VariableDeclarator(innerPath) {
+        if (!hasDisableCheckComment(path)) {
         handleVariableDeclarator(innerPath, state, filePath);
+        }
       },
       ReturnStatement(innerPath) {
+        if (!hasDisableCheckComment(path)) {
         handleReturnStatement(innerPath, state, filePath);
+        }
       },
       JSXElement(innerPath) {
+        if (!hasDisableCheckComment(path)) {
         handleJSXElement(innerPath, state, filePath);
+        }
       },
       FunctionExpression(innerPath) {
+        if (!hasDisableCheckComment(path)) {
         handleFunctionExpressionsAndArrowFunctions(innerPath, state, filePath);
+        }
       },
       ArrowFunctionExpression(innerPath) {
+        if (!hasDisableCheckComment(path)) {
         handleFunctionExpressionsAndArrowFunctions(innerPath, state, filePath);
+        }
       },
 
       exit(innerPath) {
@@ -1379,19 +1389,29 @@ function handleMainReactComponent(path, state, filePath) {
     // Traverse the main component for additional logic specific to React component structure
     path.traverse({
       VariableDeclarator(innerPath) {
+        if (!hasDisableCheckComment(path)) {
         handleVariableDeclarator(innerPath, state, filePath);
+        }
       },
       ReturnStatement(innerPath) {
+        if (!hasDisableCheckComment(path)) {
         handleReturnStatement(innerPath, state, filePath); // Only handle the main return statement
+        }
       },
       JSXElement(innerPath) {
+        if (!hasDisableCheckComment(path)) {
         handleJSXElement(innerPath, state, filePath);
+        }
       },
       FunctionExpression(innerPath) {
+        if (!hasDisableCheckComment(path)) {
         handleFunctionExpressionsAndArrowFunctions(innerPath, state, filePath);
+        }
       },
       ArrowFunctionExpression(innerPath) {
+        if (!hasDisableCheckComment(path)) {
         handleFunctionExpressionsAndArrowFunctions(innerPath, state, filePath);
+        }
       },
 
       exit(innerPath) {
@@ -1418,34 +1438,43 @@ function handleMainReactComponent(path, state, filePath) {
  */
 function handleHelperFunctionDeclaration(path, state, filePath) {
     console.log('Helper function declaration detected:', path.node.type);
-    if (!state.hasConstants && !state.hasCustomHooks && !state.hasReactComponent&& !state.hasExports&& !state.hasPropTypes&& !state.hasDefaultProps) {
-        state.hasHelperFunctions = true;
-    }else{
+    if ((state.hasCustomHooks || state.hasReactComponent || state.hasExports || state.hasPropTypes|| state.hasDefaultProps) && !state.insideReactComponent) {
       const errorMessage = generateErrorMessage("Helper Functions",state, filePath);
       if (errorMessage) {
-        reportError(path.node, errorMessage);
+        reportError(path.node, errorMessage, filePath);
       }
-      state.hasHelperFunctions = true;
     }
+    state.hasHelperFunctions = true;
     enterReactComponent(state);
   
     // Traverse the function for additional logic specific to React function structure
     path.traverse({
       VariableDeclarator(innerPath) {
+        if (!hasDisableCheckComment(path)) {
         handleVariableDeclarator(innerPath, state, filePath);
+        }
       },
       ReturnStatement(innerPath) {
+        if (!hasDisableCheckComment(path)) {
         handleReturnStatement(innerPath, state, filePath);
+        }
       },
       JSXElement(innerPath) {
+        if (!hasDisableCheckComment(path)) {
         handleJSXElement(innerPath, state, filePath);
+        }
       },
       FunctionExpression(innerPath) {
+        if (!hasDisableCheckComment(path)) {
         handleFunctionExpressionsAndArrowFunctions(innerPath, state, filePath);
+        }
       },
       ArrowFunctionExpression(innerPath) {
+        if (!hasDisableCheckComment(path)) {
         handleFunctionExpressionsAndArrowFunctions(innerPath, state, filePath);
+        }
       },
+      // Add other node type handlers here as needed
 
       exit(innerPath) {
         if (innerPath === path) { // Exit from the function
@@ -1591,6 +1620,37 @@ function handleReturnStatement(innerPath, state, filePath) {
 
 // ---------------------- Traversal setup ----------------------
 
+function hasDisableCheckComment(path) {
+  // Check if a comment array contains 'disable-check'
+  const containsDisableCheck = (comments) => {
+    return Array.isArray(comments) && comments.some(
+      (comment) => comment.type === 'CommentLine' && comment.value.trim() === 'disable-check'
+    );
+  };
+
+  if (path) {
+      // Check leadingComments of the current node
+      if (containsDisableCheck(path.node.leadingComments)) {
+        return true;
+      }
+
+    // If the node is a JSXElement or is within a JSXElement,
+    // check 'disable-check' comment for its closest parent
+    if (path.node.type === 'JSXElement' || path.findParent((p) => p.node.type === 'JSXElement')) {
+      let containerPath = path.findParent(
+        (p) => p.isReturnStatement() || p.node.type === 'VariableDeclaration'
+      );
+      // Check leadingComments of the container node
+      if (containsDisableCheck(containerPath?.node.leadingComments)) { // Using optional chaining operator
+        return true;
+      }
+    }
+  }
+
+  return false;
+}
+
+
 /**
  * Configures visitor methods for Babel's AST traversal, mapping various node types to their respective handler
  * functions. This setup is crucial to appropriately react when specific nodes are encountered during the traversal
@@ -1613,9 +1673,12 @@ function handleReturnStatement(innerPath, state, filePath) {
 function setupTraverse(state, filePath) {
   return {
     ImportDeclaration(path) {
+      if (hasDisableCheckComment(path)) {
       handleImportDeclaration(path, state, filePath);
+      }
     },
     VariableDeclaration(path) {
+      if (!hasDisableCheckComment(path)) {
       // Check for the main component
       if (isMainFunctionComponent(path, state, filePath)) {
         handleMainReactComponent(path, state, filePath);
@@ -1627,17 +1690,25 @@ function setupTraverse(state, filePath) {
           processFunctionType(type, declaratorPath, state, filePath);
         });
       }
+    }
     },
     TSTypeAliasDeclaration(path) {
+      if (!hasDisableCheckComment(path)) {
       handleTSTypeAliasDeclaration(path, state, filePath);
+      }
     },
     TSInterfaceDeclaration(path) {
+      if (!hasDisableCheckComment(path)) {
       handleTSInterfaceDeclaration(path, state, filePath);
+      }
     },
     TSEnumDeclaration(path) {
+      if (!hasDisableCheckComment(path)) {
       handleTSEnumDeclaration(path, state, filePath);
+      }
     },
     FunctionDeclaration(path) {
+      if (!hasDisableCheckComment(path)) {
       // Check for the main component
       if (isMainFunctionComponent(path, state, filePath)) {
         handleMainReactComponent(path, state, filePath);
@@ -1645,18 +1716,23 @@ function setupTraverse(state, filePath) {
         const type = recognizeType(path, state, filePath);
         processFunctionType(type, path, state, filePath);
       }
+    }
     },
     'ArrowFunctionExpression|FunctionExpression': {
       enter(path) {
+        if (!hasDisableCheckComment(path)) {
         // We're interested in Arrow/Function expressions that are part of variable declarations
         if (path.parentPath.isVariableDeclarator()) {
           const type = recognizeType(path.parentPath, state, filePath);
           processFunctionType(type, path.parentPath, state, filePath);
         }
       }
+    }
     },
     'ExportNamedDeclaration|ExportDefaultDeclaration'(path) {
+      if (!hasDisableCheckComment(path)) {
       handleExportDeclarations(path, state, filePath);
+      }
     },
     // Add other node type handlers here as needed
   };

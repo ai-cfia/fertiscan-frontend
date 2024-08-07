@@ -20,6 +20,8 @@
   },
   "devDependencies": {
     "@babel/core": "^7.25.2",
+    "@babel/preset-env": "^7.25.3",
+    "@babel/preset-react": "^7.24.7",
     "@babel/types": "^7.25.2",
     "@types/react": "^18.3.3",
     "@types/react-dom": "^18.3.0",
