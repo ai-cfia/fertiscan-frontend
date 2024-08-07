@@ -1,5 +1,10 @@
 import React, { useState, useEffect } from 'react';
 
+const useBadHook = () => {
+  useEffect(() => {
+    console.log('This is a bad side effect placement.');
+  }, []);
+};
 // main component
 const BadComponent: React.FC = () => {
   const renderConditionally = () => {
@@ -25,11 +30,7 @@ const BadComponent: React.FC = () => {
   );
 };
 
-const useBadHook = () => {
-  useEffect(() => {
-    console.log('This is a bad side effect placement.');
-  }, []);
-};
+
 
 type Props = {
   message: string; // Types should be declared at the top of the file.
