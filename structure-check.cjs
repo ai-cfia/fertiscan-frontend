@@ -1746,8 +1746,6 @@ function handleExportDeclarations(path, state, filePath) {
   }  
   state.topLevelState.hasExports = true;  
 }  
-  
-
 
 /**
  * Inspects JSX elements within the AST to verify they are correctly placed within the structure of a React component.
@@ -2059,12 +2057,12 @@ async function fixFile(filePath) {
 function analyzeCode(ast) {  
   const sections = {  
     imports: [],  
+    localConstants: new Map(), 
     constants: [],  
-    types: [],  
     functions: [],  
-    components: [],  
+    components: [],
+    types: [],  
     exports: [],  
-    localConstants: new Map() // For local constants inside functions  
   };  
   
   traverse(ast, {  
