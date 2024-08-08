@@ -16,7 +16,23 @@ function SideMenu() {
   const SideMenuRef = useRef<HTMLDivElement | null>(null);
   const navigate = useNavigate();
 
-  const goToHome = () => {
+  const saveState = () => {
+    switch (state.state) {
+      case "captur":
+        setState({ ...state, state: "FromCaptur" });
+        break;
+      case "form":
+        setState({ ...state, state: "FromForm" });
+        break;
+      case "validation":
+        setState({ ...state, state: "FromValidation" });
+        break;
+      default:
+        break;
+    }
+  };
+
+  const retrieveState = () => {
     switch (state.state) {
       case "FromCapture":
         setState({ ...state, state: "capture" });
@@ -33,26 +49,19 @@ function SideMenu() {
           data: { pics: [], form: new Data([]) },
         });
     }
+  };
+
+  const goToHome = () => {
+    retrieveState();
     navigate("/");
   };
 
   const goToSettings = () => {
-    switch (state.state) {
-      case "capture":
-        setState({ ...state, state: "FromCapture" });
-        break;
-      case "form":
-        setState({ ...state, state: "FromForm" });
-        break;
-      case "validation":
-        setState({ ...state, state: "FromValidation" });
-        break;
-      default:
-        break;
-    }
+    saveState();
     navigate("/Settings");
   };
   const goToSavedList = () => {
+    saveState();
     navigate("/Saved");
   };
 
@@ -70,21 +79,25 @@ function SideMenu() {
           <li>
             {" "}
             <a className="side-menu_item" onClick={goToHome}>
-              <img className="menu-icon" src={home}></img>{" "}
+              <img alt="home icon" className="menu-icon" src={home}></img>{" "}
               <span>{t("home")}</span>
             </a>{" "}
           </li>
           <li>
             {" "}
             <a className="side-menu_item" onClick={goToSavedList}>
-              <img className="menu-icon" src={list}></img>{" "}
+              <img alt="list icon" className="menu-icon" src={list}></img>{" "}
               <span>savedList</span>
             </a>{" "}
           </li>
           <li>
             {" "}
             <a className="side-menu_item" onClick={goToSettings}>
-              <img className="menu-icon" src={settings}></img>{" "}
+              <img
+                alt="setting icon"
+                className="menu-icon"
+                src={settings}
+              ></img>{" "}
               <span>{t("settings")}</span>
             </a>{" "}
           </li>
