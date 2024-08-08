@@ -2058,7 +2058,7 @@ async function fixFile(filePath) {
 function analyzeCode(ast) {  
   const sections = {  
     imports: [],  
-    constants: [],  
+    constants: [], // Global constants  
     types: [],  
     interfaces: [],  
     enums: [],  
@@ -2066,7 +2066,7 @@ function analyzeCode(ast) {
     functions: [],  
     components: [],  
     exports: [],  
-    localDeclarations: [], // For local declarations inside functions or components  
+    localDeclarations: {}, // For local declarations inside functions or components  
   };  
   
   traverse(ast, {  
@@ -2144,7 +2144,7 @@ function analyzeCode(ast) {
 function reorderCode(sections) {  
   const orderedSections = [  
     ...sections.imports,  
-    ...sections.constants,  
+    ...sections.constants, // Place global constants after imports  
     ...sections.types,  
     ...sections.interfaces,  
     ...sections.enums,  
@@ -2164,6 +2164,7 @@ function reorderCode(sections) {
   
   return orderedSections;  
 }  
+
   
 function createNewAST(orderedSections) {  
   return {  
