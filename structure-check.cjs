@@ -1521,28 +1521,44 @@ function handleCustomHookDeclaration(path, state, filePath) {
  * Note: It assumes that non-top-level constants should precede specific hook and function declarations.
  * TODO: Review and refine the way local and global constants are distinguished and handled.
  */
-function handlelocalConstantDeclaration(path, state, filePath) {
-  console.log('Constante declaration detected:', path.node.type);
-  // Check if we are inside any function or component
-  if (path.scope.path.type !== 'Program') {
-    if (state.hasCustomHooks|| state.hasStyledComponents
-      ||state.hasInterfaces||state.hasTypes
-      ||state.hasEnums||state.hasMainComponent
-      ||state.hasHandlers||state.hasHooks
-      || state.hasReactComponent||state.hasPropTypes
-      ||state.hasDefaultProps || state.hasExports) { 
-      const errorMessage = generateErrorMessage("Constante", state, filePath);
-      if (errorMessage) {
-        reportError(path.node, errorMessage, filePath);
-      }
-    }
-    state.hasConstants = true;
-  }
-  // If the variable declaration is not within a function, consider it as a global constant
-  else if (path.scope.path.type === 'Program') {
-    handleGlobalConstantDeclaration(path, state, filePath);
-  }
-}
+/**  
+ * Handles local constant declarations inside functions or components and ensures they precede hook states, contexts, effects,  
+ * and handler function declarations. If a local constant is found after such hooks and functions, it reports an error.  
+ * If the declaration occurs at the top level of the module ('Program'), it treats it as a global constant instead.  
+ *  
+ * @param {Path} path - The path for the local constant declaration.  
+ * @param {State} state - State object tracking the encountered hooks and declarations.  
+ * @param {string} filePath - The file being processed for context in reporting.  
+ *  
+ * Note: It assumes that non-top-level constants should precede specific hook and function declarations.  
+ * TODO: Review and refine the way local and global constants are distinguished and handled.  
+ */  
+function handlelocalConstantDeclaration(path, state, filePath) {  
+  console.log('Local constant declaration detected:', path.node.type);  
+  
+  // Check if we are inside any function or component  
+  if (path.scope.path.type !== 'Program') {  
+    if (  
+      state.functionComponentState.hasHooks ||  
+      state.functionComponentState.hasHandlers ||  
+      state.functionComponentState.hasReactComponent ||  
+      state.functionComponentState.hasPropTypes ||  
+      state.functionComponentState.hasDefaultProps ||  
+      state.functionComponentState.hasExports  
+    ) {  
+      const errorMessage = generateErrorMessage("Constante", state.functionComponentState, filePath);  
+      if (errorMessage) {  
+        reportError(path.node, errorMessage, filePath);  
+      }  
+    }  
+    state.functionComponentState.hasConstants = true;  
+  }  
+  // If the variable declaration is not within a function, consider it as a global constant  
+  else if (path.scope.path.type === 'Program') {  
+    handleGlobalConstantDeclaration(path, state, filePath);  
+  }  
+}  
+
 
 /**
  * Identifies and processes the main React component within a file. The main React component is typically the first
@@ -1946,78 +1962,78 @@ function hasDisableCheckComment(path) {
  * @param {string} filePath - The path of the source file currently being processed by Babel, which can be used for context in reporting.
  * @returns {Object} An object defining visitor methods for the traversal, linking node types to their respective handling functions.
  */
-function setupTraverse(state, filePath) {
-  return {
-    ImportDeclaration(path) {
-      if (hasDisableCheckComment(path)) {
-        handleImportDeclaration(path, state, filePath);
-      }
-    },
-    CallExpression(path) {
+function setupTraverse(state, filePath) {  
+  return {  
+    ImportDeclaration(path) {  
+      if (!hasDisableCheckComment(path)) {  
+        handleImportDeclaration(path, state, filePath);  
+      }  
+    },  
+    CallExpression(path) {  
       handleUseContext(path, state, filePath); // Ensure context is defined before using  
-      checkForContextUsageOrder(path); // Check for context usage order    
+      checkForContextUsageOrder(path); // Check for context usage order  
       handleHooksAndEffects(path, state, filePath); // Handle placement of hooks and effects  
-  
-    },
-    VariableDeclaration(path) {
-      if (!hasDisableCheckComment(path)) {
+    },  
+    VariableDeclaration(path) {  
+      if (!hasDisableCheckComment(path)) {  
         if (isMainFunctionComponent(path, state, filePath)) {  
           handleMainReactComponent(path, state, filePath);  
-        }  else {
-          handlelocalConstantDeclaration(path, state, filePath);
-        }
-      }
-    },
-    TSTypeAliasDeclaration(path) {
-      if (!hasDisableCheckComment(path)) {
-        handleTSTypeAliasDeclaration(path, state, filePath);
-      }
-    },
-    TSInterfaceDeclaration(path) {
-      if (!hasDisableCheckComment(path)) {
-        handleTSInterfaceDeclaration(path, state, filePath);
-      }
-    },
-    TSEnumDeclaration(path) {
-      if (!hasDisableCheckComment(path)) {
-        handleTSEnumDeclaration(path, state, filePath);
-      }
-    },
-    FunctionDeclaration(path) {
-      if (!hasDisableCheckComment(path)) {
-        // Check for the main component
-        if (isMainFunctionComponent(path, state, filePath)) {
-          handleMainReactComponent(path, state, filePath);
-        } else {
-          const type = recognizeType(path, state, filePath);
-          processFunctionType(type, path, state, filePath);
-        }
-      }
-    },
-    TaggedTemplateExpression(path) {
-      if (!hasDisableCheckComment(path)) {
-        handleStyledComponent(path);
-      }
-    },
-    'ArrowFunctionExpression|FunctionExpression': {
-      enter(path) {
-        if (!hasDisableCheckComment(path)) {
-          // We're interested in Arrow/Function expressions that are part of variable declarations
-          if (path.parentPath.isVariableDeclarator()) {
-            const type = recognizeType(path.parentPath, state, filePath);
-            processFunctionType(type, path.parentPath, state, filePath);
-          }
-        }
-      }
-    },
-    'ExportNamedDeclaration|ExportDefaultDeclaration'(path) {
-      if (!hasDisableCheckComment(path)) {
-        handleExportDeclarations(path, state, filePath);
-      }
-    },
-    // Add other node type handlers here as needed
-  };
-}
+        } else {  
+          handlelocalConstantDeclaration(path, state, filePath);  
+        }  
+      }  
+    },  
+    TSTypeAliasDeclaration(path) {  
+      if (!hasDisableCheckComment(path)) {  
+        handleTSTypeAliasDeclaration(path, state, filePath);  
+      }  
+    },  
+    TSInterfaceDeclaration(path) {  
+      if (!hasDisableCheckComment(path)) {  
+        handleTSInterfaceDeclaration(path, state, filePath);  
+      }  
+    },  
+    TSEnumDeclaration(path) {  
+      if (!hasDisableCheckComment(path)) {  
+        handleTSEnumDeclaration(path, state, filePath);  
+      }  
+    },  
+    FunctionDeclaration(path) {  
+      if (!hasDisableCheckComment(path)) {  
+        // Check for the main component  
+        if (isMainFunctionComponent(path, state, filePath)) {  
+          handleMainReactComponent(path, state, filePath);  
+        } else {  
+          const type = recognizeType(path, state, filePath);  
+          processFunctionType(type, path, state, filePath);  
+        }  
+      }  
+    },  
+    TaggedTemplateExpression(path) {  
+      if (!hasDisableCheckComment(path)) {  
+        handleStyledComponent(path);  
+      }  
+    },  
+    'ArrowFunctionExpression|FunctionExpression': {  
+      enter(path) {  
+        if (!hasDisableCheckComment(path)) {  
+          // We're interested in Arrow/Function expressions that are part of variable declarations  
+          if (path.parentPath.isVariableDeclarator()) {  
+            const type = recognizeType(path.parentPath, state, filePath);  
+            processFunctionType(type, path.parentPath, state, filePath);  
+          }  
+        }  
+      }  
+    },  
+    'ExportNamedDeclaration|ExportDefaultDeclaration'(path) {  
+      if (!hasDisableCheckComment(path)) {  
+        handleExportDeclarations(path, state, filePath);  
+      }  
+    },  
+    // Add other node type handlers here as needed  
+  };  
+}  
+
 
 // ---------------------- Component enter/exit functions ----------------------
 
