@@ -12,7 +12,6 @@ const ignoreFilePath = 'structure-check.ignore';
 const util = require('util');
 const readFile = util.promisify(fs.readFile);
 const generate = require('@babel/generator').default;  
-const babelTraverse = require("@babel/traverse").default;  
 
 
 const descriptionMapping = {    
@@ -34,7 +33,6 @@ const descriptionMapping = {
   "Hooks": ["hasReactComponent", "hasPropTypes", "hasDefaultProps", "hasExports"],    
   "Exports": []    
 };    
-
 
 // ---------------------- File processing functions ----------------------
 
@@ -976,7 +974,7 @@ function recognizeType(path, state, filePath) {
     return 'mainFunctionComponent';    
   } else if (path.isFunctionDeclaration()) {    
     return 'normalFunction';    
-  } else if (isReactFunctionalComponent(path)) { // New case to detect functional components    
+  } else if (isFunctionalComponent(path)) { // New case to detect functional components    
     return 'functionalComponent';    
   } else if (isFunctionExpression(path.get('init')) || isArrowFunctionExpression(path.get('init'))) {    
     return 'expressionFunction';    
@@ -2221,10 +2219,6 @@ if (parseCommandLineArguments()) {
 } else {  
   checkProjectStructure();  
 }  
-
-
-
-
 
 // ---------------------- Disabled functions ----------------------
 
