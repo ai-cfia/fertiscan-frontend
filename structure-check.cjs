@@ -2036,33 +2036,16 @@ function exitReactComponent(state) {
 }  
 
 // ---------------------- fix AST function ----------------------
-async function fixFile(filePath) {  
-  console.log(`Fixing file: ${filePath}`);  
-  const content = readFileSync(filePath, 'utf-8');  
-  const ast = parseFile(content);  
-  
-  // Analyze and reorder the code sections  
-  const sections = analyzeCode(ast);  
-  const orderedSections = reorderCode(sections);  
-  
-  // Create a new AST with ordered sections  
-  const newAst = createNewAST(orderedSections);  
-  const newCode = generate(newAst, {}).code;  
-  
-  // Write the new code to the file  
-  fs.writeFileSync(filePath, newCode, 'utf-8');  
-  console.log(`File ${filePath} fixed.`);  
-}  
-  
 function analyzeCode(ast) {  
   const sections = {  
     imports: [],  
-    localConstants: new Map(), 
+    localConstants: new Map(),  
     constants: [],  
     functions: [],  
-    components: [],
+    components: [],  
     types: [],  
     exports: [],  
+    mainComponent: null,  // Add a separate section for the main component  
   };  
   
   traverse(ast, {  
@@ -2102,12 +2085,20 @@ function analyzeCode(ast) {
       path.remove(); // Remove the enum after collecting it  
     },  
     FunctionDeclaration(path) {  
-      sections.functions.push(path.node);  
+      if (isMainFunctionComponent(path, {}, getMainComponentNameFromFileName(ast.loc.filename))) {  
+        sections.mainComponent = path.node;  // Store the main component separately  
+      } else {  
+        sections.functions.push(path.node);  
+      }  
       path.remove(); // Remove the function after collecting it  
     },  
     ArrowFunctionExpression(path) {  
-      if (isReactComponent(path.parentPath)) {  
-        sections.components.push(path.parentPath.node);  
+      if (isReactComponent(path.parentPath) && path.parentPath.isVariableDeclarator()) {  
+        if (isMainFunctionComponent(path.parentPath, {}, getMainComponentNameFromFileName(ast.loc.filename))) {  
+          sections.mainComponent = path.parentPath.parent;  // Store the main component separately  
+        } else {  
+          sections.components.push(path.parentPath.node);  
+        }  
       } else if (isCustomHook(path.parentPath)) {  
         sections.functions.push(path.parentPath.node);  
       } else {  
@@ -2132,24 +2123,38 @@ function reorderCode(sections) {
   const orderedSections = [  
     ...sections.imports,  
     ...sections.constants,  
+    ...sections.types,  // Ensure types are placed before the main component  
     ...sections.functions,  
-    ...sections.types,  
     ...sections.components,  
     ...sections.exports,  
   ];  
+  
+  // Place the main component after types and constants but before exports  
+  if (sections.mainComponent) {  
+    const mainComponentIndex = orderedSections.findIndex(  
+      (node) => node === sections.mainComponent  
+    );  
+    if (mainComponentIndex === -1) {  
+      orderedSections.splice(  
+        sections.types.length + sections.constants.length,  
+        0,  
+        sections.mainComponent  
+      );  
+    }  
+  }  
   
   // Reorder code inside functions  
   for (let [functionBodyNode, localConsts] of sections.localConstants) {  
     // Insert local constants at the top of their function body  
     const newFunctionBody = [  
       ...localConsts,  
-      ...functionBodyNode.body.filter(node => !localConsts.includes(node))  
+      ...functionBodyNode.body.filter((node) => !localConsts.includes(node)),  
     ];  
     functionBodyNode.body = newFunctionBody;  
   }  
   
   return orderedSections;  
-}   
+}  
   
 function createNewAST(orderedSections) {  
   return {  
@@ -2159,7 +2164,24 @@ function createNewAST(orderedSections) {
   };  
 }  
   
-// ... Other parts of the script remain the same ...  
+async function fixFile(filePath) {  
+  console.log(`Fixing file: ${filePath}`);  
+  const content = readFileSync(filePath, 'utf-8');  
+  const ast = parseFile(content);  
+  
+  // Analyze and reorder the code sections  
+  const sections = analyzeCode(ast);  
+  const orderedSections = reorderCode(sections);  
+  
+  // Create a new AST with ordered sections  
+  const newAst = createNewAST(orderedSections);  
+  const newCode = generate(newAst, {}).code;  
+  
+  // Write the new code to the file  
+  fs.writeFileSync(filePath, newCode, 'utf-8');  
+  console.log(`File ${filePath} fixed.`);  
+}  
+
 
   
 async function fixProjectStructure() {  
