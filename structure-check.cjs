@@ -2056,6 +2056,7 @@ function analyzeCode(ast, filePath) {
     constants: [],  
     contexts: [], // Added contexts to separate context creations  
     hooks: [],    // Added hooks to separate hooks  
+    helperFunctions: [], // Ensure helper functions are initialized as arrays  
     functions: [],  
     components: [],  
     types: [],  
@@ -2106,7 +2107,7 @@ function analyzeCode(ast, filePath) {
       if (isMainFunctionComponent(path, {}, getMainComponentNameFromFileName(filePath))) {  
         sections.mainComponent = path.node;  
       } else {  
-        sections.functions.push(path.node); // Adjusted to push helper functions here  
+        sections.helperFunctions.push(path.node); // Adjusted to push helper functions here  
       }  
       path.remove();  
     },  
@@ -2118,9 +2119,9 @@ function analyzeCode(ast, filePath) {
           sections.components.push(path.parentPath.node);  
         }  
       } else if (isCustomHook(path.parentPath)) {  
-        sections.functions.push(path.parentPath.node); // Adjusted to push custom hooks here  
+        sections.helperFunctions.push(path.parentPath.node); // Adjusted to push custom hooks here  
       } else {  
-        sections.functions.push(path.parentPath.node); // Adjusted to push expression functions here  
+        sections.helperFunctions.push(path.parentPath.node); // Adjusted to push expression functions here  
       }  
       path.parentPath.remove();  
     },  
@@ -2136,6 +2137,7 @@ function analyzeCode(ast, filePath) {
   
   return sections;  
 }  
+
   
 function reorderCode(sections) {  
   const orderedSections = [  
@@ -2163,29 +2165,31 @@ function reorderCode(sections) {
 
 
   
-function reorderCode(sections) {    
-  const orderedSections = [    
-    ...sections.imports,    
-    ...sections.contexts,    
-    ...sections.constants,    
-    ...sections.helperFunctions, // Ensure helper functions are placed before components    
-    ...sections.types,    
-    ...sections.functions,    
-    ...sections.components,    
-    sections.mainComponent,    
-    ...sections.exports,    
-  ];    
-    
-  for (let [functionBodyNode, localConsts] of sections.localConstants) {    
-    const newFunctionBody = [    
-      ...localConsts,    
-      ...functionBodyNode.body.filter((node) => !localConsts.includes(node)),    
-    ];    
-    functionBodyNode.body = newFunctionBody;    
-  }    
-    
-  return orderedSections.filter(Boolean);    
+function reorderCode(sections) {  
+  const orderedSections = [  
+    ...sections.imports,  
+    ...sections.contexts, // Place contexts after imports  
+    ...sections.constants,  
+    ...sections.hooks,  // Place hooks after constants  
+    ...sections.types,  
+    ...sections.helperFunctions, // Ensure helper functions are included correctly  
+    ...sections.functions,  
+    ...sections.components,  
+    sections.mainComponent,  
+    ...sections.exports,  
+  ];  
+  
+  for (let [functionBodyNode, localConsts] of sections.localConstants) {  
+    const newFunctionBody = [  
+      ...localConsts,  
+      ...functionBodyNode.body.filter((node) => !localConsts.includes(node)),  
+    ];  
+    functionBodyNode.body = newFunctionBody;  
+  }  
+  
+  return orderedSections.filter(Boolean);  
 }  
+
 
   
 function createNewAST(orderedSections) {  
@@ -2246,6 +2250,7 @@ if (parseCommandLineArguments()) {
 } else {  
   checkProjectStructure();  
 }  
+
  
 
 // ---------------------- Disabled functions ----------------------
