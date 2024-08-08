@@ -12,6 +12,7 @@ const ignoreFilePath = 'structure-check.ignore';
 const util = require('util');
 const readFile = util.promisify(fs.readFile);
 const generate = require('@babel/generator').default;  
+const babelTraverse = require("@babel/traverse").default;  
 
 
 const descriptionMapping = {  
@@ -2055,64 +2056,102 @@ async function fixFile(filePath) {
   console.log(`File ${filePath} fixed.`);  
 }  
   
-function analyzeCode(ast) {  
-  const sections = {  
-    imports: [],  
-    constants: [],  
-    types: [],  
-    functions: [],  
-    components: [],  
-    exports: [],  
-  };  
-  
-  babelTraverse(ast, {  
-    ImportDeclaration(path) {  
-      sections.imports.push(path.node);  
-      path.remove(); // Remove the import after collecting it  
-    },  
-    VariableDeclaration(path) {  
-      if (isGlobalConstant(path)) {  
-        sections.constants.push(path.node);  
-      }  
-      path.remove(); // Remove the declaration after collecting it  
-    },  
-    TSTypeAliasDeclaration(path) {  
-      sections.types.push(path.node);  
-      path.remove(); // Remove the type alias after collecting it  
-    },  
-    TSInterfaceDeclaration(path) {  
-      sections.types.push(path.node);  
-      path.remove(); // Remove the interface after collecting it  
-    },  
-    TSEnumDeclaration(path) {  
-      sections.types.push(path.node);  
-      path.remove(); // Remove the enum after collecting it  
-    },  
-    FunctionDeclaration(path) {  
-      sections.functions.push(path.node);  
-      path.remove(); // Remove the function after collecting it  
-    },  
-    ArrowFunctionExpression(path) {  
-      if (isReactComponent(path.parentPath)) {  
-        sections.components.push(path.parentPath.node);  
-      } else if (isCustomHook(path.parentPath)) {  
-        sections.functions.push(path.parentPath.node);  
-      } else {  
-        sections.functions.push(path.parentPath.node);  
-      }  
-      path.parentPath.remove(); // Remove the arrow function after collecting it  
-    },  
-    ExportNamedDeclaration(path) {  
-      sections.exports.push(path.node);  
-      path.remove(); // Remove the export after collecting it  
-    },  
-    ExportDefaultDeclaration(path) {  
-      sections.exports.push(path.node);  
-      path.remove(); // Remove the export after collecting it  
-    },  
-  });  
-  
-  return sections;  
+  function analyzeCode(ast, state, filePath) {  
+    const sections = {  
+      imports: [],  
+      constants: [],  
+      types: [],  
+      functions: [],  
+      components: [],  
+      exports: [],  
+    };  
+    
+    traverse(ast, {  
+      ImportDeclaration(path) {  
+        if (!hasDisableCheckComment(path)) {  
+          handleImportDeclaration(path, state, filePath);  
+          sections.imports.push(path.node);  
+          path.remove(); // Remove the import after collecting it  
+        }  
+      },  
+      CallExpression(path) {  
+        handleUseContext(path, state, filePath); // Ensure context is defined before using    
+        checkForContextUsageOrder(path); // Check for context usage order      
+        handleHooksAndEffects(path, state, filePath); // Handle placement of hooks and effects  
+      },  
+      VariableDeclaration(path) {  
+        if (!hasDisableCheckComment(path)) {  
+          if (isMainFunctionComponent(path, state, filePath)) {  
+            handleMainReactComponent(path, state, filePath);  
+          } else {  
+            handlelocalConstantDeclaration(path, state, filePath);  
+            sections.constants.push(path.node);  
+          }  
+          path.remove(); // Remove the declaration after collecting it  
+        }  
+      },  
+      TSTypeAliasDeclaration(path) {  
+        if (!hasDisableCheckComment(path)) {  
+          handleTSTypeAliasDeclaration(path, state, filePath);  
+          sections.types.push(path.node);  
+          path.remove(); // Remove the type alias after collecting it  
+        }  
+      },  
+      TSInterfaceDeclaration(path) {  
+        if (!hasDisableCheckComment(path)) {  
+          handleTSInterfaceDeclaration(path, state, filePath);  
+          sections.types.push(path.node);  
+          path.remove(); // Remove the interface after collecting it  
+        }  
+      },  
+      TSEnumDeclaration(path) {  
+        if (!hasDisableCheckComment(path)) {  
+          handleTSEnumDeclaration(path, state, filePath);  
+          sections.types.push(path.node);  
+          path.remove(); // Remove the enum after collecting it  
+        }  
+      },  
+      FunctionDeclaration(path) {  
+        if (!hasDisableCheckComment(path)) {  
+          if (isMainFunctionComponent(path, state, filePath)) {  
+            handleMainReactComponent(path, state, filePath);  
+          } else {  
+            const type = recognizeType(path, state, filePath);  
+            processFunctionType(type, path, state, filePath);  
+            sections.functions.push(path.node);  
+          }  
+          path.remove(); // Remove the function after collecting it  
+        }  
+      },  
+      TaggedTemplateExpression(path) {  
+        if (!hasDisableCheckComment(path)) {  
+          handleStyledComponent(path);  
+        }  
+      },  
+      'ArrowFunctionExpression|FunctionExpression': {  
+        enter(path) {  
+          if (!hasDisableCheckComment(path)) {  
+            // We're interested in Arrow/Function expressions that are part of variable declarations  
+            if (path.parentPath.isVariableDeclarator()) {  
+              const type = recognizeType(path.parentPath, state, filePath);  
+              processFunctionType(type, path.parentPath, state, filePath);  
+              sections.functions.push(path.parentPath.node);  
+              path.parentPath.remove(); // Remove the arrow/function expression after collecting it  
+            }  
+          }  
+        }  
+      },  
+      'ExportNamedDeclaration|ExportDefaultDeclaration'(path) {  
+        if (!hasDisableCheckComment(path)) {  
+          handleExportDeclarations(path, state, filePath);  
+          sections.exports.push(path.node);  
+          path.remove(); // Remove the export after collecting it  
+        }  
+      },  
+    });  
+    
+    return sections;  
+  }  
 }  
   
 function reorderCode(sections) {  
