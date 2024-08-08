@@ -2066,11 +2066,13 @@ function analyzeCode(ast) {
     functions: [],  
     components: [],  
     exports: [],  
+    localDeclarations: [], // For local declarations inside functions or components  
   };  
   
   traverse(ast, {  
     ImportDeclaration(path) {  
       sections.imports.push(path.node);  
+      path.remove(); // Remove the import after collecting it  
     },  
     VariableDeclaration(path) {  
       if (path.scope.parent && path.scope.parent.block.type !== 'Program') {  
@@ -2083,13 +2085,11 @@ function analyzeCode(ast) {
             parent.isClassMethod() ||  
             parent.isObjectMethod()  
           ) {  
-            if (!sections.localDeclarations) {  
-              sections.localDeclarations = [];  
+            if (!sections.localDeclarations[parent.node.start]) {  
+              sections.localDeclarations[parent.node.start] = [];  
             }  
-            sections.localDeclarations.push({  
-              functionPath: parent,  
-              node: path.node,  
-            });  
+            sections.localDeclarations[parent.node.start].push(path.node);  
+            path.remove(); // Remove the local declaration after collecting it  
             return true; // Stop searching  
           }  
         });  
@@ -2097,6 +2097,7 @@ function analyzeCode(ast) {
         const declarationType = isGlobalConstant(path) ? 'constants' : 'functions'; // Use 'functions' for now if not constant  
         if (sections[declarationType]) {  
           sections[declarationType].push(path.node);  
+          path.remove(); // Remove the global declaration after collecting it  
         } else {  
           console.error(`Unknown declaration type: ${declarationType}`);  
         }  
@@ -2104,28 +2105,36 @@ function analyzeCode(ast) {
     },  
     TSTypeAliasDeclaration(path) {  
       sections.types.push(path.node);  
+      path.remove(); // Remove the type alias after collecting it  
     },  
     TSInterfaceDeclaration(path) {  
       sections.interfaces.push(path.node);  
+      path.remove(); // Remove the interface after collecting it  
     },  
     TSEnumDeclaration(path) {  
       sections.enums.push(path.node);  
+      path.remove(); // Remove the enum after collecting it  
     },  
     FunctionDeclaration(path) {  
       sections.functions.push(path.node);  
+      path.remove(); // Remove the function after collecting it  
     },  
     ArrowFunctionExpression(path) {  
       if (isCustomHook(path)) {  
         sections.hooks.push(path.node);  
+        path.remove(); // Remove the custom hook after collecting it  
       } else {  
         sections.functions.push(path.node);  
+        path.remove(); // Remove the function after collecting it  
       }  
     },  
     ExportNamedDeclaration(path) {  
       sections.exports.push(path.node);  
+      path.remove(); // Remove the export after collecting it  
     },  
     ExportDefaultDeclaration(path) {  
       sections.exports.push(path.node);  
+      path.remove(); // Remove the export after collecting it  
     },  
   });  
   
@@ -2146,15 +2155,12 @@ function reorderCode(sections) {
   ];  
   
   // Reinsert local declarations into their parent functions  
-  if (sections.localDeclarations) {  
-    sections.localDeclarations.forEach(({ functionPath, node }) => {  
-      const body = functionPath.get('body');  
-      if (body.isBlockStatement()) {  
-        // Insert the local declaration at the beginning of the function body  
-        body.node.body.unshift(node);  
-      }  
+  Object.keys(sections.localDeclarations).forEach((parentStart) => {  
+    const parentFunction = sections.localDeclarations[parentStart];  
+    parentFunction.forEach((node) => {  
+      node.body.body.unshift(...sections.localDeclarations[parentStart]);  
     });  
-  }  
+  });  
   
   return orderedSections;  
 }  
