@@ -2036,22 +2036,23 @@ function exitReactComponent(state) {
 }  
 
 // ---------------------- fix AST function ----------------------
-function analyzeCode(ast) {  
+function analyzeCode(ast, filePath) {  
   const sections = {  
     imports: [],  
     localConstants: new Map(),  
     constants: [],  
+    helperFunctions: [], // Added to separate helper functions  
     functions: [],  
     components: [],  
     types: [],  
     exports: [],  
-    mainComponent: null,  // Add a separate section for the main component  
+    mainComponent: null,  
   };  
   
   traverse(ast, {  
     ImportDeclaration(path) {  
       sections.imports.push(path.node);  
-      path.remove(); // Remove the import after collecting it  
+      path.remove();  
     },  
     VariableDeclaration(path) {  
       if (isGlobalConstant(path)) {  
@@ -2059,7 +2060,6 @@ function analyzeCode(ast) {
       } else if (isLocalConstant(path)) {  
         const parentFunction = path.getFunctionParent();  
         if (parentFunction) {  
-          // Collect local constants specific to their parent functions  
           const functionBodyNode = parentFunction.node.body;  
           if (sections.localConstants.has(functionBodyNode)) {  
             sections.localConstants.get(functionBodyNode).push(path.node);  
@@ -2070,82 +2070,69 @@ function analyzeCode(ast) {
           sections.constants.push(path.node);  
         }  
       }  
-      path.remove(); // Remove the declaration after collecting it  
+      path.remove();  
     },  
     TSTypeAliasDeclaration(path) {  
       sections.types.push(path.node);  
-      path.remove(); // Remove the type alias after collecting it  
+      path.remove();  
     },  
     TSInterfaceDeclaration(path) {  
       sections.types.push(path.node);  
-      path.remove(); // Remove the interface after collecting it  
+      path.remove();  
     },  
     TSEnumDeclaration(path) {  
       sections.types.push(path.node);  
-      path.remove(); // Remove the enum after collecting it  
+      path.remove();  
     },  
     FunctionDeclaration(path) {  
-      if (isMainFunctionComponent(path, {}, getMainComponentNameFromFileName(ast.loc.filename))) {  
-        sections.mainComponent = path.node;  // Store the main component separately  
+      if (isMainFunctionComponent(path, {}, getMainComponentNameFromFileName(filePath))) {  
+        sections.mainComponent = path.node;  
       } else {  
-        sections.functions.push(path.node);  
+        sections.helperFunctions.push(path.node); // Adjusted to push helper functions here  
       }  
-      path.remove(); // Remove the function after collecting it  
+      path.remove();  
     },  
     ArrowFunctionExpression(path) {  
       if (isReactComponent(path.parentPath) && path.parentPath.isVariableDeclarator()) {  
-        if (isMainFunctionComponent(path.parentPath, {}, getMainComponentNameFromFileName(ast.loc.filename))) {  
-          sections.mainComponent = path.parentPath.parent;  // Store the main component separately  
+        if (isMainFunctionComponent(path.parentPath, {}, getMainComponentNameFromFileName(filePath))) {  
+          sections.mainComponent = path.parentPath.parent;  
         } else {  
           sections.components.push(path.parentPath.node);  
         }  
       } else if (isCustomHook(path.parentPath)) {  
-        sections.functions.push(path.parentPath.node);  
+        sections.helperFunctions.push(path.parentPath.node); // Adjusted to push custom hooks here  
       } else {  
-        sections.functions.push(path.parentPath.node);  
+        sections.helperFunctions.push(path.parentPath.node); // Adjusted to push expression functions here  
       }  
-      path.parentPath.remove(); // Remove the arrow function after collecting it  
+      path.parentPath.remove();  
     },  
     ExportNamedDeclaration(path) {  
       sections.exports.push(path.node);  
-      path.remove(); // Remove the export after collecting it  
+      path.remove();  
     },  
     ExportDefaultDeclaration(path) {  
       sections.exports.push(path.node);  
-      path.remove(); // Remove the export after collecting it  
+      path.remove();  
     },  
   });  
   
   return sections;  
 }  
+
   
 function reorderCode(sections) {  
   const orderedSections = [  
     ...sections.imports,  
     ...sections.constants,  
-    ...sections.types,  // Ensure types are placed before the main component  
+    ...sections.helperFunctions, // Ensure helper functions are placed before components  
+    ...sections.types,  
     ...sections.functions,  
     ...sections.components,  
+    sections.mainComponent,  
     ...sections.exports,  
   ];  
   
-  // Place the main component after types and constants but before exports  
-  if (sections.mainComponent) {  
-    const mainComponentIndex = orderedSections.findIndex(  
-      (node) => node === sections.mainComponent  
-    );  
-    if (mainComponentIndex === -1) {  
-      orderedSections.splice(  
-        sections.types.length + sections.constants.length,  
-        0,  
-        sections.mainComponent  
-      );  
-    }  
-  }  
-  
-  // Reorder code inside functions  
   for (let [functionBodyNode, localConsts] of sections.localConstants) {  
-    // Insert local constants at the top of their function body  
     const newFunctionBody = [  
       ...localConsts,  
       ...functionBodyNode.body.filter((node) => !localConsts.includes(node)),  
@@ -2153,8 +2140,9 @@ function reorderCode(sections) {
     functionBodyNode.body = newFunctionBody;  
   }  
   
-  return orderedSections;  
+  return orderedSections.filter(Boolean);  
 }  
+
   
 function createNewAST(orderedSections) {  
   return {  
@@ -2170,7 +2158,7 @@ async function fixFile(filePath) {
   const ast = parseFile(content);  
   
   // Analyze and reorder the code sections  
-  const sections = analyzeCode(ast);  
+  const sections = analyzeCode(ast, filePath);  
   const orderedSections = reorderCode(sections);  
   
   // Create a new AST with ordered sections  
@@ -2181,8 +2169,6 @@ async function fixFile(filePath) {
   fs.writeFileSync(filePath, newCode, 'utf-8');  
   console.log(`File ${filePath} fixed.`);  
 }  
-
-
   
 async function fixProjectStructure() {  
   try {  
@@ -2216,6 +2202,8 @@ if (parseCommandLineArguments()) {
 } else {  
   checkProjectStructure();  
 }  
+
+
 
 
 
