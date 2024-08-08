@@ -11,6 +11,10 @@
   margin-top: 20px;
   position: relative; /* To position the plus sign */
 }
+
+.drag-drop-container .active{
+  background-color: white!important;
+}
 @media only screen and (max-width: 1092px) {
   .camera-feed {
     max-height: 350px!important;
