@@ -370,30 +370,35 @@ function isReactComponent(path) {
  * @param {Path} path - The path to check.
  * @returns {boolean} - True if the path represents a custom hook, false otherwise.
  */
-function isCustomHook(path) {
-  if (path.scope.block.type !== 'Program') {
-    // Not top-level, thus not a custom hook
-    return false;
-  }
-  // Custom hooks must not be nested inside another function or component
-  if (path.findParent(p => p.isFunctionDeclaration() || p.isFunctionExpression() || p.isArrowFunctionExpression())) {
-    return false;
-  }
+function isCustomHook(path) {  
+  // Check if the function is at the top level (not nested inside another function or component)  
+  if (path.scope.block.type !== 'Program') {  
+    return false;  
+  }  
   
-  let functionName = '';
-
-  if (path.isVariableDeclarator()) {
-    const declarator = path.node;
-    const initializer = declarator.init;
-    if (initializer && (isFunctionExpression(initializer) || isArrowFunctionExpression(initializer))) {
-      functionName = declarator.id.name;
-    }
-  } else if (path.isFunctionDeclaration()) {
-    functionName = path.node.id.name;
-  }
+  // Custom hooks must not be nested inside another function or component  
+  if (path.findParent(p => p.isFunctionDeclaration() || p.isFunctionExpression() || p.isArrowFunctionExpression())) {  
+    return false;  
+  }  
   
-  return functionName && /^use[A-Z]/.test(functionName);
-}
+  let functionName = '';  
+  
+  if (path.isVariableDeclarator()) {  
+    const declarator = path.node;  
+    const initializer = declarator.init;  
+    if (initializer && (isFunctionExpression(initializer) || isArrowFunctionExpression(initializer))) {  
+      functionName = declarator.id.name;  
+    }  
+  } else if (path.isFunctionDeclaration()) {  
+    functionName = path.node.id.name;  
+  } else {  
+    const id = path.node.id || {};  
+    const key = path.node.key || {};  
+    functionName = id.name || key.name || '';  
+  }  
+  
+  return functionName && /^use[A-Z]/.test(functionName);  
+} 
 
 /**
  * Checks if a given node is a FunctionExpression.
@@ -421,52 +426,58 @@ function isArrowFunctionExpression(node) {
  * @param {NodePath} path - The path of the variable declaration.
  * @returns {boolean} - True if the variable is a global constant, false otherwise.
  */
-function isGlobalConstant(path) {
-  // Check if the constant is exported
-  const isExported = path.findParent(parent => parent.isExportNamedDeclaration() 
-  || parent.isExportDefaultDeclaration());
-
-
-  if (!isExported) {
-    return false;
-  }
-
-  // Check if the constant is at the top-level scope (not nested inside any function or block)
-  const parentScope = path.scope.parent;
-  const isTopLevel = !parentScope || (parentScope.path && parentScope.path.type === 'Program');
+function isGlobalConstant(path) {  
+  // Check if the constant is exported  
+  const isExported = path.findParent(parent =>  
+    parent.isExportNamedDeclaration() ||  
+    parent.isExportDefaultDeclaration()  
+  );  
   
-  // Optionally, you might want to check specific naming conventions for global constants,
-  // commonly prefixed with a particular string (e.g., "GLOBAL_") or all uppercase letters.
-  const isConventionallyNamed = (identifier) => {
-    // This regex tests for ALL_UPPERCASE naming or a specific prefix like 'GLOBAL_'
-    const globalNamePattern = /^(GLOBAL_|[A-Z0-9_]+$)/;
-    return globalNamePattern.test(identifier);
-  };
+  if (!isExported) {  
+    return false;  
+  }  
+  
+  // Check if the constant is at the top-level scope (not nested inside any function or block)  
+  const parentScope = path.scope.parent;  
+  const isTopLevel = !parentScope || (parentScope.path && parentScope.path.type === 'Program');  
+  
+  // Optionally, you might want to check specific naming conventions for global constants,  
+  // commonly prefixed with a particular string (e.g., "GLOBAL_") or all uppercase letters.  
+  const isConventionallyNamed = (identifier) => {  
+    // This regex tests for ALL_UPPERCASE naming or a specific prefix like 'GLOBAL_'  
+    const globalNamePattern = /^(GLOBAL_|[A-Z0-9_]+$)/;  
+    return globalNamePattern.test(identifier);  
+  };  
+  
+  // Get the identifier for the constant  
+  const variableDeclarator = path.node;  
+  const identifier = variableDeclarator.id ? variableDeclarator.id.name : null;  
+  
+  if (!identifier) {  
+    return false; // Identifier not found  
+  }  
+  
+  // Check if the name follows the global convention (if applicable)  
+  const followsNamingConvention = isConventionallyNamed(identifier);  
+  
+  // Check if the value is possibly coming from an import (simple heuristic check)  
+  const maybeImportedValue = variableDeclarator.init &&  
+    (variableDeclarator.init.type === 'CallExpression' &&  
+      (variableDeclarator.init.callee.type === 'Import' ||  
+        variableDeclarator.init.type === 'ImportExpression'));  
+  
+  // Determine if the constant is a common global type  
+  const isGlobalType = (node) => {  
+    // Assuming constants with objects or arrays could be global config/settings  
+    return node && (node.type === 'ObjectExpression' || node.type === 'ArrayExpression');  
+  };  
+  
+  const satisfiesGlobalType = isGlobalType(variableDeclarator.init);  
+  
+  // Combine all the checks to determine if it's a global constant  
+  return isExported && isTopLevel && (followsNamingConvention || satisfiesGlobalType || maybeImportedValue);  
+}  
 
-  // Get the identifier for the constant
-  const variableDeclarator = path.node;
-  const identifier = variableDeclarator.id.name;
-
-  // Check if the name follows the global convention (if applicable)
-  const followsNamingConvention = isConventionallyNamed(identifier);
-
-  // Check if the value is possibly coming from an import (simple heuristic check)
-  const maybeImportedValue = variableDeclarator.init &&
-    (variableDeclarator.init.type === 'CallExpression' &&
-     variableDeclarator.init.callee.type === 'Import' ||
-     variableDeclarator.init.type === 'ImportExpression');
-
-  // Determine if the constant is a common global type
-  const isGlobalType = (node) => {
-    // Assuming constants with objects or arrays could be global config/settings
-    return node && (node.type === 'ObjectExpression' || node.type === 'ArrayExpression');
-  };
-
-  const satisfiesGlobalType = isGlobalType(variableDeclarator.init);
-
-  // Combine all the checks to determine if it's a global constant
-  return isExported && isTopLevel && (followsNamingConvention || satisfiesGlobalType || maybeImportedValue);
-}
 
 /**
  * Checks if a given path represents a local constant.
@@ -2030,11 +2041,11 @@ async function fixFile(filePath) {
   console.log(`Fixing file: ${filePath}`);  
   const content = readFileSync(filePath, 'utf-8');  
   const ast = parseFile(content);  
-    
+  
   // Analyze and reorder the code sections  
   const sections = analyzeCode(ast);  
   const orderedSections = reorderCode(sections);  
-    
+  
   // Create a new AST with ordered sections  
   const newAst = createNewAST(orderedSections);  
   const newCode = generate(newAst, {}).code;  
@@ -2044,16 +2055,6 @@ async function fixFile(filePath) {
   console.log(`File ${filePath} fixed.`);  
 }  
   
-function createNewAST(orderedSections) {  
-  return {  
-    type: 'Program',  
-    body: orderedSections,  
-    sourceType: 'module',  
-  };  
-}  
-
-
-
 function analyzeCode(ast) {  
   const sections = {  
     imports: [],  
@@ -2072,8 +2073,34 @@ function analyzeCode(ast) {
       sections.imports.push(path.node);  
     },  
     VariableDeclaration(path) {  
-      const declarationType = isGlobalConstant(path) ? 'constants' : 'variables';  
-      sections[declarationType].push(path.node);  
+      if (path.scope.parent && path.scope.parent.block.type !== 'Program') {  
+        // If this is inside a function or block, mark it as local  
+        path.findParent((parent) => {  
+          if (  
+            parent.isFunctionDeclaration() ||  
+            parent.isFunctionExpression() ||  
+            parent.isArrowFunctionExpression() ||  
+            parent.isClassMethod() ||  
+            parent.isObjectMethod()  
+          ) {  
+            if (!sections.localDeclarations) {  
+              sections.localDeclarations = [];  
+            }  
+            sections.localDeclarations.push({  
+              functionPath: parent,  
+              node: path.node,  
+            });  
+            return true; // Stop searching  
+          }  
+        });  
+      } else {  
+        const declarationType = isGlobalConstant(path) ? 'constants' : 'functions'; // Use 'functions' for now if not constant  
+        if (sections[declarationType]) {  
+          sections[declarationType].push(path.node);  
+        } else {  
+          console.error(`Unknown declaration type: ${declarationType}`);  
+        }  
+      }  
     },  
     TSTypeAliasDeclaration(path) {  
       sections.types.push(path.node);  
@@ -2106,7 +2133,7 @@ function analyzeCode(ast) {
 }  
   
 function reorderCode(sections) {  
-  return [  
+  const orderedSections = [  
     ...sections.imports,  
     ...sections.constants,  
     ...sections.types,  
@@ -2117,18 +2144,29 @@ function reorderCode(sections) {
     ...sections.components,  
     ...sections.exports,  
   ];  
+  
+  // Reinsert local declarations into their parent functions  
+  if (sections.localDeclarations) {  
+    sections.localDeclarations.forEach(({ functionPath, node }) => {  
+      const body = functionPath.get('body');  
+      if (body.isBlockStatement()) {  
+        // Insert the local declaration at the beginning of the function body  
+        body.node.body.unshift(node);  
+      }  
+    });  
+  }  
+  
+  return orderedSections;  
 }  
-
-function generateCodeFromSections(orderedSections) {  
-  const program = {  
+  
+function createNewAST(orderedSections) {  
+  return {  
     type: 'Program',  
     body: orderedSections,  
     sourceType: 'module',  
   };  
-  
-  return generate(program, {}).code;  
 }  
-
+  
 async function fixProjectStructure() {  
   try {  
     console.log('Recherche des fichiers .ts et .tsx dans le projet...');  
@@ -2149,18 +2187,19 @@ async function fixProjectStructure() {
   
   console.log('Correction de la structure du projet React terminée.');  
 }  
-
+  
 function parseCommandLineArguments() {  
   const args = process.argv.slice(2); // Get command-line arguments  
   return args.includes('--fix');  
 }  
-
+  
 // Main execution  
 if (parseCommandLineArguments()) {  
   fixProjectStructure();  
 } else {  
   checkProjectStructure();  
 }  
+
 
 
 // ---------------------- Disabled functions ----------------------
