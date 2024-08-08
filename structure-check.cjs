@@ -11,6 +11,8 @@ const filePattern = /\.(ts|tsx)$/; // Use a regex pattern for matching file exte
 const ignoreFilePath = 'structure-check.ignore';
 const util = require('util');
 const readFile = util.promisify(fs.readFile);
+const generate = require('@babel/generator').default;  
+
 
 const descriptionMapping = {  
   "Import statements": ["hasGlobalConstants", "hasHelperFunctions", "hasCustomHooks", "hasStyledComponents", "hasInterfaces", "hasTypes", "hasEnums", "hasMainComponent", "hasReactComponent", "hasPropTypes", "hasDefaultProps", "hasExports"],  
