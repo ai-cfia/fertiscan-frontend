@@ -225,24 +225,29 @@ function createStateTracker() {
  
 // ---------------------- Error reporting functions ----------------------
 
-/**
- * Reports an error encountered during the project structure check.
- * 
- * This function logs the error details and optionally sends the error information
- * to an external monitoring service.
- * 
- * @function reportError
- * @param {Error} error - The error object containing details of the error.
- * @param {string} [context] - Optional context information about where the error occurred.
- */
-function reportError(node, message, filePath) {  
+/**  
+ * Enhanced error reporting to provide detailed and accurate information  
+ * about encountered errors during AST traversal and code analysis.  
+ *   
+ * @param {Object} node - The AST node where the error was encountered.  
+ * @param {string} message - The error message describing what went wrong.  
+ * @param {string} filePath - The path to the file being processed.  
+ * @param {string} [type] - Optional. Type of the node, can be provided for more contextual messages.  
+ */  
+function reportError(node, message, filePath, type) {  
+  // If the node does not have a location, fall back to a more generic error message.  
   if (!node.loc) {  
-    console.error(`Error in ${filePath} - ${message}`);  
+    console.error(`Error in ${filePath}: ${message}`);  
     return;  
   }  
   
+  // Extract the location data from the node.  
   const location = node.loc.start;  
-  const nodeType = node.type || 'Unknown';  
+  
+  // Determine the type of the node for more context if not provided.  
+  const nodeType = type || node.type || 'Unknown';  
+  
+  // Construct a detailed error message.  
   console.error(`Error in ${filePath}:${location.line}:${location.column} [${nodeType}] - ${message}`);  
 }  
 
@@ -407,56 +412,40 @@ function isCustomHook(path) {
  * @returns {boolean} - True if the variable is a global constant, false otherwise.
  */
 function isGlobalConstant(path) {  
-  // Check if the constant is exported  
   const isExported = path.findParent(parent =>  
-    parent.isExportNamedDeclaration() ||  
-    parent.isExportDefaultDeclaration()  
+      parent.isExportNamedDeclaration() ||  
+      parent.isExportDefaultDeclaration()  
   );  
-  
+
   if (!isExported) {  
-    return false;  
+      return false;  
   }  
-  
-  // Check if the constant is at the top-level scope (not nested inside any function or block)  
+
   const parentScope = path.scope.parent;  
   const isTopLevel = !parentScope || (parentScope.path && parentScope.path.type === 'Program');  
-  
-  // Optionally, you might want to check specific naming conventions for global constants,  
-  // commonly prefixed with a particular string (e.g., "GLOBAL_") or all uppercase letters.  
-  const isConventionallyNamed = (identifier) => {  
-    // This regex tests for ALL_UPPERCASE naming or a specific prefix like 'GLOBAL_'  
-    const globalNamePattern = /^(GLOBAL_|[A-Z0-9_]+$)/;  
-    return globalNamePattern.test(identifier);  
-  };  
-  
-  // Get the identifier for the constant  
+
   const variableDeclarator = path.node;  
   const identifier = variableDeclarator.id ? variableDeclarator.id.name : null;  
-  
+
   if (!identifier) {  
-    return false; // Identifier not found  
+      return false;  
   }  
-  
-  // Check if the name follows the global convention (if applicable)  
-  const followsNamingConvention = isConventionallyNamed(identifier);  
-  
-  // Check if the value is possibly coming from an import (simple heuristic check)  
+
+  const isConventionallyNamed = /^[A-Z_][A-Z0-9_]*$/.test(identifier);  
+
   const maybeImportedValue = variableDeclarator.init &&  
-    (variableDeclarator.init.type === 'CallExpression' &&  
-      (variableDeclarator.init.callee.type === 'Import' ||  
-        variableDeclarator.init.type === 'ImportExpression'));  
-  
-  // Determine if the constant is a common global type  
+      (variableDeclarator.init.type === 'CallExpression' &&  
+          (variableDeclarator.init.callee.type === 'Import' ||  
+              variableDeclarator.init.type === 'ImportExpression'));  
+
   const isGlobalType = (node) => {  
-    // Assuming constants with objects or arrays could be global config/settings  
-    return node && (node.type === 'ObjectExpression' || node.type === 'ArrayExpression');  
+      return node && (node.type === 'ObjectExpression' || node.type === 'ArrayExpression');  
   };  
-  
+
   const satisfiesGlobalType = isGlobalType(variableDeclarator.init);  
-  
-  // Combine all the checks to determine if it's a global constant  
-  return isExported && isTopLevel && (followsNamingConvention || satisfiesGlobalType || maybeImportedValue);  
-}  
+
+  return isExported && isTopLevel && (isConventionallyNamed || satisfiesGlobalType || maybeImportedValue);  
+}   
 
 
 /**
@@ -465,27 +454,24 @@ function isGlobalConstant(path) {
  * @param {Path} path - The path to check.
  * @returns {boolean} Returns true if the path represents a local constant, otherwise returns false.
  */
-function isLocalConstant(path) {
-  // Check if the constant is exported
-  const isExported = path.findParent((parent) =>
-    parent.isExportNamedDeclaration() || parent.isExportDefaultDeclaration()
-  );
+function isLocalConstant(path) {  
+  const isExported = path.findParent((parent) =>  
+      parent.isExportNamedDeclaration() || parent.isExportDefaultDeclaration()  
+  );  
 
-  if (isExported) {
-    return false;
-  }
+  if (isExported) {  
+      return false;  
+  }  
 
-  // If the scope has no parent, it is top-level (module scope in this case)
-  if (!path.scope.parent || path.scope.parent.path.type === 'Program') {
-    return false; // It is a top-level declaration, so not a local constant
-  }
+  if (!path.scope.parent || path.scope.parent.path.type === 'Program') {  
+      return false;  
+  }  
 
-  // Check if the constant is inside a function, a class, or a block
-  const isInsideFunction = path.findParent((parent) => parent.isFunction());
-  const isInsideBlock = path.findParent((parent) => parent.isBlockStatement());
+  const isInsideFunction = path.findParent((parent) => parent.isFunction());  
+  const isInsideBlock = path.findParent((parent) => parent.isBlockStatement());  
 
-  return isInsideFunction || isInsideBlock;
-}
+  return isInsideFunction || isInsideBlock;  
+}  
 
 /**
  * Determines if a node is a function expression or an arrow function expression,
@@ -588,65 +574,86 @@ function isArrowFunctionExpression(path) {
   const initPath = path.get('init');
   return initPath && isArrowFunctionNode(initPath);
 }
-
-/**
- * Determines if a given path represents the main function component.
- *
- * @param {Path} path - The path to check.
- * @param {State} state - The state object.
- * @param {string} filePath - The file path.
- * @returns {boolean} - True if the path represents the main function component, false otherwise.
- */
+/**  
+ * Determines if a given path represents the main function component.  
+ *  
+ * @param {Path} path - The path to check.  
+ * @param {State} state - The state object.  
+ * @param {string} filePath - The file path.  
+ * @returns {boolean} - True if the path represents the main function component, false otherwise.  
+ */  
 function isMainFunctionComponent(path, state, filePath) {  
   const mainComponentName = getMainComponentNameFromFileName(filePath);  
   
-  if (path.isVariableDeclaration()) {  
+  if (path.isFunctionDeclaration()) {  
+    if (t.isIdentifier(path.node.id, { name: mainComponentName })) {  
+      state.hasMainComponent = true;  
+      state.mainComponentPath = path;  
+      return true;  
+    }  
+  } else if (path.isVariableDeclaration()) {  
     return path.node.declarations.some((declaration) => {  
       if (t.isVariableDeclarator(declaration)) {  
         if (t.isIdentifier(declaration.id, { name: mainComponentName })) {  
           if (t.isArrowFunctionExpression(declaration.init) || t.isFunctionExpression(declaration.init)) {  
             state.hasMainComponent = true;  
             state.mainComponentPath = path;  
-            state.mainComponentName = mainComponentName; // Make sure to save the main component name  
             return true;  
           }  
         }  
       }  
       return false;  
     });  
-  } else if (path.isFunctionDeclaration() && t.isIdentifier(path.node.id, { name: mainComponentName })) {  
-    state.hasMainComponent = true;  
-    state.mainComponentPath = path;  
-    state.mainComponentName = mainComponentName; // Make sure to save the main component name  
-    return true;  
+  } else if (path.isExportDefaultDeclaration()) {  
+    const declaration = path.get('declaration');  
+    if (declaration.isFunctionDeclaration()) {  
+      if (t.isIdentifier(declaration.node.id, { name: mainComponentName })) {  
+        state.hasMainComponent = true;  
+        state.mainComponentPath = path;  
+        return true;  
+      }  
+    } else if (declaration.isVariableDeclarator()) {  
+      if (t.isIdentifier(declaration.node.id, { name: mainComponentName }) &&   
+          (t.isArrowFunctionExpression(declaration.node.init) || t.isFunctionExpression(declaration.node.init))) {  
+        state.hasMainComponent = true;  
+        state.mainComponentPath = path;  
+        return true;  
+      }  
+    }  
   }  
   
   return false;  
-}  
+}   
 
-function isExportDeclarationWithName(path, componentName) {
-  if (path.isExportDefaultDeclaration() && path.has('declaration')) {
-    const declaration = path.get('declaration');
-    if (declaration.isIdentifier()) {
-      // Directly checks the identifier name when exporting a default identifier
-      return declaration.node.name === componentName;
-    } else if (declaration.isFunctionDeclaration() || declaration.isClassDeclaration()) {
-      // Check the function or class name for default function/class exports
-      return declaration.node.id && declaration.node.id.name === componentName;
-    }
-  } else if (path.isExportNamedDeclaration()) {
-    // For named exports, check specifiers to see if the exported name matches the component name
-    return path.node.specifiers.some(specifier => {
-      return (
-        (specifier.exported.name === componentName) && // Exported name matches
-        // Optional: If you want to check if the local name matches the exported name
-        (specifier.local ? specifier.local.name === componentName : true) 
-      );
-    });
-  }
-  // Return false if the path is neither default nor named export
-  return false;
-}
+
+/**  
+ * Checks whether a given export declaration matches a specified component name, considering both default and   
+ * named exports in the check. This utility helps identify if a particular component or identifier is exported  
+ * with the expected name from a file.  
+ *  
+ * @param {Path} path - The Babel AST path representing an export declaration node.  
+ * @param {string} componentName - The name of the component to check for in the export declaration.  
+ * @returns {boolean} - True if the given export declaration includes an export with the specified component name; false otherwise.  
+ */  
+function isExportDeclarationWithName(path, componentName) {  
+  if (path.isExportDefaultDeclaration() && path.has('declaration')) {  
+    const declaration = path.get('declaration');  
+    if (declaration.isIdentifier()) {  
+      return declaration.node.name === componentName;  
+    } else if (declaration.isFunctionDeclaration() || declaration.isClassDeclaration()) {  
+      return declaration.node.id && declaration.node.id.name === componentName;  
+    }  
+  } else if (path.isExportNamedDeclaration() && path.has('specifiers')) {  
+    return path.get('specifiers').some(specifier => {  
+      return (  
+        (specifier.exported.name === componentName) && // Exported name matches  
+        // Optional: If you want to check if the local name matches the exported name  
+        (specifier.local ? specifier.local.name === componentName : true)   
+      );  
+    });  
+  }  
+  return false;  
+} 
 
 /**
  * Checks if the given path represents a variable declaration at the top of its scope.
@@ -861,48 +868,57 @@ function isExportDeclarationWithName(path, componentName) {
   return false;
 }
 
-// Function to check if the path represents a styled component
-function isStyledComponent(path) {
-  if (t.isTaggedTemplateExpression(path.node)) {
-    const tag = path.get('tag');
-
-    // Check if the tag is a basic styled member expression (e.g., styled.div)
-    if (t.isMemberExpression(tag)) {
-      const object = tag.get('object');
-      return (
-        t.isIdentifier(object) &&
-        object.node.name === 'styled' &&
-        t.isIdentifier(tag.get('property'))
-      );
-    }
+// Improved function to check if the path represents a styled component  
+function isStyledComponent(path) {  
+  if (t.isTaggedTemplateExpression(path.node)) {  
+    const tag = path.get('tag');  
   
-    // Check if the tag is a styled call expression (e.g., styled(Button))
-    if (t.isCallExpression(tag)) {
-      const callee = tag.get('callee');
-      return (
-        t.isIdentifier(callee.node, { name: 'styled' }) &&
-        tag.node.arguments.length > 0
-      );
-    }
-  }
+    // Check for basic styled member expression (e.g., styled.div)  
+    if (t.isMemberExpression(tag)) {  
+      const object = tag.get('object');  
+      return (  
+        t.isIdentifier(object) &&  
+        object.node.name === 'styled' &&  
+        t.isIdentifier(tag.get('property'))  
+      );  
+    }  
   
-  return false;
-}
+    // Check for styled call expression (e.g., styled(Button))  
+    if (t.isCallExpression(tag)) {  
+      const callee = tag.get('callee');  
+      return (  
+        t.isIdentifier(callee.node, { name: 'styled' }) &&  
+        tag.node.arguments.length > 0  
+      );  
+    }  
+  }  
+  
+  // Check if it's a styled component creation using styled(Component)  
+  if (t.isCallExpression(path.node)) {  
+    const callee = path.get('callee');  
+    return (  
+      t.isIdentifier(callee.node, { name: 'styled' }) &&  
+      path.node.arguments.length > 0  
+    );  
+  }  
+  
+  return false;  
+}  
 
 // ---------------------- Get functions ----------------------
 
-/**
- * Retrieves the main component name from a given file path.
- *
- * @param {string} filePath - The path of the file.
- * @returns {string} - The main component name.
- */
-function getMainComponentNameFromFileName(filePath) {
-  // Extract the file name without directory path or extension
-  const baseName = path.basename(filePath, path.extname(filePath));
-  // Turn the first letter to uppercase (React component names are PascalCase)
-  return baseName.charAt(0).toUpperCase() + baseName.slice(1);
-}
+/**  
+ * Retrieves the main component name from a given file path.  
+ *  
+ * @param {string} filePath - The path of the file.  
+ * @returns {string} - The main component name.  
+ */  
+function getMainComponentNameFromFileName(filePath) {  
+  // Extract the file name without directory path or extension  
+  const baseName = path.basename(filePath, path.extname(filePath));  
+  // Turn the first letter to uppercase (React component names are PascalCase)  
+  return baseName.charAt(0).toUpperCase() + baseName.slice(1);  
+} 
 
 // ---------------------- Find functions ----------------------
 /**
@@ -925,98 +941,72 @@ function findLastImportIndex(bodyNodes) {
   return lastImportIndex;
 }
 
-// ---------------------- Analyse type functions ----------------------
-
-// To modify to do this whit all type in this function
-/**
- * Identifies the function or declaration type of a given AST path within a JavaScript or TypeScript file.
- * This function uses a series of heuristics and checks against the AST node to determine its role in the code.
- * A recognized type can be one of 'customHook', 'mainFunctionComponent', 'normalFunction', 'expressionFunction', 
- * 'globalConstant', 'localConstant', 'variableDeclarator', or 'functionalComponent', among others.
- * If none of the known types match, it returns 'unknown', prompting further analysis or updates to the type recognition logic.
- *
- * @param {Path} path - The Babel AST path for which the type needs to be recognized.
- * @param {State} state - A state object that may carry additional information useful for recognition of certain declaration types.
- * @param {string} filePath - The file path for the current file being processed, useful for context in type recognition.
- *
- * @returns {string} The recognized type as a string, to be used for further processing or routing to the appropriate handler function.
- *
- * Note: The type recognition relies on the structure and patterns in the code. As coding styles and conventions evolve, so too should
- * the type recognition logic to remain accurate and relevant. It may be beneficial to provide an interface for extending or refining
- * the type recognition capabilities, especially for unique or unconventional code structures.
- * TODO: Implement comprehensive checks to improve type recognition accuracy. Consider methods for external contributions
- * to the recognition logic to adapt to new patterns and frameworks that may emerge within the coding community.
- */
-function recognizeType(path, state, filePath) {    
-  if (isVariableDeclarator(path) && isCustomHook(path.get('init'))) {    
-    return 'customHook';    
-  } else if (isMainFunctionComponent(path, state, filePath)) {    
-    return 'mainFunctionComponent';    
-  } else if (path.isFunctionDeclaration()) {    
-    return 'normalFunction';    
-  } else if (isFunctionalComponent(path)) { // New case to detect functional components    
-    return 'functionalComponent';    
-  } else if (isFunctionExpression(path.get('init')) || isArrowFunctionExpression(path.get('init'))) {    
-    return 'expressionFunction';    
-  } else if (isGlobalConstant(path)) {    
-    return 'globalConstant';    
-  } else if (isLocalConstant(path)) {    
-    return 'localConstant';    
-  } else if (path.isVariableDeclarator()) {    
-    return 'variableDeclarator';    
-  } else {    
-    console.warn('Recognize type function is not implemented yet', path.node.type);    
-  }    
-  return 'unknown';    
+/**   
+ * Identifies the type of a given AST path within a JavaScript or TypeScript file.  
+ *   
+ * @param {Path} path - The Babel AST path for which the type needs to be recognized.  
+ * @param {State} state - A state object that may carry additional information useful for recognition of certain declaration types.  
+ * @param {string} filePath - The file path for the current file being processed, useful for context in type recognition.  
+ *   
+ * @returns {string} The recognized type as a string.  
+ */  
+function recognizeType(path, state, filePath) {  
+  if (isVariableDeclarator(path) && isCustomHook(path.get('init'))) {  
+      return 'customHook';  
+  } else if (isMainFunctionComponent(path, state, filePath)) {  
+      return 'mainFunctionComponent';  
+  } else if (path.isFunctionDeclaration()) {  
+      if (isReactComponent(path).isComponent) {  
+          return 'functionalComponent';  
+      }  
+      return 'helperFunction'; // Recognize normal functions as helper functions  
+  } else if (path.isArrowFunctionExpression() || path.isFunctionExpression()) {  
+      if (isReactComponent(path.parentPath).isComponent) {  
+          return 'functionalComponent';  
+      }  
+      return 'expressionFunction';  
+  } else if (isGlobalConstant(path)) {  
+      return 'globalConstant';  
+  } else if (isLocalConstant(path)) {  
+      return 'localConstant';  
+  } else if (path.isVariableDeclarator()) {  
+      return 'variableDeclarator';  
+  } else if (path.isTSInterfaceDeclaration()) {  
+      return 'TSInterfaceDeclaration';  
+  } else if (path.isTSTypeAliasDeclaration()) {  
+      return 'TSTypeAliasDeclaration';  
+  } else if (path.isTSEnumDeclaration()) {  
+      return 'TSEnumDeclaration';  
+  } else {  
+      console.warn('Recognize type function is not implemented yet', path.node.type);  
+  }  
+  return 'unknown';  
 }  
 
 
-
-// Function to check if the context is being used before it's defined
-function checkForContextUsageOrder(path) {
-  // Check if the expression is a call to useContext
-  if (t.isCallExpression(path) && t.isIdentifier(path.node.callee, { name: 'useContext' })) {
-    // Retrieve the name of the context
-    const contextIdentifier = path.get('arguments')[0];
-    if (t.isIdentifier(contextIdentifier)) {
-      const contextName = contextIdentifier.node.name;
-      // Traverse upwards to check if the context identifier is defined
-      let isDefinedBeforeUsage = false;
-      path.findParent((parentPath) => {
-        if (parentPath.scope.hasBinding(contextName)) {
-          isDefinedBeforeUsage = true;
-          return true; // Stops traversing further up
-        }
-        return false;
-      });
-
-      // Throw an error if the context is used before it's defined
-      if (!isDefinedBeforeUsage) {
-        throw path.buildCodeFrameError(`Context \`${contextName}\` is undefined due to order. (Error)`);
-      }
-    }
-  }
-}
-
-// Do the same thing as the previous function 
 /**
- * Routes the AST path to the appropriate handler function based on the identified function type within the code. 
- * Recognizes various types of function declarations such as custom hooks, main function components, helper functions,
- * arrow functions, expression-based functions, as well as global and local constant declarations. 
- * Depending on the function type, it delegates the processing to specific handler functions that enforce structural 
- * conventions and check for potential issues. If an unrecognized function type is encountered, it logs a message 
- * for further investigation and potential extension of the processing logic.
- *
- * @param {string} type - A string representing the type of function or declaration encountered in the AST.
- * @param {Path} path - The Babel AST path representing the node to be processed according to its type.
- * @param {State} state - An object maintaining the state of the traversal, capturing whether certain types of code elements have been encountered.
- * @param {string} filePath - The path to the source file within the filesystem, used for context in reporting and error handling.
- *
- * Note: This function acts as a central dispatcher within the code structure analysis and should be extended to cover all relevant function types.
- * Any new function type identifiers that are introduced in the codebase should be accounted for with additional cases in this switch statement.
- * TODO: Continuously monitor and update the list of recognized function types. Consider enhancing logging and reporting for issues
- * regarding unrecognized function types, possibly linking to documentation or providing detailed developer guidance.
- */
+ * Checks if the context is being used before it's defined.  
+ *   
+ * @param {NodePath} path - The path of the node to check.  
+ * @param {string} filePath - The path of the file being processed.  
+ */  
+function checkForContextUsageOrder(path, filePath) {  
+  // Check if the expression is a call to useContext  
+  if (t.isCallExpression(path.node) && t.isIdentifier(path.node.callee, { name: 'useContext' })) {  
+    const contextIdentifier = path.node.arguments[0];  
+    if (t.isIdentifier(contextIdentifier)) {  
+      const contextName = contextIdentifier.name;  
+      const binding = path.scope.getBinding(contextName);  
+  
+      // If the binding is not found or is declared after the current path, report an error  
+      if (!binding || (binding.identifier.start > path.node.start)) {  
+        reportError(path.node, `Context \`${contextName}\` is used before it is defined.`, filePath);  
+      }  
+    }  
+  }  
+}  
+
+
 function processFunctionType(type, path, state, filePath) {  
   switch (type) {  
     case 'customHook':  
@@ -1025,12 +1015,10 @@ function processFunctionType(type, path, state, filePath) {
     case 'mainFunctionComponent':  
       handleMainReactComponent(path, state, filePath);  
       break;  
-    case 'normalFunction':  
+    case 'helperFunction':  
       handleHelperFunctionDeclaration(path, state, filePath);  
       break;  
     case 'arrowFunction':  
-      handleArrowFunctionDeclaration(path, state, filePath);  
-      break;  
     case 'expressionFunction':  
       handleExpressionFunctionDeclaration(path, state, filePath);  
       break;  
@@ -1046,6 +1034,15 @@ function processFunctionType(type, path, state, filePath) {
     case 'functionalComponent':  
       handleFunctionalComponent(path, state, filePath);  
       break;  
+    case 'TSInterfaceDeclaration':  
+      handleTSInterfaceDeclaration(path, state, filePath);  
+      break;  
+    case 'TSTypeAliasDeclaration':  
+      handleTSTypeAliasDeclaration(path, state, filePath);  
+      break;  
+    case 'TSEnumDeclaration':  
+      handleTSEnumDeclaration(path, state, filePath);  
+      break;  
     case 'unknown':  
     default:  
       console.log('Unrecognized function type. Please add this function type to the structure code script.', path.node.type);  
@@ -1053,61 +1050,63 @@ function processFunctionType(type, path, state, filePath) {
   }  
 }  
 
-/**
- * Analyzes the variable declarations in the code to encourage best practices for using declaration keywords ('const', 'let', or 'var').
- * Specifically, the function:
- * - Validates if the variable declaration is structured as expected with a 'kind' property indicating the type of declaration.
- * - If 'var' is used, it suggests avoiding 'var' due to its function-wide hoisting and returns false.
- * - For 'let' declarations, it assesses all references to the declared variable to determine if there is any reassignment.
- * - Utilizes an isReassignment helper function to identify reassignment scenarios.
- * - If no reassignment occurs for a 'let' declaration, it infers that 'const' would have been more appropriate to signify a non-reassignable binding.
- * It reports cases where 'let' could be replaced by 'const' to signal the intent of a constant value more clearly.
- * Note: The function currently lacks functionality to generate reports or messages.
- * TODO: Implement functionality to report or log cases where 'const' could be used in place of 'let'.
- *
- * @param {Path} path - The Babel AST path object for the variable declaration node.
- * @returns {boolean} - Returns true if the declaration keyword is appropriately used ('const' or justified 'let').
- *                      Returns false if 'var' is used or 'let' is used without necessity (i.e., no reassignments found).
- */
-function checkDeclarationKeyword(path) {
-  // Ensure that the node is a VariableDeclarator and has a kind (var, let, const)
-  if (!path.parentPath || !path.parentPath.node || !path.parentPath.node.kind) {
-    return false;
-  }
 
-  const declarationKind = path.parentPath.node.kind; // can be "var", "let", or "const"
-  const isInitialized = path.node.init !== null;
 
-  // If 'var' is used, that's a problem
-  if (declarationKind === 'var') {
-    return false;
-  }
+/**  
+ * Analyzes the variable declarations in the code to encourage best practices for using declaration keywords ('const', 'let', or 'var').  
+ * Specifically, the function:  
+ * - Validates if the variable declaration is structured as expected with a 'kind' property indicating the type of declaration.  
+ * - If 'var' is used, it suggests avoiding 'var' due to its function-wide hoisting and returns false.  
+ * - For 'let' declarations, it assesses all references to the declared variable to determine if there is any reassignment.  
+ * - Utilizes an isReassignment helper function to identify reassignment scenarios.  
+ * - If no reassignment occurs for a 'let' declaration, it infers that 'const' would have been more appropriate to signify a non-reassignable binding.  
+ * It reports cases where 'let' could be replaced by 'const' to signal the intent of a constant value more clearly.  
+ *   
+ * @param {Path} path - The Babel AST path object for the variable declaration node.  
+ * @returns {boolean} - Returns true if the declaration keyword is appropriately used ('const' or justified 'let').  
+ *                      Returns false if 'var' is used or 'let' is used without necessity (i.e., no reassignments found).  
+ */  
+function checkDeclarationKeyword(path) {  
+  // Ensure that the node is a VariableDeclarator and has a kind (var, let, const)  
+  if (!path.parentPath || !path.parentPath.node || !path.parentPath.node.kind) {  
+      return false;  
+  }  
+  const declarationKind = path.parentPath.node.kind; // can be "var", "let", or "const"  
+  const isInitialized = path.node.init !== null;  
 
-  if (declarationKind === 'let') {
-    // Check if 'let' is used where 'const' could be used
-    const identifierName = path.node.id.name;
-    const binding = path.scope.getBinding(identifierName);
+  // If 'var' is used, that's a problem  
+  if (declarationKind === 'var') {  
+      reportVariablePlacementIssue(path.node.id.name, path, 'DeclarationKeyword', filePath, path.node, {  
+          fix: `Consider using 'let' or 'const' instead of 'var'.`  
+      });  
+      return false;  
+  }  
 
-    if (binding && isInitialized) {
-      // Loop through all references to the variable
-      for (let i = 0; i < binding.referencePaths.length; i++) {
-        const refPath = binding.referencePaths[i];
+  if (declarationKind === 'let') {  
+      // Check if 'let' is used where 'const' could be used  
+      const identifierName = path.node.id.name;  
+      const binding = path.scope.getBinding(identifierName);  
+      if (binding && isInitialized) {  
+          // Loop through all references to the variable  
+          for (let i = 0; i < binding.referencePaths.length; i++) {  
+              const refPath = binding.referencePaths[i];  
+              // Determine if there are reassignments  
+              if (isReassignment(refPath, identifierName)) {  
+                  // If we found a valid reassignment, 'let' is justified  
+                  return true;  
+              }  
+          }  
+          // No valid reassignments found, hence 'const' should have been used instead of 'let'  
+          reportVariablePlacementIssue(identifierName, path, 'DeclarationKeyword', filePath, path.node, {  
+              fix: `Use 'const' instead of 'let' for variable '${identifierName}' as it is not reassigned.`  
+          });  
+          return false;  
+      }  
+  }  
+  // If using 'const' or if 'let' is justified, it's fine  
+  return true;  
+}  
 
-        // Determine if there are reassignments
-        if (isReassignment(refPath, identifierName)) {
-          // If we found a valid reassignment, 'let' is justified
-          return true;
-        }
-      }
-
-      // No valid reassignments found, hence 'const' should have been used instead of 'let'
-      return false;
-    }
-  }
-
-  // If using 'const' or if 'let' is justified, it's fine
-  return true;
-}
 
 /**
  * Reports an issue with how a variable is placed within the code.
@@ -1199,42 +1198,72 @@ function handleImportDeclaration(path, state, filePath) {
 }  
  
 
-/**
- * Handles a variable declarator by performing a series of checks to ensure proper usage and adhering to code standards within the current scope.
- * The function examines the variable declarator to determine if it is at the top of the current scope, correctly grouped with similar declarations
- * (grouping checks not implemented), initialized properly, uses the correct declaration keyword (let, const, var), and is exported properly
- * (exported check not implemented). It then reports any issues it finds related to these checks in the context of the file it resides in.
- *
- * @param {Path} path - The path object provided by the Babel traverse that encapsulates the node and its position within the AST.
- * @param {State} state - The state object provided by Babel that is used to share state within the plugin or between different visitors.
- * @param {string} filePath - The file path of the current file being processed, which will be used when reporting issues for context.
- */
-function handleVariableDeclarator(path, state, filePath) {
-  const currentState = state.functionComponentState.insideReactComponent ? state.functionComponentState : state.topLevelState;  
-  
+/**  
+ * Handles variable declarators by performing various checks to ensure proper usage and adherence to code standards.  
+ * It differentiates between top-level global constants and local constants within functions or blocks.  
+ * The function checks for proper initialization, grouping, declaration keywords, and ensures the correct placement within the scope.  
+ *  
+ * @param {Path} path - The Babel AST path for the variable declarator node.  
+ * @param {State} state - The state object used to track the structure of code elements.  
+ * @param {string} filePath - The path to the current file being processed for context in reporting.  
+ */  
+function handleVariableDeclarator(path, state, filePath) {  
+  // Check if the variable declarator is part of a variable declaration  
   if (!path.isVariableDeclarator()) {  
-    return;  
+      return;  
   }  
-    
-  const { id, init } = path.node;  
-  const variableName = id.name;  
-  
-  // Perform various checks
-  const isTopOfScope = IsTopOfScope(path);
-  const isProperlyInitialized = init !== null;
-  const usesCorrectDeclarationKeyword = checkDeclarationKeyword(path);
-  //const isProperlyGrouped = checkGrouping(path);
-  //const isExported = checkExported(path);
-  //const hoistingAwareness = checkHoistingAwareness(path);
+  const variableName = path.node.id.name;  
 
-  // Report any issues
-  if (!isTopOfScope) reportVariablePlacementIssue(variableName, path, 'TopOfScope', filePath);
-  if (!usesCorrectDeclarationKeyword) reportVariablePlacementIssue(variableName, path, 'DeclarationKeyword', filePath);
-  if (!isProperlyInitialized) reportVariablePlacementIssue(variableName, path, 'Initialization',filePath);
-  //if (!isProperlyGrouped) reportVariablePlacementIssue(variableName, path, 'Grouping');
-  //if (!isExported) reportVariablePlacementIssue(variableName, path, 'Exported', filePath);
-  //if (!hoistingAwareness) reportVariablePlacementIssue(variableName, path, 'HoistingAwareness');
-}
+  // Check the declaration keyword to ensure best practices are followed  
+  if (!checkDeclarationKeyword(path)) {  
+      return;  
+  }  
+
+  // Determine the context in which the variable is declared  
+  const isTopLevel = path.scope.path.type === 'Program';  
+  const isInsideFunctionOrBlock = path.scope.path.type !== 'Program';  
+  const isGlobal = isGlobalConstant(path);  
+  const isLocal = isLocalConstant(path);  
+
+  // Perform various checks and report any issues  
+  if (isTopLevel) {  
+      if (isGlobal) {  
+          handleGlobalConstantDeclaration(path, state, filePath);  
+      } else {  
+          const errorMessage = generateErrorMessage("Variable declaration at the top level", state, filePath);  
+          if (errorMessage) {  
+              reportError(path.node, errorMessage, filePath);  
+          }  
+          // Handle other top-level declarations as necessary  
+          state.topLevelState.hasDeclarations = true;  
+      }  
+  } else if (isInsideFunctionOrBlock) {  
+      if (isLocal) {  
+          const currentState = state.functionComponentState.insideReactComponent ? state.functionComponentState : state.topLevelState;  
+          if (  
+              currentState.hasHooks ||  
+              currentState.hasHandlers ||  
+              currentState.hasReactComponent ||  
+              currentState.hasPropTypes ||  
+              currentState.hasDefaultProps ||  
+              currentState.hasExports  
+          ) {  
+              const errorMessage = generateErrorMessage("Local constant declaration", currentState, filePath);  
+              if (errorMessage) {  
+                  reportError(path.node, errorMessage, filePath);  
+              }  
+          }  
+          currentState.hasConstants = true;  
+      } else {  
+          const errorMessage = generateErrorMessage("Variable declaration inside function or block", state, filePath);  
+          if (errorMessage) {  
+              reportError(path.node, errorMessage, filePath);  
+          }  
+      }  
+  }  
+}  
+
+
 
 /**
  * Handles the traversal and processing of a functional React component node within the AST. 
@@ -1273,25 +1302,35 @@ function handleFunctionalComponent(path, state, filePath) {
  * TODO: Evaluate the possibility of enhancing error reporting with actionable feedback, user-friendly messaging,
  * and configuration options to align with differing codebase standards or team preferences.
  */
-function handleGlobalConstantDeclaration(path, state, filePath) {
-  console.log('Global constant declaration detected:', path.node.type);
-  // Check if the path is directly under the Program node (not nested inside any function/component)
-  if (path.scope.path.type === 'Program') {
-    if (state.hasConstants || state.hasHelperFunctions
-      ||state.hasCustomHooks|| state.hasStyledComponents
-      ||state.hasInterfaces||state.hasTypes
-      ||state.hasEnums||state.hasMainComponent
-      ||state.hasHandlers||state.hasHooks
-      || state.hasReactComponent||state.hasPropTypes
-      ||state.hasDefaultProps || state.hasExports) {
-      const errorMessage = generateErrorMessage("Global constant", state, filePath);
-      if (errorMessage) {
-        reportError(path.node, errorMessage, filePath);
-      }
-    } 
-    state.hasGlobalConstants = true;
-  }
-}
+function handleGlobalConstantDeclaration(path, state, filePath) {  
+  console.log('Global constant declaration detected:', path.node.type);  
+
+  // Check if the path is directly under the Program node (not nested inside any function/component)  
+  if (path.scope.path.type === 'Program' && isGlobalConstant(path)) {  
+      if (state.hasConstants ||   
+          state.hasHelperFunctions ||   
+          state.hasCustomHooks ||   
+          state.hasStyledComponents ||   
+          state.hasInterfaces ||   
+          state.hasTypes ||   
+          state.hasEnums ||   
+          state.hasMainComponent ||   
+          state.hasHandlers ||   
+          state.hasHooks ||   
+          state.hasReactComponent ||   
+          state.hasPropTypes ||   
+          state.hasDefaultProps ||   
+          state.hasExports  
+      ) {  
+          const errorMessage = generateErrorMessage("Global constant", state, filePath);  
+          if (errorMessage) {  
+              reportError(path.node, errorMessage, filePath);  
+          }  
+      }  
+      state.hasGlobalConstants = true;  
+  }  
+}  
+
 
 /**
  * Handles TypeScript interface declarations, checking for proper placement within the code structure. If interfaces are
@@ -1305,20 +1344,28 @@ function handleGlobalConstantDeclaration(path, state, filePath) {
  * Note: Logs are generated for diagnostic purposes. The function presumes an ordering convention that may need adjustment according to project guidelines.
  * TODO: Optimize error reporting and ensure alignment with overarching code standards.
  */
-function handleTSInterfaceDeclaration(path, state, filePath) {
-  console.log('Interface declaration detected:', path.node.type);
-  if (state.hasTypes||state.hasEnums
-    ||state.hasMainComponent ||state.hasHandlers
-    ||state.hasHooks|| state.hasReactComponent
-    ||state.hasPropTypes||state.hasDefaultProps
-    ||state.hasExports) {
-    const errorMessage = generateErrorMessage("Interface",state, filePath);
-    if (errorMessage) {
-      reportError(path.node, errorMessage);
-    }
-  }   
-  state.hasInterfaces = true;
-}
+function handleTSInterfaceDeclaration(path, state, filePath) {  
+  console.log('Interface declaration detected:', path.node.type);  
+    
+  if (state.hasTypes ||   
+      state.hasEnums ||   
+      state.hasMainComponent ||   
+      state.hasHandlers ||   
+      state.hasHooks ||   
+      state.hasReactComponent ||   
+      state.hasPropTypes ||   
+      state.hasDefaultProps ||   
+      state.hasExports) {  
+        
+      const errorMessage = generateErrorMessage("Interface", state, filePath);  
+      if (errorMessage) {  
+          reportError(path.node, errorMessage, filePath);  
+      }  
+  }  
+    
+  state.hasInterfaces = true;  
+}  
+
 
 /**
  * Processes TypeScript type alias declarations within the AST to enforce code organization conventions, ensuring type aliases
@@ -1336,19 +1383,27 @@ function handleTSInterfaceDeclaration(path, state, filePath) {
  * Note: The function currently outputs a console log for diagnostic purposes and assumes a specific order of type declarations. Modifications
  * may be required if the code organization conventions change.
  */
-function handleTSTypeAliasDeclaration(path, state, filePath) {
-  console.log('Type alias declaration detected:', path.node.type);
-  if (state.hasEnums||state.hasMainComponent
-    ||state.hasHandlers||state.hasHooks
-    ||state.hasReactComponent||state.hasPropTypes
-    ||state.hasDefaultProps || state.hasExports) {
-    const errorMessage = generateErrorMessage("Type alias",state, filePath);
-    if (errorMessage) {
-      reportError(path.node, errorMessage, filePath);
-    }
-  } 
-  state.hasTypes = true;
-}
+function handleTSTypeAliasDeclaration(path, state, filePath) {  
+  console.log('Type alias declaration detected:', path.node.type);  
+    
+  if (state.hasEnums ||   
+      state.hasMainComponent ||   
+      state.hasHandlers ||   
+      state.hasHooks ||   
+      state.hasReactComponent ||   
+      state.hasPropTypes ||   
+      state.hasDefaultProps ||   
+      state.hasExports) {  
+        
+      const errorMessage = generateErrorMessage("Type alias", state, filePath);  
+      if (errorMessage) {  
+          reportError(path.node, errorMessage, filePath);  
+      }  
+  }  
+    
+  state.hasTypes = true;  
+}  
+
 
 /**
  * Processes TypeScript Enum declarations within the AST to ensure that they are placed prior to helper functions, hooks, 
@@ -1370,137 +1425,142 @@ function handleTSTypeAliasDeclaration(path, state, filePath) {
  * structural issues. Consider implementing a more sophisticated logging system or integrating with project-specific tooling 
  * for issue reporting.
  */
-function handleTSEnumDeclaration(path, state, filePath) {
-  console.log('Enum declaration detected:', path.node.type);
-  if (state.hasMainComponent || state.hasHandlers
-    ||state.hasHooks|| state.hasReactComponent
-    ||state.hasPropTypes||state.hasDefaultProps
-    ||state.hasExports) {
-    const errorMessage = generateErrorMessage("Enums",state, filePath);
-    if (errorMessage) {
-      reportError(path.node, errorMessage, filePath);
-    }
-  }
-  state.hasEnums = true;
-}
+function handleTSEnumDeclaration(path, state, filePath) {  
+  console.log('Enum declaration detected:', path.node.type);  
+  if (state.hasMainComponent || state.hasHandlers  
+    || state.hasHooks || state.hasReactComponent  
+    || state.hasPropTypes || state.hasDefaultProps  
+    || state.hasExports) {  
+    const errorMessage = generateErrorMessage("Enums", state, filePath);  
+    if (errorMessage) {  
+      reportError(path.node, errorMessage, filePath);  
+    }  
+  }  
+  state.hasEnums = true;  
+} 
 
-// Function to handle a styled component
-function handleStyledComponent(path) {
-  if (isStyledComponent(path)) {
-    const tag = path.get('tag');
-    
-    if (t.isMemberExpression(tag)) {
-      // It's a styled member expression like styled.div
-      const property = tag.get('property').node.name;
-      console.log('Found styled component:', property);
-      // Perform operations on styled components...
-    } else if (t.isCallExpression(tag)) {
-      // It's a styled call expression like styled(Button)
-      const styledComponent = tag.get('arguments')[0];
-      if (styledComponent) {
-        console.log('Found styled component with custom component:', styledComponent.node.name);
-        // Perform operations on styled components with custom stylings...
-      }
-    }
-  }
-}
-
-/**
- * Evaluates declarations to identify custom hook functions, ensuring that they conform to the conventions for naming and placement. 
- * A custom hook is expected to start with "use" and adhere to the structural order in the code where functions, components, types,
- * and export statements have predetermined positions. If a hook is found out of order, an error message is generated to report
- * the discovered code organization issue.
- *
- * @param {Path} path - The path containing the custom hook declaration.
- * @param {State} state - Tracks the type of declarations encountered for maintaining code organization.
- * @param {string} filePath - The location of the file being traversed, used for error reporting.
- *
- * Note: This function assumes that the naming and structuring conventions for React hooks are being followed.
- * TODO: Enhance naming and placement validation, making adjustments as needed to reflect custom project standards.
- */
-function handleCustomHookDeclaration(path, state, filePath) {
-  let functionName = "";
-  // code to found the name of the custom hook
-  if (path.node.type === 'VariableDeclaration') {
-    path.node.declarations.forEach(declarator => {
-      const initializer = declarator.init;
-      if (initializer && (initializer.type === 'FunctionExpression' || initializer.type === 'ArrowFunctionExpression')) {
-        functionName = declarator.id.name;
-      }
-    });
-  }
-  // Call isCustomHook to check if the function name matches the custom hook pattern
-  if (isCustomHook(functionName)) {
-    console.log('Custom hook declaration detected:', path.node.type);
-    // Ensure custom hooks are declared in the right order
-    if ( state.hasStyledComponents||state.hasInterfaces
-      ||state.hasTypes||state.hasEnums
-      ||state.hasMainComponent
-      ||state.hasHandlers||state.hasHooks
-      ||state.hasReactComponent||state.hasPropTypes
-      ||state.hasDefaultProps || state.hasExports) {
-      const errorMessage = generateErrorMessage("Custom Hooks",state, filePath);
-      if (errorMessage) {
-        reportError(path.node, errorMessage, filePath);
-      }
-    } 
-    state.hasCustomHooks = true;
-    enterReactComponent(state);
+// Improved function to handle a styled component  
+function handleStyledComponent(path, state, filePath) {  
+  if (isStyledComponent(path)) {  
+    const tag = path.get('tag');  
   
-    // Traverse the  component for additional logic specific to React component structure
-    path.traverse({
-      VariableDeclarator(innerPath) {
-        if (!hasDisableCheckComment(path)) {
-        handleVariableDeclarator(innerPath, state, filePath);
-        }
-      },
-      CallExpression(path) {
-        if (!hasDisableCheckComment(path)) {
-        checkForContextUsageOrder(path);
-        }
-      },
-      ReturnStatement(innerPath) {
-        if (!hasDisableCheckComment(path)) {
-        handleReturnStatement(innerPath, state, filePath);
-        }
-      },
-      JSXElement(innerPath) {
-        if (!hasDisableCheckComment(path)) {
-        handleJSXElement(innerPath, state, filePath);
-        }
-      },
-      FunctionExpression(innerPath) {
-        if (!hasDisableCheckComment(path)) {
-        handleFunctionExpressionsAndArrowFunctions(innerPath, state, filePath);
-        }
-      },
-      ArrowFunctionExpression(innerPath) {
-        if (!hasDisableCheckComment(path)) {
-        handleFunctionExpressionsAndArrowFunctions(innerPath, state, filePath);
-        }
-      },
+    if (t.isMemberExpression(tag)) {  
+      // It's a styled member expression like styled.div  
+      const property = tag.get('property').node.name;  
+      console.log('Found styled component:', property);  
+    } else if (t.isCallExpression(tag)) {  
+      // It's a styled call expression like styled(Button)  
+      const styledComponent = tag.get('arguments')[0];  
+      if (styledComponent) {  
+        console.log('Found styled component with custom component:', styledComponent.node.name);  
+      }  
+    }  
+  
+    // Ensure styled components are declared in the appropriate order  
+    if (state.hasInterfaces || state.hasTypes  
+      || state.hasEnums || state.hasMainComponent  
+      || state.hasHandlers || state.hasHooks  
+      || state.hasReactComponent || state.hasPropTypes  
+      || state.hasDefaultProps || state.hasExports) {  
+      const errorMessage = generateErrorMessage("Styled Component", state, filePath);  
+      if (errorMessage) {  
+        reportError(path.node, errorMessage, filePath);  
+      }  
+    }  
+    state.hasStyledComponents = true;  
+  }  
+}  
 
-      exit(innerPath) {
-        if (innerPath === path) { // Exit from the component
-          exitReactComponent(state);
-        }
-      },
-    });
-  }
-}
-
-/**
- * Handles local constant declarations inside functions or components and ensures they precede hook states, contexts, effects,
- * and handler function declarations. If a local constant is found after such hooks and functions, it reports an error.
- * If the declaration occurs at the top level of the module ('Program'), it treats it as a global constant instead.
- *
- * @param {Path} path - The path for the local constant declaration.
- * @param {State} state - State object tracking the encountered hooks and declarations.
- * @param {string} filePath - The file being processed for context in reporting.
- *
- * Note: It assumes that non-top-level constants should precede specific hook and function declarations.
- * TODO: Review and refine the way local and global constants are distinguished and handled.
- */
+/**  
+ * Evaluates declarations to identify custom hook functions, ensuring that they conform to the conventions for naming and placement.   
+ * A custom hook is expected to start with "use" and adhere to the structural order in the code where functions, components, types,  
+ * and export statements have predetermined positions. If a hook is found out of order, an error message is generated to report  
+ * the discovered code organization issue.  
+ *  
+ * @param {Path} path - The path containing the custom hook declaration.  
+ * @param {State} state - Tracks the type of declarations encountered for maintaining code organization.  
+ * @param {string} filePath - The location of the file being traversed, used for error reporting.  
+ *  
+ * Note: This function assumes that the naming and structuring conventions for React hooks are being followed.  
+ * TODO: Enhance naming and placement validation, making adjustments as needed to reflect custom project standards.  
+ */  
+function handleCustomHookDeclaration(path, state, filePath) {  
+  console.log('Custom hook declaration detected:', path.node.type);
+  let functionName = '';  
+  
+  // Get the function name for both function declarations and variable declarations  
+  if (path.node.type === 'FunctionDeclaration') {  
+    functionName = path.node.id.name;  
+  } else if (path.node.type === 'VariableDeclaration') {  
+    path.node.declarations.forEach(declarator => {  
+      const initializer = declarator.init;  
+      if (initializer && (initializer.type === 'FunctionExpression' || initializer.type === 'ArrowFunctionExpression')) {  
+        functionName = declarator.id.name;  
+      }  
+    });  
+  }  
+  
+  // Ensure the function name follows the custom hook naming pattern (starts with "use")  
+  if (functionName && /^use[A-Z]/.test(functionName)) {  
+    console.log('Custom hook declaration detected:', path.node.type);  
+  
+    // Ensure custom hooks are declared in the right order  
+    if (state.hasStyledComponents || state.hasInterfaces  
+        || state.hasTypes || state.hasEnums  
+        || state.hasMainComponent  
+        || state.hasHandlers || state.hasHooks  
+        || state.hasReactComponent || state.hasPropTypes  
+        || state.hasDefaultProps || state.hasExports) {  
+      const errorMessage = generateErrorMessage('Custom Hooks', state, filePath);  
+      if (errorMessage) {  
+        reportError(path.node, errorMessage, filePath);  
+      }  
+    }  
+    state.hasCustomHooks = true;  
+    enterReactComponent(state);  
+  
+    // Traverse the custom hook for additional logic specific to React hook structure  
+    path.traverse({  
+      VariableDeclarator(innerPath) {  
+        if (!hasDisableCheckComment(innerPath)) {  
+          handleVariableDeclarator(innerPath, state, filePath);  
+        }  
+      },  
+      CallExpression(innerPath) {  
+        if (!hasDisableCheckComment(innerPath)) {  
+          checkForContextUsageOrder(innerPath);  
+        }  
+      },  
+      ReturnStatement(innerPath) {  
+        if (!hasDisableCheckComment(innerPath)) {  
+          handleReturnStatement(innerPath, state, filePath);  
+        }  
+      },  
+      JSXElement(innerPath) {  
+        if (!hasDisableCheckComment(innerPath)) {  
+          handleJSXElement(innerPath, state, filePath);  
+        }  
+      },  
+      FunctionExpression(innerPath) {  
+        if (!hasDisableCheckComment(innerPath)) {  
+          handleFunctionExpressionsAndArrowFunctions(innerPath, state, filePath);  
+        }  
+      },  
+      ArrowFunctionExpression(innerPath) {  
+        if (!hasDisableCheckComment(innerPath)) {  
+          handleFunctionExpressionsAndArrowFunctions(innerPath, state, filePath);  
+        }  
+      },  
+      exit(innerPath) {  
+        if (innerPath === path) {  
+          // Exit from the component  
+          exitReactComponent(state);  
+        }  
+      }  
+    });  
+  }  
+}  
+ 
 /**  
  * Handles local constant declarations inside functions or components and ensures they precede hook states, contexts, effects,  
  * and handler function declarations. If a local constant is found after such hooks and functions, it reports an error.  
@@ -1515,29 +1575,47 @@ function handleCustomHookDeclaration(path, state, filePath) {
  */  
 function handlelocalConstantDeclaration(path, state, filePath) {  
   console.log('Local constant declaration detected:', path.node.type);  
-  
-  // Check if we are inside any function or component  
-  if (path.scope.path.type !== 'Program') {  
-    if (  
-      state.functionComponentState.hasHooks ||  
-      state.functionComponentState.hasHandlers ||  
-      state.functionComponentState.hasReactComponent ||  
-      state.functionComponentState.hasPropTypes ||  
-      state.functionComponentState.hasDefaultProps ||  
-      state.functionComponentState.hasExports  
-    ) {  
-      const errorMessage = generateErrorMessage("Constante", state.functionComponentState, filePath);  
-      if (errorMessage) {  
-        reportError(path.node, errorMessage, filePath);  
-      }  
-    }  
-    state.functionComponentState.hasConstants = true;  
+
+  // Check if the variable declarator is part of a variable declaration  
+  if (!path.isVariableDeclarator()) {  
+      return;  
   }  
-  // If the variable declaration is not within a function, consider it as a global constant  
-  else if (path.scope.path.type === 'Program') {  
-    handleGlobalConstantDeclaration(path, state, filePath);  
+  
+  const variableName = path.node.id.name;  
+  // Check the declaration keyword to ensure best practices are followed  
+  if (!checkDeclarationKeyword(path)) {  
+      return;  
+  }  
+
+  // Determine the context in which the variable is declared  
+  const isTopLevel = path.scope.path.type === 'Program';  
+  const isInsideFunctionOrBlock = path.scope.path.type !== 'Program';  
+  const isGlobal = isGlobalConstant(path);  
+  const isLocal = isLocalConstant(path);  
+
+  if (isInsideFunctionOrBlock) {  
+      // Handle local constant  
+      const currentState = state.functionComponentState.insideReactComponent ? state.functionComponentState : state.topLevelState;  
+      if (  
+          currentState.hasHooks ||  
+          currentState.hasHandlers ||  
+          currentState.hasReactComponent ||  
+          currentState.hasPropTypes ||  
+          currentState.hasDefaultProps ||  
+          currentState.hasExports  
+      ) {  
+          const errorMessage = generateErrorMessage("Local constant declaration", currentState, filePath);  
+          if (errorMessage) {  
+              reportError(path.node, errorMessage, filePath);  
+          }  
+      }  
+      currentState.hasConstants = true;  
+  } else {  
+      // If the variable declaration is not within a function, consider it as a global constant  
+      handleGlobalConstantDeclaration(path, state, filePath);  
   }  
 }  
+
 
 
 /**
@@ -1613,76 +1691,87 @@ function handleMainReactComponent(path, state, filePath) {
 }  
 
 
-/**
- * Handles the detection of helper function declarations within the code, ensuring they are appropriately positioned in
- * relation to constants, hooks, components, exports, and prop type definitions. It checks whether these elements precede
- * the helper function, which could indicate an organization issue within the code structure. If an organizational issue
- * is found, an error message is generated.
- *
- * @param {Path} path - The path representing the helper function declaration node in the AST.
- * @param {State} state - The state object tracking the order of code structure elements during AST traversal.
- * @param {string} filePath - The file path of the source file for context in error reporting.
- *
- * Note: The function updates the state to mark that a helper function has been declared, regardless of whether
- * an organizational issue has been detected.
- */
-function handleHelperFunctionDeclaration(path, state, filePath) {
-    console.log('Helper function declaration detected:', path.node.type);
-    if (state.hasHelperFunctions|| state.hasCustomHooks
-      ||state.hasStyledComponents||state.hasInterfaces
-      ||state.hasTypes||state.hasEnums||state.hasMainComponent
-      ||state.hasHandlers||state.hasHooks
-      || state.hasReactComponent||state.hasPropTypes
-      ||state.hasDefaultProps || state.hasExports) {      
-      const errorMessage = generateErrorMessage("Helper Functions",state, filePath);
-      if (errorMessage) {
-        reportError(path.node, errorMessage, filePath);
-      }
-    }
-    state.hasHelperFunctions = true;
-    enterReactComponent(state);
-  
-    // Traverse the function for additional logic specific to React function structure
-    path.traverse({
-      VariableDeclarator(innerPath) {
-        if (!hasDisableCheckComment(path)) {
-        handleVariableDeclarator(innerPath, state, filePath);
-        }
-      },
-      CallExpression(path) {
-        if (!hasDisableCheckComment(path)) {
-        checkForContextUsageOrder(path);
-        }
-      },
-      ReturnStatement(innerPath) {
-        if (!hasDisableCheckComment(path)) {
-        handleReturnStatement(innerPath, state, filePath);
-        }
-      },
-      JSXElement(innerPath) {
-        if (!hasDisableCheckComment(path)) {
-        handleJSXElement(innerPath, state, filePath);
-        }
-      },
-      FunctionExpression(innerPath) {
-        if (!hasDisableCheckComment(path)) {
-        handleFunctionExpressionsAndArrowFunctions(innerPath, state, filePath);
-        }
-      },
-      ArrowFunctionExpression(innerPath) {
-        if (!hasDisableCheckComment(path)) {
-        handleFunctionExpressionsAndArrowFunctions(innerPath, state, filePath);
-        }
-      },
-      // Add other node type handlers here as needed
+/**   
+ * Handles the detection of helper function declarations within the code, ensuring they are appropriately positioned   
+ * in relation to constants, hooks, components, exports, and prop type definitions.   
+ * It checks whether these elements precede the helper function, which could indicate an organization issue within the code structure.  
+ * If an organizational issue is found, an error message is generated.  
+ *   
+ * @param {Path} path - The path representing the helper function declaration node in the AST.   
+ * @param {State} state - The state object tracking the order of code structure elements during AST traversal.  
+ * @param {string} filePath - The file path of the source file for context in error reporting.  
+ */  
+function handleHelperFunctionDeclaration(path, state, filePath) {  
+  console.log('Helper function declaration detected:', path.node.type);  
+    
+  // Ensure functions are declared before hooks, main components, and other React-specific constructs  
+  const currentState = state.functionComponentState.insideReactComponent ? state.functionComponentState : state.topLevelState;  
+    
+  if (currentState.hasCustomHooks ||  
+      currentState.hasStyledComponents ||  
+      currentState.hasInterfaces ||  
+      currentState.hasTypes ||  
+      currentState.hasEnums ||  
+      currentState.hasMainComponent ||  
+      currentState.hasHandlers ||  
+      currentState.hasHooks ||  
+      currentState.hasReactComponent ||  
+      currentState.hasPropTypes ||  
+      currentState.hasDefaultProps ||  
+      currentState.hasExports) {  
+        
+      const errorMessage = generateErrorMessage("Helper Functions", state, filePath);  
+      if (errorMessage) {  
+          reportError(path.node, errorMessage, filePath);  
+      }  
+  }  
+    
+  // Mark helper functions correctly in the state  
+  currentState.hasHelperFunctions = true;  
+    
+  enterReactComponent(state);  
+    
+  // Traverse the function for additional logic specific to React function structure  
+  path.traverse({  
+      VariableDeclarator(innerPath) {  
+          if (!hasDisableCheckComment(path)) {  
+              handleVariableDeclarator(innerPath, state, filePath);  
+          }  
+      },  
+      CallExpression(innerPath) {  
+          if (!hasDisableCheckComment(path)) {  
+              checkForContextUsageOrder(innerPath, filePath);  
+          }  
+      },  
+      ReturnStatement(innerPath) {  
+          if (!hasDisableCheckComment(path)) {  
+              handleReturnStatement(innerPath, state, filePath);  
+          }  
+      },  
+      JSXElement(innerPath) {  
+          if (!hasDisableCheckComment(path)) {  
+              handleJSXElement(innerPath, state, filePath);  
+          }  
+      },  
+      FunctionExpression(innerPath) {  
+          if (!hasDisableCheckComment(path)) {  
+              handleFunctionExpressionsAndArrowFunctions(innerPath, state, filePath);  
+          }  
+      },  
+      ArrowFunctionExpression(innerPath) {  
+          if (!hasDisableCheckComment(path)) {  
+              handleFunctionExpressionsAndArrowFunctions(innerPath, state, filePath);  
+          }  
+      },  
+      // Add other node type handlers here as needed  
+      exit(innerPath) {  
+          if (innerPath === path) { // Exit from the function  
+              exitReactComponent(state);  
+          }  
+      }  
+  });  
+}  
 
-      exit(innerPath) {
-        if (innerPath === path) { // Exit from the function
-          exitReactComponent(state);
-        }
-      },
-    });
-}
 
 // TODO: Ajouter la gestion de ce handler dans les autre composants
 /**
@@ -1697,30 +1786,52 @@ function handleHelperFunctionDeclaration(path, state, filePath) {
  * Note: Assumes naming conventions where hooks start with 'use' and handlers with 'handle'. The state is updated with flags 
  * corresponding to the order of these function types.
  */
-function handleFunctionExpressionsAndArrowFunctions(innerPath, state, filePath) {
- console.log('Function expression detected:', innerPath.node.type);
-  const functionName = innerPath.node.id && innerPath.node.id.name;
-  if (functionName && /^use[A-Z]/.test(functionName)) {
-    // Detected a hook
-    if (state.hasPropTypes||state.hasDefaultProps
-      ||state.hasExports) {
-      const errorMessage = generateErrorMessage("Hook Function",state, filePath);
-      if (errorMessage) {
-        reportError(path.node, errorMessage, filePath);
-      }
-    }
-    state.hasHooks = true; // Assumes state contains a hasHooks flag
+function handleFunctionExpressionsAndArrowFunctions(path, state, filePath) {  
+  console.log('Function expression detected:', path.node.type);  
+  const functionName = path.node.id && path.node.id.name;  
 
-  } else if (functionName && /^handle[A-Z]/.test(functionName)) {
-    // Detected a handle function
-    if (state.hasHooks) {
-      reportError(innerPath.node, 'Handlers should be defined after hooks.', filePath);
-    } else if (state.hasConditionalRender || state.hasReturn) {
-      reportError(innerPath.node, 'Handlers should be defined before render logic and return statement.', filePath);
-    }
-    state.hasHandlers = true;
-  }
-}
+  // Identify if the function is a hook (e.g., useEffect)  
+  if (functionName && /^use[A-Z]/.test(functionName)) {  
+      if (state.hasPropTypes || state.hasDefaultProps || state.hasExports) {  
+          const errorMessage = generateErrorMessage("Hook Function", state, filePath);  
+          if (errorMessage) {  
+              reportError(path.node, errorMessage, filePath);  
+          }  
+      }  
+      state.hasHooks = true; // Assumes state contains a hasHooks flag  
+
+  // Identify if the function is a handler (e.g., handleSubmit)  
+  } else if (functionName && /^handle[A-Z]/.test(functionName)) {  
+      if (state.hasHooks) {  
+          reportError(path.node, 'Handlers should be defined after hooks.', filePath);  
+      } else if (state.hasConditionalRender || state.hasReturn) {  
+          reportError(path.node, 'Handlers should be defined before render logic and return statement.', filePath);  
+      }  
+      state.hasHandlers = true;  
+  }  
+
+  // Traverse nested functions within the current function expression  
+  path.traverse({  
+      FunctionExpression(nestedPath) {  
+          handleFunctionExpressionsAndArrowFunctions(nestedPath, state, filePath);  
+      },  
+      ArrowFunctionExpression(nestedPath) {  
+          handleFunctionExpressionsAndArrowFunctions(nestedPath, state, filePath);  
+      },  
+      JSXElement(nestedPath) {  
+          handleJSXElement(nestedPath, state, filePath);  
+      },  
+      VariableDeclarator(nestedPath) {  
+          handleVariableDeclarator(nestedPath, state, filePath);  
+      },  
+      CallExpression(nestedPath) {  
+          checkForContextUsageOrder(nestedPath);  
+      },  
+      ReturnStatement(nestedPath) {  
+          handleReturnStatement(nestedPath, state, filePath);  
+      }  
+  });  
+} 
 
 /**  
  * Processes export statements encountered during AST traversal, identifying whether the main component of the file is  
@@ -1732,28 +1843,54 @@ function handleFunctionExpressionsAndArrowFunctions(innerPath, state, filePath) 
  * @param {State} state - The object tracking the presence of code elements within the file.  
  * @param {string} filePath - The path of the file being processed.  
  */  
-function handleExportDeclarations(path, state, filePath) {    
-  console.log('Export statement detected:', path.node.type);    
-    
-  // Check if the export statement is not inside a function or component    
-  const insideFunctionOrComponent = path.findParent(p =>     
-    p.isFunctionDeclaration() ||     
-    p.isFunctionExpression() ||     
-    p.isArrowFunctionExpression() ||    
-    p.isClassDeclaration()    
-  );    
-    
-  if (insideFunctionOrComponent) {    
-    reportError(path.node, 'Exports should not be declared inside a function or component.', filePath);    
-    return;    
-  }    
-    
-  if (state.topLevelState.hasMainComponent && isExportDeclarationWithName(path, state.topLevelState.mainComponentName)) {    
-    console.log(`Main component ${state.topLevelState.mainComponentName} is exported.`);    
-    state.topLevelState.hasExportedMainComponent = true;    
-  }    
-  state.topLevelState.hasExports = true;    
-}   
+function handleExportDeclarations(path, state, filePath) {  
+  console.log('Export statement detected:', path.node.type);  
+  
+  // Check if the export statement is not inside a function or component  
+  const insideFunctionOrComponent = path.findParent(p =>   
+    p.isFunctionDeclaration() ||   
+    p.isFunctionExpression() ||   
+    p.isArrowFunctionExpression() ||   
+    p.isClassDeclaration()  
+  );  
+  
+  if (insideFunctionOrComponent) {  
+    reportError(path.node, 'Exports should not be declared inside a function or component.', filePath);  
+    return;  
+  }  
+  
+  // Retrieve all export specifiers if it's an ExportNamedDeclaration  
+  if (path.isExportNamedDeclaration()) {  
+    const { specifiers } = path.node;  
+    specifiers.forEach(specifier => {  
+      if (specifier.exported && state.topLevelState.mainComponentName && specifier.exported.name === state.topLevelState.mainComponentName) {  
+        console.log(`Main component ${state.topLevelState.mainComponentName} is exported as a named export.`);  
+        state.topLevelState.hasExportedMainComponent = true;  
+      }  
+    });  
+  }  
+  
+  // Check ExportDefaultDeclaration  
+  if (path.isExportDefaultDeclaration()) {  
+    const { declaration } = path.node;  
+    if (isExportDeclarationWithName(path, state.topLevelState.mainComponentName)) {  
+      console.log(`Main component ${state.topLevelState.mainComponentName} is exported as the default export.`);  
+      state.topLevelState.hasExportedMainComponent = true;  
+    }  
+    // Check if the default export is a variable or function declaration  
+    else if (declaration && (t.isIdentifier(declaration) || t.isFunctionDeclaration(declaration) || t.isClassDeclaration(declaration))) {  
+      if (declaration.name === state.topLevelState.mainComponentName) {  
+        console.log(`Main component ${state.topLevelState.mainComponentName} is exported as the default export.`);  
+        state.topLevelState.hasExportedMainComponent = true;  
+      }  
+    }  
+  }  
+  
+  state.topLevelState.hasExports = true;  
+}  
+  
+ 
+  
 
 
 /**
@@ -1765,7 +1902,17 @@ function handleExportDeclarations(path, state, filePath) {
  * @param {State} state - The state object, used here to track the main component's path and conditional rendering presence.
  * @param {string} filePath - The file path providing context for error messaging when JSX is found in disallowed locations.
  */
+/**  
+ * Inspects JSX elements within the AST to verify they are correctly placed within the structure of a React component.  
+ * Validates that the JSX is part of a return statement or suitably encapsulated within variable declarations or conditional   
+ * rendering logic in the main component. It reports errors for JSX that does not adhere to these structural guidelines.  
+ *  
+ * @param {Path} innerPath - The path representing a JSX element node within the AST.  
+ * @param {State} state - The state object, used here to track the main component's path and conditional rendering presence.  
+ * @param {string} filePath - The file path providing context for error messaging when JSX is found in disallowed locations.  
+ */  
 function handleJSXElement(innerPath, state, filePath) {  
+  console.log('JSX element detected:', innerPath.node.type);
   // Check if we're inside a function (component or not).  
   const functionParent = innerPath.findParent(p => p.isFunctionDeclaration() || p.isFunctionExpression() || p.isArrowFunctionExpression());  
   
@@ -1773,17 +1920,19 @@ function handleJSXElement(innerPath, state, filePath) {
     // Check if this JSX is part of the return statement or a variable declaration within the function  
     const isPartOfReturn = !!innerPath.findParent(p => p.isReturnStatement());  
     const isPartOfVariableDeclarator = !!innerPath.findParent(p => p.isVariableDeclarator());  
+    const isPartOfConditional = !!innerPath.findParent(p => p.isConditionalExpression() || p.isLogicalExpression() || p.isJSXExpressionContainer());  
+    const isPartOfFunctionBody = !!innerPath.findParent(p => p.isBlockStatement());  
   
     if (isPartOfReturn) {  
       // This JSX is valid because it's part of the return statement  
       // No error should be reported.  
-    } else if (functionParent === state.mainComponentPath && !isPartOfVariableDeclarator) {  
-      // If we're in the main component, JSX outside of the return statement indicates conditional rendering  
+    } else if (functionParent === state.mainComponentPath && (isPartOfVariableDeclarator || isPartOfConditional || isPartOfFunctionBody)) {  
+      // If we're in the main component, JSX outside of the return statement indicates conditional rendering or valid encapsulation  
       state.hasConditionalRender = true;  
-    } else if (isPartOfVariableDeclarator) {  
-      // If it's part of a variable declarator (like a component being defined), no error  
+    } else if (isPartOfVariableDeclarator || isPartOfConditional) {  
+      // If it's part of a variable declarator or conditional rendering, no error  
     } else {  
-      // Error if JSX is floating freely inside the component, not wrapped in a return statement  
+      // Error if JSX is floating freely inside the component, not wrapped in a return statement or variable/conditional  
       reportError(  
         innerPath.node,  
         'JSX should be returned from the component or part of a statement within render logic.',  
@@ -1799,6 +1948,7 @@ function handleJSXElement(innerPath, state, filePath) {
     );  
   }  
 }  
+
 
 /**
  * Evaluates return statements to ensure they are appropriately situated within React components. It differentiates between
@@ -1858,37 +2008,60 @@ function handleUseContext(path, state, filePath) {
   }  
 }  
 
+/**  
+ * Handles the identification and processing of React hooks and effects within the AST.  
+ * Ensures that hooks are declared before effects, state, and helper functions, following the expected code structure.  
+ *  
+ * @param {Path} path - The AST path for the node to be processed.  
+ * @param {State} state - The state object tracking encountered elements.  
+ * @param {string} filePath - The file path for reporting errors.  
+ */  
 function handleHooksAndEffects(path, state, filePath) {  
   const currentState = state.functionComponentState.insideReactComponent ? state.functionComponentState : state.topLevelState;  
-  
-  // Ensure hooks are declared before effects, state, and helper functions  
+    
   if (path.isCallExpression()) {  
-    const calleeName = path.node.callee.name;  
-      
-    if (calleeName === 'useState' || calleeName === 'useReducer') {  
-      if (currentState.hasEffects || currentState.hasHelperFunctions) {  
-        reportError(path.node, 'State hooks (useState, useReducer) should be declared before effects and helper functions.', filePath);  
+      const calleeName = path.node.callee.name;  
+
+      // Identify hooks and effects  
+      const hooks = ['useState', 'useReducer', 'useRef', 'useCallback', 'useMemo', 'useEffect', 'useLayoutEffect', 'useContext', 'useImperativeHandle', 'useDebugValue'];  
+      const stateHooks = ['useState', 'useReducer'];  
+      const effectHooks = ['useEffect', 'useLayoutEffect'];  
+
+      // Check for state hooks  
+      if (stateHooks.includes(calleeName)) {  
+          if (currentState.hasEffects || currentState.hasHelperFunctions) {  
+              reportError(path.node, 'State hooks (useState, useReducer) should be declared before effects and helper functions.', filePath);  
+          }  
+          currentState.hasStateHooks = true;  
       }  
-      currentState.hasStateHooks = true;  
-    }  
-      
-    if (calleeName === 'useEffect' || calleeName === 'useLayoutEffect') {  
-      if (currentState.hasHelperFunctions) {  
-        reportError(path.node, 'Effects (useEffect, useLayoutEffect) should be declared before helper functions.', filePath);  
+
+      // Check for effects  
+      if (effectHooks.includes(calleeName)) {  
+          if (currentState.hasHelperFunctions) {  
+              reportError(path.node, 'Effects (useEffect, useLayoutEffect) should be declared before helper functions.', filePath);  
+          }  
+          currentState.hasEffects = true;  
       }  
-      currentState.hasEffects = true;  
-    }  
+
+      // Check for other hooks  
+      if (hooks.includes(calleeName) && !stateHooks.includes(calleeName) && !effectHooks.includes(calleeName)) {  
+          if (currentState.hasEffects || currentState.hasHelperFunctions) {  
+              reportError(path.node, 'Other hooks should be declared before effects and helper functions.', filePath);  
+          }  
+          currentState.hasHooks = true;  
+      }  
   }  
-  
+
   // Ensure helper functions are declared after hooks and effects  
   if (path.isFunctionDeclaration() || path.isFunctionExpression() || path.isArrowFunctionExpression()) {  
-    if (currentState.hasStateHooks || currentState.hasEffects) {  
-      const functionName = path.node.id ? path.node.id.name : 'Anonymous Function';  
-      reportError(path.node, `Helper function ${functionName} should be declared after hooks and effects.`, filePath);  
-    }  
-    currentState.hasHelperFunctions = true;  
+      if (currentState.hasStateHooks || currentState.hasEffects || currentState.hasHooks) {  
+          const functionName = path.node.id ? path.node.id.name : 'Anonymous Function';  
+          reportError(path.node, `Helper function ${functionName} should be declared after hooks and effects.`, filePath);  
+      }  
+      currentState.hasHelperFunctions = true;  
   }  
 }  
+
 
 // ---------------------- Traversal setup ----------------------
 
@@ -1923,96 +2096,82 @@ function hasDisableCheckComment(path) {
 }
 
 
-/**
- * Configures visitor methods for Babel's AST traversal, mapping various node types to their respective handler
- * functions. This setup is crucial to appropriately react when specific nodes are encountered during the traversal
- * process, allowing the tool to perform checks, enforce code structure, and potentially transform the code.
- * 
- * The configuration handles several different node types, each of which has different implications for code structure:
- * - ImportDeclaration: Checks that import statements are properly ordered at the top of the file.
- * - VariableDeclaration: Handles variable declarations, differentiating between main React components and other variables.
- * - TSTypeAliasDeclaration, TSInterfaceDeclaration, TSEnumDeclaration: Handle TypeScript-specific type declarations.
- * - FunctionDeclaration: Similar to VariableDeclaration, but for function declarations.
- * - ArrowFunctionExpression and FunctionExpression: Specifically handles these within the context of variable declarations.
- * - ExportNamedDeclaration and ExportDefaultDeclaration: Handles export statements, ensuring that the main component is exported.
- *
- * Additional node types and their handlers can be added to the visitor configuration as needed to extend its functionality.
- *
- * @param {State} state - The state object that holds flags indicating the presence of various code elements encountered so far.
- * @param {string} filePath - The path of the source file currently being processed by Babel, which can be used for context in reporting.
- * @returns {Object} An object defining visitor methods for the traversal, linking node types to their respective handling functions.
- */
+/**  
+ * Configures visitor methods for Babel's AST traversal, mapping various node types to their respective handler  
+ * functions. This setup is crucial to appropriately react when specific nodes are encountered during the traversal  
+ * process, allowing the tool to perform checks, enforce code structure, and potentially transform the code.  
+ *  
+ * @param {State} state - The state object that holds flags indicating the presence of various code elements encountered so far.  
+ * @param {string} filePath - The path of the source file currently being processed by Babel, which can be used for context in reporting.  
+ * @returns {Object} An object defining visitor methods for the traversal, linking node types to their respective handling functions.  
+ */  
 function setupTraverse(state, filePath) {  
   return {  
-    ImportDeclaration(path) {  
-      if (!hasDisableCheckComment(path)) {  
-        handleImportDeclaration(path, state, filePath);  
-      }  
-    },  
-    CallExpression(path) {  
-      handleUseContext(path, state, filePath); // Ensure context is defined before using  
-      checkForContextUsageOrder(path); // Check for context usage order  
-      handleHooksAndEffects(path, state, filePath); // Handle placement of hooks and effects  
-    },  
-    VariableDeclaration(path) {  
-      if (!hasDisableCheckComment(path)) {  
-        if (isMainFunctionComponent(path, state, filePath)) {  
-          handleMainReactComponent(path, state, filePath);  
-        } else {  
-          handlelocalConstantDeclaration(path, state, filePath);  
-        }  
-      }  
-    },  
-    TSTypeAliasDeclaration(path) {  
-      if (!hasDisableCheckComment(path)) {  
-        handleTSTypeAliasDeclaration(path, state, filePath);  
-      }  
-    },  
-    TSInterfaceDeclaration(path) {  
-      if (!hasDisableCheckComment(path)) {  
-        handleTSInterfaceDeclaration(path, state, filePath);  
-      }  
-    },  
-    TSEnumDeclaration(path) {  
-      if (!hasDisableCheckComment(path)) {  
-        handleTSEnumDeclaration(path, state, filePath);  
-      }  
-    },  
-    FunctionDeclaration(path) {  
-      if (!hasDisableCheckComment(path)) {  
-        // Check for the main component  
-        if (isMainFunctionComponent(path, state, filePath)) {  
-          handleMainReactComponent(path, state, filePath);  
-        } else {  
-          const type = recognizeType(path, state, filePath);  
-          processFunctionType(type, path, state, filePath);  
-        }  
-      }  
-    },  
-    TaggedTemplateExpression(path) {  
-      if (!hasDisableCheckComment(path)) {  
-        handleStyledComponent(path);  
-      }  
-    },  
-    'ArrowFunctionExpression|FunctionExpression': {  
-      enter(path) {  
-        if (!hasDisableCheckComment(path)) {  
-          // We're interested in Arrow/Function expressions that are part of variable declarations  
-          if (path.parentPath.isVariableDeclarator()) {  
-            const type = recognizeType(path.parentPath, state, filePath);  
-            processFunctionType(type, path.parentPath, state, filePath);  
+      ImportDeclaration(path) {  
+          if (!hasDisableCheckComment(path)) {  
+              handleImportDeclaration(path, state, filePath);  
           }  
-        }  
-      }  
-    },  
-    'ExportNamedDeclaration|ExportDefaultDeclaration'(path) {  
-      if (!hasDisableCheckComment(path)) {  
-        handleExportDeclarations(path, state, filePath);  
-      }  
-    },  
-    // Add other node type handlers here as needed  
+      },  
+      VariableDeclaration(path) {  
+          if (!hasDisableCheckComment(path)) {  
+              path.get('declarations').forEach((declaratorPath) => {  
+                  handleVariableDeclarator(declaratorPath, state, filePath);  
+              });  
+          }  
+      },  
+      TSTypeAliasDeclaration(path) {  
+          if (!hasDisableCheckComment(path)) {  
+              handleTSTypeAliasDeclaration(path, state, filePath);  
+          }  
+      },  
+      TSInterfaceDeclaration(path) {  
+          if (!hasDisableCheckComment(path)) {  
+              handleTSInterfaceDeclaration(path, state, filePath);  
+          }  
+      },  
+      TSEnumDeclaration(path) {  
+          if (!hasDisableCheckComment(path)) {  
+              handleTSEnumDeclaration(path, state, filePath);  
+          }  
+      },  
+      FunctionDeclaration(path) {  
+          if (!hasDisableCheckComment(path)) {  
+              if (isMainFunctionComponent(path, state, filePath)) {  
+                  handleMainReactComponent(path, state, filePath);  
+              } else {  
+                  const type = recognizeType(path, state, filePath);  
+                  processFunctionType(type, path, state, filePath);  
+              }  
+          }  
+      },  
+      'ArrowFunctionExpression|FunctionExpression': {  
+          enter(path) {  
+              if (!hasDisableCheckComment(path)) {  
+                  if (path.parentPath.isVariableDeclarator()) {  
+                      const type = recognizeType(path.parentPath, state, filePath);  
+                      processFunctionType(type, path.parentPath, state, filePath);  
+                  }  
+              }  
+          }  
+      },  
+      CallExpression(path) {  
+          if (!hasDisableCheckComment(path)) {  
+              handleHooksAndEffects(path, state, filePath);  
+          }  
+      },  
+      TaggedTemplateExpression(path) {  
+          if (!hasDisableCheckComment(path)) {  
+              handleStyledComponent(path, state, filePath);  
+          }  
+      },  
+      'ExportNamedDeclaration|ExportDefaultDeclaration'(path) {  
+          if (!hasDisableCheckComment(path)) {  
+              handleExportDeclarations(path, state, filePath);  
+          }  
+      },  
   };  
 }  
+
 
 
 // ---------------------- Component enter/exit functions ----------------------
