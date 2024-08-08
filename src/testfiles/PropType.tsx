@@ -11,5 +11,7 @@ type ComponentProps = {
   message: string;
 };
 
+const test = 'test';
+
 
 export default PropType;

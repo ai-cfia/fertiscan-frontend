@@ -8,7 +8,6 @@ function LocalConstantError() {
     }
 
     // Local constant defined after a function inside, which is incorrect as per rules
-    //disable-check
     const someValue = 5;
   
     return innerFunction;

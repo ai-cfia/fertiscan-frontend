@@ -12,6 +12,26 @@ const ignoreFilePath = 'structure-check.ignore';
 const util = require('util');
 const readFile = util.promisify(fs.readFile);
 
+const descriptionMapping = {  
+  "Import statements": ["hasGlobalConstants", "hasHelperFunctions", "hasCustomHooks", "hasStyledComponents", "hasInterfaces", "hasTypes", "hasEnums", "hasMainComponent", "hasReactComponent", "hasPropTypes", "hasDefaultProps", "hasExports"],  
+  "Global constant": ["hasHelperFunctions", "hasCustomHooks", "hasStyledComponents", "hasInterfaces", "hasTypes", "hasEnums", "hasMainComponent", "hasReactComponent", "hasPropTypes", "hasDefaultProps", "hasExports"],  
+  "Helper Functions": ["hasCustomHooks", "hasStyledComponents", "hasInterfaces", "hasTypes", "hasEnums", "hasMainComponent", "hasReactComponent", "hasPropTypes", "hasDefaultProps", "hasExports"],  
+  "Custom Hooks": ["hasStyledComponents", "hasInterfaces", "hasTypes", "hasEnums", "hasMainComponent", "hasReactComponent", "hasPropTypes", "hasDefaultProps", "hasExports"],  
+  "Styled Component": ["hasInterfaces", "hasTypes", "hasEnums", "hasMainComponent", "hasReactComponent", "hasPropTypes", "hasDefaultProps", "hasExports"],  
+  "Interface": ["hasTypes", "hasEnums", "hasMainComponent", "hasReactComponent", "hasPropTypes", "hasDefaultProps", "hasExports"],  
+  "Type alias": ["hasEnums", "hasMainComponent", "hasReactComponent", "hasPropTypes", "hasDefaultProps", "hasExports"],  
+  "Enums": ["hasMainComponent", "hasReactComponent", "hasPropTypes", "hasDefaultProps", "hasExports"],  
+  "Main function/component": ["hasHandlers", "hasHooks", "hasReactComponent", "hasPropTypes", "hasDefaultProps", "hasExports"],  
+  "React component declarations": ["hasHandlers", "hasHooks", "hasPropTypes", "hasDefaultProps", "hasExports"],  
+  "PropTypes definitions": ["hasDefaultProps", "hasExports"],  
+  "default props": ["hasPropTypes","hasExports"],  
+  "Constante": ["hasHelperFunctions", "hasCustomHooks", "hasStyledComponents", "hasInterfaces", "hasTypes", "hasEnums", "hasMainComponent", "hasReactComponent", "hasPropTypes", "hasDefaultProps", "hasExports"],  
+  "Handlers": ["hasHooks", "hasReactComponent", "hasPropTypes", "hasDefaultProps", "hasExports"],  
+  "Hooks": ["hasReactComponent", "hasPropTypes", "hasDefaultProps", "hasExports"],  
+  "Exports": []  
+};  
+
+
 // ---------------------- File processing functions ----------------------
 
 /**
@@ -160,30 +180,47 @@ async function compileIgnorePattern(ignoreFilePath) {
  * @param {Object} initialState - The initial state of the application.
  * @returns {Object} An object with methods to get, set, and subscribe to state changes.
  */
-function createStateTracker() {
-  return {
-    hasImports: false,
-    hasGlobalConstants: false,
-    hasHelperFunctions: false,
-    hasHandlers: false,
-    hasCustomHooks: false,
-    hasConstants: false,
-    hasTypes: false,
-    hasInterfaces: false,
-    hasEnums: false,
-    hasReactComponent: false,
-    insideReactComponent: false,
-    hasPropTypes: false,
-    hasDefaultProps: false,
-    hasReturnInSameComponent: false,
-    hasExports: false,
-    hasMainComponent: false,
-    mainComponentPath: null,
-    hasEncounteredOtherComponent : false,
-    dontContainMainComponentSameNameAsFile : false,
-  };
-}
-
+function createStateTracker() {  
+  return {  
+    topLevelState: {  
+      hasImports: false, // Check for import statements in the file  
+      hasExports: false, // Check for export statements in the file  
+      hasGlobalConstants: false, // Check for constants used throughout the file  
+      hasHelperFunctions: false, // Check for pure functions that are not React components  
+      hasCustomHooks: false, // Check for hooks specific to the component but separated for reusability  
+      hasStyledComponents: false, // Check for styled-components (this is marked as not implemented yet)  
+      hasInterfaces: false, // Check for TypeScript interface definitions specific to the component  
+      hasTypes: false, // Check for TypeScript type alias definitions specific to the component  
+      hasEnums: false, // Check for TypeScript enum definitions specific to the component  
+      hasMainComponent: false, // Check if the main React component is present  
+      hasReactComponent: false, // Check if React components (besides the main one) are present  
+      hasPropTypes: false, // Check for PropTypes definitions (if not using TypeScript)  
+      hasDefaultProps: false, // Check for DefaultProps definitions (if not using TypeScript)  
+    },  
+    functionComponentState: {  
+      hasConstants: false, // Check for local constants specific to the component  
+      hasHandlers: false, // Check for handler functions  
+      hasHooks: false, // Check if any React hooks are used  
+      hasReturnInSameComponent: false, // Check for return statement within the same React component, to ensure it is rendering JSX  
+      insideReactComponent: false, // Flag to indicate if currently traversing inside React component  
+      hasEncounteredOtherComponent: false, // Check if other React components have been encountered (switched off if main component is found)  
+      dontContainMainComponentSameNameAsFile: false, // Check if there is no main component with the same name as the file  
+      mainComponentPath: null, // Store path of the main component, if found  
+      hasGlobalConstants: false, // Include top-level state checks for misplaced declarations  
+      hasHelperFunctions: false,   
+      hasCustomHooks: false,   
+      hasStyledComponents: false,  
+      hasInterfaces: false,  
+      hasTypes: false,  
+      hasEnums: false,  
+      hasMainComponent: false,   
+      hasReactComponent: false,   
+      hasPropTypes: false,   
+      hasDefaultProps: false,   
+    }  
+  };  
+}  
+ 
 // ---------------------- Error reporting functions ----------------------
 
 /**
@@ -196,10 +233,17 @@ function createStateTracker() {
  * @param {Error} error - The error object containing details of the error.
  * @param {string} [context] - Optional context information about where the error occurred.
  */
-function reportError(node, message, filePath) {
-  const location = node.loc.start;
-  console.error(`Error in ${filePath} :${location.line}:${location.column} - ${message}`);
-}
+function reportError(node, message, filePath) {  
+  if (!node.loc) {  
+    console.error(`Error in ${filePath} - ${message}`);  
+    return;  
+  }  
+  
+  const location = node.loc.start;  
+  const nodeType = node.type || 'Unknown';  
+  console.error(`Error in ${filePath}:${location.line}:${location.column} [${nodeType}] - ${message}`);  
+}  
+
 
 /**
  * Generates an error message based on the provided description, state, and file path.
@@ -209,27 +253,26 @@ function reportError(node, message, filePath) {
  * @param {string} filePath - The file path where the error occurred.
  * @returns {string} - The generated error message.
  */
-function generateErrorMessage(description, state, filePath) {
-  const messages = [];
+function generateErrorMessage(description, state, filePath) {  
+  const messages = [];  
+  const relevantStateKeys = descriptionMapping[description] || [];  
+    
+  for (const key of relevantStateKeys) {  
+    if (state[key]) {  
+      // Convert state key to readable form  
+      const readableForm = key.replace('has', '').replace(/([A-Z])/g, ' $1').toLowerCase();  
+      messages.push(readableForm.trim());  
+    }  
+  }  
+  
+  if (messages.length > 0) {  
+    const reasonString = messages.join(", ");  
+    return `${description} should be declared before ${reasonString}.`;  
+  }  
+  
+  return "";  
+}  
 
-  if (state.hasConstants) messages.push("global constants");
-  if (state.hasTypes) messages.push("type aliases");
-  if (state.hasInterfaces) messages.push("interfaces");
-  if (state.hasEnums) messages.push("enums");
-  if (state.hasHelperFunctions) messages.push("helper functions");
-  if (state.hasCustomHooks) messages.push("custom hooks");
-  if (state.hasReactComponent) messages.push("React component declarations");
-  if (state.hasExports) messages.push("export statements");
-  if (state.hasPropTypes) messages.push("PropTypes");
-  if (state.hasDefaultProps) messages.push("default props");
-
-  if (messages.length > 0) {
-    const reasonString = messages.join(", ");
-    return `${description} declarations should come before ${reasonString}.`;
-  }
-
-  return "";
-}
 
 // ---------------------- Is functions ----------------------
 
@@ -561,32 +604,32 @@ function isArrowFunctionExpression(path) {
  * @param {string} filePath - The file path.
  * @returns {boolean} - True if the path represents the main function component, false otherwise.
  */
-function isMainFunctionComponent(path, state, filePath) {
-  const mainComponentName = getMainComponentNameFromFileName(filePath);
-
-  if (path.isVariableDeclaration()) {
-    // Search variable declarators which could be React functional components
-    return path.node.declarations.some(declaration => {
-      if (t.isVariableDeclarator(declaration)) {
-        if (t.isIdentifier(declaration.id, { name: mainComponentName })) {
-          // Additionally, check if its initialization is an arrow function or a function expression
-          if (t.isArrowFunctionExpression(declaration.init) || t.isFunctionExpression(declaration.init)) {
-            state.hasMainComponent = true;
-            state.mainComponentPath = path;
-            return true;
-          }
-        }
-      }
-      return false;
-    });
-  } else if (path.isFunctionDeclaration() && t.isIdentifier(path.node.id, { name: mainComponentName })) {
-    state.hasMainComponent = true;
-    state.mainComponentPath = path;
-    return true;
-  }
-
-  return false;
-}
+function isMainFunctionComponent(path, state, filePath) {  
+  const mainComponentName = getMainComponentNameFromFileName(filePath);  
+  
+  if (path.isVariableDeclaration()) {  
+    return path.node.declarations.some((declaration) => {  
+      if (t.isVariableDeclarator(declaration)) {  
+        if (t.isIdentifier(declaration.id, { name: mainComponentName })) {  
+          if (t.isArrowFunctionExpression(declaration.init) || t.isFunctionExpression(declaration.init)) {  
+            state.hasMainComponent = true;  
+            state.mainComponentPath = path;  
+            state.mainComponentName = mainComponentName; // Make sure to save the main component name  
+            return true;  
+          }  
+        }  
+      }  
+      return false;  
+    });  
+  } else if (path.isFunctionDeclaration() && t.isIdentifier(path.node.id, { name: mainComponentName })) {  
+    state.hasMainComponent = true;  
+    state.mainComponentPath = path;  
+    state.mainComponentName = mainComponentName; // Make sure to save the main component name  
+    return true;  
+  }  
+  
+  return false;  
+}  
 
 function isExportDeclarationWithName(path, componentName) {
   if (path.isExportDefaultDeclaration() && path.has('declaration')) {
@@ -815,6 +858,34 @@ function isExportDeclarationWithName(path, componentName) {
   return false;
 }
 
+// Function to check if the path represents a styled component
+function isStyledComponent(path) {
+  if (t.isTaggedTemplateExpression(path.node)) {
+    const tag = path.get('tag');
+
+    // Check if the tag is a basic styled member expression (e.g., styled.div)
+    if (t.isMemberExpression(tag)) {
+      const object = tag.get('object');
+      return (
+        t.isIdentifier(object) &&
+        object.node.name === 'styled' &&
+        t.isIdentifier(tag.get('property'))
+      );
+    }
+  
+    // Check if the tag is a styled call expression (e.g., styled(Button))
+    if (t.isCallExpression(tag)) {
+      const callee = tag.get('callee');
+      return (
+        t.isIdentifier(callee.node, { name: 'styled' }) &&
+        tag.node.arguments.length > 0
+      );
+    }
+  }
+  
+  return false;
+}
+
 // ---------------------- Get functions ----------------------
 
 /**
@@ -890,6 +961,8 @@ function recognizeType(path, state, filePath) {
     return 'variableDeclarator';
   } else if (isFunctionalComponent(path)) { 
     return 'functionalComponent';
+  }else{
+    console.warn('Recognize type function is not implemented yet', path.node.type);
   }
   return 'unknown';
 }
@@ -1098,20 +1171,27 @@ function reportVariablePlacementIssue(variableName, path, issueType, filePath, n
  * TODO: Extend the error reporting to include more detailed information and possibly integrate with tooling that
  * provides feedback within the developer's environment.
  */
-function handleImportDeclaration(path, state, filePath) {
-  console.log('Import statement detected:', path.node.type); 
-  // Check for anything that should come after the imports
-  if (state.hasConstants || state.hasTypes || state.hasInterfaces || state.hasEnums ||
-      state.hasHelperFunctions || state.hasCustomHooks || state.hasReactComponent ||
-      state.hasExports || state.hasPropTypes || state.hasDefaultProps) {
-      
-    const errorMessage = generateErrorMessage("imports",state, filePath);
-    if (errorMessage) {
-      reportError(path.node, errorMessage);
-    }
-  }
-  state.hasImports = true;
-}
+function handleImportDeclaration(path, state, filePath) {  
+  console.log('Import statement detected:', path.node.type);     
+  if (state.functionComponentState.insideReactComponent) {  
+    reportError(path.node, 'Imports should not be declared inside a function or component.', filePath);  
+  } else {  
+    if (state.topLevelState.hasGlobalConstants || state.topLevelState.hasHelperFunctions   
+      || state.topLevelState.hasCustomHooks || state.topLevelState.hasStyledComponents   
+      || state.topLevelState.hasInterfaces || state.topLevelState.hasTypes   
+      || state.topLevelState.hasEnums || state.topLevelState.hasMainComponent   
+      || state.topLevelState.hasReactComponent || state.topLevelState.hasPropTypes   
+      || state.topLevelState.hasDefaultProps || state.topLevelState.hasExports) {  
+          
+      const errorMessage = generateErrorMessage("Import statements", state.topLevelState, filePath);  
+      if (errorMessage) {  
+        reportError(path.node, errorMessage, filePath);  
+      }  
+    }  
+    state.topLevelState.hasImports = true;  
+  }  
+}  
+ 
 
 /**
  * Handles a variable declarator by performing a series of checks to ensure proper usage and adhering to code standards within the current scope.
@@ -1124,26 +1204,28 @@ function handleImportDeclaration(path, state, filePath) {
  * @param {string} filePath - The file path of the current file being processed, which will be used when reporting issues for context.
  */
 function handleVariableDeclarator(path, state, filePath) {
-  if (!path.isVariableDeclarator()) {
-    return;
-  }
+  const currentState = state.functionComponentState.insideReactComponent ? state.functionComponentState : state.topLevelState;  
   
-  const { id, init } = path.node;
-  const variableName = id.name;
+  if (!path.isVariableDeclarator()) {  
+    return;  
+  }  
+    
+  const { id, init } = path.node;  
+  const variableName = id.name;  
   
   // Perform various checks
   const isTopOfScope = IsTopOfScope(path);
-  //const isProperlyGrouped = checkGrouping(path); Not implemented
   const isProperlyInitialized = init !== null;
   const usesCorrectDeclarationKeyword = checkDeclarationKeyword(path);
+  //const isProperlyGrouped = checkGrouping(path);
   //const isExported = checkExported(path);
   //const hoistingAwareness = checkHoistingAwareness(path);
 
   // Report any issues
   if (!isTopOfScope) reportVariablePlacementIssue(variableName, path, 'TopOfScope', filePath);
-  //if (!isProperlyGrouped) reportVariablePlacementIssue(variableName, path, 'Grouping'); not implemented
   if (!usesCorrectDeclarationKeyword) reportVariablePlacementIssue(variableName, path, 'DeclarationKeyword', filePath);
   if (!isProperlyInitialized) reportVariablePlacementIssue(variableName, path, 'Initialization',filePath);
+  //if (!isProperlyGrouped) reportVariablePlacementIssue(variableName, path, 'Grouping');
   //if (!isExported) reportVariablePlacementIssue(variableName, path, 'Exported', filePath);
   //if (!hoistingAwareness) reportVariablePlacementIssue(variableName, path, 'HoistingAwareness');
 }
@@ -1189,8 +1271,13 @@ function handleGlobalConstantDeclaration(path, state, filePath) {
   console.log('Global constant declaration detected:', path.node.type);
   // Check if the path is directly under the Program node (not nested inside any function/component)
   if (path.scope.path.type === 'Program') {
-    if (state.hasHelperFunctions || state.hasCustomHooks || state.hasReactComponent ||
-        state.hasExports || state.hasPropTypes || state.hasDefaultProps|| state.hasTypes || state.hasInterfaces || state.hasEnums||state.hasHooks) {
+    if (state.hasConstants || state.hasHelperFunctions
+      ||state.hasCustomHooks|| state.hasStyledComponents
+      ||state.hasInterfaces||state.hasTypes
+      ||state.hasEnums||state.hasMainComponent
+      ||state.hasHandlers||state.hasHooks
+      || state.hasReactComponent||state.hasPropTypes
+      ||state.hasDefaultProps || state.hasExports) {
       const errorMessage = generateErrorMessage("Global constant", state, filePath);
       if (errorMessage) {
         reportError(path.node, errorMessage, filePath);
@@ -1198,6 +1285,63 @@ function handleGlobalConstantDeclaration(path, state, filePath) {
     } 
     state.hasGlobalConstants = true;
   }
+}
+
+/**
+ * Handles TypeScript interface declarations, checking for proper placement within the code structure. If interfaces are
+ * declared after Enums, helper functions, hooks, or React components—a violation of typical organizational standards—an 
+ * error is reported. The state is then updated to indicate that an interface declaration has been processed.
+ *
+ * @param {Path} path - The path of the interface declaration in the AST.
+ * @param {State} state - The traversal state, used to assess code structure.
+ * @param {string} filePath - The file path for error context.
+ *
+ * Note: Logs are generated for diagnostic purposes. The function presumes an ordering convention that may need adjustment according to project guidelines.
+ * TODO: Optimize error reporting and ensure alignment with overarching code standards.
+ */
+function handleTSInterfaceDeclaration(path, state, filePath) {
+  console.log('Interface declaration detected:', path.node.type);
+  if (state.hasTypes||state.hasEnums
+    ||state.hasMainComponent ||state.hasHandlers
+    ||state.hasHooks|| state.hasReactComponent
+    ||state.hasPropTypes||state.hasDefaultProps
+    ||state.hasExports) {
+    const errorMessage = generateErrorMessage("Interface",state, filePath);
+    if (errorMessage) {
+      reportError(path.node, errorMessage);
+    }
+  }   
+  state.hasInterfaces = true;
+}
+
+/**
+ * Processes TypeScript type alias declarations within the AST to enforce code organization conventions, ensuring type aliases
+ * are declared before the interfacing of Enums, helper functions, hooks, and React components. This check verifies that a type
+ * alias is not declared after these constructs, as this could indicate a deviation from the preferred organizational structure 
+ * in TypeScript code. Upon encountering a misplaced type alias, the function generates an appropriate error message. It also 
+ * updates the state object to flag the presence of type alias declarations, which is beneficial for later traversal checks.
+ *
+ * @param {Path} path - The Babel AST path representing the TypeScript type alias declaration node.
+ * @param {State} state - The state object that holds information about the types of declarations encountered during the AST traversal.
+ *                        It is crucial for maintaining the order of declarations and detecting misplaced code structures.
+ * @param {string} filePath - The path to the TypeScript source file being processed. This is included in error messages, providing 
+ *                            developers with the context needed to locate and address code organization issues.
+ *
+ * Note: The function currently outputs a console log for diagnostic purposes and assumes a specific order of type declarations. Modifications
+ * may be required if the code organization conventions change.
+ */
+function handleTSTypeAliasDeclaration(path, state, filePath) {
+  console.log('Type alias declaration detected:', path.node.type);
+  if (state.hasEnums||state.hasMainComponent
+    ||state.hasHandlers||state.hasHooks
+    ||state.hasReactComponent||state.hasPropTypes
+    ||state.hasDefaultProps || state.hasExports) {
+    const errorMessage = generateErrorMessage("Type alias",state, filePath);
+    if (errorMessage) {
+      reportError(path.node, errorMessage, filePath);
+    }
+  } 
+  state.hasTypes = true;
 }
 
 /**
@@ -1222,7 +1366,10 @@ function handleGlobalConstantDeclaration(path, state, filePath) {
  */
 function handleTSEnumDeclaration(path, state, filePath) {
   console.log('Enum declaration detected:', path.node.type);
-  if (state.hasHelperFunctions || state.hasCustomHooks || state.hasReactComponent) {
+  if (state.hasMainComponent || state.hasHandlers
+    ||state.hasHooks|| state.hasReactComponent
+    ||state.hasPropTypes||state.hasDefaultProps
+    ||state.hasExports) {
     const errorMessage = generateErrorMessage("Enums",state, filePath);
     if (errorMessage) {
       reportError(path.node, errorMessage, filePath);
@@ -1231,54 +1378,25 @@ function handleTSEnumDeclaration(path, state, filePath) {
   state.hasEnums = true;
 }
 
-/**
- * Processes TypeScript type alias declarations within the AST to enforce code organization conventions, ensuring type aliases
- * are declared before the interfacing of Enums, helper functions, hooks, and React components. This check verifies that a type
- * alias is not declared after these constructs, as this could indicate a deviation from the preferred organizational structure 
- * in TypeScript code. Upon encountering a misplaced type alias, the function generates an appropriate error message. It also 
- * updates the state object to flag the presence of type alias declarations, which is beneficial for later traversal checks.
- *
- * @param {Path} path - The Babel AST path representing the TypeScript type alias declaration node.
- * @param {State} state - The state object that holds information about the types of declarations encountered during the AST traversal.
- *                        It is crucial for maintaining the order of declarations and detecting misplaced code structures.
- * @param {string} filePath - The path to the TypeScript source file being processed. This is included in error messages, providing 
- *                            developers with the context needed to locate and address code organization issues.
- *
- * Note: The function currently outputs a console log for diagnostic purposes and assumes a specific order of type declarations. Modifications
- * may be required if the code organization conventions change.
- */
-function handleTSTypeAliasDeclaration(path, state, filePath) {
-  console.log('Type alias declaration detected:', path.node.type);
-  if (state.hasInterfaces || state.hasEnums || state.hasHelperFunctions || state.hasCustomHooks || state.hasReactComponent) {
-    const errorMessage = generateErrorMessage("Type alias",state, filePath);
-    if (errorMessage) {
-      reportError(path.node, errorMessage, filePath);
+// Function to handle a styled component
+function handleStyledComponent(path) {
+  if (isStyledComponent(path)) {
+    const tag = path.get('tag');
+    
+    if (t.isMemberExpression(tag)) {
+      // It's a styled member expression like styled.div
+      const property = tag.get('property').node.name;
+      console.log('Found styled component:', property);
+      // Perform operations on styled components...
+    } else if (t.isCallExpression(tag)) {
+      // It's a styled call expression like styled(Button)
+      const styledComponent = tag.get('arguments')[0];
+      if (styledComponent) {
+        console.log('Found styled component with custom component:', styledComponent.node.name);
+        // Perform operations on styled components with custom stylings...
+      }
     }
-  } 
-  state.hasTypes = true;
-}
-
-/**
- * Handles TypeScript interface declarations, checking for proper placement within the code structure. If interfaces are
- * declared after Enums, helper functions, hooks, or React components—a violation of typical organizational standards—an 
- * error is reported. The state is then updated to indicate that an interface declaration has been processed.
- *
- * @param {Path} path - The path of the interface declaration in the AST.
- * @param {State} state - The traversal state, used to assess code structure.
- * @param {string} filePath - The file path for error context.
- *
- * Note: Logs are generated for diagnostic purposes. The function presumes an ordering convention that may need adjustment according to project guidelines.
- * TODO: Optimize error reporting and ensure alignment with overarching code standards.
- */
-function handleTSInterfaceDeclaration(path, state, filePath) {
-  console.log('Interface declaration detected:', path.node.type);
-  if (state.hasEnums || state.hasHelperFunctions || state.hasCustomHooks || state.hasReactComponent) {
-    const errorMessage = generateErrorMessage("Interface",state, filePath);
-    if (errorMessage) {
-      reportError(path.node, errorMessage);
-    }
-  }   
-  state.hasInterfaces = true;
+  }
 }
 
 /**
@@ -1309,10 +1427,12 @@ function handleCustomHookDeclaration(path, state, filePath) {
   if (isCustomHook(functionName)) {
     console.log('Custom hook declaration detected:', path.node.type);
     // Ensure custom hooks are declared in the right order
-    if (state.hasHelperFunctions || state.hasReactComponent || state.hasEnums || 
-      state.hasTypes || state.hasInterfaces || state.hasReactComponent || 
-      state.hasExports || state.hasPropTypes || state.hasDefaultProps || 
-      state.hasMainComponent){
+    if ( state.hasStyledComponents||state.hasInterfaces
+      ||state.hasTypes||state.hasEnums
+      ||state.hasMainComponent
+      ||state.hasHandlers||state.hasHooks
+      ||state.hasReactComponent||state.hasPropTypes
+      ||state.hasDefaultProps || state.hasExports) {
       const errorMessage = generateErrorMessage("Custom Hooks",state, filePath);
       if (errorMessage) {
         reportError(path.node, errorMessage, filePath);
@@ -1376,20 +1496,25 @@ function handleCustomHookDeclaration(path, state, filePath) {
  * TODO: Review and refine the way local and global constants are distinguished and handled.
  */
 function handlelocalConstantDeclaration(path, state, filePath) {
-  console.log('Constant declaration detected:', path.node.type);
+  console.log('Constante declaration detected:', path.node.type);
   // Check if we are inside any function or component
   if (path.scope.path.type !== 'Program') {
-    if (state.hasStateHooks || state.hasContextHooks || state.hasEffectHooks || state.hasHandlerFunctions) {
+    if (state.hasCustomHooks|| state.hasStyledComponents
+      ||state.hasInterfaces||state.hasTypes
+      ||state.hasEnums||state.hasMainComponent
+      ||state.hasHandlers||state.hasHooks
+      || state.hasReactComponent||state.hasPropTypes
+      ||state.hasDefaultProps || state.hasExports) { 
       const errorMessage = generateErrorMessage("Constante", state, filePath);
       if (errorMessage) {
-        reportError(path.node, errorMessage);
+        reportError(path.node, errorMessage, filePath);
       }
     }
     state.hasConstants = true;
   }
   // If the variable declaration is not within a function, consider it as a global constant
   else if (path.scope.path.type === 'Program') {
-    handleGlobalConstanteDeclaration(path, state, filePath);
+    handleGlobalConstantDeclaration(path, state, filePath);
   }
 }
 
@@ -1408,56 +1533,63 @@ function handlelocalConstantDeclaration(path, state, filePath) {
  * using different versions/frameworks of React.
  * TODO: Consider support for class components and refine the traversal logic to accommodate advanced patterns or React features.
  */
-function handleMainReactComponent(path, state, filePath) {
-  // Check if we're encountering the first React component, which we designate as the main component
-  if (isMainFunctionComponent(path, state, filePath)) {
-    console.log('Main React component (primary check) detected:', path.node.type);
-    state.hasReactComponent = true; // Mark that we've found the React component
-    state.hasMainComponent = true; // Mark that this is the main component
-    state.mainComponentPath = path;
-    enterReactComponent(state);
+function handleMainReactComponent(path, state, filePath) {  
+  if (isMainFunctionComponent(path, state, filePath)) {  
+    if (state.hasHandlers || state.hasHooks   
+      || state.hasReactComponent || state.hasPropTypes   
+      || state.hasDefaultProps || state.hasExports) {   
+      const errorMessage = generateErrorMessage("Main function/component", state, filePath);  
+      if (errorMessage) {  
+        reportError(path.node, errorMessage, filePath);  
+      }  
+    }  
+    console.log('Main React component (primary check) detected:', path.node.type);  
+    state.hasReactComponent = true;  
+    state.hasMainComponent = true;  
+    state.mainComponentPath = path;  
+    enterReactComponent(state);  
+      
+    path.traverse({  
+      VariableDeclarator(innerPath) {  
+        if (!hasDisableCheckComment(path)) {  
+          handleVariableDeclarator(innerPath, state, filePath);  
+        }  
+      },  
+      CallExpression(path) {  
+        if (!hasDisableCheckComment(path)) {  
+          checkForContextUsageOrder(path);  
+        }  
+      },  
+      ReturnStatement(innerPath) {  
+        if (!hasDisableCheckComment(path)) {  
+          handleReturnStatement(innerPath, state, filePath);  
+        }  
+      },  
+      JSXElement(innerPath) {  
+        if (!hasDisableCheckComment(path)) {  
+          handleJSXElement(innerPath, state, filePath);  
+        }  
+      },  
+      FunctionExpression(innerPath) {  
+        if (!hasDisableCheckComment(path)) {  
+          handleFunctionExpressionsAndArrowFunctions(innerPath, state, filePath);  
+        }  
+      },  
+      ArrowFunctionExpression(innerPath) {  
+        if (!hasDisableCheckComment(path)) {  
+          handleFunctionExpressionsAndArrowFunctions(innerPath, state, filePath);  
+        }  
+      },  
   
-    // Traverse the main component for additional logic specific to React component structure
-    path.traverse({
-      VariableDeclarator(innerPath) {
-        if (!hasDisableCheckComment(path)) {
-        handleVariableDeclarator(innerPath, state, filePath);
-        }
-      },
-      CallExpression(path) {
-        if (!hasDisableCheckComment(path)) {
-        checkForContextUsageOrder(path);
-        }
-      },
-      ReturnStatement(innerPath) {
-        if (!hasDisableCheckComment(path)) {
-        handleReturnStatement(innerPath, state, filePath); // Only handle the main return statement
-        }
-      },
-      JSXElement(innerPath) {
-        if (!hasDisableCheckComment(path)) {
-        handleJSXElement(innerPath, state, filePath);
-        }
-      },
-      FunctionExpression(innerPath) {
-        if (!hasDisableCheckComment(path)) {
-        handleFunctionExpressionsAndArrowFunctions(innerPath, state, filePath);
-        }
-      },
-      ArrowFunctionExpression(innerPath) {
-        if (!hasDisableCheckComment(path)) {
-        handleFunctionExpressionsAndArrowFunctions(innerPath, state, filePath);
-        }
-      },
+      exit(innerPath) {  
+        if (innerPath === path) {  
+          exitReactComponent(state);  
+        }  
+      },  
+    });  
+  }  
+}  
 
-      exit(innerPath) {
-        if (innerPath === path) { // Exit from the main component
-          exitReactComponent(state);
-        }
-      },
-    });
-  }
-}
 
 /**
  * Handles the detection of helper function declarations within the code, ensuring they are appropriately positioned in
@@ -1474,7 +1606,12 @@ function handleMainReactComponent(path, state, filePath) {
  */
 function handleHelperFunctionDeclaration(path, state, filePath) {
     console.log('Helper function declaration detected:', path.node.type);
-    if ((state.hasCustomHooks || state.hasReactComponent || state.hasExports || state.hasPropTypes|| state.hasDefaultProps) && !state.insideReactComponent) {
+    if (state.hasHelperFunctions|| state.hasCustomHooks
+      ||state.hasStyledComponents||state.hasInterfaces
+      ||state.hasTypes||state.hasEnums||state.hasMainComponent
+      ||state.hasHandlers||state.hasHooks
+      || state.hasReactComponent||state.hasPropTypes
+      ||state.hasDefaultProps || state.hasExports) {      
       const errorMessage = generateErrorMessage("Helper Functions",state, filePath);
       if (errorMessage) {
         reportError(path.node, errorMessage, filePath);
@@ -1543,13 +1680,18 @@ function handleFunctionExpressionsAndArrowFunctions(innerPath, state, filePath) 
   const functionName = innerPath.node.id && innerPath.node.id.name;
   if (functionName && /^use[A-Z]/.test(functionName)) {
     // Detected a hook
-    if (state.hasHandlers || state.hasConditionalRender || state.hasReturn) {
-      reportError(innerPath.node, 'Hooks should be defined at the top of the component, before handlers and render logic.', filePath);
+    if (state.hasPropTypes||state.hasDefaultProps
+      ||state.hasExports) {
+      const errorMessage = generateErrorMessage("Hook Function",state, filePath);
+      if (errorMessage) {
+        reportError(path.node, errorMessage, filePath);
+      }
     }
     state.hasHooks = true; // Assumes state contains a hasHooks flag
+
   } else if (functionName && /^handle[A-Z]/.test(functionName)) {
     // Detected a handle function
-    if (!state.hasHooks) {
+    if (state.hasHooks) {
       reportError(innerPath.node, 'Handlers should be defined after hooks.', filePath);
     } else if (state.hasConditionalRender || state.hasReturn) {
       reportError(innerPath.node, 'Handlers should be defined before render logic and return statement.', filePath);
@@ -1558,24 +1700,40 @@ function handleFunctionExpressionsAndArrowFunctions(innerPath, state, filePath) 
   }
 }
 
-/**
- * Processes export statements encountered during AST traversal, identifying whether the main component of the file is
- * correctly exported. This function logs the export statement type and updates the traversal state to indicate that
- * an export has occurred. If the main component is exported with the correct name, it logs a confirmation and flags
- * that the main component has been exported.
- *
- * @param {Path} path - The AST path representing an export statement.
- * @param {State} state - The object tracking the presence of code elements within the file.
- * @param {string} filePath - The path of the file being processed.
- */
-function handleExportDeclarations(path, state, filePath) {
-  console.log('Export statement detected:', path.node.type);
-  if (state.mainComponentName && isExportDeclarationWithName(path, state.mainComponentName)) {
-    console.log(`Main component ${state.mainComponentName} is exported.`);
-    state.hasExportedMainComponent = true;
-  }
-  state.hasExports = true;
-}
+/**  
+ * Processes export statements encountered during AST traversal, identifying whether the main component of the file is  
+ * correctly exported. This function logs the export statement type and updates the traversal state to indicate that  
+ * an export has occurred. If the main component is exported with the correct name, it logs a confirmation and flags  
+ * that the main component has been exported.  
+ *  
+ * @param {Path} path - The AST path representing an export statement.  
+ * @param {State} state - The object tracking the presence of code elements within the file.  
+ * @param {string} filePath - The path of the file being processed.  
+ */  
+function handleExportDeclarations(path, state, filePath) {  
+  console.log('Export statement detected:', path.node.type);  
+  
+  // Check if the export statement is not inside a function or component  
+  const insideFunctionOrComponent = path.findParent(p =>   
+    p.isFunctionDeclaration() ||   
+    p.isFunctionExpression() ||   
+    p.isArrowFunctionExpression() ||  
+    p.isClassDeclaration()  
+  );  
+  
+  if (insideFunctionOrComponent) {  
+    reportError(path.node, 'Exports should not be declared inside a function or component.', filePath);  
+    return;  
+  }  
+  
+  if (state.topLevelState.hasMainComponent && isExportDeclarationWithName(path, state.topLevelState.mainComponentName)) {  
+    console.log(`Main component ${state.topLevelState.mainComponentName} is exported.`);  
+    state.topLevelState.hasExportedMainComponent = true;  
+  }  
+  state.topLevelState.hasExports = true;  
+}  
+  
+
 
 /**
  * Inspects JSX elements within the AST to verify they are correctly placed within the structure of a React component.
@@ -1659,6 +1817,58 @@ function handleReturnStatement(innerPath, state, filePath) {
   }
 }
 
+/**  
+ * Processes useContext calls to ensure the context is defined before being used.  
+ *  
+ * @param {Path} path - The AST path for the CallExpression node.  
+ * @param {State} state - The state object tracking encountered elements.  
+ * @param {string} filePath - The file path for reporting errors.  
+ */  
+function handleUseContext(path, state, filePath) {  
+  if (t.isCallExpression(path.node) && t.isIdentifier(path.node.callee, { name: 'useContext' })) {  
+    const contextArgument = path.get('arguments')[0];  
+    if (t.isIdentifier(contextArgument.node)) {  
+      const contextName = contextArgument.node.name;  
+      const contextBinding = path.scope.getBinding(contextName);  
+      if (!contextBinding) {  
+        reportError(path.node, `Context \`${contextName}\` is used before it is defined.`, filePath);  
+      }  
+    }  
+  }  
+}  
+
+function handleHooksAndEffects(path, state, filePath) {  
+  const currentState = state.functionComponentState.insideReactComponent ? state.functionComponentState : state.topLevelState;  
+  
+  // Ensure hooks are declared before effects, state, and helper functions  
+  if (path.isCallExpression()) {  
+    const calleeName = path.node.callee.name;  
+      
+    if (calleeName === 'useState' || calleeName === 'useReducer') {  
+      if (currentState.hasEffects || currentState.hasHelperFunctions) {  
+        reportError(path.node, 'State hooks (useState, useReducer) should be declared before effects and helper functions.', filePath);  
+      }  
+      currentState.hasStateHooks = true;  
+    }  
+      
+    if (calleeName === 'useEffect' || calleeName === 'useLayoutEffect') {  
+      if (currentState.hasHelperFunctions) {  
+        reportError(path.node, 'Effects (useEffect, useLayoutEffect) should be declared before helper functions.', filePath);  
+      }  
+      currentState.hasEffects = true;  
+    }  
+  }  
+  
+  // Ensure helper functions are declared after hooks and effects  
+  if (path.isFunctionDeclaration() || path.isFunctionExpression() || path.isArrowFunctionExpression()) {  
+    if (currentState.hasStateHooks || currentState.hasEffects) {  
+      const functionName = path.node.id ? path.node.id.name : 'Anonymous Function';  
+      reportError(path.node, `Helper function ${functionName} should be declared after hooks and effects.`, filePath);  
+    }  
+    currentState.hasHelperFunctions = true;  
+  }  
+}  
+
 // ---------------------- Traversal setup ----------------------
 
 function hasDisableCheckComment(path) {
@@ -1715,64 +1925,69 @@ function setupTraverse(state, filePath) {
   return {
     ImportDeclaration(path) {
       if (hasDisableCheckComment(path)) {
-      handleImportDeclaration(path, state, filePath);
+        handleImportDeclaration(path, state, filePath);
       }
+    },
+    CallExpression(path) {
+      handleUseContext(path, state, filePath); // Ensure context is defined before using  
+      checkForContextUsageOrder(path); // Check for context usage order    
+      handleHooksAndEffects(path, state, filePath); // Handle placement of hooks and effects  
+  
     },
     VariableDeclaration(path) {
       if (!hasDisableCheckComment(path)) {
-      // Check for the main component
-      if (isMainFunctionComponent(path, state, filePath)) {
-        handleMainReactComponent(path, state, filePath);
-      } else {
-        // Iterate over variable declarators in case of multiple declarations in one statement
-        path.node.declarations.forEach(declarator => {
-          const declaratorPath = path.get('declarations').find(p => p.node === declarator);
-          const type = recognizeType(declaratorPath, state, filePath); // Assuming you have recognizeType function
-          processFunctionType(type, declaratorPath, state, filePath);
-        });
+        if (isMainFunctionComponent(path, state, filePath)) {  
+          handleMainReactComponent(path, state, filePath);  
+        }  else {
+          handlelocalConstantDeclaration(path, state, filePath);
+        }
       }
-    }
     },
     TSTypeAliasDeclaration(path) {
       if (!hasDisableCheckComment(path)) {
-      handleTSTypeAliasDeclaration(path, state, filePath);
+        handleTSTypeAliasDeclaration(path, state, filePath);
       }
     },
     TSInterfaceDeclaration(path) {
       if (!hasDisableCheckComment(path)) {
-      handleTSInterfaceDeclaration(path, state, filePath);
+        handleTSInterfaceDeclaration(path, state, filePath);
       }
     },
     TSEnumDeclaration(path) {
       if (!hasDisableCheckComment(path)) {
-      handleTSEnumDeclaration(path, state, filePath);
+        handleTSEnumDeclaration(path, state, filePath);
       }
     },
     FunctionDeclaration(path) {
       if (!hasDisableCheckComment(path)) {
-      // Check for the main component
-      if (isMainFunctionComponent(path, state, filePath)) {
-        handleMainReactComponent(path, state, filePath);
-      } else {
-        const type = recognizeType(path, state, filePath);
-        processFunctionType(type, path, state, filePath);
+        // Check for the main component
+        if (isMainFunctionComponent(path, state, filePath)) {
+          handleMainReactComponent(path, state, filePath);
+        } else {
+          const type = recognizeType(path, state, filePath);
+          processFunctionType(type, path, state, filePath);
+        }
       }
-    }
+    },
+    TaggedTemplateExpression(path) {
+      if (!hasDisableCheckComment(path)) {
+        handleStyledComponent(path);
+      }
     },
     'ArrowFunctionExpression|FunctionExpression': {
       enter(path) {
         if (!hasDisableCheckComment(path)) {
-        // We're interested in Arrow/Function expressions that are part of variable declarations
-        if (path.parentPath.isVariableDeclarator()) {
-          const type = recognizeType(path.parentPath, state, filePath);
-          processFunctionType(type, path.parentPath, state, filePath);
+          // We're interested in Arrow/Function expressions that are part of variable declarations
+          if (path.parentPath.isVariableDeclarator()) {
+            const type = recognizeType(path.parentPath, state, filePath);
+            processFunctionType(type, path.parentPath, state, filePath);
+          }
         }
       }
-    }
     },
     'ExportNamedDeclaration|ExportDefaultDeclaration'(path) {
       if (!hasDisableCheckComment(path)) {
-      handleExportDeclarations(path, state, filePath);
+        handleExportDeclarations(path, state, filePath);
       }
     },
     // Add other node type handlers here as needed
@@ -1787,10 +2002,16 @@ function setupTraverse(state, filePath) {
  *
  * @param {State} state - The state object to be updated when entering a React component during AST traversal.
  */
-function enterReactComponent(state) {
-  state.insideReactComponent = true;
-  state.hasReturnInSameComponent  = false; // Reset the flag when entering a new component
-}
+function enterReactComponent(state) {  
+  state.functionComponentState = {  
+    ...state.functionComponentState,  
+    hasConstants: false,  
+    hasHandlers: false,  
+    hasHooks: false,  
+    hasReturnInSameComponent: false,  
+    insideReactComponent: true,  
+  };  
+}  
 
 /**
  * Updates the traversal state object to indicate that the AST traversal has exited the context of a React component. 
@@ -1798,13 +2019,132 @@ function enterReactComponent(state) {
  *
  * @param {State} state - The state object to be updated upon exiting a React component during AST traversal.
  */
-function exitReactComponent(state) {
-  state.insideReactComponent = false;
-}
+function exitReactComponent(state) {  
+  state.functionComponentState.insideReactComponent = false;  
+}  
 
+// ---------------------- fix AST function ----------------------
+async function fixFile(filePath) {  
+  console.log(`Fixing file: ${filePath}`);  
+  const content = readFileSync(filePath, 'utf-8');  
+  const ast = parseFile(content);  
+  const sections = analyzeCode(ast);  
+  const orderedSections = reorderCode(sections);  
+  const fixedCode = generateCodeFromSections(orderedSections);  
+  
+  fs.writeFileSync(filePath, fixedCode, 'utf-8');  
+  console.log(`File ${filePath} fixed.`);  
+}  
 
-// Call the async check function
-checkProjectStructure();
+function analyzeCode(ast) {  
+  const sections = {  
+    imports: [],  
+    constants: [],  
+    types: [],  
+    interfaces: [],  
+    enums: [],  
+    hooks: [],  
+    functions: [],  
+    components: [],  
+    exports: [],  
+  };  
+  
+  traverse(ast, {  
+    ImportDeclaration(path) {  
+      sections.imports.push(path.node);  
+    },  
+    VariableDeclaration(path) {  
+      const declarationType = path.node.declarations[0].init ? 'constants' : 'variables';  
+      sections[declarationType].push(path.node);  
+    },  
+    TSTypeAliasDeclaration(path) {  
+      sections.types.push(path.node);  
+    },  
+    TSInterfaceDeclaration(path) {  
+      sections.interfaces.push(path.node);  
+    },  
+    TSEnumDeclaration(path) {  
+      sections.enums.push(path.node);  
+    },  
+    FunctionDeclaration(path) {  
+      sections.functions.push(path.node);  
+    },  
+    ArrowFunctionExpression(path) {  
+      sections.hooks.push(path.node);  
+    },  
+    FunctionExpression(path) {  
+      sections.hooks.push(path.node);  
+    },  
+    ExportNamedDeclaration(path) {  
+      sections.exports.push(path.node);  
+    },  
+    ExportDefaultDeclaration(path) {  
+      sections.exports.push(path.node);  
+    },  
+  });  
+  
+  return sections;  
+}  
+
+function reorderCode(sections) {  
+  const orderedSections = [  
+    ...sections.imports,  
+    ...sections.types,  
+    ...sections.interfaces,  
+    ...sections.enums,  
+    ...sections.constants,  
+    ...sections.hooks,  
+    ...sections.functions,  
+    ...sections.components,  
+    ...sections.exports,  
+  ];  
+  
+  return orderedSections;  
+}  
+
+function generateCodeFromSections(orderedSections) {  
+  const program = {  
+    type: 'Program',  
+    body: orderedSections,  
+    sourceType: 'module',  
+  };  
+  
+  return generate(program, {}).code;  
+}  
+
+async function fixProjectStructure() {  
+  try {  
+    console.log('Recherche des fichiers .ts et .tsx dans le projet...');  
+    const ignorePattern = await compileIgnorePattern(ignoreFilePath);  
+    const files = await findFilesRecursive(projectPath, filePattern, [], ignorePattern);  
+  
+    if (files.length === 0) {  
+      console.log(`Aucun fichier correspondant trouvé avec le motif "${filePattern}".`);  
+    } else {  
+      console.log(`Fichiers trouvés pour la vérification de structure:`, files);  
+      for (const filePath of files) {  
+        await fixFile(filePath); // Fix the file structure  
+      }  
+    }  
+  } catch (err) {  
+    console.error('Erreur lors de la recherche de fichiers:', err);  
+  }  
+  
+  console.log('Correction de la structure du projet React terminée.');  
+}  
+
+function parseCommandLineArguments() {  
+  const args = process.argv.slice(2); // Get command-line arguments  
+  return args.includes('--fix');  
+}  
+
+// Main execution  
+if (parseCommandLineArguments()) {  
+  fixProjectStructure();  
+} else {  
+  checkProjectStructure();  
+}  
+
 
 // ---------------------- Disabled functions ----------------------
 
