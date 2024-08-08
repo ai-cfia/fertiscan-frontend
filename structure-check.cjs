@@ -2030,13 +2030,29 @@ async function fixFile(filePath) {
   console.log(`Fixing file: ${filePath}`);  
   const content = readFileSync(filePath, 'utf-8');  
   const ast = parseFile(content);  
+    
+  // Analyze and reorder the code sections  
   const sections = analyzeCode(ast);  
   const orderedSections = reorderCode(sections);  
-  const fixedCode = generateCodeFromSections(orderedSections);  
+    
+  // Create a new AST with ordered sections  
+  const newAst = createNewAST(orderedSections);  
+  const newCode = generate(newAst, {}).code;  
   
-  fs.writeFileSync(filePath, fixedCode, 'utf-8');  
+  // Write the new code to the file  
+  fs.writeFileSync(filePath, newCode, 'utf-8');  
   console.log(`File ${filePath} fixed.`);  
 }  
+  
+function createNewAST(orderedSections) {  
+  return {  
+    type: 'Program',  
+    body: orderedSections,  
+    sourceType: 'module',  
+  };  
+}  
+
+
 
 function analyzeCode(ast) {  
   const sections = {  
@@ -2056,7 +2072,7 @@ function analyzeCode(ast) {
       sections.imports.push(path.node);  
     },  
     VariableDeclaration(path) {  
-      const declarationType = path.node.declarations[0].init ? 'constants' : 'variables';  
+      const declarationType = isGlobalConstant(path) ? 'constants' : 'variables';  
       sections[declarationType].push(path.node);  
     },  
     TSTypeAliasDeclaration(path) {  
@@ -2072,10 +2088,11 @@ function analyzeCode(ast) {
       sections.functions.push(path.node);  
     },  
     ArrowFunctionExpression(path) {  
-      sections.hooks.push(path.node);  
-    },  
-    FunctionExpression(path) {  
-      sections.hooks.push(path.node);  
+      if (isCustomHook(path)) {  
+        sections.hooks.push(path.node);  
+      } else {  
+        sections.functions.push(path.node);  
+      }  
     },  
     ExportNamedDeclaration(path) {  
       sections.exports.push(path.node);  
@@ -2087,21 +2104,19 @@ function analyzeCode(ast) {
   
   return sections;  
 }  
-
+  
 function reorderCode(sections) {  
-  const orderedSections = [  
+  return [  
     ...sections.imports,  
+    ...sections.constants,  
     ...sections.types,  
     ...sections.interfaces,  
     ...sections.enums,  
-    ...sections.constants,  
     ...sections.hooks,  
     ...sections.functions,  
     ...sections.components,  
     ...sections.exports,  
   ];  
-  
-  return orderedSections;  
 }  
 
 function generateCodeFromSections(orderedSections) {  
