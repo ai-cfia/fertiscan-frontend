@@ -2064,6 +2064,7 @@ function analyzeCode(ast) {
     functions: [],  
     components: [],  
     exports: [],  
+    localConstants: new Map() // For local constants inside functions  
   };  
   
   traverse(ast, {  
@@ -2074,9 +2075,20 @@ function analyzeCode(ast) {
     VariableDeclaration(path) {  
       if (isGlobalConstant(path)) {  
         sections.constants.push(path.node);  
-      }else if(isLocalConstant(path)){
-        sections.constants.push(path.node);
-      }
+      } else if (isLocalConstant(path)) {  
+        const parentFunction = path.getFunctionParent();  
+        if (parentFunction) {  
+          // Collect local constants specific to their parent functions  
+          const functionBodyNode = parentFunction.node.body;  
+          if (sections.localConstants.has(functionBodyNode)) {  
+            sections.localConstants.get(functionBodyNode).push(path.node);  
+          } else {  
+            sections.localConstants.set(functionBodyNode, [path.node]);  
+          }  
+        } else {  
+          sections.constants.push(path.node);  
+        }  
+      }  
       path.remove(); // Remove the declaration after collecting it  
     },  
     TSTypeAliasDeclaration(path) {  
@@ -2128,6 +2140,16 @@ function reorderCode(sections) {
     ...sections.exports,  
   ];  
   
+  // Reorder code inside functions  
+  for (let [functionBodyNode, localConsts] of sections.localConstants) {  
+    // Insert local constants at the top of their function body  
+    const newFunctionBody = [  
+      ...localConsts,  
+      ...functionBodyNode.body.filter(node => !localConsts.includes(node))  
+    ];  
+    functionBodyNode.body = newFunctionBody;  
+  }  
+  
   return orderedSections;  
 }  
   
@@ -2138,6 +2160,9 @@ function createNewAST(orderedSections) {
     sourceType: 'module',  
   };  
 }  
+  
+// ... Other parts of the script remain the same ...  
+
   
 async function fixProjectStructure() {  
   try {  
