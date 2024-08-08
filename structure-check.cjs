@@ -2074,7 +2074,7 @@ function analyzeCode(ast) {
     VariableDeclaration(path) {  
       if (isGlobalConstant(path)) {  
         sections.constants.push(path.node);  
-      }else{
+      }else if(isLocalConstant(path)){
         sections.constants.push(path.node);
       }
       path.remove(); // Remove the declaration after collecting it  
