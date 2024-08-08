@@ -2152,7 +2152,7 @@ async function fixFile(filePath) {
     
     return sections;  
   }  
-}  
+
   
 function reorderCode(sections) {  
   const orderedSections = [  
