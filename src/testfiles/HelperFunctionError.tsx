@@ -3,7 +3,7 @@
 import React from 'react';
 
 // Helper function defined after constants (Incorrect as per rules)
-export function helperFunction() {
+export function HelperFunctionError() {
   return 'helperFunction';
 }
 

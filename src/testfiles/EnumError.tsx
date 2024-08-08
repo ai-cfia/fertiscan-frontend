@@ -2,7 +2,7 @@
 
 import React from 'react';
 
-export function Component() {
+export function EnumError() {
   return <div />;
 }
 

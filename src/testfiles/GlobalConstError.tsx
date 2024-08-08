@@ -2,8 +2,11 @@
 
 import React from 'react';
 
-export const GLOBAL_CONSTANT = 'This should be at the top of the file';
 
-export function Component() {
+
+function GlobalConstError() {
   return <div />;
 }
+const GLOBAL_CONSTANT = 'This should be at the top of the file';
+
+export default GlobalConstError;

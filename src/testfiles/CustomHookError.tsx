@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 
 // Main React component defined first (this should come after the custom hook according to script logic)
-function MyComponent() {
+function CustomHookError() {
   // ...
   return <div>Hello World</div>;
 }
