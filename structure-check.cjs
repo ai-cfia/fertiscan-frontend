@@ -2049,91 +2049,118 @@ function exitReactComponent(state) {
 }  
 
 // ---------------------- fix AST function ----------------------
-function analyzeCode(ast, filePath) {      
-  const sections = {      
-    imports: [],      
-    localConstants: new Map(),      
-    constants: [],      
-    helperFunctions: [], // Added to separate helper functions      
-    functions: [],      
-    components: [],      
-    types: [],      
-    exports: [],      
-    contexts: [], // Added contexts to separate context creations      
-    mainComponent: null,      
-  };      
-      
-  traverse(ast, {      
-    ImportDeclaration(path) {      
-      sections.imports.push(path.node);      
-      path.remove();      
-    },      
-    VariableDeclaration(path) {      
-      if (isGlobalConstant(path)) {      
-        sections.constants.push(path.node);      
-      } else if (isLocalConstant(path)) {      
-        const parentFunction = path.getFunctionParent();      
-        if (parentFunction) {      
-          const functionBodyNode = parentFunction.node.body;      
-          if (sections.localConstants.has(functionBodyNode)) {      
-            sections.localConstants.get(functionBodyNode).push(path.node);      
-          } else {      
-            sections.localConstants.set(functionBodyNode, [path.node]);      
-          }      
-        } else {      
-          sections.constants.push(path.node);      
-        }      
-      } else if (isContextCreation(path)) {    
-        sections.contexts.push(path.node);    
-      }    
-      path.remove();      
-    },      
-    TSTypeAliasDeclaration(path) {      
-      sections.types.push(path.node);      
-      path.remove();      
-    },      
-    TSInterfaceDeclaration(path) {      
-      sections.types.push(path.node);      
-      path.remove();      
-    },      
-    TSEnumDeclaration(path) {      
-      sections.types.push(path.node);      
-      path.remove();      
-    },      
-    FunctionDeclaration(path) {      
-      if (isMainFunctionComponent(path, {}, getMainComponentNameFromFileName(filePath))) {      
-        sections.mainComponent = path.node;      
-      } else {      
-        sections.helperFunctions.push(path.node); // Adjusted to push helper functions here      
-      }      
-      path.remove();      
-    },      
-    ArrowFunctionExpression(path) {      
-      if (isReactComponent(path.parentPath) && path.parentPath.isVariableDeclarator()) {      
-        if (isMainFunctionComponent(path.parentPath, {}, getMainComponentNameFromFileName(filePath))) {      
-          sections.mainComponent = path.parentPath.parent;      
-        } else {      
-          sections.components.push(path.parentPath.node);      
-        }      
-      } else if (isCustomHook(path.parentPath)) {      
-        sections.helperFunctions.push(path.parentPath.node); // Adjusted to push custom hooks here      
-      } else {      
-        sections.helperFunctions.push(path.parentPath.node); // Adjusted to push expression functions here      
-      }      
-      path.parentPath.remove();      
-    },      
-    ExportNamedDeclaration(path) {      
-      sections.exports.push(path.node);      
-      path.remove();      
-    },      
-    ExportDefaultDeclaration(path) {      
-      sections.exports.push(path.node);      
-      path.remove();      
-    },      
-  });      
-      
-  return sections;      
+function analyzeCode(ast, filePath) {  
+  const sections = {  
+    imports: [],  
+    localConstants: new Map(),  
+    constants: [],  
+    contexts: [], // Added contexts to separate context creations  
+    hooks: [],    // Added hooks to separate hooks  
+    functions: [],  
+    components: [],  
+    types: [],  
+    exports: [],  
+    mainComponent: null,  
+  };  
+    
+  traverse(ast, {  
+    ImportDeclaration(path) {  
+      sections.imports.push(path.node);  
+      path.remove();  
+    },  
+    VariableDeclaration(path) {  
+      if (isGlobalConstant(path)) {  
+        sections.constants.push(path.node);  
+      } else if (isLocalConstant(path)) {  
+        const parentFunction = path.getFunctionParent();  
+        if (parentFunction) {  
+          const functionBodyNode = parentFunction.node.body;  
+          if (sections.localConstants.has(functionBodyNode)) {  
+            sections.localConstants.get(functionBodyNode).push(path.node);  
+          } else {  
+            sections.localConstants.set(functionBodyNode, [path.node]);  
+          }  
+        } else {  
+          sections.constants.push(path.node);  
+        }  
+      } else if (isContextCreation(path)) {  
+        sections.contexts.push(path.node);  
+      } else {  
+        sections.constants.push(path.node);  
+      }  
+      path.remove();  
+    },  
+    TSTypeAliasDeclaration(path) {  
+      sections.types.push(path.node);  
+      path.remove();  
+    },  
+    TSInterfaceDeclaration(path) {  
+      sections.types.push(path.node);  
+      path.remove();  
+    },  
+    TSEnumDeclaration(path) {  
+      sections.types.push(path.node);  
+      path.remove();  
+    },  
+    FunctionDeclaration(path) {  
+      if (isMainFunctionComponent(path, {}, getMainComponentNameFromFileName(filePath))) {  
+        sections.mainComponent = path.node;  
+      } else {  
+        sections.functions.push(path.node); // Adjusted to push helper functions here  
+      }  
+      path.remove();  
+    },  
+    ArrowFunctionExpression(path) {  
+      if (isReactComponent(path.parentPath) && path.parentPath.isVariableDeclarator()) {  
+        if (isMainFunctionComponent(path.parentPath, {}, getMainComponentNameFromFileName(filePath))) {  
+          sections.mainComponent = path.parentPath.parent;  
+        } else {  
+          sections.components.push(path.parentPath.node);  
+        }  
+      } else if (isCustomHook(path.parentPath)) {  
+        sections.functions.push(path.parentPath.node); // Adjusted to push custom hooks here  
+      } else {  
+        sections.functions.push(path.parentPath.node); // Adjusted to push expression functions here  
+      }  
+      path.parentPath.remove();  
+    },  
+    ExportNamedDeclaration(path) {  
+      sections.exports.push(path.node);  
+      path.remove();  
+    },  
+    ExportDefaultDeclaration(path) {  
+      sections.exports.push(path.node);  
+      path.remove();  
+    },  
+  });  
+  
+  return sections;  
 }  
+  
+function reorderCode(sections) {  
+  const orderedSections = [  
+    ...sections.imports,  
+    ...sections.constants,  
+    ...sections.contexts, // Place contexts after imports  
+    ...sections.hooks,  // Place hooks after constants  
+    ...sections.types,  
+    ...sections.functions,  
+    ...sections.components,  
+    sections.mainComponent,  
+    ...sections.exports,  
+  ];  
+  
+  for (let [functionBodyNode, localConsts] of sections.localConstants) {  
+    const newFunctionBody = [  
+      ...localConsts,  
+      ...functionBodyNode.body.filter((node) => !localConsts.includes(node)),  
+    ];  
+    functionBodyNode.body = newFunctionBody;  
+  }  
+  
+  return orderedSections.filter(Boolean);  
+}  
+
 
   
 function reorderCode(sections) {    
@@ -2219,6 +2246,7 @@ if (parseCommandLineArguments()) {
 } else {  
   checkProjectStructure();  
 }  
+ 
 
 // ---------------------- Disabled functions ----------------------
 
