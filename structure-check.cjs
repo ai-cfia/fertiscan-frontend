@@ -2134,7 +2134,6 @@ function reorderCode(sections) {
     ...sections.constants,  
     ...sections.functions,  
     ...sections.types,  
-    ...sections.enums,
     ...sections.components,  
     ...sections.exports,  
   ];  
