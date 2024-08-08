@@ -401,26 +401,6 @@ function isCustomHook(path) {
 } 
 
 /**
- * Checks if a given node is a FunctionExpression.
- *
- * @param {Node} node - The node to check.
- * @returns {boolean} - True if the node is a FunctionExpression, false otherwise.
- */
-function isFunctionExpression(node) {
-  return node.type === 'FunctionExpression';
-}
-
-/**
- * Checks if a given node is an Arrow Function Expression.
- *
- * @param {object} node - The node to check.
- * @returns {boolean} - True if the node is an Arrow Function Expression, false otherwise.
- */
-function isArrowFunctionExpression(node) {
-  return node.type === 'ArrowFunctionExpression';
-}
-
-/**
  * Determines if a given variable is a global constant.
  *
  * @param {NodePath} path - The path of the variable declaration.
