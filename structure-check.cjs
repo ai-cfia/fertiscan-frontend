@@ -2132,8 +2132,9 @@ function reorderCode(sections) {
   const orderedSections = [  
     ...sections.imports,  
     ...sections.constants,  
-    ...sections.types,  
     ...sections.functions,  
+    ...sections.types,  
+    ...sections.enums,
     ...sections.components,  
     ...sections.exports,  
   ];  
@@ -2149,7 +2150,7 @@ function reorderCode(sections) {
   }  
   
   return orderedSections;  
-}  
+}   
   
 function createNewAST(orderedSections) {  
   return {  
