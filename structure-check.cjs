@@ -257,25 +257,25 @@ function reportError(node, message, filePath) {
  * @param {string} filePath - The file path where the error occurred.
  * @returns {string} - The generated error message.
  */
-function generateErrorMessage(description, state, filePath) {  
-  const messages = [];  
-  const relevantStateKeys = descriptionMapping[description] || [];  
+function generateErrorMessage(description, state, filePath) {    
+  const messages = [];    
+  const relevantStateKeys = descriptionMapping[description] || [];    
+      
+  for (const key of relevantStateKeys) {    
+    if (state[key]) {    
+      // Convert state key to readable form    
+      const readableForm = key.replace('has', '').replace(/([A-Z])/g, ' $1').toLowerCase();    
+      messages.push(readableForm.trim());    
+    }    
+  }    
     
-  for (const key of relevantStateKeys) {  
-    if (state[key]) {  
-      // Convert state key to readable form  
-      const readableForm = key.replace('has', '').replace(/([A-Z])/g, ' $1').toLowerCase();  
-      messages.push(readableForm.trim());  
-    }  
-  }  
-  
-  if (messages.length > 0) {  
-    const reasonString = messages.join(", ");  
-    return `${description} should be declared before ${reasonString}.`;  
-  }  
-  
-  return "";  
-}  
+  if (messages.length > 0) {    
+    const reasonString = messages.join(", ");    
+    return `${description} should be declared before ${reasonString}.`;    
+  }    
+    
+  return "";    
+} 
 
 
 // ---------------------- Is functions ----------------------
@@ -969,28 +969,30 @@ function findLastImportIndex(bodyNodes) {
  * TODO: Implement comprehensive checks to improve type recognition accuracy. Consider methods for external contributions
  * to the recognition logic to adapt to new patterns and frameworks that may emerge within the coding community.
  */
-function recognizeType(path, state, filePath) {
-  if (isVariableDeclarator(path)&&isCustomHook(path.get('init'))) {
-    return 'customHook';
-  } else if (isMainFunctionComponent(path, state, filePath)) {
-    return 'mainFunctionComponent';
-  } else if (path.isFunctionDeclaration()) {
-    return 'normalFunction';
-  } else if (path.isFunctionExpression() || isArrowFunctionExpression(path.get('init'))) {
-    return 'expressionFunction';
-  } else if (isGlobalConstant(path)) {
-    return 'globalConstant';
-  } else if (isLocalConstant(path)) {
-    return 'constant';
-  } else if (path.isVariableDeclarator()) {
-    return 'variableDeclarator';
-  } else if (isFunctionalComponent(path)) { 
-    return 'functionalComponent';
-  }else{
-    console.warn('Recognize type function is not implemented yet', path.node.type);
-  }
-  return 'unknown';
-}
+function recognizeType(path, state, filePath) {    
+  if (isVariableDeclarator(path) && isCustomHook(path.get('init'))) {    
+    return 'customHook';    
+  } else if (isMainFunctionComponent(path, state, filePath)) {    
+    return 'mainFunctionComponent';    
+  } else if (path.isFunctionDeclaration()) {    
+    return 'normalFunction';    
+  } else if (isReactFunctionalComponent(path)) { // New case to detect functional components    
+    return 'functionalComponent';    
+  } else if (isFunctionExpression(path.get('init')) || isArrowFunctionExpression(path.get('init'))) {    
+    return 'expressionFunction';    
+  } else if (isGlobalConstant(path)) {    
+    return 'globalConstant';    
+  } else if (isLocalConstant(path)) {    
+    return 'localConstant';    
+  } else if (path.isVariableDeclarator()) {    
+    return 'variableDeclarator';    
+  } else {    
+    console.warn('Recognize type function is not implemented yet', path.node.type);    
+  }    
+  return 'unknown';    
+}  
+
+
 
 // Function to check if the context is being used before it's defined
 function checkForContextUsageOrder(path) {
@@ -1037,40 +1039,41 @@ function checkForContextUsageOrder(path) {
  * TODO: Continuously monitor and update the list of recognized function types. Consider enhancing logging and reporting for issues
  * regarding unrecognized function types, possibly linking to documentation or providing detailed developer guidance.
  */
-function processFunctionType(type, path, state, filePath) {
-  switch (type) {
-    case 'customHook':
-      handleCustomHookDeclaration(path, state, filePath);
-      break;
-    case 'mainFunctionComponent':
-      handleMainReactComponent(path, state, filePath);
-      break;
-    case 'normalFunction':
-      handleHelperFunctionDeclaration(path, state, filePath);
-      break;
-    case 'arrowFunction':
-      handleArrowFunctionDeclaration(path, state, filePath);
-      break;
-    case 'expressionFunction':
-      handleExpressionFunctionDeclaration(path, state, filePath);
-      break;
-    case 'globalConstant':
-      handleGlobalConstantDeclaration(path, state, filePath);
-      break;
-    case 'localConstant':
-      handlelocalConstantDeclaration(path, state, filePath);
-      break;
-    case 'variableDeclarator':
-      handleVariableDeclarator(path, state, filePath);
-      break;
-    case 'functionalComponent':
-      handleFunctionalComponent(path, state, filePath);
-    case 'unknown':
-    default:
-      console.log('Unrecognized function type. Please add this function type to the structure code script.', path.node.type);
-      break;
-  }
-}
+function processFunctionType(type, path, state, filePath) {  
+  switch (type) {  
+    case 'customHook':  
+      handleCustomHookDeclaration(path, state, filePath);  
+      break;  
+    case 'mainFunctionComponent':  
+      handleMainReactComponent(path, state, filePath);  
+      break;  
+    case 'normalFunction':  
+      handleHelperFunctionDeclaration(path, state, filePath);  
+      break;  
+    case 'arrowFunction':  
+      handleArrowFunctionDeclaration(path, state, filePath);  
+      break;  
+    case 'expressionFunction':  
+      handleExpressionFunctionDeclaration(path, state, filePath);  
+      break;  
+    case 'globalConstant':  
+      handleGlobalConstantDeclaration(path, state, filePath);  
+      break;  
+    case 'localConstant':  
+      handlelocalConstantDeclaration(path, state, filePath);  
+      break;  
+    case 'variableDeclarator':  
+      handleVariableDeclarator(path, state, filePath);  
+      break;  
+    case 'functionalComponent':  
+      handleFunctionalComponent(path, state, filePath);  
+      break;  
+    case 'unknown':  
+    default:  
+      console.log('Unrecognized function type. Please add this function type to the structure code script.', path.node.type);  
+      break;  
+  }  
+}  
 
 /**
  * Analyzes the variable declarations in the code to encourage best practices for using declaration keywords ('const', 'let', or 'var').
@@ -1735,28 +1738,29 @@ function handleFunctionExpressionsAndArrowFunctions(innerPath, state, filePath) 
  * @param {State} state - The object tracking the presence of code elements within the file.  
  * @param {string} filePath - The path of the file being processed.  
  */  
-function handleExportDeclarations(path, state, filePath) {  
-  console.log('Export statement detected:', path.node.type);  
-  
-  // Check if the export statement is not inside a function or component  
-  const insideFunctionOrComponent = path.findParent(p =>   
-    p.isFunctionDeclaration() ||   
-    p.isFunctionExpression() ||   
-    p.isArrowFunctionExpression() ||  
-    p.isClassDeclaration()  
-  );  
-  
-  if (insideFunctionOrComponent) {  
-    reportError(path.node, 'Exports should not be declared inside a function or component.', filePath);  
-    return;  
-  }  
-  
-  if (state.topLevelState.hasMainComponent && isExportDeclarationWithName(path, state.topLevelState.mainComponentName)) {  
-    console.log(`Main component ${state.topLevelState.mainComponentName} is exported.`);  
-    state.topLevelState.hasExportedMainComponent = true;  
-  }  
-  state.topLevelState.hasExports = true;  
-}  
+function handleExportDeclarations(path, state, filePath) {    
+  console.log('Export statement detected:', path.node.type);    
+    
+  // Check if the export statement is not inside a function or component    
+  const insideFunctionOrComponent = path.findParent(p =>     
+    p.isFunctionDeclaration() ||     
+    p.isFunctionExpression() ||     
+    p.isArrowFunctionExpression() ||    
+    p.isClassDeclaration()    
+  );    
+    
+  if (insideFunctionOrComponent) {    
+    reportError(path.node, 'Exports should not be declared inside a function or component.', filePath);    
+    return;    
+  }    
+    
+  if (state.topLevelState.hasMainComponent && isExportDeclarationWithName(path, state.topLevelState.mainComponentName)) {    
+    console.log(`Main component ${state.topLevelState.mainComponentName} is exported.`);    
+    state.topLevelState.hasExportedMainComponent = true;    
+  }    
+  state.topLevelState.hasExports = true;    
+}   
+
 
 /**
  * Inspects JSX elements within the AST to verify they are correctly placed within the structure of a React component.
@@ -1767,40 +1771,40 @@ function handleExportDeclarations(path, state, filePath) {
  * @param {State} state - The state object, used here to track the main component's path and conditional rendering presence.
  * @param {string} filePath - The file path providing context for error messaging when JSX is found in disallowed locations.
  */
-function handleJSXElement(innerPath, state, filePath) {
-  // Check if we're inside a function (component or not).
-  const functionParent = innerPath.findParent(p => p.isFunctionDeclaration() || p.isFunctionExpression() || p.isArrowFunctionExpression());
-
-  if (functionParent) {
-    // Check if this JSX is part of the return statement or a variable declaration within the function
-    const isPartOfReturn = !!innerPath.findParent(p => p.isReturnStatement());
-    const isPartOfVariableDeclarator = !!innerPath.findParent(p => p.isVariableDeclarator());
-
-    if (isPartOfReturn) {
-      // This JSX is valid because it's part of the return statement
-      // No error should be reported.
-    } else if (functionParent === state.mainComponentPath && !isPartOfVariableDeclarator) {
-      // If we're in the main component, JSX outside of the return statement indicates conditional rendering
-      state.hasConditionalRender = true;
-    } else if (isPartOfVariableDeclarator) {
-      // If it's part of a variable declarator (like a component being defined), no error
-    } else {
-      // Error if JSX is floating freely inside the component, not wrapped in a return statement
-      reportError(
-        innerPath.node,
-        'JSX should be returned from the component or part of a statement within render logic.',
-        filePath
-      );
-    }
-  } else if (innerPath.findParent(p => p.isProgram())) {
-    // If we're at the program level, any JSX is invalid 
-    reportError(
-      innerPath.node,
-      'JSX should be inside a function component or returned directly from an arrow function component.',
-      filePath
-    );
-  }
-}
+function handleJSXElement(innerPath, state, filePath) {  
+  // Check if we're inside a function (component or not).  
+  const functionParent = innerPath.findParent(p => p.isFunctionDeclaration() || p.isFunctionExpression() || p.isArrowFunctionExpression());  
+  
+  if (functionParent) {  
+    // Check if this JSX is part of the return statement or a variable declaration within the function  
+    const isPartOfReturn = !!innerPath.findParent(p => p.isReturnStatement());  
+    const isPartOfVariableDeclarator = !!innerPath.findParent(p => p.isVariableDeclarator());  
+  
+    if (isPartOfReturn) {  
+      // This JSX is valid because it's part of the return statement  
+      // No error should be reported.  
+    } else if (functionParent === state.mainComponentPath && !isPartOfVariableDeclarator) {  
+      // If we're in the main component, JSX outside of the return statement indicates conditional rendering  
+      state.hasConditionalRender = true;  
+    } else if (isPartOfVariableDeclarator) {  
+      // If it's part of a variable declarator (like a component being defined), no error  
+    } else {  
+      // Error if JSX is floating freely inside the component, not wrapped in a return statement  
+      reportError(  
+        innerPath.node,  
+        'JSX should be returned from the component or part of a statement within render logic.',  
+        filePath  
+      );  
+    }  
+  } else if (innerPath.findParent(p => p.isProgram())) {  
+    // If we're at the program level, any JSX is invalid   
+    reportError(  
+      innerPath.node,  
+      'JSX should be inside a function component or returned directly from an arrow function component.',  
+      filePath  
+    );  
+  }  
+}  
 
 /**
  * Evaluates return statements to ensure they are appropriately situated within React components. It differentiates between
@@ -2047,91 +2051,92 @@ function exitReactComponent(state) {
 }  
 
 // ---------------------- fix AST function ----------------------
-function analyzeCode(ast, filePath) {    
-  const sections = {    
-    imports: [],    
-    localConstants: new Map(),    
-    constants: [],    
-    helperFunctions: [], // Added to separate helper functions    
-    functions: [],    
-    components: [],    
-    types: [],    
-    exports: [],    
-    contexts: [], // Added contexts to separate context creations    
-    mainComponent: null,    
-  };    
-    
-  traverse(ast, {    
-    ImportDeclaration(path) {    
-      sections.imports.push(path.node);    
-      path.remove();    
-    },    
-    VariableDeclaration(path) {    
-      if (isGlobalConstant(path)) {    
-        sections.constants.push(path.node);    
-      } else if (isLocalConstant(path)) {    
-        const parentFunction = path.getFunctionParent();    
-        if (parentFunction) {    
-          const functionBodyNode = parentFunction.node.body;    
-          if (sections.localConstants.has(functionBodyNode)) {    
-            sections.localConstants.get(functionBodyNode).push(path.node);    
-          } else {    
-            sections.localConstants.set(functionBodyNode, [path.node]);    
-          }    
-        } else {    
-          sections.constants.push(path.node);    
-        }    
-      } else if (isContextCreation(path)) {  
-        sections.contexts.push(path.node);  
-      }  
-      path.remove();    
-    },    
-    TSTypeAliasDeclaration(path) {    
-      sections.types.push(path.node);    
-      path.remove();    
-    },    
-    TSInterfaceDeclaration(path) {    
-      sections.types.push(path.node);    
-      path.remove();    
-    },    
-    TSEnumDeclaration(path) {    
-      sections.types.push(path.node);    
-      path.remove();    
-    },    
-    FunctionDeclaration(path) {    
-      if (isMainFunctionComponent(path, {}, getMainComponentNameFromFileName(filePath))) {    
-        sections.mainComponent = path.node;    
-      } else {    
-        sections.helperFunctions.push(path.node); // Adjusted to push helper functions here    
+function analyzeCode(ast, filePath) {      
+  const sections = {      
+    imports: [],      
+    localConstants: new Map(),      
+    constants: [],      
+    helperFunctions: [], // Added to separate helper functions      
+    functions: [],      
+    components: [],      
+    types: [],      
+    exports: [],      
+    contexts: [], // Added contexts to separate context creations      
+    mainComponent: null,      
+  };      
+      
+  traverse(ast, {      
+    ImportDeclaration(path) {      
+      sections.imports.push(path.node);      
+      path.remove();      
+    },      
+    VariableDeclaration(path) {      
+      if (isGlobalConstant(path)) {      
+        sections.constants.push(path.node);      
+      } else if (isLocalConstant(path)) {      
+        const parentFunction = path.getFunctionParent();      
+        if (parentFunction) {      
+          const functionBodyNode = parentFunction.node.body;      
+          if (sections.localConstants.has(functionBodyNode)) {      
+            sections.localConstants.get(functionBodyNode).push(path.node);      
+          } else {      
+            sections.localConstants.set(functionBodyNode, [path.node]);      
+          }      
+        } else {      
+          sections.constants.push(path.node);      
+        }      
+      } else if (isContextCreation(path)) {    
+        sections.contexts.push(path.node);    
       }    
-      path.remove();    
-    },    
-    ArrowFunctionExpression(path) {    
-      if (isReactComponent(path.parentPath) && path.parentPath.isVariableDeclarator()) {    
-        if (isMainFunctionComponent(path.parentPath, {}, getMainComponentNameFromFileName(filePath))) {    
-          sections.mainComponent = path.parentPath.parent;    
-        } else {    
-          sections.components.push(path.parentPath.node);    
-        }    
-      } else if (isCustomHook(path.parentPath)) {    
-        sections.helperFunctions.push(path.parentPath.node); // Adjusted to push custom hooks here    
-      } else {    
-        sections.helperFunctions.push(path.parentPath.node); // Adjusted to push expression functions here    
-      }    
-      path.parentPath.remove();    
-    },    
-    ExportNamedDeclaration(path) {    
-      sections.exports.push(path.node);    
-      path.remove();    
-    },    
-    ExportDefaultDeclaration(path) {    
-      sections.exports.push(path.node);    
-      path.remove();    
-    },    
-  });    
-    
-  return sections;    
-}
+      path.remove();      
+    },      
+    TSTypeAliasDeclaration(path) {      
+      sections.types.push(path.node);      
+      path.remove();      
+    },      
+    TSInterfaceDeclaration(path) {      
+      sections.types.push(path.node);      
+      path.remove();      
+    },      
+    TSEnumDeclaration(path) {      
+      sections.types.push(path.node);      
+      path.remove();      
+    },      
+    FunctionDeclaration(path) {      
+      if (isMainFunctionComponent(path, {}, getMainComponentNameFromFileName(filePath))) {      
+        sections.mainComponent = path.node;      
+      } else {      
+        sections.helperFunctions.push(path.node); // Adjusted to push helper functions here      
+      }      
+      path.remove();      
+    },      
+    ArrowFunctionExpression(path) {      
+      if (isReactComponent(path.parentPath) && path.parentPath.isVariableDeclarator()) {      
+        if (isMainFunctionComponent(path.parentPath, {}, getMainComponentNameFromFileName(filePath))) {      
+          sections.mainComponent = path.parentPath.parent;      
+        } else {      
+          sections.components.push(path.parentPath.node);      
+        }      
+      } else if (isCustomHook(path.parentPath)) {      
+        sections.helperFunctions.push(path.parentPath.node); // Adjusted to push custom hooks here      
+      } else {      
+        sections.helperFunctions.push(path.parentPath.node); // Adjusted to push expression functions here      
+      }      
+      path.parentPath.remove();      
+    },      
+    ExportNamedDeclaration(path) {      
+      sections.exports.push(path.node);      
+      path.remove();      
+    },      
+    ExportDefaultDeclaration(path) {      
+      sections.exports.push(path.node);      
+      path.remove();      
+    },      
+  });      
+      
+  return sections;      
+}  
+
   
 function reorderCode(sections) {    
   const orderedSections = [    
