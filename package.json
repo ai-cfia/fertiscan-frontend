@@ -1,40 +1,61 @@
 {
-  "name": "frontend",
-  "private": true,
-  "version": "0.0.0",
-  "type": "module",
-  "scripts": {
-    "dev": "vite",
-    "build": "tsc -b && vite build",
-    "lint": "eslint . --ext ts,tsx --report-unused-disable-directives --max-warnings 0",
-    "preview": "vite preview",
-    "structure": "node ./src/structure-check.js",
-    "test": "jest"
-  },
-  "dependencies": {
-    "@babel/generator": "^7.25.0",
-    "@babel/parser": "^7.25.3",
-    "@babel/traverse": "^7.25.3",
-    "glob": "^11.0.0",
-    "react": "^18.3.1",
-    "react-dom": "^18.3.1"
-  },
-  "devDependencies": {
-    "@babel/core": "^7.25.2",
-    "@babel/preset-env": "^7.25.3",
-    "@babel/preset-react": "^7.24.7",
-    "@babel/types": "^7.25.2",
-    "@types/react": "^18.3.3",
-    "@types/react-dom": "^18.3.0",
-    "@typescript-eslint/eslint-plugin": "^7.18.0",
-    "@typescript-eslint/parser": "^7.18.0",
-    "@vitejs/plugin-react-swc": "^3.5.0",
-    "eslint": "^8.57.0",
-    "eslint-plugin-react": "^7.35.0",
-    "eslint-plugin-react-hooks": "^4.6.2",
-    "eslint-plugin-react-refresh": "^0.4.7",
-    "jest": "^29.7.0",
-    "typescript": "^5.2.2",
-    "vite": "^5.3.4"
-  }
+    "name": "frontend",
+    "private": true,
+    "version": "0.0.0",
+    "type": "commonjs",
+    "scripts": {
+        "dev": "vite",
+        "build": "tsc -b && vite build",
+        "lint": "eslint . --ext ts,tsx --report-unused-disable-directives --max-warnings 0",
+        "preview": "vite preview",
+        "structure": "node ./src/structure-check.js",
+        "test": "jest",
+        "build-cli": "babel cli.js --out-dir dist/cli --extensions \".js,.jsx\"",
+        "start-cli": "node dist/cli/cli.js",
+        "test-build": "npm run build-cli && npm run start-cli"
+    },
+    "babel": {
+        "presets": [
+            "@babel/preset-env",
+            "@babel/preset-react"
+        ]
+    },
+    "dependencies": {
+        "@babel/generator": "^7.25.0",
+        "@babel/parser": "^7.25.3",
+        "@babel/traverse": "^7.25.3",
+        "blessed": "^0.1.81",
+        "glob": "^11.0.0",
+        "ink": "^5.0.1",
+        "ink-big-text": "^2.0.0",
+        "ink-gradient": "^3.0.0",
+        "ink-link": "^4.1.0",
+        "ink-select-input": "^6.0.0",
+        "prompts": "^2.4.2",
+        "react": "^18.3.1",
+        "react-dom": "^18.3.1"
+    },
+    "devDependencies": {
+        "@babel/cli": "^7.24.8",
+        "@babel/core": "^7.25.2",
+        "@babel/node": "^7.25.0",
+        "@babel/plugin-transform-modules-commonjs": "^7.24.8",
+        "@babel/preset-env": "^7.25.3",
+        "@babel/preset-react": "^7.24.7",
+        "@babel/preset-typescript": "^7.24.7",
+        "@babel/register": "^7.24.6",
+        "@babel/types": "^7.25.2",
+        "@types/react": "^18.3.3",
+        "@types/react-dom": "^18.3.0",
+        "@typescript-eslint/eslint-plugin": "^7.18.0",
+        "@typescript-eslint/parser": "^7.18.0",
+        "@vitejs/plugin-react-swc": "^3.5.0",
+        "eslint": "^8.57.0",
+        "eslint-plugin-react": "^7.35.0",
+        "eslint-plugin-react-hooks": "^4.6.2",
+        "eslint-plugin-react-refresh": "^0.4.7",
+        "jest": "^29.7.0",
+        "typescript": "^5.2.2",
+        "vite": "^5.3.4"
+    }
 }

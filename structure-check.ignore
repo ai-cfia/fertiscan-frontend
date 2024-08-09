@@ -5,3 +5,4 @@ Mock
 .config.
 vite-env.d.ts
 main.tsx
+structure-check-terminal

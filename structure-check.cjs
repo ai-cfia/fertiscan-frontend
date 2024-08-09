@@ -1,17 +1,25 @@
-const fs = require('fs');
-const { parse } = require('@babel/parser');
-const traverse = require('@babel/traverse').default;
-const fsPromises = fs.promises;
-const path = require('path');
-const t = require('@babel/types');
-const { readdir, stat } = fsPromises;
-const readFileSync = fs.readFileSync;
-const projectPath = 'src';
-const filePattern = /\.(ts|tsx)$/; // Use a regex pattern for matching file extensions
-const ignoreFilePath = 'structure-check.ignore';
-const util = require('util');
-const readFile = util.promisify(fs.readFile);
+const { execSync } = require('child_process');  
+const path = require('path');  
+const fs = require('fs');  
+const { parse } = require('@babel/parser');  
+const traverse = require('@babel/traverse').default;  
+const fsPromises = fs.promises;  
+const t = require('@babel/types');  
 const generate = require('@babel/generator').default;  
+const prompts = require('prompts');  
+const projectPath = 'src';  
+const filePattern = /\.(ts|tsx)$/; // Use a regex pattern for matching file extensions  
+const ignoreFilePath = 'structure-check.ignore';  
+const util = require('util');  
+const readFile = util.promisify(fs.readFile);  
+const readFileSync = fs.readFileSync;  
+const React = require('react');  
+const { useState } = require('react');
+async function loadInk() {    
+  const { render, Text, Box, useApp, useInput } = await import('ink');    
+  const SelectInput = await import('ink-select-input').then(mod => mod.default); // Use dynamic import for ink-select-input  
+  return { render, Text, Box, useApp, useInput, SelectInput };    
+}    
 
 
 const descriptionMapping = {      
@@ -135,28 +143,37 @@ function parseFile(content) {
  *
  * @param {string} filePath - The path of the file to be read and checked.
  */
-async function checkFile(filePath) {
-  console.log(`Reading file: ${filePath}`);
-  const content = readFileSync(filePath, 'utf-8');
-  const ast = parseFile(content);  
-  let state = createStateTracker();
+async function checkFile(filePath) {  
+  console.log(`Reading file: ${filePath}`);  
+    
+  // Vérification que le chemin est un fichier  
+  if (fs.statSync(filePath).isFile()) {  
+    const content = readFileSync(filePath, 'utf-8');  
+    const ast = parseFile(content);    
+    let state = createStateTracker();  
+  
+    traverse(ast, setupTraverse(state, filePath));  
+  
+    // Once the AST traversal is complete, check if the main component's name matches the file name  
+    if (state.hasMainComponent) {  
+      const mainComponentName = getMainComponentNameFromFileName(filePath);  
+      if (!isExportDeclarationWithName(state.mainComponentPath, mainComponentName)) {  
+        console.error(`Success`);  
+      }  
+    } else {  
+      console.error(`Error in ${filePath}: No main detected as the main (Function/Component/Class) is detected by the fileName please rename your main component to match the file name.`);  
+    }  
+  
+    console.log(`File ${filePath} checked.`);  
+    console.log("------------------------------------------------------------")  
+    console.log('\n');  
+  } else {  
+    console.error(`${filePath} is not a file.`);  
+    process.exit(1); // Exit the process if it's not a file  
+  }  
+}  
 
-  traverse(ast, setupTraverse(state, filePath));
 
-  // Once the AST traversal is complete, check if the main component's name matches the file name
-  if (state.hasMainComponent) {
-    const mainComponentName = getMainComponentNameFromFileName(filePath);
-    if (!isExportDeclarationWithName(state.mainComponentPath, mainComponentName)) {
-      console.error(`Success`);
-    }
-  }else{
-    console.error(`Error in ${filePath}: No main detected as the main (Function/Component/Class) is detected by the fileName please rename your main component to match the file name.`);
-  }
-
-  console.log(`File ${filePath} checked.`);
-  console.log("------------------------------------------------------------")
-  console.log('\n');
-}
 
 // Function to read ignore patterns and compile them into a regex
 async function compileIgnorePattern(ignoreFilePath) {
@@ -2491,25 +2508,33 @@ function createNewAST(orderedSections) {
   
 async function fixFile(filePath) {  
   console.log(`Fixing file: ${filePath}`);  
+    
+  // Vérification que le chemin est un fichier  
+  if (fs.statSync(filePath).isFile()) {  
+    // Create a backup before fixing the file  
+    backupFile(filePath);  
   
-  // Create a backup before fixing the file  
-  backupFile(filePath);  
-
-  const content = readFileSync(filePath, 'utf-8');  
-  const ast = parseFile(content);  
+    const content = readFileSync(filePath, 'utf-8');    
+    const ast = parseFile(content);    
   
-  // Analyze and reorder the code sections  
-  const sections = analyzeCode(ast, filePath);  
-  const orderedSections = reorderCode(sections);  
+    // Analyze and reorder the code sections    
+    const sections = analyzeCode(ast, filePath);    
+    const orderedSections = reorderCode(sections);    
   
-  // Create a new AST with ordered sections  
-  const newAst = createNewAST(orderedSections);  
-  const newCode = generate(newAst, {}).code;  
+    // Create a new AST with ordered sections    
+    const newAst = createNewAST(orderedSections);    
+    const newCode = generate(newAst, {}).code;    
   
-  // Write the new code to the file  
-  fs.writeFileSync(filePath, newCode, 'utf-8');  
-  console.log(`File ${filePath} fixed.`);  
+    // Write the new code to the file    
+    fs.writeFileSync(filePath, newCode, 'utf-8');    
+    console.log(`File ${filePath} fixed.`);    
+  } else {  
+    console.error(`${filePath} is not a file.`);  
+    process.exit(1); // Exit the process if it's not a file  
+  }  
 }  
+ 
+ 
   
 async function fixProjectStructure(filePath) {  
   try {  
@@ -2537,24 +2562,392 @@ async function fixProjectStructure(filePath) {
 } 
   
 function parseCommandLineArguments() {  
-  const args = process.argv.slice(2); // Get command-line arguments  
+  const args = process.argv.slice(2);  
   
   let filePath = '';  
   const fix = args.includes('--fix');  
   const revert = args.includes('--revert');  
   const analyze = args.includes('--analyze');  
-  
-  // Check if a file path is provided  
+  const help = args.includes('--help');  
+    
+  let displayLevel = 'basic'; // Default display level  
+  let language = 'en'; // Default language  
+    
+  // Check for display and language options  
   args.forEach(arg => {  
     if (arg.startsWith('--file=')) {  
       filePath = path.resolve(arg.replace('--file=', ''));  
+    } else if (arg.startsWith('--display=')) {  
+      const level = arg.replace('--display=', '');  
+      if (['basic', 'detailed', 'tree', 'interactive'].includes(level)) { // Add 'interactive' here  
+        displayLevel = level;  
+      }  
+    } else if (arg.startsWith('--langue=')) {  
+      const lang = arg.replace('--langue=', '');  
+      if (['en', 'fr'].includes(lang)) {  
+        language = lang;  
+      }  
     }  
   });  
   
-  return { fix, revert, analyze, filePath };  
+  return { fix, revert, analyze, help, filePath, displayLevel, language };  
 }  
 
 
+
+// Analyze code with details  
+function analyzeCodeWithDetails(ast, filePath) {  
+  if (!filePath) {  
+    console.error('No file path provided for analysis.');  
+    process.exit(1);  
+  }  
+  
+  if (!fs.statSync(filePath).isFile()) {  
+    console.error(`${filePath} is not a file.`);  
+    process.exit(1);  
+  }  
+  
+  const sections = {  
+    imports: [],  
+    localConstants: new Map(),  
+    constants: [],  
+    contexts: [],  
+    hooks: [],  
+    helperFunctions: [],  
+    functions: [],  
+    components: [],  
+    classComponents: [],  
+    types: [],  
+    exports: [],  
+    mainComponent: null,  
+    nodes: [],  
+  };  
+  
+  traverse(ast, {    
+    enter(path) {    
+      sections.nodes.push({    
+        type: path.node.type,    
+        loc: path.node.loc,    
+        name: path.node.id ? path.node.id.name : null,    
+        code: generate(path.node).code    
+      });    
+    },    
+    ImportDeclaration(path) {    
+      sections.imports.push({    
+        type: path.node.type,    
+        loc: path.node.loc,    
+        code: generate(path.node).code    
+      });    
+      path.remove();    
+    },    
+    VariableDeclaration(path) {    
+      const details = {    
+        type: path.node.type,    
+        loc: path.node.loc,    
+        code: generate(path.node).code    
+      };    
+      if (isGlobalConstant(path)) {    
+        sections.constants.push(details);    
+      } else if (isLocalConstant(path)) {    
+        const parentFunction = path.getFunctionParent();    
+        if (parentFunction) {    
+          const functionBodyNode = parentFunction.node.body;    
+          if (sections.localConstants.has(functionBodyNode)) {    
+            sections.localConstants.get(functionBodyNode).push(details);    
+          } else {    
+            sections.localConstants.set(functionBodyNode, [details]);    
+          }    
+        } else {    
+          sections.constants.push(details);    
+        }    
+      } else if (isContextCreation(path)) {    
+        sections.contexts.push(details);    
+      } else {    
+        sections.constants.push(details);    
+      }    
+      path.remove();    
+    },    
+    TSTypeAliasDeclaration(path) {    
+      sections.types.push({    
+        type: path.node.type,    
+        loc: path.node.loc,    
+        code: generate(path.node).code    
+      });    
+      path.remove();    
+    },    
+    TSInterfaceDeclaration(path) {    
+      sections.types.push({    
+        type: path.node.type,    
+        loc: path.node.loc,    
+        code: generate(path.node).code    
+      });    
+      path.remove();    
+    },    
+    TSEnumDeclaration(path) {    
+      sections.types.push({    
+        type: path.node.type,    
+        loc: path.node.loc,    
+        code: generate(path.node).code    
+      });    
+      path.remove();    
+    },    
+    FunctionDeclaration(path) {    
+      const details = {    
+        type: path.node.type,    
+        loc: path.node.loc,    
+        name: path.node.id.name,    
+        code: generate(path.node).code    
+      };    
+      if (isMainFunctionComponent(path, {}, getMainComponentNameFromFileName(filePath))) {    
+        sections.mainComponent = details;    
+      } else {    
+        sections.helperFunctions.push(details);    
+      }    
+      path.remove();    
+    },    
+    ArrowFunctionExpression(path) {    
+      const details = {    
+        type: path.node.type,    
+        loc: path.node.loc,    
+        name: path.parent.id ? path.parent.id.name : null,    
+        code: generate(path.node).code    
+      };    
+      if (isReactComponent(path.parentPath) && path.parentPath.isVariableDeclarator()) {    
+        if (isMainFunctionComponent(path.parentPath, {}, getMainComponentNameFromFileName(filePath))) {    
+          sections.mainComponent = details;    
+        } else {    
+          sections.components.push(details);    
+        }    
+      } else if (isCustomHook(path.parentPath)) {    
+        sections.helperFunctions.push(details);    
+      } else {    
+        sections.helperFunctions.push(details);    
+      }    
+      path.parentPath.remove();    
+    },    
+    ClassDeclaration(path) {    
+      const details = {    
+        type: path.node.type,    
+        loc: path.node.loc,    
+        name: path.node.id.name,    
+        code: generate(path.node).code    
+      };    
+      if (isClassComponent(path)) {    
+        sections.classComponents.push(details);    
+      } else {    
+        sections.helperFunctions.push(details);    
+      }    
+      path.remove();    
+    },    
+    ExportNamedDeclaration(path) {    
+      sections.exports.push({    
+        type: path.node.type,    
+        loc: path.node.loc,    
+        code: generate(path.node).code    
+      });    
+      path.remove();    
+    },    
+    ExportDefaultDeclaration(path) {    
+      sections.exports.push({    
+        type: path.node.type,    
+        loc: path.node.loc,    
+        code: generate(path.node).code    
+      });    
+      path.remove();    
+    },    
+  });    
+    
+  return sections;    
+} 
+
+const runApp = async (sections) => {  
+  InkComponents = await loadInk();  
+  InkComponents.render(React.createElement(App, { sections }));  
+};  
+
+  
+// Update displayAnalysis to include interactive elements  
+async function displayAnalysis(sections, displayLevel) {    
+  if (displayLevel === 'basic') {    
+    displayBasic(sections);    
+  } else if (displayLevel === 'detailed') {    
+    await displayDetailedInteractive(sections);    
+  } else if (displayLevel === 'tree') {    
+    displayTree(sections);    
+  } else if (displayLevel === 'interactive') {    
+    await runApp(sections); // Use await here    
+  } else {    
+    console.error('Invalid display level specified.');    
+  }    
+}   
+
+
+
+function displayBasic(sections) {  
+  console.log('--- Basic Analysis ---');  
+  console.log('Imports:', sections.imports.length);  
+  console.log('Constants:', sections.constants.length);  
+  console.log('Contexts:', sections.contexts.length);  
+  console.log('Hooks:', sections.hooks.length);  
+  console.log('Helper Functions:', sections.helperFunctions.length);  
+  console.log('Components:', sections.components.length);  
+  console.log('Main Component:', sections.mainComponent ? 'Found' : 'Not Found');  
+  console.log('Exports:', sections.exports.length);  
+}  
+  
+  
+// Tree display remains the same  
+function displayTree(sections) {  
+  console.log('--- Tree Analysis ---');  
+  const ui = require('cliui')({ width: 80 });  
+  sections.nodes.forEach(node => {  
+    ui.div({  
+      text: `Node Type: ${node.type}\nLocation: Line ${node.loc.start.line}, Column ${node.loc.start.column}\n${node.name ? `Name: ${node.name}` : ''}`,  
+      padding: [1, 0, 1, 0]  
+    });  
+  });  
+  console.log(ui.toString());  
+}
+
+
+  
+/**  
+ * Function to display detailed analysis interactively.  
+ * @param {Object} sections - The analyzed sections of the code.  
+ */  
+async function displayDetailedInteractive(sections) {  
+  console.log('--- Detailed Interactive Analysis ---');  
+    
+  const choices = [  
+    'Imports',  
+    'Constants',  
+    'Contexts',  
+    'Hooks',  
+    'Helper Functions',  
+    'Components',  
+    'Class Components',  
+    'Main Component',  
+    'Types',  
+    'Exports'  
+  ];  
+  
+  const sectionMap = {  
+    'Imports': sections.imports,  
+    'Constants': sections.constants,  
+    'Contexts': sections.contexts,  
+    'Hooks': sections.hooks,  
+    'Helper Functions': sections.helperFunctions,  
+    'Components': sections.components,  
+    'Class Components': sections.classComponents,  
+    'Main Component': sections.mainComponent ? [sections.mainComponent] : [],  
+    'Types': sections.types,  
+    'Exports': sections.exports  
+  };  
+  
+  while (true) {  
+    try {  
+      const { selectedSection } = await prompts({  
+        type: 'select',  
+        name: 'selectedSection',  
+        message: 'Select the section you want to highlight:',  
+        choices: choices.map(choice => ({ title: choice, value: choice })),  
+      });  
+  
+      if (!selectedSection) break; // If user cancels or no selection  
+  
+      displayHighlightedCode(sectionMap[selectedSection]);  
+  
+      const { continueInteraction } = await prompts({  
+        type: 'confirm',  
+        name: 'continueInteraction',  
+        message: 'Do you want to select another section?',  
+        initial: true,  
+      });  
+  
+      if (!continueInteraction) break;  
+    } catch (error) {  
+      console.error('Error during prompts:', error);  
+      break;  
+    }  
+  }  
+}  
+  
+/**  
+ * Function to display code interactively.  
+ * @param {Array} nodes - The nodes to display.  
+ */  
+function displayHighlightedCode(nodes) {  
+  nodes.forEach(node => {  
+    console.log(`\n#### Node Type: ${node.type}`);  
+    console.log(`- **Location:** Line ${node.loc.start.line}, Column ${node.loc.start.column}`);  
+    if (node.name) {  
+      console.log(`- **Name:** ${node.name}`);  
+    }  
+    console.log(`- **Code:**\n\`\`\`javascript\n${generate(node).code}\n\`\`\``);  
+    console.log('---');  
+  });  
+}  
+  
+
+
+function displayHelp(language) {  
+  if (language === 'fr') {  
+    console.log(`  
+Usage: node script.js [options]  
+  
+Options:  
+  --fix                  Corrige la structure de tous les fichiers .ts et .tsx dans le projet.  
+  --fix --file=<path>    Corrige la structure du fichier spécifié.  
+  --revert               Réinitialise la structure des fichiers corrigés à partir des sauvegardes.  
+  --revert --file=<path> Réinitialise la structure du fichier spécifié à partir de la sauvegarde.  
+  --analyze              Analyse la structure des fichiers .ts et .tsx dans le projet.  
+  --analyze --file=<path> Analyse la structure du fichier spécifié.  
+  --display=<level>      Définit le niveau d'affichage pour l'analyse. Options disponibles: basic, detailed, tree, interactive.  
+  --langue=<lang>        Définit la langue d'affichage de l'aide. Options disponibles: en, fr.  
+  --help                 Affiche l'aide pour les commandes disponibles.  
+  
+Examples:  
+  node script.js --fix  
+  node script.js --fix --file=src/components/App.tsx  
+  node script.js --revert  
+  node script.js --revert --file=src/components/App.tsx  
+  node script.js --analyze  
+  node script.js --analyze --file=src/components/App.tsx --display=tree  
+  node script.js --analyze --file=src/components/App.tsx --display=interactive  
+  node script.js --help  
+`);  
+  } else {  
+    console.log(`  
+Usage: node script.js [options]  
+  
+Options:  
+  --fix                  Fix the structure of all .ts and .tsx files in the project.  
+  --fix --file=<path>    Fix the structure of the specified file.  
+  --revert               Revert the structure of fixed files from backups.  
+  --revert --file=<path> Revert the structure of the specified file from backup.  
+  --analyze              Analyze the structure of .ts and .tsx files in the project.  
+  --analyze --file=<path> Analyze the structure of the specified file.  
+  --display=<level>      Set the display level for analysis. Available options: basic, detailed, tree, interactive.  
+  --langue=<lang>        Set the language for help display. Available options: en, fr.  
+  --help                 Display help for available commands.  
+  
+Examples:  
+  node script.js --fix  
+  node script.js --fix --file=src/components/App.tsx  
+  node script.js --revert  
+  node script.js --revert --file=src/components/App.tsx  
+  node script.js --analyze  
+  node script.js --analyze --file=src/components/App.tsx --display=tree  
+  node script.js --analyze --file=src/components/App.tsx --display=interactive  
+  node script.js --help  
+`);  
+  }  
+}  
+
+
+
+
+  
 // ---------------------- Revert fix option ----------------------
 const backupDir = 'backup';  
   
@@ -2622,20 +3015,111 @@ async function revertProjectStructure(filePath) {
   console.log('Reverting project structure completed.');  
 }  
 
-  
-// Main execution  
-const args = parseCommandLineArguments();  
-  
-if (args.revert) {  
-  revertProjectStructure(args.filePath);  
-} else if (args.fix) {  
-  fixProjectStructure(args.filePath);  
-} else if (args.analyze) {  
-  checkProjectStructure(args.filePath);  
-} else {  
-  console.error('Invalid command. Use --fix, --revert or --analyze with an optional --file=<file-path> argument.');  
+// Export the necessary functions for use in structure-check-terminal.js  
+module.exports = {  
+  checkProjectStructure,  
+  fixProjectStructure,  
+  revertProjectStructure,  
+};  
+
+function truncateLabel(label, maxLength = 15) {  
+  return label.length > maxLength ? label.substring(0, maxLength - 3) + '...' : label;  
 }  
 
+
+let InkComponents;  
+  
+// Function to handle selection and display detailed code information  
+function handleSelect(item, sections) {    
+  console.clear();    
+  console.log(`Selected: ${item.label}`);    
+    
+  const sectionNodes = sections[item.value] || [];    
+    
+  sectionNodes.forEach(node => {    
+    console.log(`\n#### Node Type: ${node.type}`);    
+    console.log(`- **Location:** Line ${node.loc.start.line}, Column ${node.loc.start.column}`);    
+    if (node.name) {    
+      console.log(`- **Name:** ${node.name}`);    
+    }    
+    console.log(`- **Code:**\n\`\`\`javascript\n${node.code}\n\`\`\``);    
+    console.log('---');    
+  });    
+}    
+  
+const App = ({ sections }) => {    
+  const items = [    
+    { label: 'Imports', value: 'imports' },    
+    { label: 'Constants', value: 'constants' },    
+    { label: 'Contexts', value: 'contexts' },    
+    { label: 'Hooks', value: 'hooks' },    
+    { label: 'Helper Functions', value: 'helperFunctions' },    
+    { label: 'Components', value: 'components' },    
+    { label: 'Class Components', value: 'classComponents' },    
+    { label: 'Main Component', value: 'mainComponent' },    
+    { label: 'Types', value: 'types' },    
+    { label: 'Exports', value: 'exports' }    
+  ];    
+    
+  // Function to check if a section has problems    
+  const hasProblems = (section) => {    
+    // Implement your logic to check if there are problems in the section    
+    // For now, let's assume sections with more than 0 items have problems    
+    return sections[section] && sections[section].length > 0;    
+  };    
+    
+  // Add badges to items    
+  const itemsWithBadges = items.map(item => ({    
+    ...item,    
+    label: hasProblems(item.value) ? `🔴 ${item.label}` : `🟢 ${item.label}` // Red dot for problems, green dot for no problems    
+  }));    
+    
+  return (    
+    React.createElement(    
+      InkComponents.Box,    
+      { flexDirection: 'column', padding: 1 },    
+      React.createElement(InkComponents.Text, { color: 'green' }, 'Select an option to view detailed analysis:'),    
+      React.createElement(    
+        InkComponents.SelectInput, // Use InkComponents.SelectInput here    
+        {    
+          items: itemsWithBadges,    
+          onSelect: item => handleSelect(item, sections),    
+        }    
+      )    
+    )    
+  );    
+};   
+
+
+
+  
+// Main execution remains the same  
+const { fix, revert, analyze, help, filePath, displayLevel, language } = parseCommandLineArguments();  
+  
+if (help) {  
+  displayHelp(language); // Display help in the specified language  
+} else if (revert) {  
+  revertProjectStructure(filePath);  
+} else if (fix) {  
+  fixProjectStructure(filePath);  
+} else if (analyze) {  
+  if (filePath) {  
+    const content = readFileSync(filePath, 'utf-8');  
+    const ast = parse(content, { sourceType: 'module', plugins: ['jsx', 'typescript'] });  
+    const sections = analyzeCodeWithDetails(ast, filePath);  
+    if (displayLevel === 'interactive') {  
+      runApp(sections); // Run interactive display  
+    } else {  
+      displayAnalysis(sections, displayLevel);  
+    }  
+  } else {  
+    console.error('No file path provided for analysis.');  
+  }  
+} else {  
+  const terminalPath = path.join(__dirname, 'run-terminal.js');  
+  execSync(`node ${terminalPath}`, { stdio: 'inherit' });  
+
+}
  
 
 // ---------------------- Disabled functions ----------------------
