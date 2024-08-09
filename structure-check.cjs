@@ -14,25 +14,27 @@ const readFile = util.promisify(fs.readFile);
 const generate = require('@babel/generator').default;  
 
 
-const descriptionMapping = {    
-  // Mapping for error messages...  
-  "Import statements": ["hasGlobalConstants", "hasHelperFunctions", "hasCustomHooks", "hasStyledComponents", "hasInterfaces", "hasTypes", "hasEnums", "hasMainComponent", "hasReactComponent", "hasPropTypes", "hasDefaultProps", "hasExports"],    
-  "Global constant": ["hasHelperFunctions", "hasCustomHooks", "hasStyledComponents", "hasInterfaces", "hasTypes", "hasEnums", "hasMainComponent", "hasReactComponent", "hasPropTypes", "hasDefaultProps", "hasExports"],    
-  "Helper Functions": ["hasCustomHooks", "hasStyledComponents", "hasInterfaces", "hasTypes", "hasEnums", "hasMainComponent", "hasReactComponent", "hasPropTypes", "hasDefaultProps", "hasExports"],    
-  "Custom Hooks": ["hasStyledComponents", "hasInterfaces", "hasTypes", "hasEnums", "hasMainComponent", "hasReactComponent", "hasPropTypes", "hasDefaultProps", "hasExports"],    
-  "Styled Component": ["hasInterfaces", "hasTypes", "hasEnums", "hasMainComponent", "hasReactComponent", "hasPropTypes", "hasDefaultProps", "hasExports"],    
-  "Interface": ["hasTypes", "hasEnums", "hasMainComponent", "hasReactComponent", "hasPropTypes", "hasDefaultProps", "hasExports"],    
-  "Type alias": ["hasEnums", "hasMainComponent", "hasReactComponent", "hasPropTypes", "hasDefaultProps", "hasExports"],    
-  "Enums": ["hasMainComponent", "hasReactComponent", "hasPropTypes", "hasDefaultProps", "hasExports"],    
-  "Main function/component": ["hasHandlers", "hasHooks", "hasReactComponent", "hasPropTypes", "hasDefaultProps", "hasExports"],    
-  "React component declarations": ["hasHandlers", "hasHooks", "hasPropTypes", "hasDefaultProps", "hasExports"],    
-  "PropTypes definitions": ["hasDefaultProps", "hasExports"],    
-  "default props": ["hasPropTypes","hasExports"],    
-  "Constante": ["hasHelperFunctions", "hasCustomHooks", "hasStyledComponents", "hasInterfaces", "hasTypes", "hasEnums", "hasMainComponent", "hasReactComponent", "hasPropTypes", "hasDefaultProps", "hasExports"],    
-  "Handlers": ["hasHooks", "hasReactComponent", "hasPropTypes", "hasDefaultProps", "hasExports"],    
-  "Hooks": ["hasReactComponent", "hasPropTypes", "hasDefaultProps", "hasExports"],    
-  "Exports": []    
-};    
+const descriptionMapping = {      
+  // Mapping for error messages...    
+  "Import statements": ["hasGlobalConstants", "hasHelperFunctions", "hasCustomHooks", "hasStyledComponents", "hasInterfaces", "hasTypes", "hasEnums", "hasMainComponent", "hasClassComponent", "hasReactComponent", "hasPropTypes", "hasDefaultProps", "hasExports"],      
+  "Global constant": ["hasHelperFunctions", "hasCustomHooks", "hasStyledComponents", "hasInterfaces", "hasTypes", "hasEnums", "hasMainComponent", "hasClassComponent", "hasReactComponent", "hasPropTypes", "hasDefaultProps", "hasExports"],      
+  "Helper Functions": ["hasCustomHooks", "hasStyledComponents", "hasInterfaces", "hasTypes", "hasEnums", "hasMainComponent", "hasClassComponent", "hasReactComponent", "hasPropTypes", "hasDefaultProps", "hasExports"],      
+  "Custom Hooks": ["hasStyledComponents", "hasInterfaces", "hasTypes", "hasEnums", "hasMainComponent", "hasClassComponent", "hasReactComponent", "hasPropTypes", "hasDefaultProps", "hasExports"],      
+  "Styled Component": ["hasInterfaces", "hasTypes", "hasEnums", "hasMainComponent", "hasClassComponent", "hasReactComponent", "hasPropTypes", "hasDefaultProps", "hasExports"],      
+  "Interface": ["hasTypes", "hasEnums", "hasMainComponent", "hasClassComponent", "hasReactComponent", "hasPropTypes", "hasDefaultProps", "hasExports"],      
+  "Type alias": ["hasEnums", "hasMainComponent", "hasClassComponent", "hasReactComponent", "hasPropTypes", "hasDefaultProps", "hasExports"],      
+  "Enums": ["hasMainComponent", "hasClassComponent", "hasReactComponent", "hasPropTypes", "hasDefaultProps", "hasExports"],      
+  "Main function/component": ["hasHandlers", "hasHooks", "hasClassComponent", "hasReactComponent", "hasPropTypes", "hasDefaultProps", "hasExports"],      
+  "Class component": ["hasHandlers", "hasHooks", "hasReactComponent", "hasPropTypes", "hasDefaultProps", "hasExports"],  
+  "React component declarations": ["hasHandlers", "hasHooks", "hasPropTypes", "hasDefaultProps", "hasExports"],      
+  "PropTypes definitions": ["hasDefaultProps", "hasExports"],      
+  "default props": ["hasPropTypes","hasExports"],      
+  "Constante": ["hasHelperFunctions", "hasCustomHooks", "hasStyledComponents", "hasInterfaces", "hasTypes", "hasEnums", "hasMainComponent", "hasClassComponent", "hasReactComponent", "hasPropTypes", "hasDefaultProps", "hasExports"],      
+  "Handlers": ["hasHooks", "hasReactComponent", "hasPropTypes", "hasDefaultProps", "hasExports"],      
+  "Hooks": ["hasReactComponent", "hasPropTypes", "hasDefaultProps", "hasExports"],      
+  "Exports": []      
+};      
+    
 
 // ---------------------- File processing functions ----------------------
 
@@ -77,26 +79,30 @@ async function findFilesRecursive(dir, pattern, fileList = [], ignorePattern) {
  * @function checkProjectStructure
  * @returns {Promise<void>} A promise that resolves when the structure check is complete.
  */
-async function checkProjectStructure() {
-  try {
-    console.log('Recherche des fichiers .ts et .tsx dans le projet...');
-    const ignorePattern = await compileIgnorePattern(ignoreFilePath);
-    const files = await findFilesRecursive(projectPath, filePattern, [], ignorePattern);
-
-    if (files.length === 0) {
-      console.log(`Aucun fichier correspondant trouvé avec le motif "${filePattern}".`);
-    } else {
-      console.log(`Fichiers trouvés pour la vérification de structure:`, files);
-      for (const filePath of files) {
-        await checkFile(filePath); // assuming checkFile could potentially be async
-      }
-    }
-  } catch (err) {
-    console.error('Erreur lors de la recherche de fichiers:', err);
-  }
-
-  console.log('Vérification de la structure du projet React terminée.');
-}
+async function checkProjectStructure(filePath) {  
+  try {  
+    if (filePath) {  
+      await checkFile(filePath); // Analyze the specific file  
+    } else {  
+      console.log('Recherche des fichiers .ts et .tsx dans le projet...');  
+      const ignorePattern = await compileIgnorePattern(ignoreFilePath);  
+      const files = await findFilesRecursive(projectPath, filePattern, [], ignorePattern);  
+  
+      if (files.length === 0) {  
+        console.log(`Aucun fichier correspondant trouvé avec le motif "${filePattern}".`);  
+      } else {  
+        console.log(`Fichiers trouvés pour la vérification de structure:`, files);  
+        for (const filePath of files) {  
+          await checkFile(filePath); // Check each file  
+        }  
+      }  
+    }  
+  } catch (err) {  
+    console.error('Erreur lors de la recherche de fichiers:', err);  
+  }  
+  
+  console.log('Vérification de la structure du projet React terminée.');  
+} 
 
 /**
  * Parses a given file to extract relevant information.
@@ -216,7 +222,8 @@ function createStateTracker() {
       hasTypes: false,  
       hasEnums: false,  
       hasMainComponent: false,   
-      hasReactComponent: false,   
+      hasReactComponent: false,
+      hasClassComponent: false,   
       hasPropTypes: false,   
       hasDefaultProps: false,   
     }  
@@ -234,22 +241,28 @@ function createStateTracker() {
  * @param {string} filePath - The path to the file being processed.  
  * @param {string} [type] - Optional. Type of the node, can be provided for more contextual messages.  
  */  
-function reportError(node, message, filePath, type) {  
-  // If the node does not have a location, fall back to a more generic error message.  
-  if (!node.loc) {  
-    console.error(`Error in ${filePath}: ${message}`);  
-    return;  
-  }  
-  
-  // Extract the location data from the node.  
-  const location = node.loc.start;  
-  
-  // Determine the type of the node for more context if not provided.  
-  const nodeType = type || node.type || 'Unknown';  
-  
-  // Construct a detailed error message.  
-  console.error(`Error in ${filePath}:${location.line}:${location.column} [${nodeType}] - ${message}`);  
-}  
+function reportError(node, message, filePath, type, extraInfo = {}) {    
+  // If the node does not have a location, fall back to a more generic error message.    
+  if (!node.loc) {    
+    console.error(`Error in ${filePath}: ${message}`);    
+    return;    
+  }    
+    
+  // Extract the location data from the node.    
+  const location = node.loc.start;    
+    
+  // Determine the type of the node for more context if not provided.    
+  const nodeType = type || node.type || 'Unknown';    
+    
+  // Construct a detailed error message.    
+  const errorMessage = `\n[${nodeType}] - Error in ${filePath}:${location.line}:${location.column}:\n` +  
+    `Message: ${message}\n` +  
+    `Node Type: ${nodeType}\n` +  
+    (extraInfo.suggestions ? `Suggestions: ${extraInfo.suggestions}\n` : '') +   
+    (extraInfo.fix ? `Suggested Fix: ${extraInfo.fix}\n` : '');    
+    
+  console.error(errorMessage);    
+}   
 
 
 /**
@@ -279,6 +292,7 @@ function generateErrorMessage(description, state, filePath) {
     
   return "";    
 } 
+
 
 
 // ---------------------- Is functions ----------------------
@@ -351,7 +365,12 @@ function isReactComponent(path) {
         componentName = name;
       }
     }
-  }
+  }else if (path.isClassDeclaration()) {  
+    if (isClassComponent(path)) {  
+      isComponent = true;  
+      componentName = path.node.id.name;  
+    }  
+  }  
 
   // Check for proceeding comments that indicate a main component
   if (isComponent) {
@@ -582,48 +601,48 @@ function isArrowFunctionExpression(path) {
  * @param {string} filePath - The file path.  
  * @returns {boolean} - True if the path represents the main function component, false otherwise.  
  */  
-function isMainFunctionComponent(path, state, filePath) {  
-  const mainComponentName = getMainComponentNameFromFileName(filePath);  
+function isMainFunctionComponent(path, state, filePath) {    
+  const mainComponentName = getMainComponentNameFromFileName(filePath);    
   
-  if (path.isFunctionDeclaration()) {  
-    if (t.isIdentifier(path.node.id, { name: mainComponentName })) {  
-      state.hasMainComponent = true;  
-      state.mainComponentPath = path;  
-      return true;  
-    }  
-  } else if (path.isVariableDeclaration()) {  
-    return path.node.declarations.some((declaration) => {  
-      if (t.isVariableDeclarator(declaration)) {  
-        if (t.isIdentifier(declaration.id, { name: mainComponentName })) {  
-          if (t.isArrowFunctionExpression(declaration.init) || t.isFunctionExpression(declaration.init)) {  
-            state.hasMainComponent = true;  
-            state.mainComponentPath = path;  
-            return true;  
-          }  
-        }  
-      }  
-      return false;  
-    });  
-  } else if (path.isExportDefaultDeclaration()) {  
-    const declaration = path.get('declaration');  
-    if (declaration.isFunctionDeclaration()) {  
-      if (t.isIdentifier(declaration.node.id, { name: mainComponentName })) {  
-        state.hasMainComponent = true;  
-        state.mainComponentPath = path;  
-        return true;  
-      }  
-    } else if (declaration.isVariableDeclarator()) {  
-      if (t.isIdentifier(declaration.node.id, { name: mainComponentName }) &&   
-          (t.isArrowFunctionExpression(declaration.node.init) || t.isFunctionExpression(declaration.node.init))) {  
-        state.hasMainComponent = true;  
-        state.mainComponentPath = path;  
-        return true;  
-      }  
-    }  
-  }  
+  if (path.isFunctionDeclaration()|| path.isClassDeclaration()) {    
+    if (t.isIdentifier(path.node.id, { name: mainComponentName })) {    
+      state.hasMainComponent = true;    
+      state.mainComponentPath = path;    
+      return true;    
+    }    
+  } else if (path.isVariableDeclaration()) {    
+    return path.node.declarations.some((declaration) => {    
+      if (t.isVariableDeclarator(declaration)) {    
+        if (t.isIdentifier(declaration.id, { name: mainComponentName }) &&    
+            (t.isArrowFunctionExpression(declaration.init) || t.isFunctionExpression(declaration.init))) {    
+          state.hasMainComponent = true;    
+          state.mainComponentPath = path;    
+          return true;    
+        }    
+      }    
+      return false;    
+    });    
+  } else if (path.isExportDefaultDeclaration()) {    
+    const declaration = path.get('declaration');    
+    if (t.isIdentifier(declaration)) {    
+      if (declaration.node.name === mainComponentName) {    
+        state.hasMainComponent = true;    
+        state.mainComponentPath = path;    
+        return true;    
+      }    
+    } else if (t.isFunctionDeclaration(declaration) || t.isVariableDeclarator(declaration)) {    
+      if (t.isIdentifier(declaration.node.id, { name: mainComponentName })) {    
+        state.hasMainComponent = true;    
+        state.mainComponentPath = path;    
+        return true;    
+      }    
+    }    
+  }    
   
-  return false;  
-}   
+  return false;    
+}  
+
+
 
 
 /**  
@@ -905,6 +924,20 @@ function isStyledComponent(path) {
   return false;  
 }  
 
+function isClassComponent(path) {  
+  if (path.isClassDeclaration()) {  
+    const superClass = path.node.superClass;  
+    if (superClass && (  
+      (t.isIdentifier(superClass) && superClass.name === 'Component') ||  
+      (t.isMemberExpression(superClass) && superClass.object.name === 'React' && superClass.property.name === 'Component')  
+    )) {  
+      return true;  
+    }  
+  }  
+  return false;  
+}  
+
+
 // ---------------------- Get functions ----------------------
 
 /**  
@@ -956,7 +989,7 @@ function recognizeType(path, state, filePath) {
   } else if (isMainFunctionComponent(path, state, filePath)) {  
       return 'mainFunctionComponent';  
   } else if (path.isFunctionDeclaration()) {  
-      if (isReactComponent(path).isComponent) {  
+      if (isFunctionalComponent(path)) {  
           return 'functionalComponent';  
       }  
       return 'helperFunction'; // Recognize normal functions as helper functions  
@@ -1066,22 +1099,22 @@ function processFunctionType(type, path, state, filePath) {
  * @returns {boolean} - Returns true if the declaration keyword is appropriately used ('const' or justified 'let').  
  *                      Returns false if 'var' is used or 'let' is used without necessity (i.e., no reassignments found).  
  */  
-function checkDeclarationKeyword(path) {  
+function checkDeclarationKeyword(path, filePath) {
   // Ensure that the node is a VariableDeclarator and has a kind (var, let, const)  
   if (!path.parentPath || !path.parentPath.node || !path.parentPath.node.kind) {  
       return false;  
   }  
   const declarationKind = path.parentPath.node.kind; // can be "var", "let", or "const"  
   const isInitialized = path.node.init !== null;  
-
+    
   // If 'var' is used, that's a problem  
   if (declarationKind === 'var') {  
-      reportVariablePlacementIssue(path.node.id.name, path, 'DeclarationKeyword', filePath, path.node, {  
+      reportVariablePlacementIssue(path.node.id.name, path, 'DeclarationKeyword', filePath, path.node, {  // Utilisation de `filePath` ici  
           fix: `Consider using 'let' or 'const' instead of 'var'.`  
       });  
       return false;  
   }  
-
+    
   if (declarationKind === 'let') {  
       // Check if 'let' is used where 'const' could be used  
       const identifierName = path.node.id.name;  
@@ -1097,7 +1130,7 @@ function checkDeclarationKeyword(path) {
               }  
           }  
           // No valid reassignments found, hence 'const' should have been used instead of 'let'  
-          reportVariablePlacementIssue(identifierName, path, 'DeclarationKeyword', filePath, path.node, {  
+          reportVariablePlacementIssue(identifierName, path, 'DeclarationKeyword', filePath, path.node, {  // Utilisation de `filePath` ici  
               fix: `Use 'const' instead of 'let' for variable '${identifierName}' as it is not reassigned.`  
           });  
           return false;  
@@ -1106,6 +1139,7 @@ function checkDeclarationKeyword(path) {
   // If using 'const' or if 'let' is justified, it's fine  
   return true;  
 }  
+
 
 
 /**
@@ -1208,58 +1242,63 @@ function handleImportDeclaration(path, state, filePath) {
  * @param {string} filePath - The path to the current file being processed for context in reporting.  
  */  
 function handleVariableDeclarator(path, state, filePath) {  
-  // Check if the variable declarator is part of a variable declaration  
   if (!path.isVariableDeclarator()) {  
-      return;  
+    return;  
   }  
+  
   const variableName = path.node.id.name;  
-
-  // Check the declaration keyword to ensure best practices are followed  
-  if (!checkDeclarationKeyword(path)) {  
-      return;  
+  
+  if (!checkDeclarationKeyword(path, filePath)) {  
+    return;  
   }  
-
-  // Determine the context in which the variable is declared  
+  
   const isTopLevel = path.scope.path.type === 'Program';  
   const isInsideFunctionOrBlock = path.scope.path.type !== 'Program';  
   const isGlobal = isGlobalConstant(path);  
   const isLocal = isLocalConstant(path);  
-
-  // Perform various checks and report any issues  
+  
   if (isTopLevel) {  
-      if (isGlobal) {  
-          handleGlobalConstantDeclaration(path, state, filePath);  
-      } else {  
-          const errorMessage = generateErrorMessage("Variable declaration at the top level", state, filePath);  
-          if (errorMessage) {  
-              reportError(path.node, errorMessage, filePath);  
-          }  
-          // Handle other top-level declarations as necessary  
-          state.topLevelState.hasDeclarations = true;  
+    if (isGlobal) {  
+      handleGlobalConstantDeclaration(path, state, filePath);  
+    } else {  
+      const errorMessage = generateErrorMessage("Variable declaration at the top level", state, filePath);  
+      if (errorMessage) {  
+        reportError(path.node, `Variable "${variableName}" should not be at the top level.`, filePath, 'Variable', {  
+          suggestions: 'Ensure this variable is either a global constant or moved to an appropriate scope.',  
+          fix: `Consider moving the variable "${variableName}" into an appropriate function or block scope.`  
+        });  
       }  
+      state.topLevelState.hasDeclarations = true;  
+    }  
   } else if (isInsideFunctionOrBlock) {  
-      if (isLocal) {  
-          const currentState = state.functionComponentState.insideReactComponent ? state.functionComponentState : state.topLevelState;  
-          if (  
-              currentState.hasHooks ||  
-              currentState.hasHandlers ||  
-              currentState.hasReactComponent ||  
-              currentState.hasPropTypes ||  
-              currentState.hasDefaultProps ||  
-              currentState.hasExports  
-          ) {  
-              const errorMessage = generateErrorMessage("Local constant declaration", currentState, filePath);  
-              if (errorMessage) {  
-                  reportError(path.node, errorMessage, filePath);  
-              }  
-          }  
-          currentState.hasConstants = true;  
-      } else {  
-          const errorMessage = generateErrorMessage("Variable declaration inside function or block", state, filePath);  
-          if (errorMessage) {  
-              reportError(path.node, errorMessage, filePath);  
-          }  
+    if (isLocal) {  
+      const currentState = state.functionComponentState.insideReactComponent ? state.functionComponentState : state.topLevelState;  
+      if (  
+        currentState.hasHooks ||  
+        currentState.hasHandlers ||  
+        currentState.hasReactComponent ||  
+        currentState.hasPropTypes ||  
+        currentState.hasDefaultProps ||  
+        currentState.hasExports  
+      ) {  
+        const errorMessage = generateErrorMessage("Local constant declaration", currentState, filePath);  
+        if (errorMessage) {  
+          reportError(path.node, `Local constant "${variableName}" should be declared properly.`, filePath, 'Constant', {  
+            suggestions: 'Ensure local constants are declared before hooks, handlers, render logic, and export statements.',  
+            fix: `Consider relocating the constant "${variableName}" to the top of its scope.`  
+          });  
+        }  
       }  
+      currentState.hasConstants = true;  
+    } else {  
+      const errorMessage = generateErrorMessage("Variable declaration inside function or block", state, filePath);  
+      if (errorMessage) {  
+        reportError(path.node, `Variable "${variableName}" should be correctly placed within its block or function scope.`, filePath, 'Variable', {  
+          suggestions: 'Ensure variables inside functions are correctly ordered.',  
+          fix: `Consider reordering the variable "${variableName}" within its function or block scope.`  
+        });  
+      }  
+    }  
   }  
 }  
 
@@ -1787,51 +1826,55 @@ function handleHelperFunctionDeclaration(path, state, filePath) {
  * corresponding to the order of these function types.
  */
 function handleFunctionExpressionsAndArrowFunctions(path, state, filePath) {  
-  console.log('Function expression detected:', path.node.type);  
-  const functionName = path.node.id && path.node.id.name;  
-
+  const functionName = path.node.id && path.node.id.name || 'Anonymous';  
+  
   // Identify if the function is a hook (e.g., useEffect)  
   if (functionName && /^use[A-Z]/.test(functionName)) {  
-      if (state.hasPropTypes || state.hasDefaultProps || state.hasExports) {  
-          const errorMessage = generateErrorMessage("Hook Function", state, filePath);  
-          if (errorMessage) {  
-              reportError(path.node, errorMessage, filePath);  
-          }  
-      }  
-      state.hasHooks = true; // Assumes state contains a hasHooks flag  
-
+    if (state.hasPropTypes || state.hasDefaultProps || state.hasExports) {  
+      reportError(path.node, `Hook "${functionName}" should be declared before props and exports.`, filePath, 'Hook', {  
+        suggestions: 'Move this hook before any PropTypes, default props, and export statements.',  
+        fix: 'Consider relocating the hook towards the beginning of the function.'  
+      });  
+    }  
+    state.hasHooks = true; // Assumes state contains a hasHooks flag  
   // Identify if the function is a handler (e.g., handleSubmit)  
   } else if (functionName && /^handle[A-Z]/.test(functionName)) {  
-      if (state.hasHooks) {  
-          reportError(path.node, 'Handlers should be defined after hooks.', filePath);  
-      } else if (state.hasConditionalRender || state.hasReturn) {  
-          reportError(path.node, 'Handlers should be defined before render logic and return statement.', filePath);  
-      }  
-      state.hasHandlers = true;  
+    if (state.hasHooks) {  
+      reportError(path.node, `Handler function "${functionName}" should be declared after hooks.`, filePath, 'Handler', {  
+        suggestions: 'Move handler functions after all hook calls within the component.',  
+        fix: 'Consider relocating this handler function below the hooks.'  
+      });  
+    } else if (state.hasConditionalRender || state.hasReturn) {  
+      reportError(path.node, `Handler function "${functionName}" should be declared before render logic and return statements.`, filePath, 'Handler', {  
+        suggestions: 'Move handler functions to precede the render logic and return statements.',  
+        fix: 'Consider relocating this handler function above the render logic and return statements.'  
+      });  
+    }  
+    state.hasHandlers = true;  
   }  
-
+  
   // Traverse nested functions within the current function expression  
   path.traverse({  
-      FunctionExpression(nestedPath) {  
-          handleFunctionExpressionsAndArrowFunctions(nestedPath, state, filePath);  
-      },  
-      ArrowFunctionExpression(nestedPath) {  
-          handleFunctionExpressionsAndArrowFunctions(nestedPath, state, filePath);  
-      },  
-      JSXElement(nestedPath) {  
-          handleJSXElement(nestedPath, state, filePath);  
-      },  
-      VariableDeclarator(nestedPath) {  
-          handleVariableDeclarator(nestedPath, state, filePath);  
-      },  
-      CallExpression(nestedPath) {  
-          checkForContextUsageOrder(nestedPath);  
-      },  
-      ReturnStatement(nestedPath) {  
-          handleReturnStatement(nestedPath, state, filePath);  
-      }  
+    FunctionExpression(nestedPath) {  
+      handleFunctionExpressionsAndArrowFunctions(nestedPath, state, filePath);  
+    },  
+    ArrowFunctionExpression(nestedPath) {  
+      handleFunctionExpressionsAndArrowFunctions(nestedPath, state, filePath);  
+    },  
+    JSXElement(nestedPath) {  
+      handleJSXElement(nestedPath, state, filePath);  
+    },  
+    VariableDeclarator(nestedPath) {  
+      handleVariableDeclarator(nestedPath, state, filePath);  
+    },  
+    CallExpression(nestedPath) {  
+      checkForContextUsageOrder(nestedPath);  
+    },  
+    ReturnStatement(nestedPath) {  
+      handleReturnStatement(nestedPath, state, filePath);  
+    }  
   });  
-} 
+}  
 
 /**  
  * Processes export statements encountered during AST traversal, identifying whether the main component of the file is  
@@ -1889,19 +1932,6 @@ function handleExportDeclarations(path, state, filePath) {
   state.topLevelState.hasExports = true;  
 }  
   
- 
-  
-
-
-/**
- * Inspects JSX elements within the AST to verify they are correctly placed within the structure of a React component.
- * Validates that the JSX is part of a return statement or suitably encapsulated within variable declarations or conditional 
- * rendering logic in the main component. It reports errors for JSX that does not adhere to these structural guidelines.
- *
- * @param {Path} innerPath - The path representing a JSX element node within the AST.
- * @param {State} state - The state object, used here to track the main component's path and conditional rendering presence.
- * @param {string} filePath - The file path providing context for error messaging when JSX is found in disallowed locations.
- */
 /**  
  * Inspects JSX elements within the AST to verify they are correctly placed within the structure of a React component.  
  * Validates that the JSX is part of a return statement or suitably encapsulated within variable declarations or conditional   
@@ -1912,21 +1942,31 @@ function handleExportDeclarations(path, state, filePath) {
  * @param {string} filePath - The file path providing context for error messaging when JSX is found in disallowed locations.  
  */  
 function handleJSXElement(innerPath, state, filePath) {  
-  console.log('JSX element detected:', innerPath.node.type);
-  // Check if we're inside a function (component or not).  
-  const functionParent = innerPath.findParent(p => p.isFunctionDeclaration() || p.isFunctionExpression() || p.isArrowFunctionExpression());  
+  console.log('JSX element detected:', innerPath.node.type);  
+  
+  // Check if the JSX element is within a function (arrow, function, or method).  
+  const functionParent = innerPath.findParent(  
+    (p) =>  
+      p.isFunctionDeclaration() ||  
+      p.isFunctionExpression() ||  
+      p.isArrowFunctionExpression() ||  
+      p.isClassMethod() // Adding check for class methods  
+  );  
   
   if (functionParent) {  
     // Check if this JSX is part of the return statement or a variable declaration within the function  
-    const isPartOfReturn = !!innerPath.findParent(p => p.isReturnStatement());  
-    const isPartOfVariableDeclarator = !!innerPath.findParent(p => p.isVariableDeclarator());  
-    const isPartOfConditional = !!innerPath.findParent(p => p.isConditionalExpression() || p.isLogicalExpression() || p.isJSXExpressionContainer());  
-    const isPartOfFunctionBody = !!innerPath.findParent(p => p.isBlockStatement());  
+    const isPartOfReturn = !!innerPath.findParent((p) => p.isReturnStatement());  
+    const isPartOfVariableDeclarator = !!innerPath.findParent((p) => p.isVariableDeclarator());  
+    const isPartOfConditional = !!innerPath.findParent((p) => p.isConditionalExpression() || p.isLogicalExpression() || p.isJSXExpressionContainer());  
+    const isPartOfFunctionBody = !!innerPath.findParent((p) => p.isBlockStatement());  
   
     if (isPartOfReturn) {  
       // This JSX is valid because it's part of the return statement  
       // No error should be reported.  
-    } else if (functionParent === state.mainComponentPath && (isPartOfVariableDeclarator || isPartOfConditional || isPartOfFunctionBody)) {  
+    } else if (  
+      functionParent === state.mainComponentPath &&  
+      (isPartOfVariableDeclarator || isPartOfConditional || isPartOfFunctionBody)  
+    ) {  
       // If we're in the main component, JSX outside of the return statement indicates conditional rendering or valid encapsulation  
       state.hasConditionalRender = true;  
     } else if (isPartOfVariableDeclarator || isPartOfConditional) {  
@@ -1939,8 +1979,8 @@ function handleJSXElement(innerPath, state, filePath) {
         filePath  
       );  
     }  
-  } else if (innerPath.findParent(p => p.isProgram())) {  
-    // If we're at the program level, any JSX is invalid   
+  } else if (innerPath.findParent((p) => p.isProgram())) {  
+    // If we're at the program level, any JSX is invalid  
     reportError(  
       innerPath.node,  
       'JSX should be inside a function component or returned directly from an arrow function component.',  
@@ -2007,6 +2047,74 @@ function handleUseContext(path, state, filePath) {
     }  
   }  
 }  
+
+function handleClassComponent(path, state, filePath) {  
+  console.log('Class component detected:', path.node.type);  
+  state.hasClassComponent = true;  
+  
+  // Ensure class components are declared in the correct order  
+  if (state.hasHandlers || state.hasHooks   
+    || state.hasReactComponent || state.hasPropTypes   
+    || state.hasDefaultProps || state.hasExports) {  
+    const errorMessage = generateErrorMessage("Class component", state, filePath);  
+    if (errorMessage) {  
+      reportError(path.node, errorMessage, filePath);  
+    }  
+  }  
+    
+  path.traverse({  
+    ClassMethod(innerPath) {  
+      handleClassMethod(innerPath, state, filePath);  
+    },  
+    ClassProperty(innerPath) {  
+      handleClassProperty(innerPath, state, filePath);  
+    },  
+    VariableDeclarator(innerPath) {  
+      handleVariableDeclarator(innerPath, state, filePath);  
+    },  
+    enter(innerPath) {  
+      enterReactComponent(state);  
+    },  
+    exit(innerPath) {  
+      exitReactComponent(state);  
+    }  
+  });  
+}  
+  
+function handleClassMethod(path, state, filePath) {  
+  const methodName = path.node.key.name;  
+  if (methodName === 'constructor') {  
+    if (state.hasHooks || state.hasHandlers || state.hasReactComponent) {  
+      reportError(path.node, 'Constructor should be declared before hooks, handlers, and other React components.', filePath);  
+    }  
+    state.hasConstructor = true;  
+  } else if (methodName.startsWith('handle')) {  
+    if (state.hasHooks || state.hasReactComponent) {  
+      reportError(path.node, 'Handlers should be declared before hooks and other React components.', filePath);  
+    }  
+    state.hasHandlers = true;  
+  } else if (methodName.startsWith('render')) {  
+    state.hasRenderMethod = true;  
+  } else if (methodName.startsWith('componentDid')) {  
+    if (state.hasHandlers || state.hasRenderMethod || state.hasReactComponent) {  
+      reportError(path.node, 'Lifecycle methods should be declared before handlers, render methods, and other React components.', filePath);  
+    }  
+    state.hasLifecycleMethods = true;  
+  }  
+}  
+  
+function handleClassProperty(path, state, filePath) {  
+  const propertyName = path.node.key.name;  
+  if (propertyName === 'state') {  
+    if (state.hasHandlers || state.hasRenderMethod || state.hasReactComponent) {  
+      reportError(path.node, 'State should be declared before handlers, render methods, and other React components.', filePath);  
+    }  
+    state.hasStateProperty = true;  
+  } else {  
+    handleVariableDeclarator(path, state, filePath);  
+  }  
+}  
+
 
 /**  
  * Handles the identification and processing of React hooks and effects within the AST.  
@@ -2114,10 +2222,15 @@ function setupTraverse(state, filePath) {
       },  
       VariableDeclaration(path) {  
           if (!hasDisableCheckComment(path)) {  
+            if (isMainFunctionComponent(path, state, filePath)) {  
+              handleMainReactComponent(path, state, filePath);  
+          } else {
               path.get('declarations').forEach((declaratorPath) => {  
-                  handleVariableDeclarator(declaratorPath, state, filePath);  
+                  const type = recognizeType(declaratorPath, state, filePath);  
+                  processFunctionType(type, declaratorPath, state, filePath);  
               });  
           }  
+        }
       },  
       TSTypeAliasDeclaration(path) {  
           if (!hasDisableCheckComment(path)) {  
@@ -2154,6 +2267,15 @@ function setupTraverse(state, filePath) {
               }  
           }  
       },  
+      ClassDeclaration(path) {  
+        if (!hasDisableCheckComment(path)) {    
+          if (isMainFunctionComponent(path, state, filePath)) {  
+            handleMainReactComponent(path, state, filePath);    
+          } else {  
+            handleClassComponent(path, state, filePath);  
+          }  
+        }    
+      }, 
       CallExpression(path) {  
           if (!hasDisableCheckComment(path)) {  
               handleHooksAndEffects(path, state, filePath);  
@@ -2171,6 +2293,7 @@ function setupTraverse(state, filePath) {
       },  
   };  
 }  
+
 
 
 
@@ -2214,6 +2337,7 @@ function analyzeCode(ast, filePath) {
     helperFunctions: [], // Ensure helper functions are initialized as arrays  
     functions: [],  
     components: [],  
+    classComponents: [], 
     types: [],  
     exports: [],  
     mainComponent: null,  
@@ -2280,6 +2404,14 @@ function analyzeCode(ast, filePath) {
       }  
       path.parentPath.remove();  
     },  
+    ClassDeclaration(path) {  
+      if (isClassComponent(path)) {  
+        sections.classComponents.push(path.node);  // Push the class component to the classComponents section  
+      } else {  
+        sections.helperFunctions.push(path.node);  
+      }  
+      path.remove();  
+    }, 
     ExportNamedDeclaration(path) {  
       sections.exports.push(path.node);  
       path.remove();  
@@ -2301,18 +2433,20 @@ function reorderCode(sections) {
     ...sections.contexts, // Place contexts after imports  
     ...sections.hooks,  // Place hooks after constants  
     ...sections.types,  
+    ...sections.helperFunctions, 
     ...sections.functions,  
     ...sections.components,  
+    ...sections.classComponents,
     sections.mainComponent,  
     ...sections.exports,  
   ];  
   
-  for (let [functionBodyNode, localConsts] of sections.localConstants) {  
-    const newFunctionBody = [  
-      ...localConsts,  
-      ...functionBodyNode.body.filter((node) => !localConsts.includes(node)),  
-    ];  
-    functionBodyNode.body = newFunctionBody;  
+  for (let [functionBodyNode, localConsts] of sections.localConstants) {    
+    const newFunctionBody = [    
+      ...localConsts,    
+      ...functionBodyNode.body.filter((node) => !localConsts.includes(node)),    
+    ];    
+    functionBodyNode.body = newFunctionBody;    
   }  
   
   return orderedSections.filter(Boolean);  
@@ -2357,6 +2491,10 @@ function createNewAST(orderedSections) {
   
 async function fixFile(filePath) {  
   console.log(`Fixing file: ${filePath}`);  
+  
+  // Create a backup before fixing the file  
+  backupFile(filePath);  
+
   const content = readFileSync(filePath, 'utf-8');  
   const ast = parseFile(content);  
   
@@ -2373,18 +2511,22 @@ async function fixFile(filePath) {
   console.log(`File ${filePath} fixed.`);  
 }  
   
-async function fixProjectStructure() {  
+async function fixProjectStructure(filePath) {  
   try {  
-    console.log('Recherche des fichiers .ts et .tsx dans le projet...');  
-    const ignorePattern = await compileIgnorePattern(ignoreFilePath);  
-    const files = await findFilesRecursive(projectPath, filePattern, [], ignorePattern);  
-  
-    if (files.length === 0) {  
-      console.log(`Aucun fichier correspondant trouvé avec le motif "${filePattern}".`);  
+    if (filePath) {  
+      await fixFile(filePath); // Fix the specific file  
     } else {  
-      console.log(`Fichiers trouvés pour la vérification de structure:`, files);  
-      for (const filePath of files) {  
-        await fixFile(filePath); // Fix the file structure  
+      console.log('Recherche des fichiers .ts et .tsx dans le projet...');  
+      const ignorePattern = await compileIgnorePattern(ignoreFilePath);  
+      const files = await findFilesRecursive(projectPath, filePattern, [], ignorePattern);  
+  
+      if (files.length === 0) {  
+        console.log(`Aucun fichier correspondant trouvé avec le motif "${filePattern}".`);  
+      } else {  
+        console.log(`Fichiers trouvés pour la vérification de structure:`, files);  
+        for (const filePath of files) {  
+          await fixFile(filePath); // Fix the file structure  
+        }  
       }  
     }  
   } catch (err) {  
@@ -2392,18 +2534,106 @@ async function fixProjectStructure() {
   }  
   
   console.log('Correction de la structure du projet React terminée.');  
-}  
+} 
   
 function parseCommandLineArguments() {  
   const args = process.argv.slice(2); // Get command-line arguments  
-  return args.includes('--fix');  
+  
+  let filePath = '';  
+  const fix = args.includes('--fix');  
+  const revert = args.includes('--revert');  
+  const analyze = args.includes('--analyze');  
+  
+  // Check if a file path is provided  
+  args.forEach(arg => {  
+    if (arg.startsWith('--file=')) {  
+      filePath = path.resolve(arg.replace('--file=', ''));  
+    }  
+  });  
+  
+  return { fix, revert, analyze, filePath };  
+}  
+
+
+// ---------------------- Revert fix option ----------------------
+const backupDir = 'backup';  
+  
+/**  
+ * Creates a backup of the given file before making any changes.  
+ *   
+ * @param {string} filePath - The path of the file to back up.  
+ */  
+function backupFile(filePath) {  
+  const backupFilePath = path.join(backupDir, path.relative(projectPath, filePath));  
+  const backupFileDir = path.dirname(backupFilePath);  
+  
+  // Create directory if it does not exist  
+  fs.mkdirSync(backupFileDir, { recursive: true });  
+  
+  // Copy the file to the backup directory  
+  fs.copyFileSync(filePath, backupFilePath);  
+  console.log(`Backup of ${filePath} created at ${backupFilePath}`);  
 }  
   
+/**  
+ * Reverts a fixed file to its original state from the backup.  
+ *   
+ * @param {string} filePath - The path of the file to revert.  
+ */  
+function revertFile(filePath) {  
+  const backupFilePath = path.join(backupDir, path.relative(projectPath, filePath));  
+  
+  // Check if a backup exists  
+  if (fs.existsSync(backupFilePath)) {  
+    // Copy the backup file to the original location  
+    fs.copyFileSync(backupFilePath, filePath);  
+    console.log(`Reverted ${filePath} to its original state.`);  
+  } else {  
+    console.log(`No backup found for ${filePath}. Unable to revert.`);  
+  }  
+}  
+  
+/**  
+ * Recursively finds and reverts all backed-up files.  
+ *   
+ * @param {string} dir - The directory to search for backups.  
+ */  
+async function revertProjectStructure(filePath) {  
+  try {  
+    if (filePath) {  
+      revertFile(filePath); // Revert the specific file  
+    } else {  
+      console.log('Reverting project structure from backups...');  
+      const files = await findFilesRecursive(backupDir, filePattern);  
+  
+      if (files.length === 0) {  
+        console.log(`No backup files found.`);  
+      } else {  
+        for (const filePath of files) {  
+          const originalFilePath = path.join(projectPath, path.relative(backupDir, filePath));  
+          revertFile(originalFilePath);  
+        }  
+      }  
+    }  
+  } catch (err) {  
+    console.error('Error during reverting project structure:', err);  
+  }  
+  
+  console.log('Reverting project structure completed.');  
+}  
+
+  
 // Main execution  
-if (parseCommandLineArguments()) {  
-  fixProjectStructure();  
+const args = parseCommandLineArguments();  
+  
+if (args.revert) {  
+  revertProjectStructure(args.filePath);  
+} else if (args.fix) {  
+  fixProjectStructure(args.filePath);  
+} else if (args.analyze) {  
+  checkProjectStructure(args.filePath);  
 } else {  
-  checkProjectStructure();  
+  console.error('Invalid command. Use --fix, --revert or --analyze with an optional --file=<file-path> argument.');  
 }  
 
  
