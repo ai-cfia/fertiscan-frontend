@@ -15,12 +15,13 @@ const readFile = util.promisify(fs.readFile);
 const readFileSync = fs.readFileSync;  
 const React = require('react');  
 const { useState } = require('react');
+const { readdir, stat } = fs.promises;
+
 async function loadInk() {    
   const { render, Text, Box, useApp, useInput } = await import('ink');    
   const SelectInput = await import('ink-select-input').then(mod => mod.default); // Use dynamic import for ink-select-input  
   return { render, Text, Box, useApp, useInput, SelectInput };    
 }    
-
 
 const descriptionMapping = {      
   // Mapping for error messages...    
@@ -42,7 +43,6 @@ const descriptionMapping = {
   "Hooks": ["hasReactComponent", "hasPropTypes", "hasDefaultProps", "hasExports"],      
   "Exports": []      
 };      
-    
 
 // ---------------------- File processing functions ----------------------
 
@@ -55,27 +55,27 @@ const descriptionMapping = {
  * @param {RegExp} pattern - The file pattern to search for.
  * @returns {Promise<string[]>} A promise that resolves to an array of file paths matching the pattern.
  */
-async function findFilesRecursive(dir, pattern, fileList = [], ignorePattern) {
-  const files = await readdir(dir);
-
-  for (const file of files) {
-    const fullPath = path.join(dir, file);
-    const fileStat = await stat(fullPath);
-
-    // Test the ignorePattern against the full path
-    if (ignorePattern && ignorePattern.test(fullPath)) {
-      continue; // Skip ignored files or directories
-    }
-
-    if (fileStat.isDirectory()) {
-      await findFilesRecursive(fullPath, pattern, fileList, ignorePattern); // Recurse into subdirectories
-    } else if (pattern.test(file)) {
-      fileList.push(fullPath); // Add to list if file matches the pattern
-    }
-  }
-
-  return fileList;
-}
+async function findFilesRecursive(dir, pattern, fileList = [], ignorePattern) {  
+  const files = await readdir(dir);  
+  
+  for (const file of files) {  
+    const fullPath = path.join(dir, file);  
+    const fileStat = await stat(fullPath);  
+  
+    // Test the ignorePattern against the full path  
+    if (ignorePattern && ignorePattern.test(fullPath)) {  
+      continue; // Skip ignored files or directories  
+    }  
+  
+    if (fileStat.isDirectory()) {  
+      await findFilesRecursive(fullPath, pattern, fileList, ignorePattern); // Recurse into subdirectories  
+    } else if (pattern.test(file)) {  
+      fileList.push(fullPath); // Add to list if file matches the pattern  
+    }  
+  }  
+  
+  return fileList;  
+}  
 
 /**
  * Checks the project structure by searching for .ts and .tsx files.
@@ -143,37 +143,35 @@ function parseFile(content) {
  *
  * @param {string} filePath - The path of the file to be read and checked.
  */
-async function checkFile(filePath) {  
-  console.log(`Reading file: ${filePath}`);  
+async function checkFile(filePath) {    
+  console.log(`Reading file: ${filePath}`);    
+      
+  // Vérification que le chemin est un fichier    
+  if (fs.statSync(filePath).isFile()) {    
+    const content = readFileSync(filePath, 'utf-8');    
+    const ast = parseFile(content);      
+    let state = createStateTracker();    
     
-  // Vérification que le chemin est un fichier  
-  if (fs.statSync(filePath).isFile()) {  
-    const content = readFileSync(filePath, 'utf-8');  
-    const ast = parseFile(content);    
-    let state = createStateTracker();  
-  
-    traverse(ast, setupTraverse(state, filePath));  
-  
-    // Once the AST traversal is complete, check if the main component's name matches the file name  
-    if (state.hasMainComponent) {  
-      const mainComponentName = getMainComponentNameFromFileName(filePath);  
-      if (!isExportDeclarationWithName(state.mainComponentPath, mainComponentName)) {  
-        console.error(`Success`);  
-      }  
-    } else {  
-      console.error(`Error in ${filePath}: No main detected as the main (Function/Component/Class) is detected by the fileName please rename your main component to match the file name.`);  
-    }  
-  
-    console.log(`File ${filePath} checked.`);  
-    console.log("------------------------------------------------------------")  
-    console.log('\n');  
-  } else {  
-    console.error(`${filePath} is not a file.`);  
-    process.exit(1); // Exit the process if it's not a file  
-  }  
-}  
-
-
+    traverse(ast, setupTraverse(state, filePath));    
+    
+    // Once the AST traversal is complete, check if the main component's name matches the file name    
+    if (state.hasMainComponent) {    
+      const mainComponentName = getMainComponentNameFromFileName(filePath);    
+      if (!isExportDeclarationWithName(state.mainComponentPath, mainComponentName)) {    
+        console.error(`Error in ${filePath}: Main component name does not match file name.`);  // Fix the success message to an error message  
+      }    
+    } else {    
+      console.error(`Error in ${filePath}: No main component detected. The main (Function/Component/Class) should match the file name.`);  // Improve error message  
+    }    
+    
+    console.log(`File ${filePath} checked.`);    
+    console.log("------------------------------------------------------------")    
+    console.log('\n');    
+  } else {    
+    console.error(`${filePath} is not a file.`);    
+    process.exit(1); // Exit the process if it's not a file    
+  }    
+}    
 
 // Function to read ignore patterns and compile them into a regex
 async function compileIgnorePattern(ignoreFilePath) {
@@ -258,29 +256,28 @@ function createStateTracker() {
  * @param {string} filePath - The path to the file being processed.  
  * @param {string} [type] - Optional. Type of the node, can be provided for more contextual messages.  
  */  
-function reportError(node, message, filePath, type, extraInfo = {}) {    
-  // If the node does not have a location, fall back to a more generic error message.    
-  if (!node.loc) {    
-    console.error(`Error in ${filePath}: ${message}`);    
-    return;    
-  }    
-    
-  // Extract the location data from the node.    
-  const location = node.loc.start;    
-    
-  // Determine the type of the node for more context if not provided.    
-  const nodeType = type || node.type || 'Unknown';    
-    
-  // Construct a detailed error message.    
-  const errorMessage = `\n[${nodeType}] - Error in ${filePath}:${location.line}:${location.column}:\n` +  
-    `Message: ${message}\n` +  
-    `Node Type: ${nodeType}\n` +  
-    (extraInfo.suggestions ? `Suggestions: ${extraInfo.suggestions}\n` : '') +   
-    (extraInfo.fix ? `Suggested Fix: ${extraInfo.fix}\n` : '');    
-    
-  console.error(errorMessage);    
-}   
-
+function reportError(node, message, filePath, type, extraInfo = {}) {      
+  // If the node does not have a location, fall back to a more generic error message.      
+  if (!node.loc) {      
+    console.error(`Error in ${filePath}: ${message}`);      
+    return;      
+  }      
+      
+  // Extract the location data from the node.      
+  const location = node.loc.start;      
+      
+  // Determine the type of the node for more context if not provided.      
+  const nodeType = type || node.type || 'Unknown';      
+      
+  // Construct a detailed error message.      
+  const errorMessage = `\n[${nodeType}] - Error in ${filePath}:${location.line}:${location.column}:\n` +    
+    `Message: ${message}\n` +    
+    `Node Type: ${nodeType}\n` +    
+    (extraInfo.suggestions ? `Suggestions: ${extraInfo.suggestions}\n` : '') +     
+    (extraInfo.fix ? `Suggested Fix: ${extraInfo.fix}\n` : '');      
+      
+  console.error(errorMessage);      
+}     
 
 /**
  * Generates an error message based on the provided description, state, and file path.
@@ -309,8 +306,6 @@ function generateErrorMessage(description, state, filePath) {
     
   return "";    
 } 
-
-
 
 // ---------------------- Is functions ----------------------
 
@@ -658,9 +653,6 @@ function isMainFunctionComponent(path, state, filePath) {
   
   return false;    
 }  
-
-
-
 
 /**  
  * Checks whether a given export declaration matches a specified component name, considering both default and   
@@ -2569,10 +2561,10 @@ function parseCommandLineArguments() {
   const revert = args.includes('--revert');  
   const analyze = args.includes('--analyze');  
   const help = args.includes('--help');  
-    
+  
   let displayLevel = 'basic'; // Default display level  
   let language = 'en'; // Default language  
-    
+  
   // Check for display and language options  
   args.forEach(arg => {  
     if (arg.startsWith('--file=')) {  
@@ -2591,52 +2583,102 @@ function parseCommandLineArguments() {
   });  
   
   return { fix, revert, analyze, help, filePath, displayLevel, language };  
-}  
+} 
 
-
-
-// Analyze code with details  
-function analyzeCodeWithDetails(ast, filePath) {  
-  if (!filePath) {  
-    console.error('No file path provided for analysis.');  
-    process.exit(1);  
-  }  
+async function analyzeAllFiles(displayLevel) {  
+  console.log('Recherche des fichiers .ts et .tsx dans le projet...');    
+  const ignorePattern = await compileIgnorePattern(ignoreFilePath);    
+  const files = await findFilesRecursive(projectPath, filePattern, [], ignorePattern);    
+    
+  if (files.length === 0) {    
+    console.log(`Aucun fichier correspondant trouvé avec le motif "${filePattern}".`);    
+  } else {    
+    console.log(`Fichiers trouvés pour l'analyse de structure:`, files);    
+    for (const filePath of files) {    
+      console.log(`Analysing file: ${filePath}`);    
+      const content = readFileSync(filePath, 'utf-8');    
+      const ast = parse(content, { sourceType: 'module', plugins: ['jsx', 'typescript'] });    
+      const sections = analyzeCodeWithDetails(ast, filePath);    
+      displayAnalysis(sections, displayLevel);    
+    }    
+  }    
+}   
   
-  if (!fs.statSync(filePath).isFile()) {  
-    console.error(`${filePath} is not a file.`);  
-    process.exit(1);  
-  }  
   
-  const sections = {  
-    imports: [],  
-    localConstants: new Map(),  
-    constants: [],  
-    contexts: [],  
-    hooks: [],  
-    helperFunctions: [],  
-    functions: [],  
-    components: [],  
-    classComponents: [],  
-    types: [],  
-    exports: [],  
-    mainComponent: null,  
-    nodes: [],  
-  };  
-  
+function analyzeCodeWithDetails(ast, filePath) {    
+  if (!filePath) {    
+    console.error('No file path provided for analysis.');    
+    process.exit(1);    
+  }    
+    
+  if (!fs.statSync(filePath).isFile()) {    
+    console.error(`${filePath} is not a file.`);    
+    process.exit(1);    
+  }    
+    
+  const sections = {    
+    imports: [],    
+    localConstants: new Map(),    
+    constants: [],    
+    contexts: [],    
+    hooks: [],    
+    helperFunctions: [],    
+    functions: [],    
+    components: [],    
+    classComponents: [],    
+    types: [],    
+    exports: [],    
+    mainComponent: null,    
+    nodes: [],    
+  };    
+    
+  const state = createStateTracker();  // Create state tracker here  
+    
   traverse(ast, {    
     enter(path) {    
-      sections.nodes.push({    
+      const nodeDetails = {    
         type: path.node.type,    
         loc: path.node.loc,    
         name: path.node.id ? path.node.id.name : null,    
-        code: generate(path.node).code    
-      });    
+        code: generate(path.node).code,    
+        hasError: false // Initialize hasError to false    
+      };    
+    
+      // Use existing functions to detect errors    
+      if (path.isVariableDeclaration()) {    
+        handleVariableDeclarator(path, state, filePath);    
+      } else if (path.isFunctionDeclaration()) {    
+        handleHelperFunctionDeclaration(path, state, filePath);    
+      } else if (path.isArrowFunctionExpression() || path.isFunctionExpression()) {    
+        handleFunctionExpressionsAndArrowFunctions(path, state, filePath);    
+      } else if (path.isClassDeclaration()) {    
+        handleClassComponent(path, state, filePath);    
+      } else if (path.isImportDeclaration()) {    
+        handleImportDeclaration(path, state, filePath);    
+      } else if (path.isExportNamedDeclaration() || path.isExportDefaultDeclaration()) {    
+        handleExportDeclarations(path, state, filePath);    
+      } else if (path.isTSTypeAliasDeclaration() || path.isTSInterfaceDeclaration() || path.isTSEnumDeclaration()) {    
+        handleTSTypeAliasDeclaration(path, state, filePath);    
+      } else if (path.isCallExpression()) {    
+        handleHooksAndEffects(path, state, filePath);    
+      } else if (path.isTaggedTemplateExpression()) {    
+        handleStyledComponent(path, state, filePath);    
+      }    
+    
+      // Check if the state has any errors    
+      if (state.functionComponentState.hasErrors || state.topLevelState.hasErrors) {    
+        nodeDetails.hasError = true;    
+        console.log('Error detected:', path.node.type);  
+      }    
+    
+      sections.nodes.push(nodeDetails);    
     },    
     ImportDeclaration(path) {    
       sections.imports.push({    
         type: path.node.type,    
         loc: path.node.loc,    
-        code: generate(path.node).code    
+        code: generate(path.node).code,    
+        hasError: false    
       });    
       path.remove();    
     },    
@@ -2644,7 +2686,8 @@ function analyzeCodeWithDetails(ast, filePath) {
       const details = {    
         type: path.node.type,    
         loc: path.node.loc,    
-        code: generate(path.node).code    
+        code: generate(path.node).code,    
+        hasError: false    
       };    
       if (isGlobalConstant(path)) {    
         sections.constants.push(details);    
@@ -2671,7 +2714,8 @@ function analyzeCodeWithDetails(ast, filePath) {
       sections.types.push({    
         type: path.node.type,    
         loc: path.node.loc,    
-        code: generate(path.node).code    
+        code: generate(path.node).code,    
+        hasError: false    
       });    
       path.remove();    
     },    
@@ -2679,7 +2723,8 @@ function analyzeCodeWithDetails(ast, filePath) {
       sections.types.push({    
         type: path.node.type,    
         loc: path.node.loc,    
-        code: generate(path.node).code    
+        code: generate(path.node).code,    
+        hasError: false    
       });    
       path.remove();    
     },    
@@ -2687,7 +2732,8 @@ function analyzeCodeWithDetails(ast, filePath) {
       sections.types.push({    
         type: path.node.type,    
         loc: path.node.loc,    
-        code: generate(path.node).code    
+        code: generate(path.node).code,    
+        hasError: false    
       });    
       path.remove();    
     },    
@@ -2696,7 +2742,8 @@ function analyzeCodeWithDetails(ast, filePath) {
         type: path.node.type,    
         loc: path.node.loc,    
         name: path.node.id.name,    
-        code: generate(path.node).code    
+        code: generate(path.node).code,    
+        hasError: false    
       };    
       if (isMainFunctionComponent(path, {}, getMainComponentNameFromFileName(filePath))) {    
         sections.mainComponent = details;    
@@ -2710,7 +2757,8 @@ function analyzeCodeWithDetails(ast, filePath) {
         type: path.node.type,    
         loc: path.node.loc,    
         name: path.parent.id ? path.parent.id.name : null,    
-        code: generate(path.node).code    
+        code: generate(path.node).code,    
+        hasError: false    
       };    
       if (isReactComponent(path.parentPath) && path.parentPath.isVariableDeclarator()) {    
         if (isMainFunctionComponent(path.parentPath, {}, getMainComponentNameFromFileName(filePath))) {    
@@ -2730,7 +2778,8 @@ function analyzeCodeWithDetails(ast, filePath) {
         type: path.node.type,    
         loc: path.node.loc,    
         name: path.node.id.name,    
-        code: generate(path.node).code    
+        code: generate(path.node).code,    
+        hasError: false    
       };    
       if (isClassComponent(path)) {    
         sections.classComponents.push(details);    
@@ -2743,7 +2792,8 @@ function analyzeCodeWithDetails(ast, filePath) {
       sections.exports.push({    
         type: path.node.type,    
         loc: path.node.loc,    
-        code: generate(path.node).code    
+        code: generate(path.node).code,    
+        hasError: false    
       });    
       path.remove();    
     },    
@@ -2751,14 +2801,16 @@ function analyzeCodeWithDetails(ast, filePath) {
       sections.exports.push({    
         type: path.node.type,    
         loc: path.node.loc,    
-        code: generate(path.node).code    
+        code: generate(path.node).code,    
+        hasError: false    
       });    
       path.remove();    
     },    
   });    
     
   return sections;    
-} 
+}  
+
 
 const runApp = async (sections) => {  
   InkComponents = await loadInk();  
@@ -2767,20 +2819,19 @@ const runApp = async (sections) => {
 
   
 // Update displayAnalysis to include interactive elements  
-async function displayAnalysis(sections, displayLevel) {    
-  if (displayLevel === 'basic') {    
-    displayBasic(sections);    
-  } else if (displayLevel === 'detailed') {    
-    await displayDetailedInteractive(sections);    
-  } else if (displayLevel === 'tree') {    
-    displayTree(sections);    
-  } else if (displayLevel === 'interactive') {    
-    await runApp(sections); // Use await here    
-  } else {    
-    console.error('Invalid display level specified.');    
-  }    
-}   
-
+async function displayAnalysis(sections, displayLevel) {  
+  if (displayLevel === 'basic') {  
+    displayBasic(sections);  
+  } else if (displayLevel === 'detailed') {  
+    await displayDetailedInteractive(sections);  
+  } else if (displayLevel === 'tree') {  
+    displayTree(sections);  
+  } else if (displayLevel === 'interactive') {  
+    await runApp(sections); // Use await here  
+  } else {  
+    console.error('Invalid display level specified.');  
+  }  
+}  
 
 
 function displayBasic(sections) {  
@@ -2817,7 +2868,7 @@ function displayTree(sections) {
  */  
 async function displayDetailedInteractive(sections) {  
   console.log('--- Detailed Interactive Analysis ---');  
-    
+  
   const choices = [  
     'Imports',  
     'Constants',  
@@ -2871,6 +2922,7 @@ async function displayDetailedInteractive(sections) {
     }  
   }  
 }  
+
   
 /**  
  * Function to display code interactively.  
@@ -2878,13 +2930,12 @@ async function displayDetailedInteractive(sections) {
  */  
 function displayHighlightedCode(nodes) {  
   nodes.forEach(node => {  
-    console.log(`\n#### Node Type: ${node.type}`);  
-    console.log(`- **Location:** Line ${node.loc.start.line}, Column ${node.loc.start.column}`);  
-    if (node.name) {  
-      console.log(`- **Name:** ${node.name}`);  
+    const output = `\n#### Node Type: ${node.type}\n- **Location:** Line ${node.loc.start.line}, Column ${node.loc.start.column}\n${node.name ? `- **Name:** ${node.name}` : ''}\n- **Code:**\n\`\`\`javascript\n${node.code}\n\`\`\`\n---`;  
+    if (node.hasError) {  
+      console.error(output);  
+    } else {  
+      console.log(output);  
     }  
-    console.log(`- **Code:**\n\`\`\`javascript\n${generate(node).code}\n\`\`\``);  
-    console.log('---');  
   });  
 }  
   
@@ -3093,33 +3144,33 @@ const App = ({ sections }) => {
 
 
   
-// Main execution remains the same  
-const { fix, revert, analyze, help, filePath, displayLevel, language } = parseCommandLineArguments();  
+const { fix, revert, analyze, help, filePath, displayLevel, language } = parseCommandLineArguments();    
   
-if (help) {  
+if (help) {    
+  displayHelp(language); // Display help in the specified language    
+} else if (revert) {    
+  revertProjectStructure(filePath);    
+} else if (fix) {    
+  fixProjectStructure(filePath);    
+} else if (analyze) {    
+  if (filePath) {    
+    const content = readFileSync(filePath, 'utf-8');    
+    const ast = parse(content, { sourceType: 'module', plugins: ['jsx', 'typescript'] });    
+    const sections = analyzeCodeWithDetails(ast, filePath);    
+    if (displayLevel === 'interactive') {    
+      runApp(sections); // Run interactive display    
+    } else {    
+      displayAnalysis(sections, displayLevel);    
+    }    
+  } else {    
+    analyzeAllFiles(displayLevel);    
+  }    
+} else {    
+  // Handle the default case without relying on run-terminal.js  
+  console.log('No specific command provided. Use --help to see available options.');  
   displayHelp(language); // Display help in the specified language  
-} else if (revert) {  
-  revertProjectStructure(filePath);  
-} else if (fix) {  
-  fixProjectStructure(filePath);  
-} else if (analyze) {  
-  if (filePath) {  
-    const content = readFileSync(filePath, 'utf-8');  
-    const ast = parse(content, { sourceType: 'module', plugins: ['jsx', 'typescript'] });  
-    const sections = analyzeCodeWithDetails(ast, filePath);  
-    if (displayLevel === 'interactive') {  
-      runApp(sections); // Run interactive display  
-    } else {  
-      displayAnalysis(sections, displayLevel);  
-    }  
-  } else {  
-    console.error('No file path provided for analysis.');  
-  }  
-} else {  
-  const terminalPath = path.join(__dirname, 'run-terminal.js');  
-  execSync(`node ${terminalPath}`, { stdio: 'inherit' });  
+}    
 
-}
  
 
 // ---------------------- Disabled functions ----------------------

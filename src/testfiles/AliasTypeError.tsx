@@ -6,7 +6,6 @@ function AliasTypeError() {
   return <div />;
 }
 
-//disable-check
 type Props = {
   message: string;
 };
