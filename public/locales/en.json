@@ -88,5 +88,8 @@
   "login": "Login / Register",
   "currentStateSize": "Upload limit",
   "confirmSuccess": "The label has been successfully submitted",
-  "confirmError": "An error occurred while submitting the label"
- }
+  "confirmError": "An error occurred while submitting the label",
+  "fileElementToolTip":"Right click to see the options menu",
+  "delete":"Delete",
+  "invalidImageTypeAlert":"File type not valid (Accepted: JPG/PNG/HEIF)"
+}
