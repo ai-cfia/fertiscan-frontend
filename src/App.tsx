@@ -11,6 +11,7 @@ import SavedListPage from "./Pages/SavedListPage/SavedListPage";
 import { AlertProvider } from "./Utils/AlertContext";
 import { SessionProvider } from "./Utils/SessionContext";
 import LabelPage from "./Pages/LabelPage/LabelPage";
+import AlertBanner from "./Components/AlertBanner/AlertBanner";
 
 function App() {
   useEffect(() => {
@@ -25,6 +26,7 @@ function App() {
           <StrictMode>
             <Header />
             <SideMenu />
+            <AlertBanner />
           </StrictMode>
           <Routes>
             <Route path="/">

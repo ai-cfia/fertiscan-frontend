@@ -86,6 +86,7 @@ const FormPage = () => {
           "Access-Control-Allow-Headers":
             "Origin, Content-Type, X-Amz-Date, Authorization, X-Api-Key, X-Amz-Security-Token, locale",
           "Access-Control-Allow-Methods": "GET, POST",
+          Authorization: "Basic " + document.cookie.split("=")[1] + ":password",
         },
         body: formData,
       })

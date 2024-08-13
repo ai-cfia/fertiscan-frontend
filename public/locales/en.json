@@ -81,8 +81,12 @@
   "not-define": "Not defined",
   "fileElementToolTip": "Right click to see the options menu",
   "delete": "Delete",
-  "invalidImageTypeAlert": "File type not valid (Accepted: JPG/PNG/HEIF)"
+  "invalidImageTypeAlert": "File type not valid (Accepted: JPG/PNG/HEIF)",
+  "askForUName": "Please enter your user identifier",
+  "acceptUName": "By checking this box I understand that the data I have entered will be stored and thus should not be sensitive information.",
+  "reminderSensitive": "As a reminder, work email, phone number or real name are considered sensitive information.",
+  "login": "Login / Register",
   "currentStateSize": "Upload limit",
   "confirmSuccess": "The label has been successfully submitted",
-  "confirmError": "An error occurred while submitting the label",
+  "confirmError": "An error occurred while submitting the label"
  }
