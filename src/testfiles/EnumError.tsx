@@ -2,7 +2,7 @@
 
 import React from 'react';
 
-export function EnumError() {
+function EnumError() {
   return <div />;
 }
 
@@ -12,3 +12,4 @@ enum Colors {
   Green = 'green',
   Blue = 'blue'
 }
+export default EnumError;
