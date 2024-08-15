@@ -1,6 +1,6 @@
-const { parseFile } = require('./fileOperations');  
+const { parseFile, readFileContent } = require('./fileOperations');
 const traverse = require('@babel/traverse').default;  
-const t = require('@babel/types');  
+const t = require('@babel/types');
 const generate = require('@babel/generator').default;  
 const { createStateTracker, enterReactComponent, exitReactComponent } = require('./stateManagement');  
 const {  
@@ -42,7 +42,8 @@ const readFileSync = fs.readFileSync;
 
 const { logError, generateErrorMessage, 
     reportError, errors 
-} = require('./errorHandling'); 
+} = require('./errorHandling');
+const { codeFrameColumns } = require("@babel/code-frame");
 
 /**
  * Checks the structure and naming conventions of a given file.
@@ -450,7 +451,10 @@ function analyzeCode(ast, filePath) {
         mainComponent: null,    
     };    
   
-    traverse(ast, {    
+    traverse(ast, {
+        enter(path) {
+          path.node.code = codeFrameColumns(readFileContent(filePath), path.node.loc, { highlightCode: true });
+        },
         ImportDeclaration(path) {    
             sections.imports.push(path.node);    
             path.remove();    

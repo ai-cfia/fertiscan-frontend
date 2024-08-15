@@ -225,15 +225,13 @@ const displayDetailedInteractive = async (sections) => {
 const displayHighlightedCode = (nodes) => {  
     nodes.forEach(node => {  
         const location = node.loc && node.loc.start ? `Line ${node.loc.start.line}, Column ${node.loc.start.column}` : 'Location information not available';  
-        const codeSnippet = node.code || 'Code not available';  
+        const codeSnippet = node.code || 'Code not available';
         const output = `\n
-        #### Node Type: ${node.type}\n
-        - **Location:** ${location}\n${node.name ? 
-        `- **Name:** ${node.name}` : ''}\n
-        - **Code:**\n\`\`\`
-        javascript\n
-        ${codeSnippet}\n\`\`\`
-        `;
+#### Node Type: ${node.type}\n
+- **Location:** ${location}${node.name ? 
+`- **Name:** ${node.name}` : ''}
+- **Code:**\n\`\`\`javascript
+${codeSnippet}\n\`\`\``;
         
         // Check for error messages  ********Here********
         if (node.hasError) {  
