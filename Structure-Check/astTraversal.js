@@ -450,10 +450,10 @@ function analyzeCode(ast, filePath) {
         exports: [],    
         mainComponent: null,    
     };    
-  
+    const fileContent = readFileContent(filePath);
     traverse(ast, {
         enter(path) {
-          path.node.code = codeFrameColumns(readFileContent(filePath), path.node.loc, { highlightCode: true });
+          path.node.code = codeFrameColumns(fileContent, path.node.loc, { highlightCode: true });
         },
         ImportDeclaration(path) {    
             sections.imports.push(path.node);    
