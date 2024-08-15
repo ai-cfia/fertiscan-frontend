@@ -16,9 +16,9 @@ const { displayBasic, displayTree, displayAnalysis,
 
 const path = require('path');  
   
-const projectPath = '../src';  
+const projectPath = require.main.path+'\\..\\src';
 const filePattern = /\.(ts|tsx)$/;  
-const ignoreFilePath = 'structure-check.ignore'; 
+const ignoreFilePath = require.main.path+'\\structure-check.ignore';
 
   
 /**  

@@ -8,7 +8,7 @@
         "build": "tsc -b && vite build",
         "lint": "eslint . --ext ts,tsx --report-unused-disable-directives --max-warnings 0",
         "preview": "vite preview",
-        "structure": "node ./src/structure-check.js",
+        "structure": "node ./Structure-Check/structure-check.js --analyze",
         "test": "jest",
         "build-cli": "babel cli.js --out-dir dist/cli --extensions \".js,.jsx\"",
         "start-cli": "node dist/cli/cli.js",

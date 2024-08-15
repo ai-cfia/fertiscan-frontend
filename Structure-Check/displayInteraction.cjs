@@ -374,7 +374,7 @@ function displayHelp(language) {
  * @returns {Promise<void>} A promise that resolves when the menu interaction is complete.  
  */    
 const displayFilesMenu = async (files) => {  
-    const fileChoices = files.map(filePath => ({ title: filePath, value: filePath }));  
+    const fileChoices = files.map(filePath => ({ title: "src"+filePath.split("src")[1], value: filePath }));
     let continueInteraction = true;  
   
     while (continueInteraction) {  
