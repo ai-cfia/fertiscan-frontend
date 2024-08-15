@@ -98,8 +98,7 @@ const parseFile = (content) => {
     return parse(content, {  
         sourceType: 'module',  
         plugins: ['jsx', 'typescript', 'classProperties', 'decorators-legacy', 'dynamicImport'],  
-        ranges: true,  
-        loc: true,  
+        ranges: true,
     });  
 };  
   
