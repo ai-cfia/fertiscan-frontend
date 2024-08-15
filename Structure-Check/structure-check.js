@@ -12,68 +12,55 @@ const { createStateTracker } = require('./stateManagement');
 const { displayBasic, displayTree, displayAnalysis,  
         displayDetailedInteractive, displayHighlightedCode,  
         displayHelp, displayFilesMenu, displaySectionsMenu,  
-    } = require('./displayInteraction.cjs');  
+    } = require('./displayInteraction.cjs');   
 
-const { logError, generateErrorMessage, 
-        reportError, errors 
-    } = require('./errorHandling');   
-
-const { isReactComponent, isCustomHook, isGlobalConstant,  
-        isLocalConstant, isFunctionExpression,  
-        isArrowFunctionExpression, isMainFunctionComponent,  
-        isExportDeclarationWithName, IsTopOfScope,  
-        isReactFunctionalComponent, isFunctionalComponent,  
-        isReactCreateElementCall, isVariableDeclarator,  
-        isContextCreation, isReassignment,  
-        getMainComponentNameFromFileName, findLastImportIndex,  
-        recognizeType, checkForContextUsageOrder,  
-        checkDeclarationKeyword, reportVariablePlacementIssue,  
-    } = require('./utils');  
-
-const prompts = require('prompts');  
 const path = require('path');  
-const { readdir } = require('fs').promises;  
   
 const projectPath = '../src';  
 const filePattern = /\.(ts|tsx)$/;  
 const ignoreFilePath = 'structure-check.ignore'; 
-const fs = require('fs');  
-const readFileSync = fs.readFileSync;  
 
   
-/**
- * Analyzes the structure of the entire project or specific files based on display level.
- *
- * @async
- * @function analyzeProject
- * @param {string} displayLevel - The level of detail for displaying the analysis. Possible values: 'basic', 'detailed', 'tree', 'interactive'.
- * @returns {Promise<void>} A promise that resolves when the analysis process is complete.
- * @throws Will log an error if there's an issue finding or processing the files.
- */
-const analyzeProject = async (displayLevel) => {
-    try {  
-        console.log('Searching for .ts and .tsx files in the project...');
+/**  
+ * Analyzes the structure of the entire project or specific files based on display level.  
+ *  
+ * @async  
+ * @function analyzeProject  
+ * @param {string} displayLevel - The level of detail for displaying the analysis. Possible values: 'basic', 'detailed', 'tree', 'interactive'.  
+ * @returns {Promise<void>} A promise that resolves when the analysis process is complete.  
+ * @throws Will log an error if there's an issue finding or processing the files.  
+ */  
+const analyzeProject = async (displayLevel) => {  
+    try {    
+        console.log('Searching for .ts and .tsx files in the project...');  
+  
+        const ignorePattern = await compileIgnorePattern(ignoreFilePath);  
+        const files = await findFilesRecursive(projectPath, filePattern, [], ignorePattern);  
+        console.log(`Files found for structure analysis:`, files);  
+  
+        if (files.length === 0) {  
+            console.log(`No matching files found with the pattern "${filePattern}".`);  
+        } else {  
+            console.log(`Files found for structure analysis:`, files);  
+  
+            // If the display level is detailed or interactive, show the file menu  
+            if (displayLevel === 'detailed' || displayLevel === 'interactive') {  
+                await displayFilesMenu(files, displayLevel);  
+            } else {  
+                for (const filePath of files) {  
+                    const content = readFileContent(filePath);  
+                    const ast = parseFile(content);  
+                    const state = createStateTracker();  
+                    checkFile(filePath, state);  
+                    displayAnalysis(state, displayLevel);  
+                }  
+            }  
+        }  
+    } catch (err) {    
+        console.error('Error during the search of the file:', err);    
+    }    
+};  
 
-        const ignorePattern = await compileIgnorePattern(ignoreFilePath);
-        const files = await findFilesRecursive(projectPath, filePattern, [], ignorePattern);
-        console.log(`Files found for structure analysis:`, files);
-
-        if (files.length === 0) {
-            console.log(`No matching files found with the pattern "${filePattern}".`);
-        } else {
-            console.log(`Files found for structure analysis:`, files);
-            for (const filePath of files) {
-                const content = readFileContent(filePath);
-                const ast = parseFile(content);
-                const state = createStateTracker();
-                checkFile(filePath, state);
-                displayAnalysis(state, displayLevel);
-            }
-        }
-    } catch (err) {  
-        console.error('Error during the search of the file:', err);  
-    }  
-};
   
 /**
  * Fixes the structure of the entire project or a specific file if a file path is provided.

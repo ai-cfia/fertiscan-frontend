@@ -103,6 +103,7 @@ function hasDisableCheckComment(path) {
   }
 
   return false;
+}
 
 
 
@@ -144,10 +145,10 @@ function setupTraverse(state, filePath) {
       },  
       FunctionDeclaration(path) {  
           if (!hasDisableCheckComment(path)) {  
-             // if (isMainFunctionComponent(path, state, filePath)) {  
-               //   handleMainReactComponent(path, state, filePath);  
-             // }
-              if {  
+              if (isMainFunctionComponent(path, state, filePath)) {  
+                  handleMainReactComponent(path, state, filePath);  
+              }
+              else {  
                   const type = recognizeType(path, state, filePath);  
                   processFunctionType(type, path, state, filePath);  
               }  
@@ -288,6 +289,7 @@ function analyzeCode(ast, filePath) {
   
   return sections;  
 }   
+
 async function analyzeAllFiles(displayLevel) {    
   console.log('Recherche des fichiers .ts et .tsx dans le projet...');    
   errors.length = 0;  

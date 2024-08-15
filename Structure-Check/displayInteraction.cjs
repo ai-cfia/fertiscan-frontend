@@ -1,9 +1,7 @@
 const prompts = require('prompts');  
-const { readFileSync } = require('fs');  
-const { parse } = require('@babel/parser');  
-const traverse = require('@babel/traverse').default;  
 const { createStateTracker } = require('./stateManagement');  
-const { checkFile } = require('./astTraversal'); 
+const { checkFile, analyzeCode } = require('./astTraversal');  
+const { parseFile, readFileContent} = require('./fileOperations');
  
 (async function() {
     const { render, Text, Box, useApp, useInput } = await import('ink');
@@ -365,20 +363,21 @@ function displayHelp(language) {
     }  
 } 
 
-/**
- * Displays a menu for selecting files to analyze.
- * Provides options based on the available files and allows the user to interactively select files for analysis.
- *
- * @async
- * @function displayFilesMenu
- * @param {Object} allSections - An object where keys are file paths and values are the sections of code for each file.
- * @param {string} displayLevel - The level of detail for displaying the sections.
- * @returns {Promise<void>} A promise that resolves when the menu interaction is complete.
- */
-const displayFilesMenu = async (allSections, displayLevel) => {  
-    const fileChoices = Object.keys(allSections).map(filePath => ({ title: filePath, value: filePath }));  
+/**  
+ * Displays a menu for selecting files to analyze.  
+ * Provides options based on the available files and allows the user to interactively select files for analysis.  
+ *  
+ * @async  
+ * @function displayFilesMenu  
+ * @param {string[]} files - An array of file paths to display in the menu.  
+ * @param {string} displayLevel - The level of detail for displaying the sections.  
+ * @returns {Promise<void>} A promise that resolves when the menu interaction is complete.  
+ */    
+const displayFilesMenu = async (files) => {  
+    const fileChoices = files.map(filePath => ({ title: filePath, value: filePath }));  
+    let continueInteraction = true;  
   
-    while (true) {  
+    while (continueInteraction) {  
         try {  
             const { selectedFile } = await prompts({  
                 type: 'select',  
@@ -389,17 +388,21 @@ const displayFilesMenu = async (allSections, displayLevel) => {
   
             if (!selectedFile) break;  
   
-            await displaySectionsMenu(allSections[selectedFile], displayLevel, selectedFile);  
+            const content = readFileContent(selectedFile);  
+            const ast = parseFile(content);  
+            const sections = analyzeCode(ast, selectedFile);  
   
-            const { continueInteraction } = await prompts({  
+            // Display section menu after analyzing the file  
+            await displaySectionsMenu(sections, selectedFile);  
+  
+            const result = await prompts({  
                 type: 'confirm',  
                 name: 'continueInteraction',  
                 message: 'Do you want to select another file?',  
                 initial: true,  
             });  
   
-            if (!continueInteraction) break;  
-  
+            continueInteraction = result.continueInteraction;  
         } catch (error) {  
             console.error('Error during prompts:', error);  
             break;  
@@ -407,78 +410,76 @@ const displayFilesMenu = async (allSections, displayLevel) => {
     }  
 };  
   
+module.exports = displayFilesMenu;  
+ 
+  
 ////////////////////////////
 //////////////////////////// 
 ////////// Todo ////////////: Make sure that all type are in the menu.
 ////////////////////////////  
 ////////////////////////////
 
-/**
- * Displays a menu for selecting sections of code to highlight.
- * Provides options based on the available sections and allows the user to interactively select and highlight sections.
- *
- * @async
- * @function displaySectionsMenu
- * @param {Object} sections - An object containing arrays of different code sections.
- * @param {Array} sections.imports - An array of import statements.
- * @param {Map} sections.localConstants - A map of local constants within function bodies.
- * @param {Array} sections.constants - An array of constant declarations.
- * @param {Array} sections.contexts - An array of context declarations.
- * @param {Array} sections.hooks - An array of hook declarations.
- * @param {Array} sections.helperFunctions - An array of helper functions.
- * @param {Array} sections.functions - An array of other functions.
- * @param {Array} sections.components - An array of component declarations.
- * @param {Array} sections.classComponents - An array of class component declarations.
- * @param {Object} sections.mainComponent - The main component.
- * @param {Object} sections.types.Enums - An array of enum declarations.
- * @param {Array} sections.exports - An array of export statements.
- * @param {Array} sections.errors - An array of errors encountered during analysis.
- * @param {string} displayLevel - The level of detail for displaying the sections.
- * @param {string} filePath - The path of the file being processed.
- * @returns {Promise<void>} A promise that resolves when the menu interaction is complete.
- */
-const displaySectionsMenu = async (sections, displayLevel, filePath) => {  
+/**  
+ * Displays a menu for selecting sections of code to highlight.  
+ * Provides options based on the available sections and allows the user to interactively select and highlight sections.  
+ *  
+ * @async  
+ * @function displaySectionsMenu  
+ * @param {Object} sections - An object containing arrays of different code sections.  
+ * @param {Array} sections.imports - An array of import statements.  
+ * @param {Map} [sections.localConstants=new Map()] - A map of local constants within function bodies.  
+ * @param {Array} sections.constants - An array of constant declarations.  
+ * @param {Array} sections.contexts - An array of context declarations.  
+ * @param {Array} sections.hooks - An array of hook declarations.  
+ * @param {Array} sections.helperFunctions - An array of helper functions.  
+ * @param {Array} sections.functions - An array of other functions.  
+ * @param {Array} sections.components - An array of component declarations.  
+ * @param {Array} sections.classComponents - An array of class component declarations.  
+ * @param {Object} sections.mainComponent - The main component.  
+ * @param {Object} sections.types - An object containing different types, e.g., Enums.  
+ * @param {Array} sections.types.Enums - An array of enum declarations.  
+ * @param {Array} sections.exports - An array of export statements.  
+ * @param {Array} sections.errors - An array of errors encountered during analysis.  
+ * @param {string} displayLevel - The level of detail for displaying the sections.  
+ * @param {string} filePath - The path of the file being processed.  
+ * @returns {Promise<void>} A promise that resolves when the menu interaction is complete.  
+ */    
+const displaySectionsMenu = async (sections, filePath) => {  
     const choices = [];  
   
-    if (sections.imports && sections.imports.length > 0) choices.push('Imports');  
-    if (sections.localConstants && sections.localConstants.size > 0) choices.push('Local Constants');  
-    if (sections.constants && sections.constants.length > 0) choices.push('Constants');  
-    if (sections.contexts && sections.contexts.length > 0) choices.push('Contexts');  
-    if (sections.hooks && sections.hooks.length > 0) choices.push('Hooks');  
-    if (sections.helperFunctions && sections.helperFunctions.length > 0) choices.push('Helper Functions');  
-    if (sections.functions && sections.functions.length > 0) choices.push('Functions');  
-    if (sections.components && sections.components.length > 0) choices.push('Components');  
-    if (sections.classComponents && sections.classComponents.length > 0) choices.push('Class Components');  
-    if (sections.mainComponent) choices.push('Main Component');  
-    if (sections.types && sections.types.Enums && sections.types.Enums.length > 0) choices.push('Enums');  
-    if (sections.exports && sections.exports.length > 0) choices.push('Exports');  
-  
-    sections.errors = sections.errors || [];  
-    if (errors.length > 0) {  
-        sections.errors.push(...errors);  
-        choices.push('Errors');  
-    }  
+    if (sections.imports && sections.imports.length > 0) choices.push(`(${sections.imports.length}) Imports`);  
+    if (sections.localConstants && sections.localConstants.size > 0) choices.push(`(${sections.localConstants.size}) Local Constants`);  
+    if (sections.constants && sections.constants.length > 0) choices.push(`(${sections.constants.length}) Constants`);  
+    if (sections.contexts && sections.contexts.length > 0) choices.push(`(${sections.contexts.length}) Contexts`);  
+    if (sections.hooks && sections.hooks.length > 0) choices.push(`(${sections.hooks.length}) Hooks`);  
+    if (sections.helperFunctions && sections.helperFunctions.length > 0) choices.push(`(${sections.helperFunctions.length}) Helper Functions`);  
+    if (sections.functions && sections.functions.length > 0) choices.push(`(${sections.functions.length}) Functions`);  
+    if (sections.components && sections.components.length > 0) choices.push(`(${sections.components.length}) Components`);  
+    if (sections.classComponents && sections.classComponents.length > 0) choices.push(`(${sections.classComponents.length}) Class Components`);  
+    if (sections.mainComponent) choices.push('(1) Main Component');  
+    if (sections.types.TSInterfaceDeclaration.length > 0) choices.push(`(${sections.types.TSInterfaceDeclaration.length}) TS Interface Declarations`);  
+    if (sections.types.TSTypeAliasDeclaration.length > 0) choices.push(`(${sections.types.TSTypeAliasDeclaration.length}) TS Type Alias Declarations`);  
+    if (sections.types.TSEnumDeclaration.length > 0) choices.push(`(${sections.types.TSEnumDeclaration.length}) TS Enum Declarations`);  
+    if (sections.exports && sections.exports.length > 0) choices.push(`(${sections.exports.length}) Exports`);  
+    if (errors.length > 0) choices.push(`(${errors.length}) Errors`);  
   
     const sectionMap = {  
-        'Imports': sections.imports,  
-        'Local Constants': Array.from(sections.localConstants.values()).flat(),  
-        'Constants': sections.constants,  
-        'Contexts': sections.contexts,  
-        'Hooks': sections.hooks,  
-        'Helper Functions': sections.helperFunctions,  
-        'Functions': sections.functions,  
-        'Components': sections.components,  
-        'Class Components': sections.classComponents,  
+        'Imports': sections.imports || [],  
+        'Local Constants': Array.from(sections.localConstants?.values() ?? []),  
+        'Constants': sections.constants || [],  
+        'Contexts': sections.contexts || [],  
+        'Hooks': sections.hooks || [],  
+        'Helper Functions': sections.helperFunctions || [],  
+        'Functions': sections.functions || [],  
+        'Components': sections.components || [],  
+        'Class Components': sections.classComponents || [],  
         'Main Component': sections.mainComponent ? [sections.mainComponent] : [],  
-        'Enums': sections.types.Enums,  
-        'Exports': sections.exports,  
-        'Errors': sections.errors  
+        'TS Interface Declarations': sections.types?.TSInterfaceDeclaration || [],  
+        'TS Type Alias Declarations': sections.types?.TSTypeAliasDeclaration || [],  
+        'TS Enum Declarations': sections.types?.TSEnumDeclaration || [],  
+        'Exports': sections.exports || [],  
+        'Errors': errors || [],  
     };  
-    
-    // Analyze the code for errors here before displaying the sections  
-    const ast = parseFile(readFileSync(filePath, 'utf-8'));  
-    const state = createStateTracker();  
-    traverse(ast, setupTraverse(state, filePath));  
   
     while (true) {  
         try {  
@@ -491,7 +492,10 @@ const displaySectionsMenu = async (sections, displayLevel, filePath) => {
   
             if (!selectedSection) break;  
   
-            displayHighlightedCode(sectionMap[selectedSection]);  
+            // Remove count from selectedSection to match the sectionMap keys  
+            const cleanedSectionName = selectedSection.replace(/^\(\d+\) /, '');  
+  
+            displayHighlightedCode(sectionMap[cleanedSectionName]);  
   
             const { continueInteraction } = await prompts({  
                 type: 'confirm',  
@@ -501,7 +505,6 @@ const displaySectionsMenu = async (sections, displayLevel, filePath) => {
             });  
   
             if (!continueInteraction) break;  
-  
         } catch (error) {  
             console.error('Error during prompts:', error);  
             break;  

@@ -191,7 +191,6 @@ const setupTraverse = (state, filePath) => {
     };  
 };  
   
-
 //////////////////////
 //////////////////////
 /////////// Todo /////: Make sure this is tested and no error accur when fixing code
@@ -403,111 +402,137 @@ function hasDisableCheckComment(path) {
     return false;
 }
 
-
 //////////////////////
 //////////////////////
 /////////// Todo /////: Make sure this is tested and no error accur when fixing code
 //////////////////////
 //////////////////////
 
-function analyzeCode(ast, filePath) {  
-    const sections = {  
-      imports: [],  
-      localConstants: new Map(),  
-      constants: [],  
-      contexts: [], // Added contexts to separate context creations  
-      hooks: [],    // Added hooks to separate hooks  
-      helperFunctions: [], // Ensure helper functions are initialized as arrays  
-      functions: [],  
-      components: [],  
-      classComponents: [], 
-      types: [],  
-      exports: [],  
-      mainComponent: null,  
-    };  
-      
-    traverse(ast, {  
-      ImportDeclaration(path) {  
-        sections.imports.push(path.node);  
-        path.remove();  
-      },  
-      VariableDeclaration(path) {  
-        if (isGlobalConstant(path)) {  
-          sections.constants.push(path.node);  
-        } else if (isLocalConstant(path)) {  
-          const parentFunction = path.getFunctionParent();  
-          if (parentFunction) {  
-            const functionBodyNode = parentFunction.node.body;  
-            if (sections.localConstants.has(functionBodyNode)) {  
-              sections.localConstants.get(functionBodyNode).push(path.node);  
-            } else {  
-              sections.localConstants.set(functionBodyNode, [path.node]);  
-            }  
-          } else {  
-            sections.constants.push(path.node);  
-          }  
-        } else if (isContextCreation(path)) {  
-          sections.contexts.push(path.node);  
-        } else {  
-          sections.constants.push(path.node);  
-        }  
-        path.remove();  
-      },  
-      TSTypeAliasDeclaration(path) {  
-        sections.types.push(path.node);  
-        path.remove();  
-      },  
-      TSInterfaceDeclaration(path) {  
-        sections.types.push(path.node);  
-        path.remove();  
-      },  
-      TSEnumDeclaration(path) {  
-        sections.types.push(path.node);  
-        path.remove();  
-      },  
-      FunctionDeclaration(path) {  
-        if (isMainFunctionComponent(path, {}, getMainComponentNameFromFileName(filePath))) {  
-          sections.mainComponent = path.node;  
-        } else {  
-          sections.helperFunctions.push(path.node); // Adjusted to push helper functions here  
-        }  
-        path.remove();  
-      },  
-      ArrowFunctionExpression(path) {  
-        if (isReactComponent(path.parentPath) && path.parentPath.isVariableDeclarator()) {  
-          if (isMainFunctionComponent(path.parentPath, {}, getMainComponentNameFromFileName(filePath))) {  
-            sections.mainComponent = path.parentPath.parent;  
-          } else {  
-            sections.components.push(path.parentPath.node);  
-          }  
-        } else if (isCustomHook(path.parentPath)) {  
-          sections.helperFunctions.push(path.parentPath.node); // Adjusted to push custom hooks here  
-        } else {  
-          sections.helperFunctions.push(path.parentPath.node); // Adjusted to push expression functions here  
-        }  
-        path.parentPath.remove();  
-      },  
-      ClassDeclaration(path) {  
-        if (isClassComponent(path)) {  
-          sections.classComponents.push(path.node);  // Push the class component to the classComponents section  
-        } else {  
-          sections.helperFunctions.push(path.node);  
-        }  
-        path.remove();  
-      }, 
-      ExportNamedDeclaration(path) {  
-        sections.exports.push(path.node);  
-        path.remove();  
-      },  
-      ExportDefaultDeclaration(path) {  
-        sections.exports.push(path.node);  
-        path.remove();  
-      },  
-    });  
-    
-    return sections;  
-  }   
+/**
+ * Analyzes the Abstract Syntax Tree (AST) of a file and categorizes its sections into imports, constants, contexts, hooks, 
+ * helper functions, components, class components, TypeScript types, and exports. Removes the nodes from the original AST 
+ * as they are categorized.
+ *
+ * @function analyzeCode
+ * @param {Object} ast - The Abstract Syntax Tree (AST) of the file being analyzed.
+ * @param {string} filePath - The path of the file being processed.
+ * @returns {Object} An object containing categorized sections of the code.
+ * @returns {Array} returns.imports - An array of import statements.
+ * @returns {Map} returns.localConstants - A map of local constants within function bodies.
+ * @returns {Array} returns.constants - An array of constant declarations.
+ * @returns {Array} returns.contexts - An array of context declarations.
+ * @returns {Array} returns.hooks - An array of hook declarations.
+ * @returns {Array} returns.helperFunctions - An array of helper functions.
+ * @returns {Array} returns.functions - An array of other functions.
+ * @returns {Array} returns.components - An array of component declarations.
+ * @returns {Array} returns.classComponents - An array of class component declarations.
+ * @returns {Object} returns.types - An object containing arrays of TypeScript types (TSInterfaceDeclaration, TSTypeAliasDeclaration, TSEnumDeclaration).
+ * @returns {Array} returns.exports - An array of export statements.
+ * @returns {Object|null} returns.mainComponent - The main component, if detected.
+ */  
+function analyzeCode(ast, filePath) {    
+    const sections = {    
+        imports: [],    
+        localConstants: new Map(),    
+        constants: [],    
+        contexts: [],    
+        hooks: [],    
+        helperFunctions: [],    
+        functions: [],    
+        components: [],    
+        classComponents: [],    
+        types: {   
+            TSInterfaceDeclaration: [],   
+            TSTypeAliasDeclaration: [],   
+            TSEnumDeclaration: []   
+        },    
+        exports: [],    
+        mainComponent: null,    
+    };    
   
+    traverse(ast, {    
+        ImportDeclaration(path) {    
+            sections.imports.push(path.node);    
+            path.remove();    
+        },    
+        VariableDeclaration(path) {    
+            if (isGlobalConstant(path)) {    
+                sections.constants.push(path.node);    
+            } else if (isLocalConstant(path)) {    
+                const parentFunction = path.getFunctionParent();    
+                if (parentFunction) {    
+                    const functionBodyNode = parentFunction.node.body;    
+                    if (sections.localConstants.has(functionBodyNode)) {    
+                        sections.localConstants.get(functionBodyNode).push(path.node);    
+                    } else {    
+                        sections.localConstants.set(functionBodyNode, [path.node]);    
+                    }    
+                } else {    
+                    sections.constants.push(path.node);    
+                }    
+            } else if (isContextCreation(path)) {    
+                sections.contexts.push(path.node);    
+            } else {    
+                sections.constants.push(path.node);    
+            }    
+            path.remove();    
+        },    
+        TSTypeAliasDeclaration(path) {    
+            sections.types.TSTypeAliasDeclaration.push(path.node);    
+            path.remove();    
+        },    
+        TSInterfaceDeclaration(path) {    
+            sections.types.TSInterfaceDeclaration.push(path.node);    
+            path.remove();    
+        },    
+        TSEnumDeclaration(path) {    
+            sections.types.TSEnumDeclaration.push(path.node);    
+            path.remove();    
+        },    
+        FunctionDeclaration(path) {    
+            if (isMainFunctionComponent(path, {}, getMainComponentNameFromFileName(filePath))) {    
+                sections.mainComponent = path.node;    
+            } else {    
+                sections.helperFunctions.push(path.node);    
+            }    
+            path.remove();    
+        },    
+        ArrowFunctionExpression(path) {    
+            if (isReactComponent(path.parentPath) && path.parentPath.isVariableDeclarator()) {    
+                if (isMainFunctionComponent(path.parentPath, {}, getMainComponentNameFromFileName(filePath))) {    
+                    sections.mainComponent = path.parentPath.parent;    
+                } else {    
+                    sections.components.push(path.parentPath.node);    
+                }    
+            } else if (isCustomHook(path.parentPath)) {    
+                sections.helperFunctions.push(path.parentPath.node);    
+            } else {    
+                sections.helperFunctions.push(path.parentPath.node);    
+            }    
+            path.parentPath.remove();    
+        },    
+        ClassDeclaration(path) {    
+            if (isClassComponent(path)) {    
+                sections.classComponents.push(path.node);    
+            } else {    
+                sections.helperFunctions.push(path.node);    
+            }    
+            path.remove();    
+        },   
+        ExportNamedDeclaration(path) {    
+            sections.exports.push(path.node);    
+            path.remove();    
+        },    
+        ExportDefaultDeclaration(path) {    
+            sections.exports.push(path.node);    
+            path.remove();    
+        },    
+    });    
+  
+    return sections;    
+}  
+   
+
 module.exports = {  
     checkFile,  
     setupTraverse,  

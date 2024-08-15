@@ -49,8 +49,6 @@ const {
  *
  * Note: The current implementation logs the import statement type to the console and reports an error
  * through a dedicated function, which should be elaborated upon to handle various error reporting requirements.
- * TODO: Extend the error reporting to include more detailed information and possibly integrate with tooling that
- * provides feedback within the developer's environment.
  */ 
 function handleImportDeclaration(path, state, filePath) {  
     console.log('Import statement detected:', path.node.type);  
@@ -180,8 +178,6 @@ function handleFunctionalComponent(path, state, filePath) {
  *
  * Note: Reporting is handled by a separate `reportError` function, which should be sufficiently robust to 
  * present meaningful information to the developer. Additionally, a console log provides immediate feedback on the type of node detected.
- * TODO: Evaluate the possibility of enhancing error reporting with actionable feedback, user-friendly messaging,
- * and configuration options to align with differing codebase standards or team preferences.
  */ 
 function handleGlobalConstantDeclaration(path, state, filePath) {  
     console.log('Global constant declaration detected:', path.node.type);  
