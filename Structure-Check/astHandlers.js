@@ -647,12 +647,6 @@ function handleJSXElement(path, state, filePath) {
     }
 }
 
-/////////////////////////
-/////////////////////////
-/////////// Todo ////////: Make sure that the return are well detected when in a component.
-/////////////////////////
-/////////////////////////
-
 /**
  * Handles the processing of return statements within React components.
  * Ensures that return statements are correctly placed within main and nested components,
