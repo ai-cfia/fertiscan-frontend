@@ -422,13 +422,6 @@ function handleLocalConstantDeclaration(path, state, filePath) {
     }  
 }  
   
-/////////////////////////
-/////////////////////////
-/////////// Todo ////////: Make sure the traversal is implemented in a 
-/////////////////////////  separate function so that there is not duplicated 
-/////////////////////////  code beetween function/ main and customHook.
-/////////////////////////
-/////////////////////////
 
 /**
  * Handles the detection and processing of the main React component within a file.
@@ -442,22 +435,22 @@ function handleLocalConstantDeclaration(path, state, filePath) {
  */ 
 function handleMainReactComponent(path, state, filePath) {  
     if (isMainFunctionComponent(path, state, filePath)) {  
-        if (state.hasHandlers || state.hasHooks  
-            || state.hasReactComponent || state.hasPropTypes  
-            || state.hasDefaultProps || state.hasExports) {  
+        if (state.topLevelState.hasHandlers || state.topLevelState.hasHooks  
+            || state.topLevelState.hasReactComponent || state.topLevelState.hasPropTypes  
+            || state.topLevelState.hasDefaultProps || state.topLevelState.hasExports) {  
             const errorMessage = generateErrorMessage("Main function/component", state, filePath);  
             if (errorMessage) {  
                 reportError(path.node, errorMessage, filePath);  
             }  
         }  
         console.log('Main React component (primary check) detected:', path.node.type);  
-        state.hasReactComponent = true;  
-        state.hasMainComponent = true;  
-        state.mainComponentPath = path;  
+        state.topLevelState.hasReactComponent = true;  
+        state.topLevelState.hasMainComponent = true;  
+        state.topLevelState.mainComponentPath = path;  
         enterReactComponent(state);  
         traverseReactComponent(path, state, filePath); 
     }  
-}  
+}
 
 /**
  * Handles helper function declarations within the code.
@@ -601,12 +594,6 @@ function handleExportDeclarations(path, state, filePath) {
     state.topLevelState.hasExports = true;  
 }  
 
-/////////////////////////
-/////////////////////////
-/////////// Todo ////////: Make sure to add the handler for export just before function.
-/////////////////////////
-/////////////////////////
-
 /**  
  * Inspects JSX elements within the AST to verify they are correctly placed within the structure of a React component.  
  * Validates that the JSX is part of a return statement or suitably encapsulated within variable declarations or conditional   
@@ -616,53 +603,49 @@ function handleExportDeclarations(path, state, filePath) {
  * @param {State} state - The state object, used here to track the main component's path and conditional rendering presence.  
  * @param {string} filePath - The file path providing context for error messaging when JSX is found in disallowed locations.  
  */
-function handleJSXElement(innerPath, state, filePath) {  
-    console.log('JSX element detected:', innerPath.node.type);  
+function handleJSXElement(path, state, filePath) {  
+    console.log('JSX element detected:', path.node.type);  
 
-    // Check if the JSX element is within a function (arrow, function, or method).  
-    const functionParent = innerPath.findParent(  
-        (p) =>   
-            p.isFunctionDeclaration() ||   
-            p.isFunctionExpression() ||   
-            p.isArrowFunctionExpression() ||   
-            p.isClassMethod()
-    );  
+    // Check if the JSX element is within a function (arrow, function, or method).
+    const functionParent = path.findParent(p =>
+        p.isFunctionDeclaration() || 
+        p.isFunctionExpression() || 
+        p.isArrowFunctionExpression() || 
+        p.isClassMethod()
+    );
 
-    if (functionParent) {  
-        // Check if this JSX is part of the return statement or a variable declaration within the function  
-        const isPartOfReturn = !!innerPath.findParent((p) => p.isReturnStatement());  
-        const isPartOfVariableDeclarator = !!innerPath.findParent((p) => p.isVariableDeclarator());  
-        const isPartOfConditional = !!innerPath.findParent((p) => p.isConditionalExpression() || p.isLogicalExpression() || p.isJSXExpressionContainer());  
-        const isPartOfFunctionBody = !!innerPath.findParent((p) => p.isBlockStatement());  
+    if (functionParent) {
+        // Check if this JSX is part of the return statement or a variable declaration within the function
+        const isPartOfReturn = !!path.findParent(p => p.isReturnStatement());
+        const isPartOfVariableDeclarator = !!path.findParent(p => p.isVariableDeclarator());
+        const isPartOfConditional = !!path.findParent(p => p.isConditionalExpression() || p.isLogicalExpression() || p.isJSXExpressionContainer());
+        const isPartOfFunctionBody = !!path.findParent(p => p.isBlockStatement());
 
-        if (isPartOfReturn) {  
-            // This JSX is valid because it's part of the return statement  
-            // No error should be reported.  
-        } else if (  
-            functionParent === state.mainComponentPath &&  
-            (isPartOfVariableDeclarator || isPartOfConditional || isPartOfFunctionBody)  
-        ) {  
-            // If we're in the main component, JSX outside of the return statement indicates conditional rendering or valid encapsulation  
-            state.hasConditionalRender = true;  
-        } else if (isPartOfVariableDeclarator || isPartOfConditional) {  
-            // If it's part of a variable declarator or conditional rendering, no error  
-        } else {  
-            // Error if JSX is floating freely inside the component, not wrapped in a return statement or variable/conditional  
-            reportError(  
-                innerPath.node,  
-                'JSX should be returned from the component or part of a statement within render logic.',  
-                filePath  
-            );  
-        }  
-    } else if (innerPath.findParent((p) => p.isProgram())) {  
-        // If we're at the program level, any JSX is invalid  
-        reportError(  
-            innerPath.node,  
-            'JSX should be inside a function component or returned directly from an arrow function component.',  
-            filePath  
-        );  
-    }  
-}  
+        if (isPartOfReturn) {
+            // This JSX is valid because it's part of the return statement
+            // No error should be reported.
+        } else if (isPartOfVariableDeclarator || isPartOfConditional || isPartOfFunctionBody) {
+            // If we're in the main component, JSX outside of the return statement indicates conditional rendering or valid encapsulation
+            if (functionParent === state.mainComponentPath) {
+                state.functionComponentState.hasConditionalRender = true;
+            }
+        } else {
+            // Error if JSX is floating freely inside the component, not wrapped in a return statement or variable/conditional
+            reportError(
+                path.node,
+                'JSX should be returned from the component or part of a statement within render logic.',
+                filePath
+            );
+        }
+    } else if (path.findParent(p => p.isProgram())) {
+        // If we're at the program level, any JSX is invalid
+        reportError(
+            path.node,
+            'JSX should be inside a function component or returned directly from an arrow function component.',
+            filePath
+        );
+    }
+}
 
 /////////////////////////
 /////////////////////////
@@ -680,34 +663,38 @@ function handleJSXElement(innerPath, state, filePath) {
  * @param {Object} state - The state object that keeps track of various code states.
  * @param {string} filePath - The file path of the current file being processed.
  */ 
-function handleReturnStatement(innerPath, state, filePath) { 
-    console.log('Return statement detected:', innerPath.node.type); 
-    if (!state.insideReactComponent) return;  
-    const functionPath = innerPath.findParent(p =>   
-        p.isFunctionDeclaration() || p.isFunctionExpression() || 
-        p.isArrowFunctionExpression() || p.isClassMethod()
-    );  
-    if (functionPath && isReactComponent(functionPath) && !functionPath.findParent(p =>
-        p.isFunctionDeclaration() || p.isFunctionExpression() || p.isArrowFunctionExpression()|| p.isClassComponent())) {  
-        // Check if we're in the main component or a nested one  
-        const isMainComponent = state.hasReactComponent && functionPath === state.mainComponentPath;  
-        if (isMainComponent) {  
-            // Handling return for the main component  
-            if (state.hasReturn) {  
-                reportError(innerPath.node, 'Multiple return statements detected directly within the main component.', filePath);  
-            } else {  
-                state.hasReturn = true;  
-            }  
-        } else {  
-            // Handling return for nested components  
-            if (state.hasReturnInSameComponent) {  
-                reportError(innerPath.node, 'Multiple return statements detected directly within a nested component.', filePath);  
-            } else {  
-                state.hasReturnInSameComponent = true;  
-            }  
-        }  
-    }  
-}  
+function handleReturnStatement(path, state, filePath) { 
+    console.log('Return statement detected:', path.node.type); 
+
+    if (!state.functionComponentState.insideReactComponent) return;
+
+    const functionPath = path.findParent(p =>   
+        p.isFunctionDeclaration() || 
+        p.isFunctionExpression() || 
+        p.isArrowFunctionExpression() || 
+        p.isClassMethod()
+    );
+
+    if (functionPath) {
+        const isMainComponent = functionPath === state.mainComponentPath;
+
+        if (isMainComponent) {
+            // Ensure there's only one direct return statement in the main component
+            if (state.functionComponentState.hasReturn) {
+                reportError(path.node, 'Multiple return statements detected within the main component.', filePath);
+            } else {
+                state.functionComponentState.hasReturn = true;
+            }
+        } else {
+            // Handle nested component returns or other function returns
+            if (state.functionComponentState.hasReturnInSameComponent) {
+                reportError(path.node, 'Multiple return statements detected within a nested component.', filePath);
+            } else {
+                state.functionComponentState.hasReturnInSameComponent = true;
+            }
+        }
+    }
+}
 
 /**  
  * Processes useContext calls to ensure the context is defined before being used.  
