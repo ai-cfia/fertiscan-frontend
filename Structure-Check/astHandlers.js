@@ -7,7 +7,6 @@ const { logError, generateErrorMessage,
     reportError, errors 
 } = require('./errorHandling');  
 
-const { traverseReactComponent} = require('./astTraversal');
 const {   
     isReactComponent,  
     isCustomHook,  
@@ -907,6 +906,55 @@ function hasDisableCheckComment(path) {
     }
   
     return false;
+}
+
+// AstTraversal.js function that cause error : 
+/**
+ * General traversal function for React components and hooks.
+ *
+ * @param {Path} path - The root path of the component or hook.
+ * @param {State} state - The state object to maintain the traversal state.
+ * @param {string} filePath - The path to the current file being processed.
+ */
+function traverseReactComponent(path, state, filePath) {
+    path.traverse({
+        VariableDeclarator(innerPath) {
+            if (!hasDisableCheckComment(innerPath)) {
+                handleVariableDeclarator(innerPath, state, filePath);
+            }
+        },
+        CallExpression(innerPath) {
+            if (!hasDisableCheckComment(innerPath)) {
+                checkForContextUsageOrder(innerPath, filePath);
+                handleHooksAndEffects(innerPath, state, filePath);
+            }
+        },
+        ReturnStatement(innerPath) {
+            if (!hasDisableCheckComment(innerPath)) {
+                handleReturnStatement(innerPath, state, filePath);
+            }
+        },
+        JSXElement(innerPath) {
+            if (!hasDisableCheckComment(innerPath)) {
+                handleJSXElement(innerPath, state, filePath);
+            }
+        },
+        FunctionExpression(innerPath) {
+            if (!hasDisableCheckComment(innerPath)) {
+                handleFunctionExpressionsAndArrowFunctions(innerPath, state, filePath);
+            }
+        },
+        ArrowFunctionExpression(innerPath) {
+            if (!hasDisableCheckComment(innerPath)) {
+                handleFunctionExpressionsAndArrowFunctions(innerPath, state, filePath);
+            }
+        },
+        exit(innerPath) {
+            if (innerPath === path) {
+                exitReactComponent(state);
+            }
+        },
+    });
 }
 
 module.exports = {  
