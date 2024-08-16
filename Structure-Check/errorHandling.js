@@ -90,14 +90,6 @@ const generateErrorMessage = (description, state, filePath) => {
     return "";  
 };  
   
-
-//////////////////////////
-//////////////////////////
-//////// Todo ////////////: This function can be replace 
-//////////////////////////  totaly by logError just make sure to 
-//////////////////////////  modify all occurence where it is called.
-//////////////////////////  
-//////////////////////////  
 /**  
  * Reports an error by logging it and adding it to the errors array.  
  *   
