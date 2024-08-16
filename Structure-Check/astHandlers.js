@@ -5,7 +5,9 @@ const {
 } = require('./stateManagement');  
 const { logError, generateErrorMessage, 
     reportError, errors 
-} = require('./errorHandling');   
+} = require('./errorHandling');  
+
+const { traverseReactComponent} = require('./astTraversal');
 const {   
     isReactComponent,  
     isCustomHook,  
@@ -318,14 +320,6 @@ function handleStyledComponent(path, state, filePath) {
         state.hasStyledComponents = true;  
     }  
 }  
-  
-/////////////////////////
-/////////////////////////
-/////////// Todo ////////: Make sure the traversal is implemented in a 
-/////////////////////////  separate function so that there is not duplicated 
-/////////////////////////  code beetween function/ main and customHook.
-/////////////////////////
-/////////////////////////
 
 /**  
  * Evaluates declarations to identify custom hook functions, ensuring that they conform to the conventions for naming and placement.   
@@ -371,46 +365,8 @@ function handleCustomHookDeclaration(path, state, filePath) {
         }  
         state.hasCustomHooks = true;  
         enterReactComponent(state);  
-  
-        // Traverse the custom hook for additional logic specific to React hook structure  
-        path.traverse({  
-            VariableDeclarator(innerPath) {  
-                if (!hasDisableCheckComment(innerPath)) {  
-                    handleVariableDeclarator(innerPath, state, filePath);  
-                }  
-            },  
-            CallExpression(innerPath) {  
-                if (!hasDisableCheckComment(innerPath)) {  
-                    checkForContextUsageOrder(innerPath);  
-                }  
-            },  
-            ReturnStatement(innerPath) {  
-                if (!hasDisableCheckComment(innerPath)) {  
-                    handleReturnStatement(innerPath, state, filePath);  
-                }  
-            },  
-            JSXElement(innerPath) {  
-                if (!hasDisableCheckComment(innerPath)) {  
-                    handleJSXElement(innerPath, state, filePath);  
-                }  
-            },  
-            FunctionExpression(innerPath) {  
-                if (!hasDisableCheckComment(innerPath)) {  
-                    handleFunctionExpressionsAndArrowFunctions(innerPath, state, filePath);  
-                }  
-            },  
-            ArrowFunctionExpression(innerPath) {  
-                if (!hasDisableCheckComment(innerPath)) {  
-                    handleFunctionExpressionsAndArrowFunctions(innerPath, state, filePath);  
-                }  
-            },  
-            exit(innerPath) {  
-                if (innerPath === path) {  
-                    // Exit from the component  
-                    exitReactComponent(state);  
-                }  
-            }  
-        });  
+        traverseReactComponent(path, state, filePath);
+
     }  
 }  
   
@@ -503,54 +459,9 @@ function handleMainReactComponent(path, state, filePath) {
         state.hasMainComponent = true;  
         state.mainComponentPath = path;  
         enterReactComponent(state);  
-  
-        path.traverse({  
-            VariableDeclarator(innerPath) {  
-                if (!hasDisableCheckComment(path)) {  
-                    handleVariableDeclarator(innerPath, state, filePath);  
-                }  
-            },  
-            CallExpression(path) {  
-                if (!hasDisableCheckComment(path)) {  
-                    checkForContextUsageOrder(path);  
-                }  
-            },  
-            ReturnStatement(innerPath) {  
-                if (!hasDisableCheckComment(innerPath)) {  
-                    handleReturnStatement(innerPath, state, filePath);  
-                }  
-            },  
-            JSXElement(innerPath) {  
-                if (!hasDisableCheckComment(innerPath)) {  
-                    handleJSXElement(innerPath, state, filePath);  
-                }  
-            },  
-            FunctionExpression(innerPath) {  
-                if (!hasDisableCheckComment(innerPath)) {  
-                    handleFunctionExpressionsAndArrowFunctions(innerPath, state, filePath);  
-                }  
-            },  
-            ArrowFunctionExpression(innerPath) {  
-                if (!hasDisableCheckComment(innerPath)) {  
-                    handleFunctionExpressionsAndArrowFunctions(innerPath, state, filePath);  
-                }  
-            },  
-            exit(innerPath) {  
-                if (innerPath === path) {  
-                    exitReactComponent(state);  
-                }  
-            },  
-        });  
+        traverseReactComponent(path, state, filePath); 
     }  
 }  
-  
-/////////////////////////
-/////////////////////////
-/////////// Todo ////////: Make sure the traversal is implemented in a 
-/////////////////////////  separate function so that there is not duplicated 
-/////////////////////////  code beetween function/ main and customHook.
-/////////////////////////
-/////////////////////////
 
 /**
  * Handles helper function declarations within the code.
@@ -588,57 +499,10 @@ function handleHelperFunctionDeclaration(path, state, filePath) {
   
     // Mark helper functions correctly in the state  
     currentState.hasHelperFunctions = true;  
-  
+
     enterReactComponent(state);  
-  
-    // Traverse the function for additional logic specific to React function structure  
-    path.traverse({  
-        VariableDeclarator(innerPath) {  
-            if (!hasDisableCheckComment(path)) {  
-                handleVariableDeclarator(innerPath, state, filePath);  
-            }  
-        },  
-        CallExpression(innerPath) {  
-            if (!hasDisableCheckComment(innerPath)) {  
-                checkForContextUsageOrder(innerPath, filePath);  
-            }  
-        },  
-        ReturnStatement(innerPath) {  
-            if (!hasDisableCheckComment(innerPath)) {  
-                handleReturnStatement(innerPath, state, filePath);  
-            }  
-        },  
-        JSXElement(innerPath) {  
-            if (!hasDisableCheckComment(innerPath)) {  
-                handleJSXElement(innerPath, state, filePath);  
-            }  
-        },  
-        FunctionExpression(innerPath) {  
-            if (!hasDisableCheckComment(innerPath)) {  
-                handleFunctionExpressionsAndArrowFunctions(innerPath, state, filePath);  
-            }  
-        },  
-        ArrowFunctionExpression(innerPath) {  
-            if (!hasDisableCheckComment(innerPath)) {  
-                handleFunctionExpressionsAndArrowFunctions(innerPath, state, filePath);  
-            }  
-        },  
-        // Add other node type handlers here as needed  
-        exit(innerPath) {  
-            if (innerPath === path) { // Exit from the function  
-                exitReactComponent(state);  
-            }  
-        }  
-    });  
+    traverseReactComponent(path, state, filePath); 
 }  
-  
-/////////////////////////
-/////////////////////////
-/////////// Todo ////////: Make sure the traversal is implemented in a 
-/////////////////////////  separate function so that there is not duplicated 
-/////////////////////////  code beetween function/ main and customHook.
-/////////////////////////
-/////////////////////////
 
 /**
  * Handles function expressions and arrow functions within the code.
@@ -680,28 +544,9 @@ function handleFunctionExpressionsAndArrowFunctions(path, state, filePath) {
             }  
             state.hasHandlers = true;  
         }  
-
-    // Traverse nested functions within the current function expression  
-    path.traverse({  
-        FunctionExpression(nestedPath) {  
-            handleFunctionExpressionsAndArrowFunctions(nestedPath, state, filePath);  
-        },  
-        ArrowFunctionExpression(nestedPath) {  
-            handleFunctionExpressionsAndArrowFunctions(nestedPath, state, filePath);  
-        },  
-        JSXElement(nestedPath) {  
-            handleJSXElement(nestedPath, state, filePath);  
-        },  
-        VariableDeclarator(nestedPath) {  
-            handleVariableDeclarator(nestedPath, state, filePath);  
-        },  
-        CallExpression(nestedPath) {  
-            checkForContextUsageOrder(nestedPath);  
-        },  
-        ReturnStatement(nestedPath) {  
-            handleReturnStatement(nestedPath, state, filePath);  
-        }  
-    });  
+        
+        enterReactComponent(state);
+        traverseReactComponent(path, state, filePath);
 }  
 
 /**  
