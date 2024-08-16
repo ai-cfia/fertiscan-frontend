@@ -43,8 +43,8 @@ const analyzeProject = async (displayLevel) => {
         } else {  
             console.log(`Files found for structure analysis:`, files);  
   
-            // If the display level is detailed or interactive, show the file menu  
-            if (displayLevel === 'detailed' || displayLevel === 'interactive') {  
+            // If the display level is detailed, show the file menu  
+            if (displayLevel === 'detailed' ) {  
                 await displayFilesMenu(files, displayLevel);  
             } else {  
                 for (const filePath of files) {  
@@ -149,7 +149,7 @@ const revertProjectStructure = async (filePath) => {
 const parseCommandLineArguments = () => {  
     const args = process.argv.slice(2);  
     let filePath = '';  
-    const fix = args.includes('-fix') || args.includes('--f');
+    const fix = args.includes('-fix') || args.includes('-f');
     const revert = args.includes('-revert') || args.includes('-r');
     const analyze = args.includes('-analyze')||args.includes('-a');
     const help = args.includes('-help') || args.includes('-h');
@@ -163,7 +163,7 @@ const parseCommandLineArguments = () => {
             filePath = path.resolve(arg.replace('-file=', ''));
         } else if (arg.startsWith('-display=') || arg.startsWith('-d=')) {
             const level = arg.replace('-display=', '');
-            if (['basic', 'detailed', 'tree', 'interactive'].includes(level)) {  
+            if (['basic', 'detailed', 'tree', 'error'].includes(level)) {  
                 displayLevel = level;  
             }  
         } else if (arg.startsWith('-langue=') || arg.startsWith('-l=')) {

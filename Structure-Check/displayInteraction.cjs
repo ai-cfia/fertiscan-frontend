@@ -2,29 +2,36 @@ const prompts = require('prompts');
 const { createStateTracker } = require('./stateManagement');  
 const { checkFile, analyzeCode } = require('./astTraversal');  
 const { parseFile, readFileContent} = require('./fileOperations');
- 
-(async function() {
-    const { render, Text, Box, useApp, useInput } = await import('ink');
-    const SelectInput = await import('ink-select-input').then(mod => mod.default);
+const ansiEscapes = require('ansi-escapes'); 
+const path = require('path');  
 
-    // Your other functions and logic go here
-
-    module.exports = {
-        displayAnalysis,
-        displayBasic,
-        displayDetailedInteractive,
-        displayTree,
-        displayHelp,
-        displayFilesMenu,
-        displaySectionsMenu,
-        loadInk: async () => ({ render, Text, Box, useApp, useInput, SelectInput }),
-        displayHighlightedCode,
-    };
-})();  
 const { logError, generateErrorMessage, 
     reportError, errors 
 } = require('./errorHandling'); 
+const { get } = require('http');
+const colors = {  
+    reset: "\x1b[0m",  
+    bright: "\x1b[1m",  
+    fgRed: "\x1b[31m",  
+    fgGreen: "\x1b[32m",  
+    fgYellow: "\x1b[33m",  
+    fgBlue: "\x1b[34m",  
+    fgMagenta: "\x1b[35m",  
+    fgCyan: "\x1b[36m",  
+    fgWhite: "\x1b[37m"  
+};  
 
+
+const getShortenedFileName = (filePath) => {
+    const fileBaseName = path.basename(filePath, path.extname(filePath));
+    return fileBaseName;
+};
+
+const displayFilePaths = (filePath) => {
+    const shortenedName = getShortenedFileName(filePath);
+    const fileLink = `file://${path.resolve(filePath)}`;
+    console.log(`Name: ${shortenedName} | Link: ${fileLink}`);
+};
 ////////////////////////////
 ////////////////////////////
 ////////////////////////////  Make sure all display utilise the same menu function.
@@ -55,6 +62,9 @@ const displayAnalysis = async (sections, displayLevel) => {
         case 'tree':
             displayTree(sections);  
             break;
+        case 'error':  
+            await displayErrorAnalysis(sections);  
+        break;  
         default:
             console.error('Invalid display level specified.');  
             break;
@@ -299,6 +309,54 @@ function displayTree(sections) {
     });  
 }  
 
+  
+/**    
+ * Displays a detailed error analysis report with clickable links.    
+ * Each error is displayed with a clickable link that opens the file at the specific location of the error.    
+ *     
+ * @async    
+ * @function displayErrorAnalysis    
+ * @param {Object[]} sections - The sections to be analyzed and displayed.    
+ * @returns {Promise<void>} Returns a promise that resolves when the error analysis has been successfully displayed.    
+ */    
+const displayErrorAnalysis = async (sections) => {  
+    console.log(`\n${colors.fgCyan}----------------------${colors.reset}`);  
+    console.log(`\n${colors.fgCyan}--- Error Analysis ---${colors.reset}`);  
+    console.log(`\n${colors.fgCyan}----------------------${colors.reset}`);  
+  
+    const errorSections = errors.map((error, index) => {  
+        const errorFilePath = getShortenedFileName(error.filePath);  
+        const errorLocation = error.node && error.node.loc  
+            ? `${error.node.loc.start.line}:${error.node.loc.start.column}`  
+            : 'unknown location';  
+  
+        const errorLink = `file://${path.resolve(errorFilePath)}:${errorLocation}`;  
+  
+        return {  
+            value: errorLink,  
+            description: `File: ${errorFilePath}`  ,
+            location: `Location: ${errorLocation}`,
+        };  
+    });  
+  
+    // If no errors, inform the user and exit  
+    if (errorSections.length === 0) {  
+        console.log(`${colors.fgGreen}No errors found.${colors.reset}`);  
+        return;  
+    }  
+  
+    console.log(`${colors.fgBlue}Number of errors: ${errorSections.length}${colors.reset}`);  
+  
+    errorSections.forEach((error, index) => {  
+        console.log(`${colors.fgYellow}${index + 1}.${colors.reset}`);  
+        console.log(`   ${error.description}`);
+        console.log(`   ${error.location}`);  
+        console.log(`   ${error.value}\n`);  
+    });  
+  
+    console.log(`${colors.fgCyan}End of error analysis.${colors.reset}`);  
+};  
+
 /**
  * Displays help information for using the script, in either English or French, 
  * based on the provided language parameter.
@@ -372,7 +430,7 @@ function displayHelp(language) {
  * @returns {Promise<void>} A promise that resolves when the menu interaction is complete.  
  */    
 const displayFilesMenu = async (files) => {  
-    const fileChoices = files.map(filePath => ({ title: "src"+filePath.split("src")[1], value: filePath }));
+    const fileChoices = files.map(filePath => getShortenedFileName(filePath));
     let continueInteraction = true;  
   
     while (continueInteraction) {  
@@ -509,13 +567,6 @@ const displaySectionsMenu = async (sections, filePath) => {
         }  
     }  
 };  
-
-// Todo : check the relevance of this function not sure if it used as now.
-async function loadInk() {    
-    const { render, Text, Box, useApp, useInput } = await import('ink');    
-    const SelectInput = await import('ink-select-input').then(mod => mod.default); // Use dynamic import for ink-select-input  
-    return { render, Text, Box, useApp, useInput, SelectInput };    
-  } 
   
   module.exports = {  
     displayAnalysis,  
@@ -525,6 +576,6 @@ async function loadInk() {
     displayHelp,
     displayFilesMenu,
     displaySectionsMenu,
-    loadInk,
-    displayHighlightedCode,  
+    displayHighlightedCode, 
+    displayErrorAnalysis, 
 };  
