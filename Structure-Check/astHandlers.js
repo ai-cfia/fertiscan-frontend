@@ -85,7 +85,6 @@ function handleImportDeclaration(path, state, filePath) {
  * @throws Will log errors if variable declarations do not conform to specified rules.
  */
 function handleVariableDeclarator(path, state, filePath) {  
-
     console.log('Variable declarator detected:', path.node.type);
 
     if (!path.isVariableDeclarator()) {  
@@ -120,7 +119,11 @@ function handleVariableDeclarator(path, state, filePath) {
         if (isLocal) {  
             const currentState = state.functionComponentState.insideReactComponent ? state.functionComponentState : state.topLevelState;  
 
-            if (currentState.hasHooks || currentState.hasHandlers || currentState.hasReactComponent ||  
+            // Check if the local constant is declared in a proper place
+            const parentFunction = path.getFunctionParent();
+            const isPartOfFunctionBody = parentFunction && parentFunction.isBlockStatement();
+            
+            if (!isPartOfFunctionBody || currentState.hasHooks || currentState.hasHandlers || currentState.hasReactComponent ||  
                 currentState.hasPropTypes || currentState.hasDefaultProps || currentState.hasExports) {  
 
                 const errorMessage = generateErrorMessage("Local constant declaration", currentState, filePath);  
@@ -142,7 +145,7 @@ function handleVariableDeclarator(path, state, filePath) {
             }  
         }  
     }  
-}  
+} 
   
 /**
  * Handles the traversal and processing of a functional React component node within the AST. 
@@ -369,13 +372,6 @@ function handleCustomHookDeclaration(path, state, filePath) {
 
     }  
 }  
-  
-/////////////////////////
-/////////////////////////
-/////////// Todo ////////: Make sure the local handler work well for 
-/////////////////////////  element in a function or block. 
-/////////////////////////
-/////////////////////////
 
 /**
  * Handles local constant declarations within the code.
@@ -735,11 +731,6 @@ function handleUseContext(path, state, filePath) {
     }  
 }  
 
-/////////////////////////
-/////////////////////////
-/////////// Todo ////////: Test this class with new file. Not done yet.
-/////////////////////////
-/////////////////////////
 
 /**
  * Handles the processing of React class components.
@@ -785,11 +776,6 @@ function handleClassComponent(path, state, filePath) {
     });  
 }  
 
-/////////////////////////
-/////////////////////////
-/////////// Todo ////////: Test this class with new file. Not done yet.
-/////////////////////////
-/////////////////////////
 
 /**
  * Handles the processing of class methods within React class components.
