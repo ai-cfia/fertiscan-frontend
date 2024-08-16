@@ -16,9 +16,9 @@ const { displayBasic, displayTree, displayAnalysis,
 
 const path = require('path');  
   
-const projectPath = require.main.path+'\\..\\src';
+const projectPath = require.main.path+'/../src';
 const filePattern = /\.(ts|tsx)$/;  
-const ignoreFilePath = require.main.path+'\\structure-check.ignore';
+const ignoreFilePath = require.main.path+'/structure-check.ignore';
 
   
 /**  
@@ -149,25 +149,25 @@ const revertProjectStructure = async (filePath) => {
 const parseCommandLineArguments = () => {  
     const args = process.argv.slice(2);  
     let filePath = '';  
-    const fix = args.includes('-fix') || args.includes('--f');  
-    const revert = args.includes('-revert') || args.includes('-r');  
-    const analyze = args.includes('-analyze')||args.includes('-a');  
-    const help = args.includes('-help') || args.includes('-h');  
+    const fix = args.includes('-fix') || args.includes('--f');
+    const revert = args.includes('-revert') || args.includes('-r');
+    const analyze = args.includes('-analyze')||args.includes('-a');
+    const help = args.includes('-help') || args.includes('-h');
 
     let displayLevel = 'basic';  // Default display level  
     let language = 'en';  // Default language  
   
     // Check for display and language options  
     args.forEach(arg => {  
-        if (arg.startsWith('-file=') || arg.startsWith('-fi=')) {  
-            filePath = path.resolve(arg.replace('-file=', ''));  
-        } else if (arg.startsWith('-display=') || arg.startsWith('-d=')) {  
-            const level = arg.replace('-display=', '');  
+        if (arg.startsWith('-file=') || arg.startsWith('-fi=')) {
+            filePath = path.resolve(arg.replace('-file=', ''));
+        } else if (arg.startsWith('-display=') || arg.startsWith('-d=')) {
+            const level = arg.replace('-display=', '');
             if (['basic', 'detailed', 'tree', 'interactive'].includes(level)) {  
                 displayLevel = level;  
             }  
-        } else if (arg.startsWith('-langue=') || arg.startsWith('-l=')) {  
-            const lang = arg.replace('-langue=', '');  
+        } else if (arg.startsWith('-langue=') || arg.startsWith('-l=')) {
+            const lang = arg.replace('-langue=', '');
             if (['en', 'fr'].includes(lang)) {  
                 language = lang;  
             }  
