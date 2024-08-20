@@ -23,7 +23,8 @@ module.exports = {
         // Use the new JSX transform introduced in React 17
         // (can be removed if React 17 is not applicable to your project)
         runtime: "automatic"
-      }]
+      }],
+      "@babel/preset-typescript"  
     ],
     // Plugins are JavaScript libraries that add additional transformations to Babel
     plugins: [

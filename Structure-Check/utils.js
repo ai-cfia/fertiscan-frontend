@@ -383,35 +383,6 @@ function isMainFunctionComponent(path, state, filePath) {
 }  
   
 /**
- * Determines if a given path represents an export declaration with a specific component name.
- * Checks export default declarations and export named declarations to see if they match the provided name.
- *
- * @function isExportDeclarationWithName
- * @param {NodePath} path - The Babel path object to check.
- * @param {string} componentName - The name of the component to match against the export declarations.
- * @returns {boolean} True if the path represents an export declaration with the specified component name, false otherwise.
- */  
-function isExportDeclarationWithName(path, componentName) {  
-    if (path.isExportDefaultDeclaration() && path.has('declaration')) {  
-        const declaration = path.get('declaration');  
-        if (declaration.isIdentifier()) {  
-            return declaration.node.name === componentName;  
-        } else if (declaration.isFunctionDeclaration() || declaration.isClassDeclaration()) {  
-            return declaration.node.id && declaration.node.id.name === componentName;  
-        }  
-    } else if (path.isExportNamedDeclaration() && path.has('specifiers')) {  
-        return path.get('specifiers').some(specifier => {  
-            return (  
-                (specifier.exported.name === componentName) && // Exported name matches  
-                // Check if the local name matches the exported name  
-                (specifier.local ? specifier.local.name === componentName : true)  
-            );  
-        });  
-    }  
-    return false;  
-}  
-  
-/**
  * Determines if a given variable declaration is at the top of its scope.
  * Handles different scope types such as program (global), function, and block scopes.
  * Includes special handling for variables that are part of React functional components and import statements.

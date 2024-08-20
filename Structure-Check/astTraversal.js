@@ -103,23 +103,18 @@ const setupTraverse = (state, filePath, sections) => {
     return {
         ImportDeclaration(path) {
             if (!hasDisableCheckComment(path)) {
-                console.log('ImportDeclaration:', path.toString());
-                handleImportDeclaration(path, state, filePath);
-                sections.imports.push(path.node);
+                handleImportDeclaration(path, state, filePath, sections);
                 path.remove();
             }
         },
         VariableDeclaration(path) {
             if (!hasDisableCheckComment(path)) {
-                console.log('VariableDeclaration:', path.toString());
 
                 if (isMainFunctionComponent(path, state, filePath)) {
-                    handleMainReactComponent(path, state, filePath);
-                    sections.mainComponent = path.node;
+                    handleMainReactComponent(path, state, filePath, sections);
                 } 
                 else if (isGlobalConstant(path)) {
-                    handleGlobalConstantDeclaration(path, state, filePath);
-                    sections.constants.push(path.node);
+                    handleGlobalConstantDeclaration(path, state, filePath, sections);
                 } 
                 else if (isLocalConstant(path)) {
                     const parentFunction = path.getFunctionParent();
@@ -131,19 +126,18 @@ const setupTraverse = (state, filePath, sections) => {
                             sections.localConstants.set(functionBodyNode, [path.node]);
                         }
                     } else {
+                        // Not sure about this
                         sections.constants.push(path.node);
                     }
                 } 
                 else if (isContextCreation(path)) {
-                    handleContextCreation(path, state, filePath);
-                    sections.contexts.push(path.node);
+                    handleContextCreation(path, state, filePath, sections);
                 } 
                 else {
-                    sections.constants.push(path.node);
                     path.get('declarations').forEach(declaratorPath => {
                         const type = recognizeType(declaratorPath, state, filePath);
                         console.log('VariableDeclaration Type:', type, declaratorPath.toString());
-                        processFunctionType(type, declaratorPath, state, filePath);
+                        processFunctionType(type, declaratorPath, state, filePath,sections);
                     });
                 }
                 path.remove();
@@ -152,24 +146,21 @@ const setupTraverse = (state, filePath, sections) => {
         TSTypeAliasDeclaration(path) {
             if (!hasDisableCheckComment(path)) {
                 console.log('TSTypeAliasDeclaration:', path.toString());
-                handleTSTypeAliasDeclaration(path, state, filePath);
-                sections.types.TSTypeAliasDeclaration.push(path.node);
+                handleTSTypeAliasDeclaration(path, state, filePath,sections);
                 path.remove();
             }
         },
         TSInterfaceDeclaration(path) {
             if (!hasDisableCheckComment(path)) {
                 console.log('TSInterfaceDeclaration:', path.toString());
-                handleTSInterfaceDeclaration(path, state, filePath);
-                sections.types.TSInterfaceDeclaration.push(path.node);
+                handleTSInterfaceDeclaration(path, state, filePath,sections);
                 path.remove();
             }
         },
         TSEnumDeclaration(path) {
             if (!hasDisableCheckComment(path)) {
                 console.log('TSEnumDeclaration:', path.toString());
-                handleTSEnumDeclaration(path, state, filePath);
-                sections.types.TSEnumDeclaration.push(path.node);
+                handleTSEnumDeclaration(path, state, filePath,sections);
                 path.remove();
             }
         },
@@ -177,13 +168,12 @@ const setupTraverse = (state, filePath, sections) => {
             if (!hasDisableCheckComment(path)) {
                 console.log('FunctionDeclaration:', path.toString());
                 if (isMainFunctionComponent(path, state, filePath)) {
-                    handleMainReactComponent(path, state, filePath);
-                    sections.mainComponent = path.node;
+                    handleMainReactComponent(path, state, filePath,sections);
                 } else {
-                    handleHelperFunctionDeclaration(path, state, filePath);
+                    handleHelperFunctionDeclaration(path, state, filePath,sections);
+                    console.log("--------------------recognize type------------------")
                     const type = recognizeType(path, state, filePath);
                     console.log('FunctionDeclaration Type:', type, path.toString());
-                    sections.helperFunctions.push(path.node);
                     processFunctionType(type, path, state, filePath);
                 }
                 path.remove();
@@ -380,41 +370,41 @@ const fixFile = async (filePath) => {
  * @param {Object} state - The state object that keeps track of various code states.
  * @param {string} filePath - The file path of the current file being processed.
  */
-function processFunctionType(type, path, state, filePath) {  
+function processFunctionType(type, path, state, filePath, sections) {  
     switch (type) {  
         case 'customHook':  
-            handleCustomHookDeclaration(path, state, filePath);  
+            handleCustomHookDeclaration(path, state, filePath, sections);  
             break;  
         case 'mainFunctionComponent':  
-            handleMainReactComponent(path, state, filePath);  
+            handleMainReactComponent(path, state, filePath, sections);  
             break;  
         case 'helperFunction':  
-            handleHelperFunctionDeclaration(path, state, filePath);  
+            handleHelperFunctionDeclaration(path, state, filePath, sections);  
             break;  
         case 'arrowFunction':  
         case 'expressionFunction':  
-            handleFunctionExpressionsAndArrowFunctions(path, state, filePath);  
+            handleFunctionExpressionsAndArrowFunctions(path, state, filePath,sections);  
             break;  
         case 'globalConstant':  
-            handleGlobalConstantDeclaration(path, state, filePath);  
+            handleGlobalConstantDeclaration(path, state, filePath,sections);  
             break;  
         case 'localConstant':  
-            handleLocalConstantDeclaration(path, state, filePath);  
+            handleLocalConstantDeclaration(path, state, filePath,sections);  
             break;  
         case 'variableDeclarator':  
-            handleVariableDeclarator(path, state, filePath);  
+            handleVariableDeclarator(path, state, filePath,sections);  
             break;  
         case 'functionalComponent':  
-            handleFunctionalComponent(path, state, filePath);  
+            handleFunctionalComponent(path, state, filePath,sections);  
             break;  
         case 'TSInterfaceDeclaration':  
-            handleTSInterfaceDeclaration(path, state, filePath);  
+            handleTSInterfaceDeclaration(path, state, filePath,sections);  
             break;  
         case 'TSTypeAliasDeclaration':  
-            handleTSTypeAliasDeclaration(path, state, filePath);  
+            handleTSTypeAliasDeclaration(path, state, filePath,sections);  
             break;  
         case 'TSEnumDeclaration':  
-            handleTSEnumDeclaration(path, state, filePath);  
+            handleTSEnumDeclaration(path, state, filePath,sections);  
             break;  
         case 'unknown':  
         default:  
@@ -463,6 +453,29 @@ function hasDisableCheckComment(path) {
     return false;
 }
 
+// Define the sections object globally  
+const sections = {  
+    imports: [],  
+    localConstants: new Map(),  
+    constants: [],  
+    contexts: [],  
+    hooks: [],  
+    handlers:[],
+    helperFunctions: [],  
+    functions: [],  
+    components: [],  
+    classComponents: [],  
+    types: {  
+        TSInterfaceDeclaration: [],  
+        TSTypeAliasDeclaration: [],  
+        TSEnumDeclaration: []  
+    },  
+    exports: [],  
+    mainComponent: null,  
+    nodes: [] // Add nodes array  
+};  
+  
+
 //////////////////////
 //////////////////////
 /////////// Todo /////: Make sure this is tested and no error accur when fixing code
@@ -494,25 +507,22 @@ function hasDisableCheckComment(path) {
 
 // Todo : make sur this is revelant since it make traverse and setup traverse already do it
 function analyzeCode(ast, filePath) {  
-    const sections = {  
-        imports: [],  
-        localConstants: new Map(),  
-        constants: [],  
-        contexts: [],  
-        hooks: [],  
-        helperFunctions: [],  
-        functions: [],  
-        components: [],  
-        classComponents: [],  
-        types: {  
-            TSInterfaceDeclaration: [],  
-            TSTypeAliasDeclaration: [],  
-            TSEnumDeclaration: []  
-        },  
-        exports: [],  
-        mainComponent: null,  
-        nodes: [] // Add nodes array  
-    };  
+    // Clear the sections object before each analysis  
+    sections.imports = [];  
+    sections.localConstants = new Map();  
+    sections.constants = [];  
+    sections.contexts = [];  
+    sections.hooks = [];  
+    sections.helperFunctions = [];  
+    sections.functions = [];  
+    sections.components = [];  
+    sections.classComponents = [];  
+    sections.types.TSInterfaceDeclaration = [];  
+    sections.types.TSTypeAliasDeclaration = [];  
+    sections.types.TSEnumDeclaration = [];  
+    sections.exports = [];  
+    sections.mainComponent = null;  
+    sections.nodes = [];  
   
     const state = createStateTracker();  
     const fileContent = readFileContent(filePath);  
@@ -549,11 +559,6 @@ function analyzeCode(ast, filePath) {
     return sections;  
 }  
 
-
-
-
-   
-
 module.exports = {  
     checkFile,  
     setupTraverse,  
@@ -563,4 +568,5 @@ module.exports = {
     processFunctionType,
     hasDisableCheckComment,
     fixFile,  
+    sections,
 };  

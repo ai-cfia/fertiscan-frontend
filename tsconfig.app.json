@@ -23,5 +23,5 @@
     "noUnusedParameters": true,
     "noFallthroughCasesInSwitch": true
   },
-  "include": ["src", "cli.cjs", "cli-main.js"]
+  "include": ["src", "cli.cjs", "cli-main.js", "Structure-Check/tests_"]
 }

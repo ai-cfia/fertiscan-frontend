@@ -7,6 +7,8 @@ const { logError, generateErrorMessage,
     reportError, errors 
 } = require('./errorHandling');  
 
+const {sections} = require('./astTraversal');
+
 const {   
     isReactComponent,  
     isCustomHook,  
@@ -51,9 +53,9 @@ const {
  * Note: The current implementation logs the import statement type to the console and reports an error
  * through a dedicated function, which should be elaborated upon to handle various error reporting requirements.
  */ 
-function handleImportDeclaration(path, state, filePath) {  
+function handleImportDeclaration(path, state, filePath, sections) {  
     console.log('Import statement detected:', path.node.type);  
-  
+    sections.imports.push(path.node);
     if (state.functionComponentState.insideReactComponent) {  
         reportError(path.node, 'Imports should not be declared inside a function or component.', filePath);  
     } else {  
@@ -83,7 +85,9 @@ function handleImportDeclaration(path, state, filePath) {
  * @param {string} filePath - The file path of the current file being processed.
  * @throws Will log errors if variable declarations do not conform to specified rules.
  */
-function handleVariableDeclarator(path, state, filePath) {  
+
+// is this one is revelant since we have local and global handler mabe refactor
+function handleVariableDeclarator(path, state, filePath, sections) {  
     console.log('Variable declarator detected:', path.node.type);
 
     if (!path.isVariableDeclarator()) {  
@@ -103,7 +107,7 @@ function handleVariableDeclarator(path, state, filePath) {
   
     if (isTopLevel) {  
         if (isGlobal) {  
-            handleGlobalConstantDeclaration(path, state, filePath);  
+            handleGlobalConstantDeclaration(path, state, filePath,sections);  
         } else {  
             const errorMessage = generateErrorMessage("Variable declaration at the top level", state, filePath);  
             if (errorMessage) {  
@@ -160,10 +164,10 @@ function handleVariableDeclarator(path, state, filePath) {
  * @param {string} filePath - The file path of the source file being processed by Babel, which can be useful for 
  *                            reporting purposes, such as providing context in error or log messages.
  */ 
-function handleFunctionalComponent(path, state, filePath) {  
+function handleFunctionalComponent(path, state, filePath,sections) {  
     console.log('Functional component detected:', path.node.type);
-
-    handleMainReactComponent(path, state, filePath);  
+    
+    handleMainReactComponent(path, state, filePath,sections);  
 }  
   
 /**
@@ -183,8 +187,9 @@ function handleFunctionalComponent(path, state, filePath) {
  * Note: Reporting is handled by a separate `reportError` function, which should be sufficiently robust to 
  * present meaningful information to the developer. Additionally, a console log provides immediate feedback on the type of node detected.
  */ 
-function handleGlobalConstantDeclaration(path, state, filePath) {  
+function handleGlobalConstantDeclaration(path, state, filePath, sections) {  
     console.log('Global constant declaration detected:', path.node.type);  
+    sections.constants.push(path.node);
 
     // Check if the path is directly under the Program node (not nested inside any function/component)  
     if (path.scope.path.type === 'Program' && isGlobalConstant(path)) {  
@@ -214,9 +219,10 @@ function handleGlobalConstantDeclaration(path, state, filePath) {
  * @param {Object} state - The state object that keeps track of various code states.
  * @param {string} filePath - The file path of the current file being processed.
  */
-function handleTSInterfaceDeclaration(path, state, filePath) {  
+function handleTSInterfaceDeclaration(path, state, filePath, sections) {  
     console.log('Interface declaration detected:', path.node.type);  
-  
+    sections.types.TSInterfaceDeclaration.push(path.node);
+
     if (state.hasTypes || state.hasEnums ||  
         state.hasMainComponent || state.hasHandlers ||  
         state.hasHooks || state.hasReactComponent ||  
@@ -241,9 +247,9 @@ function handleTSInterfaceDeclaration(path, state, filePath) {
  * @param {Object} state - The state object that keeps track of various code states.
  * @param {string} filePath - The file path of the current file being processed.
  */
-function handleTSTypeAliasDeclaration(path, state, filePath) {  
+function handleTSTypeAliasDeclaration(path, state, filePath,sections) {  
     console.log('Type alias declaration detected:', path.node.type);  
-  
+    sections.types.TSTypeAliasDeclaration.push(path.node);
     if (state.hasEnums || state.hasMainComponent ||  
         state.hasHandlers || state.hasHooks ||  
         state.hasReactComponent || state.hasPropTypes ||  
@@ -267,8 +273,10 @@ function handleTSTypeAliasDeclaration(path, state, filePath) {
  * @param {Object} state - The state object that keeps track of various code states.
  * @param {string} filePath - The file path of the current file being processed.
  */ 
-function handleTSEnumDeclaration(path, state, filePath) {  
+function handleTSEnumDeclaration(path, state, filePath,sections) {  
     console.log('Enum declaration detected:', path.node.type);  
+    sections.types.handleTSEnumDeclaration.push(path.node);
+
     if (state.hasMainComponent || state.hasHandlers  
         || state.hasHooks || state.hasReactComponent  
         || state.hasPropTypes || state.hasDefaultProps  
@@ -334,8 +342,9 @@ function handleStyledComponent(path, state, filePath) {
  * @param {State} state - Tracks the type of declarations encountered for maintaining code organization.  
  * @param {string} filePath - The location of the file being traversed, used for error reporting.  
  */
-function handleCustomHookDeclaration(path, state, filePath) {  
+function handleCustomHookDeclaration(path, state, filePath,sections) {  
     console.log('Custom hook declaration detected:', path.node.type);  
+    sections.hooks.push(path.node);
 
     let functionName = '';  
   
@@ -383,8 +392,9 @@ function handleCustomHookDeclaration(path, state, filePath) {
  * @param {Object} state - The state object that keeps track of various code states.
  * @param {string} filePath - The file path of the current file being processed.
  */
-function handleLocalConstantDeclaration(path, state, filePath) {  
+function handleLocalConstantDeclaration(path, state, filePath,sections) {  
     console.log('Local constant declaration detected:', path.node.type);  
+    sections.localConstants.push(path.node);
 
     // Check if the variable declarator is part of a variable declaration  
     if (!path.isVariableDeclarator()) {  
@@ -433,8 +443,9 @@ function handleLocalConstantDeclaration(path, state, filePath) {
  * @param {Object} state - The state object that keeps track of various code states.
  * @param {string} filePath - The file path of the current file being processed.
  */ 
-function handleMainReactComponent(path, state, filePath) {  
+function handleMainReactComponent(path, state, filePath, sections) {  
     if (isMainFunctionComponent(path, state, filePath)) {  
+        sections.mainComponent = path.node;
         if (state.topLevelState.hasHandlers || state.topLevelState.hasHooks  
             || state.topLevelState.hasReactComponent || state.topLevelState.hasPropTypes  
             || state.topLevelState.hasDefaultProps || state.topLevelState.hasExports) {  
@@ -462,8 +473,10 @@ function handleMainReactComponent(path, state, filePath) {
  * @param {Object} state - The state object that keeps track of various code states.
  * @param {string} filePath - The file path of the current file being processed.
  */  
-function handleHelperFunctionDeclaration(path, state, filePath) {  
+function handleHelperFunctionDeclaration(path, state, filePath,sections) {  
     console.log('Helper function declaration detected:', path.node.type);  
+    sections.helperFunctions.push(path.node);
+
   
     // Ensure functions are declared before hooks, main components, and other React-specific constructs  
     const currentState = state.functionComponentState.insideReactComponent ? state.functionComponentState : state.topLevelState;  
@@ -503,36 +516,38 @@ function handleHelperFunctionDeclaration(path, state, filePath) {
  * @param {Object} state - The state object that keeps track of various code states.
  * @param {string} filePath - The file path of the current file being processed.
  */
-function handleFunctionExpressionsAndArrowFunctions(path, state, filePath) {  
-    console.log('Function expression or arrow function detected:', path.node.type);
-
+function handleFunctionExpressionsAndArrowFunctions(path, state, filePath,sections) {  
     const functionName = path.node.id && path.node.id.name || 'Anonymous';  
   
-    // Identify if the function is a hook (e.g., useEffect)  
-    if (functionName && /^use[A-Z]/.test(functionName)) {  
+     // Identify if the function is a hook (e.g., useEffect)  
+     if (/^use[A-Z]/.test(functionName)) { 
+        console.log('Hook detected:', path.node.type); 
+        sections.hooks.push(path.node);
         if (state.hasPropTypes || state.hasDefaultProps || state.hasExports) {  
             reportError(path.node, `Hook "${functionName}" should be declared before props and exports.`, filePath, 'Hook', {  
                 suggestions: 'Move this hook before any PropTypes, default props, and export statements.',  
                 fix: 'Consider relocating the hook towards the beginning of the function.'  
             });  
         }  
-        state.hasHooks = true;
-        
-        // Identify if the function is a handler (e.g., handleSubmit)  
-        } else if (functionName && /^handle[A-Z]/.test(functionName)) {  
-            if (state.hasHooks) {  
-                reportError(path.node, `Handler function "${functionName}" should be declared after hooks.`, filePath, 'Handler', {  
-                    suggestions: 'Move handler functions after all hook calls within the component.',  
-                    fix: 'Consider relocating this handler function below the hooks.'  
-                });  
-            } else if (state.hasConditionalRender || state.hasReturn) {  
-                reportError(path.node, `Handler function "${functionName}" should be declared before render logic and return statements.`, filePath, 'Handler', {  
-                    suggestions: 'Move handler functions to precede the render logic and return statements.',  
-                    fix: 'Consider relocating this handler function above the render logic and return statements.'  
-                });  
-            }  
-            state.hasHandlers = true;  
+        state.hasHooks = true;  
+    }   
+    // Identify if the function is a handler (e.g., handleSubmit)  
+    else if (/^handle[A-Z]/.test(functionName)) {  
+        console.log('Handler detected:', path.node.type);  
+        sections.handlers.push(path.node);
+        if (state.hasHooks) {  
+            reportError(path.node, `Handler function "${functionName}" should be declared after hooks.`, filePath, 'Handler', {  
+                suggestions: 'Move handler functions after all hook calls within the component.',  
+                fix: 'Consider relocating this handler function below the hooks.'  
+            });  
+        } else if (state.hasConditionalRender || state.hasReturn) {  
+            reportError(path.node, `Handler function "${functionName}" should be declared before render logic and return statements.`, filePath, 'Handler', {  
+                suggestions: 'Move handler functions to precede the render logic and return statements.',  
+                fix: 'Consider relocating this handler function above the render logic and return statements.'  
+            });  
         }  
+        state.hasHandlers = true;  
+    }   
         
         enterReactComponent(state);
         traverseReactComponent(path, state, filePath);
@@ -874,7 +889,7 @@ const handleHooksAndEffects = (path, state, filePath) => {
 
 function handleContextCreation(path, state, filePath) {  
     console.log('Context creation detected:', path.node.type);  
-  
+    sections.contexts.push(path.node);
     if (state.hasConstants || state.hasHelperFunctions ||   
         state.hasCustomHooks || state.hasStyledComponents ||   
         state.hasInterfaces || state.hasTypes ||   
