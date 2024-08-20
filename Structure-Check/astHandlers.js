@@ -20,7 +20,6 @@ const {
     isExportDeclarationWithName,  
     IsTopOfScope,  
     isReactFunctionalComponent,  
-    isFunctionalComponent,  
     isReactCreateElementCall,  
     isVariableDeclarator,  
     isContextCreation,  
@@ -56,7 +55,7 @@ const {
 function handleImportDeclaration(path, state, filePath, sections) {  
     console.log('Import statement detected:', path.node.type);  
     sections.imports.push(path.node);
-    if (state.functionComponentState.insideReactComponent) {  
+    if (path.scope.path.type !== 'Program') {  
         reportError(path.node, 'Imports should not be declared inside a function or component.', filePath);  
     } else {  
         if (state.topLevelState.hasGlobalConstants || state.topLevelState.hasHelperFunctions ||  
@@ -166,6 +165,7 @@ function handleVariableDeclarator(path, state, filePath, sections) {
  */ 
 function handleFunctionalComponent(path, state, filePath,sections) {  
     console.log('Functional component detected:', path.node.type);
+    sections.functionalComponent.push(path.node);
     
     handleMainReactComponent(path, state, filePath,sections);  
 }  
@@ -247,9 +247,10 @@ function handleTSInterfaceDeclaration(path, state, filePath, sections) {
  * @param {Object} state - The state object that keeps track of various code states.
  * @param {string} filePath - The file path of the current file being processed.
  */
-function handleTSTypeAliasDeclaration(path, state, filePath,sections) {  
+function handleTSTypeAliasDeclaration(path, state, filePath, sections) {  
     console.log('Type alias declaration detected:', path.node.type);  
     sections.types.TSTypeAliasDeclaration.push(path.node);
+    
     if (state.hasEnums || state.hasMainComponent ||  
         state.hasHandlers || state.hasHooks ||  
         state.hasReactComponent || state.hasPropTypes ||  
@@ -275,7 +276,7 @@ function handleTSTypeAliasDeclaration(path, state, filePath,sections) {
  */ 
 function handleTSEnumDeclaration(path, state, filePath,sections) {  
     console.log('Enum declaration detected:', path.node.type);  
-    sections.types.handleTSEnumDeclaration.push(path.node);
+    sections.types.TSEnumDeclaration.push(path.node);
 
     if (state.hasMainComponent || state.hasHandlers  
         || state.hasHooks || state.hasReactComponent  
@@ -300,8 +301,9 @@ function handleTSEnumDeclaration(path, state, filePath,sections) {
  * @param {Object} state - The state object that keeps track of various code states.
  * @param {string} filePath - The file path of the current file being processed.
  */ 
-function handleStyledComponent(path, state, filePath) {  
+function handleStyledComponent(path, state, filePath,sections) {  
     console.log('style component declaration detected:', path.node.type)
+    //sections.styledComponent.push(path.node);
     if (isStyledComponent(path)) {  
         const tag = path.get('tag');  
   
@@ -395,41 +397,16 @@ function handleCustomHookDeclaration(path, state, filePath,sections) {
 function handleLocalConstantDeclaration(path, state, filePath,sections) {  
     console.log('Local constant declaration detected:', path.node.type);  
     sections.localConstants.push(path.node);
-
-    // Check if the variable declarator is part of a variable declaration  
-    if (!path.isVariableDeclarator()) {  
-        return;  
-    }  
-  
-    const variableName = path.node.id.name;  
-    // Check the declaration keyword to ensure best practices are followed  
-    if (!checkDeclarationKeyword(path)) {  
-        return;  
-    }  
-    // Determine the context in which the variable is declared  
-    const isTopLevel = path.scope.path.type === 'Program';  
-    const isInsideFunctionOrBlock = path.scope.path.type !== 'Program';  
-    const isGlobal = isGlobalConstant(path);  
-    const isLocal = isLocalConstant(path);  
-    if (isInsideFunctionOrBlock) {  
-        // Handle local constant  
-        const currentState = state.functionComponentState.insideReactComponent ? state.functionComponentState : state.topLevelState;  
-        if (currentState.hasHooks ||  
-            currentState.hasHandlers ||  
-            currentState.hasReactComponent ||  
-            currentState.hasPropTypes ||  
-            currentState.hasDefaultProps ||  
-            currentState.hasExports) {  
-            const errorMessage = generateErrorMessage("Local constant declaration", currentState, filePath);  
-            if (errorMessage) {  
-                reportError(path.node, errorMessage, filePath);  
-            }  
-        }  
-        currentState.hasConstants = true;  
-    } else {  
-        // If the variable declaration is not within a function, consider it as a global constant  
-        handleGlobalConstantDeclaration(path, state, filePath);  
-    }  
+    const parentFunction = path.getFunctionParent();
+    if (parentFunction) {
+        const functionBodyNode = parentFunction.node.body;
+        if (sections.localConstants.has(functionBodyNode)) {
+            sections.localConstants.get(functionBodyNode).push(path.node);
+        } else {
+            sections.localConstants.set(functionBodyNode, [path.node]);
+        }
+    }
+    state.localConstants =true;
 }  
   
 
@@ -459,7 +436,7 @@ function handleMainReactComponent(path, state, filePath, sections) {
         state.topLevelState.hasMainComponent = true;  
         state.topLevelState.mainComponentPath = path;  
         enterReactComponent(state);  
-        traverseReactComponent(path, state, filePath); 
+        traverseReactComponent(path, state, filePath,sections); 
     }  
 }
 
@@ -503,7 +480,7 @@ function handleHelperFunctionDeclaration(path, state, filePath,sections) {
     currentState.hasHelperFunctions = true;  
 
     enterReactComponent(state);  
-    traverseReactComponent(path, state, filePath); 
+    traverseReactComponent(path, state, filePath,sections); 
 }  
 
 /**
@@ -563,8 +540,9 @@ function handleFunctionExpressionsAndArrowFunctions(path, state, filePath,sectio
  * @param {State} state - The object tracking the presence of code elements within the file.  
  * @param {string} filePath - The path of the file being processed.  
  */ 
-function handleExportDeclarations(path, state, filePath) {  
+function handleExportDeclarations(path, state, filePath, sections) {  
     console.log('Export statement detected:', path.node.type);  
+    sections.exports.push(path.node);
 
     // Check if the export statement is not inside a function or component  
     const insideFunctionOrComponent = path.findParent(p =>   
@@ -618,8 +596,9 @@ function handleExportDeclarations(path, state, filePath) {
  * @param {State} state - The state object, used here to track the main component's path and conditional rendering presence.  
  * @param {string} filePath - The file path providing context for error messaging when JSX is found in disallowed locations.  
  */
-function handleJSXElement(path, state, filePath) {  
+function handleJSXElement(path, state, filePath,sections) {  
     console.log('JSX element detected:', path.node.type);  
+        //sections.jsx.push(path.node);
 
     // Check if the JSX element is within a function (arrow, function, or method).
     const functionParent = path.findParent(p =>
@@ -672,17 +651,16 @@ function handleJSXElement(path, state, filePath) {
  * @param {Object} state - The state object that keeps track of various code states.
  * @param {string} filePath - The file path of the current file being processed.
  */ 
-function handleReturnStatement(path, state, filePath) { 
+function handleReturnStatement(path, state, filePath,sections) { 
     console.log('Return statement detected:', path.node.type); 
+    //sections.return.push(path.node);
 
     if (!state.functionComponentState.insideReactComponent) return;
 
     const functionPath = path.findParent(p =>   
-        p.isFunctionDeclaration() || 
-        p.isFunctionExpression() || 
-        p.isArrowFunctionExpression() || 
-        p.isClassMethod()
-    );
+        isFunctionExpression(p) || 
+        isArrowFunctionExpression(p)
+        );
 
     if (functionPath) {
         const isMainComponent = functionPath === state.mainComponentPath;
@@ -739,8 +717,9 @@ function handleUseContext(path, state, filePath) {
  * @param {Object} state - The state object that keeps track of various code states.
  * @param {string} filePath - The file path of the current file being processed.
  */  
-function handleClassComponent(path, state, filePath) {  
+function handleClassComponent(path, state, filePath, sections) {  
     console.log('Class component detected:', path.node.type);  
+    sections.classComponents.push(path.node);
 
     state.hasClassComponent = true;  
 
@@ -755,14 +734,15 @@ function handleClassComponent(path, state, filePath) {
 
     path.traverse({  
         ClassMethod(innerPath) {  
-            handleClassMethod(innerPath, state, filePath);  
+            handleClassMethod(innerPath, state, filePath, sections);  
         },  
         ClassProperty(innerPath) {  
-            handleClassProperty(innerPath, state, filePath);  
+            handleClassProperty(innerPath, state, filePath,sections);  
         },  
-        VariableDeclarator(innerPath) {  
-            handleVariableDeclarator(innerPath, state, filePath);  
-        },  
+        /// Need to check this
+       /// VariableDeclarator(innerPath) {  
+        ///    handleVariableDeclarator(innerPath, state, filePath,sections);  
+        ///},  
         enter(innerPath) {  
             enterReactComponent(state);  
         },  
@@ -784,8 +764,9 @@ function handleClassComponent(path, state, filePath) {
  * @param {string} filePath - The file path of the current file being processed.
  */
  
-function handleClassMethod(path, state, filePath) { 
+function handleClassMethod(path, state, filePath, sections) { 
     console.log('Class method detected:', path.node.type);
+    sections.classMethod.push(path.node);
 
     const methodName = path.node.key.name;  
     if (methodName === 'constructor') {  
@@ -818,8 +799,9 @@ function handleClassMethod(path, state, filePath) {
  * @param {Object} state - The state object that keeps track of various code states.
  * @param {string} filePath - The file path of the current file being processed.
  */ 
-function handleClassProperty(path, state, filePath) {  
+function handleClassProperty(path, state, filePath, sections) {  
     console.log('Class property detected:', path.node.type);
+    sections.classProperty.push(path.node);
 
     const propertyName = path.node.key.name;  
     if (propertyName === 'state') {  
@@ -840,7 +822,7 @@ function handleClassProperty(path, state, filePath) {
  * @param {State} state - The state object tracking encountered elements.  
  * @param {string} filePath - The file path for reporting errors.  
  */  
-const handleHooksAndEffects = (path, state, filePath) => {  
+const handleHooksAndEffects = (path, state, filePath,sections) => {  
     console.log('Hook or effect detected:', path.node.type);  
   
     const currentState = state.functionComponentState.insideReactComponent ? state.functionComponentState : state.topLevelState;  
@@ -853,7 +835,8 @@ const handleHooksAndEffects = (path, state, filePath) => {
         const effectHooks = ['useEffect', 'useLayoutEffect'];  
   
         // Check for state hooks  
-        if (stateHooks.includes(calleeName)) {  
+        if (stateHooks.includes(calleeName)) { 
+            //sections.stateHook.push(path.node); 
             if (currentState.hasEffects || currentState.hasHelperFunctions) {  
                 reportError(path.node, 'State hooks (useState, useReducer) should be declared before effects and helper functions.', filePath);  
             }  
@@ -861,7 +844,9 @@ const handleHooksAndEffects = (path, state, filePath) => {
         }  
   
         // Check for effects  
-        if (effectHooks.includes(calleeName)) {  
+        if (effectHooks.includes(calleeName)) { 
+            //sections.effectHook.push(path.node); 
+ 
             if (currentState.hasHelperFunctions) {  
                 reportError(path.node, 'Effects (useEffect, useLayoutEffect) should be declared before helper functions.', filePath);  
             }  
@@ -933,6 +918,7 @@ function hasDisableCheckComment(path) {
   
       // If the node is a JSXElement or is within a JSXElement,
       // check 'disable-check' comment for its closest parent
+      /*
       if (path.node.type === 'JSXElement' || path.findParent((p) => p.node.type === 'JSXElement')) {
         let containerPath = path.findParent(
           (p) => p.isReturnStatement() || p.node.type === 'VariableDeclaration'
@@ -941,7 +927,7 @@ function hasDisableCheckComment(path) {
         if (containsDisableCheck(containerPath?.node.leadingComments)) { // Using optional chaining operator
           return true;
         }
-      }
+      }*/
     }
   
     return false;
@@ -955,37 +941,37 @@ function hasDisableCheckComment(path) {
  * @param {State} state - The state object to maintain the traversal state.
  * @param {string} filePath - The path to the current file being processed.
  */
-function traverseReactComponent(path, state, filePath) {
+function traverseReactComponent(path, state, filePath,sections) {
     path.traverse({
         VariableDeclarator(innerPath) {
             if (!hasDisableCheckComment(innerPath)) {
-                handleVariableDeclarator(innerPath, state, filePath);
+                handleVariableDeclarator(innerPath, state, filePath,sections);
             }
         },
         CallExpression(innerPath) {
             if (!hasDisableCheckComment(innerPath)) {
                 checkForContextUsageOrder(innerPath, filePath);
-                handleHooksAndEffects(innerPath, state, filePath);
+                handleHooksAndEffects(innerPath, state, filePath,sections);
             }
         },
         ReturnStatement(innerPath) {
             if (!hasDisableCheckComment(innerPath)) {
-                handleReturnStatement(innerPath, state, filePath);
+                handleReturnStatement(innerPath, state, filePath,sections);
             }
         },
         JSXElement(innerPath) {
             if (!hasDisableCheckComment(innerPath)) {
-                handleJSXElement(innerPath, state, filePath);
+                //handleJSXElement(innerPath, state, filePath,sections);
             }
         },
         FunctionExpression(innerPath) {
             if (!hasDisableCheckComment(innerPath)) {
-                handleFunctionExpressionsAndArrowFunctions(innerPath, state, filePath);
+                handleFunctionExpressionsAndArrowFunctions(innerPath, state, filePath,sections);
             }
         },
         ArrowFunctionExpression(innerPath) {
             if (!hasDisableCheckComment(innerPath)) {
-                handleFunctionExpressionsAndArrowFunctions(innerPath, state, filePath);
+                handleFunctionExpressionsAndArrowFunctions(innerPath, state, filePath,sections);
             }
         },
         exit(innerPath) {

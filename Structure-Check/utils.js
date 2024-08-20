@@ -286,48 +286,83 @@ function isFunctionExpression(path) {
  * @returns {boolean} True if the path represents an arrow function expression, false otherwise.
  */
 function isArrowFunctionExpression(path) {  
-
-    // Détermine si un nœud est une expression de fonction ou une fonction fléchée,
-    // même si c'est enveloppé dans une expression, comme une expression logique ou conditionnelle.
-    // Par exemple: const example = someCondition ? () => {} : function() {};
-
-    // Function to detect arrow functions recursively  
-    const isArrowFunctionNode = (nodePath) => {  
-        if (nodePath.isArrowFunctionExpression()) {  
-            return true;  
+    // Function to detect arrow functions recursively    
+    const isArrowFunctionNode = (nodePath) => {    
+        if (!nodePath || !nodePath.node) {  
+            return false;  
         }  
   
-        // For conditional expressions, check the branches  
-        if (nodePath.isConditionalExpression()) {  
-            return (  
-                isArrowFunctionNode(nodePath.get('consequent')) ||  
-                isArrowFunctionNode(nodePath.get('alternate'))  
-            );  
-        }  
-
-        // Handle cases like immediately invoked function expressions (IIFEs)
-        if (nodePath.isCallExpression() && isFunctionExpressionNode(nodePath.get('callee'))) {
-            return true;
-        }
-
+        if (isArrowFunctionExpression(nodePath)) {    
+            return true;    
+        }    
+    
+        // For conditional expressions, check the branches    
+        if (nodePath.isConditionalExpression()) {    
+            return (    
+                isArrowFunctionNode(nodePath.get('consequent')) ||    
+                isArrowFunctionNode(nodePath.get('alternate'))    
+            );    
+        }    
+    
+        // Handle cases like immediately invoked function expressions (IIFEs)  
+        if (isCallExpression(nodePath)) {    
+            return true;    
+        }    
+    
         // For logical expressions, check both sides  
-        if (nodePath.isLogicalExpression()) {  
-            return (  
-                isArrowFunctionNode(nodePath.get('left')) ||  
-                isArrowFunctionNode(nodePath.get('right'))  
-            );  
-        }  
-        // If wrapped in parentheses  
-        if (nodePath.isParenthesizedExpression()) {  
-            return isArrowFunctionNode(nodePath.get('expression'));  
-        }  
-        // Add other cases as needed  
-        // In other cases, it is not an arrow function  
-        return false;  
-    };  
-    // Get the initialization and call the recursive built-in function  
-    const initPath = path.get('init');  
-    return initPath && isArrowFunctionNode(initPath);  
+          
+        if (isLogicalExpression(nodePath)) {    
+            return (    
+                isArrowFunctionNode(nodePath.get('left')) ||    
+                isArrowFunctionNode(nodePath.get('right'))    
+            );    
+        }    
+        
+        // If wrapped in parentheses    
+        if (isParenthesizedExpression()) {    
+            return isArrowFunctionNode(nodePath.get('expression'));    
+        }    
+    
+        // Add other cases as needed    
+        // In other cases, it is not an arrow function    
+        return false;    
+    };
+        // Get the initialization and call the recursive built-in function    
+        const initPath = path.get('init');    
+        return initPath && isArrowFunctionNode(initPath);    
+}     
+    
+    /**  
+     * Determines if a given path represents a parenthesized expression.  
+     *  
+     * @function isParenthesizedExpression  
+     * @param {Object} path - The Babel path object to check.  
+     * @returns {boolean} True if the path represents a parenthesized expression, false otherwise.  
+     */  
+    function isParenthesizedExpression(path) {  
+        return t.isParenthesizedExpression(path);  
+    }  
+
+/**  
+ * Determines if a given path represents a logical expression.  
+ *  
+ * @function isLogicalExpression  
+ * @param {Object} path - The Babel path object to check.  
+ * @returns {boolean} True if the path represents a logical expression, false otherwise.  
+ */  
+function isLogicalExpression(path) {  
+    return t.isLogicalExpression(path.node);  
+} 
+
+/**  
+ * Determines if a given path represents a call expression.  
+ *  
+ * @function isCallExpression  
+ * @param {Object} path - The Babel path object to check.  
+ * @returns {boolean} True if the path represents a call expression, false otherwise.  
+ */  
+function isCallExpression(path) {  
+    return t.isCallExpression(path.node);  
 }  
   
 /**
@@ -463,63 +498,24 @@ function IsTopOfScope(path) {
  * @param {NodePath} path - The Babel path object for the variable declarator node.
  * @returns {boolean} True if the path represents a React functional component, false otherwise.
  */
-function isReactFunctionalComponent(path) { 
-    console.log('----------------- isReactFunctionalComponent -----------------'); 
-    if (!t.isVariableDeclarator(path.node)) {  
-        return false;  
-    }  
-    const variableDeclarator = path.node;  
-  
-    // Check if it is initialized with an arrow function  
-    if (t.isArrowFunctionExpression(variableDeclarator.init)) {  
-        const arrowFunction = variableDeclarator.init;  
-  
-        // Assuming the React FC always returns JSX or calls React.createElement  
-        // We look into arrow function's body to determine if it's React element  
-        if (t.isBlockStatement(arrowFunction.body)) {  
-            // Has block body, we should look for a return statement  
-            const returnStatement = arrowFunction.body.body.find(t.isReturnStatement);  
-            if (returnStatement && returnStatement.argument) {  
-                return t.isJSXElement(returnStatement.argument) ||  
-                    isReactCreateElementCall(returnStatement.argument);  
-            }  
-        } else if (t.isJSXElement(arrowFunction.body) || isReactCreateElementCall(arrowFunction.body)) {  
-            // Directly returns JSX or React.createElement call without block body  
-            return true;  
-        }  
-    }  
-  
-    return false; // Not a React functional component  
-}  
-  
-/**
- * Determines if a given path represents a functional component.
- * Checks if the path is a variable declarator initialized with an arrow function 
- * or a regular function that returns JSX or calls React.createElement.
- *
- * @function isFunctionalComponent
- * @param {nodePath} path - The Babel path object for the variable declarator node.
- * @returns {boolean} True if the path represents a functional component, false otherwise.
- */  
-function isFunctionalComponent(path) {  
-    if (t.isVariableDeclarator(path.node)) {  
-        const init = path.node.init;  
-  
-        // Check if the init is an arrow function or a regular function  
-        if (t.isArrowFunctionExpression(init) || t.isFunctionExpression(init)) {  
-            const body = init.body;  
-            if (t.isBlockStatement(body)) {  
-                const returnStatement = body.body.find(t.isReturnStatement);  
-                if (returnStatement && (t.isJSXElement(returnStatement.argument) || isReactCreateElementCall(returnStatement.argument))) {  
-                    return true;  
-                }  
-            } else if (t.isJSXElement(body) || isReactCreateElementCall(body)) {  
-                return true;  
-            }  
-        }  
-    }  
-    return false;  
-}  
+function isReactFunctionalComponent(path) {
+    if (!t.isVariableDeclarator(path.node)) {
+        return false;
+    }
+    const variableDeclarator = path.node;
+
+    // Check if the variable has a type annotation and if it contains React.FC
+    if (variableDeclarator.id.typeAnnotation) {
+        const typeAnnotation = variableDeclarator.id.typeAnnotation.typeAnnotation;
+
+        // Check if the type annotation is React.FC
+        if (t.isTSTypeReference(typeAnnotation) && t.isIdentifier(typeAnnotation.typeName, { name: 'FC' })) {
+            return true;
+        }
+    }
+
+    return false; // Not a React functional component
+}
 
   
 /**
@@ -530,21 +526,13 @@ function isFunctionalComponent(path) {
  * @param {Node} node - The Babel node to check.
  * @returns {boolean} True if the node represents a call to React.createElement, false otherwise.
  */
-function isReactCreateElementCall(node) {  
-    // Check whether the node is a CallExpression  
-    if (t.isCallExpression(node)) {  
-        // Inside a CallExpression, check if the callee is a MemberExpression or an Identifier  
-        const isDirectCall = t.isIdentifier(node.callee) && node.callee.name === 'createElement';  
-        const isMemberCall = t.isMemberExpression(node.callee) &&  
-            node.callee.object.name === 'React' &&  
-            node.callee.property.name === 'createElement';  
-  
-        // Return true if either isDirectCall or isMemberCall is true
-        return isDirectCall || isMemberCall;  
-    }  
-    // Return false if the node is not a CallExpression  
-    return false;  
-}  
+function isReactCreateElementCall(node) {
+    return t.isCallExpression(node) &&
+        t.isMemberExpression(node.callee) &&
+        t.isIdentifier(node.callee.object, { name: 'React' }) &&
+        t.isIdentifier(node.callee.property, { name: 'createElement' }) &&
+        node.arguments.length > 0;
+} 
   
 //////////////////////
 //////////////////////
@@ -770,41 +758,43 @@ function findLastImportIndex(bodyNodes) {
 function recognizeType(path, state, filePath) {  
     if (isVariableDeclarator(path) && isCustomHook(path.get('init'))) {  
         console.log('Detected Custom Hook:', path.toString());  
-        return 'customHook';  
+        return 'customHook'; 
+
     } else if (isMainFunctionComponent(path, state, filePath)) {  
         console.log('Detected Main Function Component:', path.toString());  
-        return 'mainFunctionComponent';  
-    } else if (path.isFunctionDeclaration()) {  
-        if (isFunctionalComponent(path)) {  
-            console.log('Detected Functional Component:', path.toString());  
-            return 'functionalComponent';  
-        }  
-        return 'helperFunction';   
-    } else if (path.isArrowFunctionExpression() || path.isFunctionExpression()) {  
+        return 'mainFunctionComponent'; 
+
+    } else if (isArrowFunctionExpression(path) || isFunctionExpression(path)) {  
         if (isReactComponent(path.parentPath).isComponent) {  
             console.log('Detected Functional Component (Arrow/Function Expression):', path.toString());  
+
             return 'functionalComponent';  
         }  
         return 'expressionFunction';  
+
     } else if (isGlobalConstant(path)) {  
         console.log('Detected Global Constant:', path.toString());  
         return 'globalConstant';  
+
     } else if (isLocalConstant(path)) {  
         console.log('Detected Local Constant:', path.toString());  
-        return 'localConstant';  
-    } else if (path.isVariableDeclarator()) {  
-        if (isFunctionalComponent(path)) {  
+        return 'localConstant';
+
+    } else if (isVariableDeclarator(path)) {
+        if (isReactFunctionalComponent(path)) {  
             console.log('Detected Functional Component (Variable Declarator):', path.toString());  
             return 'functionalComponent';  
         }  
+
         return 'variableDeclarator';  
-    } else if (path.isTSInterfaceDeclaration()) {  
+
+    } else if (isTSInterfaceDeclaration()) {  
         console.log('Detected TS Interface Declaration:', path.toString());  
         return 'TSInterfaceDeclaration';  
-    } else if (path.isTSTypeAliasDeclaration()) {  
+    } else if (isTSTypeAliasDeclaration()) {  
         console.log('Detected TS Type Alias Declaration:', path.toString());  
         return 'TSTypeAliasDeclaration';  
-    } else if (path.isTSEnumDeclaration()) {  
+    } else if (isTSEnumDeclaration()) {  
         console.log('Detected TS Enum Declaration:', path.toString());  
         return 'TSEnumDeclaration';  
     } else {  
@@ -960,8 +950,7 @@ module.exports = {
     isMainFunctionComponent,  
     isExportDeclarationWithName,  
     IsTopOfScope,  
-    isReactFunctionalComponent,  
-    isFunctionalComponent,  
+    isReactFunctionalComponent,    
     isReactCreateElementCall,  
     isVariableDeclarator,  
     isContextCreation,  
