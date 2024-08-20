@@ -99,154 +99,155 @@ const checkFile = async (filePath, state) => {
  * @param {string} filePath - The path of the source file currently being processed by Babel, which can be used for context in reporting.  
  * @returns {Object} An object defining visitor methods for the traversal, linking node types to their respective handling functions.  
  */  
-const setupTraverse = (state, filePath, sections) => {  
-    return {  
-        ImportDeclaration(path) {  
-            if (!hasDisableCheckComment(path)) {  
-                console.log('ImportDeclaration:', path.toString());  
-                handleImportDeclaration(path, state, filePath);  
-                sections.imports.push(path.node);  
-                path.remove();  
-            }  
-        },  
-        VariableDeclaration(path) {  
-            if (!hasDisableCheckComment(path)) {  
-                console.log('VariableDeclaration:', path.toString());  
-  
-                if (isMainFunctionComponent(path, state, filePath)) {  
-                    handleMainReactComponent(path, state, filePath);  
-                    sections.mainComponent = path.node;  
-                }   
-                else if (isGlobalConstant(path)) {  
-                    handleGlobalConstantDeclaration(path, state, filePath);  
-                    sections.constants.push(path.node);  
-                }   
-                else if (isLocalConstant(path)) {  
-                    const parentFunction = path.getFunctionParent();  
-                    if (parentFunction) {  
-                        const functionBodyNode = parentFunction.node.body;  
-                        if (sections.localConstants.has(functionBodyNode)) {  
-                            sections.localConstants.get(functionBodyNode).push(path.node);  
-                        } else {  
-                            sections.localConstants.set(functionBodyNode, [path.node]);  
-                        }  
-                    } else {  
-                        sections.constants.push(path.node);  
-                    }  
-                }   
-                else if (isContextCreation(path)) {  
-                    handleContextCreation(path, state, filePath);  
-                    sections.contexts.push(path.node);  
-                }   
-                else {  
-                    sections.constants.push(path.node);  
-                    path.get('declarations').forEach(declaratorPath => {  
-                        const type = recognizeType(declaratorPath, state, filePath);  
-                        console.log('VariableDeclaration Type:', type, declaratorPath.toString());  
-                        processFunctionType(type, declaratorPath, state, filePath);  
-                    });  
-                }  
-                path.remove();  
-            }  
-        },  
-        TSTypeAliasDeclaration(path) {  
-            if (!hasDisableCheckComment(path)) {  
-                console.log('TSTypeAliasDeclaration:', path.toString());  
-                handleTSTypeAliasDeclaration(path, state, filePath);  
-                sections.types.TSTypeAliasDeclaration.push(path.node);  
-                path.remove();  
-            }  
-        },  
-        TSInterfaceDeclaration(path) {  
-            if (!hasDisableCheckComment(path)) {  
-                console.log('TSInterfaceDeclaration:', path.toString());  
-                handleTSInterfaceDeclaration(path, state, filePath);  
-                sections.types.TSInterfaceDeclaration.push(path.node);  
-                path.remove();  
-            }  
-        },  
-        TSEnumDeclaration(path) {  
-            if (!hasDisableCheckComment(path)) {  
-                console.log('TSEnumDeclaration:', path.toString());  
-                handleTSEnumDeclaration(path, state, filePath);  
-                sections.types.TSEnumDeclaration.push(path.node);  
-                path.remove();  
-            }  
-        },  
-        FunctionDeclaration(path) {  
-            if (!hasDisableCheckComment(path)) {  
-                console.log('FunctionDeclaration:', path.toString());  
-                if (isMainFunctionComponent(path, state, filePath)) {  
-                    handleMainReactComponent(path, state, filePath);  
-                    sections.mainComponent = path.node;  
-                } else {  
-                    handleHelperFunctionDeclaration(path, state, filePath);  
-                    const type = recognizeType(path, state, filePath);  
-                    console.log('FunctionDeclaration Type:', type, path.toString());  
-                    sections.helperFunctions.push(path.node);  
-                    processFunctionType(type, path, state, filePath);  
-                }  
-                path.remove();  
-            }  
-        },  
-        'ArrowFunctionExpression|FunctionExpression': {  
-            enter(path) {  
-                if (!hasDisableCheckComment(path)) {  
-                    console.log('ArrowFunctionExpression|FunctionExpression:', path.toString());  
-                    if (path.parentPath.isVariableDeclarator()) {  
-                        const type = recognizeType(path.parentPath, state, filePath);  
-                        console.log('ArrowFunctionExpression|FunctionExpression Type:', type, path.parentPath.toString());  
-                        processFunctionType(type, path.parentPath, state, filePath);  
-                        if (type === 'functionalComponent') {  
-                            sections.components.push(path.parentPath.node);  
-                        } else if (type === 'customHook') {  
-                            sections.helperFunctions.push(path.parentPath.node);  
-                        } else {  
-                            sections.helperFunctions.push(path.parentPath.node);  
-                        }  
-                    }  
-                    path.parentPath.remove();  
-                }  
-            }  
-        },  
-        ClassDeclaration(path) {  
-            if (!hasDisableCheckComment(path)) {  
-                console.log('ClassDeclaration:', path.toString());  
-                if (isMainFunctionComponent(path, state, filePath)) {  
-                    handleMainReactComponent(path, state, filePath);  
-                    sections.mainComponent = path.node;  
-                } else {  
-                    handleClassComponent(path, state, filePath);  
-                    sections.classComponents.push(path.node);  
-                }  
-                path.remove();  
-            }  
-        },  
-        CallExpression(path) {  
-            if (!hasDisableCheckComment(path)) {  
-                console.log('CallExpression:', path.toString());  
-                handleHooksAndEffects(path, state, filePath);  
-                path.remove(); // Remove the processed call expression node from AST if necessary.  
-            }  
-        },  
-        TaggedTemplateExpression(path) {  
-            if (!hasDisableCheckComment(path)) {  
-                console.log('TaggedTemplateExpression:', path.toString());  
-                handleStyledComponent(path, state, filePath);  
-                path.remove(); // Remove the processed tagged template expression node from AST if necessary.  
-            }  
-        },  
-        'ExportNamedDeclaration|ExportDefaultDeclaration'(path) {  
-            if (!hasDisableCheckComment(path)) {  
-                console.log('ExportNamedDeclaration|ExportDefaultDeclaration:', path.toString());  
-                handleExportDeclarations(path, state, filePath);  
-                sections.exports.push(path.node);  
-                path.remove();  
-            }  
-        },  
-    };  
-};  
+const setupTraverse = (state, filePath, sections) => {
+    return {
+        ImportDeclaration(path) {
+            if (!hasDisableCheckComment(path)) {
+                console.log('ImportDeclaration:', path.toString());
+                handleImportDeclaration(path, state, filePath);
+                sections.imports.push(path.node);
+                path.remove();
+            }
+        },
+        VariableDeclaration(path) {
+            if (!hasDisableCheckComment(path)) {
+                console.log('VariableDeclaration:', path.toString());
 
+                if (isMainFunctionComponent(path, state, filePath)) {
+                    handleMainReactComponent(path, state, filePath);
+                    sections.mainComponent = path.node;
+                } 
+                else if (isGlobalConstant(path)) {
+                    handleGlobalConstantDeclaration(path, state, filePath);
+                    sections.constants.push(path.node);
+                } 
+                else if (isLocalConstant(path)) {
+                    const parentFunction = path.getFunctionParent();
+                    if (parentFunction) {
+                        const functionBodyNode = parentFunction.node.body;
+                        if (sections.localConstants.has(functionBodyNode)) {
+                            sections.localConstants.get(functionBodyNode).push(path.node);
+                        } else {
+                            sections.localConstants.set(functionBodyNode, [path.node]);
+                        }
+                    } else {
+                        sections.constants.push(path.node);
+                    }
+                } 
+                else if (isContextCreation(path)) {
+                    handleContextCreation(path, state, filePath);
+                    sections.contexts.push(path.node);
+                } 
+                else {
+                    sections.constants.push(path.node);
+                    path.get('declarations').forEach(declaratorPath => {
+                        const type = recognizeType(declaratorPath, state, filePath);
+                        console.log('VariableDeclaration Type:', type, declaratorPath.toString());
+                        processFunctionType(type, declaratorPath, state, filePath);
+                    });
+                }
+                path.remove();
+            }
+        },
+        TSTypeAliasDeclaration(path) {
+            if (!hasDisableCheckComment(path)) {
+                console.log('TSTypeAliasDeclaration:', path.toString());
+                handleTSTypeAliasDeclaration(path, state, filePath);
+                sections.types.TSTypeAliasDeclaration.push(path.node);
+                path.remove();
+            }
+        },
+        TSInterfaceDeclaration(path) {
+            if (!hasDisableCheckComment(path)) {
+                console.log('TSInterfaceDeclaration:', path.toString());
+                handleTSInterfaceDeclaration(path, state, filePath);
+                sections.types.TSInterfaceDeclaration.push(path.node);
+                path.remove();
+            }
+        },
+        TSEnumDeclaration(path) {
+            if (!hasDisableCheckComment(path)) {
+                console.log('TSEnumDeclaration:', path.toString());
+                handleTSEnumDeclaration(path, state, filePath);
+                sections.types.TSEnumDeclaration.push(path.node);
+                path.remove();
+            }
+        },
+        FunctionDeclaration(path) {
+            if (!hasDisableCheckComment(path)) {
+                console.log('FunctionDeclaration:', path.toString());
+                if (isMainFunctionComponent(path, state, filePath)) {
+                    handleMainReactComponent(path, state, filePath);
+                    sections.mainComponent = path.node;
+                } else {
+                    handleHelperFunctionDeclaration(path, state, filePath);
+                    const type = recognizeType(path, state, filePath);
+                    console.log('FunctionDeclaration Type:', type, path.toString());
+                    sections.helperFunctions.push(path.node);
+                    processFunctionType(type, path, state, filePath);
+                }
+                path.remove();
+            }
+        },
+        'ArrowFunctionExpression|FunctionExpression': {
+            enter(path) {
+                if (!hasDisableCheckComment(path)) {
+                    console.log('ArrowFunctionExpression|FunctionExpression:', path.toString());
+                    if (path.parentPath.isVariableDeclarator()) {
+                        const type = recognizeType(path.parentPath, state, filePath);
+                        console.log('ArrowFunctionExpression|FunctionExpression Type:', type, path.parentPath.toString());
+                        processFunctionType(type, path.parentPath, state, filePath);
+                        if (type === 'functionalComponent') {
+                            sections.components.push(path.parentPath.node);
+                        } else if (type === 'customHook') {
+                            sections.helperFunctions.push(path.parentPath.node);
+                        } else {
+                            sections.helperFunctions.push(path.parentPath.node);
+                        }
+                    }
+                    path.parentPath.remove();
+                }
+            }
+        },
+        ClassDeclaration(path) {
+            if (!hasDisableCheckComment(path)) {
+                console.log('ClassDeclaration:', path.toString());
+                if (isMainFunctionComponent(path, state, filePath)) {
+                    handleMainReactComponent(path, state, filePath);
+                    sections.mainComponent = path.node;
+                } else {
+                    handleClassComponent(path, state, filePath);
+                    sections.classComponents.push(path.node);
+                }
+                path.remove();
+            }
+        },
+        CallExpression(path) {
+            if (!hasDisableCheckComment(path)) {
+                console.log('CallExpression:', path.toString());
+                handleHooksAndEffects(path, state, filePath);
+                // NOTE: Depending on your use case, sections.push for CallExpression can be added here.
+                path.remove(); // Remove the processed call expression node from AST if necessary.
+            }
+        },
+        TaggedTemplateExpression(path) {
+            if (!hasDisableCheckComment(path)) {
+                console.log('TaggedTemplateExpression:', path.toString());
+                handleStyledComponent(path, state, filePath);
+                // NOTE: Depending on your use case, sections.push for TaggedTemplateExpression can be added here.
+                path.remove(); // Remove the processed tagged template expression node from AST if necessary.
+            }
+        },
+        'ExportNamedDeclaration|ExportDefaultDeclaration'(path) {
+            if (!hasDisableCheckComment(path)) {
+                console.log('ExportNamedDeclaration|ExportDefaultDeclaration:', path.toString());
+                handleExportDeclarations(path, state, filePath);
+                sections.exports.push(path.node);
+                path.remove();
+            }
+        },
+    };
+};
 
 
   
@@ -510,8 +511,8 @@ function analyzeCode(ast, filePath) {
         },  
         exports: [],  
         mainComponent: null,  
+        nodes: [] // Add nodes array  
     };  
-     
   
     const state = createStateTracker();  
     const fileContent = readFileContent(filePath);  
@@ -528,8 +529,26 @@ function analyzeCode(ast, filePath) {
         reportError(null, 'No main component detected. The main (Function/Component/Class) should match the file name.', filePath);  
     }  
   
+    // Populate the nodes array with all the elements  
+    sections.nodes.push(  
+        ...sections.imports,  
+        ...sections.constants,  
+        ...sections.contexts,  
+        ...sections.hooks,  
+        ...sections.types.TSInterfaceDeclaration,  
+        ...sections.types.TSTypeAliasDeclaration,  
+        ...sections.types.TSEnumDeclaration,  
+        ...sections.helperFunctions,  
+        ...sections.functions,  
+        ...sections.components,  
+        ...sections.classComponents,  
+        sections.mainComponent,  
+        ...sections.exports  
+    );  
+  
     return sections;  
 }  
+
 
 
 

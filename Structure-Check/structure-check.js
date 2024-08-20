@@ -38,42 +38,31 @@ const fs = require('fs');
  */  
 const analyzeProject = async (displayLevel, filePath) => {  
     try {  
-        let files = [];  
+        console.log('Searching for .ts and .tsx files in the project...');  
   
-        if (filePath) {  
-            if (fs.existsSync(filePath)) {  
-                files.push(filePath);  
-            } else {  
-                console.error(`Specified file does not exist: ${filePath}`);  
-                return;  
-            }  
+        const ignorePattern = await compileIgnorePattern(ignoreFilePath);  
+        const files = filePath ? [filePath] : await findFilesRecursive(projectPath, filePattern, [], ignorePattern);  
+        console.log(`Files found for structure analysis:`, files);  
+  
+        if (files.length === 0) {  
+            console.log(`No matching files found with the pattern "${filePattern}".`);  
         } else {  
-            console.log('Searching for .ts and .tsx files in the project...');  
-            const ignorePattern = await compileIgnorePattern(ignoreFilePath);  
-            files = await findFilesRecursive(projectPath, filePattern, [], ignorePattern);  
-            console.log(`Files found for structure analysis:`, files);  
-  
-            if (files.length === 0) {  
-                console.log(`No matching files found with the pattern "${filePattern}".`);  
-                return;  
-            }  
-        }  
-  
-        // If the display level is detailed, show the file menu  
-        if (displayLevel === 'detailed' && !filePath) {  
-            await displayFilesMenu(files, displayLevel);  
-        } else {  
-            for (const file of files) {  
-                const content = readFileContent(file);  
-                const ast = parseFile(content);  
-                const sections = analyzeCode(ast, file);  
-                displayBasic(sections, errors);  
+            if (displayLevel === 'detailed') {  
+                await displayFilesMenu(files, displayLevel);  
+            }else {  
+                for (const filePath of files) {  
+                    const content = readFileContent(filePath);  
+                    const ast = parseFile(content);  
+                    const sections = analyzeCode(ast, filePath);  
+                    displayAnalysis(sections, displayLevel, errors);  
+                }  
             }  
         }  
     } catch (err) {  
         console.error('Error during the search of the file:', err);  
     }  
 };  
+ 
 
 
 
@@ -198,6 +187,12 @@ const parseCommandLineArguments = () => {
             }  
         }  
     });  
+
+    // Ensure 'tree' display level is only allowed when filePath is provided  
+    if (displayLevel === 'tree' && !filePath) {  
+        console.error('The "tree" display level is only available when the -file option is provided.');  
+        displayLevel = 'basic';  // Fallback to default display level  
+    }  
   
     return { fix, revert, analyze, help, filePath, displayLevel, language };  
 };  

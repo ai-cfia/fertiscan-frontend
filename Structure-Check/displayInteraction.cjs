@@ -61,7 +61,6 @@ const handleErrors = (errorArray) => {
 const displayAnalysis = async (sections, displayLevel, errors) => {
     console.log(`displayAnalysis called with displayLevel: ${displayLevel}`); // Debugging log
 
-    try {
         switch (displayLevel) {
             case 'basic':
                 displayBasic(sections, errors);
@@ -79,9 +78,6 @@ const displayAnalysis = async (sections, displayLevel, errors) => {
                 console.error('Invalid display level specified.');
                 break;
         }
-    } catch (error) {
-        console.error(`Error during displayAnalysis at display level ${displayLevel}:`, error);
-    }
 };
 
 /**
@@ -223,9 +219,7 @@ ${codeSnippet}
 
         // Check for error messages
         if (node.hasError) {
-            console.error(output);
-        } else {
-            console.log(output);
+            handleErrors(errors)
         }
     });
 };
@@ -242,29 +236,32 @@ ${codeSnippet}
  * @function displayTree
  * @param {Object} sections - An object containing properties that represent different parts of the code to be analyzed in tree format.
  */
-function displayTree(sections) {
-    console.log('--- Tree Analysis ---');
+function displayTree(sections) {  
+    console.log('--- Tree Analysis ---');  
+  
+    // Check if sections.nodes is defined and is an array  
+    if (!Array.isArray(sections.nodes)) {  
+        console.error("Invalid sections data. Expected 'nodes' to be an array.");  
+        return;  
+    }  
+  
+    const ui = require('cliui')({ width: 80 });  
+  
+    // Display the tree structure of the code  
+    sections.nodes.forEach(node => {  
+        if (node) {  
+            ui.div({  
+                text: `Node Type: ${node.type}\nLocation: Line ${node.loc.start.line}, Column ${node.loc.start.column}\n${node.name ? `Name: ${node.name}` : ''}`,  
+                padding: [1, 0, 1, 0]  
+            });  
+        }  
+    });  
+  
+    console.log(ui.toString());  
+  
+    handleErrors(errors);  
+}  
 
-    // Check if sections.nodes is defined and is an array
-    if (!Array.isArray(sections.nodes)) {
-        console.error("Invalid sections data. Expected 'nodes' to be an array.");
-        return;
-    }
-
-    const ui = require('cliui')({ width: 80 });
-
-    // Display the tree structure of the code
-    sections.nodes.forEach(node => {
-        ui.div({
-            text: `Node Type: ${node.type}\nLocation: Line ${node.loc.start.line}, Column ${node.loc.start.column}\n${node.name ? `Name: ${node.name}` : ''}`,
-            padding: [1, 0, 1, 0]
-        });
-    });
-
-    console.log(ui.toString());
-
-    handleErrors(errors);
-}
 
 /**    
  * Displays a detailed error analysis report with clickable links.    
