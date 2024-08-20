@@ -15,8 +15,6 @@ import { useTranslation } from "react-i18next";
 import goUpIcon from "../../assets/goUpIcon.svg";
 
 const FormPage = () => {
-  // For local development
-  const api_url = "http://localhost:5000";
   const { t } = useTranslation();
   const dataContainerRef = useRef<HTMLDivElement>(null);
   const [showScrollUp, setShowScrollUp] = useState(false);
@@ -152,7 +150,7 @@ const FormPage = () => {
     }
 
     const data = await (
-      await fetch(api_url + "/analyze", {
+      await fetch(process.env.API_URL + "/analyze", {
         method: "POST",
         headers: {
           "Access-Control-Allow-Origin": "*",
