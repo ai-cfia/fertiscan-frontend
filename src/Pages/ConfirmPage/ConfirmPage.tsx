@@ -30,7 +30,7 @@ const ConfirmPage = () => {
   };
 
   const submitForm = () => {
-    fetch(process.env.API_URL + "/forms", {
+    fetch(process.env.API_URL + "/inspections", {
       method: "POST",
       headers: {
         "Content-Type": "application/json",
