@@ -324,56 +324,65 @@ const displayErrorAnalysis = async (sections) => {
  * @param {string} language - The language in which to display the help information. 
  *                            Supported options are 'en' for English and 'fr' for French.
  */
-function displayHelp(language) {
-    if (language === 'fr') {
-        console.log(`
-        Usage: node structure-check.js [options]
-            
-        Options:  
-            -fix                  Corrige la structure de tous les fichiers .ts et .tsx dans le projet.
-            -fix -file=<path>     Corrige la structure du fichier spécifié.
-            -revert               Réinitialise la structure des fichiers corrigés à partir des sauvegardes.
-            -revert -file=<path>  Réinitialise la structure du fichier spécifié à partir de la sauvegarde.
-            -analyze              Analyse la structure des fichiers .ts et .tsx dans le projet.
-            -analyze -file=<path> Analyze la structure du fichier spécifié.
-            -display=<level>      Définit le niveau d'affichage pour l'analyse. Options disponibles: basic, detailed, tree, interactive.
-            -langue=<lang>        Définit la langue d'affichage de l'aide. Options disponibles: en, fr.
-            -help                 Affiche l'aide pour les commandes disponibles.
-            
-        Examples:  
-            node structure-check.js -fix
-            node structure-check.js -fix -file=src/testfiles/EnumError.tsx
-            node structure-check.js -revert
-            node structure-check.js -revert -file=src/testfiles/EnumError.tsx
-            node structure-check.js -analyze
-            node structure-check.js -analyze -file=src/testfiles/EnumError.tsx -display=tree
-            node structure-check.js -analyze -file=src/testfiles/EnumError.tsx -display=detailed
-            node structure-check.js -analyze -file=src/testfiles/EnumError.tsx -display=error
-            node structure-check.js -help  
-      `);
-    } else {
-        console.log(`
-        Usage: node structure-check.js [options]
-            
-        Options:  
-            --fix                  Fix the structure of all .ts and .tsx files in the project.  
-            --fix --file=<path>    Fix the structure of the specified file.  
-            --revert               Revert the structure of fixed files from backups.  
-            --revert --file=<path> Revert the structure of the specified file from backup.  
-            --analyze              Analyze the structure of .ts and .tsx files in the project.  
-            --analyze --file=<path> Analyze the structure of the specified file.  
-            --display=<level>      Set the display level for analysis. Available options: basic, detailed, tree, interactive. Default : basic.
-            --langue=<lang>        Set the language for help display. Available options: en, fr.  Default : en.
-            --help                 Display help for available commands.  
-            
-        Examples:  
-            node script.js --fix  
-            node script.js --fix --file=src/components/App.tsx  
-            node script.js --revert  
-            node script.js --revert --file=src/components/App.tsx  
-            node script.js --analyze
-            node script.js --analyze --file=src/components/App.tsx --display=interactive  
-            node script.js --help  
+function displayHelp(language) {  
+    if (language === 'fr') {  
+      console.log(`  
+Usage: node structure-check.js [ACTION] [OPTION]...
+Analyze the react project and check the structure of the code.
+
+    
+Actions :
+    -f, --fix                    Corrige la structure de tous les fichiers .ts et .tsx dans le projet.  
+    -r, --revert                 Réinitialise la structure des fichiers corrigés à partir des sauvegardes.  
+    -a, --analyze                Analyse la structure des fichiers .ts et .tsx dans le projet.  
+    -h, --help                   Affiche l'aide pour les commandes disponibles.  
+    
+Options :
+    -fi=, --file=<path>          Effectue l'action uniquement sur le fichier spécifié.
+    -d=,  --display=<level>      Définit le niveau d'affichage pour l'analyse. 
+                                    Options disponibles : basic, detailed, tree, interactive.
+                                    Par défaut : basic.
+    -l=,  --langue=<lang>        Définit la langue d'affichage de l'aide. 
+                                    Options disponibles : en, fr.
+                                    Par défaut : en.  
+    
+Examples:  
+    node script.js --fix  
+    node script.js --fix --file=src/components/App.tsx  
+    node script.js --revert  
+    node script.js --revert --file=src/components/App.tsx  
+    node script.js --analyze  
+    node script.js --analyze --file=src/components/App.tsx --display=tree  
+    node script.js --analyze --file=src/components/App.tsx --display=interactive  
+    node script.js --help  
+      `)  
+    } else {  
+      console.log(`  
+Usage: node structure-check.js [ACTION] [OPTION]...
+Analyze the react project and check the structure of the code.
+    
+Actions:  
+    -f, --fix                    Fix the structure of all .ts and .tsx files in the project.  
+    -r, --revert                 Revert the structure of fixed files from backups.  
+    -a, --analyze                Analyze the structure of .ts and .tsx files in the project.  
+    -h, --help                   Display help for available commands.  
+Options:
+    -fi=, --file=<path>          Make the action only on the specified file.  
+    -d=,  --display=<level>      Set the display level for analysis. 
+                                    Available options: basic, detailed, tree, interactive. 
+                                    Default : basic.
+    -l=,  --langue=<lang>        Set the language for help display. 
+                                    Available options: en, fr.  
+                                    Default : en.
+    
+Examples:  
+    node script.js --fix  
+    node script.js --fix --file=src/components/App.tsx  
+    node script.js --revert  
+    node script.js --revert --file=src/components/App.tsx  
+    node script.js --analyze
+    node script.js --analyze --file=src/components/App.tsx --display=interactive  
+    node script.js --help  
     `);  
     }  
 } 
