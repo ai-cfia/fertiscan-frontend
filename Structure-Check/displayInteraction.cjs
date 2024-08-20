@@ -356,29 +356,27 @@ function displayHelp(language) {
         Usage: node structure-check.js [options]
             
         Options:  
-            -fix                  Fix the structure of all .ts and .tsx files in the project.
-            -fix -file=<path>     Fix the structure of the specified file.
-            -revert               Revert the structure of fixed files from backups.
-            -revert -file=<path>  Revert the structure of the specified file from backup.
-            -analyze              Analyze the structure of .ts and .tsx files in the project.
-            -analyze -file=<path> Analyze the structure of the specified file.
-            -display=<level>      Set the display level for analysis. Available options: basic, detailed, tree, interactive.
-            -langue=<lang>        Set the language for help display. Available options: en, fr.
-            -help                 Display help for available commands.
+            --fix                  Fix the structure of all .ts and .tsx files in the project.  
+            --fix --file=<path>    Fix the structure of the specified file.  
+            --revert               Revert the structure of fixed files from backups.  
+            --revert --file=<path> Revert the structure of the specified file from backup.  
+            --analyze              Analyze the structure of .ts and .tsx files in the project.  
+            --analyze --file=<path> Analyze the structure of the specified file.  
+            --display=<level>      Set the display level for analysis. Available options: basic, detailed, tree, interactive. Default : basic.
+            --langue=<lang>        Set the language for help display. Available options: en, fr.  Default : en.
+            --help                 Display help for available commands.  
             
         Examples:  
-            node structure-check.js -fix
-            node structure-check.js -fix -file=src/testfiles/EnumError.tsx
-            node structure-check.js -revert
-            node structure-check.js -revert -file=src/testfiles/EnumError.tsx
-            node structure-check.js -analyze
-            node structure-check.js -analyze -file=src/testfiles/EnumError.tsx -display=tree
-            node structure-check.js -analyze -file=src/testfiles/EnumError.tsx -display=detailed
-            node structure-check.js -analyze -file=src/testfiles/EnumError.tsx -display=error
-            node structure-check.js -help  
-    `);
-    }
-}
+            node script.js --fix  
+            node script.js --fix --file=src/components/App.tsx  
+            node script.js --revert  
+            node script.js --revert --file=src/components/App.tsx  
+            node script.js --analyze
+            node script.js --analyze --file=src/components/App.tsx --display=interactive  
+            node script.js --help  
+    `);  
+    }  
+} 
 
 /**
  * Displays a menu for selecting files to analyze.

@@ -170,7 +170,7 @@ const parseCommandLineArguments = () => {
             filePath = path.resolve(arg.replace(/-{1,2}fi(le)?=/, ''));
         } else if (arg.startsWith('--display=') || arg.startsWith('-d=')) {
             const level = arg.replace(/-{1,2}d(isplay)?=/, ''); // match either -d= or --display= ( could also match --d= or -display=)
-            if (['basic', 'detailed', 'tree', 'interactive'].includes(level)) {  
+            if (['basic', 'detailed', 'interactive'].includes(level)) {
                 displayLevel = level;  
             }  
         } else if (arg.startsWith('--langue=') || arg.startsWith('-l=')) {
