@@ -21,7 +21,7 @@ function CapturPage() {
   const { state } = useContext(SessionContext);
   const { setState } = useContext(SetSessionContext);
   const { showAlert } = useAlert();
-  
+
   const handlePhotoChange = (newFiles: File[]) => {
     const newPics: BlobData[] = [];
 

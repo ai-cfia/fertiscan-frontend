@@ -4,7 +4,6 @@ import CapturPage from "../CapturPage/CapturPage";
 import FormPage from "../FormPage/FormPage";
 import ConfirmPage from "../ConfirmPage/ConfirmPage";
 
-
 function HomePage() {
   const { state } = useContext(SessionContext);
   if (state.state === "form") {
