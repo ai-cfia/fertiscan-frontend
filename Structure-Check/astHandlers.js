@@ -293,6 +293,7 @@ function handleTSEnumDeclaration(path, state, filePath) {
  * @param {string} filePath - The file path of the current file being processed.
  */ 
 function handleStyledComponent(path, state, filePath) {  
+    console.log('style component declaration detected:', path.node.type)
     if (isStyledComponent(path)) {  
         const tag = path.get('tag');  
   
@@ -824,17 +825,18 @@ function handleClassProperty(path, state, filePath) {
  * @param {State} state - The state object tracking encountered elements.  
  * @param {string} filePath - The file path for reporting errors.  
  */  
-function handleHooksAndEffects(path, state, filePath) {  
-    console.log('Hook or effect detected:', path.node.type);
-    
+const handleHooksAndEffects = (path, state, filePath) => {  
+    console.log('Hook or effect detected:', path.node.type);  
+  
     const currentState = state.functionComponentState.insideReactComponent ? state.functionComponentState : state.topLevelState;  
-
+  
     if (path.isCallExpression()) {  
         const calleeName = path.node.callee.name;  
         // Identify hooks and effects  
         const hooks = ['useState', 'useReducer', 'useRef', 'useCallback', 'useMemo', 'useEffect', 'useLayoutEffect', 'useContext', 'useImperativeHandle', 'useDebugValue'];  
         const stateHooks = ['useState', 'useReducer'];  
         const effectHooks = ['useEffect', 'useLayoutEffect'];  
+  
         // Check for state hooks  
         if (stateHooks.includes(calleeName)) {  
             if (currentState.hasEffects || currentState.hasHelperFunctions) {  
@@ -842,6 +844,7 @@ function handleHooksAndEffects(path, state, filePath) {
             }  
             currentState.hasStateHooks = true;  
         }  
+  
         // Check for effects  
         if (effectHooks.includes(calleeName)) {  
             if (currentState.hasHelperFunctions) {  
@@ -849,6 +852,7 @@ function handleHooksAndEffects(path, state, filePath) {
             }  
             currentState.hasEffects = true;  
         }  
+  
         // Check for other hooks  
         if (hooks.includes(calleeName) && !stateHooks.includes(calleeName) && !effectHooks.includes(calleeName)) {  
             if (currentState.hasEffects || currentState.hasHelperFunctions) {  
@@ -857,17 +861,37 @@ function handleHooksAndEffects(path, state, filePath) {
             currentState.hasHooks = true;  
         }  
     }  
+  
     // Ensure helper functions are declared after hooks and effects  
-    if (p =>   
-        p.isFunctionDeclaration() || p.isFunctionExpression() || 
-        p.isArrowFunctionExpression() || p.isClassMethod() ) {  
+    if (path.isFunctionDeclaration() || path.isFunctionExpression() || path.isArrowFunctionExpression() || path.isClassMethod()) {  
         if (currentState.hasStateHooks || currentState.hasEffects || currentState.hasHooks) {  
             const functionName = path.node.id ? path.node.id.name : 'Anonymous Function';  
             reportError(path.node, `Helper function ${functionName} should be declared after hooks and effects.`, filePath);  
         }  
         currentState.hasHelperFunctions = true;  
     }  
+};  
+
+function handleContextCreation(path, state, filePath) {  
+    console.log('Context creation detected:', path.node.type);  
+  
+    if (state.hasConstants || state.hasHelperFunctions ||   
+        state.hasCustomHooks || state.hasStyledComponents ||   
+        state.hasInterfaces || state.hasTypes ||   
+        state.hasEnums || state.hasMainComponent ||   
+        state.hasHandlers || state.hasHooks ||   
+        state.hasReactComponent || state.hasPropTypes ||   
+        state.hasDefaultProps || state.hasExports) {  
+          
+        const errorMessage = generateErrorMessage("Context creation", state, filePath);  
+        if (errorMessage) {  
+            reportError(path.node, errorMessage, filePath);  
+        }  
+    }  
+    state.hasContexts = true;  
 }  
+
+
 
 /**
  * Determines if a given path has a 'disable-check' comment associated with it.
@@ -979,6 +1003,7 @@ handleClassComponent,
 handleClassMethod,  
 handleClassProperty,  
 handleHooksAndEffects,  
+handleContextCreation,
 };  
 
 

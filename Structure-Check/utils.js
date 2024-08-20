@@ -536,12 +536,12 @@ function isFunctionalComponent(path) {
   
         // Check if the init is an arrow function or a regular function  
         if (t.isArrowFunctionExpression(init) || t.isFunctionExpression(init)) {  
-            // Detect if this is possibly a React component based on JSX  
-            // or React.createElement being returned (simplified heuristic)  
             const body = init.body;  
-            if (t.isBlockStatement(body) && body.body.some(statement => t.isReturnStatement(statement) &&  
-                (t.isJSXElement(statement.argument) || isReactCreateElementCall(statement.argument)))) {  
-                return true;  
+            if (t.isBlockStatement(body)) {  
+                const returnStatement = body.body.find(t.isReturnStatement);  
+                if (returnStatement && (t.isJSXElement(returnStatement.argument) || isReactCreateElementCall(returnStatement.argument))) {  
+                    return true;  
+                }  
             } else if (t.isJSXElement(body) || isReactCreateElementCall(body)) {  
                 return true;  
             }  
@@ -549,6 +549,7 @@ function isFunctionalComponent(path) {
     }  
     return false;  
 }  
+
   
 /**
  * Determines if a given node represents a call to React.createElement.
@@ -797,36 +798,51 @@ function findLastImportIndex(bodyNodes) {
  */ 
 function recognizeType(path, state, filePath) {  
     if (isVariableDeclarator(path) && isCustomHook(path.get('init'))) {  
+        console.log('Detected Custom Hook:', path.toString());  
         return 'customHook';  
     } else if (isMainFunctionComponent(path, state, filePath)) {  
+        console.log('Detected Main Function Component:', path.toString());  
         return 'mainFunctionComponent';  
     } else if (path.isFunctionDeclaration()) {  
         if (isFunctionalComponent(path)) {  
+            console.log('Detected Functional Component:', path.toString());  
             return 'functionalComponent';  
         }  
-        return 'helperFunction'; // Recognize normal functions as helper functions  
+        return 'helperFunction';   
     } else if (path.isArrowFunctionExpression() || path.isFunctionExpression()) {  
         if (isReactComponent(path.parentPath).isComponent) {  
+            console.log('Detected Functional Component (Arrow/Function Expression):', path.toString());  
             return 'functionalComponent';  
         }  
         return 'expressionFunction';  
     } else if (isGlobalConstant(path)) {  
+        console.log('Detected Global Constant:', path.toString());  
         return 'globalConstant';  
     } else if (isLocalConstant(path)) {  
+        console.log('Detected Local Constant:', path.toString());  
         return 'localConstant';  
     } else if (path.isVariableDeclarator()) {  
+        if (isFunctionalComponent(path)) {  
+            console.log('Detected Functional Component (Variable Declarator):', path.toString());  
+            return 'functionalComponent';  
+        }  
         return 'variableDeclarator';  
     } else if (path.isTSInterfaceDeclaration()) {  
+        console.log('Detected TS Interface Declaration:', path.toString());  
         return 'TSInterfaceDeclaration';  
     } else if (path.isTSTypeAliasDeclaration()) {  
+        console.log('Detected TS Type Alias Declaration:', path.toString());  
         return 'TSTypeAliasDeclaration';  
     } else if (path.isTSEnumDeclaration()) {  
+        console.log('Detected TS Enum Declaration:', path.toString());  
         return 'TSEnumDeclaration';  
     } else {  
         console.warn('Recognize type function is not implemented yet', path.node.type);  
     }  
     return 'unknown';  
 }  
+
+  
   
 /**
  * Checks the order of context usage within a given path, ensuring that useContext is called 

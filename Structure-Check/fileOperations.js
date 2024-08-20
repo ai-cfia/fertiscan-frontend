@@ -88,14 +88,21 @@ const parseFile = (content) => {
 };
 
 /**
- * Reads the content of a file synchronously.
- *
- * @function readFileContent
- * @param {string} filePath - The path of the file to read.
+ * Reads the content of a given file synchronously.
+ * @param {string} filePath - The path to the file to read.
  * @returns {string} The content of the file.
- * @throws Will throw an error if the file cannot be read.
  */
-const readFileContent = (filePath) => readFileSync(filePath, 'utf-8');
+const readFileContent = (filePath) => {
+    try {
+        const resolvedPath = path.resolve(filePath);
+        console.log(`Reading file: ${resolvedPath}`); // Debugging log
+        const content = fs.readFileSync(resolvedPath, 'utf-8');
+        return content;
+    } catch (error) {
+        console.error(`Error reading file ${filePath}:`, error);
+        throw error;
+    }
+};
 
 /**
  * Reverts a file to its original state using the latest backup.

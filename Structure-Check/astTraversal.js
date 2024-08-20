@@ -25,6 +25,7 @@ const {
     handleClassMethod,  
     handleClassProperty,  
     handleHooksAndEffects,
+    handleContextCreation,
 } = require('./astHandlers.js');  
 const { isReactComponent, isCustomHook, isGlobalConstant,  
     isLocalConstant, isFunctionExpression,  
@@ -57,7 +58,7 @@ const { codeFrameColumns } = require("@babel/code-frame");
  * @throws Will log an error and exit the process if there is an issue reading the file.
  */
 const checkFile = async (filePath, state) => {  
-    console.log(`Reading file: ${filePath}`);    
+    console.log(`Reading file: ${filePath}`);  
     try {  
         const content = readFileSync(filePath, 'utf-8');  
         const ast = parseFile(content);  
@@ -68,10 +69,10 @@ const checkFile = async (filePath, state) => {
         if (state.hasMainComponent) {  
             const mainComponentName = getMainComponentNameFromFileName(filePath);  
             if (!isExportDeclarationWithName(state.mainComponentPath, mainComponentName)) {  
-                logError(state.mainComponentPath.node, 'Main component name does not match file name.', filePath);  
+                reportError(state.mainComponentPath.node, 'Main component name does not match file name.', filePath);  
             }  
         } else {  
-            logError(null, 'No main component detected. The main (Function/Component/Class) should match the file name.', filePath);  
+            reportError(null, 'No main component detected. The main (Function/Component/Class) should match the file name.', filePath);  
         }  
   
         console.log(`File ${filePath} checked.`);  
@@ -81,6 +82,7 @@ const checkFile = async (filePath, state) => {
         process.exit(1);  
     }  
 };  
+
   
 //////////////////////
 //////////////////////
@@ -97,100 +99,155 @@ const checkFile = async (filePath, state) => {
  * @param {string} filePath - The path of the source file currently being processed by Babel, which can be used for context in reporting.  
  * @returns {Object} An object defining visitor methods for the traversal, linking node types to their respective handling functions.  
  */  
-const setupTraverse = (state, filePath) => {  
+const setupTraverse = (state, filePath, sections) => {  
     return {  
-        ImportDeclaration(path) { 
+        ImportDeclaration(path) {  
             if (!hasDisableCheckComment(path)) {  
-                handleImportDeclaration(path, state, filePath);
-            } 
+                console.log('ImportDeclaration:', path.toString());  
+                handleImportDeclaration(path, state, filePath);  
+                sections.imports.push(path.node);  
+                path.remove();  
+            }  
         },  
-
-        VariableDeclaration(path) {
+        VariableDeclaration(path) {  
             if (!hasDisableCheckComment(path)) {  
-                // Todo Check about this not sure if this is needed
+                console.log('VariableDeclaration:', path.toString());  
+  
                 if (isMainFunctionComponent(path, state, filePath)) {  
                     handleMainReactComponent(path, state, filePath);  
-                  }
-                  else{
-                    path.get('declarations').forEach(
-                        declaratorPath => {
-                        const type = recognizeType(declaratorPath, state, filePath);
-                            processFunctionType(type, declaratorPath, state, filePath); 
-                        }
-                    );
-                }
-            }
+                    sections.mainComponent = path.node;  
+                }   
+                else if (isGlobalConstant(path)) {  
+                    handleGlobalConstantDeclaration(path, state, filePath);  
+                    sections.constants.push(path.node);  
+                }   
+                else if (isLocalConstant(path)) {  
+                    const parentFunction = path.getFunctionParent();  
+                    if (parentFunction) {  
+                        const functionBodyNode = parentFunction.node.body;  
+                        if (sections.localConstants.has(functionBodyNode)) {  
+                            sections.localConstants.get(functionBodyNode).push(path.node);  
+                        } else {  
+                            sections.localConstants.set(functionBodyNode, [path.node]);  
+                        }  
+                    } else {  
+                        sections.constants.push(path.node);  
+                    }  
+                }   
+                else if (isContextCreation(path)) {  
+                    handleContextCreation(path, state, filePath);  
+                    sections.contexts.push(path.node);  
+                }   
+                else {  
+                    sections.constants.push(path.node);  
+                    path.get('declarations').forEach(declaratorPath => {  
+                        const type = recognizeType(declaratorPath, state, filePath);  
+                        console.log('VariableDeclaration Type:', type, declaratorPath.toString());  
+                        processFunctionType(type, declaratorPath, state, filePath);  
+                    });  
+                }  
+                path.remove();  
+            }  
         },  
-
-        TSTypeAliasDeclaration(path) {
+        TSTypeAliasDeclaration(path) {  
             if (!hasDisableCheckComment(path)) {  
-                handleTSTypeAliasDeclaration(path, state, filePath);
-            }
+                console.log('TSTypeAliasDeclaration:', path.toString());  
+                handleTSTypeAliasDeclaration(path, state, filePath);  
+                sections.types.TSTypeAliasDeclaration.push(path.node);  
+                path.remove();  
+            }  
         },  
-
-        TSInterfaceDeclaration(path) {
+        TSInterfaceDeclaration(path) {  
             if (!hasDisableCheckComment(path)) {  
-                handleTSInterfaceDeclaration(path, state, filePath);
-            }
+                console.log('TSInterfaceDeclaration:', path.toString());  
+                handleTSInterfaceDeclaration(path, state, filePath);  
+                sections.types.TSInterfaceDeclaration.push(path.node);  
+                path.remove();  
+            }  
         },  
-
-        TSEnumDeclaration(path) {
-            if (!hasDisableCheckComment(path)) {
-                handleTSEnumDeclaration(path, state, filePath);
-            }
+        TSEnumDeclaration(path) {  
+            if (!hasDisableCheckComment(path)) {  
+                console.log('TSEnumDeclaration:', path.toString());  
+                handleTSEnumDeclaration(path, state, filePath);  
+                sections.types.TSEnumDeclaration.push(path.node);  
+                path.remove();  
+            }  
         },  
-
-        FunctionDeclaration(path) {
-            if (!hasDisableCheckComment(path)) {
+        FunctionDeclaration(path) {  
+            if (!hasDisableCheckComment(path)) {  
+                console.log('FunctionDeclaration:', path.toString());  
                 if (isMainFunctionComponent(path, state, filePath)) {  
-                    handleMainReactComponent(path, state, filePath);
-                } else{  
+                    handleMainReactComponent(path, state, filePath);  
+                    sections.mainComponent = path.node;  
+                } else {  
+                    handleHelperFunctionDeclaration(path, state, filePath);  
                     const type = recognizeType(path, state, filePath);  
+                    console.log('FunctionDeclaration Type:', type, path.toString());  
+                    sections.helperFunctions.push(path.node);  
                     processFunctionType(type, path, state, filePath);  
                 }  
-            }
-        },
-
-        'ArrowFunctionExpression|FunctionExpression': {
-            enter(path) {
+                path.remove();  
+            }  
+        },  
+        'ArrowFunctionExpression|FunctionExpression': {  
+            enter(path) {  
                 if (!hasDisableCheckComment(path)) {  
+                    console.log('ArrowFunctionExpression|FunctionExpression:', path.toString());  
                     if (path.parentPath.isVariableDeclarator()) {  
                         const type = recognizeType(path.parentPath, state, filePath);  
+                        console.log('ArrowFunctionExpression|FunctionExpression Type:', type, path.parentPath.toString());  
                         processFunctionType(type, path.parentPath, state, filePath);  
+                        if (type === 'functionalComponent') {  
+                            sections.components.push(path.parentPath.node);  
+                        } else if (type === 'customHook') {  
+                            sections.helperFunctions.push(path.parentPath.node);  
+                        } else {  
+                            sections.helperFunctions.push(path.parentPath.node);  
+                        }  
                     }  
+                    path.parentPath.remove();  
                 }  
-            } 
+            }  
         },  
-
-        ClassDeclaration(path) { 
-            if (!hasDisableCheckComment(path)) {    
+        ClassDeclaration(path) {  
+            if (!hasDisableCheckComment(path)) {  
+                console.log('ClassDeclaration:', path.toString());  
                 if (isMainFunctionComponent(path, state, filePath)) {  
-                  handleMainReactComponent(path, state, filePath);    
+                    handleMainReactComponent(path, state, filePath);  
+                    sections.mainComponent = path.node;  
                 } else {  
                     handleClassComponent(path, state, filePath);  
+                    sections.classComponents.push(path.node);  
                 }  
-              }            
+                path.remove();  
+            }  
         },  
-
-        CallExpression(path) { 
+        CallExpression(path) {  
             if (!hasDisableCheckComment(path)) {  
-                handleHooksAndEffects(path, state, filePath);
-            } 
+                console.log('CallExpression:', path.toString());  
+                handleHooksAndEffects(path, state, filePath);  
+                path.remove(); // Remove the processed call expression node from AST if necessary.  
+            }  
         },  
-
-        TaggedTemplateExpression(path) { 
+        TaggedTemplateExpression(path) {  
             if (!hasDisableCheckComment(path)) {  
-                handleStyledComponent(path, state, filePath); 
-            }
+                console.log('TaggedTemplateExpression:', path.toString());  
+                handleStyledComponent(path, state, filePath);  
+                path.remove(); // Remove the processed tagged template expression node from AST if necessary.  
+            }  
         },  
-
-        'ExportNamedDeclaration|ExportDefaultDeclaration'(path) { 
-            if (!hasDisableCheckComment(path)) {
-                handleExportDeclarations(path, state, filePath);
-            } 
+        'ExportNamedDeclaration|ExportDefaultDeclaration'(path) {  
+            if (!hasDisableCheckComment(path)) {  
+                console.log('ExportNamedDeclaration|ExportDefaultDeclaration:', path.toString());  
+                handleExportDeclarations(path, state, filePath);  
+                sections.exports.push(path.node);  
+                path.remove();  
+            }  
         },  
     };  
 };  
+
+
 
   
 //////////////////////
@@ -324,46 +381,47 @@ const fixFile = async (filePath) => {
  */
 function processFunctionType(type, path, state, filePath) {  
     switch (type) {  
-      case 'customHook':  
-        handleCustomHookDeclaration(path, state, filePath);  
-        break;  
-      case 'mainFunctionComponent':  
-        handleMainReactComponent(path, state, filePath);  
-        break;  
-      case 'helperFunction':  
-        handleHelperFunctionDeclaration(path, state, filePath);  
-        break;  
-      case 'arrowFunction':  
-      case 'expressionFunction':  
-        handleExpressionFunctionDeclaration(path, state, filePath);  
-        break;  
-      case 'globalConstant':  
-        handleGlobalConstantDeclaration(path, state, filePath);  
-        break;  
-      case 'localConstant':  
-        handleLocalConstantDeclaration(path, state, filePath);  
-        break;  
-      case 'variableDeclarator':  
-        handleVariableDeclarator(path, state, filePath);  
-        break;  
-      case 'functionalComponent':  
-        handleFunctionalComponent(path, state, filePath);  
-        break;  
-      case 'TSInterfaceDeclaration':  
-        handleTSInterfaceDeclaration(path, state, filePath);  
-        break;  
-      case 'TSTypeAliasDeclaration':  
-        handleTSTypeAliasDeclaration(path, state, filePath);  
-        break;  
-      case 'TSEnumDeclaration':  
-        handleTSEnumDeclaration(path, state, filePath);  
-        break;  
-      case 'unknown':  
-      default:  
-        console.log('Unrecognized function type. Please add this function type to the structure code script.', path.node.type);  
-        break;  
+        case 'customHook':  
+            handleCustomHookDeclaration(path, state, filePath);  
+            break;  
+        case 'mainFunctionComponent':  
+            handleMainReactComponent(path, state, filePath);  
+            break;  
+        case 'helperFunction':  
+            handleHelperFunctionDeclaration(path, state, filePath);  
+            break;  
+        case 'arrowFunction':  
+        case 'expressionFunction':  
+            handleFunctionExpressionsAndArrowFunctions(path, state, filePath);  
+            break;  
+        case 'globalConstant':  
+            handleGlobalConstantDeclaration(path, state, filePath);  
+            break;  
+        case 'localConstant':  
+            handleLocalConstantDeclaration(path, state, filePath);  
+            break;  
+        case 'variableDeclarator':  
+            handleVariableDeclarator(path, state, filePath);  
+            break;  
+        case 'functionalComponent':  
+            handleFunctionalComponent(path, state, filePath);  
+            break;  
+        case 'TSInterfaceDeclaration':  
+            handleTSInterfaceDeclaration(path, state, filePath);  
+            break;  
+        case 'TSTypeAliasDeclaration':  
+            handleTSTypeAliasDeclaration(path, state, filePath);  
+            break;  
+        case 'TSEnumDeclaration':  
+            handleTSEnumDeclaration(path, state, filePath);  
+            break;  
+        case 'unknown':  
+        default:  
+            console.log('Unrecognized function type. Please add this function type to the structure code script.', path.node.type);  
+            break;  
     }  
 }  
+
 
 /**
  * Determines if a given path has a 'disable-check' comment associated with it.
@@ -432,110 +490,49 @@ function hasDisableCheckComment(path) {
  * @returns {Array} returns.exports - An array of export statements.
  * @returns {Object|null} returns.mainComponent - The main component, if detected.
  */  
-function analyzeCode(ast, filePath) {    
-    const sections = {    
-        imports: [],    
-        localConstants: new Map(),    
-        constants: [],    
-        contexts: [],    
-        hooks: [],    
-        helperFunctions: [],    
-        functions: [],    
-        components: [],    
-        classComponents: [],    
-        types: {   
-            TSInterfaceDeclaration: [],   
-            TSTypeAliasDeclaration: [],   
-            TSEnumDeclaration: []   
-        },    
-        exports: [],    
-        mainComponent: null,    
-    };    
-    const fileContent = readFileContent(filePath);
-    traverse(ast, {
-        enter(path) {
-          path.node.code = codeFrameColumns(fileContent, path.node.loc, { highlightCode: true });
-        },
-        ImportDeclaration(path) {    
-            sections.imports.push(path.node);    
-            path.remove();    
-        },    
-        VariableDeclaration(path) {    
-            if (isGlobalConstant(path)) {    
-                sections.constants.push(path.node);    
-            } else if (isLocalConstant(path)) {    
-                const parentFunction = path.getFunctionParent();    
-                if (parentFunction) {    
-                    const functionBodyNode = parentFunction.node.body;    
-                    if (sections.localConstants.has(functionBodyNode)) {    
-                        sections.localConstants.get(functionBodyNode).push(path.node);    
-                    } else {    
-                        sections.localConstants.set(functionBodyNode, [path.node]);    
-                    }    
-                } else {    
-                    sections.constants.push(path.node);    
-                }    
-            } else if (isContextCreation(path)) {    
-                sections.contexts.push(path.node);    
-            } else {    
-                sections.constants.push(path.node);    
-            }    
-            path.remove();    
-        },    
-        TSTypeAliasDeclaration(path) {    
-            sections.types.TSTypeAliasDeclaration.push(path.node);    
-            path.remove();    
-        },    
-        TSInterfaceDeclaration(path) {    
-            sections.types.TSInterfaceDeclaration.push(path.node);    
-            path.remove();    
-        },    
-        TSEnumDeclaration(path) {    
-            sections.types.TSEnumDeclaration.push(path.node);    
-            path.remove();    
-        },    
-        FunctionDeclaration(path) {    
-            if (isMainFunctionComponent(path, {}, getMainComponentNameFromFileName(filePath))) {    
-                sections.mainComponent = path.node;    
-            } else {    
-                sections.helperFunctions.push(path.node);    
-            }    
-            path.remove();    
-        },    
-        ArrowFunctionExpression(path) {    
-            if (isReactComponent(path.parentPath) && path.parentPath.isVariableDeclarator()) {    
-                if (isMainFunctionComponent(path.parentPath, {}, getMainComponentNameFromFileName(filePath))) {    
-                    sections.mainComponent = path.parentPath.parent;    
-                } else {    
-                    sections.components.push(path.parentPath.node);    
-                }    
-            } else if (isCustomHook(path.parentPath)) {    
-                sections.helperFunctions.push(path.parentPath.node);    
-            } else {    
-                sections.helperFunctions.push(path.parentPath.node);    
-            }    
-            path.parentPath.remove();    
-        },    
-        ClassDeclaration(path) {    
-            if (isClassComponent(path)) {    
-                sections.classComponents.push(path.node);    
-            } else {    
-                sections.helperFunctions.push(path.node);    
-            }    
-            path.remove();    
-        },   
-        ExportNamedDeclaration(path) {    
-            sections.exports.push(path.node);    
-            path.remove();    
-        },    
-        ExportDefaultDeclaration(path) {    
-            sections.exports.push(path.node);    
-            path.remove();    
-        },    
-    });    
+
+// Todo : make sur this is revelant since it make traverse and setup traverse already do it
+function analyzeCode(ast, filePath) {  
+    const sections = {  
+        imports: [],  
+        localConstants: new Map(),  
+        constants: [],  
+        contexts: [],  
+        hooks: [],  
+        helperFunctions: [],  
+        functions: [],  
+        components: [],  
+        classComponents: [],  
+        types: {  
+            TSInterfaceDeclaration: [],  
+            TSTypeAliasDeclaration: [],  
+            TSEnumDeclaration: []  
+        },  
+        exports: [],  
+        mainComponent: null,  
+    };  
+     
   
-    return sections;    
+    const state = createStateTracker();  
+    const fileContent = readFileContent(filePath);  
+  
+    traverse(ast, setupTraverse(state, filePath, sections));  
+  
+    // Check if the main component's name matches the file name  
+    if (state.hasMainComponent) {  
+        const mainComponentName = getMainComponentNameFromFileName(filePath);  
+        if (!isExportDeclarationWithName(state.mainComponentPath, mainComponentName)) {  
+            reportError(state.mainComponentPath.node, 'Main component name does not match file name.', filePath);  
+        }  
+    } else {  
+        reportError(null, 'No main component detected. The main (Function/Component/Class) should match the file name.', filePath);  
+    }  
+  
+    return sections;  
 }  
+
+
+
    
 
 module.exports = {  

@@ -29,18 +29,18 @@ const errors = [];
  * @param {string[]} [extraInfo.suggestions] - Suggestions for resolving the error.  
  * @param {string} [extraInfo.fix] - Suggested fix for the error.  
  */  
-const logError = (node, message, filePath, extraInfo = {}) => {  
-    const errorMessage = [  
-        `[${node && node.type ? node.type : 'Error'}] - Error in ${filePath}:${node && node.loc && node.loc.start ? `${node.loc.start.line}:${node.loc.start.column}` : 'Unknown location'}`,  
-        `Message: ${message}`,  
-        node && node.type ? `Node Type: ${node.type}` : '',  
-        extraInfo.suggestions ? `Suggestions: ${extraInfo.suggestions.join(', ')}` : '',  
-        extraInfo.fix ? `Suggested Fix: ${extraInfo.fix}` : ''  
-    ].filter(Boolean).join('\n');  
-  
-    console.error(errorMessage);  
-    errors.push({ node, errorMessage, filePath, extraInfo });  
-};  
+const logError = (node, message, filePath, extraInfo = {}) => {    
+    const errorMessage = [    
+        `[${node && node.type ? node.type : 'Error'}] - Error in ${filePath || 'Unknown file'}:${node && node.loc && node.loc.start ? `${node.loc.start.line}:${node.loc.start.column}` : 'Unknown location'}`,    
+        `Message: ${message}`,    
+        node && node.type ? `Node Type: ${node.type}` : '',    
+        extraInfo.suggestions ? `Suggestions: ${extraInfo.suggestions.join(', ')}` : '',    
+        extraInfo.fix ? `Suggested Fix: ${extraInfo.fix}` : ''    
+    ].filter(Boolean).join('\n');    
+    
+    console.error(errorMessage);    
+    errors.push({ node, errorMessage, filePath, extraInfo });    
+};    
   
 /**  
  * Generates an error message based on the provided description, state, and file path.  
