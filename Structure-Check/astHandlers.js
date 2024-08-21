@@ -1,38 +1,37 @@
-const t = require('@babel/types');  
+const { t, logError, generateErrorMessage, reportError } = require('./common');    
 const {   
-    enterReactComponent,   
+    enterReactComponent,     
     exitReactComponent   
-} = require('./stateManagement');  
-const { logError, generateErrorMessage, 
-    reportError, errors 
-} = require('./errorHandling');  
-
-const {sections} = require('./astTraversal');
+} = require('./stateManagement'); 
 
 const {   
-    isReactComponent,  
-    isCustomHook,  
-    isGlobalConstant,  
-    isLocalConstant,  
-    isFunctionExpression,  
-    isArrowFunctionExpression,  
-    isMainFunctionComponent,  
-    isExportDeclarationWithName,  
-    IsTopOfScope,  
-    isReactFunctionalComponent,  
-    isReactCreateElementCall,  
-    isVariableDeclarator,  
-    isContextCreation,  
-    isReassignment,  
-    isClassComponent,
-    isStyledComponent,
-    getMainComponentNameFromFileName,  
-    findLastImportIndex,  
-    recognizeType,  
-    checkForContextUsageOrder,  
-    checkDeclarationKeyword,  
-    reportVariablePlacementIssue  
-} = require('./utils');  
+    sections   
+} = require('./astTraversal');  
+
+const {   
+    isReactComponent,    
+    isCustomHook,    
+    isGlobalConstant,    
+    isLocalConstant,    
+    isFunctionExpression,    
+    isArrowFunctionExpression,    
+    isMainFunctionComponent,    
+    isExportDeclarationWithName,    
+    IsTopOfScope,    
+    isReactFunctionalComponent,    
+    isReactCreateElementCall,    
+    isVariableDeclarator,    
+    isContextCreation,    
+    isReassignment,    
+    isClassComponent,  
+    isStyledComponent,  
+    getMainComponentNameFromFileName,    
+    findLastImportIndex,    
+    recognizeType,    
+    checkForContextUsageOrder,    
+    checkDeclarationKeyword,    
+    reportVariablePlacementIssue   
+} = require('./utils');   
 
 
   
@@ -303,7 +302,7 @@ function handleTSEnumDeclaration(path, state, filePath,sections) {
  */ 
 function handleStyledComponent(path, state, filePath,sections) {  
     console.log('style component declaration detected:', path.node.type)
-    //sections.styledComponent.push(path.node);
+    sections.styledComponent.push(path.node);
     if (isStyledComponent(path)) {  
         const tag = path.get('tag');  
   

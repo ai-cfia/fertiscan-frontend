@@ -1,82 +1,88 @@
-const { parseFile, readFileContent } = require('./fileOperations');
-const traverse = require('@babel/traverse').default;  
-const t = require('@babel/types');
-const generate = require('@babel/generator').default;  
-const { createStateTracker, enterReactComponent, exitReactComponent } = require('./stateManagement');  
-const {  
-    handleImportDeclaration,  
-    handleVariableDeclarator,  
-    handleFunctionalComponent,  
-    handleGlobalConstantDeclaration,  
-    handleTSInterfaceDeclaration,  
-    handleTSTypeAliasDeclaration,  
-    handleTSEnumDeclaration,  
-    handleStyledComponent,  
-    handleCustomHookDeclaration,  
-    handleLocalConstantDeclaration,  
-    handleMainReactComponent,  
-    handleHelperFunctionDeclaration,  
-    handleFunctionExpressionsAndArrowFunctions,  
-    handleExportDeclarations,  
-    handleJSXElement,  
-    handleReturnStatement,  
-    handleUseContext,  
-    handleClassComponent,  
-    handleClassMethod,  
-    handleClassProperty,  
-    handleHooksAndEffects,
-    handleContextCreation,
-} = require('./astHandlers.js');  
-const { isReactComponent, isCustomHook, isGlobalConstant,  
-    isLocalConstant, isFunctionExpression,  
-    isArrowFunctionExpression, isMainFunctionComponent,  
-    isExportDeclarationWithName, IsTopOfScope,  
-    isReactFunctionalComponent,  
-    isReactCreateElementCall, isVariableDeclarator,  
-    isContextCreation, isReassignment,  
-    getMainComponentNameFromFileName, findLastImportIndex,  
-    recognizeType, checkForContextUsageOrder,  
-    checkDeclarationKeyword, reportVariablePlacementIssue,  
-} = require('./utils'); 
-const fs = require('fs');  
-const readFileSync = fs.readFileSync; 
+const { parseFile, readFileContent } = require('./fileOperations');  
+const traverse = require('@babel/traverse').default;    
+const { t, logError, generateErrorMessage, reportError } = require('./common');  
+const { createStateTracker, enterReactComponent, exitReactComponent } = require('./stateManagement');    
+const generate = require('@babel/generator').default;   
+const {   
+    handleImportDeclaration,    
+    handleVariableDeclarator,    
+    handleFunctionalComponent,    
+    handleGlobalConstantDeclaration,    
+    handleTSInterfaceDeclaration,    
+    handleTSTypeAliasDeclaration,    
+    handleTSEnumDeclaration,    
+    handleStyledComponent,    
+    handleCustomHookDeclaration,    
+    handleLocalConstantDeclaration,    
+    handleMainReactComponent,    
+    handleHelperFunctionDeclaration,    
+    handleFunctionExpressionsAndArrowFunctions,    
+    handleExportDeclarations,    
+    handleJSXElement,    
+    handleReturnStatement,    
+    handleUseContext,    
+    handleClassComponent,    
+    handleClassMethod,    
+    handleClassProperty,    
+    handleHooksAndEffects,  
+    handleContextCreation,  
+} = require('./astHandlers.js'); 
+const {   
+    isReactComponent,   
+    isCustomHook,   
+    isGlobalConstant,   
+    isLocalConstant,   
+    isFunctionExpression,   
+    isArrowFunctionExpression,   
+    isMainFunctionComponent,   
+    isExportDeclarationWithName,   
+    IsTopOfScope,   
+    isReactFunctionalComponent,   
+    isReactCreateElementCall,   
+    isVariableDeclarator,   
+    isContextCreation,   
+    isReassignment,   
+    getMainComponentNameFromFileName,   
+    findLastImportIndex,   
+    recognizeType,   
+    checkForContextUsageOrder,   
+    checkDeclarationKeyword,   
+    reportVariablePlacementIssue   
+} = require('./utils');
 
-const { logError, generateErrorMessage, 
-    reportError, errors 
-} = require('./errorHandling');
-const { codeFrameColumns } = require("@babel/code-frame");
-const { classProperty } = require('@babel/types');
-const { variableDeclaration } = require('@babel/types');
+const fs = require('fs');    
+const readFileSync = fs.readFileSync;  
+
 
 // Define the sections object globally  
-const sections = {  
-    imports: [],  
-    localConstants: new Map(),  
-    constants: [],  
-    contexts: [],  
-    hooks: [], 
-    stateHooks:[], 
-    effectHooks:[],
-    handlers:[],
-    helperFunctions: [],  
-    functions: [],  
-    components: [],  
-    classComponents: [], 
-    classMethod: [],
-    classProperty:[], 
-    return:[],
-    styledComponent:[],
-    functionalComponent:[],
-
-    types: {  
-        TSInterfaceDeclaration: [],  
-        TSTypeAliasDeclaration: [],  
-        TSEnumDeclaration: []  
-    },  
-    exports: [],  
-    mainComponent: null,  
-    nodes: [] // Add nodes array  
-};  
+const sections = {    
+    imports: [],    
+    localConstants: new Map(),    
+    constants: [],    
+    contexts: [],    
+    hooks: [],   
+    stateHooks:[],   
+    effectHooks:[],  
+    handlers:[],  
+    helperFunctions: [],    
+    functions: [],    
+    components: [],    
+    classComponents: [],   
+    classMethod: [],  
+    classProperty:[],   
+    return:[],  
+    styledComponent:[],  
+    functionalComponent:[],  
+  
+    types: {    
+        TSInterfaceDeclaration: [],    
+        TSTypeAliasDeclaration: [],    
+        TSEnumDeclaration: []    
+    },    
+    exports: [],    
+    mainComponent: null,    
+    nodes: []   
+};    
   
 /**
  * Checks the structure and naming conventions of a given file.
@@ -89,31 +95,61 @@ const sections = {
  * @returns {Promise<void>} A promise that resolves when the file has been checked.
  * @throws Will log an error and exit the process if there is an issue reading the file.
  */
-const checkFile = async (filePath, state) => {  
-    console.log(`Reading file: ${filePath}`);  
-    try {  
-        const content = readFileSync(filePath, 'utf-8');  
-        const ast = parseFile(content);  
+const checkFile = async (filePath, state) => {    
+    console.log(`Reading file: ${filePath}`);    
+    try {    
+        const content = readFileSync(filePath, 'utf-8');    
+        const ast = parseFile(content);    
   
-        traverse(ast, setupTraverse(state, filePath));  
+        const sections = {    
+            imports: [],    
+            localConstants: new Map(),    
+            constants: [],    
+            contexts: [],    
+            hooks: [],   
+            stateHooks:[],   
+            effectHooks:[],  
+            handlers:[],  
+            helperFunctions: [],    
+            functions: [],    
+            components: [],    
+            classComponents: [],   
+            classMethod: [],  
+            classProperty:[],   
+            return:[],  
+            styledComponent:[],  
+            functionalComponent:[],  
   
-        // Check if the main component's name matches the file name  
-        if (state.hasMainComponent) {  
-            const mainComponentName = getMainComponentNameFromFileName(filePath);  
-            if (!isExportDeclarationWithName(state.mainComponentPath, mainComponentName)) {  
-                reportError(state.mainComponentPath.node, 'Main component name does not match file name.', filePath);  
-            }  
-        } else {  
-            reportError(null, 'No main component detected. The main (Function/Component/Class) should match the file name.', filePath);  
-        }  
+            types: {    
+                TSInterfaceDeclaration: [],    
+                TSTypeAliasDeclaration: [],    
+                TSEnumDeclaration: []    
+            },    
+            exports: [],    
+            mainComponent: null,    
+            nodes: [] // Add nodes array    
+        };    
   
-        console.log(`File ${filePath} checked.`);  
-        console.log("------------------------------------------------------------\n");  
-    } catch (error) {  
-        console.error(`Error reading file ${filePath}: ${error.message}`);  
-        process.exit(1);  
-    }  
+        traverse(ast, setupTraverse(state, filePath, sections));    
+    
+        // Check if the main component's name matches the file name    
+        if (state.hasMainComponent) {    
+            const mainComponentName = getMainComponentNameFromFileName(filePath);    
+            if (!isExportDeclarationWithName(state.mainComponentPath, mainComponentName)) {    
+                reportError(state.mainComponentPath.node, 'Main component name does not match file name.', filePath);    
+            }    
+        } else {    
+            reportError(null, 'No main component detected. The main (Function/Component/Class) should match the file name.', filePath);    
+        }    
+    
+        console.log(`File ${filePath} checked.`);    
+        console.log("------------------------------------------------------------\n");    
+    } catch (error) {    
+        console.error(`Error reading file ${filePath}: ${error.message}`);    
+        process.exit(1);    
+    }    
 };  
+
 
   
 //////////////////////
@@ -154,7 +190,7 @@ const setupTraverse =(state, filePath,sections)=>{
                     handleContextCreation(path, state, filePath, sections);
                 }else {
                     path.get('declarations').forEach(declaratorPath => {
-                        const type = recognizeType(declaratorPath, state, filePath);
+                        const type = recognizeType(declaratorPath, state, filePath,sections);
                         processFunctionType(type, declaratorPath, state, filePath,sections);
                     });
                 }
@@ -185,7 +221,7 @@ const setupTraverse =(state, filePath,sections)=>{
                 }else {
                     handleHelperFunctionDeclaration(path, state, filePath,sections);
                     console.log("--------------------recognize type------------------")
-                    const type = recognizeType(path, state, filePath);
+                    const type = recognizeType(path, state, filePath,sections);
                     processFunctionType(type, path, state, filePath, sections);
                 }
                 path.remove();
@@ -226,7 +262,7 @@ const setupTraverse =(state, filePath,sections)=>{
         },
         TaggedTemplateExpression(path) {
             if (!hasDisableCheckComment(path)) {
-                handleStyledComponent(path, state, filePath);
+                handleStyledComponent(path, state, filePath,sections);
                 path.remove(); 
             }
         },

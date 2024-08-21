@@ -1,8 +1,7 @@
-const t = require('@babel/types');  
-const path = require('path');  
-const { logError, generateErrorMessage, 
-    reportError, errors 
-} = require('./errorHandling'); 
+const { t, logError, generateErrorMessage, reportError } = require('./common');    
+const path = require('path');    
+
+
   
 ///////////////////////////////
 ///////////////////////////////
@@ -517,6 +516,32 @@ function isReactFunctionalComponent(path) {
     return false; // Not a React functional component
 }
 
+/**  
+ * Checks if the node is a TypeScript Interface Declaration.  
+ * @param {Object} path - The Babel path object to check.  
+ * @returns {boolean} True if the node is a TypeScript Interface Declaration, false otherwise.  
+ */  
+function isTSInterfaceDeclaration(path) {  
+    return t.isTSInterfaceDeclaration(path.node);  
+}  
+  
+/**  
+ * Checks if the node is a TypeScript Type Alias Declaration.  
+ * @param {Object} path - The Babel path object to check.  
+ * @returns {boolean} True if the node is a TypeScript Type Alias Declaration, false otherwise.  
+ */  
+function isTSTypeAliasDeclaration(path) {  
+    return t.isTSTypeAliasDeclaration(path.node);  
+}  
+  
+/**  
+ * Checks if the node is a TypeScript Enum Declaration.  
+ * @param {Object} path - The Babel path object to check.  
+ * @returns {boolean} True if the node is a TypeScript Enum Declaration, false otherwise.  
+ */  
+function isTSEnumDeclaration(path) {  
+    return t.isTSEnumDeclaration(path.node);  
+} 
   
 /**
  * Determines if a given node represents a call to React.createElement.
@@ -755,53 +780,55 @@ function findLastImportIndex(bodyNodes) {
  *                   'variableDeclarator', 'TSInterfaceDeclaration', 'TSTypeAliasDeclaration', 
  *                   'TSEnumDeclaration', or 'unknown'.
  */ 
-function recognizeType(path, state, filePath) {  
-    if (isVariableDeclarator(path) && isCustomHook(path.get('init'))) {  
-        console.log('Detected Custom Hook:', path.toString());  
-        return 'customHook'; 
+function recognizeType(path, state, filePath) {    
+    if (isVariableDeclarator(path) && isCustomHook(path.get('init'))) {    
+        console.log('Detected Custom Hook:', path.toString());    
+        return 'customHook';   
+  
+    } else if (isMainFunctionComponent(path, state, filePath)) {    
+        console.log('Detected Main Function Component:', path.toString());    
+        return 'mainFunctionComponent';   
+  
+    } else if (isArrowFunctionExpression(path) || isFunctionExpression(path)) {    
+        if (isReactComponent(path.parentPath).isComponent) {    
+            console.log('Detected Functional Component (Arrow/Function Expression):', path.toString());    
+            return 'functionalComponent';    
+        }    
+        return 'expressionFunction';    
+  
+    } else if (isGlobalConstant(path)) {    
+        console.log('Detected Global Constant:', path.toString());    
+        return 'globalConstant';    
+  
+    } else if (isLocalConstant(path)) {    
+        console.log('Detected Local Constant:', path.toString());    
+        return 'localConstant';  
+  
+    } else if (isVariableDeclarator(path)) {  
+        if (isReactFunctionalComponent(path)) {    
+            console.log('Detected Functional Component (Variable Declarator):', path.toString());    
+            return 'functionalComponent';    
+        }    
+        return 'variableDeclarator';    
+  
+    } else if (isTSInterfaceDeclaration(path)) {    
+        console.log('Detected TS Interface Declaration:', path.toString());    
+        return 'TSInterfaceDeclaration';    
+  
+    } else if (isTSTypeAliasDeclaration(path)) {    
+        console.log('Detected TS Type Alias Declaration:', path.toString());    
+        return 'TSTypeAliasDeclaration';    
+  
+    } else if (isTSEnumDeclaration(path)) {    
+        console.log('Detected TS Enum Declaration:', path.toString());    
+        return 'TSEnumDeclaration';    
+  
+    } else {    
+        console.warn('Recognize type function is not implemented yet', path.node.type);    
+    }    
+    return 'unknown';    
+}    
 
-    } else if (isMainFunctionComponent(path, state, filePath)) {  
-        console.log('Detected Main Function Component:', path.toString());  
-        return 'mainFunctionComponent'; 
-
-    } else if (isArrowFunctionExpression(path) || isFunctionExpression(path)) {  
-        if (isReactComponent(path.parentPath).isComponent) {  
-            console.log('Detected Functional Component (Arrow/Function Expression):', path.toString());  
-
-            return 'functionalComponent';  
-        }  
-        return 'expressionFunction';  
-
-    } else if (isGlobalConstant(path)) {  
-        console.log('Detected Global Constant:', path.toString());  
-        return 'globalConstant';  
-
-    } else if (isLocalConstant(path)) {  
-        console.log('Detected Local Constant:', path.toString());  
-        return 'localConstant';
-
-    } else if (isVariableDeclarator(path)) {
-        if (isReactFunctionalComponent(path)) {  
-            console.log('Detected Functional Component (Variable Declarator):', path.toString());  
-            return 'functionalComponent';  
-        }  
-
-        return 'variableDeclarator';  
-
-    } else if (isTSInterfaceDeclaration()) {  
-        console.log('Detected TS Interface Declaration:', path.toString());  
-        return 'TSInterfaceDeclaration';  
-    } else if (isTSTypeAliasDeclaration()) {  
-        console.log('Detected TS Type Alias Declaration:', path.toString());  
-        return 'TSTypeAliasDeclaration';  
-    } else if (isTSEnumDeclaration()) {  
-        console.log('Detected TS Enum Declaration:', path.toString());  
-        return 'TSEnumDeclaration';  
-    } else {  
-        console.warn('Recognize type function is not implemented yet', path.node.type);  
-    }  
-    return 'unknown';  
-}  
 
   
   
@@ -940,27 +967,30 @@ function reportVariablePlacementIssue(variableName, path, issueType, filePath, n
     console.warn(logMessage);  
 }  
   
-module.exports = {  
-    isReactComponent,  
-    isCustomHook,  
-    isGlobalConstant,  
-    isLocalConstant,  
-    isFunctionExpression,  
-    isArrowFunctionExpression,  
-    isMainFunctionComponent,  
-    isExportDeclarationWithName,  
-    IsTopOfScope,  
-    isReactFunctionalComponent,    
-    isReactCreateElementCall,  
-    isVariableDeclarator,  
-    isContextCreation,  
-    isReassignment,  
-    isClassComponent,
-    isStyledComponent,
-    getMainComponentNameFromFileName,  
-    findLastImportIndex,  
-    recognizeType,  
-    checkForContextUsageOrder,  
-    checkDeclarationKeyword,  
-    reportVariablePlacementIssue  
+module.exports = {    
+    isReactComponent,    
+    isCustomHook,    
+    isGlobalConstant,    
+    isLocalConstant,    
+    isFunctionExpression,    
+    isArrowFunctionExpression,    
+    isMainFunctionComponent,    
+    isExportDeclarationWithName,    
+    IsTopOfScope,    
+    isReactFunctionalComponent,      
+    isReactCreateElementCall,    
+    isVariableDeclarator,    
+    isContextCreation,    
+    isReassignment,    
+    isClassComponent,  
+    isStyledComponent,  
+    getMainComponentNameFromFileName,    
+    findLastImportIndex,    
+    recognizeType,    
+    checkForContextUsageOrder,    
+    checkDeclarationKeyword,    
+    reportVariablePlacementIssue,  
+    isTSInterfaceDeclaration,  
+    isTSTypeAliasDeclaration,  
+    isTSEnumDeclaration  
 };  
