@@ -15,8 +15,6 @@ import { useTranslation } from "react-i18next";
 import goUpIcon from "../../assets/goUpIcon.svg";
 
 const FormPage = () => {
-  // For local development
-  const api_url = "http://localhost:5000";
   const { t } = useTranslation();
   const dataContainerRef = useRef<HTMLDivElement>(null);
   const [showScrollUp, setShowScrollUp] = useState(false);
@@ -152,7 +150,7 @@ const FormPage = () => {
     }
 
     const data = await (
-      await fetch(api_url + "/analyze", {
+      await fetch(process.env.VITE_API_URL + "/analyze", {
         method: "POST",
         headers: {
           "Access-Control-Allow-Origin": "*",
@@ -285,7 +283,7 @@ const FormPage = () => {
 
     // if no data in session, data has never been loaded and has to be fetched
     if (state.data.form.sections.length == 0) {
-      if (process.env.REACT_APP_ACTIVATE_USING_JSON == "true") {
+      if (process.env.VITE_APP_ACTIVATE_USING_JSON == "true") {
         // skip backend take answer.json as answer
         fetch("/answer.json").then((res) => res.json().then(populateForm));
       } else {
