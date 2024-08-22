@@ -633,22 +633,32 @@ function isVariableDeclarator(path) {
 }  
   
 /**
- * Determines if a given path represents the creation of a React context.
- * Checks if the path is a variable declarator initialized with a call to React.createContext.
- *
- * @function isContextCreation
- * @param {NodePath} path - The Babel path object to check.
- * @returns {boolean} True if the path represents a context creation using React.createContext, false otherwise.
- */ 
+ * Checks if the given AST path represents a context creation.
+ * @param {Object} path - The AST path to check.
+ * @returns {boolean} True if the AST path represents a context creation, false otherwise.
+ */
 function isContextCreation(path) {  
     if (t.isVariableDeclarator(path.node) && t.isCallExpression(path.node.init)) {  
-        const callee = path.node.init.callee;  
-        if (t.isMemberExpression(callee) && t.isIdentifier(callee.object, { name: 'React' }) && t.isIdentifier(callee.property, { name: 'createContext' })) {  
+        
+        const callee = path.node.init.callee;
+        console.log('Callee:', callee);
+        
+        if (t.isMemberExpression(callee)) {
+            console.log('Callee is a MemberExpression.');
+            
+            if (t.isIdentifier(callee.object, { name: 'React' }) && t.isIdentifier(callee.property, { name: 'createContext' })) {
+                console.log('This is a context creation via React.createContext.');
+                return true;
+            }
+        } else if (t.isIdentifier(callee, { name: 'createContext' })) {  // Adjusted to check for direct identifier
+            console.log('This is a context creation via createContext.');
             return true;  
-        }  
+        }
     }  
+
+    console.log('This is NOT a context creation.');
     return false;  
-}  
+}
   
 /**
  * Determines if a given reference path represents a reassignment of a variable.

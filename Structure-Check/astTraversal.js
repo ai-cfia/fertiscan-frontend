@@ -493,7 +493,6 @@ const analyzeCode = (ast, filePath) => {
         ...sections.localConstants, 
         ...sections.contexts,  
         ...sections.hooks,  
-        ...sections.stateHooks,  
         ...sections.effectHooks,  
         ...sections.handlers,  
         ...sections.types.TSInterfaceDeclaration,  

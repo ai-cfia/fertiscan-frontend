@@ -94,12 +94,8 @@ const displayBasic = (sections, errors) => {
     console.log('Global Constants:', sections.constants ? sections.constants.length : 0);  
     console.log('Contexts:', sections.contexts ? sections.contexts.length : 0);  
     console.log('Hooks:', sections.hooks ? sections.hooks.length : 0);  
-    console.log('State Hooks:', sections.stateHooks ? sections.stateHooks.length : 0);
-    console.log('Effect Hooks:', sections.effectHooks ? sections.effectHooks.length : 0);
     console.log('Handlers:', sections.handlers ? sections.handlers.length : 0);
-    console.log('Arrow Functions:', sections.arrowFunctions ? sections.arrowFunctions.length : 0);
     console.log('Helper Functions:', sections.helperFunctions ? sections.helperFunctions.length : 0);  
-    console.log('Functions:', sections.functions ? sections.functions.length : 0);  
     console.log('Components:', sections.components ? sections.components.length : 0);  
     console.log('Class Components:', sections.classComponents ? sections.classComponents.length : 0);  
     console.log('Class Methods:', sections.classMethod ? sections.classMethod.length : 0);
@@ -456,12 +452,10 @@ const displaySectionsMenu = async (sections, filePath) => {
 
     // Construction des messages de choix
     if (sections.imports && sections.imports.length > 0) choices.push(`(${sections.imports.length}) Imports`);
-    if (sections.localConstants && sections.localConstants.length > 0) choices.push(`(${sections.localConstants.length}) Local Constants`);
+    if (sections.localConstants && Array.from(sections.localConstants.values()).flat().length > 0) choices.push(`(${Array.from(sections.localConstants.values()).flat().length}) Local Constants`);
     if (sections.constants && sections.constants.length > 0) choices.push(`(${sections.constants.length}) Constants`);
     if (sections.contexts && sections.contexts.length > 0) choices.push(`(${sections.contexts.length}) Contexts`);
     if (sections.hooks && sections.hooks.length > 0) choices.push(`(${sections.hooks.length}) Hooks`);
-    if (sections.stateHooks && sections.stateHooks.length > 0) choices.push(`(${sections.stateHooks.length}) State Hooks`);
-    if (sections.effectHooks && sections.effectHooks.length > 0) choices.push(`(${sections.effectHooks.length}) Effect Hooks`);
     if (sections.handlers && sections.handlers.length > 0) choices.push(`(${sections.handlers.length}) Handlers`);
     if (sections.types.TSInterfaceDeclaration && sections.types.TSInterfaceDeclaration.length > 0) choices.push(`(${sections.types.TSInterfaceDeclaration.length}) TS Interface Declarations`);
     if (sections.types.TSTypeAliasDeclaration && sections.types.TSTypeAliasDeclaration.length > 0) choices.push(`(${sections.types.TSTypeAliasDeclaration.length}) TS Type Alias Declarations`);
@@ -475,23 +469,27 @@ const displaySectionsMenu = async (sections, filePath) => {
     if (sections.styledComponent && sections.styledComponent.length > 0) choices.push(`(${sections.styledComponent.length}) Styled Components`);
     if (sections.functionalComponent && sections.functionalComponent.length > 0) choices.push(`(${sections.functionalComponent.length}) Functional Components`);
     if (sections.mainComponent) choices.push('(1) Main Component');
-    if (sections.exports && sections.exports.length > 0) choices.push(`(${sections.exports.length}) Exports`);
     if (errors.length > 0) choices.push(`(${errors.length}) Errors`);
 
     const sectionMap = {
         'Imports': sections.imports || [],
-        'Local Constants': Array.from(sections.localConstants?.values() ?? []),
+        'Local Constants': Array.from(sections.localConstants?.values() ?? []).flat(),
         'Constants': sections.constants || [],
         'Contexts': sections.contexts || [],
         'Hooks': sections.hooks || [],
-        'Helper Functions': sections.helperFunctions || [],
-        'Functions': sections.functions || [],
-        'Components': sections.components || [],
-        'Class Components': sections.classComponents || [],
-        'Main Component': sections.mainComponent ? [sections.mainComponent] : [],
+        'Handlers': sections.handlers || [],
         'TS Interface Declarations': sections.types?.TSInterfaceDeclaration || [],
         'TS Type Alias Declarations': sections.types?.TSTypeAliasDeclaration || [],
         'TS Enum Declarations': sections.types?.TSEnumDeclaration || [],
+        'Helper Functions': sections.helperFunctions || [],
+        'Components': sections.components || [],
+        'Class Components': sections.classComponents || [],
+        'Class Methods': sections.classMethod || [],
+        'Class Properties': sections.classProperty || [],
+        'Returns': sections.returns || [],
+        'Styled Components': sections.styledComponent || [],
+        'Functional Components': sections.functionalComponent || [],
+        'Main Component': sections.mainComponent ? [sections.mainComponent] : [],
         'Exports': sections.exports || [],
         'Errors': errors || [],
     };

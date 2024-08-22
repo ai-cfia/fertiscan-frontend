@@ -33,12 +33,6 @@ test('should analyze and classify code sections correctly file: AliasTypeError',
     expect(sections).toHaveProperty('hooks');
     expect(sections.hooks.length).toBe(0);
 
-    expect(sections).toHaveProperty('stateHooks');
-    expect(sections.stateHooks.length).toBe(0);
-    
-    expect(sections).toHaveProperty('effectHooks');
-    expect(sections.effectHooks.length).toBe(0);
-
     expect(sections).toHaveProperty('handlers');
     expect(sections.handlers.length).toBe(0);
 
@@ -111,12 +105,6 @@ test('should analyze and classify code sections correctly file: AliasTypeError',
     expect(sections).toHaveProperty('hooks');
     expect(sections.hooks.length).toBe(1);
 
-    expect(sections).toHaveProperty('stateHooks');
-    expect(sections.stateHooks.length).toBe(0);
-
-    expect(sections).toHaveProperty('effectHooks');
-    expect(sections.effectHooks.length).toBe(0);
-
     expect(sections).toHaveProperty('handlers');
     expect(sections.handlers.length).toBe(1);
 
@@ -188,11 +176,6 @@ test('should analyze and classify code sections correctly file: CustomHookDefine
     expect(sections).toHaveProperty('hooks');
     expect(sections.hooks.length).toBe(1);
 
-    expect(sections).toHaveProperty('stateHooks');
-    expect(sections.stateHooks.length).toBe(0);
-
-    expect(sections).toHaveProperty('effectHooks');
-    expect(sections.effectHooks.length).toBe(0);
 
     expect(sections).toHaveProperty('handlers');
     expect(sections.handlers.length).toBe(0);
@@ -268,17 +251,8 @@ test('should analyze and classify code sections correctly in file: DisorganizedC
     expect(sections).toHaveProperty('hooks');
     expect(sections.hooks.length).toBe(3);
 
-    expect(sections).toHaveProperty('stateHooks');
-    expect(sections.stateHooks.length).toBe(1);
-    
-    expect(sections).toHaveProperty('effectHooks');
-    expect(sections.effectHooks.length).toBe(2);
-
     expect(sections).toHaveProperty('handlers');
     expect(sections.handlers.length).toBe(1);
-
-    expect(sections).toHaveProperty('arrowFunctions');
-    expect(sections.arrowFunctions.length).toBe(2);
 
     expect(sections).toHaveProperty('helperFunctions');
     expect(sections.helperFunctions.length).toBe(0);
@@ -348,12 +322,6 @@ test('should analyze and classify code sections correctly in file: DisorganizedC
 
     expect(sections).toHaveProperty('hooks');
     expect(sections.hooks.length).toBe(0);
-
-    expect(sections).toHaveProperty('stateHooks');
-    expect(sections.stateHooks.length).toBe(2);
-
-    expect(sections).toHaveProperty('effectHooks');
-    expect(sections.effectHooks.length).toBe(2);
 
     expect(sections).toHaveProperty('handlers');
     expect(sections.handlers.length).toBe(0);
@@ -430,12 +398,6 @@ test('should analyze and classify code sections correctly in file: EnumError', (
     expect(sections).toHaveProperty('hooks');
     expect(sections.hooks.length).toBe(0);
 
-    expect(sections).toHaveProperty('stateHooks');
-    expect(sections.stateHooks.length).toBe(0);
-
-    expect(sections).toHaveProperty('effectHooks');
-    expect(sections.effectHooks.length).toBe(0);
-
     expect(sections).toHaveProperty('handlers');
     expect(sections.handlers.length).toBe(0);
 
@@ -485,8 +447,8 @@ test('should analyze and classify code sections correctly in file: EnumError', (
     console.log(sections);
 });
 
-test('should analyze and classify code sections correctly in file: GlobalConstOrder', () => {
-    const filePath = 'src/testfiles/GlobalConstOrder.tsx';
+test('should analyze and classify code sections correctly in file: GlobalConstError', () => {
+    const filePath = 'src/testfiles/GlobalConstError.tsx';
     const content = readFileContent(filePath);
 
     const ast = parseFile(content);
@@ -508,23 +470,11 @@ test('should analyze and classify code sections correctly in file: GlobalConstOr
     expect(sections).toHaveProperty('hooks');
     expect(sections.hooks.length).toBe(0);
 
-    expect(sections).toHaveProperty('stateHooks');
-    expect(sections.stateHooks.length).toBe(0);
-
-    expect(sections).toHaveProperty('effectHooks');
-    expect(sections.effectHooks.length).toBe(0);
-
     expect(sections).toHaveProperty('handlers');
     expect(sections.handlers.length).toBe(0);
 
-    expect(sections).toHaveProperty('arrowFunctions');
-    expect(sections.arrowFunctions.length).toBe(0);
-
     expect(sections).toHaveProperty('helperFunctions');
     expect(sections.helperFunctions.length).toBe(0);
-
-    expect(sections).toHaveProperty('functions');
-    expect(sections.functions.length).toBe(1);
 
     expect(sections).toHaveProperty('components');
     expect(sections.components.length).toBe(0);
@@ -561,7 +511,7 @@ test('should analyze and classify code sections correctly in file: GlobalConstOr
     expect(sections.exports.length).toBe(1);
 
     expect(sections).toHaveProperty('mainComponent');
-    expect(sections.mainComponent).toBeNull();
+    expect(sections.mainComponent).not.toBeNull();
 
     expect(sections).toHaveProperty('nodes');
     expect(sections.nodes.length).toBeGreaterThan(0);
@@ -592,23 +542,11 @@ test('should analyze and classify code sections correctly in file: GoodClassIncl
     expect(sections).toHaveProperty('hooks');
     expect(sections.hooks.length).toBe(1);
 
-    expect(sections).toHaveProperty('stateHooks');
-    expect(sections.stateHooks.length).toBe(1);
-
-    expect(sections).toHaveProperty('effectHooks');
-    expect(sections.effectHooks.length).toBe(1);
-
     expect(sections).toHaveProperty('handlers');
-    expect(sections.handlers.length).toBe(1);
-
-    expect(sections).toHaveProperty('arrowFunctions');
-    expect(sections.arrowFunctions.length).toBe(0);
+    expect(sections.handlers.length).toBe(2);
 
     expect(sections).toHaveProperty('helperFunctions');
     expect(sections.helperFunctions.length).toBe(1);
-
-    expect(sections).toHaveProperty('functions');
-    expect(sections.functions.length).toBe(0);
 
     expect(sections).toHaveProperty('components');
     expect(sections.components.length).toBe(0);
@@ -645,7 +583,7 @@ test('should analyze and classify code sections correctly in file: GoodClassIncl
     expect(sections.exports.length).toBe(6);
 
     expect(sections).toHaveProperty('mainComponent');
-    expect(sections.mainComponent).toBeNull();
+    expect(sections.mainComponent).not.toBeNull();
 
     expect(sections).toHaveProperty('nodes');
     expect(sections.nodes.length).toBeGreaterThan(0);
@@ -676,23 +614,11 @@ test('should analyze and classify code sections correctly in file: HandlerAfterR
     expect(sections).toHaveProperty('hooks');
     expect(sections.hooks.length).toBe(0);
 
-    expect(sections).toHaveProperty('stateHooks');
-    expect(sections.stateHooks.length).toBe(0);
-
-    expect(sections).toHaveProperty('effectHooks');
-    expect(sections.effectHooks.length).toBe(0);
-
     expect(sections).toHaveProperty('handlers');
     expect(sections.handlers.length).toBe(1);
 
-    expect(sections).toHaveProperty('arrowFunctions');
-    expect(sections.arrowFunctions.length).toBe(0);
-
     expect(sections).toHaveProperty('helperFunctions');
     expect(sections.helperFunctions.length).toBe(0);
-
-    expect(sections).toHaveProperty('functions');
-    expect(sections.functions.length).toBe(0);
 
     expect(sections).toHaveProperty('components');
     expect(sections.components.length).toBe(1);
