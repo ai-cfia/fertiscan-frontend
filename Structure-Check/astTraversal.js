@@ -1,5 +1,6 @@
-const { parseFile } = require('./fileOperations');  
-const traverse = require('@babel/traverse').default;    
+const { parseFile, readFileContent } = require('./fileOperations');
+const traverse = require('@babel/traverse').default
+const { codeFrameColumns } = require("@babel/code-frame");
 const { t, logError, generateErrorMessage, reportError } = require('./common');  
 const { createStateTracker } = require('./stateManagement');    
 const {   
@@ -170,6 +171,9 @@ const setupTraverse = (state, filePath, sections) => {
     const visitedNodes = new Set();
 
     return {
+        enter(path) {
+            path.node.code = codeFrameColumns(readFileContent(filePath), path.node.loc, { highlightCode: true });
+        },
         ImportDeclaration(innerPath) {
             if (!visitedNodes.has(innerPath.node) && !hasDisableCheckComment(innerPath)) {
                 visitedNodes.add(innerPath.node);
