@@ -2,11 +2,6 @@ FROM node:20.12.2-alpine AS build
 
 WORKDIR /code
 
-# Define build arguments
-ARG ARG_API_URL
-ARG ARG_REACT_APP_ACTIVATE_USING_JSON
-ARG ARG_REACT_APP_STATE_OBJECT_SIZE_LIMIT
-
 # Copy files
 COPY ./src ./src
 COPY ./public ./public
