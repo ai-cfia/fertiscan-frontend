@@ -5,7 +5,7 @@ import StateType from "../interfaces/StateType";
  * Defaults to 4194304 bytes (4 MB).
  */
 export const STATE_OBJECT_SIZE_LIMIT = parseInt(
-  process.env.VITE_APP_STATE_OBJECT_SIZE_LIMIT || "4194304",
+  process.env.REACT_APP_STATE_OBJECT_SIZE_LIMIT || "4194304",
 );
 
 /**
