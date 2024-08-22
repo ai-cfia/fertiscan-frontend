@@ -1,8 +1,7 @@
-const { parseFile, readFileContent } = require('./fileOperations');  
+const { parseFile } = require('./fileOperations');  
 const traverse = require('@babel/traverse').default;    
 const { t, logError, generateErrorMessage, reportError } = require('./common');  
-const { createStateTracker, enterReactComponent, exitReactComponent } = require('./stateManagement');    
-const generate = require('@babel/generator').default;   
+const { createStateTracker } = require('./stateManagement');    
 const {   
     handleImportDeclaration,    
     handleVariableDeclarator,    
@@ -64,6 +63,7 @@ const sections = {
     stateHooks:[],   
     effectHooks:[],  
     handlers:[],  
+    arrowFunctions:[],
     helperFunctions: [],    
     functions: [],    
     components: [],    
@@ -665,13 +665,14 @@ function analyzeCode(ast, filePath) {
         stateHooks: [],
         effectHooks: [],
         handlers: [],
+        arrowFunctions:[],
         helperFunctions: [],
         functions: [],
         components: [],
         classComponents: [],
         classMethod: [],
         classProperty: [],
-        return: [],
+        returns: [],
         styledComponent: [],
         functionalComponent: [],
 
@@ -685,27 +686,16 @@ function analyzeCode(ast, filePath) {
         nodes: []
     };
   
-    const state = createStateTracker();  
-    const fileContent = readFileContent(filePath);  
-  
+    const state = createStateTracker();    
     traverse(ast, setupTraverse(state, filePath, sections));  
-  
-    // Check if the main component's name matches the file name  
-    if (state.hasMainComponent) {  
-        const mainComponentName = getMainComponentNameFromFileName(filePath);  
-        if (!isExportDeclarationWithName(state.mainComponentPath, mainComponentName)) {  
-            reportError(state.mainComponentPath.node, 'Main component name does not match file name.', filePath);  
-        }  
-    } else {  
-        reportError(null, 'No main component detected. The main (Function/Component/Class) should match the file name.', filePath);  
-    }   
 
     // Populate the nodes array with all the elements  
     sections.nodes.push(  
         ...sections.imports,  
         ...sections.constants,  
         ...sections.contexts,  
-        ...sections.hooks,  
+        ...sections.hooks, 
+        ...sections.arrowFunctions, 
         ...sections.stateHooks,  
         ...sections.effectHooks,  
         ...sections.handlers,  
@@ -718,7 +708,7 @@ function analyzeCode(ast, filePath) {
         ...sections.classComponents,  
         ...sections.classMethod,  
         ...sections.classProperty,  
-        ...sections.return,  
+        ...sections.returns,  
         ...sections.styledComponent,  
         ...sections.functionalComponent,  
         sections.mainComponent,  

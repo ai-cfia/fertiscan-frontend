@@ -1,15 +1,12 @@
 const prompts = require('prompts');
-const { createStateTracker } = require('./stateManagement');
-const { checkFile, analyzeCode } = require('./astTraversal');
+const { analyzeCode } = require('./astTraversal');
 const { parseFile, readFileContent } = require('./fileOperations');
-const ansiEscapes = require('ansi-escapes');
 const path = require('path');
 
 const {
     logError, generateErrorMessage,
     reportError, errors
 } = require('./errorHandling');
-const { get } = require('http');
 const colors = {
     reset: "\x1b[0m",
     bright: "\x1b[1m",
@@ -100,17 +97,17 @@ const displayBasic = (sections, errors) => {
     console.log('State Hooks:', sections.stateHooks ? sections.stateHooks.length : 0);
     console.log('Effect Hooks:', sections.effectHooks ? sections.effectHooks.length : 0);
     console.log('Handlers:', sections.handlers ? sections.handlers.length : 0);
+    console.log('Arrow Functions:', sections.arrowFunctions ? sections.arrowFunctions.length : 0);
     console.log('Helper Functions:', sections.helperFunctions ? sections.helperFunctions.length : 0);  
     console.log('Functions:', sections.functions ? sections.functions.length : 0);  
     console.log('Components:', sections.components ? sections.components.length : 0);  
     console.log('Class Components:', sections.classComponents ? sections.classComponents.length : 0);  
     console.log('Class Methods:', sections.classMethod ? sections.classMethod.length : 0);
     console.log('Class Properties:', sections.classProperty ? sections.classProperty.length : 0);
-    console.log('Return Statements:', sections.return ? sections.return.length : 0);
+    console.log('Return Statements:', sections.returns ? sections.returns.length : 0);
     console.log('Styled Components:', sections.styledComponent ? sections.styledComponent.length : 0);
     console.log('Functional Components:', sections.functionalComponent ? sections.functionalComponent.length : 0);
-    console.log('Main Component:', sections.mainComponent ? 'Found' : 'Not Found');
-    console.log('TS Interface Declarations:', sections.types?.TSInterfaceDeclaration ? sections.types.TSInterfaceDeclaration.length : 0);  
+    console.log(`Main Component: ${sections.mainComponent ? `${colors.fgGreen}Found${colors.reset}` : `${colors.fgRed}Not Found${colors.reset}`}`);    console.log('TS Interface Declarations:', sections.types?.TSInterfaceDeclaration ? sections.types.TSInterfaceDeclaration.length : 0);  
     console.log('TS Type Alias Declarations:', sections.types?.TSTypeAliasDeclaration ? sections.types.TSTypeAliasDeclaration.length : 0);  
     console.log('TS Enum Declarations:', sections.types?.TSEnumDeclaration ? sections.types.TSEnumDeclaration.length : 0);  
     console.log('Exports:', sections.exports ? sections.exports.length : 0);  

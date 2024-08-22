@@ -1,22 +1,17 @@
 const { findFilesRecursive, compileIgnorePattern, 
-    parseFile, readFileContent, writeFileContent, 
-    createBackup, revertFile 
+    parseFile, readFileContent, revertFile 
 } = require('./fileOperations');  
 
-const { checkFile, setupTraverse, analyzeCode, 
-    reorderCode, createNewAST, fixFile, hasDisableCheckComment 
+const { analyzeCode, fixFile, 
 } = require('./astTraversal.js');  
 
-const { createStateTracker } = require('./stateManagement'); 
 
-const { displayBasic, displayTree, displayAnalysis,  
-    displayDetailedInteractive, displayHighlightedCode,  
-    displayHelp, displayFilesMenu, displaySectionsMenu,  
+const { displayAnalysis,  
+    displayHelp, displayFilesMenu,  
 } = require('./displayInteraction.cjs');   
 
 const {
-    logError, generateErrorMessage,
-    reportError, errors
+    logError, errors
 } = require('./errorHandling');
 
 const path = require('path');  

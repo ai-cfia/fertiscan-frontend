@@ -1,13 +1,10 @@
 const fs = require('fs');
 const path = require('path');
-const { readFileSync, writeFileSync, statSync } = fs;
 const { parse } = require('@babel/parser');
 const { readdir, stat } = fs.promises;
 const util = require('util');
 const readFile = util.promisify(fs.readFile);
 const projectPath = path.resolve(__dirname, '../src/');
-const filePattern = /\.(ts|tsx)$/;
-const ignoreFilePath = 'structure-check.ignore';
 
 /**
  * Recursively searches for files in a given directory that match a specified pattern.

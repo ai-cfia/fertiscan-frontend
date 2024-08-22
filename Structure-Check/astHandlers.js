@@ -1,4 +1,8 @@
-const { t, logError, generateErrorMessage, reportError } = require('./common');    
+const { t, generateErrorMessage, reportError } = require('./common');   
+const {
+    logError, errors
+} = require('./errorHandling');
+
 const {   
     enterReactComponent,     
     exitReactComponent   
@@ -32,7 +36,6 @@ const {
     checkDeclarationKeyword,    
     reportVariablePlacementIssue   
 } = require('./utils');   
-
 
   
 /**
@@ -162,12 +165,18 @@ function handleVariableDeclarator(path, state, filePath, sections) {
  * @param {string} filePath - The file path of the source file being processed by Babel, which can be useful for 
  *                            reporting purposes, such as providing context in error or log messages.
  */ 
-function handleFunctionalComponent(path, state, filePath,sections) {  
+function handleFunctionalComponent(path, state, filePath, sections) {
+    sections.functionalComponent.push(path.node)
     console.log('Functional component detected:', path.node.type);
     sections.functionalComponent.push(path.node);
     
-    handleMainReactComponent(path, state, filePath,sections);  
-}  
+    const functionType = recognizeType(path, state, filePath);
+    if (functionType === 'mainFunctionComponent') {
+        handleMainReactComponent(path, state, filePath, sections);
+    }
+
+    
+}
   
 /**
  * Processes global constant declarations within the AST to enforce that they are placed prior to helper functions, hooks, 
@@ -378,7 +387,7 @@ function handleCustomHookDeclaration(path, state, filePath,sections) {
         }  
         state.hasCustomHooks = true;  
         enterReactComponent(state);  
-        traverseReactComponent(path, state, filePath);
+        traverseReactComponent(path, state, filePath,sections);
 
     }  
 }  
@@ -492,42 +501,56 @@ function handleHelperFunctionDeclaration(path, state, filePath,sections) {
  * @param {Object} state - The state object that keeps track of various code states.
  * @param {string} filePath - The file path of the current file being processed.
  */
-function handleFunctionExpressionsAndArrowFunctions(path, state, filePath,sections) {  
-    const functionName = path.node.id && path.node.id.name || 'Anonymous';  
-  
-     // Identify if the function is a hook (e.g., useEffect)  
-     if (/^use[A-Z]/.test(functionName)) { 
-        console.log('Hook detected:', path.node.type); 
+function handleFunctionExpressionsAndArrowFunctions(path, state, filePath, sections) {
+    let functionName = 'Anonymous';
+
+    // Check for named function expressions or variable declarators
+    if (path.isFunctionExpression() || path.isArrowFunctionExpression()) {
+        if (path.parentPath.isVariableDeclarator() && path.parentPath.node.id) {
+            functionName = path.parentPath.node.id.name;
+        } else if (path.node.id) {
+            functionName = path.node.id.name;
+        }
+    } else if (path.parentPath.isObjectProperty() && path.parentPath.node.key) {
+        functionName = path.parentPath.node.key.name || 'Anonymous';
+    }
+
+    sections.arrowFunctions.push(path.node);
+    console.log("\n" + functionName + "\n");
+
+    // Identify if the function is a hook (e.g., useEffect)
+    if (/^use[A-Z]/.test(functionName)) {
+        console.log('Hook detected:', path.node.type);
         sections.hooks.push(path.node);
-        if (state.hasPropTypes || state.hasDefaultProps || state.hasExports) {  
-            reportError(path.node, `Hook "${functionName}" should be declared before props and exports.`, filePath, 'Hook', {  
-                suggestions: 'Move this hook before any PropTypes, default props, and export statements.',  
-                fix: 'Consider relocating the hook towards the beginning of the function.'  
-            });  
-        }  
-        state.hasHooks = true;  
-    }   
-    // Identify if the function is a handler (e.g., handleSubmit)  
-    else if (/^handle[A-Z]/.test(functionName)) {  
-        console.log('Handler detected:', path.node.type);  
+        if (state.hasPropTypes || state.hasDefaultProps || state.hasExports) {
+            const errorMessage = generateErrorMessage('Hooks', state, filePath);  
+            if (errorMessage) {  
+                reportError(path.node, errorMessage, filePath);  
+            } 
+        }
+        state.hasHooks = true;
+    }
+    // Identify if the function is a handler (e.g., handleSubmit)
+    else if (/^handle[A-Z]/.test(functionName)) {
+        console.log('Handler detected:', path.node.type);
         sections.handlers.push(path.node);
-        if (state.hasHooks) {  
-            reportError(path.node, `Handler function "${functionName}" should be declared after hooks.`, filePath, 'Handler', {  
-                suggestions: 'Move handler functions after all hook calls within the component.',  
-                fix: 'Consider relocating this handler function below the hooks.'  
-            });  
-        } else if (state.hasConditionalRender || state.hasReturn) {  
-            reportError(path.node, `Handler function "${functionName}" should be declared before render logic and return statements.`, filePath, 'Handler', {  
-                suggestions: 'Move handler functions to precede the render logic and return statements.',  
-                fix: 'Consider relocating this handler function above the render logic and return statements.'  
-            });  
-        }  
-        state.hasHandlers = true;  
-    }   
-        
-        enterReactComponent(state);
-        traverseReactComponent(path, state, filePath);
-}  
+        if (state.hasHooks) {
+            const errorMessage = generateErrorMessage('Hooks', state, filePath);  
+            if (errorMessage) {  
+                reportError(path.node, errorMessage, filePath);  
+            } 
+        } else if (state.hasConditionalRender || state.hasReturn) {
+            reportError(path.node, `Handler function "${functionName}" should be declared before render logic and return statements.`, filePath, 'Handler', {
+                suggestions: 'Move handler functions to precede the render logic and return statements.',
+                fix: 'Consider relocating this handler function above the render logic and return statements.'
+            });
+        }
+        state.hasHandlers = true;
+    }
+
+    enterReactComponent(state);
+    traverseReactComponent(path, state, filePath, sections);
+}
 
 /**  
  * Processes export statements encountered during AST traversal, identifying whether the main component of the file is  
@@ -650,37 +673,37 @@ function handleJSXElement(path, state, filePath,sections) {
  * @param {Object} state - The state object that keeps track of various code states.
  * @param {string} filePath - The file path of the current file being processed.
  */ 
-function handleReturnStatement(path, state, filePath,sections) { 
-    console.log('Return statement detected:', path.node.type); 
-    //sections.return.push(path.node);
-
-    if (!state.functionComponentState.insideReactComponent) return;
-
+function handleReturnStatement(path, state, filePath, sections) {  
+    console.log('Return statement detected:', path.node.type);  
+    sections.returns.push(path.node);  
+  
+    if (!state.functionComponentState.insideReactComponent) return;  
     const functionPath = path.findParent(p =>   
-        isFunctionExpression(p) || 
-        isArrowFunctionExpression(p)
-        );
+        p.isFunctionDeclaration() ||   
+        p.isFunctionExpression() ||   
+        isArrowFunctionExpression(path)  
+    );  
+    if (functionPath) {  
+        const isMainComponent = functionPath === state.mainComponentPath;  
+  
+        if (isMainComponent) {  
+            // Ensure there's only one direct return statement in the main component  
+            if (state.functionComponentState.hasReturn) {  
+                reportError(path.node, 'Multiple return statements detected within the main component.', filePath);  
+            } else {  
+                state.functionComponentState.hasReturn = true;  
+            }  
+        } else {  
+            // Handle nested component returns or other function returns  
+            if (state.functionComponentState.hasReturnInSameComponent) {  
+                reportError(path.node, 'Multiple return statements detected within a nested component.', filePath);  
+            } else {  
+                state.functionComponentState.hasReturnInSameComponent = true;  
+            }  
+        }  
+    }  
+}  
 
-    if (functionPath) {
-        const isMainComponent = functionPath === state.mainComponentPath;
-
-        if (isMainComponent) {
-            // Ensure there's only one direct return statement in the main component
-            if (state.functionComponentState.hasReturn) {
-                reportError(path.node, 'Multiple return statements detected within the main component.', filePath);
-            } else {
-                state.functionComponentState.hasReturn = true;
-            }
-        } else {
-            // Handle nested component returns or other function returns
-            if (state.functionComponentState.hasReturnInSameComponent) {
-                reportError(path.node, 'Multiple return statements detected within a nested component.', filePath);
-            } else {
-                state.functionComponentState.hasReturnInSameComponent = true;
-            }
-        }
-    }
-}
 
 /**  
  * Processes useContext calls to ensure the context is defined before being used.  
