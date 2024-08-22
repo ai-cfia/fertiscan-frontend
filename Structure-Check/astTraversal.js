@@ -65,8 +65,7 @@ const sections = {
     effectHooks:[],  
     handlers:[],  
     arrowFunctions:[],
-    helperFunctions: [],    
-    functions: [],    
+    helperFunctions: [],  
     components: [],    
     classComponents: [],   
     classMethod: [],  
@@ -111,8 +110,7 @@ const checkFile = async (filePath, state) => {
             stateHooks:[],   
             effectHooks:[],  
             handlers:[],  
-            helperFunctions: [],    
-            functions: [],    
+            helperFunctions: [],      
             components: [],    
             classComponents: [],   
             classMethod: [],  
@@ -211,7 +209,10 @@ const setupTraverse = (state, filePath, sections) => {
             }
         },
         FunctionDeclaration(innerPath) {
-            if (!visitedNodes.has(innerPath.node) && !hasDisableCheckComment(innerPath)) {
+            if(isMainFunctionComponent(innerPath,state,filePath)){
+                handleMainReactComponent(innerPath,state,filePath,sections)
+            }
+            else if (!visitedNodes.has(innerPath.node) && !hasDisableCheckComment(innerPath)) {
                 visitedNodes.add(innerPath.node);
                 handleHelperFunctionDeclaration(innerPath, state, filePath, sections);
             }
@@ -270,7 +271,6 @@ const setupTraverse = (state, filePath, sections) => {
  * @param {Array} sections.hooks - An array of hook declarations.
  * @param {Array} sections.types - An array of type declarations.
  * @param {Array} sections.helperFunctions - An array of helper functions.
- * @param {Array} sections.functions - An array of other functions.
  * @param {Array} sections.components - An array of component declarations.
  * @param {Array} sections.classComponents - An array of class component declarations.
  * @param {Object} sections.mainComponent - The main component.
@@ -286,7 +286,6 @@ const reorderCode = (sections) => {
         ...sections.hooks,  
         ...sections.types,  
         ...sections.helperFunctions,  
-        ...sections.functions,  
         ...sections.components,  
         ...sections.classComponents,  
         sections.mainComponent,  

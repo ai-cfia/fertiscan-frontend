@@ -377,23 +377,31 @@ function handleLocalConstantDeclaration(path, state, filePath,sections) {
  * @param {string} filePath - The file path of the current file being processed.
  */ 
 function handleMainReactComponent(path, state, filePath, sections) {  
-        sections.mainComponent = path.node;  
-  
-        if (state.topLevelState.hasHandlers || state.topLevelState.hasHooks ||  
-            state.topLevelState.hasReactComponent || state.topLevelState.hasPropTypes ||  
-            state.topLevelState.hasDefaultProps || state.topLevelState.hasExports) {  
-            const errorMessage = generateErrorMessage("Main function/component", state, filePath);  
-            if (errorMessage) {  
-                reportError(path.node, errorMessage, filePath);  
-            }  
+    sections.mainComponent = path.node;  
+
+    const componentName = path.node.id?.name;
+    const fileName = filePath.split('/').pop().replace(/\.tsx?$/, '');
+
+    if (componentName && componentName === fileName) {
+        const errorMessage = `Component name '${componentName}' should not be identical to the file name in '${filePath}'`;
+        reportError(path.node, errorMessage, filePath);
+    }
+
+    if (state.topLevelState.hasHandlers || state.topLevelState.hasHooks ||  
+        state.topLevelState.hasReactComponent || state.topLevelState.hasPropTypes ||  
+        state.topLevelState.hasDefaultProps || state.topLevelState.hasExports) {  
+        const errorMessage = generateErrorMessage("Main function/component", state, filePath);  
+        if (errorMessage) {  
+            reportError(path.node, errorMessage, filePath);  
         }  
-        state.topLevelState.hasReactComponent = true;  
-        state.topLevelState.hasMainComponent = true;  
-        state.topLevelState.mainComponentPath = path;  
-        enterReactComponent(state);  
-        traverseReactComponent(path, state, filePath, sections);  
-    
-}  
+    }  
+
+    state.topLevelState.hasReactComponent = true;  
+    state.topLevelState.hasMainComponent = true;  
+    state.topLevelState.mainComponentPath = path;  
+    enterReactComponent(state);  
+    traverseReactComponent(path, state, filePath, sections);  
+}
 
 
 /**

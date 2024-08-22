@@ -223,6 +223,8 @@ const displayHighlightedCode = (nodes) => {
 ${codeSnippet}
 \`\`\``;
 
+console.log(output);
+
         // Check for error messages
         if (node.hasError) {
             handleErrors(errors)
