@@ -1,5 +1,7 @@
 FROM node:20.12.2-alpine AS build
 
+ARG env_filename=.env.production
+
 WORKDIR /code
 
 # Copy files
@@ -11,6 +13,7 @@ COPY tsconfig.json .
 COPY tsconfig.node.json .
 COPY vite.config.ts .
 COPY index.html .
+COPY $env_filename ./.env.production
 
 # Install npm at a specific version, dependencies, build, and run tests
 RUN npm install --include=dev
