@@ -65,7 +65,6 @@ const sections = {
     stateHooks:[],   
     effectHooks:[],  
     handlers:[],  
-    arrowFunctions:[],
     helperFunctions: [],  
     components: [],    
     classComponents: [],   
@@ -223,6 +222,9 @@ const setupTraverse = (state, filePath, sections) => {
         },
         'ArrowFunctionExpression|FunctionExpression': {
             enter(innerPath) {
+                if(isMainFunctionComponent(innerPath,state,filePath)){
+                    handleMainReactComponent(innerPath,state,filePath,sections)
+                }
                 if (!visitedNodes.has(innerPath.node) && !hasDisableCheckComment(innerPath)) {
                     visitedNodes.add(innerPath.node);
                     handleFunctionExpressionsAndArrowFunctions(innerPath, state, filePath, sections);
@@ -236,12 +238,18 @@ const setupTraverse = (state, filePath, sections) => {
             }
         },
         CallExpression(innerPath) {
+            if(isMainFunctionComponent(innerPath,state,filePath)){
+                handleMainReactComponent(innerPath,state,filePath,sections)
+            }
             if (!visitedNodes.has(innerPath.node) && !hasDisableCheckComment(innerPath)) {
                 visitedNodes.add(innerPath.node);
                 handleHooksAndEffects(innerPath, state, filePath, sections);
             }
         },
         TaggedTemplateExpression(innerPath) {
+            if(isMainFunctionComponent(innerPath,state,filePath)){
+                handleMainReactComponent(innerPath,state,filePath,sections)
+            }
             if (!visitedNodes.has(innerPath.node) && !hasDisableCheckComment(innerPath)) {
                 visitedNodes.add(innerPath.node);
                 handleStyledComponent(innerPath, state, filePath, sections);
@@ -456,7 +464,6 @@ const analyzeCode = (ast, filePath) => {
         stateHooks: [],  
         effectHooks: [],  
         handlers: [],  
-        arrowFunctions: [],  
         helperFunctions: [],  
         functions: [],  
         components: [],  
@@ -486,7 +493,6 @@ const analyzeCode = (ast, filePath) => {
         ...sections.localConstants, 
         ...sections.contexts,  
         ...sections.hooks,  
-        ...sections.arrowFunctions,  
         ...sections.stateHooks,  
         ...sections.effectHooks,  
         ...sections.handlers,  

@@ -454,19 +454,27 @@ const displayFilesMenu = async (files) => {
 const displaySectionsMenu = async (sections, filePath) => {
     const choices = [];
 
+    // Construction des messages de choix
     if (sections.imports && sections.imports.length > 0) choices.push(`(${sections.imports.length}) Imports`);
-    if (sections.localConstants && sections.localConstants.size > 0) choices.push(`(${sections.localConstants.size}) Local Constants`);
+    if (sections.localConstants && sections.localConstants.length > 0) choices.push(`(${sections.localConstants.length}) Local Constants`);
     if (sections.constants && sections.constants.length > 0) choices.push(`(${sections.constants.length}) Constants`);
     if (sections.contexts && sections.contexts.length > 0) choices.push(`(${sections.contexts.length}) Contexts`);
     if (sections.hooks && sections.hooks.length > 0) choices.push(`(${sections.hooks.length}) Hooks`);
-    if (sections.helperFunctions && sections.helperFunctions.length > 0) choices.push(`(${sections.helperFunctions.length}) Helper Functions`);
-    if (sections.functions && sections.functions.length > 0) choices.push(`(${sections.functions.length}) Functions`);
-    if (sections.components && sections.components.length > 0) choices.push(`(${sections.components.length}) Components`);
-    if (sections.classComponents && sections.classComponents.length > 0) choices.push(`(${sections.classComponents.length}) Class Components`);
-    if (sections.mainComponent) choices.push('(1) Main Component');
+    if (sections.stateHooks && sections.stateHooks.length > 0) choices.push(`(${sections.stateHooks.length}) State Hooks`);
+    if (sections.effectHooks && sections.effectHooks.length > 0) choices.push(`(${sections.effectHooks.length}) Effect Hooks`);
+    if (sections.handlers && sections.handlers.length > 0) choices.push(`(${sections.handlers.length}) Handlers`);
     if (sections.types.TSInterfaceDeclaration && sections.types.TSInterfaceDeclaration.length > 0) choices.push(`(${sections.types.TSInterfaceDeclaration.length}) TS Interface Declarations`);
     if (sections.types.TSTypeAliasDeclaration && sections.types.TSTypeAliasDeclaration.length > 0) choices.push(`(${sections.types.TSTypeAliasDeclaration.length}) TS Type Alias Declarations`);
     if (sections.types.TSEnumDeclaration && sections.types.TSEnumDeclaration.length > 0) choices.push(`(${sections.types.TSEnumDeclaration.length}) TS Enum Declarations`);
+    if (sections.helperFunctions && sections.helperFunctions.length > 0) choices.push(`(${sections.helperFunctions.length}) Helper Functions`);
+    if (sections.components && sections.components.length > 0) choices.push(`(${sections.components.length}) Components`);
+    if (sections.classComponents && sections.classComponents.length > 0) choices.push(`(${sections.classComponents.length}) Class Components`);
+    if (sections.classMethod && sections.classMethod.length > 0) choices.push(`(${sections.classMethod.length}) Class Methods`);
+    if (sections.classProperty && sections.classProperty.length > 0) choices.push(`(${sections.classProperty.length}) Class Properties`);
+    if (sections.returns && sections.returns.length > 0) choices.push(`(${sections.returns.length}) Returns`);
+    if (sections.styledComponent && sections.styledComponent.length > 0) choices.push(`(${sections.styledComponent.length}) Styled Components`);
+    if (sections.functionalComponent && sections.functionalComponent.length > 0) choices.push(`(${sections.functionalComponent.length}) Functional Components`);
+    if (sections.mainComponent) choices.push('(1) Main Component');
     if (sections.exports && sections.exports.length > 0) choices.push(`(${sections.exports.length}) Exports`);
     if (errors.length > 0) choices.push(`(${errors.length}) Errors`);
 

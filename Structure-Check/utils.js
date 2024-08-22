@@ -185,14 +185,51 @@ function isGlobalConstant(path) {
  * @returns {boolean} True if the path represents a local constant, false otherwise.
  */
 function isLocalConstant(path) {
-    // Check if the declaration is a variable declarator and its parent declaration is of kind 'const'
-    if (!t.isVariableDeclarator(path.node) || path.parentPath.isVariableDeclaration({ kind: 'const' })) {
-        return true;
+    //console.log('Inspecting node:', path.node.id.name);
+
+    // Ensure path.node is a VariableDeclarator
+    if (!t.isVariableDeclarator(path.node)) {
+        console.log('Node is not a VariableDeclarator:', path.node);
+        return false;
     }
 
-    const parentScope = path.scope.parent;
-    const isTopLevel = !parentScope || (parentScope.path && parentScope.path.type === 'Program');
-    return !isTopLevel;
+    // Ensure the parent is a VariableDeclaration of kind 'const'
+    if (!path.parentPath.isVariableDeclaration({ kind: 'const' })) {
+        console.log('Parent is not a VariableDeclaration of kind const:', path.parentPath.node);
+        return false;
+    }
+
+    console.log('Node is a const VariableDeclarator:', path.node);
+
+    // Ensure path.node.id exists and has a name property
+    if (!path.node.id || typeof path.node.id.name !== 'string') {
+        console.log('Node id is not valid or does not have a valid name property:', path.node.id);
+        return false;
+    }
+
+    const name = path.node.id.name;
+
+    // Ensure the name does not contain 'use' or 'handle'
+    if (name.includes('use') || name.includes('handle')) {
+        console.log(`Variable name contains 'use' or 'handle': ${name}`);
+        return false;
+    }
+
+    // Check if within a function scope
+    let currentScope = path.scope;
+    while (currentScope) {
+        console.log('Checking scope:', currentScope.path && currentScope.path.type);
+
+        if (currentScope.path.type==="ArrowFunctionExpression"|| currentScope.path.type==="FunctionDeclaration" ) {
+            console.log('Found function or arrow function scope:', currentScope.path.type);
+            return true; // It's in a function, hence a local constant
+        }
+        currentScope = currentScope.parent;
+    }
+
+    // If not found within function scope, return false
+    console.log('Did not find function or arrow function scope for node:', path.node);
+    return false;
 }
   
 ///////////////////////////////

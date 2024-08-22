@@ -93,7 +93,7 @@ function handleVariableDeclarator(path, state, filePath, sections) {
     }
     else if (isGlobalConstant(path)) {
         handleGlobalConstantDeclaration(path, state, filePath, sections);
-    } else if (isLocalConstant(path)&& !isArrowFunctionExpression(path)&&!isReactFunctionalComponent(path)) {
+    } else if (isLocalConstant(path)) {
         handleLocalConstantDeclaration(path, state, filePath, sections);
     } else if (isContextCreation(path)) {
         handleContextCreation(path, state, filePath, sections);
@@ -470,10 +470,6 @@ function handleFunctionExpressionsAndArrowFunctions(path, state, filePath, secti
     } else if (path.parentPath.isObjectProperty() && path.parentPath.node.key) {
         functionName = path.parentPath.node.key.name || 'Anonymous';
     }
-
-    sections.arrowFunctions.push(path.node);
-    console.log("\n" + functionName + "\n");
-
     // Identify if the function is a hook (e.g., useEffect)
     if (/^use[A-Z]/.test(functionName)) {
         console.log('Hook detected:', path.node.type);
@@ -495,12 +491,12 @@ function handleFunctionExpressionsAndArrowFunctions(path, state, filePath, secti
             if (errorMessage) {  
                 reportError(path.node, errorMessage, filePath);  
             } 
-        } else if (state.hasConditionalRender || state.hasReturn) {
+        } /*else if (state.hasConditionalRender || state.hasReturn) {
             reportError(path.node, `Handler function "${functionName}" should be declared before render logic and return statements.`, filePath, 'Handler', {
                 suggestions: 'Move handler functions to precede the render logic and return statements.',
                 fix: 'Consider relocating this handler function above the render logic and return statements.'
             });
-        }
+        }*/
         state.hasHandlers = true;
     }
 
