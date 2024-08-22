@@ -501,7 +501,7 @@ const displaySectionsMenu = async (sections, filePath) => {
 
             // Remove count from selectedSection to match the sectionMap keys
             const cleanedSectionName = selectedSection.replace(/^\(\d+\) /, '');
-            console.log(`Displaying section: ${cleanedSectionName}`, sectionMap[cleanedSectionName]); // Debugging log
+            //console.log(`Displaying section: ${cleanedSectionName}`, sectionMap[cleanedSectionName]); // Debugging log
 
             // Check if the cleaned section actually contains elements before displaying
             if (sectionMap[cleanedSectionName].length > 0) {
