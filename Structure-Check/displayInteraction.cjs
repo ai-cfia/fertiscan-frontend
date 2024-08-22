@@ -91,7 +91,7 @@ const displayBasic = (sections, errors) => {
   
     console.log('Imports:', sections.imports ? sections.imports.length : 0);  
     console.log('Local Constants:', sections.localConstants ? Array.from(sections.localConstants.values()).flat().length : 0);  
-    console.log('Constants:', sections.constants ? sections.constants.length : 0);  
+    console.log('Global Constants:', sections.constants ? sections.constants.length : 0);  
     console.log('Contexts:', sections.contexts ? sections.contexts.length : 0);  
     console.log('Hooks:', sections.hooks ? sections.hooks.length : 0);  
     console.log('State Hooks:', sections.stateHooks ? sections.stateHooks.length : 0);

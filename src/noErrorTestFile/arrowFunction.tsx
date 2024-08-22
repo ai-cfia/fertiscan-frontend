@@ -3,6 +3,7 @@ import React from 'react';
 // Define a global constant
 const GREETING_MESSAGE: string = "Hello, World!";
 
+//Hook
 const useTestHook = () => {
     return (
         <div>
@@ -11,6 +12,7 @@ const useTestHook = () => {
     );
 };
 
+// Handler
 const handleTestHook = () => {
     return (
         <div>

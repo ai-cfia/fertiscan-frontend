@@ -59,10 +59,7 @@ const createStateTracker = () => {
  */
 const enterReactComponent = (state) => {  
     state.functionComponentState = {  
-        ...state.functionComponentState,  
-        hasConstants: false,  
-        hasHandlers: false,  
-        hasHooks: false,  
+        ...state.functionComponentState,   
         hasReturnInSameComponent: false,  
         insideReactComponent: true,  
     };  

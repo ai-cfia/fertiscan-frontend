@@ -138,7 +138,7 @@ function isCustomHook(path) {
     }  
   
     return functionName && /^use[A-Z]/.test(functionName);  
-}  
+} 
   
 /**
  * Determines if a given path represents a global constant.
@@ -148,32 +148,19 @@ function isCustomHook(path) {
  * @param {Object} path - The Babel path object for the variable declarator node.
  * @returns {boolean} True if the path represents a global constant, false otherwise.
  */ 
-function isGlobalConstant(path) {  
-    const isExported = path.findParent(parent =>  
-        parent.isExportNamedDeclaration() ||  
-        parent.isExportDefaultDeclaration()  
-    );  
-    if (!isExported) {  
-        return false;  
-    }  
-    const parentScope = path.scope.parent;  
-    const isTopLevel = !parentScope || (parentScope.path && parentScope.path.type === 'Program');  
-    const variableDeclarator = path.node;  
-    const identifier = variableDeclarator.id ? variableDeclarator.id.name : null;  
-    if (!identifier) {  
-        return false;  
-    }  
-    const isConventionallyNamed = /^[A-Z_][A-Z0-9_]*$/.test(identifier);  
-    const maybeImportedValue = variableDeclarator.init &&  
-        (variableDeclarator.init.type === 'CallExpression' &&  
-            (variableDeclarator.init.callee.type === 'Import' ||  
-                variableDeclarator.init.type === 'ImportExpression'));  
-    const isGlobalType = (node) => {  
-        return node && (node.type === 'ObjectExpression' || node.type === 'ArrayExpression');  
-    };  
-    const satisfiesGlobalType = isGlobalType(variableDeclarator.init);  
-    return isExported && isTopLevel && (isConventionallyNamed || satisfiesGlobalType || maybeImportedValue);  
-}  
+function isGlobalConstant(path) {
+    const variableDeclarator = path.node;
+    const identifier = variableDeclarator.id ? variableDeclarator.id.name : null;
+    
+    if (!identifier) {
+        return false;
+    }
+
+    // Check if the variable name follows the conventional naming pattern for global constants
+    const isConventionallyNamed = /^[A-Z_][A-Z0-9_]*$/.test(identifier);
+
+    return isConventionallyNamed;
+}
   
 ///////////////////////////////
 ///////////////////////////////
@@ -190,21 +177,23 @@ function isGlobalConstant(path) {
  * @param {NodePath} path - The Babel path object for the variable declarator node.
  * @returns {boolean} True if the path represents a local constant, false otherwise.
  */  
-function isLocalConstant(path) {  
-    const isExported = path.findParent((parent) =>  
-        parent.isExportNamedDeclaration() || parent.isExportDefaultDeclaration()  
-    );  
-    if (isExported) {  
-        return false;  
-    }  
-    if (!path.scope.parent || path.scope.parent.path.type === 'Program') {  
-        return false;  
-    }  
-    // *****Here*****
-    const isInsideFunction = path.findParent((parent) => parent.isFunction());  
-    const isInsideBlock = path.findParent((parent) => parent.isBlockStatement());  
-    return isInsideFunction || isInsideBlock;  
-}  
+/**
+ * Determines if a given path represents a local constant.
+ * Checks if the constant is not exported, not at the top level, and is inside a function or block statement.
+ *
+ * @param {Object} path - The Babel path object for the variable declarator node.
+ * @returns {boolean} True if the path represents a local constant, false otherwise.
+ */
+function isLocalConstant(path) {
+    // Check if the declaration is a variable declarator and its parent declaration is of kind 'const'
+    if (!t.isVariableDeclarator(path.node) || path.parentPath.isVariableDeclaration({ kind: 'const' })) {
+        return true;
+    }
+
+    const parentScope = path.scope.parent;
+    const isTopLevel = !parentScope || (parentScope.path && parentScope.path.type === 'Program');
+    return !isTopLevel;
+}
   
 ///////////////////////////////
 ///////////////////////////////
@@ -814,7 +803,16 @@ function findLastImportIndex(bodyNodes) {
  *                   'TSEnumDeclaration', or 'unknown'.
  */ 
 function recognizeType(path, state, filePath) {
-    if (isVariableDeclarator(path) && isCustomHook(path.get('init'))) {
+    console.log("test");
+    if (isGlobalConstant(path)) {
+        console.log('Detected Global Constant:', path.toString());
+        return 'globalConstant';
+
+    } else if (isLocalConstant(path)) {
+        console.log('Detected Local Constant:', path.toString());
+        return 'localConstant';
+
+    }else if (isVariableDeclarator(path) && isCustomHook(path.get('init'))) {
         console.log('Detected Custom Hook:', path.toString());
         return 'customHook';
 
@@ -829,15 +827,7 @@ function recognizeType(path, state, filePath) {
         }
         return 'expressionFunction';
 
-    } else if (isGlobalConstant(path)) {
-        console.log('Detected Global Constant:', path.toString());
-        return 'globalConstant';
-
-    } else if (isLocalConstant(path)) {
-        console.log('Detected Local Constant:', path.toString());
-        return 'localConstant';
-
-    } else if (isVariableDeclarator(path)) {
+    }  else if (isVariableDeclarator(path)) {
         if (isReactFunctionalComponent(path)) {
             console.log('Detected Functional Component (Variable Declarator):', path.toString());
             return 'functionalComponent';
