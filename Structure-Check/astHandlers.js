@@ -8,8 +8,6 @@ const {
     exitReactComponent   
 } = require('./stateManagement'); 
 
-const { sections } = require('./astTraversal.js');  
-
 const {   
     isReactComponent,    
     isCustomHook,    
@@ -692,102 +690,18 @@ function handleUseContext(path, state, filePath) {
  * @param {string} filePath - The file path of the current file being processed.
  */  
 function handleClassComponent(path, state, filePath, sections) {  
-    console.log('Class component detected:', path.node.type);  
-    sections.classComponents.push(path.node);
+    const node = path.node;
+    const message = 'Class components are not recommended in React. Consider using functional components with hooks instead.';
+    const extraInfo = {
+        suggestions: ['Refactor to a functional component', 'Use hooks like useState and useEffect'],
+        fix: 'Replace the class keyword with a const declaration and use React hooks.'
+    };
 
-    state.hasClassComponent = true;  
-
-    if (state.hasHandlers || state.hasHooks  
-        || state.hasReactComponent || state.hasPropTypes  
-        || state.hasDefaultProps || state.hasExports) {  
-        const errorMessage = generateErrorMessage("Class component", state, filePath);  
-        if (errorMessage) {  
-            reportError(path.node, errorMessage, filePath);  
-        }  
-    }  
-
-    path.traverse({  
-        ClassMethod(innerPath) {  
-            handleClassMethod(innerPath, state, filePath, sections);  
-        },  
-        ClassProperty(innerPath) {  
-            handleClassProperty(innerPath, state, filePath,sections);  
-        },  
-        /// Need to check this
-       /// VariableDeclarator(innerPath) {  
-        ///    handleVariableDeclarator(innerPath, state, filePath,sections);  
-        ///},  
-        enter(innerPath) {  
-            enterReactComponent(state);  
-        },  
-        exit(innerPath) {  
-            exitReactComponent(state);  
-        }  
-    });  
+    logError(node, message, filePath, extraInfo);
 }  
 
-
-/**
- * Handles the processing of class methods within React class components.
- * Checks for constructors, handlers, render methods, and lifecycle methods to ensure they 
- * are declared in the correct order relative to other code constructs.
- *
- * @function handleClassMethod
- * @param {Object} path - The Babel path object for the class method node.
- * @param {Object} state - The state object that keeps track of various code states.
- * @param {string} filePath - The file path of the current file being processed.
- */
  
-function handleClassMethod(path, state, filePath, sections) { 
-    console.log('Class method detected:', path.node.type);
-    sections.classMethod.push(path.node);
-
-    const methodName = path.node.key.name;  
-    if (methodName === 'constructor') {  
-        if (state.hasHooks || state.hasHandlers || state.hasReactComponent) {  
-            reportError(path.node, 'Constructor should be declared before hooks, handlers, and other React components.', filePath);  
-        }  
-        state.hasConstructor = true;  
-    } else if (methodName.startsWith('handle')) {  
-        if (state.hasHooks || state.hasReactComponent) {  
-            reportError(path.node, 'Handlers should be declared before hooks and other React components.', filePath);  
-        }  
-        state.hasHandlers = true;  
-    } else if (methodName.startsWith('render')) {  
-        state.hasRenderMethod = true;  
-    } else if (methodName.startsWith('componentDid')) {  
-        if (state.hasHandlers || state.hasRenderMethod || state.hasReactComponent) {  
-            reportError(path.node, 'Lifecycle methods should be declared before handlers, render methods, and other React components.', filePath);  
-        }  
-        state.hasLifecycleMethods = true;  
-    }  
-}  
-
-/**
- * Handles the processing of class properties within React class components.
- * Ensures that the `state` property is declared in the correct order relative to other code constructs.
- * Delegates the handling of other properties to the `handleVariableDeclarator` function.
- *
- * @function handleClassProperty
- * @param {Object} path - The Babel path object for the class property node.
- * @param {Object} state - The state object that keeps track of various code states.
- * @param {string} filePath - The file path of the current file being processed.
- */ 
-function handleClassProperty(path, state, filePath, sections) {  
-    console.log('Class property detected:', path.node.type);
-    sections.classProperty.push(path.node);
-
-    const propertyName = path.node.key.name;  
-    if (propertyName === 'state') {  
-        if (state.hasHandlers || state.hasRenderMethod || state.hasReactComponent) {  
-            reportError(path.node, 'State should be declared before handlers, render methods, and other React components.', filePath);  
-        }  
-        state.hasStateProperty = true;  
-    } else {  
-        handleVariableDeclarator(path, state, filePath);  
-    }  
-}  
-
+//// Todo not use as now
 /**  
  * Handles the identification and processing of React hooks and effects within the AST.  
  * Ensures that hooks are declared before effects, state, and helper functions, following the expected code structure.  
@@ -1048,9 +962,7 @@ handleExportDeclarations,
 handleJSXElement,  
 handleReturnStatement,  
 handleUseContext,  
-handleClassComponent,  
-handleClassMethod,  
-handleClassProperty,  
+handleClassComponent,    
 handleHooksAndEffects,  
 handleContextCreation,
 processFunctionType,

@@ -1,8 +1,10 @@
-const { parseFile, readFileContent } = require('./fileOperations');
-const traverse = require('@babel/traverse').default
+const traverse = require('@babel/traverse').default;
 const { codeFrameColumns } = require("@babel/code-frame");
 const { t, logError, generateErrorMessage, reportError } = require('./common');  
-const { createStateTracker } = require('./stateManagement');    
+const { createStateTracker } = require('./stateManagement');  
+const { generate } = require('@babel/generator').default;
+const { statSync, readFileSync } = require('fs');
+const { parseFile, createBackup, readFileContent, writeFileContent } = require('./fileOperations');  
 const {   
     handleImportDeclaration,    
     handleVariableDeclarator,    
@@ -51,8 +53,6 @@ const {
     reportVariablePlacementIssue   
 } = require('./utils');
 
-const fs = require('fs');    
-const readFileSync = fs.readFileSync;  
 
 
 // Define the sections object globally  
@@ -290,30 +290,40 @@ const setupTraverse = (state, filePath, sections) => {
  * @param {Array} sections.localConstants - An array of local constants within function bodies.
  * @returns {Array} An array of ordered code sections.
  */ 
-const reorderCode = (sections) => {  
-    const orderedSections = [  
-        ...sections.imports,  
-        ...sections.constants,  
-        ...sections.contexts,  
-        ...sections.hooks,  
-        ...sections.types,  
-        ...sections.helperFunctions,  
-        ...sections.components,  
-        ...sections.classComponents,  
-        sections.mainComponent,  
-        ...sections.exports,  
-    ];  
-  
-    for (let [functionBodyNode, localConsts] of sections.localConstants) {  
-        const newFunctionBody = [  
-            ...localConsts,  
-            ...functionBodyNode.body.filter((node) => !localConsts.includes(node)),  
-        ];  
-        functionBodyNode.body = newFunctionBody;  
-    }  
-  
-    return orderedSections.filter(Boolean);  
-};  
+const reorderCode = (sections) => {
+    const orderedSections = [
+        ...sections.imports,
+        ...sections.constants,
+        ...sections.contexts,
+        ...sections.hooks,
+        ...sections.stateHooks,
+        ...sections.effectHooks,
+        ...sections.handlers,
+        ...sections.types.TSInterfaceDeclaration,
+        ...sections.types.TSTypeAliasDeclaration,
+        ...sections.types.TSEnumDeclaration,
+        ...sections.helperFunctions,
+        ...sections.components,
+        ...sections.classComponents,
+        ...sections.classMethod,
+        ...sections.classProperty,
+        ...sections.returns,
+        ...sections.styledComponent,
+        ...sections.functionalComponent,
+        sections.mainComponent,
+        ...sections.exports,
+    ];
+
+    for (let [functionBodyNode, localConsts] of sections.localConstants.entries()) {
+        const newFunctionBody = [
+            ...localConsts,
+            ...functionBodyNode.body.filter((node) => !localConsts.includes(node)),
+        ];
+        functionBodyNode.body = newFunctionBody;
+    }
+
+    return orderedSections.filter(Boolean);
+};
   
 /**
  * Creates a new Abstract Syntax Tree (AST) from the ordered sections of code.
@@ -342,36 +352,60 @@ const createNewAST = (orderedSections) => {
  * @returns {Promise<void>} A promise that resolves when the file has been fixed.
  * @throws Will log an error and exit the process if the provided path is not a file.
  */  
-const fixFile = async (filePath) => {  
-    console.log(`Fixing file: ${filePath}`);  
+const fixFile = async (filePath) => {
+    console.log(`Fixing file: ${filePath}`);
 
-    const { createBackup, readFileContent, writeFileContent } = require('./fileOperations');  
-    const { generate } = require('@babel/generator').default;  
-  
-    // Vérification que le chemin est un fichier  
-    if (statSync(filePath).isFile()) {  
-        // Create a backup before fixing the file  
-        createBackup(filePath);  
-        const content = readFileContent(filePath);  
-        const ast = parseFile(content);  
-        const state = createStateTracker();  
-  
-        traverse(ast, setupTraverse(state, filePath));  
-        // Analyze and reorder the code sections    
-        const sections = analyzeCode(ast, filePath);  
-        const orderedSections = reorderCode(sections);  
+    if (statSync(filePath).isFile()) {
+        // Create a backup before fixing the file
+        createBackup(filePath);
+        const content = readFileContent(filePath);
+        const ast = parseFile(content);
+        const state = createStateTracker();
 
-        const newAst = createNewAST(orderedSections);  
-        const newContent = generate(newAst, {}).code;  
-  
-        writeFileContent(filePath, newContent);  
-  
-        console.log(`File ${filePath} fixed.`);  
-    } else {  
-        console.error(`${filePath} is not a file.`);  
-        process.exit(1);  // Exit the process if it's not a file
-    }  
-};  
+        // Initialize sections object
+        const sections = {
+            imports: [],
+            localConstants: new Map(),
+            constants: [],
+            contexts: [],
+            hooks: [],
+            stateHooks: [],
+            effectHooks: [],
+            handlers: [],
+            helperFunctions: [],
+            components: [],
+            classComponents: [],
+            classMethod: [],
+            classProperty: [],
+            returns: [],
+            styledComponent: [],
+            functionalComponent: [],
+            types: {
+                TSInterfaceDeclaration: [],
+                TSTypeAliasDeclaration: [],
+                TSEnumDeclaration: []
+            },
+            exports: [],
+            mainComponent: null,
+            nodes: []
+        };
+
+        traverse(ast, setupTraverse(state, filePath, sections));
+
+        // Analyze and reorder the code sections
+        const orderedSections = reorderCode(sections);
+
+        const newAst = createNewAST(orderedSections);
+        const newContent = generate(newAst, {}).code;  // Ensure `generate` is called correctly
+
+        writeFileContent(filePath, newContent);
+
+        console.log(`File ${filePath} fixed.`);
+    } else {
+        console.error(`${filePath} is not a file.`);
+        process.exit(1); // Exit the process if it's not a file
+    }
+}; 
 
 //////////////////////
 //////////////////////

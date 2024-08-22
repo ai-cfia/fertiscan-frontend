@@ -92,7 +92,6 @@ const parseFile = (content) => {
 const readFileContent = (filePath) => {
     try {
         const resolvedPath = path.resolve(filePath);
-        console.log(`Reading file: ${resolvedPath}`); // Debugging log
         const content = fs.readFileSync(resolvedPath, 'utf-8');
         return content;
     } catch (error) {

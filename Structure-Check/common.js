@@ -1,5 +1,7 @@
 const t = require('@babel/types');    
-const { logError, generateErrorMessage, reportError } = require('./errorHandling');   
+const { logError, generateErrorMessage, reportError } = require('./errorHandling'); 
+const { generate } = require('@babel/generator');
+
   
 module.exports = {  
     t,  

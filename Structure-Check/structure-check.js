@@ -20,6 +20,8 @@ const projectPath = require.main.path + '/../src';
 const filePattern = /\.(ts|tsx)$/;  
 const ignoreFilePath = require.main.path + '/structure-check.ignore';
 const fs = require('fs');
+const { existsSync, statSync, readFileSync } = require('fs');
+
 
 
 /**  
@@ -73,32 +75,35 @@ const analyzeProject = async (displayLevel, filePath) => {
 * @throws Will log an error if there's an issue finding or fixing the files.
 */
   
-const fixProjectStructure = async (filePath) => {   
-    try {     
-        if (filePath) {    
-            if (fs.existsSync(filePath)) {  
-                await fixFile(filePath);    
-            } else {  
-                logError(null, `Specified file does not exist: ${filePath}`, filePath);  
-                return;  // Exit the function if the file does not exist  
-            }  
-        } else {    
-            const ignorePattern = await compileIgnorePattern(ignoreFilePath);    
-            const files = await findFilesRecursive(projectPath, filePattern, [], ignorePattern);    
-            if (files.length === 0) {    
-                // If no files are found, log a message and exit  
-                console.log(`Files found for structure analysis:`, files);  
-            } else {   
-                for (const filePath of files) {    
-                    await fixFile(filePath);    
-                }    
-                console.log("Fixing of react project done");  
-            }  
-        }    
-    } catch (err) {    
-        logError(null, `Error during the searching of the file: ${err.message}`, filePath);  
-    }   
-}; 
+const fixProjectStructure = async (filePath) => {
+    try {
+        if (filePath) {
+            if (existsSync(filePath)) {
+                await fixFile(filePath);
+            } else {
+                logError(null, `Specified file does not exist: ${filePath}`, filePath);
+                return; // Exit the function if the file does not exist
+            }
+        } else {
+            const ignorePattern = await compileIgnorePattern(ignoreFilePath);
+            const files = await findFilesRecursive(projectPath, filePattern, [], ignorePattern);
+            
+            if (files.length === 0) {
+                console.log(`No files found for structure analysis`);
+            } else {
+                console.log(`Files found for structure analysis:`, files);
+
+                for (const file of files) {
+                    await fixFile(file);
+                }
+
+                console.log("Fixing of React project done");
+            }
+        }
+    } catch (err) {
+        logError(null, `Error during the searching of the file: ${err.message}`, filePath);
+    }
+};
 
 ///////////////////////////////
 ///////////////////////////////

@@ -3,6 +3,7 @@ const { analyzeCode } = require('./astTraversal');
 const { parseFile, readFileContent } = require('./fileOperations');
 const path = require('path');
 
+
 const {
     logError, generateErrorMessage,
     reportError, errors

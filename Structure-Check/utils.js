@@ -2,6 +2,7 @@ const { t, logError, generateErrorMessage, reportError } = require('./common');
 const path = require('path');    
 const projectPath = path.resolve(__dirname, '../src/');
 
+
   
 ///////////////////////////////
 ///////////////////////////////
@@ -169,14 +170,7 @@ function isGlobalConstant(path) {
 ///////////////////////////////
 ///////////////////////////////
 
-/**
- * Determines if a given path represents a local constant.
- * Checks if the constant is not exported, is not at the top level, and is inside a function or block statement.
- *
- * @function isLocalConstant
- * @param {NodePath} path - The Babel path object for the variable declarator node.
- * @returns {boolean} True if the path represents a local constant, false otherwise.
- */  
+
 /**
  * Determines if a given path represents a local constant.
  * Checks if the constant is not exported, not at the top level, and is inside a function or block statement.
@@ -185,25 +179,19 @@ function isGlobalConstant(path) {
  * @returns {boolean} True if the path represents a local constant, false otherwise.
  */
 function isLocalConstant(path) {
-    //console.log('Inspecting node:', path.node.id.name);
 
     // Ensure path.node is a VariableDeclarator
     if (!t.isVariableDeclarator(path.node)) {
-        console.log('Node is not a VariableDeclarator:', path.node);
         return false;
     }
 
     // Ensure the parent is a VariableDeclaration of kind 'const'
     if (!path.parentPath.isVariableDeclaration({ kind: 'const' })) {
-        console.log('Parent is not a VariableDeclaration of kind const:', path.parentPath.node);
         return false;
     }
 
-    console.log('Node is a const VariableDeclarator:', path.node);
-
     // Ensure path.node.id exists and has a name property
     if (!path.node.id || typeof path.node.id.name !== 'string') {
-        console.log('Node id is not valid or does not have a valid name property:', path.node.id);
         return false;
     }
 
@@ -211,24 +199,19 @@ function isLocalConstant(path) {
 
     // Ensure the name does not contain 'use' or 'handle'
     if (name.includes('use') || name.includes('handle')) {
-        console.log(`Variable name contains 'use' or 'handle': ${name}`);
         return false;
     }
 
     // Check if within a function scope
     let currentScope = path.scope;
     while (currentScope) {
-        console.log('Checking scope:', currentScope.path && currentScope.path.type);
 
         if (currentScope.path.type==="ArrowFunctionExpression"|| currentScope.path.type==="FunctionDeclaration" ) {
-            console.log('Found function or arrow function scope:', currentScope.path.type);
-            return true; // It's in a function, hence a local constant
+            return true; 
         }
         currentScope = currentScope.parent;
     }
 
-    // If not found within function scope, return false
-    console.log('Did not find function or arrow function scope for node:', path.node);
     return false;
 }
   
