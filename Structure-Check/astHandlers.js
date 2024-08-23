@@ -471,6 +471,7 @@ function handleHelperFunctionDeclaration(path, state, filePath,sections) {
  */
 function handleFunctionExpressionsAndArrowFunctions(path, state, filePath, sections) {
     let functionName = 'Anonymous';
+    let type="";
 
     // Check for named function expressions or variable declarators
     if (path.isFunctionExpression() || path.isArrowFunctionExpression()) {
@@ -485,7 +486,9 @@ function handleFunctionExpressionsAndArrowFunctions(path, state, filePath, secti
     // Identify if the function is a hook (e.g., useEffect)
     if (/^use[A-Z]/.test(functionName)) {
         console.log('Hook detected:', path.node.type);
+        if (path.scope.path.type === 'Program') {  
         sections.hooks.push(path.node);
+        }
         if (state.hasPropTypes || state.hasDefaultProps || state.hasExports) {
             const errorMessage = generateErrorMessage('Hooks', state, filePath);  
             if (errorMessage) {  
@@ -493,11 +496,15 @@ function handleFunctionExpressionsAndArrowFunctions(path, state, filePath, secti
             } 
         }
         state.hasHooks = true;
+        type="hooks";
+        return type;
     }
     // Identify if the function is a handler (e.g., handleSubmit)
     else if (/^handle[A-Z]/.test(functionName)) {
         console.log('Handler detected:', path.node.type);
-        sections.handlers.push(path.node);
+        if (path.scope.path.type === 'Program') {  
+            sections.handlers.push(path.node);
+        }
         if (state.hasHooks) {
             const errorMessage = generateErrorMessage('Hooks', state, filePath);  
             if (errorMessage) {  
@@ -510,6 +517,8 @@ function handleFunctionExpressionsAndArrowFunctions(path, state, filePath, secti
             });
         }*/
         state.hasHandlers = true;
+        type="handlers";
+        return type;
     }
 
     enterReactComponent(state);
@@ -639,7 +648,6 @@ function handleJSXElement(path, state, filePath,sections) {
  */ 
 function handleReturnStatement(path, state, filePath, sections) {  
     console.log('Return statement detected:', path.node.type);  
-    sections.returns.push(path.node);  
   
     if (!state.functionComponentState.insideReactComponent) return;  
     const functionPath = path.findParent(p =>   
@@ -877,7 +885,7 @@ const traverseReactComponent = (path, state, filePath, sections) => {
                         let visitedNode;
                         let type;
                         visitedNode, type = handleVariableDeclarator(declaratorPath, state, filePath, sections);
-                        visitedNodes.add(visitedNode)  
+                        visitedNodes.add(visitedNode);
                        innerSection.section.get(type).push(visitedNode);
                     }  
                 });  
@@ -903,10 +911,14 @@ const traverseReactComponent = (path, state, filePath, sections) => {
                 // handleJSXElement(innerPath, state, filePath, sections);  
             }  
         },  
+        // Todo, modify this to use helper Function
         FunctionExpression(innerPath) {  
             if (!visitedNodes.has(innerPath.node) && !hasDisableCheckComment(innerPath)) {  
                 visitedNodes.add(innerPath.node);  
-                handleFunctionExpressionsAndArrowFunctions(innerPath, state, filePath, sections);  
+                let visitedNode;
+                let type;
+                type=handleFunctionExpressionsAndArrowFunctions(innerPath, state, filePath, sections); 
+                innerSection.section.get(type).push(path.node); 
             }  
         },  
         ArrowFunctionExpression(innerPath) {  
