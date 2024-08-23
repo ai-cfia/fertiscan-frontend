@@ -6,7 +6,6 @@ interface InnerSection {
 }
 
 interface InnerReturn{
-    index:Number;
     node:Node;
     JSXTable: Node[];
 }
@@ -71,17 +70,15 @@ const createInnerSection = (node: Node): InnerSection => ({
     section: createSection()
 });
 
-const createInnerReturn = (index:Number, node: Node, jsx): InnerReturn => ({
+const createInnerReturn = (node: Node, jsx: Node[]): InnerReturn => ({
     node: node,
-    jsx: createSection()
+    JSXTable: jsx,
 });
 
 const createMainComponent=(innerSection:Node, path:string):MainComponent => ({
     innerSection: createInnerSection(innerSection),
     mainComponentPath: path
 })
-
-
 
 module.exports= {
     createSection,

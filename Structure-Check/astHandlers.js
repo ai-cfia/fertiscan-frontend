@@ -8,6 +8,13 @@ const {
     exitReactComponent   
 } = require('./stateManagement'); 
 
+const {
+    createSection,
+    createInnerSection,
+    createInnerReturn,
+    createMainComponent
+} = require('./sections')
+
 const {   
     isReactComponent,    
     isCustomHook,    
@@ -398,7 +405,9 @@ function handleMainReactComponent(path, state, filePath, sections) {
     state.topLevelState.hasMainComponent = true;  
     state.topLevelState.mainComponentPath = path;  
     enterReactComponent(state);  
-    traverseReactComponent(path, state, filePath, sections);  
+    let mainNodes=traverseReactComponent(path, state, filePath, sections);  
+    let innerSection = createInnerSection(path.node, )
+    let innerMain= createMainComponent()
 }
 
 
@@ -651,8 +660,23 @@ function handleReturnStatement(path, state, filePath, sections) {
                 state.functionComponentState.hasReturnInSameComponent = true;  
             }  
         }  
-    }  
+    }
+    let jsxNodes = getReturnJSX(path.node);
+    const innerReturn = createInnerReturn(path.node, jsxNodes);
+    sections.returns.push(innerReturn);
 }  
+
+const getReturnJSX = (parentNode) => {
+    const childNodes = [];
+    traverse(parentNode, {
+      enter(path) {
+        if (path.node !== parentNode.node) {
+          childNodes.push(path.node);
+        }
+      }
+    });
+    return childNodes;
+  };
 
 
 /**  
@@ -835,6 +859,7 @@ const traverseReactComponent = (path, state, filePath, sections) => {
     const visitor = {  
         VariableDeclaration(innerPath) {
             if(isMainFunctionComponent(innerPath,state,filePath)){
+                visitedNodes.add(innerPath.node);  
                 handleMainReactComponent(innerPath,state,filePath,sections)
             }
             else if (!visitedNodes.has(innerPath.node) && !hasDisableCheckComment(innerPath)) {  
@@ -887,6 +912,7 @@ const traverseReactComponent = (path, state, filePath, sections) => {
     };  
   
     path.traverse(visitor);  
+    return visitor;
 };  
 
 
