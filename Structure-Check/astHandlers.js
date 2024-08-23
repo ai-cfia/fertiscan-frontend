@@ -751,7 +751,7 @@ function handleClassComponent(path, state, filePath, sections) {
  */  
 const handleHooksAndEffects = (path, state, filePath,sections) => {  
     console.log('Hook or effect detected:', path.node.type);  
-
+    let type="";
     const currentState = state.functionComponentState.insideReactComponent ? state.functionComponentState : state.topLevelState;  
   
     if (path.isCallExpression()) {  
@@ -769,7 +769,8 @@ const handleHooksAndEffects = (path, state, filePath,sections) => {
             if (currentState.hasEffects || currentState.hasHelperFunctions) {  
                 reportError(path.node, 'State hooks (useState, useReducer) should be declared before effects and helper functions.', filePath);  
             }  
-            currentState.hasStateHooks = true;  
+            currentState.hasStateHooks = true; 
+            type="stateHooks" 
         }  
   
         // Check for effects  
@@ -781,6 +782,7 @@ const handleHooksAndEffects = (path, state, filePath,sections) => {
                 reportError(path.node, 'Effects (useEffect, useLayoutEffect) should be declared before helper functions.', filePath);  
             }  
             currentState.hasEffects = true;  
+            type="stateEffects"
         }  
   
         // Check for other hooks  
@@ -788,7 +790,8 @@ const handleHooksAndEffects = (path, state, filePath,sections) => {
             if (currentState.hasEffects || currentState.hasHelperFunctions) {  
                 reportError(path.node, 'Other hooks should be declared before effects and helper functions.', filePath);  
             }  
-            currentState.hasHooks = true;  
+            currentState.hasHooks = true; 
+            type="hooks" 
         }  
     }  
   
@@ -800,7 +803,7 @@ const handleHooksAndEffects = (path, state, filePath,sections) => {
         }  
         currentState.hasHelperFunctions = true;  
     }
-    return path.node.type;
+    return type;
 };  
 
 function handleContextCreation(path, state, filePath,sections) {  
@@ -897,7 +900,8 @@ const traverseReactComponent = (path, state, filePath, sections) => {
             if (!visitedNodes.has(innerPath.node) && !hasDisableCheckComment(innerPath)) {  
                 visitedNodes.add(innerPath.node);  
                 checkForContextUsageOrder(innerPath, filePath);  
-                handleHooksAndEffects(innerPath, state, filePath, sections);  
+                type=handleHooksAndEffects(innerPath, state, filePath, sections);  
+                innerSection.section.get(type).push(path.node); 
             }  
         },  
         ReturnStatement(innerPath) {  
@@ -917,18 +921,19 @@ const traverseReactComponent = (path, state, filePath, sections) => {
         FunctionExpression(innerPath) {
             if (!visitedNodes.has(innerPath.node) && !hasDisableCheckComment(innerPath)) {
                 visitedNodes.add(innerPath.node);
-                let visitedNode;
                 let type;
                 type=handleHelperFunctionDeclaration(innerPath, state, filePath, sections);
                 innerSection.section.get(type).push(path.node);
             }
         },
-        ArrowFunctionExpression(innerPath) {
-            if (!visitedNodes.has(innerPath.node) && !hasDisableCheckComment(innerPath)) {
-                visitedNodes.add(innerPath.node);
-                handleFunctionExpressionsAndArrowFunctions(innerPath, state, filePath, sections);
-            }
-        },
+        ArrowFunctionExpression(innerPath) {  
+            if (!visitedNodes.has(innerPath.node) && !hasDisableCheckComment(innerPath)) {  
+                visitedNodes.add(innerPath.node);  
+                let type;
+                type=handleFunctionExpressionsAndArrowFunctions(innerPath, state, filePath, sections); 
+                innerSection.section.get(type).push(path.node);   
+            }  
+        },  
         exit(innerPath) {  
             if (innerPath === path) {  
                 exitReactComponent(state);  
