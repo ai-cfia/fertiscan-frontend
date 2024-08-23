@@ -37,7 +37,7 @@ interface Sections {
         TSEnumDeclaration: Node[];
     };
     exports: Node[];
-    mainComponent: mainComponent;
+    mainComponent: MainComponent | null;
     nodes: Node[];
 }
 
@@ -66,22 +66,26 @@ const createSection = (): Sections => ({
     nodes: []
 });
 
-const createInnerSection = (node: any): InnerSection => ({
+const createInnerSection = (node: Node): InnerSection => ({
     node: node,
     section: createSection()
 });
 
 const createInnerReturn = (index:Number, node: Node, jsx): InnerReturn => ({
-    index:index,
     node: node,
     jsx: createSection()
 });
 
-const createMainComponent=():MainComponent
+const createMainComponent=(innerSection:Node, path:string):MainComponent => ({
+    innerSection: createInnerSection(innerSection),
+    mainComponentPath: path
+})
 
 
 
 module.exports= {
     createSection,
     createInnerSection,
+    createInnerReturn,
+    createMainComponent
 }
