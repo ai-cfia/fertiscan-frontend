@@ -1,4 +1,4 @@
-const { t, logError, generateErrorMessage, reportError } = require('./common');    
+const { t,  reportError } = require('./common');    
 const path = require('path');    
 const projectPath = path.resolve(__dirname, '../src/');
 

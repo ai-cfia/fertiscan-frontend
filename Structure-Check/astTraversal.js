@@ -1,58 +1,39 @@
 const traverse = require('@babel/traverse').default;
 const { codeFrameColumns } = require("@babel/code-frame");
-const { t, logError, generateErrorMessage, reportError } = require('./common');  
-const { createStateTracker } = require('./stateManagement');  
+const { reportError } = require('./common');  
+const { createStateTracker, } = require('./stateManagement');  
 const generate  = require('@babel/generator').default;
 const { statSync, readFileSync } = require('fs');
 const { parseFile, createBackup, readFileContent, writeFileContent } = require('./fileOperations');  
 const {   
     handleImportDeclaration,    
     handleVariableDeclarator,    
-    handleFunctionalComponent,    
-    handleGlobalConstantDeclaration,    
+    handleFunctionalComponent,    //not use
+    handleGlobalConstantDeclaration,   //not use 
     handleTSInterfaceDeclaration,    
     handleTSTypeAliasDeclaration,    
     handleTSEnumDeclaration,    
     handleStyledComponent,    
-    handleCustomHookDeclaration,    
-    handleLocalConstantDeclaration,    
+    handleCustomHookDeclaration,  //no tuse  
+    handleLocalConstantDeclaration,   //not use 
     handleMainReactComponent,    
     handleHelperFunctionDeclaration,    
     handleFunctionExpressionsAndArrowFunctions,    
     handleExportDeclarations,    
-    handleJSXElement,    
-    handleReturnStatement,    
-    handleUseContext,    
+    handleJSXElement,    // Need to be implemented
+    handleReturnStatement, // Not use   
+    handleUseContext,     // Not use
     handleClassComponent,    
-    handleClassMethod,    
-    handleClassProperty,    
+    handleClassMethod,    // Not use no class accept in file since it is an old usage    
     handleHooksAndEffects,  
-    handleContextCreation, 
-    processFunctionType, 
+    handleContextCreation, // Not use
+    processFunctionType, // Not use
 } = require('./astHandlers.js'); 
-const {   
-    isReactComponent,   
-    isCustomHook,   
-    isGlobalConstant,   
-    isLocalConstant,   
-    isFunctionExpression,   
-    isArrowFunctionExpression,   
+const {     
     isMainFunctionComponent,   
     isExportDeclarationWithName,   
-    IsTopOfScope,   
-    isReactFunctionalComponent,   
-    isReactCreateElementCall,   
-    isVariableDeclarator,   
-    isContextCreation,   
-    isReassignment,   
-    getMainComponentNameFromFileName,   
-    findLastImportIndex,   
-    recognizeType,   
-    checkForContextUsageOrder,   
-    checkDeclarationKeyword,   
-    reportVariablePlacementIssue   
+    getMainComponentNameFromFileName,    
 } = require('./utils');
-
 
 
 // Define the sections object globally  

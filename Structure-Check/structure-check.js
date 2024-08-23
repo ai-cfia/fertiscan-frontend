@@ -1,13 +1,17 @@
-const { findFilesRecursive, compileIgnorePattern, 
-    parseFile, readFileContent, revertFile 
-} = require('./fileOperations');  
+const { findFilesRecursive, 
+        compileIgnorePattern, 
+        parseFile, 
+        readFileContent, 
+        revertFile 
+    } = require('./fileOperations');  
 
-const { analyzeCode, fixFile, 
-} = require('./astTraversal.js');  
-
+const { analyzeCode, 
+        fixFile, 
+    } = require('./astTraversal.js');
 
 const { displayAnalysis,  
-    displayHelp, displayFilesMenu,  
+        displayHelp, 
+        displayFilesMenu,  
 } = require('./displayInteraction.cjs');   
 
 const {
@@ -20,9 +24,7 @@ const projectPath = require.main.path + '/../src';
 const filePattern = /\.(ts|tsx)$/;  
 const ignoreFilePath = require.main.path + '/structure-check.ignore';
 const fs = require('fs');
-const { existsSync, statSync, readFileSync } = require('fs');
-
-
+const { existsSync } = require('fs');
 
 /**  
  * Analyzes the structure of the entire project or specific files based on display level.  

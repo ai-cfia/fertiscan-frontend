@@ -74,6 +74,8 @@ const enterReactComponent = (state) => {
 const exitReactComponent = (state) => {  
     state.functionComponentState.insideReactComponent = false;  
 };  
+
+
   
 module.exports = {  
     createStateTracker,  

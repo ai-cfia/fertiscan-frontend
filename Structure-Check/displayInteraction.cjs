@@ -2,12 +2,7 @@ const prompts = require('prompts');
 const { analyzeCode } = require('./astTraversal');
 const { parseFile, readFileContent } = require('./fileOperations');
 const path = require('path');
-
-
-const {
-    logError, generateErrorMessage,
-    reportError, errors
-} = require('./errorHandling');
+const { errors } = require('./errorHandling');
 const colors = {
     reset: "\x1b[0m",
     bright: "\x1b[1m",
