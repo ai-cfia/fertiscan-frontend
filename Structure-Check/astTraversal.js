@@ -2,7 +2,7 @@ const traverse = require('@babel/traverse').default;
 const { codeFrameColumns } = require("@babel/code-frame");
 const { t, logError, generateErrorMessage, reportError } = require('./common');  
 const { createStateTracker } = require('./stateManagement');  
-const { generate } = require('@babel/generator').default;
+const generate  = require('@babel/generator').default;
 const { statSync, readFileSync } = require('fs');
 const { parseFile, createBackup, readFileContent, writeFileContent } = require('./fileOperations');  
 const {   
