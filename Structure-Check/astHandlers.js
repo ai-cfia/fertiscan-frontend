@@ -427,7 +427,7 @@ function handleMainReactComponent(path, state, filePath, sections) {
  * @param {string} filePath - The file path of the current file being processed.
  */  
 function handleHelperFunctionDeclaration(path, state, filePath,sections) {  
-    console.log('Helper function declaration detected:', path.node.type);  
+    console.log('Helper function declaration detected:', path.node.type);
     sections.helperFunctions.push(path.node);
 
   
@@ -456,7 +456,9 @@ function handleHelperFunctionDeclaration(path, state, filePath,sections) {
     currentState.hasHelperFunctions = true;  
 
     enterReactComponent(state);  
-    traverseReactComponent(path, state, filePath,sections); 
+    traverseReactComponent(path, state, filePath,sections);
+
+    return "helperFunctions"
 }  
 
 /**
@@ -912,21 +914,21 @@ const traverseReactComponent = (path, state, filePath, sections) => {
             }  
         },  
         // Todo, modify this to use helper Function
-        FunctionExpression(innerPath) {  
-            if (!visitedNodes.has(innerPath.node) && !hasDisableCheckComment(innerPath)) {  
-                visitedNodes.add(innerPath.node);  
+        FunctionExpression(innerPath) {
+            if (!visitedNodes.has(innerPath.node) && !hasDisableCheckComment(innerPath)) {
+                visitedNodes.add(innerPath.node);
                 let visitedNode;
                 let type;
-                type=handleFunctionExpressionsAndArrowFunctions(innerPath, state, filePath, sections); 
-                innerSection.section.get(type).push(path.node); 
-            }  
-        },  
-        ArrowFunctionExpression(innerPath) {  
-            if (!visitedNodes.has(innerPath.node) && !hasDisableCheckComment(innerPath)) {  
-                visitedNodes.add(innerPath.node);  
-                handleFunctionExpressionsAndArrowFunctions(innerPath, state, filePath, sections);  
-            }  
-        },  
+                type=handleHelperFunctionDeclaration(innerPath, state, filePath, sections);
+                innerSection.section.get(type).push(path.node);
+            }
+        },
+        ArrowFunctionExpression(innerPath) {
+            if (!visitedNodes.has(innerPath.node) && !hasDisableCheckComment(innerPath)) {
+                visitedNodes.add(innerPath.node);
+                handleFunctionExpressionsAndArrowFunctions(innerPath, state, filePath, sections);
+            }
+        },
         exit(innerPath) {  
             if (innerPath === path) {  
                 exitReactComponent(state);  
