@@ -741,7 +741,7 @@ function handleClassComponent(path, state, filePath, sections) {
  */  
 const handleHooksAndEffects = (path, state, filePath,sections) => {  
     console.log('Hook or effect detected:', path.node.type);  
-  
+
     const currentState = state.functionComponentState.insideReactComponent ? state.functionComponentState : state.topLevelState;  
   
     if (path.isCallExpression()) {  
@@ -752,8 +752,10 @@ const handleHooksAndEffects = (path, state, filePath,sections) => {
         const effectHooks = ['useEffect', 'useLayoutEffect'];  
   
         // Check for state hooks  
-        if (stateHooks.includes(calleeName)) { 
-            //sections.stateHook.push(path.node); 
+        if (stateHooks.includes(calleeName)) {
+            if (path.scope.path.type === 'Program') {
+                sections.stateHook.push(path.node);
+            }
             if (currentState.hasEffects || currentState.hasHelperFunctions) {  
                 reportError(path.node, 'State hooks (useState, useReducer) should be declared before effects and helper functions.', filePath);  
             }  
@@ -761,9 +763,10 @@ const handleHooksAndEffects = (path, state, filePath,sections) => {
         }  
   
         // Check for effects  
-        if (effectHooks.includes(calleeName)) { 
-            //sections.effectHook.push(path.node); 
- 
+        if (effectHooks.includes(calleeName)) {
+            if (path.scope.path.type === 'Program') {
+                sections.effectHook.push(path.node);
+            }
             if (currentState.hasHelperFunctions) {  
                 reportError(path.node, 'Effects (useEffect, useLayoutEffect) should be declared before helper functions.', filePath);  
             }  
@@ -786,7 +789,8 @@ const handleHooksAndEffects = (path, state, filePath,sections) => {
             reportError(path.node, `Helper function ${functionName} should be declared after hooks and effects.`, filePath);  
         }  
         currentState.hasHelperFunctions = true;  
-    }  
+    }
+    return path.node.type;
 };  
 
 function handleContextCreation(path, state, filePath,sections) {  
