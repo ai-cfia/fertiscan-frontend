@@ -37,7 +37,7 @@ interface Sections {
         TSEnumDeclaration: Node[];
     };
     exports: Node[];
-    mainComponent: mainComponent;
+    mainComponent: MainComponent | null;
     nodes: Node[];
 }
 
