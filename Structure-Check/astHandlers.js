@@ -39,6 +39,7 @@ const {
     checkDeclarationKeyword,    
     reportVariablePlacementIssue   
 } = require('./utils');   
+const { variableDeclaration } = require('@babel/types');
 
   
 /**
@@ -92,17 +93,22 @@ function handleImportDeclaration(path, state, filePath, sections) {
 
 // is this one is revelant since we have local and global handler mabe refactor
 function handleVariableDeclarator(path, state, filePath, sections) {  
-    console.log('Variable declarator detected:', path.node.type);
-    if(isMainFunctionComponent(path,state,filePath)){
-        handleMainReactComponent(path, state,filePath,sections);
-    }
-    else if (isGlobalConstant(path)) {
+    const visitedNodes = new Set();  
+    let type="";
+    if (isGlobalConstant(path)) {
+        visitedNodes.add(path.node);  
         handleGlobalConstantDeclaration(path, state, filePath, sections);
+        type="constants"
     } else if (isLocalConstant(path)) {
+        visitedNodes.add(path.node);  
         handleLocalConstantDeclaration(path, state, filePath, sections);
+        type="localConstants"
     } else if (isContextCreation(path)) {
+        visitedNodes.add(path.node);  
         handleContextCreation(path, state, filePath, sections);
+        type="contexts"
     }
+    return visitedNodes, type;
 } 
   
 /**
@@ -382,7 +388,6 @@ function handleLocalConstantDeclaration(path, state, filePath,sections) {
  * @param {string} filePath - The file path of the current file being processed.
  */ 
 function handleMainReactComponent(path, state, filePath, sections) {  
-    sections.mainComponent = path.node;  
 
     const componentName = path.node.id?.name;
     const fileName = filePath.split('/').pop().replace(/\.tsx?$/, '');
@@ -406,7 +411,7 @@ function handleMainReactComponent(path, state, filePath, sections) {
     state.topLevelState.mainComponentPath = path;  
     enterReactComponent(state);  
     let mainNodes=traverseReactComponent(path, state, filePath, sections);  
-    let innerSection = createInnerSection(path.node, )
+    let innerSection = createInnerSection(path.node,  )
     let innerMain= createMainComponent()
 }
 
@@ -853,21 +858,23 @@ function hasDisableCheckComment(path) {
  * @param {State} state - The state object to maintain the traversal state.
  * @param {string} filePath - The path to the current file being processed.
  */
-const traverseReactComponent = (path, state, filePath, sections) => {  
-    const visitedNodes = new Set();  
-  
+const traverseReactComponent = (path, state, filePath, sections) => { 
+    const section = createSection(); 
+    const innerSection = createInnerSection(path.node, section);
     const visitor = {  
         VariableDeclaration(innerPath) {
             if(isMainFunctionComponent(innerPath,state,filePath)){
-                visitedNodes.add(innerPath.node);  
                 handleMainReactComponent(innerPath,state,filePath,sections)
             }
-            else if (!visitedNodes.has(innerPath.node) && !hasDisableCheckComment(innerPath)) {  
+             if (!visitedNodes.has(innerPath.node) && !hasDisableCheckComment(innerPath)) {  
                 visitedNodes.add(innerPath.node);  
                 innerPath.get('declarations').forEach(declaratorPath => {  
                     if (!visitedNodes.has(declaratorPath.node)) {  
-                        visitedNodes.add(declaratorPath.node);  
-                        handleVariableDeclarator(declaratorPath, state, filePath, sections);  
+                        let visitedNode;
+                        let type;
+                        visitedNode, type = handleVariableDeclarator(declaratorPath, state, filePath, sections);
+                        visitedNodes.add(visitedNode)  
+                       innerSection.section.get(type).push(visitedNode);
                     }  
                 });  
             }  
