@@ -134,16 +134,18 @@ const setupTraverse = (state, filePath, sections) => {
             }
         },
         VariableDeclaration(innerPath) {
-            if (isMainFunctionComponent(innerPath, state, filePath)) {
-                handleMainReactComponent(innerPath, state, filePath, sections);
-            } else if (!visitedNodes.has(innerPath.node) && !hasDisableCheckComment(innerPath)) {
+            if (!visitedNodes.has(innerPath.node) && !hasDisableCheckComment(innerPath)) {
                 visitedNodes.add(innerPath.node);
-                innerPath.get('declarations').forEach(declaratorPath => {
-                    if (!visitedNodes.has(declaratorPath.node)) {
-                        visitedNodes.add(declaratorPath.node);
-                        handleVariableDeclarator(declaratorPath, state, filePath, sections);
-                    }
-                });
+                if (isMainFunctionComponent(innerPath, state, filePath)) {
+                    handleMainReactComponent(innerPath, state, filePath, sections);
+                } else {
+                    innerPath.get('declarations').forEach(declaratorPath => {
+                        if (!visitedNodes.has(declaratorPath.node)) {
+                            visitedNodes.add(declaratorPath.node);
+                            handleVariableDeclarator(declaratorPath, state, filePath, sections);
+                        }
+                    });
+                }
             }
         },
         TSTypeAliasDeclaration(innerPath) {

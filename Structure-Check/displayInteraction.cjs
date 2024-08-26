@@ -1,6 +1,6 @@
 const prompts = require('prompts');
 const { analyzeCode } = require('./astTraversal');
-const { parseFile, readFileContent } = require('./fileOperations');
+const { parseFile, readFileContent} = require('./fileOperations');
 const path = require('path');
 const { errors } = require('./errorHandling');
 const { createSection, visitedNodes, sections } = require('./sections');
@@ -17,9 +17,11 @@ const colors = {
     fgCyan: "\x1b[36m",
     fgWhite: "\x1b[37m",
 };
+let  globalfilePath="";
 
 // Get the base name of the file (without directory path)
 const getShortenedFileName = (filePath) => {
+    globalfilePath=filePath;
     return path.basename(filePath, path.extname(filePath));
 };
 
@@ -169,7 +171,7 @@ const displayDetailedInteractive = async (sections, errors) => {
         'Nodes'
     ];
 
-    const getSections = (sections) => ({
+    const getSections = () => ({
         'Imports': sections.imports || [],
         'Local Constants': Array.from(sections.localConstants.values()).flat() || [],
         'Constants': sections.constants || [],
@@ -196,17 +198,16 @@ const displayDetailedInteractive = async (sections, errors) => {
         if (sectionItems.length > 0) {
             displayHighlightedCode(sectionItems);
         } else {
-            console.log(`No ${selectedSection.toLowerCase()} found.`);
+            console.log(`No items found for section: ${selectedSection}`);
         }
     };
 
     const displayInteractiveSections = async (sections, indent = 0) => {
-        const sectionMap = getSections(sections);
+        const sectionMap = getSections();
 
         while (true) {
             try {
                 const choicesWithInnerSections = choices.slice();
-
                 if (sections.innerSections && sections.innerSections.length > 0) {
                     sections.innerSections.forEach((innerSection, index) => {
                         choicesWithInnerSections.push(`Inner Section ${index + 1}`);
@@ -229,14 +230,14 @@ const displayDetailedInteractive = async (sections, errors) => {
                     displaySectionHighlight(selectedSection, sectionMap);
                 }
 
-                const result = await prompts({
+                const { continueInteraction } = await prompts({
                     type: 'confirm',
                     name: 'continueInteraction',
                     message: 'Do you want to select another section?',
                     initial: true,
                 });
 
-                if (!result.continueInteraction) break;
+                if (!continueInteraction) break;
 
             } catch (error) {
                 console.error('Error during prompts:', error);
@@ -248,44 +249,54 @@ const displayDetailedInteractive = async (sections, errors) => {
     await displayInteractiveSections(sections, 0);
 };
 
-/**
- * Outputs to the console highlighted code snippets for a given list of nodes.
- * Each node is printed with its type, location, name (if available), and code snippet.
- * Nodes that have errors are logged using console.error, and others using console.log.
- * @function displayHighlightedCode
- * @param {Object[]} nodes - An array of node objects to display.
- */
 const displayHighlightedCode = (nodes) => {
     nodes.forEach(node => {
-        if (!node || !node.type) {
-            console.error('Invalid node detected:', node);
-            return;
-        }
-        
-        const location = node.loc && node.loc.start ? `Line ${node.loc.start.line}, Column ${node.loc.start.column}` : 'Location information not available';
-
-        let codeSnippet;
-        try {
-            codeSnippet = generate(node).code || 'Code not available';
-        } catch (err) {
-            console.error(`Error generating code for node type ${node.type}`, err);
-            codeSnippet = 'Code generation error';
-        }
-
-        const output = `
-#### Node Type: ${node.type}
-- **Location:** ${location}${node.name ? ` - **Name:** ${node.name}` : ''}
-- **Code:**
-\`\`\`javascript
-${codeSnippet}
-\`\`\``;
-        console.log(output);
-        // Check for error messages
         if (node.hasError) {
-            console.error(node.errorMessage);
+            console.error(`Error: ${node.errorMessage}`);
         }
+        validateAndGenerateCode(node);
     });
 };
+
+const validateAndGenerateCode = (node) => {
+    if (!node) {
+        console.error('Invalid node detected: node is undefined or null');
+        return;
+    }
+
+    const actualNode = node.node ? node.node : node;
+
+    if (!actualNode.type) {
+        console.error('Node detected without a type:', JSON.stringify(actualNode, null, 2));
+        return;
+    }
+
+    let codeSnippet;
+    try {
+        codeSnippet = actualNode.code || generate(actualNode).code || 'Code not available';  // Try to generate code only if not available
+    } catch (err) {
+        console.error(`Error generating code for node type ${actualNode.type}`, err);
+        codeSnippet = 'Code generation error';
+    }
+
+    const output = `
+    Node Type: ${actualNode.type}
+    Location: ${
+        globalfilePath || 'Unknown file'
+    }:${
+        actualNode.loc?.start
+            ? `${actualNode.loc.start.line}:${actualNode.loc.start.column}`
+            : 'Unknown location'
+    };
+    Code: \n${codeSnippet}\n`;
+
+    console.log(output);
+
+    if (node.hasError) {
+        console.error(`Error Message: ${node.errorMessage}`);
+    }
+};
+
 
 // Todo : Rework the tree display to not show error and also to display the component in form of a tree 
 // component
@@ -483,9 +494,9 @@ const displayFilesMenu = async (files) => {
  * @param {string} filePath - The path of the file being processed.
  * @returns {Promise<void>} A promise that resolves when the menu interaction is complete.
  */
-const displaySectionsMenu = async (sections, filePath) => {
+const displaySectionsMenu = async (filePath) => {
     const choices = [];
-
+  
     // Construction des messages de choix
     if (sections.imports && sections.imports.length > 0) choices.push(`(${sections.imports.length}) Imports`);
     if (sections.localConstants && Array.from(sections.localConstants.values()).flat().length > 0) choices.push(`(${Array.from(sections.localConstants.values()).flat().length}) Local Constants`);
@@ -504,6 +515,7 @@ const displaySectionsMenu = async (sections, filePath) => {
     if (sections.mainComponent && sections.mainComponent.length > 0) choices.push('(1) Main Component');
     if (errors.length > 0) choices.push(`(${errors.length}) Errors`);
 
+    // Define sectionMap after gathering the sections
     const sectionMap = {
         'Imports': sections.imports || [],
         'Local Constants': Array.from(sections.localConstants?.values() ?? []).flat(),
@@ -519,8 +531,7 @@ const displaySectionsMenu = async (sections, filePath) => {
         'Returns': sections.return || [],
         'Styled Components': sections.styledComponent || [],
         'Functional Components': sections.functionalComponent || [],
-        'Main Component': sections.mainComponent || [],
-        'Exports': sections.exports || [],
+        'Main Component': sections.mainComponent ? [sections.mainComponent] : [],
         'Errors': errors || []
     };
 

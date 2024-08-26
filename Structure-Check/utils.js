@@ -616,19 +616,15 @@ function isContextCreation(path) {
         const callee = path.node.init.callee;
         
         if (t.isMemberExpression(callee)) {
-            console.log('Callee is a MemberExpression.');
             
             if (t.isIdentifier(callee.object, { name: 'React' }) && t.isIdentifier(callee.property, { name: 'createContext' })) {
-                console.log('This is a context creation via React.createContext.');
                 return true;
             }
         } else if (t.isIdentifier(callee, { name: 'createContext' })) {  // Adjusted to check for direct identifier
-            console.log('This is a context creation via createContext.');
             return true;  
         }
     }  
 
-    console.log('This is NOT a context creation.');
     return false;  
 }
   

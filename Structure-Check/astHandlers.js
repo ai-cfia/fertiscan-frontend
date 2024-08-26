@@ -96,6 +96,7 @@ function handleImportDeclaration(path, state, filePath) {
 const handleVariableDeclarator = (path, state, filePath) => {
     let type = '';
 
+    if (!visitedNodes.has(path.node)) {
     if (isGlobalConstant(path)) {
         handleGlobalConstantDeclaration(path, state, filePath);
         type = "constants";
@@ -139,6 +140,7 @@ const handleVariableDeclarator = (path, state, filePath) => {
                 break;
         }
     }
+}
 };
   
 /**
@@ -408,12 +410,6 @@ function handleMainReactComponent(path, state, filePath) {
     const componentName = getMainComponentNameFromFileName(filePath);
     const currentComponentName = path.node.id?.name || path.node.declarations?.[0].id.name || '';
 
-    // Change condition to allow ~standard~ component name, not being case-sensitive regarding the file name
-    if (componentName.toLowerCase() === currentComponentName.toLowerCase()) {
-        const errorMessage = `Component name '${currentComponentName}' should not be identical to the file name in '${filePath}'`;
-        reportError(path.node, errorMessage, filePath);
-    }
-
     if (state.topLevelState.hasHandlers || state.topLevelState.hasHooks ||
         state.topLevelState.hasReactComponent || state.topLevelState.hasPropTypes ||
         state.topLevelState.hasDefaultProps || state.topLevelState.hasExports) {
@@ -428,8 +424,8 @@ function handleMainReactComponent(path, state, filePath) {
     state.topLevelState.mainComponentPath = path;
     enterReactComponent(state);
 
-    const visitedNodes = traverseReactComponent(path, state, filePath);
-    const section = createSection(path.node, visitedNodes);
+    const visitedNode = traverseReactComponent(path, state, filePath);
+    const section = createSection(path.node, visitedNode);
     sections.mainComponent.push(createMainComponent(createInnerSection(path.node, section)));
 }
 
@@ -488,7 +484,7 @@ function handleHelperFunctionDeclaration(path, state, filePath) {
  * @param {Object} state - The state object that keeps track of various code states.
  * @param {string} filePath - The file path of the current file being processed.
  */
-const handleFunctionExpressionsAndArrowFunctions = (path, state, filePath, sections) => {
+const handleFunctionExpressionsAndArrowFunctions = (path, state, filePath) => {
     let functionName = 'Anonymous';
     let type = '';
 
@@ -915,38 +911,19 @@ function hasDisableCheckComment(path) {
  */
 const traverseReactComponent = (path, state, filePath) => {
     const innerSection = createSection();
-    const visitedNodes = new Set();
 
     const visitor = {
         VariableDeclaration(innerPath) {
             if (!visitedNodes.has(innerPath.node) && !hasDisableCheckComment(innerPath)) {
                 visitedNodes.add(innerPath.node);
+                innerPath.node.code = generate(innerPath.node).code; 
                 innerPath.get('declarations').forEach(declaratorPath => {
                     if (!visitedNodes.has(declaratorPath.node)) {
-                        let visitedNode, type = handleVariableDeclarator(declaratorPath, state, filePath, innerSection);
                         visitedNodes.add(declaratorPath.node);
+                        let visitedNode, type = handleVariableDeclarator(declaratorPath, state, filePath, innerSection);
                         if (visitedNode) {
                             visitedNodes.add(visitedNode);
                             visitedNode.code = generate(visitedNode).code; // Generate code snippet for the node
-                        }
-                        switch (type) {
-                            case 'constants':
-                                innerSection.constants.push(visitedNode);
-                                break;
-                            case 'localConstants':
-                                const parentFunction = declaratorPath.getFunctionParent();
-                                if (parentFunction) {
-                                    const functionBodyNode = parentFunction.node.body;
-                                    if (innerSection.localConstants.has(functionBodyNode)) {
-                                        innerSection.localConstants.get(functionBodyNode).push(visitedNode);
-                                    } else {
-                                        innerSection.localConstants.set(functionBodyNode, [visitedNode]);
-                                    }
-                                }
-                                break;
-                            case 'contexts':
-                                innerSection.contexts.push(visitedNode);
-                                break;
                         }
                     }
                 });
@@ -991,6 +968,7 @@ const traverseReactComponent = (path, state, filePath) => {
         FunctionExpression(innerPath) {
             if (!visitedNodes.has(innerPath.node) && !hasDisableCheckComment(innerPath)) {
                 visitedNodes.add(innerPath.node);
+                visitedNode.code = generate(visitedNode).code; // Generate code snippet for the node
                 const innerSection = traverseReactComponent(innerPath, state, filePath);
                 let innerSectionWrapper = createInnerSection(innerPath.node);
                 innerSectionWrapper.node.code = generate(innerPath.node).code; // Generate code snippet for the node
@@ -1006,8 +984,8 @@ const traverseReactComponent = (path, state, filePath) => {
         },
         ArrowFunctionExpression(innerPath) {
             if (!visitedNodes.has(innerPath.node) && !hasDisableCheckComment(innerPath)) {
-                let visitedNode, type = handleFunctionExpressionsAndArrowFunctions(innerPath, state, filePath, innerSection);
-                visitedNodes.add(innerPath.node);
+                let visitedNode, type = handleFunctionExpressionsAndArrowFunctions(innerPath, state, filePath);
+                visitedNodes.add(visitedNode);
                 if (visitedNode) {
                     visitedNodes.add(visitedNode);
                     visitedNode.code = generate(visitedNode).code; // Generate code snippet for the node
@@ -1037,6 +1015,8 @@ const traverseReactComponent = (path, state, filePath) => {
  * @param {string} filePath - The file path of the current file being processed.
  */
 function processFunctionType(type, path, state, filePath, sections) {
+    if (!visitedNodes.has(path.node) && !hasDisableCheckComment(innerPath)) {
+        visitedNodes.add(visitedNode);
     switch (type) {
         case 'customHook':
             handleCustomHookDeclaration(path, state, filePath, sections);
@@ -1077,6 +1057,7 @@ function processFunctionType(type, path, state, filePath, sections) {
             console.log('Unrecognized function type. Please add this function type to the structure code script.', path.node.type);
             break;
     }
+}
 }
 
 

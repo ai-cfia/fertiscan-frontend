@@ -25,6 +25,7 @@ const filePattern = /\.(ts|tsx)$/;
 const ignoreFilePath = require.main.path + '/structure-check.ignore';
 const fs = require('fs');
 const { existsSync } = require('fs');
+const { FILE } = require('dns');
 
 /**  
  * Analyzes the structure of the entire project or specific files based on display level.  
@@ -51,7 +52,7 @@ const analyzeProject = async (displayLevel, filePath) => {
             }else {  
                 for (const filePath of files) {  
                     const content = readFileContent(filePath);  
-                    const ast = parseFile(content);  
+                    const ast = parseFile(content);
                     const sections = analyzeCode(ast, filePath);  
                     displayAnalysis(sections, displayLevel, errors);  
                 }  
@@ -162,7 +163,7 @@ const revertProjectStructure = async (filePath) => {
  */  
 const parseCommandLineArguments = () => {  
     const args = process.argv.slice(2);  
-    let filePath = '';  
+    let filePath = '';
     const fix = args.includes('--fix') || args.includes('-f');
     const revert = args.includes('--revert') || args.includes('-r');
     const analyze = args.includes('--analyze')||args.includes('-a');
@@ -202,6 +203,7 @@ const parseCommandLineArguments = () => {
   
 
 const { fix, revert, analyze, help, filePath, displayLevel, language } = parseCommandLineArguments();  
+
 
 if (help) {  
 displayHelp(language);  
