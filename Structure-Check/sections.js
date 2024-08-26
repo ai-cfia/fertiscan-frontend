@@ -19,7 +19,7 @@ const createSection = () => ({
         TSEnumDeclaration: [],
     },
     exports: [],
-    mainComponent: null,
+    mainComponent: [],
     jsx: [],
     nodes: []
 });
@@ -39,6 +39,33 @@ const createMainComponent = (innerSection, path) => ({
     mainComponentPath: path
 });
 
+const sections = {  
+    imports: [],  
+    localConstants: new Map(),  
+    constants: [],  
+    contexts: [],  
+    hooks: [],  
+    stateHooks: [],  
+    effectHooks: [],  
+    handlers: [],  
+    helperFunctions: [],  
+    components: [],  
+    classComponents: [],  
+    classMethod: [],  
+    classProperty: [],  
+    returns: [],  
+    styledComponent: [],  
+    functionalComponent: [],  
+    types: {  
+        TSInterfaceDeclaration: [],  
+        TSTypeAliasDeclaration: [],  
+        TSEnumDeclaration: []  
+    },  
+    exports: [],  
+    mainComponent: [],  
+    nodes: []  
+};  
+
 const visitedNodes = new Set();
 
 module.exports = {
@@ -46,5 +73,6 @@ module.exports = {
     createInnerSection,
     createInnerReturn,
     createMainComponent,
-    visitedNodes
+    visitedNodes,
+    sections
 };

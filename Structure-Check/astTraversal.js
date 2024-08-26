@@ -8,7 +8,7 @@ const {     createSection,
     createInnerSection,
     createInnerReturn,
     createMainComponent,
-visitedNodes} = require('./sections')
+visitedNodes, sections} = require('./sections')
 const { parseFile, createBackup, readFileContent, writeFileContent } = require('./fileOperations');  
 const {   
     handleImportDeclaration,    
@@ -40,36 +40,6 @@ const {
     getMainComponentNameFromFileName,    
 } = require('./utils');
 
-
-// Define the sections object globally  
-const sections = {    
-    imports: [],    
-    localConstants: new Map(),    
-    constants: [],    
-    contexts: [],    
-    hooks: [],   
-    stateHooks:[],   
-    effectHooks:[],  
-    handlers:[],  
-    helperFunctions: [],  
-    components: [],    
-    classComponents: [],   
-    classMethod: [],  
-    classProperty:[],   
-    return:[],  
-    styledComponent:[],  
-    functionalComponent:[],  
-  
-    types: {    
-        TSInterfaceDeclaration: [],    
-        TSTypeAliasDeclaration: [],    
-        TSEnumDeclaration: []    
-    },    
-    exports: [],    
-    mainComponent: null,    
-    nodes: []   
-};    
-  
 /**
  * Checks the structure and naming conventions of a given file.
  * Reads the file, parses its contents into an AST, performs various checks, and logs errors if any issues are found.
@@ -153,7 +123,6 @@ const checkFile = async (filePath, state) => {
  * @returns {Object} An object defining visitor methods for the traversal, linking node types to their respective handling functions.  
  */  
 const setupTraverse = (state, filePath, sections) => {
-
     return {
         enter(path) {
             path.node.code = codeFrameColumns(readFileContent(filePath), path.node.loc, { highlightCode: true });
@@ -165,18 +134,17 @@ const setupTraverse = (state, filePath, sections) => {
             }
         },
         VariableDeclaration(innerPath) {
-            if(isMainFunctionComponent(innerPath,state,filePath)){
-                handleMainReactComponent(innerPath,state,filePath,sections)
+            if (isMainFunctionComponent(innerPath, state, filePath)) {
+                handleMainReactComponent(innerPath, state, filePath, sections);
+            } else if (!visitedNodes.has(innerPath.node) && !hasDisableCheckComment(innerPath)) {
+                visitedNodes.add(innerPath.node);
+                innerPath.get('declarations').forEach(declaratorPath => {
+                    if (!visitedNodes.has(declaratorPath.node)) {
+                        visitedNodes.add(declaratorPath.node);
+                        handleVariableDeclarator(declaratorPath, state, filePath, sections);
+                    }
+                });
             }
-            else if (!visitedNodes.has(innerPath.node) && !hasDisableCheckComment(innerPath)) {  
-                visitedNodes.add(innerPath.node);  
-                innerPath.get('declarations').forEach(declaratorPath => {  
-                    if (!visitedNodes.has(declaratorPath.node)) {  
-                        visitedNodes.add(declaratorPath.node);  
-                        handleVariableDeclarator(declaratorPath, state, filePath, sections);  
-                    }  
-                });  
-            }  
         },
         TSTypeAliasDeclaration(innerPath) {
             if (!visitedNodes.has(innerPath.node) && !hasDisableCheckComment(innerPath)) {
@@ -197,18 +165,17 @@ const setupTraverse = (state, filePath, sections) => {
             }
         },
         FunctionDeclaration(innerPath) {
-            if(isMainFunctionComponent(innerPath,state,filePath)){
-                handleMainReactComponent(innerPath,state,filePath,sections)
-            }
-            else if (!visitedNodes.has(innerPath.node) && !hasDisableCheckComment(innerPath)) {
+            if (isMainFunctionComponent(innerPath, state, filePath)) {
+                handleMainReactComponent(innerPath, state, filePath, sections);
+            } else if (!visitedNodes.has(innerPath.node) && !hasDisableCheckComment(innerPath)) {
                 visitedNodes.add(innerPath.node);
                 handleHelperFunctionDeclaration(innerPath, state, filePath, sections);
             }
         },
         'ArrowFunctionExpression|FunctionExpression': {
             enter(innerPath) {
-                if(isMainFunctionComponent(innerPath,state,filePath)){
-                    handleMainReactComponent(innerPath,state,filePath,sections)
+                if (isMainFunctionComponent(innerPath, state, filePath)) {
+                    handleMainReactComponent(innerPath, state, filePath, sections);
                 }
                 if (!visitedNodes.has(innerPath.node) && !hasDisableCheckComment(innerPath)) {
                     visitedNodes.add(innerPath.node);
@@ -223,8 +190,8 @@ const setupTraverse = (state, filePath, sections) => {
             }
         },
         CallExpression(innerPath) {
-            if(isMainFunctionComponent(innerPath,state,filePath)){
-                handleMainReactComponent(innerPath,state,filePath,sections)
+            if (isMainFunctionComponent(innerPath, state, filePath)) {
+                handleMainReactComponent(innerPath, state, filePath, sections);
             }
             if (!visitedNodes.has(innerPath.node) && !hasDisableCheckComment(innerPath)) {
                 visitedNodes.add(innerPath.node);
@@ -232,12 +199,18 @@ const setupTraverse = (state, filePath, sections) => {
             }
         },
         TaggedTemplateExpression(innerPath) {
-            if(isMainFunctionComponent(innerPath,state,filePath)){
-                handleMainReactComponent(innerPath,state,filePath,sections)
+            if (isMainFunctionComponent(innerPath, state, filePath)) {
+                handleMainReactComponent(innerPath, state, filePath, sections);
             }
             if (!visitedNodes.has(innerPath.node) && !hasDisableCheckComment(innerPath)) {
                 visitedNodes.add(innerPath.node);
                 handleStyledComponent(innerPath, state, filePath, sections);
+            }
+        },
+        ReturnStatement(innerPath) {
+            if (!visitedNodes.has(innerPath.node) && !hasDisableCheckComment(innerPath)) {
+                visitedNodes.add(innerPath.node);
+                handleReturnStatement(innerPath, state, filePath, sections);
             }
         },
         'ExportNamedDeclaration|ExportDefaultDeclaration'(innerPath) {
@@ -337,32 +310,7 @@ const fixFile = async (filePath) => {
         const state = createStateTracker();  
   
         // Initialize sections object  
-        const sections = {  
-            imports: [],  
-            localConstants: new Map(),  
-            constants: [],  
-            contexts: [],  
-            hooks: [],  
-            stateHooks: [],  
-            effectHooks: [],  
-            handlers: [],  
-            helperFunctions: [],  
-            components: [],  
-            classComponents: [],  
-            classMethod: [],  
-            classProperty: [],  
-            returns: [],  
-            styledComponent: [],  
-            functionalComponent: [],  
-            types: {  
-                TSInterfaceDeclaration: [],  
-                TSTypeAliasDeclaration: [],  
-                TSEnumDeclaration: []  
-            },  
-            exports: [],  
-            mainComponent: null,  
-            nodes: []  
-        };  
+       
   
         traverse(ast, setupTraverse(state, filePath, sections));  
   
@@ -374,7 +322,6 @@ const fixFile = async (filePath) => {
   
         writeFileContent(filePath, newContent);  
   
-        console.log(`File ${filePath} fixed.`);  
     } else {  
         console.error(`${filePath} is not a file.`);  
         process.exit(1); // Exit the process if it's not a file  
@@ -492,9 +439,8 @@ const analyzeCode = (ast, filePath) => {
     };  
   
     const state = createStateTracker();  
-    traverse(ast, setupTraverse(state, filePath, sections));
- 
-  
+    let innerSection= setupTraverse(state, filePath, sections);
+    traverse(ast, innerSection);  
     sections.nodes.push(  
         ...sections.imports,  
         ...sections.constants, 

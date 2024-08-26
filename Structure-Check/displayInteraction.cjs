@@ -3,6 +3,9 @@ const { analyzeCode } = require('./astTraversal');
 const { parseFile, readFileContent } = require('./fileOperations');
 const path = require('path');
 const { errors } = require('./errorHandling');
+const { createSection, visitedNodes, sections } = require('./sections');
+const generate = require('@babel/generator').default;
+
 const colors = {
     reset: "\x1b[0m",
     bright: "\x1b[1m",
@@ -12,18 +15,12 @@ const colors = {
     fgBlue: "\x1b[34m",
     fgMagenta: "\x1b[35m",
     fgCyan: "\x1b[36m",
-    fgWhite: "\x1b[37m"
+    fgWhite: "\x1b[37m",
 };
 
 // Get the base name of the file (without directory path)
 const getShortenedFileName = (filePath) => {
     return path.basename(filePath, path.extname(filePath));
-};
-
-const displayFilePaths = (filePath) => {
-    const shortenedName = getShortenedFileName(filePath);
-    const fileLink = `file://${path.resolve(filePath)}`;
-    console.log(`Name: ${shortenedName} | Link: ${fileLink}`);
 };
 
 /**
@@ -35,12 +32,12 @@ const handleErrors = (errorArray) => {
         console.log('No errors found.');
         return;
     }
-    
+
     console.log('--- Errors ---');
     errorArray.forEach(error => {
         console.error(error.errorMessage, 'at', error.location ?? 'unknown location');
     });
-}; 
+};
 
 /**
  * Displays analysis of sections based on the display level provided.
@@ -54,146 +51,202 @@ const handleErrors = (errorArray) => {
 const displayAnalysis = async (sections, displayLevel, errors) => {
     console.log(`displayAnalysis called with displayLevel: ${displayLevel}`); // Debugging log
 
-        switch (displayLevel) {
-            case 'basic':
-                displayBasic(sections, errors);
-                break;
-            case 'detailed':
-                await displayDetailedInteractive(sections, errors);
-                break;
-            case 'tree':
-                displayTree(sections); // Assurez-vous que displayTree appelle handleErrors comme prévu
-                break;
-            case 'error':
-                await displayErrorAnalysis(sections);
-                break;
-            default:
-                console.error('Invalid display level specified.');
-                break;
-        }
+    switch (displayLevel) {
+        case 'basic':
+            displayBasic( errors);
+            break;
+        case 'detailed':
+            await displayDetailedInteractive(sections, errors);
+            break;
+        case 'tree':
+            displayTree(sections);
+            break;
+        case 'error':
+            await displayErrorAnalysis(sections);
+            break;
+        default:
+            console.error('Invalid display level specified.');
+            break;
+    }
 };
 
 /**
- *  Displays a basic analysis report of various code sections to the console.
- *  This displays the number of imports, constants, contexts, hooks, helper 
- *  functions, components, main component, and exports in the code.
- *  It also displays any errors that were encountered during the
- *  analysis process in an error section.
+ * Displays a basic analysis report of various code sections to the console.
+ * This displays the number of imports, constants, contexts, hooks, helper 
+ * functions, components, main component, and exports in the code.
+ * It also displays any errors that were encountered during the
+ * analysis process in an error section.
  * @function displayBasic
  * @param {Object} sections - An object containing arrays that represent different parts of the code.
  */
-const displayBasic = (sections, errors) => {  
-    console.log('--- Basic Analysis ---');  
-  
-    console.log('Imports:', sections.imports ? sections.imports.length : 0);  
-    console.log('Local Constants:', sections.localConstants ? Array.from(sections.localConstants.values()).flat().length : 0);  
-    console.log('Global Constants:', sections.constants ? sections.constants.length : 0);  
-    console.log('Contexts:', sections.contexts ? sections.contexts.length : 0);  
-    console.log('Hooks:', sections.hooks ? sections.hooks.length : 0);  
-    console.log('Handlers:', sections.handlers ? sections.handlers.length : 0);
-    console.log('Helper Functions:', sections.helperFunctions ? sections.helperFunctions.length : 0);  
-    console.log('Components:', sections.components ? sections.components.length : 0);  
-    console.log('Class Components:', sections.classComponents ? sections.classComponents.length : 0);  
-    console.log('Class Methods:', sections.classMethod ? sections.classMethod.length : 0);
-    console.log('Class Properties:', sections.classProperty ? sections.classProperty.length : 0);
-    console.log('Return Statements:', sections.returns ? sections.returns.length : 0);
-    console.log('Styled Components:', sections.styledComponent ? sections.styledComponent.length : 0);
-    console.log('Functional Components:', sections.functionalComponent ? sections.functionalComponent.length : 0);
-    console.log(`Main Component: ${sections.mainComponent ? `${colors.fgGreen}Found${colors.reset}` : `${colors.fgRed}Not Found${colors.reset}`}`);    console.log('TS Interface Declarations:', sections.types?.TSInterfaceDeclaration ? sections.types.TSInterfaceDeclaration.length : 0);  
-    console.log('TS Type Alias Declarations:', sections.types?.TSTypeAliasDeclaration ? sections.types.TSTypeAliasDeclaration.length : 0);  
-    console.log('TS Enum Declarations:', sections.types?.TSEnumDeclaration ? sections.types.TSEnumDeclaration.length : 0);  
-    console.log('Exports:', sections.exports ? sections.exports.length : 0);  
-    console.log('Nodes:', sections.nodes ? sections.nodes.length : 0);
-  
-    handleErrors(errors);  
+const displayBasic = (errors) => {
+    console.log('--- Basic Analysis ---');
+
+    const displaySectionSummary = ( indent = 0) => {
+        const indentation = '        '.repeat(indent);
+        console.log(`${indentation}Imports: ${sections.imports ? sections.imports.length : 0}`);
+        console.log(`${indentation}Local Constants: ${sections.localConstants ? Array.from(sections.localConstants.values()).flat().length : 0}`);
+        console.log(`${indentation}Global Constants: ${sections.constants ? sections.constants.length : 0}`);
+        console.log(`${indentation}Contexts: ${sections.contexts ? sections.contexts.length : 0}`);
+        console.log(`${indentation}Hooks: ${sections.hooks ? sections.hooks.length : 0}`);
+        console.log(`${indentation}Handlers: ${sections.handlers ? sections.handlers.length : 0}`);
+        console.log(`${indentation}Helper Functions: ${sections.helperFunctions ? sections.helperFunctions.length : 0}`);
+        console.log(`${indentation}Components: ${sections.components ? sections.components.length : 0}`);
+        console.log(`${indentation}Class Components: ${sections.classComponents ? sections.classComponents.length : 0}`);
+        console.log(`${indentation}Return Statements: ${sections.return ? sections.return.length : 0}`);
+        console.log(`${indentation}Styled Components: ${sections.styledComponent ? sections.styledComponent.length : 0}`);
+        console.log(`${indentation}Functional Components: ${sections.functionalComponent ? sections.functionalComponent.length : 0}`);
+        console.log(`${indentation}Main Component: ${sections.mainComponent ? `${colors.fgGreen}Found${colors.reset}` : `${colors.fgRed}Not Found${colors.reset}`}`);
+        console.log(`${indentation}TS Interface Declarations: ${sections.types?.TSInterfaceDeclaration ? sections.types.TSInterfaceDeclaration.length : 0}`);
+        console.log(`${indentation}TS Type Alias Declarations: ${sections.types?.TSTypeAliasDeclaration ? sections.types.TSTypeAliasDeclaration.length : 0}`);
+        console.log(`${indentation}TS Enum Declarations: ${sections.types?.TSEnumDeclaration ? sections.types.TSEnumDeclaration.length : 0}`);
+        console.log(`${indentation}Exports: ${sections.exports ? sections.exports.length : 0}`);
+        console.log(`${indentation}Nodes: ${sections.nodes ? sections.nodes.length : 0}`);
+    };
+
+    const displayRecursive = (sections, indent = 0) => {
+        const indentation = ' '.repeat(indent);
+        displaySectionSummary(sections, indent);
+
+        if (sections.innerSections && sections.innerSections.length > 0) {
+            sections.innerSections.forEach(innerSection => {
+                console.log(`${indentation}Inner Section:`);
+                displayRecursive(innerSection.section, indent + 2);
+            });
+        }
+
+        if (sections.return && sections.return.length > 0) {
+            sections.return.forEach(returnSection => {
+                console.log(`${indentation}Return Statement:`);
+
+                if (returnSection.JSXTable && returnSection.JSXTable.length > 0) {
+                    console.log(`${indentation}Inner Returns:`);
+                    returnSection.JSXTable.forEach(innerReturn => {
+                        const innerIndentation = ' '.repeat(indent + 4);
+                        console.log(`${innerIndentation}${innerReturn}`);
+                    });
+                }
+            });
+        }
+    };
+
+    displayRecursive(sections, 0);
+
+    // handleErrors(errors);
 };
 
-
-
 /**
- * Inteactively displays a detailed analysis of the various code sections.
- * Users can choose which file to analyse and which sections to highlight 
+ * Interactively displays a detailed analysis of the various code sections.
+ * Users can choose which file to analyze and which sections to highlight 
  * through a series of prompts.
  * This display should be used when a more detailed analysis of the code is required.
  * @async
  * @function displayDetailedInteractive
  * @param {Object} sections - An object containing properties that represent different parts of the code to be used in a detailed analysis.
+ * @param {Object[]} errors - An array of error objects to show in the analysis.
  * @returns {Promise<void>} A Promise that resolves after the interactive detailed analysis is completed or interrupted.
  */
 const displayDetailedInteractive = async (sections, errors) => {
-    console.log('--- Detailed Interactive Analysis ---');
-
     const choices = [
         'Imports',
+        'Local Constants',
         'Constants',
         'Contexts',
         'Hooks',
+        'Handlers',
         'Helper Functions',
         'Components',
         'Class Components',
+        'Return Statements',
+        'Styled Components',
+        'Functional Components',
         'Main Component',
         'TS Interface Declarations',
         'TS Type Alias Declarations',
         'TS Enum Declarations',
         'Exports',
-        'Errors'
+        'Errors',
+        'Nodes'
     ];
 
-    const sectionMap = {
-        'Imports': sections.imports,
-        'Constants': sections.constants,
-        'Contexts': sections.contexts,
-        'Hooks': sections.hooks,
-        'Helper Functions': sections.helperFunctions,
-        'Components': sections.components,
-        'Class Components': sections.classComponents,
+    const getSections = (sections) => ({
+        'Imports': sections.imports || [],
+        'Local Constants': Array.from(sections.localConstants.values()).flat() || [],
+        'Constants': sections.constants || [],
+        'Contexts': sections.contexts || [],
+        'Hooks': sections.hooks || [],
+        'Handlers': sections.handlers || [],
+        'Helper Functions': sections.helperFunctions || [],
+        'Components': sections.components || [],
+        'Class Components': sections.classComponents || [],
+        'Return Statements': sections.return || [],
+        'Styled Components': sections.styledComponent || [],
+        'Functional Components': sections.functionalComponent || [],
         'Main Component': sections.mainComponent ? [sections.mainComponent] : [],
         'TS Interface Declarations': sections.types?.TSInterfaceDeclaration || [],
         'TS Type Alias Declarations': sections.types?.TSTypeAliasDeclaration || [],
         'TS Enum Declarations': sections.types?.TSEnumDeclaration || [],
-        'Exports': sections.exports,
-        'Errors': errors,
+        'Exports': sections.exports || [],
+        'Errors': errors || [],
+        'Nodes': sections.nodes || []
+    });
+
+    const displaySectionHighlight = (selectedSection, sectionMap) => {
+        const sectionItems = sectionMap[selectedSection] || [];
+        if (sectionItems.length > 0) {
+            displayHighlightedCode(sectionItems);
+        } else {
+            console.log(`No ${selectedSection.toLowerCase()} found.`);
+        }
     };
 
-    let continueInteraction = true;
+    const displayInteractiveSections = async (sections, indent = 0) => {
+        const sectionMap = getSections(sections);
 
-    while (continueInteraction) {
-        try {
-            const { selectedSection } = await prompts({
-                type: 'select',
-                name: 'selectedSection',
-                message: 'Select the section you want to highlight:',
-                choices: choices.map(choice => ({ title: choice, value: choice })),
-            });
+        while (true) {
+            try {
+                const choicesWithInnerSections = choices.slice();
 
-            if (!selectedSection) break;
+                if (sections.innerSections && sections.innerSections.length > 0) {
+                    sections.innerSections.forEach((innerSection, index) => {
+                        choicesWithInnerSections.push(`Inner Section ${index + 1}`);
+                    });
+                }
 
-            console.log(`Selected section: ${selectedSection}`);
-            console.log(`Section content:`, sectionMap[selectedSection]);
+                const { selectedSection } = await prompts({
+                    type: 'select',
+                    name: 'selectedSection',
+                    message: 'Select the section you want to highlight:',
+                    choices: choicesWithInnerSections.map(choice => ({ title: choice, value: choice })),
+                });
 
-            if (!(sectionMap[selectedSection] && sectionMap[selectedSection].length > 0)) {
-                console.log(`No ${selectedSection.toLowerCase()} found.`);
-            } else {
-                displayHighlightedCode(sectionMap[selectedSection]);
+                if (!selectedSection) break;
+
+                if (selectedSection.startsWith('Inner Section')) {
+                    const index = parseInt(selectedSection.split(' ')[2]) - 1;
+                    await displayInteractiveSections(sections.innerSections[index].section, indent + 2);
+                } else {
+                    displaySectionHighlight(selectedSection, sectionMap);
+                }
+
+                const result = await prompts({
+                    type: 'confirm',
+                    name: 'continueInteraction',
+                    message: 'Do you want to select another section?',
+                    initial: true,
+                });
+
+                if (!result.continueInteraction) break;
+
+            } catch (error) {
+                console.error('Error during prompts:', error);
+                break;
             }
-
-            const result = await prompts({
-                type: 'confirm',
-                name: 'continueInteraction',
-                message: 'Do you want to select another section?',
-                initial: true,
-            });
-
-            continueInteraction = result.continueInteraction;
-            console.log(`Continue interaction: ${continueInteraction}`); // Debugging log
-
-        } catch (error) {
-            console.error('Error during prompts:', error);
-            break;
         }
-    }
-};
+    };
 
+    await displayInteractiveSections(sections, 0);
+};
 
 /**
  * Outputs to the console highlighted code snippets for a given list of nodes.
@@ -204,26 +257,35 @@ const displayDetailedInteractive = async (sections, errors) => {
  */
 const displayHighlightedCode = (nodes) => {
     nodes.forEach(node => {
+        if (!node || !node.type) {
+            console.error('Invalid node detected:', node);
+            return;
+        }
+        
         const location = node.loc && node.loc.start ? `Line ${node.loc.start.line}, Column ${node.loc.start.column}` : 'Location information not available';
-        const codeSnippet = node.code || 'Code not available';
+
+        let codeSnippet;
+        try {
+            codeSnippet = generate(node).code || 'Code not available';
+        } catch (err) {
+            console.error(`Error generating code for node type ${node.type}`, err);
+            codeSnippet = 'Code generation error';
+        }
 
         const output = `
 #### Node Type: ${node.type}
-- **Location:** ${location}${node.name ? `- **Name:** ${node.name}` : ''}
+- **Location:** ${location}${node.name ? ` - **Name:** ${node.name}` : ''}
 - **Code:**
 \`\`\`javascript
 ${codeSnippet}
 \`\`\``;
-
-console.log(output);
-
+        console.log(output);
         // Check for error messages
         if (node.hasError) {
-            handleErrors(errors)
+            console.error(node.errorMessage);
         }
     });
 };
-
 
 // Todo : Rework the tree display to not show error and also to display the component in form of a tree 
 // component
@@ -236,74 +298,60 @@ console.log(output);
  * @function displayTree
  * @param {Object} sections - An object containing properties that represent different parts of the code to be analyzed in tree format.
  */
-function displayTree(sections) {  
-    console.log('--- Tree Analysis ---');  
-  
-    // Check if sections.nodes is defined and is an array  
-    if (!Array.isArray(sections.nodes)) {  
-        console.error("Invalid sections data. Expected 'nodes' to be an array.");  
-        return;  
-    }  
-  
-    const ui = require('cliui')({ width: 80 });  
-  
-    // Display the tree structure of the code  
-    sections.nodes.forEach(node => {  
-        if (node) {  
-            ui.div({  
-                text: `Node Type: ${node.type}\nLocation: Line ${node.loc.start.line}, Column ${node.loc.start.column}\n${node.name ? `Name: ${node.name}` : ''}`,  
-                padding: [1, 0, 1, 0]  
-            });  
-        }  
-    });  
-  
-    console.log(ui.toString());  
-  
-    handleErrors(errors);  
-}  
+const displayTree = (sections) => {
+    console.log('--- Tree Analysis ---');
 
+    if (!Array.isArray(sections.nodes)) {
+        console.error("Invalid sections data. Expected 'nodes' to be an array.");
+        return;
+    }
 
-/**    
- * Displays a detailed error analysis report with clickable links.    
- * Each error is displayed with a clickable link that opens the file at the specific location of the error.    
- * @async    
- * @function displayErrorAnalysis    
- * @param {Object[]} sections - The sections to be analyzed and displayed.    
- * @returns {Promise<void>} Returns a promise that resolves when the error analysis has been successfully displayed.    
- */
-const displayErrorAnalysis = async (sections) => {
-    console.log(`\n${colors.fgCyan}----------------------${colors.reset}`);
-    console.log(`\n${colors.fgCyan}--- Error Analysis ---${colors.reset}`);
-    console.log(`\n${colors.fgCyan}----------------------${colors.reset}`);
+    const ui = require('cliui')({ width: 80 });
 
-    const errorSections = errors.map((error, index) => {
-        const errorFilePath = getShortenedFileName(error.filePath);
-        const errorLocation = error.node && error.node.loc
-            ? `${error.node.loc.start.line}:${error.node.loc.start.column}`
-            : 'unknown location';
-
-        const errorLink = `file://${path.resolve(errorFilePath)}:${errorLocation}`;
-
-        return {
-            value: errorLink,
-            description: `File: ${errorFilePath}`,
-            location: `Location: ${errorLocation}`,
-        };
+    sections.nodes.forEach(node => {
+        if (node) {
+            ui.div({
+                text: `Node Type: ${node.type}\nLocation: Line ${node.loc.start.line}, Column ${node.loc.start.column}${node.name ? `\nName: ${node.name}` : ''}`,
+                padding: [1, 0, 1, 0]
+            });
+        }
     });
 
-    // If no errors, inform the user and exit
-    if (errorSections.length === 0) {
+    console.log(ui.toString());
+
+    handleErrors(errors);
+};
+
+/**
+ * Displays a detailed error analysis report with clickable links.
+ * Each error is displayed with a clickable link that opens the file at the specific location of the error.
+ * @async
+ * @function displayErrorAnalysis
+ * @param {Object} sections - The sections to be analyzed and displayed.
+ * @returns {Promise<void>} Returns a promise that resolves when the error analysis has been successfully displayed.
+ */
+const displayErrorAnalysis = async (sections) => {
+    if (!errors || errors.length === 0) {
         console.log(`${colors.fgGreen}No errors found.${colors.reset}`);
         return;
     }
 
-    console.log(`${colors.fgBlue}Number of errors: ${errorSections.length}${colors.reset}`);
+    console.log(`${colors.fgCyan}----------------------${colors.reset}`);
+    console.log(`${colors.fgCyan}--- Error Analysis ---${colors.reset}`);
+    console.log(`${colors.fgCyan}----------------------${colors.reset}`);
 
-    errorSections.forEach((error, index) => {
+    errors.forEach((error, index) => {
+        const errorFilePath = path.resolve(error.filePath);
+        const errorLocation = error.node && error.node.loc
+            ? `Line ${error.node.loc.start.line}:${error.node.loc.start.column}`
+            : 'unknown location';
+        const errorLink = `file://${errorFilePath}:${errorLocation}`;
+
         console.log(`${colors.fgYellow}${index + 1}.${colors.reset}`);
-        console.log(`   ${error.description}`);
-        console.log(`   ${error.location}`);
-        console.log(`   ${error.value}\n`);
+        console.log(`   File: ${getShortenedFileName(error.filePath)}`);
+        console.log(`   Location: ${errorLocation}`);
+        console.log(`   Error: ${error.errorMessage}`);
+        console.log(`   Link: ${errorLink}\n`);
     });
 
     console.log(`${colors.fgCyan}End of error analysis.${colors.reset}`);
@@ -316,68 +364,60 @@ const displayErrorAnalysis = async (sections) => {
  * @param {string} language - The language in which to display the help information. 
  *                            Supported options are 'en' for English and 'fr' for French.
  */
-function displayHelp(language) {  
-    if (language === 'fr') {  
-      console.log(`  
+const displayHelp = (language) => {
+    if (language === 'fr') {
+        console.log(`
 Usage: node structure-check.js [ACTION] [OPTION]...
 Analyze the react project and check the structure of the code.
 
-    
 Actions :
-    -f, --fix                    Corrige la structure de tous les fichiers .ts et .tsx dans le projet.  
-    -r, --revert                 Réinitialise la structure des fichiers corrigés à partir des sauvegardes.  
-    -a, --analyze                Analyse la structure des fichiers .ts et .tsx dans le projet.  
-    -h, --help                   Affiche l'aide pour les commandes disponibles.  
-    
+    -f, --fix                    Corrige la structure de tous les fichiers .ts et .tsx dans le projet.
+    -r, --revert                 Réinitialise la structure des fichiers corrigés à partir des sauvegardes.
+    -a, --analyze                Analyse la structure des fichiers .ts et .tsx dans le projet.
+    -h, --help                   Affiche l'aide pour les commandes disponibles.
+
 Options :
     -fi=, --file=<path>          Effectue l'action uniquement sur le fichier spécifié.
-    -d=,  --display=<level>      Définit le niveau d'affichage pour l'analyse. 
-                                    Options disponibles : basic, detailed, tree, interactive.
-                                    Par défaut : basic.
-    -l=,  --langue=<lang>        Définit la langue d'affichage de l'aide. 
-                                    Options disponibles : en, fr.
-                                    Par défaut : en.  
-    
-Examples:  
-    node script.js --fix  
-    node script.js --fix --file=src/components/App.tsx  
-    node script.js --revert  
-    node script.js --revert --file=src/components/App.tsx  
-    node script.js --analyze  
-    node script.js --analyze --file=src/components/App.tsx --display=tree  
-    node script.js --analyze --file=src/components/App.tsx --display=interactive  
-    node script.js --help  
-      `)  
-    } else {  
-      console.log(`  
+    -d=,  --display=<level>      Définit le niveau d'affichage pour l'analyse. Options disponibles : basic, detailed, tree, interactive. Par défaut : basic.
+    -l=,  --langue=<lang>        Définit la langue d'affichage de l'aide. Options disponibles : en, fr. Par défaut : en.
+
+Examples:
+    node script.js --fix
+    node script.js --fix --file=src/components/App.tsx
+    node script.js --revert
+    node script.js --revert --file=src/components/App.tsx
+    node script.js --analyze
+    node script.js --analyze --file=src/components/App.tsx --display=tree
+    node script.js --analyze --file=src/components/App.tsx --display=interactive
+    node script.js --help
+        `);
+    } else {
+        console.log(`
 Usage: node structure-check.js [ACTION] [OPTION]...
 Analyze the react project and check the structure of the code.
-    
-Actions:  
-    -f, --fix                    Fix the structure of all .ts and .tsx files in the project.  
-    -r, --revert                 Revert the structure of fixed files from backups.  
-    -a, --analyze                Analyze the structure of .ts and .tsx files in the project.  
-    -h, --help                   Display help for available commands.  
+
+Actions:
+    -f, --fix                    Fix the structure of all .ts and .tsx files in the project.
+    -r, --revert                 Revert the structure of fixed files from backups.
+    -a, --analyze                Analyze the structure of .ts and .tsx files in the project.
+    -h, --help                   Display help for available commands.
+
 Options:
-    -fi=, --file=<path>          Make the action only on the specified file.  
-    -d=,  --display=<level>      Set the display level for analysis. 
-                                    Available options: basic, detailed, tree, interactive. 
-                                    Default : basic.
-    -l=,  --langue=<lang>        Set the language for help display. 
-                                    Available options: en, fr.  
-                                    Default : en.
-    
-Examples:  
-    node script.js --fix  
-    node script.js --fix --file=src/components/App.tsx  
-    node script.js --revert  
-    node script.js --revert --file=src/components/App.tsx  
+    -fi=, --file=<path>          Make the action only on the specified file.
+    -d=,  --display=<level>      Set the display level for analysis. Available options: basic, detailed, tree, interactive. Default: basic.
+    -l=,  --langue=<lang>        Set the language for help display. Available options: en, fr. Default: en.
+
+Examples:
+    node script.js --fix
+    node script.js --fix --file=src/components/App.tsx
+    node script.js --revert
+    node script.js --revert --file=src/components/App.tsx
     node script.js --analyze
-    node script.js --analyze --file=src/components/App.tsx --display=interactive  
-    node script.js --help  
-    `);  
-    }  
-} 
+    node script.js --analyze --file=src/components/App.tsx --display=interactive
+    node script.js --help
+        `);
+    }
+};
 
 /**
  * Displays a menu for selecting files to analyze.
@@ -453,18 +493,15 @@ const displaySectionsMenu = async (sections, filePath) => {
     if (sections.contexts && sections.contexts.length > 0) choices.push(`(${sections.contexts.length}) Contexts`);
     if (sections.hooks && sections.hooks.length > 0) choices.push(`(${sections.hooks.length}) Hooks`);
     if (sections.handlers && sections.handlers.length > 0) choices.push(`(${sections.handlers.length}) Handlers`);
-    if (sections.types.TSInterfaceDeclaration && sections.types.TSInterfaceDeclaration.length > 0) choices.push(`(${sections.types.TSInterfaceDeclaration.length}) TS Interface Declarations`);
-    if (sections.types.TSTypeAliasDeclaration && sections.types.TSTypeAliasDeclaration.length > 0) choices.push(`(${sections.types.TSTypeAliasDeclaration.length}) TS Type Alias Declarations`);
-    if (sections.types.TSEnumDeclaration && sections.types.TSEnumDeclaration.length > 0) choices.push(`(${sections.types.TSEnumDeclaration.length}) TS Enum Declarations`);
+    if (sections.types?.TSInterfaceDeclaration && sections.types.TSInterfaceDeclaration.length > 0) choices.push(`(${sections.types.TSInterfaceDeclaration.length}) TS Interface Declarations`);
+    if (sections.types?.TSTypeAliasDeclaration && sections.types.TSTypeAliasDeclaration.length > 0) choices.push(`(${sections.types.TSTypeAliasDeclaration.length}) TS Type Alias Declarations`);
+    if (sections.types?.TSEnumDeclaration && sections.types.TSEnumDeclaration.length > 0) choices.push(`(${sections.types.TSEnumDeclaration.length}) TS Enum Declarations`);
     if (sections.helperFunctions && sections.helperFunctions.length > 0) choices.push(`(${sections.helperFunctions.length}) Helper Functions`);
-    if (sections.components && sections.components.length > 0) choices.push(`(${sections.components.length}) Components`);
     if (sections.classComponents && sections.classComponents.length > 0) choices.push(`(${sections.classComponents.length}) Class Components`);
-    if (sections.classMethod && sections.classMethod.length > 0) choices.push(`(${sections.classMethod.length}) Class Methods`);
-    if (sections.classProperty && sections.classProperty.length > 0) choices.push(`(${sections.classProperty.length}) Class Properties`);
-    if (sections.returns && sections.returns.length > 0) choices.push(`(${sections.returns.length}) Returns`);
+    if (sections.return && sections.return.length > 0) choices.push(`(${sections.return.length}) Returns`);
     if (sections.styledComponent && sections.styledComponent.length > 0) choices.push(`(${sections.styledComponent.length}) Styled Components`);
     if (sections.functionalComponent && sections.functionalComponent.length > 0) choices.push(`(${sections.functionalComponent.length}) Functional Components`);
-    if (sections.mainComponent) choices.push('(1) Main Component');
+    if (sections.mainComponent && sections.mainComponent.length > 0) choices.push('(1) Main Component');
     if (errors.length > 0) choices.push(`(${errors.length}) Errors`);
 
     const sectionMap = {
@@ -478,16 +515,13 @@ const displaySectionsMenu = async (sections, filePath) => {
         'TS Type Alias Declarations': sections.types?.TSTypeAliasDeclaration || [],
         'TS Enum Declarations': sections.types?.TSEnumDeclaration || [],
         'Helper Functions': sections.helperFunctions || [],
-        'Components': sections.components || [],
         'Class Components': sections.classComponents || [],
-        'Class Methods': sections.classMethod || [],
-        'Class Properties': sections.classProperty || [],
-        'Returns': sections.returns || [],
+        'Returns': sections.return || [],
         'Styled Components': sections.styledComponent || [],
         'Functional Components': sections.functionalComponent || [],
-        'Main Component': sections.mainComponent ? [sections.mainComponent] : [],
+        'Main Component': sections.mainComponent || [],
         'Exports': sections.exports || [],
-        'Errors': errors || [],
+        'Errors': errors || []
     };
 
     while (true) {
@@ -503,7 +537,6 @@ const displaySectionsMenu = async (sections, filePath) => {
 
             // Remove count from selectedSection to match the sectionMap keys
             const cleanedSectionName = selectedSection.replace(/^\(\d+\) /, '');
-            //console.log(`Displaying section: ${cleanedSectionName}`, sectionMap[cleanedSectionName]); // Debugging log
 
             // Check if the cleaned section actually contains elements before displaying
             if (sectionMap[cleanedSectionName].length > 0) {
@@ -526,6 +559,7 @@ const displaySectionsMenu = async (sections, filePath) => {
         }
     }
 };
+
 
 module.exports = {
     displayAnalysis,

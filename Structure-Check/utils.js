@@ -24,68 +24,74 @@ const projectPath = path.resolve(__dirname, '../src/');
  * @returns {Object|null} return.path - The path object if it represents a React component, otherwise null.
  * @returns {string} return.componentName - The name of the component if identified.
  */
-function isReactComponent(path) {  
+function isReactComponent(path) {
     let isComponent = false;  
     let isMainComponent = false;  
     let componentName = "";  
-  
+
     // Check for function declarations and variable declarations  
     if (path.isFunctionDeclaration() || path.isVariableDeclaration()) {  
-        let name;  
-        let typeAnnotation;  
-        if (path.isFunctionDeclaration()) {  
-            name = path.get('id').node.name;  
-            typeAnnotation = path.get('returnType').node;  
-        } else if (path.isVariableDeclaration()) {  
-            const declarator = path.get('declarations')[0];  
-            if (declarator.isVariableDeclarator()) {  
-                const id = declarator.get('id');  
-                if (id.isIdentifier()) {  
-                    name = id.node.name;  
-                    typeAnnotation = id.getTypeAnnotation().typeAnnotation;  
+        // Additional checks for context creation
+        if (isContextCreation(path)) {  
+            isComponent = true;  
+            componentName = getComponentNameFromPath(path);
+        } else {  
+            let name;
+            let typeAnnotation;  
+            if (path.isFunctionDeclaration()) {  
+                name = path.get('id').node.name;  
+                typeAnnotation = path.get('returnType').node;  
+            } else if (path.isVariableDeclaration()) {  
+                const declarator = path.get('declarations')[0];  
+                if (declarator.isVariableDeclarator()) {  
+                    const id = declarator.get('id');  
+                    if (id.isIdentifier()) {  
+                        name = id.node.name;  
+                        typeAnnotation = id.getTypeAnnotation().typeAnnotation;  
+                    }  
                 }  
             }  
-        }  
-        if (path.isVariableDeclaration()) {  
-            const declarator = path.get('declarations')[0];  
-            if (  
-                declarator.isVariableDeclarator() &&  
-                t.isIdentifier(declarator.node.id) &&  
-                /^[A-Z]/.test(declarator.node.id.name) && // Component names must start with an Uppercase letter  
-                declarator.node.init &&  
-                t.isArrowFunctionExpression(declarator.node.init) && // Ensure it's an Arrow function  
-                declarator.node.init.returnType // Ensure it has a return type  
-            ) {  
-                componentName = declarator.node.id.name;  
-                const returnTypeNode = declarator.node.init.returnType;  
-                const typeAnnotation = returnTypeNode.typeAnnotation;  
-  
+            if (path.isVariableDeclaration()) {  
+                const declarator = path.get('declarations')[0];  
                 if (  
-                    t.isTSTypeReference(typeAnnotation) &&  
-                    (typeAnnotation.typeName.name === 'FC' || typeAnnotation.typeName.name === 'FunctionComponent')  
+                    declarator.isVariableDeclarator() &&  
+                    t.isIdentifier(declarator.node.id) &&  
+                    /^[A-Z]/.test(declarator.node.id.name) && // Component names must start with an Uppercase letter  
+                    declarator.node.init &&  
+                    t.isArrowFunctionExpression(declarator.node.init) && // Ensure it's an Arrow function  
+                    declarator.node.init.returnType // Ensure it has a return type  
+                ) {  
+                    componentName = declarator.node.id.name;  
+                    const returnTypeNode = declarator.node.init.returnType;  
+                    const typeAnnotation = returnTypeNode.typeAnnotation;  
+
+                    if (  
+                        t.isTSTypeReference(typeAnnotation) &&  
+                        (typeAnnotation.typeName.name === 'FC' || typeAnnotation.typeName.name === 'FunctionComponent')  
+                    ) {  
+                        isComponent = true;  
+                    }  
+                }  
+            }  
+            // Check if the name starts with a capital letter and if there's a React.FC type annotation  
+            if (name && /^[A-Z]/.test(name) && typeAnnotation) {  
+                const typeName = typeAnnotation.typeName || typeAnnotation.id;  
+                if (  
+                    typeName &&  
+                    (typeName.name === 'FC' || typeName.name === 'FunctionComponent')  
                 ) {  
                     isComponent = true;  
+                    componentName = name;  
                 }  
             }  
-        }  
-        // Check if the name starts with a capital letter and if there's a React.FC type annotation  
-        if (name && /^[A-Z]/.test(name) && typeAnnotation) {  
-            const typeName = typeAnnotation.typeName || typeAnnotation.id;  
-            if (  
-                typeName &&  
-                (typeName.name === 'FC' || typeName.name === 'FunctionComponent')  
-            ) {  
-                isComponent = true;  
-                componentName = name;  
-            }  
-        }  
+        }
     } else if (path.isClassDeclaration()) {  
         if (isClassComponent(path)) {  
             isComponent = true;  
             componentName = path.node.id.name;  
         }  
     }  
-  
+
     // Check for preceding comments that indicate a main component  
     if (isComponent) {  
         const leadingComments = path.node.leadingComments;  
@@ -99,7 +105,7 @@ function isReactComponent(path) {
         path: isComponent ? path : null,  
         componentName  
     };  
-}  
+}
   
 /**
  * Determines if a given path represents a custom React hook.
@@ -386,69 +392,53 @@ function isCallExpression(path) {
  */
 function isMainFunctionComponent(path, state, filePath) {
     const mainComponentName = getMainComponentNameFromFileName(filePath);
-    let nodeName;
-    if (path.node) {
-        switch (path.node.type) {
-            case 'Identifier':
-                nodeName = path.node.name;
-                break;
-            case 'FunctionDeclaration':
-            case 'ClassDeclaration':
-                nodeName = path.node.id ? path.node.id.name : null;
-                break;
-            case 'VariableDeclarator':
-                nodeName = path.node.id ? path.node.id.name : null;
-                break;
-            case 'ExportDefaultDeclaration':
-                const declaration = path.node.declaration;
-                nodeName = declaration && declaration.id ? declaration.id.name : mainComponentName;
-                break;
-            default:
-                nodeName = null;
+    let nodeName = '';
+
+    if (t.isFunctionDeclaration(path.node) || t.isClassDeclaration(path.node)) {
+        nodeName = path.node.id ? path.node.id.name : '';
+    } else if (t.isVariableDeclarator(path.node)) {
+        nodeName = path.node.id ? path.node.id.name : '';
+    } else if (t.isExportDefaultDeclaration(path.node)) {
+        const declaration = path.node.declaration;
+        if (t.isIdentifier(declaration)) {
+            nodeName = declaration.name;
+        } else if (t.isFunctionDeclaration(declaration) || t.isClassDeclaration(declaration)) {
+            nodeName = declaration.id ? declaration.id.name : '';
+        } else if (t.isVariableDeclarator(declaration)) {
+            nodeName = declaration.id ? declaration.id.name : '';
         }
     }
 
-    if (nodeName && nodeName === mainComponentName) {
+    if (nodeName === mainComponentName) {
         state.hasMainComponent = true;
         state.mainComponentPath = path;
         return true;
     }
 
-    if (path.isFunctionDeclaration() || path.isClassDeclaration()) {
-        if (path.node.id && path.node.id.name === mainComponentName) {
-            state.hasMainComponent = true;
-            state.mainComponentPath = path;
-            return true;
-        }
-    } else if (path.isVariableDeclaration()) {
+    if (path.isVariableDeclaration()) {
         return path.node.declarations.some((declaration) => {
-            if (t.isVariableDeclarator(declaration)) {
-                if (
-                    t.isIdentifier(declaration.id, { name: mainComponentName }) &&
-                    (t.isArrowFunctionExpression(declaration.init) || t.isFunctionExpression(declaration.init))
-                ) {
+            const id = declaration.id;
+            const init = declaration.init;
+
+            if (t.isIdentifier(id) && id.name === mainComponentName) {
+                if (t.isArrowFunctionExpression(init) || t.isFunctionExpression(init)) {
                     state.hasMainComponent = true;
                     state.mainComponentPath = path;
                     return true;
                 }
+
+                if (init && t.isTSAsExpression(init) && t.isTSTypeReference(init.typeAnnotation)) {
+                    const typeName = init.typeAnnotation.typeName;
+                    if (t.isIdentifier(typeName) && (typeName.name === 'FC' || typeName.name === 'FunctionComponent')) {
+                        state.hasMainComponent = true;
+                        state.mainComponentPath = path;
+                        return true;
+                    }
+                }
             }
+
             return false;
         });
-    } else if (path.isExportDefaultDeclaration()) {
-        const declaration = path.get('declaration');
-        if (t.isIdentifier(declaration.node)) {
-            if (declaration.node.name === mainComponentName) {
-                state.hasMainComponent = true;
-                state.mainComponentPath = path;
-                return true;
-            }
-        } else if (t.isFunctionDeclaration(declaration.node) || t.isVariableDeclarator(declaration.node)) {
-            if (t.isIdentifier(declaration.node.id, { name: mainComponentName })) {
-                state.hasMainComponent = true;
-                state.mainComponentPath = path;
-                return true;
-            }
-        }
     }
 
     return false;
@@ -624,7 +614,6 @@ function isContextCreation(path) {
     if (t.isVariableDeclarator(path.node) && t.isCallExpression(path.node.init)) {  
         
         const callee = path.node.init.callee;
-        console.log('Callee:', callee);
         
         if (t.isMemberExpression(callee)) {
             console.log('Callee is a MemberExpression.');
@@ -833,49 +822,32 @@ function findLastImportIndex(bodyNodes) {
  *                   'TSEnumDeclaration', or 'unknown'.
  */ 
 function recognizeType(path, state, filePath) {
-    console.log("test");
     if (isGlobalConstant(path)) {
-        console.log('Detected Global Constant:', path.toString());
         return 'globalConstant';
-
     } else if (isLocalConstant(path)) {
-        console.log('Detected Local Constant:', path.toString());
         return 'localConstant';
-
-    }else if (isVariableDeclarator(path) && isCustomHook(path.get('init'))) {
-        console.log('Detected Custom Hook:', path.toString());
+    } else if (isVariableDeclarator(path) && isCustomHook(path.get('init'))) {
         return 'customHook';
-
     } else if (isMainFunctionComponent(path, state, filePath)) {
-        console.log('Detected Main Function Component:', path.toString());
         return 'mainFunctionComponent';
-
     } else if (isArrowFunctionExpression(path) || isFunctionExpression(path)) {
         if (isReactComponent(path.parentPath).isComponent) {
-            console.log('Detected Functional Component (Arrow/Function Expression):', path.toString());
             return 'functionalComponent';
         }
         return 'expressionFunction';
-
-    }  else if (isVariableDeclarator(path)) {
+    } else if (isVariableDeclarator(path)) {
         if (isReactFunctionalComponent(path)) {
-            console.log('Detected Functional Component (Variable Declarator):', path.toString());
             return 'functionalComponent';
+        } else if (isContextCreation(path)) {
+            return 'contextCreation'; // Context creation as type
         }
         return 'variableDeclarator';
-
     } else if (isTSInterfaceDeclaration(path)) {
-        console.log('Detected TS Interface Declaration:', path.toString());
         return 'TSInterfaceDeclaration';
-
     } else if (isTSTypeAliasDeclaration(path)) {
-        console.log('Detected TS Type Alias Declaration:', path.toString());
         return 'TSTypeAliasDeclaration';
-
     } else if (isTSEnumDeclaration(path)) {
-        console.log('Detected TS Enum Declaration:', path.toString());
         return 'TSEnumDeclaration';
-
     } else {
         console.warn('Recognize type function is not implemented yet', path.node.type);
     }
