@@ -4,6 +4,11 @@ const { reportError } = require('./common');
 const { createStateTracker, } = require('./stateManagement');  
 const generate  = require('@babel/generator').default;
 const { statSync, readFileSync } = require('fs');
+const {     createSection,
+    createInnerSection,
+    createInnerReturn,
+    createMainComponent,
+visitedNodes} = require('./sections')
 const { parseFile, createBackup, readFileContent, writeFileContent } = require('./fileOperations');  
 const {   
     handleImportDeclaration,    
@@ -148,7 +153,6 @@ const checkFile = async (filePath, state) => {
  * @returns {Object} An object defining visitor methods for the traversal, linking node types to their respective handling functions.  
  */  
 const setupTraverse = (state, filePath, sections) => {
-    const visitedNodes = new Set();
 
     return {
         enter(path) {
@@ -322,71 +326,60 @@ const createNewAST = (orderedSections) => {
     };  
 };  
   
-/**
- * Fixes the structure of a specified file by reading its content, parsing it into an AST,
- * analyzing and reordering code sections, and then writing the updated content back to the file.
- * Creates a backup of the original file before making changes.
- *
- * @async
- * @function fixFile
- * @param {string} filePath - The path of the file to fix.
- * @returns {Promise<void>} A promise that resolves when the file has been fixed.
- * @throws Will log an error and exit the process if the provided path is not a file.
- */  
-const fixFile = async (filePath) => {
-    console.log(`Fixing file: ${filePath}`);
-
-    if (statSync(filePath).isFile()) {
-        // Create a backup before fixing the file
-        createBackup(filePath);
-        const content = readFileContent(filePath);
-        const ast = parseFile(content);
-        const state = createStateTracker();
-
-        // Initialize sections object
-        const sections = {
-            imports: [],
-            localConstants: new Map(),
-            constants: [],
-            contexts: [],
-            hooks: [],
-            stateHooks: [],
-            effectHooks: [],
-            handlers: [],
-            helperFunctions: [],
-            components: [],
-            classComponents: [],
-            classMethod: [],
-            classProperty: [],
-            returns: [],
-            styledComponent: [],
-            functionalComponent: [],
-            types: {
-                TSInterfaceDeclaration: [],
-                TSTypeAliasDeclaration: [],
-                TSEnumDeclaration: []
-            },
-            exports: [],
-            mainComponent: null,
-            nodes: []
-        };
-
-        traverse(ast, setupTraverse(state, filePath, sections));
-
-        // Analyze and reorder the code sections
-        const orderedSections = reorderCode(sections);
-
-        const newAst = createNewAST(orderedSections);
-        const newContent = generate(newAst, {}).code;  // Ensure `generate` is called correctly
-
-        writeFileContent(filePath, newContent);
-
-        console.log(`File ${filePath} fixed.`);
-    } else {
-        console.error(`${filePath} is not a file.`);
-        process.exit(1); // Exit the process if it's not a file
-    }
-}; 
+const fixFile = async (filePath) => {  
+    console.log(`Fixing file: ${filePath}`);  
+  
+    if (statSync(filePath).isFile()) {  
+        // Create a backup before fixing the file  
+        createBackup(filePath);  
+        const content = readFileContent(filePath);  
+        const ast = parseFile(content);  
+        const state = createStateTracker();  
+  
+        // Initialize sections object  
+        const sections = {  
+            imports: [],  
+            localConstants: new Map(),  
+            constants: [],  
+            contexts: [],  
+            hooks: [],  
+            stateHooks: [],  
+            effectHooks: [],  
+            handlers: [],  
+            helperFunctions: [],  
+            components: [],  
+            classComponents: [],  
+            classMethod: [],  
+            classProperty: [],  
+            returns: [],  
+            styledComponent: [],  
+            functionalComponent: [],  
+            types: {  
+                TSInterfaceDeclaration: [],  
+                TSTypeAliasDeclaration: [],  
+                TSEnumDeclaration: []  
+            },  
+            exports: [],  
+            mainComponent: null,  
+            nodes: []  
+        };  
+  
+        traverse(ast, setupTraverse(state, filePath, sections));  
+  
+        // Analyze and reorder the code sections  
+        const orderedSections = reorderCode(sections);  
+  
+        const newAst = createNewAST(orderedSections);  
+        const newContent = generate(newAst, {}).code;  // Ensure `generate` is called correctly  
+  
+        writeFileContent(filePath, newContent);  
+  
+        console.log(`File ${filePath} fixed.`);  
+    } else {  
+        console.error(`${filePath} is not a file.`);  
+        process.exit(1); // Exit the process if it's not a file  
+    }  
+};  
 
 //////////////////////
 //////////////////////
