@@ -6,7 +6,6 @@
     "scripts": {
         "dev": "vite",
         "build": "tsc -b && vite build",
-        "lint": "eslint . --ext ts,tsx --report-unused-disable-directives --max-warnings 0",
         "preview": "vite preview",
         "structure": "node ./Structure-Check/structure-check.js --analyze",
         "test": "jest",
@@ -37,7 +36,8 @@
         "open": "^10.1.0",
         "prompts": "^2.4.2",
         "react": "^18.3.1",
-        "react-dom": "^18.3.1"
+        "react-dom": "^18.3.1",
+        "strip-ansi": "^7.1.0"
     },
     "devDependencies": {
         "@babel/cli": "^7.24.8",
@@ -52,13 +52,7 @@
         "@babel/types": "^7.25.2",
         "@types/react": "^18.3.3",
         "@types/react-dom": "^18.3.0",
-        "@typescript-eslint/eslint-plugin": "^8.2.0",
-        "@typescript-eslint/parser": "^3.10.1",
         "@vitejs/plugin-react-swc": "^3.5.0",
-        "eslint": "^8.57.0",
-        "eslint-plugin-react": "^7.35.0",
-        "eslint-plugin-react-hooks": "^4.6.2",
-        "eslint-plugin-react-refresh": "^0.4.7",
         "jest": "^24.1.0",
         "typescript": "^5.2.2",
         "vite": "^5.3.4"

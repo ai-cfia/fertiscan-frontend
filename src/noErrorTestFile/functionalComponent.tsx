@@ -10,7 +10,7 @@ const test: React.FC = () => {
 
 const functionalComponent: React.FC = () => {
     // Define a local constant
-    const GREETING_MESSAGE: string = "Hello, World!";
+    const GREETING_MESSAGE = "Hello, World!";
 
     return (
         <div>

@@ -1,13 +1,13 @@
 import React from 'react';
 
 // Define a helper function
-const getGreetingMessage = (): string => {
+function getGreetingMessage () {
     return "Hello, World!";
 };
 
 const helperFunction: React.FC = () => {
     // Use the helper function
-    const greetingMessage: string = getGreetingMessage();
+    const greetingMessage = getGreetingMessage();
 
     return (
         <div>

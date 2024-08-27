@@ -24,9 +24,11 @@ const createSection = () => ({
     nodes: []
 });
 
-const createInnerSection = (node) => ({
+const createInnerSection = (node, section = createSection(), mainComponentPath = null, isMainComponent = false) => ({
     node: node,
-    section: createSection()
+    section: section || createSection(),
+    mainComponentPath: mainComponentPath,
+    isMainComponent: isMainComponent
 });
 
 const createInnerReturn = (node, jsx) => ({
@@ -34,10 +36,6 @@ const createInnerReturn = (node, jsx) => ({
     JSXTable: jsx,
 });
 
-const createMainComponent = (innerSection, path) => ({
-    innerSection: createInnerSection(innerSection),
-    mainComponentPath: path
-});
 
 const sections = {  
     imports: [],  
@@ -53,7 +51,7 @@ const sections = {
     classComponents: [],  
     classMethod: [],  
     classProperty: [],  
-    returns: [],  
+    return: [],  
     styledComponent: [],  
     functionalComponent: [],  
     types: {  
@@ -72,7 +70,6 @@ module.exports = {
     createSection,
     createInnerSection,
     createInnerReturn,
-    createMainComponent,
     visitedNodes,
     sections
 };

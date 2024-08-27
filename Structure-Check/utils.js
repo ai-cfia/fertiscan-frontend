@@ -1,6 +1,8 @@
 const { t,  reportError } = require('./common');    
 const path = require('path');    
 const projectPath = path.resolve(__dirname, '../src/');
+const generate = require('@babel/generator').default;
+
 
 
   
@@ -155,10 +157,10 @@ function isCustomHook(path) {
  * @param {Object} path - The Babel path object for the variable declarator node.
  * @returns {boolean} True if the path represents a global constant, false otherwise.
  */ 
-function isGlobalConstant(path) {
+const isGlobalConstant = (path) => {
     const variableDeclarator = path.node;
     const identifier = variableDeclarator.id ? variableDeclarator.id.name : null;
-    
+
     if (!identifier) {
         return false;
     }
@@ -167,7 +169,7 @@ function isGlobalConstant(path) {
     const isConventionallyNamed = /^[A-Z_][A-Z0-9_]*$/.test(identifier);
 
     return isConventionallyNamed;
-}
+};
   
 ///////////////////////////////
 ///////////////////////////////
@@ -184,42 +186,41 @@ function isGlobalConstant(path) {
  * @param {Object} path - The Babel path object for the variable declarator node.
  * @returns {boolean} True if the path represents a local constant, false otherwise.
  */
-function isLocalConstant(path) {
+function isLocalConstant(path) {  
+    // Ensure path.node is a VariableDeclarator  
+    if (!t.isVariableDeclarator(path.node)) {  
+        return false;  
+    }  
+  
+    // Ensure the parent is a VariableDeclaration of kind 'const'  
+    if (!path.parentPath.isVariableDeclaration({ kind: 'const' })) {  
+        return false;  
+    }  
+  
+    // Ensure path.node.id exists and has a name property  
+    if (!path.node.id || typeof path.node.id.name !== 'string') {  
+        return false;  
+    }  
+  
+    const name = path.node.id.name;  
+  
+    // Ensure the name does not contain 'use' or 'handle'  
+    if (name.includes('use') || name.includes('handle')) {  
+        return false;  
+    }  
+  
+    // Check if within a function scope  
+    let currentScope = path.scope;  
+    while (currentScope) {  
+        if (currentScope.path.isFunctionDeclaration() || currentScope.path.isFunctionExpression() || currentScope.path.isArrowFunctionExpression()) {  
+            return true;  
+        }  
+        currentScope = currentScope.parent;  
+    }  
+  
+    return false;  
+}  
 
-    // Ensure path.node is a VariableDeclarator
-    if (!t.isVariableDeclarator(path.node)) {
-        return false;
-    }
-
-    // Ensure the parent is a VariableDeclaration of kind 'const'
-    if (!path.parentPath.isVariableDeclaration({ kind: 'const' })) {
-        return false;
-    }
-
-    // Ensure path.node.id exists and has a name property
-    if (!path.node.id || typeof path.node.id.name !== 'string') {
-        return false;
-    }
-
-    const name = path.node.id.name;
-
-    // Ensure the name does not contain 'use' or 'handle'
-    if (name.includes('use') || name.includes('handle')) {
-        return false;
-    }
-
-    // Check if within a function scope
-    let currentScope = path.scope;
-    while (currentScope) {
-
-        if (currentScope.path.type==="ArrowFunctionExpression"|| currentScope.path.type==="FunctionDeclaration" ) {
-            return true; 
-        }
-        currentScope = currentScope.parent;
-    }
-
-    return false;
-}
   
 ///////////////////////////////
 ///////////////////////////////
@@ -525,24 +526,46 @@ function IsTopOfScope(path) {
  * @param {NodePath} path - The Babel path object for the variable declarator node.
  * @returns {boolean} True if the path represents a React functional component, false otherwise.
  */
-function isReactFunctionalComponent(path) {
-    if (!t.isVariableDeclarator(path.node)) {
-        return false;
+function isReactFunctionalComponent(path) {  
+  
+    if (!t.isVariableDeclarator(path.node)) {  
+        return false;  
+    }  
+  
+    const variableDeclarator = path.node;  
+  
+    // Check if the variable has a type annotation and if it contains React.FC  
+    if (variableDeclarator.id.typeAnnotation) {  
+        const typeAnnotation = variableDeclarator.id.typeAnnotation.typeAnnotation;  
+  
+        // Check if the type annotation is React.FC  
+        if (t.isTSTypeReference(typeAnnotation) && t.isIdentifier(typeAnnotation.typeName, { name: 'FC' })) {  
+            return true;  
+        }  
     }
-    const variableDeclarator = path.node;
-
-    // Check if the variable has a type annotation and if it contains React.FC
-    if (variableDeclarator.id.typeAnnotation) {
-        const typeAnnotation = variableDeclarator.id.typeAnnotation.typeAnnotation;
-
-        // Check if the type annotation is React.FC
-        if (t.isTSTypeReference(typeAnnotation) && t.isIdentifier(typeAnnotation.typeName, { name: 'FC' })) {
-            return true;
-        }
+  
+    // Check if the initializer returns JSX  
+    const init = variableDeclarator.init;  
+    if (t.isArrowFunctionExpression(init) || t.isFunctionExpression(init)) {  
+  
+        // Check if the body is a JSX element directly  
+        if (t.isJSXElement(init.body) || t.isJSXFragment(init.body)) {  
+            return true;  
+        }  
+  
+        // Check if the body is a block statement containing a return statement that returns JSX  
+        if (t.isBlockStatement(init.body)) {  
+            const returnStatement = init.body.body.find(node => t.isReturnStatement(node));  
+            if (returnStatement && (t.isJSXElement(returnStatement.argument) || t.isJSXFragment(returnStatement.argument))) {  
+                return true;  
+            }  
+        }  
+  
     }
-
-    return false; // Not a React functional component
-}
+  
+    return false; // Not a React functional component  
+} 
+  
 
 /**  
  * Checks if the node is a TypeScript Interface Declaration.  

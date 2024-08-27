@@ -5,10 +5,23 @@ const path = require('path');
 const { errors } = require('./errorHandling');
 const { createSection, visitedNodes, sections } = require('./sections');
 const generate = require('@babel/generator').default;
+let stripAnsi;  
+(async () => {  
+    const stripAnsiModule = await import('strip-ansi');  
+    stripAnsi = stripAnsiModule.default;  
+})();  
+
 
 const colors = {
     reset: "\x1b[0m",
     bright: "\x1b[1m",
+    dim: "\x1b[2m",
+    underscore: "\x1b[4m",
+    blink: "\x1b[5m",
+    reverse: "\x1b[7m",
+    hidden: "\x1b[8m",
+
+    fgBlack: "\x1b[30m",
     fgRed: "\x1b[31m",
     fgGreen: "\x1b[32m",
     fgYellow: "\x1b[33m",
@@ -16,7 +29,42 @@ const colors = {
     fgMagenta: "\x1b[35m",
     fgCyan: "\x1b[36m",
     fgWhite: "\x1b[37m",
+    fgGray: "\x1b[90m",
+    fgBrightRed: "\x1b[91m",
+    fgBrightGreen: "\x1b[92m",
+    fgBrightYellow: "\x1b[93m",
+    fgBrightBlue: "\x1b[94m",
+    fgBrightMagenta: "\x1b[95m",
+    fgBrightCyan: "\x1b[96m",
+    fgBrightWhite: "\x1b[97m",
+
+    bgBlack: "\x1b[40m",
+    bgRed: "\x1b[41m",
+    bgGreen: "\x1b[42m",
+    bgYellow: "\x1b[43m",
+    bgBlue: "\x1b[44m",
+    bgMagenta: "\x1b[45m",
+    bgCyan: "\x1b[46m",
+    bgWhite: "\x1b[47m",
+    bgGray: "\x1b[100m",
+    bgBrightRed: "\x1b[101m",
+    bgBrightGreen: "\x1b[102m",
+    bgBrightYellow: "\x1b[103m",
+    bgBrightBlue: "\x1b[104m",
+    bgBrightMagenta: "\x1b[105m",
+    bgBrightCyan: "\x1b[106m",
+    bgBrightWhite: "\x1b[107m",
+
+    // Specific RGB colors
+    fgLightPurple: "\x1b[35m",            // Light purple/magenta (standard)
+    fgPurple: "\x1b[38;2;128;0;128m",     // Specific purple using RGB
+    fgLightGray: "\x1b[38;2;211;211;211m",// Light gray
+    fgOrange: "\x1b[38;2;255;165;0m",     // Orange
+    fgPink: "\x1b[38;2;255;192;203m",     // Pink
+    fgLightGreen: "\x1b[38;2;144;238;144m",// Light green
+    fgLightBlue: "\x1b[38;2;173;216;230m" // Light blue
 };
+
 let  globalfilePath="";
 
 // Get the base name of the file (without directory path)
@@ -148,190 +196,220 @@ const displayBasic = (errors) => {
  * @param {Object[]} errors - An array of error objects to show in the analysis.
  * @returns {Promise<void>} A Promise that resolves after the interactive detailed analysis is completed or interrupted.
  */
-const displayDetailedInteractive = async (sections, errors) => {
-    const choices = [
-        'Imports',
-        'Local Constants',
-        'Constants',
-        'Contexts',
-        'Hooks',
-        'Handlers',
-        'Helper Functions',
-        'Components',
-        'Class Components',
-        'Return Statements',
-        'Styled Components',
-        'Functional Components',
-        'Main Component',
-        'TS Interface Declarations',
-        'TS Type Alias Declarations',
-        'TS Enum Declarations',
-        'Exports',
-        'Errors',
-        'Nodes'
-    ];
+const displayDetailedInteractive = async (errors) => {  
 
-    const getSections = () => ({
-        'Imports': sections.imports || [],
-        'Local Constants': Array.from(sections.localConstants.values()).flat() || [],
-        'Constants': sections.constants || [],
-        'Contexts': sections.contexts || [],
-        'Hooks': sections.hooks || [],
-        'Handlers': sections.handlers || [],
-        'Helper Functions': sections.helperFunctions || [],
-        'Components': sections.components || [],
-        'Class Components': sections.classComponents || [],
-        'Return Statements': sections.return || [],
-        'Styled Components': sections.styledComponent || [],
-        'Functional Components': sections.functionalComponent || [],
-        'Main Component': sections.mainComponent ? [sections.mainComponent] : [],
-        'TS Interface Declarations': sections.types?.TSInterfaceDeclaration || [],
-        'TS Type Alias Declarations': sections.types?.TSTypeAliasDeclaration || [],
-        'TS Enum Declarations': sections.types?.TSEnumDeclaration || [],
-        'Exports': sections.exports || [],
-        'Errors': errors || [],
-        'Nodes': sections.nodes || []
-    });
+    const choices = [  
+        'Imports',  
+        'Local Constants',  
+        'Constants',  
+        'Contexts',  
+        'Hooks',  
+        'Handlers',  
+        'Helper Functions',  
+        'Components',  
+        'Class Components',  
+        'Return Statements',  
+        'Styled Components',  
+        'Functional Components',  
+        'Main Component',  
+        'TS Interface Declarations',  
+        'TS Type Alias Declarations',  
+        'TS Enum Declarations',  
+        'Exports',  
+        'Errors',  
+        'Nodes'  
+    ];  
+  
+    const getSections = () => ({  
+        'Imports': sections.imports || [],  
+        'Local Constants': Array.from(sections.localConstants.values()).flat() || [],  
+        'Constants': sections.constants || [],  
+        'Contexts': sections.contexts || [],  
+        'Hooks': sections.hooks || [],  
+        'Handlers': sections.handlers || [],  
+        'Helper Functions': sections.helperFunctions || [],  
+        'Components': sections.components || [],  
+        'Class Components': sections.classComponents || [],  
+        'Return Statements': sections.return || [],  
+        'Styled Components': sections.styledComponent || [],  
+        'Functional Components': sections.functionalComponent || [],  
+        'Main Component': sections.mainComponent ? [sections.mainComponent] : [],  
+        'TS Interface Declarations': sections.types?.TSInterfaceDeclaration || [],  
+        'TS Type Alias Declarations': sections.types?.TSTypeAliasDeclaration || [],  
+        'TS Enum Declarations': sections.types?.TSEnumDeclaration || [],  
+        'Exports': sections.exports || [],  
+        'Errors': errors || [],  
+        'Nodes': sections.nodes || []  
+    });  
+  
+    const displaySectionHighlight = async (selectedSection, sectionMap) => {  
+        const sectionItems = sectionMap[selectedSection] || [];  
+        if (sectionItems.length > 0) {  
+            await displayHighlightedCode(sectionItems);  
+        } else {  
+            console.log(`No items found for section: ${selectedSection}`);  
+        }  
+    };  
 
-    const displaySectionHighlight = (selectedSection, sectionMap) => {
-        const sectionItems = sectionMap[selectedSection] || [];
-        if (sectionItems.length > 0) {
-            displayHighlightedCode(sectionItems);
-        } else {
-            console.log(`No items found for section: ${selectedSection}`);
-        }
-    };
+    const displayInteractiveSections = async (sections, indent = 0) => {  
+        const sectionMap = getSections(sections);  
 
-    const displayInteractiveSections = async (sections, indent = 0) => {
-        const sectionMap = getSections();
+        while (true) {  
+            try {  
+                const choicesWithInnerSections = choices.slice();  
 
-        while (true) {
-            try {
-                const choicesWithInnerSections = choices.slice();
-                if (sections.innerSections && sections.innerSections.length > 0) {
-                    sections.innerSections.forEach((innerSection, index) => {
-                        choicesWithInnerSections.push(`Inner Section ${index + 1}`);
-                    });
-                }
+                if (sections.innerSections && sections.innerSections.length > 0) {  
+                    sections.innerSections.forEach((innerSection, index) => {  
+                        choicesWithInnerSections.push(`Inner Section ${index + 1}`);  
+                    });  
+                }  
 
-                const { selectedSection } = await prompts({
-                    type: 'select',
-                    name: 'selectedSection',
-                    message: 'Select the section you want to highlight:',
-                    choices: choicesWithInnerSections.map(choice => ({ title: choice, value: choice })),
-                });
+                const { selectedSection } = await prompts({  
+                    type: 'select',  
+                    name: 'selectedSection',  
+                    message: 'Select the section you want to highlight:',  
+                    choices: choicesWithInnerSections.map(choice => ({ title: choice, value: choice })),  
+                });  
 
-                if (!selectedSection) break;
+                if (!selectedSection) break;  
 
-                if (selectedSection.startsWith('Inner Section')) {
-                    const index = parseInt(selectedSection.split(' ')[2]) - 1;
-                    await displayInteractiveSections(sections.innerSections[index].section, indent + 2);
-                } else {
-                    displaySectionHighlight(selectedSection, sectionMap);
-                }
+                if (selectedSection.startsWith('Inner Section')) {  
+                    const index = parseInt(selectedSection.split(' ')[2]) - 1;  
+                    await displayInteractiveSections(sections.innerSections[index].section, indent + 2);  
+                } else {  
+                    await displaySectionHighlight(selectedSection, sectionMap);  
+                }  
 
-                const { continueInteraction } = await prompts({
-                    type: 'confirm',
-                    name: 'continueInteraction',
-                    message: 'Do you want to select another section?',
-                    initial: true,
-                });
+                const result = await prompts({  
+                    type: 'confirm',  
+                    name: 'continueInteraction',  
+                    message: 'Do you want to select another section?',  
+                    initial: true,  
+                });  
 
-                if (!continueInteraction) break;
+                if (!result.continueInteraction) break;  
 
-            } catch (error) {
-                console.error('Error during prompts:', error);
-                break;
-            }
-        }
-    };
+            } catch (error) {  
+                console.error('Error during prompts:', error);  
+                break;  
+            }  
+        }  
+    };  
 
-    await displayInteractiveSections(sections, 0);
-};
+    await displayInteractiveSections(sections, 0);  
+};  
 
-const displayHighlightedCode = (nodes) => {
-    nodes.forEach(node => {
-        if (node.hasError) {
-            console.error(`Error: ${node.errorMessage}`);
-        }
-        validateAndGenerateCode(node);
-    });
-};
-
-const validateAndGenerateCode = (node) => {
-    if (!node) {
-        console.error('Invalid node detected: node is undefined or null');
-        return;
-    }
-
-    const actualNode = node.node ? node.node : node;
-
-    if (!actualNode.type) {
-        console.error('Node detected without a type:', JSON.stringify(actualNode, null, 2));
-        return;
-    }
-
-    let codeSnippet;
-    try {
-        codeSnippet = actualNode.code || generate(actualNode).code || 'Code not available';  // Try to generate code only if not available
-    } catch (err) {
-        console.error(`Error generating code for node type ${actualNode.type}`, err);
-        codeSnippet = 'Code generation error';
-    }
-
-    const output = `
-    Node Type: ${actualNode.type}
-    Location: ${
-        globalfilePath || 'Unknown file'
-    }:${
-        actualNode.loc?.start
-            ? `${actualNode.loc.start.line}:${actualNode.loc.start.column}`
-            : 'Unknown location'
-    };
-    Code: \n${codeSnippet}\n`;
-
-    console.log(output);
-
-    if (node.hasError) {
-        console.error(`Error Message: ${node.errorMessage}`);
-    }
-};
-
-
-// Todo : Rework the tree display to not show error and also to display the component in form of a tree 
-// component
-//      element in component
-// other component
 
 /**
- * Displays a tree analysis of various code sections together with any errors.
- * The information is formatted for command line interface output.
- * @function displayTree
- * @param {Object} sections - An object containing properties that represent different parts of the code to be analyzed in tree format.
+ * Outputs to the console highlighted code snippets for a given list of nodes.
+ * Each node is printed with its type, location, name (if available), and code snippet.
+ * Nodes that have errors are logged using console.error, and others using console.log.
+ * @function displayHighlightedCode
+ * @param {Object[]} nodes - An array of node objects to display.
  */
-const displayTree = (sections) => {
-    console.log('--- Tree Analysis ---');
+const displayHighlightedCode = (nodes) => {  
+    nodes.forEach(node => {  
+        validateAndGenerateCode(node);  
+    });  
+};  
 
-    if (!Array.isArray(sections.nodes)) {
-        console.error("Invalid sections data. Expected 'nodes' to be an array.");
-        return;
+  
+/**
+ * Validates the node and generates a code snippet for display.
+ * @function validateAndGenerateCode
+ * @param {Object} node - The node object to validate and generate code from.
+ */
+const validateAndGenerateCode = async (node, indent = 0) => {  
+    if (!node) {  
+        console.error('Invalid node detected: node is undefined or null');  
+        return '';  
+    }  
+  
+    // Handle Array node type  
+    const actualNode = node.node ? node.node : node;  
+    if (Array.isArray(actualNode)) {  
+        actualNode.forEach(node => validateAndGenerateCode(node, indent));  
+        return '';  
+    }  
+  
+    if (!actualNode.type) {  
+        console.error('Node detected without a type:', JSON.stringify(actualNode, null, 2));  
+        return '';  
+    }  
+  
+    let codeSnippet;  
+    try {  
+        codeSnippet = generate(actualNode).code || 'Code not available';  
+        // Proper multiline indentation for code snippet  
+        codeSnippet = codeSnippet.replace(/\n/g, `\n${' '.repeat(indent + 4)}`);  
+    } catch (err) {  
+        console.error(`Error generating code for node type ${actualNode.type}`, err);  
+        codeSnippet = 'Code generation error';  
+    }  
+  
+    // Strip ANSI color codes to ensure clean output  
+    codeSnippet = codeSnippet.replace(/\u001b\[.*?m/g, '');  
+  
+    let output = ` ${colors.fgPurple}Node Type: ${actualNode.type}${colors.reset}  
+${' '.repeat(indent)}Location: ${globalfilePath || 'Unknown file'}:${actualNode && actualNode.loc && actualNode.loc.start   
+        ? `${actualNode.loc.start.line}:${actualNode.loc.start.column}${colors.reset}`   
+        : `${colors.fgRed}Unknown location${colors.reset}`  
+    };  
+${' '.repeat(indent)}Code:\n${colors.fgGreen}${codeSnippet}${colors.reset}\n`;  
+  
+    // If the node is a main component, traverse its inner sections and concatenate code snippets  
+    if (node.innerSection) {  
+        console.log('--- Main Component Inner Sections ---');  
+        const innerCodeSnippets = await traverseInnerSections(node.innerSection, indent + 2);  
+        output += `\n\n--- Inner Sections Code ---\n${innerCodeSnippets}`;  
+    }  
+  
+    console.log(output);  
+  
+    return codeSnippet;  
+  
+    // Check for error messages  
+    if (node.hasError) {  
+        console.error(node.errorMessage);  
+    }  
+};  
+
+
+const formatInnerSections = async (innerSection, indent = 2) => {
+    let output = '';
+
+    if (innerSection.section && innerSection.section.length > 0) {
+        output += '\n' + ' '.repeat(indent) + `--- Inner Section Start ---\n`;
+        for (let subSection of innerSection.section) {
+            output += await validateAndGenerateCode(subSection.node, indent + 4);
+            if (subSection.innerSection) {
+                output += await formatInnerSections(subSection.innerSection, indent + 6);
+            }
+        }
+        output += ' '.repeat(indent) + `--- Inner Section End ---\n`;
     }
 
-    const ui = require('cliui')({ width: 80 });
-
-    sections.nodes.forEach(node => {
-        if (node) {
-            ui.div({
-                text: `Node Type: ${node.type}\nLocation: Line ${node.loc.start.line}, Column ${node.loc.start.column}${node.name ? `\nName: ${node.name}` : ''}`,
-                padding: [1, 0, 1, 0]
-            });
-        }
-    });
-
-    console.log(ui.toString());
-
-    handleErrors(errors);
+    return output;
 };
+
+/**  
+ * Utility function to handle objects with circular references.  
+ * @function safeStringify  
+ * @param {Object} obj - The object to stringify.  
+ * @returns {string} Safely stringified object.  
+ */  
+const safeStringify = (obj) => {  
+    const seen = new WeakSet();  
+    return JSON.stringify(obj, (key, value) => {  
+        if (typeof value === 'object' && value !== null) {  
+            if (seen.has(value)) {  
+                return;  
+            }  
+            seen.add(value);  
+        }  
+        return value;  
+    }, 2);  
+};  
 
 /**
  * Displays a detailed error analysis report with clickable links.
@@ -439,6 +517,28 @@ Examples:
  * @returns {Promise<void>} A promise that resolves when the menu interaction is complete.
  */
 const displayFilesMenu = async (files) => {
+    // Reset sections properly
+    sections.imports = [];
+    sections.localConstants = new Map(); // Ensure localConstants is a Map
+    sections.constants = [];
+    sections.contexts = [];
+    sections.hooks = [];
+    sections.handlers = [];
+    sections.helperFunctions = [];
+    sections.components = [];
+    sections.classComponents = [];
+    sections.return = [];
+    sections.styledComponent = [];
+    sections.functionalComponent = [];
+    sections.mainComponent = [];
+    sections.types = {
+        TSInterfaceDeclaration: [],
+        TSTypeAliasDeclaration: [],
+        TSEnumDeclaration: [],
+    };
+    sections.exports = [];
+    sections.nodes = [];
+
     // Map full paths to their shortened names for display choices
     const fileChoices = files.map(filePath => ({
         title: getShortenedFileName(filePath),
@@ -494,89 +594,96 @@ const displayFilesMenu = async (files) => {
  * @param {string} filePath - The path of the file being processed.
  * @returns {Promise<void>} A promise that resolves when the menu interaction is complete.
  */
-const displaySectionsMenu = async (filePath) => {
-    const choices = [];
+const displaySectionsMenu = async (filePath) => {  
+    const choices = [];  
   
-    // Construction des messages de choix
-    if (sections.imports && sections.imports.length > 0) choices.push(`(${sections.imports.length}) Imports`);
-    if (sections.localConstants && Array.from(sections.localConstants.values()).flat().length > 0) choices.push(`(${Array.from(sections.localConstants.values()).flat().length}) Local Constants`);
-    if (sections.constants && sections.constants.length > 0) choices.push(`(${sections.constants.length}) Constants`);
-    if (sections.contexts && sections.contexts.length > 0) choices.push(`(${sections.contexts.length}) Contexts`);
-    if (sections.hooks && sections.hooks.length > 0) choices.push(`(${sections.hooks.length}) Hooks`);
-    if (sections.handlers && sections.handlers.length > 0) choices.push(`(${sections.handlers.length}) Handlers`);
-    if (sections.types?.TSInterfaceDeclaration && sections.types.TSInterfaceDeclaration.length > 0) choices.push(`(${sections.types.TSInterfaceDeclaration.length}) TS Interface Declarations`);
-    if (sections.types?.TSTypeAliasDeclaration && sections.types.TSTypeAliasDeclaration.length > 0) choices.push(`(${sections.types.TSTypeAliasDeclaration.length}) TS Type Alias Declarations`);
-    if (sections.types?.TSEnumDeclaration && sections.types.TSEnumDeclaration.length > 0) choices.push(`(${sections.types.TSEnumDeclaration.length}) TS Enum Declarations`);
-    if (sections.helperFunctions && sections.helperFunctions.length > 0) choices.push(`(${sections.helperFunctions.length}) Helper Functions`);
-    if (sections.classComponents && sections.classComponents.length > 0) choices.push(`(${sections.classComponents.length}) Class Components`);
-    if (sections.return && sections.return.length > 0) choices.push(`(${sections.return.length}) Returns`);
-    if (sections.styledComponent && sections.styledComponent.length > 0) choices.push(`(${sections.styledComponent.length}) Styled Components`);
-    if (sections.functionalComponent && sections.functionalComponent.length > 0) choices.push(`(${sections.functionalComponent.length}) Functional Components`);
-    if (sections.mainComponent && sections.mainComponent.length > 0) choices.push('(1) Main Component');
-    if (errors.length > 0) choices.push(`(${errors.length}) Errors`);
+    // Construction des messages de choix  
+    if (sections.imports && sections.imports.length > 0) choices.push(`(${sections.imports.length}) Imports`);  
+    if (sections.localConstants && Array.from(sections.localConstants.values()).flat().length > 0) choices.push(`(${Array.from(sections.localConstants.values()).flat().length}) Local Constants`);  
+    if (sections.constants && sections.constants.length > 0) choices.push(`(${sections.constants.length}) Constants`);  
+    if (sections.contexts && sections.contexts.length > 0) choices.push(`(${sections.contexts.length}) Contexts`);  
+    if (sections.hooks && sections.hooks.length > 0) choices.push(`(${sections.hooks.length}) Hooks`);  
+    if (sections.handlers && sections.handlers.length > 0) choices.push(`(${sections.handlers.length}) Handlers`);  
+    if (sections.types?.TSInterfaceDeclaration && sections.types.TSInterfaceDeclaration.length > 0) choices.push(`(${sections.types.TSInterfaceDeclaration.length}) TS Interface Declarations`);  
+    if (sections.types?.TSTypeAliasDeclaration && sections.types.TSTypeAliasDeclaration.length > 0) choices.push(`(${sections.types.TSTypeAliasDeclaration.length}) TS Type Alias Declarations`);  
+    if (sections.types?.TSEnumDeclaration && sections.types.TSEnumDeclaration.length > 0) choices.push(`(${sections.types.TSEnumDeclaration.length}) TS Enum Declarations`);  
+    if (sections.helperFunctions && sections.helperFunctions.length > 0) choices.push(`(${sections.helperFunctions.length}) Helper Functions`);  
+    if (sections.classComponents && sections.classComponents.length > 0) choices.push(`(${sections.classComponents.length}) Class Components`);  
+    if (sections.return && sections.return.length > 0) choices.push(`(${sections.return.length}) Returns`);  
+    if (sections.styledComponent && sections.styledComponent.length > 0) choices.push(`(${sections.styledComponent.length}) Styled Components`);  
+    if (sections.functionalComponent && sections.functionalComponent.length > 0) choices.push(`(${sections.functionalComponent.length}) Functional Components`);  
+    if (sections.mainComponent && sections.mainComponent.length > 0) choices.push('(1) Main Component');  
+    if (sections.exports && sections.exports.length > 0) choices.push(`(${sections.exports.length}) Exports`);  
+    if (errors.length > 0) choices.push(`(${errors.length}) Errors`);  
+  
+    // Define sectionMap after gathering the sections  
+    const sectionMap = {  
+        'Imports': sections.imports || [],  
+        'Local Constants': Array.from(sections.localConstants?.values() ?? []).flat(),  
+        'Constants': sections.constants || [],  
+        'Contexts': sections.contexts || [],  
+        'Hooks': sections.hooks || [],  
+        'Handlers': sections.handlers || [],  
+        'TS Interface Declarations': sections.types?.TSInterfaceDeclaration || [],  
+        'TS Type Alias Declarations': sections.types?.TSTypeAliasDeclaration || [],  
+        'TS Enum Declarations': sections.types?.TSEnumDeclaration || [],  
+        'Helper Functions': sections.helperFunctions || [],  
+        'Class Components': sections.classComponents || [],  
+        'Returns': sections.return || [],  
+        'Styled Components': sections.styledComponent || [],  
+        'Functional Components': sections.functionalComponent || [],  
+        'Main Component': sections.mainComponent ? [sections.mainComponent] : [],  
+        'Exports': sections.exports || [],  
+        'Errors': errors || []  
+    };  
+  
+    console.log("Choices available:", choices);  // Debugging log  
+  
+    while (true) {  
+        try {  
+            const { selectedSection } = await prompts({  
+                type: 'select',  
+                name: 'selectedSection',  
+                message: 'Select the section you want to highlight:',  
+                choices: choices.map(choice => ({ title: choice, value: choice })),  
+            });  
+  
+            if (!selectedSection) break;  
+  
+            // Remove count from selectedSection to match the sectionMap keys  
+            const cleanedSectionName = selectedSection.replace(/^\(\d+\) /, '');  
+  
+            console.log(`Selected section: ${cleanedSectionName}`);  // Debugging log  
+  
+            // Check if the cleaned section actually contains elements before displaying  
+            if (sectionMap[cleanedSectionName].length > 0) {  
+                displayHighlightedCode(sectionMap[cleanedSectionName]);  
+            } else {  
+                console.log(`No ${cleanedSectionName.toLowerCase()} found.`);  
+            }  
+  
+            const { continueInteraction } = await prompts({  
+                type: 'confirm',  
+                name: 'continueInteraction',  
+                message: 'Do you want to select another section?',  
+                initial: true,  
+            });  
+  
+            if (!continueInteraction) break;  
+        } catch (error) {  
+            console.error('Error during prompts:', error);  
+            break;  
+        }  
+    }  
+};  
 
-    // Define sectionMap after gathering the sections
-    const sectionMap = {
-        'Imports': sections.imports || [],
-        'Local Constants': Array.from(sections.localConstants?.values() ?? []).flat(),
-        'Constants': sections.constants || [],
-        'Contexts': sections.contexts || [],
-        'Hooks': sections.hooks || [],
-        'Handlers': sections.handlers || [],
-        'TS Interface Declarations': sections.types?.TSInterfaceDeclaration || [],
-        'TS Type Alias Declarations': sections.types?.TSTypeAliasDeclaration || [],
-        'TS Enum Declarations': sections.types?.TSEnumDeclaration || [],
-        'Helper Functions': sections.helperFunctions || [],
-        'Class Components': sections.classComponents || [],
-        'Returns': sections.return || [],
-        'Styled Components': sections.styledComponent || [],
-        'Functional Components': sections.functionalComponent || [],
-        'Main Component': sections.mainComponent ? [sections.mainComponent] : [],
-        'Errors': errors || []
-    };
 
-    while (true) {
-        try {
-            const { selectedSection } = await prompts({
-                type: 'select',
-                name: 'selectedSection',
-                message: 'Select the section you want to highlight:',
-                choices: choices.map(choice => ({ title: choice, value: choice })),
-            });
-
-            if (!selectedSection) break;
-
-            // Remove count from selectedSection to match the sectionMap keys
-            const cleanedSectionName = selectedSection.replace(/^\(\d+\) /, '');
-
-            // Check if the cleaned section actually contains elements before displaying
-            if (sectionMap[cleanedSectionName].length > 0) {
-                displayHighlightedCode(sectionMap[cleanedSectionName]);
-            } else {
-                console.log(`No ${cleanedSectionName.toLowerCase()} found.`);
-            }
-
-            const { continueInteraction } = await prompts({
-                type: 'confirm',
-                name: 'continueInteraction',
-                message: 'Do you want to select another section?',
-                initial: true,
-            });
-
-            if (!continueInteraction) break;
-        } catch (error) {
-            console.error('Error during prompts:', error);
-            break;
-        }
-    }
-};
 
 
 module.exports = {
     displayAnalysis,
     displayBasic,
     displayDetailedInteractive,
-    displayTree,
     displayHelp,
     displayFilesMenu,
     displaySectionsMenu,

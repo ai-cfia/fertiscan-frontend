@@ -6,7 +6,7 @@ const GREETING_MESSAGE: string = "Hello, World!";
 const test: React.FC = () => {
     return (
         <div>
-            <h1>{GREETING_MESSAGE}</h1>
+            <h1>test</h1>
         </div>
     );
 };

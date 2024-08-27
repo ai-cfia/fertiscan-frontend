@@ -122,107 +122,109 @@ const checkFile = async (filePath, state) => {
  * @param {string} filePath - The path of the source file currently being processed by Babel, which can be used for context in reporting.  
  * @returns {Object} An object defining visitor methods for the traversal, linking node types to their respective handling functions.  
  */  
-const setupTraverse = (state, filePath, sections) => {
-    return {
-        enter(path) {
-            path.node.code = codeFrameColumns(readFileContent(filePath), path.node.loc, { highlightCode: true });
-        },
-        ImportDeclaration(innerPath) {
-            if (!visitedNodes.has(innerPath.node) && !hasDisableCheckComment(innerPath)) {
-                visitedNodes.add(innerPath.node);
-                handleImportDeclaration(innerPath, state, filePath, sections);
-            }
-        },
-        VariableDeclaration(innerPath) {
-            if (!visitedNodes.has(innerPath.node) && !hasDisableCheckComment(innerPath)) {
-                visitedNodes.add(innerPath.node);
-                if (isMainFunctionComponent(innerPath, state, filePath)) {
-                    handleMainReactComponent(innerPath, state, filePath, sections);
-                } else {
-                    innerPath.get('declarations').forEach(declaratorPath => {
-                        if (!visitedNodes.has(declaratorPath.node)) {
-                            visitedNodes.add(declaratorPath.node);
-                            handleVariableDeclarator(declaratorPath, state, filePath, sections);
-                        }
-                    });
-                }
-            }
-        },
-        TSTypeAliasDeclaration(innerPath) {
-            if (!visitedNodes.has(innerPath.node) && !hasDisableCheckComment(innerPath)) {
-                visitedNodes.add(innerPath.node);
-                handleTSTypeAliasDeclaration(innerPath, state, filePath, sections);
-            }
-        },
-        TSInterfaceDeclaration(innerPath) {
-            if (!visitedNodes.has(innerPath.node) && !hasDisableCheckComment(innerPath)) {
-                visitedNodes.add(innerPath.node);
-                handleTSInterfaceDeclaration(innerPath, state, filePath, sections);
-            }
-        },
-        TSEnumDeclaration(innerPath) {
-            if (!visitedNodes.has(innerPath.node) && !hasDisableCheckComment(innerPath)) {
-                visitedNodes.add(innerPath.node);
-                handleTSEnumDeclaration(innerPath, state, filePath, sections);
-            }
-        },
-        FunctionDeclaration(innerPath) {
-            if (isMainFunctionComponent(innerPath, state, filePath)) {
-                handleMainReactComponent(innerPath, state, filePath, sections);
-            } else if (!visitedNodes.has(innerPath.node) && !hasDisableCheckComment(innerPath)) {
-                visitedNodes.add(innerPath.node);
-                handleHelperFunctionDeclaration(innerPath, state, filePath, sections);
-            }
-        },
-        'ArrowFunctionExpression|FunctionExpression': {
-            enter(innerPath) {
-                if (isMainFunctionComponent(innerPath, state, filePath)) {
-                    handleMainReactComponent(innerPath, state, filePath, sections);
-                }
-                if (!visitedNodes.has(innerPath.node) && !hasDisableCheckComment(innerPath)) {
-                    visitedNodes.add(innerPath.node);
-                    handleFunctionExpressionsAndArrowFunctions(innerPath, state, filePath, sections);
-                }
-            }
-        },
-        ClassDeclaration(innerPath) {
-            if (!visitedNodes.has(innerPath.node) && !hasDisableCheckComment(innerPath)) {
-                visitedNodes.add(innerPath.node);
-                handleClassComponent(innerPath, state, filePath, sections);
-            }
-        },
-        CallExpression(innerPath) {
-            if (isMainFunctionComponent(innerPath, state, filePath)) {
-                handleMainReactComponent(innerPath, state, filePath, sections);
-            }
-            if (!visitedNodes.has(innerPath.node) && !hasDisableCheckComment(innerPath)) {
-                visitedNodes.add(innerPath.node);
-                handleHooksAndEffects(innerPath, state, filePath, sections);
-            }
-        },
-        TaggedTemplateExpression(innerPath) {
-            if (isMainFunctionComponent(innerPath, state, filePath)) {
-                handleMainReactComponent(innerPath, state, filePath, sections);
-            }
-            if (!visitedNodes.has(innerPath.node) && !hasDisableCheckComment(innerPath)) {
-                visitedNodes.add(innerPath.node);
-                handleStyledComponent(innerPath, state, filePath, sections);
-            }
-        },
-        ReturnStatement(innerPath) {
-            if (!visitedNodes.has(innerPath.node) && !hasDisableCheckComment(innerPath)) {
-                visitedNodes.add(innerPath.node);
-                handleReturnStatement(innerPath, state, filePath, sections);
-            }
-        },
-        'ExportNamedDeclaration|ExportDefaultDeclaration'(innerPath) {
-            if (!visitedNodes.has(innerPath.node) && !hasDisableCheckComment(innerPath)) {
-                visitedNodes.add(innerPath.node);
-                handleExportDeclarations(innerPath, state, filePath, sections);
-            }
-        }
-    };
-};
+const setupTraverse = (state, filePath) => {  
+    return {  
+        enter(path) {  
+            path.node.code = codeFrameColumns(readFileContent(filePath), path.node.loc, { highlightCode: true });  
+        },  
+        ImportDeclaration(innerPath) {  
+            if (!visitedNodes.has(innerPath.node)) {  
+                visitedNodes.add(innerPath.node);  
+                sections.imports.push(innerPath.node);  
+            }  
+        },  
+        VariableDeclaration(innerPath) {  
+            if (!visitedNodes.has(innerPath.node)) {  
+                visitedNodes.add(innerPath.node);  
+                if (isMainFunctionComponent(innerPath, state, filePath)) {  
+                    sections.mainComponent.push(innerPath.node);  
+                } else {  
+                    innerPath.get('declarations').forEach(declaratorPath => {  
+                        if (!visitedNodes.has(declaratorPath.node)) {  
+                            visitedNodes.add(declaratorPath.node);  
+                            if (isGlobalConstant(declaratorPath)) {  
+                                sections.constants.push(declaratorPath.node);  
+                            } else {  
+                                sections.localConstants.set(declaratorPath.node, declaratorPath.node);  
+                            }  
+                        }  
+                    });  
+                }  
+            }  
+        },  
+        TSTypeAliasDeclaration(innerPath) {  
+            if (!visitedNodes.has(innerPath.node)) {  
+                visitedNodes.add(innerPath.node);  
+                sections.types.TSTypeAliasDeclaration.push(innerPath.node);  
+            }  
+        },  
+        TSInterfaceDeclaration(innerPath) {  
+            if (!visitedNodes.has(innerPath.node)) {  
+                visitedNodes.add(innerPath.node);  
+                sections.types.TSInterfaceDeclaration.push(innerPath.node);  
+            }  
+        },  
+        TSEnumDeclaration(innerPath) {  
+            if (!visitedNodes.has(innerPath.node)) {  
+                visitedNodes.add(innerPath.node);  
+                sections.types.TSEnumDeclaration.push(innerPath.node);  
+            }  
+        },  
+        FunctionDeclaration(innerPath) {  
+            if (!visitedNodes.has(innerPath.node)) {  
+                visitedNodes.add(innerPath.node);  
+                if (isMainFunctionComponent(innerPath, state, filePath)) {  
+                    sections.mainComponent.push(innerPath.node);  
+                } else {  
+                    sections.helperFunctions.push(innerPath.node);  
+                }  
+            }  
+        },  
+        'ArrowFunctionExpression|FunctionExpression': {  
+            enter(innerPath) {  
+                if (!visitedNodes.has(innerPath.node)) {  
+                    visitedNodes.add(innerPath.node);  
+                    if (isMainFunctionComponent(innerPath, state, filePath)) {  
+                        sections.mainComponent.push(innerPath.node);  
+                    } else {  
+                        sections.helperFunctions.push(innerPath.node);  
+                    }  
+                }  
+            }  
+        },  
+        ClassDeclaration(innerPath) {  
+            if (!visitedNodes.has(innerPath.node)) {  
+                visitedNodes.add(innerPath.node);  
+                sections.classComponents.push(innerPath.node);  
+            }  
+        },  
+        CallExpression(innerPath) {  
+            if (!visitedNodes.has(innerPath.node)) {  
+                visitedNodes.add(innerPath.node);  
+                sections.hooks.push(innerPath.node);  
+            }  
+        },  
+        TaggedTemplateExpression(innerPath) {  
+            if (!visitedNodes.has(innerPath.node)) {  
+                visitedNodes.add(innerPath.node);  
+                sections.styledComponent.push(innerPath.node);  
+            }  
+        },  
+        ReturnStatement(innerPath) {  
+            if (!visitedNodes.has(innerPath.node)) {  
+                visitedNodes.add(innerPath.node);  
+                sections.return.push(innerPath.node);  
+            }  
+        },  
+        'ExportNamedDeclaration|ExportDefaultDeclaration'(innerPath) {  
+            if (!visitedNodes.has(innerPath.node)) {  
+                visitedNodes.add(innerPath.node);  
+                sections.exports.push(innerPath.node);  
+            }  
+        }  
+    };  
+};  
+
   
 //////////////////////
 //////////////////////
@@ -250,40 +252,42 @@ const setupTraverse = (state, filePath, sections) => {
  * @param {Array} sections.localConstants - An array of local constants within function bodies.
  * @returns {Array} An array of ordered code sections.
  */ 
-const reorderCode = (sections) => {
-    const orderedSections = [
-        ...sections.imports,
-        ...sections.constants,
-        ...sections.contexts,
-        ...sections.hooks,
-        ...sections.stateHooks,
-        ...sections.effectHooks,
-        ...sections.handlers,
-        ...sections.types.TSInterfaceDeclaration,
-        ...sections.types.TSTypeAliasDeclaration,
-        ...sections.types.TSEnumDeclaration,
-        ...sections.helperFunctions,
-        ...sections.components,
-        ...sections.classComponents,
-        ...sections.classMethod,
-        ...sections.classProperty,
-        ...sections.returns,
-        ...sections.styledComponent,
-        ...sections.functionalComponent,
-        sections.mainComponent,
-        ...sections.exports,
-    ];
+const reorderCode = (sections) => {  
+    const orderedSections = [  
+        ...sections.imports,  
+        ...sections.constants,  
+        ...sections.contexts,  
+        ...sections.hooks,  
+        ...sections.stateHooks,  
+        ...sections.effectHooks,  
+        ...sections.handlers,  
+        ...sections.types.TSInterfaceDeclaration,  
+        ...sections.types.TSTypeAliasDeclaration,  
+        ...sections.types.TSEnumDeclaration,  
+        ...sections.helperFunctions,  
+        ...sections.components,  
+        ...sections.classComponents,  
+        ...sections.classMethod,  
+        ...sections.classProperty,  
+        ...sections.styledComponent,  
+        ...sections.functionalComponent,  
+        ...sections.mainComponent,  
+        ...sections.exports,  
+        ...sections.others, // Add the new "others" section at the end  
+    ];  
+  
+    for (let [functionBodyNode, localConsts] of sections.localConstants.entries()) {  
+        const newFunctionBody = [  
+            ...localConsts,  
+            ...functionBodyNode.body.filter((node) => !localConsts.includes(node)),  
+        ];  
+        functionBodyNode.body = newFunctionBody;  
+    }  
+  
+    return orderedSections.filter(Boolean);  
+};  
 
-    for (let [functionBodyNode, localConsts] of sections.localConstants.entries()) {
-        const newFunctionBody = [
-            ...localConsts,
-            ...functionBodyNode.body.filter((node) => !localConsts.includes(node)),
-        ];
-        functionBodyNode.body = newFunctionBody;
-    }
 
-    return orderedSections.filter(Boolean);
-};
   
 /**
  * Creates a new Abstract Syntax Tree (AST) from the ordered sections of code.
@@ -311,10 +315,32 @@ const fixFile = async (filePath) => {
         const ast = parseFile(content);  
         const state = createStateTracker();  
   
-        // Initialize sections object  
-       
+        // Reset sections properly  
+        sections.imports = [];  
+        sections.localConstants = new Map();  
+        sections.constants = [];  
+        sections.contexts = [];  
+        sections.hooks = [];  
+        sections.stateHooks = [];  
+        sections.effectHooks = [];  
+        sections.handlers = [];  
+        sections.helperFunctions = [];  
+        sections.components = [];  
+        sections.classComponents = [];  
+        sections.return = [];  
+        sections.styledComponent = [];  
+        sections.functionalComponent = [];  
+        sections.types = {  
+            TSInterfaceDeclaration: [],  
+            TSTypeAliasDeclaration: [],  
+            TSEnumDeclaration: [],  
+        };  
+        sections.exports = [];  
+        sections.mainComponent = [];  
+        sections.nodes = [];  
+        sections.others = []; // New section for unidentified code  
   
-        traverse(ast, setupTraverse(state, filePath, sections));  
+        traverse(ast, setupTraverse(state, filePath));  
   
         // Analyze and reorder the code sections  
         const orderedSections = reorderCode(sections);  
@@ -323,12 +349,16 @@ const fixFile = async (filePath) => {
         const newContent = generate(newAst, {}).code;  // Ensure `generate` is called correctly  
   
         writeFileContent(filePath, newContent);  
-  
+        console.log(`File ${filePath} has been fixed.`);  
     } else {  
         console.error(`${filePath} is not a file.`);  
         process.exit(1); // Exit the process if it's not a file  
     }  
 };  
+
+
+
+ 
 
 //////////////////////
 //////////////////////

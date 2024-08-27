@@ -7,7 +7,7 @@ enum Greeting {
     GOOD_MORNING = "Good Morning"
 }
 
-const HelloWorld: React.FC = () => {
+const typeEnum: React.FC = () => {
     // Use the enum
     const greetingMessage = Greeting.HELLO + ", World!";
 
