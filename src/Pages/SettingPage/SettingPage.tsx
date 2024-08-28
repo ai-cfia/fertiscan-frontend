@@ -18,13 +18,13 @@ function SettingPage() {
       showAlert(t("loggedIn"), "confirm");
       return;
     }
-    fetch(process.env.API_URL + "/signup", {
+    fetch(process.env.VITE_API_URL + "/signup", {
       method: "POST",
       body: form,
     })
       .then((r) => {
         if (r.status !== 201) {
-          fetch(process.env.API_URL + "/login", {
+          fetch(process.env.VITE_API_URL + "/login", {
             method: "POST",
             body: form,
           })
