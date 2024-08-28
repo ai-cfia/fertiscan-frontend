@@ -62,7 +62,10 @@ function CapturPage() {
   };
 
   const Submit = () => {
-    if (document.cookie.split(";").filter((item) => item.includes("username=")).length === 0) {
+    if (
+      document.cookie.split(";").filter((item) => item.includes("username="))
+        .length === 0
+    ) {
       showAlert(t("mustLogin"), "error");
     } else {
       setState({ ...state, state: "form" });
