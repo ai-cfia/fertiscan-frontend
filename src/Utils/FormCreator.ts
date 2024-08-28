@@ -23,8 +23,7 @@ export const FertiliserForm = () =>
       new Input(t("name"), "fertiliser_name"),
       new Input(t("registrationNumber"), "registration_number"),
       new Input(t("lotNumber"), "lot_number"),
-      new Input(t("weightKg"), "weight_kg"),
-      new Input(t("weightLb"), "weight_lb"),
+      new Input(t("weight"), "weight"),
       new Input(t("density"), "density"),
       new Input(t("volume"), "volume"),
       new Input(t("npk"), "npk"),
@@ -35,10 +34,8 @@ export const FertiliserForm = () =>
       new Input(t("instructions_fr"), "instructions_fr"),
       new Input(t("micronutrients_en"), "micronutrients_en"),
       new Input(t("micronutrients_fr"), "micronutrients_fr"),
-      new Input(t("organicIngredients_en"), "organic_ingredients_en"),
-      new Input(t("organicIngredients_fr"), "organic_ingredients_fr"),
-      new Input(t("inertIngredients_en"), "inert_ingredients_en"),
-      new Input(t("inertIngredients_fr"), "inert_ingredients_fr"),
+      new Input(t("ingredients_en"), "ingredients_en"),
+      new Input(t("ingredients_fr"), "ingredients_fr"),
       new Input(t("specifications_en"), "specifications_en"),
       new Input(t("specifications_fr"), "specifications_fr"),
       new Input(t("firstAid_en"), "first_aid_en"),
@@ -54,16 +51,22 @@ export const populateFromJSON = (form: Data, data: any) => {
       if (typeof data[input.id] == "string") {
         input.value = [data[input.id]];
       } else if (
-        Array.isArray(data[input.id]) &&
-        typeof data[input.id][0] == "string"
+          Array.isArray(data[input.id]) &&
+          typeof data[input.id][0] == "string"
       ) {
         input.value = data[input.id];
         input.isAlreadyTable = true;
       } else if (
-        Array.isArray(data[input.id]) &&
-        typeof data[input.id][0] == "object"
+          Array.isArray(data[input.id]) &&
+          typeof data[input.id][0] == "object"
       ) {
         input.value = data[input.id];
+        input.isInputObjectList = true;
+      } else if (
+          typeof data[input.id] == "object" &&
+          data[input.id] != null
+      ) {
+        input.value = [data[input.id]];
         input.isInputObjectList = true;
       }
     });

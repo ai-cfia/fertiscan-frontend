@@ -1,11 +1,22 @@
 interface LabelPreview {
-  label_id: string;
-  company_name: string;
-  fertiliser_name: string;
-  registration_number?: string; // optional field
-  lot_number: string;
-  user: string;
-  upload_date: string;
+  inspection:{
+    id:number;
+    upload_date:string;
+    updated_at:string;
+    sample_id:number;
+    picture_set_id:number;
+
+  };
+  label_info:{
+    id:number;
+    product_name:string;
+    company_info_id:number;
+    manufacturer_info_id:number;
+  };
+  company_info:{
+    id:number;
+    company_name:string;
+  }
 }
 
 export default LabelPreview;

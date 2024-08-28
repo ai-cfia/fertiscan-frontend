@@ -5,6 +5,7 @@ import { useContext, useState } from "react";
 import { SessionContext, SetSessionContext } from "../../Utils/SessionContext";
 import Label from "../../Components/Label/Label.tsx";
 import { useAlert } from "../../Utils/AlertContext.tsx";
+import Data from "../../Model/Data-Model.tsx";
 
 const ConfirmPage = () => {
   const { t } = useTranslation();
@@ -28,6 +29,9 @@ const ConfirmPage = () => {
     })
       .then((response) => response.json())
       .then((data) => {
+        if (data.error) {
+          throw new Error(data.error);
+        }
         console.log("Success:", data);
         setState({ state: "capture", data: { pics: [], form: new Data([]) } });
         showAlert(t("confirmSuccess"), "confirm");

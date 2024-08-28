@@ -5,6 +5,8 @@ import SavedLabelCard from "../../Components/SavedLabelCard/SavedLabelCard";
 import ReactPaginate from "react-paginate";
 
 const SavedListPage = () => {
+  const [fetching, setFetching] = useState(true);
+
   const listContainer = useRef<HTMLDivElement>(null);
 
   // Constant for the number of labels per page
@@ -38,12 +40,22 @@ const SavedListPage = () => {
         .then((response) => response.json())
         .then((data) => {
           setLabels(data);
+            setFetching(false);
         });
     } else {
-      fetch(process.env.API_URL + "/labels")
+      fetch(process.env.API_URL + "/inspections",{
+        headers: {
+            Authorization: "Basic "+ "user1:password1"
+        }
+      })
         .then((r) => r.json())
         .then((data) => {
-          setLabels(data);
+          if(data.error){
+            setLabels([])
+          }else{
+            setLabels(data);
+          }
+          setFetching(false);
         });
     }
   }, []);
@@ -51,9 +63,10 @@ const SavedListPage = () => {
   return (
     <div className="saved-label-list" ref={listContainer}>
       {/* Display the current labels */}
-      {currentLabels.map((label, index) => (
+      {currentLabels.length>0 &&currentLabels.map((label, index) => (
         <SavedLabelCard key={index} label={label} />
       ))}
+      {currentLabels.length==0 && !fetching && <p className={"center full-width"}>No labels found</p>}
       {/* Pagination Container */}
       <div className="pagination-container">
         <ReactPaginate

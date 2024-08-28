@@ -38,11 +38,21 @@ const Label = ({ sections }: LabelProps) => {
     return (
       <div id={inputInfo.id} className="object-input">
         <table>
-          <colgroup>
-            <col span={1} style={{ width: "40%" }} />
-            <col span={1} style={{ width: "20%" }} />
-            <col span={1} style={{ width: "15%" }} />
-          </colgroup>
+          {keys.length==3 &&
+              <colgroup>
+                <col span={1} style={{ width: "45%" }} />
+                <col span={1} style={{ width: "35%" }} />
+                <col span={1} style={{ width: "10%" }} />
+                <col span={1} style={{ width: "10%" }} />
+              </colgroup>
+          }
+          {keys.length==2 &&
+              <colgroup>
+                <col span={1} style={{ width: "55%" }} />
+                <col span={1} style={{ width: "35%" }} />
+                <col span={1} style={{ width: "10%" }} />
+              </colgroup>
+          }
           <thead>
             {keys.map((key, index) => {
               return <th key={index}>{key}</th>;
@@ -52,33 +62,19 @@ const Label = ({ sections }: LabelProps) => {
             {inputInfo.value.map((_obj, index) => {
               return (
                 <tr key={index}>
-                  <td>
-                    <p>
-                      {
-                        (inputInfo.value[index] as { [key: string]: string })[
-                          keys[0]
-                        ]
-                      }
-                    </p>
-                  </td>
-                  <td>
-                    <p>
-                      {
-                        (inputInfo.value[index] as { [key: string]: string })[
-                          keys[1]
-                        ]
-                      }
-                    </p>
-                  </td>
-                  <td>
-                    <p>
-                      {
-                        (inputInfo.value[index] as { [key: string]: string })[
-                          keys[2]
-                        ]
-                      }
-                    </p>
-                  </td>
+                    {keys.map((_, keyIndex) => {
+                        return (
+                            <td>
+                              <p>
+                                {
+                                  (inputInfo.value[index] as { [key: string]: string })[
+                                      keys[keyIndex]
+                                      ]
+                                }
+                              </p>
+                            </td>
+                        )
+                    })}
                 </tr>
               );
             })}

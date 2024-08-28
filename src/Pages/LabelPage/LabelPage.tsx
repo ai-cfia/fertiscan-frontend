@@ -17,7 +17,11 @@ function LabelPage() {
           setLabel(populateFromJSON(label, data));
         });
     } else {
-      fetch(process.env.API_URL + "/labels/" + labelId)
+      fetch(process.env.API_URL + "/inspections/" + labelId,{
+        headers: {
+          Authorization : "Basic "+ "user1:password1"
+        }
+      })
         .then((r) => r.json())
         .then((data) => {
           setLabel(populateFromJSON(label, data));
