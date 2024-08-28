@@ -9,27 +9,34 @@ function SettingPage() {
   const { showAlert } = useAlert();
   const [uname_validated, setUnameValidated] = useState(false);
   const [uname, setUname] = useState("");
+  const [password, setPassword] = useState("");
   const login = () => {
     const form = new FormData();
     form.append("username", uname);
-    form.append("password", "");
+    form.append("password", password);
     if (process.env.VITE_APP_ACTIVATE_USING_JSON == "true") {
       document.cookie = `username=${uname}`;
       showAlert(t("loggedIn"), "confirm");
       return;
     }
-    fetch(process.env.VITE_API_URL + "/signup", {
+    fetch(process.env.VITE_API_URL + "/login", {
       method: "POST",
       body: form,
+      headers: {
+        Authorization : "Basic " + uname + ":"+password,
+      }
     })
       .then((r) => {
-        if (r.status !== 201) {
-          fetch(process.env.VITE_API_URL + "/login", {
+        if (r.status !== 200) {
+          fetch(process.env.VITE_API_URL + "/signup", {
             method: "POST",
             body: form,
+            headers: {
+              Authorization : "Basic " + uname + ":"+password,
+            }
           })
             .then((r) => {
-              if (r.status !== 200) {
+              if (r.status !== 201) {
                 r.json().then((data) => {
                   showAlert(data.error, "error");
                 });
@@ -61,13 +68,25 @@ function SettingPage() {
           <LanguageButton />
         </div>
         <hr />
-        <div id={"uname"}>
-          <label>{t("askForUName")} : </label>
-          <input
-            type={"text"}
-            value={uname}
-            onChange={(e) => setUname(e.target.value)}
-          ></input>
+        <div id={"login"}>
+          <div id={"inputs"}>
+            <div id={"uname"}>
+              <label>{t("askForUName")} : </label>
+              <input
+                  type={"text"}
+                  value={uname}
+                  onChange={(e) => setUname(e.target.value)}
+              ></input>
+            </div>
+            <div id={"password"}>
+              <label>{t("askForPassword")} : </label>
+              <input
+                  type={"password"}
+                  value={password}
+                  onChange={(e) => setPassword(e.target.value)}
+              ></input>
+            </div>
+          </div>
           <div id={"validate-uname"}>
             <div
               className={"checkbox-container"}

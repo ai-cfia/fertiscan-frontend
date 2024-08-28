@@ -80,6 +80,7 @@
   "date": "Upload Date",
   "not-define": "Not defined",
   "askForUName": "Please enter your user identifier",
+  "askForPassword": "Please enter your password",
   "acceptUName": "By checking this box I understand that the data I have entered will be stored and thus should not be sensitive information.",
   "reminderSensitive": "As a reminder, work email, phone number or real name are considered sensitive information.",
   "login": "Login / Register",
