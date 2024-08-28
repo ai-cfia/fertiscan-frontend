@@ -13,7 +13,7 @@ function SettingPage() {
     const form = new FormData();
     form.append("username", uname);
     form.append("password", "");
-    if (process.env.REACT_APP_ACTIVATE_USING_JSON == "true") {
+    if (process.env.VITE_APP_ACTIVATE_USING_JSON == "true") {
       document.cookie = `username=${uname}`;
       showAlert(t("loggedIn"), "confirm");
       return;
