@@ -1,19 +1,16 @@
-import { useState, useEffect, StrictMode, useContext, useRef } from "react";
+import {StrictMode, useContext, useEffect, useRef, useState} from "react";
 import "./FormPage.css";
-import {
-  SessionContext,
-  SetSessionContext,
-} from "../../Utils/SessionContext.tsx";
+import {SessionContext, SetSessionContext,} from "../../Utils/SessionContext.tsx";
 import Carousel from "../../Components/Carousel/Carousel.tsx";
 import ProgressBar from "../../Components/ProgressBar/ProgressBar";
 import SectionComponent from "../../Components/Section/Section.tsx";
 import Section from "../../Model/Section-Model.tsx";
 import Input from "../../Model/Input-Model.tsx";
 import Data from "../../Model/Data-Model.tsx";
-import { FormClickActions } from "../../Utils/EventChannels.tsx";
-import { useTranslation } from "react-i18next";
+import {FormClickActions} from "../../Utils/EventChannels.tsx";
+import {useTranslation} from "react-i18next";
 import goUpIcon from "../../assets/goUpIcon.svg";
-import { FertiliserForm, populateFromJSON } from "../../Utils/FormCreator.ts";
+import {FertiliserForm, populateFromJSON} from "../../Utils/FormCreator.ts";
 
 const FormPage = () => {
   // For local development
@@ -50,7 +47,7 @@ const FormPage = () => {
 
   // This object describes how the formPage data will looks like
   const [data, setData] = useState<Data>(FertiliserForm());
-
+  /**
   // command to approve all inputs only working in dev mode and always need to be put in comment before commit
   const approveAll = () => {
     data.sections.forEach((section) => {
@@ -62,9 +59,8 @@ const FormPage = () => {
     updateData();
   };
 
-
   window.approveAll = approveAll;
-
+  */
   /**
    * Prepare and send request to backend for file analysis
    * @returns data : the data retrieved from the backend
@@ -72,24 +68,23 @@ const FormPage = () => {
   const analyse = async () => {
     const formData = new FormData();
     for (let i = 0; i < blobs.length; i++) {
-      let blob = await fetch(blobs[i].blob).then((r) => r.blob());
+      const blob = await fetch(blobs[i].blob).then((r) => r.blob());
       formData.append("images", blob, blobs[i].name);
     }
 
-    const data = await (
-      await fetch(api_url + "/analyze", {
-        method: "POST",
-        headers: {
-          "Access-Control-Allow-Origin": "*",
-          "Access-Control-Allow-Credentials": "true",
-          "Access-Control-Allow-Headers":
-            "Origin, Content-Type, X-Amz-Date, Authorization, X-Api-Key, X-Amz-Security-Token, locale",
-          "Access-Control-Allow-Methods": "GET, POST",
-        },
-        body: formData,
-      })
+    return await (
+        await fetch(api_url + "/analyze", {
+          method: "POST",
+          headers: {
+            "Access-Control-Allow-Origin": "*",
+            "Access-Control-Allow-Credentials": "true",
+            "Access-Control-Allow-Headers":
+                "Origin, Content-Type, X-Amz-Date, Authorization, X-Api-Key, X-Amz-Security-Token, locale",
+            "Access-Control-Allow-Methods": "GET, POST",
+          },
+          body: formData,
+        })
     ).json();
-    return data;
   };
 
   const setForm = (response: unknown) => {

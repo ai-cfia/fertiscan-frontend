@@ -40,19 +40,19 @@ const SavedListPage = () => {
         .then((response) => response.json())
         .then((data) => {
           setLabels(data);
-            setFetching(false);
+          setFetching(false);
         });
     } else {
-      fetch(process.env.API_URL + "/inspections",{
+      fetch(process.env.API_URL + "/inspections", {
         headers: {
-            Authorization: "Basic "+ "user1:password1"
-        }
+          Authorization: "Basic " + "user1:password1",
+        },
       })
         .then((r) => r.json())
         .then((data) => {
-          if(data.error){
-            setLabels([])
-          }else{
+          if (data.error) {
+            setLabels([]);
+          } else {
             setLabels(data);
           }
           setFetching(false);
@@ -63,10 +63,13 @@ const SavedListPage = () => {
   return (
     <div className="saved-label-list" ref={listContainer}>
       {/* Display the current labels */}
-      {currentLabels.length>0 &&currentLabels.map((label, index) => (
-        <SavedLabelCard key={index} label={label} />
-      ))}
-      {currentLabels.length==0 && !fetching && <p className={"center full-width"}>No labels found</p>}
+      {currentLabels.length > 0 &&
+        currentLabels.map((label, index) => (
+          <SavedLabelCard key={index} label={label} />
+        ))}
+      {currentLabels.length == 0 && !fetching && (
+        <p className={"center full-width"}>No labels found</p>
+      )}
       {/* Pagination Container */}
       <div className="pagination-container">
         <ReactPaginate

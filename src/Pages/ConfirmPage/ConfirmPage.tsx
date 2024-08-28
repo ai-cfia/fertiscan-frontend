@@ -42,7 +42,6 @@ const ConfirmPage = () => {
       });
   };
 
-
   const [isChecked, setIsChecked] = useState(false);
 
   // eslint-disable-next-line

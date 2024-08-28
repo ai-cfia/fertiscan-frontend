@@ -31,9 +31,7 @@ const SavedLabelCard: React.FC<SavedLabelCardProps> = ({ label }) => {
       </div>
       <div className="registration-grid">
         <p className="registration-label">{t("registrationNumber")}:</p>
-        <p className="registration-result">
-            {t("not-define")}
-        </p>
+        <p className="registration-result">{t("not-define")}</p>
       </div>
       <div className="footer-grid">
         <div className="user-grid">

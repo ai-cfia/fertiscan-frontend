@@ -236,25 +236,25 @@ const InputComponent: React.FC<InputProps> = ({
         ref={textarea.ref as React.RefObject<HTMLDivElement>}
       >
         <table>
-          {keys.length==3 &&
+          {keys.length == 3 && (
             <colgroup>
               <col span={1} style={{ width: "45%" }} />
               <col span={1} style={{ width: "35%" }} />
               <col span={1} style={{ width: "10%" }} />
               <col span={1} style={{ width: "10%" }} />
             </colgroup>
-          }
-          {keys.length==2 &&
+          )}
+          {keys.length == 2 && (
             <colgroup>
               <col span={1} style={{ width: "55%" }} />
               <col span={1} style={{ width: "35%" }} />
               <col span={1} style={{ width: "10%" }} />
             </colgroup>
-          }
+          )}
           <thead>
             {keys.map((key, index) => {
               return <th key={index}>{key}</th>;
-                })}
+            })}
           </thead>
           <tbody>
             {inputInfo.value.map((_, index) => {
@@ -267,9 +267,11 @@ const InputComponent: React.FC<InputProps> = ({
                           id={`${inputInfo.id}-${key}-${index}`}
                           type="text"
                           value={
-                            (inputInfo.value[index] as { [key: string]: string })[
-                              keys[keyIndex]
-                              ]
+                            (
+                              inputInfo.value[index] as {
+                                [key: string]: string;
+                              }
+                            )[keys[keyIndex]]
                           }
                           disabled={inputInfo.disabled}
                           onChange={(event) => {
@@ -277,7 +279,7 @@ const InputComponent: React.FC<InputProps> = ({
                               ...(inputInfo.value[index] as {
                                 [key: string]: string;
                               }),
-                              [keys[keyIndex]]: event.target.value
+                              [keys[keyIndex]]: event.target.value,
                             };
                             inputInfo.value[index] = newValue;
                             propagateChange(inputInfo);

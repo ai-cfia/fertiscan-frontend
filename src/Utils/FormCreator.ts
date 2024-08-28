@@ -51,21 +51,18 @@ export const populateFromJSON = (form: Data, data: any) => {
       if (typeof data[input.id] == "string") {
         input.value = [data[input.id]];
       } else if (
-          Array.isArray(data[input.id]) &&
-          typeof data[input.id][0] == "string"
+        Array.isArray(data[input.id]) &&
+        typeof data[input.id][0] == "string"
       ) {
         input.value = data[input.id];
         input.isAlreadyTable = true;
       } else if (
-          Array.isArray(data[input.id]) &&
-          typeof data[input.id][0] == "object"
+        Array.isArray(data[input.id]) &&
+        typeof data[input.id][0] == "object"
       ) {
         input.value = data[input.id];
         input.isInputObjectList = true;
-      } else if (
-          typeof data[input.id] == "object" &&
-          data[input.id] != null
-      ) {
+      } else if (typeof data[input.id] == "object" && data[input.id] != null) {
         input.value = [data[input.id]];
         input.isInputObjectList = true;
       }
