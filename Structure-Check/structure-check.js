@@ -79,7 +79,6 @@ const analyzeProject = async (displayLevel, filePath) => {
 */
   
 const fixProjectStructure = async (filePath) => {
-    try {
         if (filePath) {
             if (existsSync(filePath)) {
                 await fixFile(filePath);
@@ -103,9 +102,6 @@ const fixProjectStructure = async (filePath) => {
                 console.log("Fixing of React project done");
             }
         }
-    } catch (err) {
-        logError(null, `Error during the searching of the file: ${err.message}`, filePath);
-    }
 };
 
 ///////////////////////////////
