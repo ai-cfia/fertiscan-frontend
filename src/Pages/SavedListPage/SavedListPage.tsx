@@ -45,7 +45,7 @@ const SavedListPage = () => {
     } else {
       fetch(process.env.VITE_API_URL + "/inspections", {
         headers: {
-          Authorization: "Basic " + document.cookie.split(";").find((c) => c.includes("auth="))?.split("=")[1],
+          Authorization: "Basic " + document.cookie.split("auth=")[1].split(";")[0],
         },
       })
         .then((r) => r.json())
