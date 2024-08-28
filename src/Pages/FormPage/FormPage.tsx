@@ -1,16 +1,19 @@
-import {StrictMode, useContext, useEffect, useRef, useState} from "react";
+import { StrictMode, useContext, useEffect, useRef, useState } from "react";
 import "./FormPage.css";
-import {SessionContext, SetSessionContext,} from "../../Utils/SessionContext.tsx";
+import {
+  SessionContext,
+  SetSessionContext,
+} from "../../Utils/SessionContext.tsx";
 import Carousel from "../../Components/Carousel/Carousel.tsx";
 import ProgressBar from "../../Components/ProgressBar/ProgressBar";
 import SectionComponent from "../../Components/Section/Section.tsx";
 import Section from "../../Model/Section-Model.tsx";
 import Input from "../../Model/Input-Model.tsx";
 import Data from "../../Model/Data-Model.tsx";
-import {FormClickActions} from "../../Utils/EventChannels.tsx";
-import {useTranslation} from "react-i18next";
+import { FormClickActions } from "../../Utils/EventChannels.tsx";
+import { useTranslation } from "react-i18next";
 import goUpIcon from "../../assets/goUpIcon.svg";
-import {FertiliserForm, populateFromJSON} from "../../Utils/FormCreator.ts";
+import { FertiliserForm, populateFromJSON } from "../../Utils/FormCreator.ts";
 
 const FormPage = () => {
   // For local development
@@ -73,17 +76,17 @@ const FormPage = () => {
     }
 
     return await (
-        await fetch(api_url + "/analyze", {
-          method: "POST",
-          headers: {
-            "Access-Control-Allow-Origin": "*",
-            "Access-Control-Allow-Credentials": "true",
-            "Access-Control-Allow-Headers":
-                "Origin, Content-Type, X-Amz-Date, Authorization, X-Api-Key, X-Amz-Security-Token, locale",
-            "Access-Control-Allow-Methods": "GET, POST",
-          },
-          body: formData,
-        })
+      await fetch(api_url + "/analyze", {
+        method: "POST",
+        headers: {
+          "Access-Control-Allow-Origin": "*",
+          "Access-Control-Allow-Credentials": "true",
+          "Access-Control-Allow-Headers":
+            "Origin, Content-Type, X-Amz-Date, Authorization, X-Api-Key, X-Amz-Security-Token, locale",
+          "Access-Control-Allow-Methods": "GET, POST",
+        },
+        body: formData,
+      })
     ).json();
   };
 
