@@ -236,103 +236,62 @@ const InputComponent: React.FC<InputProps> = ({
         ref={textarea.ref as React.RefObject<HTMLDivElement>}
       >
         <table>
-          <colgroup>
-            <col span={1} style={{ width: "45%" }} />
-            <col span={1} style={{ width: "35%" }} />
-            <col span={1} style={{ width: "10%" }} />
-            <col span={1} style={{ width: "10%" }} />
-          </colgroup>
+          {keys.length==3 &&
+            <colgroup>
+              <col span={1} style={{ width: "45%" }} />
+              <col span={1} style={{ width: "35%" }} />
+              <col span={1} style={{ width: "10%" }} />
+              <col span={1} style={{ width: "10%" }} />
+            </colgroup>
+          }
+          {keys.length==2 &&
+            <colgroup>
+              <col span={1} style={{ width: "55%" }} />
+              <col span={1} style={{ width: "35%" }} />
+              <col span={1} style={{ width: "10%" }} />
+            </colgroup>
+          }
           <thead>
             {keys.map((key, index) => {
               return <th key={index}>{key}</th>;
-            })}
+                })}
           </thead>
           <tbody>
             {inputInfo.value.map((_, index) => {
               return (
                 <tr key={index}>
-                  <td>
-                    <input
-                      id="input1"
-                      type="text"
-                      value={
-                        (inputInfo.value[index] as { [key: string]: string })[
-                          keys[0]
-                        ]
-                      }
-                      disabled={inputInfo.disabled}
-                      onChange={(event) => {
-                        const newValue = {
-                          ...(inputInfo.value[index] as {
-                            [key: string]: string;
-                          }),
-                          [keys[0]]: event.target.value,
-                        };
-                        inputInfo.value[index] = newValue;
-                        propagateChange(inputInfo);
-                      }}
-                      onInput={(event) => {
-                        const input = event.currentTarget;
-                        adjustFontSize(input, null);
-                      }}
-                      onFocus={setFocus}
-                      onBlur={unsetFocus}
-                    />
-                  </td>
-                  <td>
-                    <input
-                      type="text"
-                      value={
-                        (inputInfo.value[index] as { [key: string]: string })[
-                          keys[1]
-                        ]
-                      }
-                      disabled={inputInfo.disabled}
-                      onChange={(event) => {
-                        const newValue = {
-                          ...(inputInfo.value[index] as {
-                            [key: string]: string;
-                          }),
-                          [keys[1]]: event.target.value,
-                        };
-                        inputInfo.value[index] = newValue;
-                        propagateChange(inputInfo);
-                      }}
-                      onInput={(event) => {
-                        const input = event.currentTarget;
-                        adjustFontSize(input, null);
-                      }}
-                      onFocus={setFocus}
-                      onBlur={unsetFocus}
-                    />
-                  </td>
-                  <td>
-                    <input
-                      type="text"
-                      value={
-                        (inputInfo.value[index] as { [key: string]: string })[
-                          keys[2]
-                        ]
-                      }
-                      disabled={inputInfo.disabled}
-                      onChange={(event) => {
-                        const newValue = {
-                          ...(inputInfo.value[index] as {
-                            [key: string]: string;
-                          }),
-                          [keys[2]]: event.target.value,
-                        };
-                        inputInfo.value[index] = newValue;
-                        propagateChange(inputInfo);
-                      }}
-                      onInput={(event) => {
-                        const input = event.currentTarget;
-                        adjustFontSize(input, null);
-                      }}
-                      onFocus={setFocus}
-                      onBlur={unsetFocus}
-                    />
-                  </td>
+                  {keys.map((key, keyIndex) => {
+                    return (
+                      <td>
+                        <input
+                          id={`${inputInfo.id}-${key}-${index}`}
+                          type="text"
+                          value={
+                            (inputInfo.value[index] as { [key: string]: string })[
+                              keys[keyIndex]
+                              ]
+                          }
+                          disabled={inputInfo.disabled}
+                          onChange={(event) => {
+                            const newValue = {
+                              ...(inputInfo.value[index] as {
+                                [key: string]: string;
+                              }),
+                              [keys[keyIndex]]: event.target.value
+                            };
+                            inputInfo.value[index] = newValue;
+                            propagateChange(inputInfo);
+                          }}
+                          onInput={(event) => {
+                            const input = event.currentTarget;
+                            adjustFontSize(input, null);
+                          }}
+                          onFocus={setFocus}
+                          onBlur={unsetFocus}
+                        />
+                      </td>
+                    );
+                  })}
                   <td>
                     <button
                       className={`delete-button ${inputInfo.disabled ? "disabled" : ""}`}

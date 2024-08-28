@@ -46,24 +46,21 @@ const FormPage = () => {
     fertiliser_name: "",
     registration_number: "",
     lot_number: "",
-    weight_kg: "",
-    weight_lb: "",
-    density: "",
-    volume: "",
+    weight: [],
+    density: [],
+    volume: [],
     npk: "",
     warranty: "",
     cautions_en: [],
     instructions_en: [],
     micronutrients_en: [],
-    organic_ingredients_en: [],
-    inert_ingredients_en: [],
+    ingredients_en: [],
     specifications_en: [],
     first_aid_en: [],
     cautions_fr: [],
     instructions_fr: [],
     micronutrients_fr: [],
-    organic_ingredients_fr: [],
-    inert_ingredients_fr: [],
+    ingredients_fr: [],
     specifications_fr: [],
     first_aid_fr: [],
     guaranteed_analysis: [],
@@ -101,8 +98,7 @@ const FormPage = () => {
         new Input(t("name"), "fertiliser_name"),
         new Input(t("registrationNumber"), "registration_number"),
         new Input(t("lotNumber"), "lot_number"),
-        new Input(t("weightKg"), "weight_kg"),
-        new Input(t("weightLb"), "weight_lb"),
+        new Input(t("weight"), "weight"),
         new Input(t("density"), "density"),
         new Input(t("volume"), "volume"),
         new Input(t("npk"), "npk"),
@@ -113,10 +109,8 @@ const FormPage = () => {
         new Input(t("instructions_fr"), "instructions_fr"),
         new Input(t("micronutrients_en"), "micronutrients_en"),
         new Input(t("micronutrients_fr"), "micronutrients_fr"),
-        new Input(t("organicIngredients_en"), "organic_ingredients_en"),
-        new Input(t("organicIngredients_fr"), "organic_ingredients_fr"),
-        new Input(t("inertIngredients_en"), "inert_ingredients_en"),
-        new Input(t("inertIngredients_fr"), "inert_ingredients_fr"),
+        new Input(t("ingredients_en"), "ingredients_en"),
+        new Input(t("ingredients_fr"), "ingredients_fr"),
         new Input(t("specifications_en"), "specifications_en"),
         new Input(t("specifications_fr"), "specifications_fr"),
         new Input(t("firstAid_en"), "first_aid_en"),
@@ -125,7 +119,7 @@ const FormPage = () => {
       ]),
     ]),
   );
-  /**
+
   // command to approve all inputs only working in dev mode and always need to be put in comment before commit
   const approveAll = () => {
     data.sections.forEach((section) => {
@@ -139,7 +133,7 @@ const FormPage = () => {
 
 
   window.approveAll = approveAll;
-  */
+
   /**
    * Prepare and send request to backend for file analysis
    * @returns data : the data retrieved from the backend
@@ -147,8 +141,8 @@ const FormPage = () => {
   const analyse = async () => {
     const formData = new FormData();
     for (let i = 0; i < blobs.length; i++) {
-      const blobData = await fetch(blobs[i].blob).then((res) => res.blob());
-      formData.append("images", blobData, blobs[i].name);
+      let blob = await fetch(blobs[i].blob).then((r) => r.blob());
+      formData.append("images", blob, blobs[i].name);
     }
 
     const data = await (
@@ -184,6 +178,12 @@ const FormPage = () => {
           typeof response[input.id][0] == "object"
         ) {
           input.value = response[input.id];
+          input.isInputObjectList = true;
+        } else if (
+          typeof response[input.id] == "object" &&
+          response[input.id] != null
+        ) {
+          input.value = [response[input.id]];
           input.isInputObjectList = true;
         }
       });
