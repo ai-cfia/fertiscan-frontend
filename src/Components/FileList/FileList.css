@@ -27,6 +27,7 @@
   body, html{
     overflow-y: scroll!important;
   }
+}
 .file-list .active{
   color:black;
   background-color: #cccccc00!important;
