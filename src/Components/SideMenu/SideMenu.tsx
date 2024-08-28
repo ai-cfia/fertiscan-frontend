@@ -17,8 +17,8 @@ function SideMenu() {
 
   const goToHome = () => {
     switch (state.state) {
-      case "FromCaptur":
-        setState({ ...state, state: "captur" });
+      case "FromCapture":
+        setState({ ...state, state: "capture" });
         break;
       case "FromForm":
         setState({ ...state, state: "form" });
@@ -28,7 +28,7 @@ function SideMenu() {
         break;
       default:
         setState({
-          state: "captur",
+          state: "capture",
           data: { pics: [], form: new Data([]) },
         });
     }
@@ -37,8 +37,8 @@ function SideMenu() {
 
   const goToSettings = () => {
     switch (state.state) {
-      case "captur":
-        setState({ ...state, state: "FromCaptur" });
+      case "capture":
+        setState({ ...state, state: "FromCapture" });
         break;
       case "form":
         setState({ ...state, state: "FromForm" });
