@@ -17,7 +17,7 @@ import { FertiliserForm, populateFromJSON } from "../../Utils/FormCreator.ts";
 
 const FormPage = () => {
   // For local development
-  const api_url = "http://localhost:5000";
+  const api_url = process.env.VITE_API_URL;
   const { t } = useTranslation();
   const dataContainerRef = useRef<HTMLDivElement>(null);
   const [showScrollUp, setShowScrollUp] = useState(false);
