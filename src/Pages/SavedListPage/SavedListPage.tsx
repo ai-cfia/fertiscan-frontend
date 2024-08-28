@@ -43,7 +43,7 @@ const SavedListPage = () => {
           setFetching(false);
         });
     } else {
-      fetch(process.env.API_URL + "/inspections", {
+      fetch(process.env.VITE_API_URL + "/inspections", {
         headers: {
           Authorization: "Basic " + "user1:password1",
         },

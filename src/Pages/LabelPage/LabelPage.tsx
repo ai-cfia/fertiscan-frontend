@@ -17,7 +17,7 @@ function LabelPage() {
           setLabel(populateFromJSON(label, data));
         });
     } else {
-      fetch(process.env.API_URL + "/inspections/" + labelId, {
+      fetch(process.env.VITE_API_URL + "/inspections/" + labelId, {
         headers: {
           Authorization: "Basic " + "user1:password1",
         },
