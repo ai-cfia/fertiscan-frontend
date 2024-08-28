@@ -15,7 +15,7 @@ function SettingPage() {
     form.append("username", uname);
     form.append("password", password);
     if (process.env.VITE_APP_ACTIVATE_USING_JSON == "true") {
-      document.cookie = `username=${uname}`;
+      document.cookie = `auth=${btoa(uname + ":" + password)}`;
       showAlert(t("loggedIn"), "confirm");
       return;
     }
@@ -23,7 +23,7 @@ function SettingPage() {
       method: "POST",
       body: form,
       headers: {
-        Authorization : "Basic " + uname + ":"+password,
+        Authorization : "Basic " + btoa(uname + ":" + password),
       }
     })
       .then((r) => {
@@ -32,7 +32,7 @@ function SettingPage() {
             method: "POST",
             body: form,
             headers: {
-              Authorization : "Basic " + uname + ":"+password,
+              Authorization : "Basic " +btoa(uname + ":" + password),
             }
           })
             .then((r) => {
@@ -41,7 +41,7 @@ function SettingPage() {
                   showAlert(data.error, "error");
                 });
               } else {
-                document.cookie = `username=${uname}`;
+                document.cookie = `auth=${btoa(uname + ":" + password)}`;
                 showAlert(t("loggedIn"), "confirm");
               }
             })

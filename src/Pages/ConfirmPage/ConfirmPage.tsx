@@ -23,7 +23,7 @@ const ConfirmPage = () => {
       method: "POST",
       headers: {
         "Content-Type": "application/json",
-        Authorization: "Basic " + "user1:password1",
+        Authorization: "Basic " + document.cookie.split(";").find((c) => c.includes("auth="))?.split("=")[1],
       },
       body: JSON.stringify(state.data),
     })
