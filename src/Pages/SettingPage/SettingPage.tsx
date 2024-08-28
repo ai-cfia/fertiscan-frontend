@@ -49,7 +49,7 @@ function SettingPage() {
               showAlert(e, "error");
             });
         } else {
-          document.cookie = `username=${uname}`;
+          document.cookie = `auth=${btoa(uname + ":" + password)}`;
           showAlert(t("registered"), "confirm");
         }
       })
