@@ -63,7 +63,7 @@ function CapturPage() {
 
   const Submit = () => {
     if (
-      document.cookie.split(";").filter((item) => item.includes("username="))
+      document.cookie.split(";").filter((item) => item.includes("auth="))
         .length === 0
     ) {
       showAlert(t("mustLogin"), "error");
