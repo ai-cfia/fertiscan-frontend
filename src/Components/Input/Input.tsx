@@ -205,7 +205,6 @@ const InputComponent: React.FC<InputProps> = ({
     const currentFontSize = parseFloat(
       window.getComputedStyle(inputElement).getPropertyValue("font-size"),
     );
-
     if (
       (!isWindowEnlarged && actualWidth >= maxWidth && currentFontSize > 7) ||
       (!isWindowEnlarged == null &&
