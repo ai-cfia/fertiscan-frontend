@@ -1,0 +1,72 @@
+/* Pagination container */
+.pagination {
+    display: flex;
+    list-style-type: none;
+    justify-content: center;
+    padding: 0;
+    column-gap: 10px;
+  }
+  
+  /* Pagination items */
+  .pagination li {
+    margin: 0 2px;
+    border-radius: 5px;
+    cursor: pointer;
+    min-width: 20px;
+    max-height: 40px!important;
+    min-height: 20px;
+    border: 1px solid #007bff;
+  }
+
+  /* Pagination items not with next and previous li */
+  .pagination li:not(.next):not(.previous) {
+    display: flex;
+    padding: 0;
+  }
+  
+  /* Links inside pagination items */
+  .pagination a {
+    text-decoration: none;
+    color: #007bff;
+    width: 100%;
+    height: 100%;
+    justify-content: center;
+    align-content: center;
+  }
+  
+  .pagination .active a {
+    color: white;
+    background-color: #007bff;
+  }
+  
+  /* Active page */
+  .active {
+    color: white;
+    background-color: #007bff;
+  }
+  /* Disabled links */
+  .pagination .disabled a {
+    color: grey;
+  }
+  
+  /* Previous and Next page links */
+  .pagination li.previous, .pagination li.next {
+    font-weight: bold;
+    justify-content: center;
+    align-content: center;
+  }
+  
+  /* Break view label "..." */
+  .pagination li.break {
+    cursor: default;
+  }
+  
+  /* Optional: Hover state */
+  .pagination li:hover {
+    background-color: #007bff;
+  }
+
+  /* Optional: Hover state */
+  .pagination li:hover >a {
+    color: white;
+}

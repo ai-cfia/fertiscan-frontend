@@ -1,0 +1,137 @@
+[
+  {
+    "label_id": 1,
+    "company_name": "Agrobloom Corp.",
+    "fertiliser_name": "BloomMax 24-17-7",
+    "registration_number": "REG-0786",
+    "lot_number": "L0001",
+    "user": "user4",
+    "upload_date": "2024-07-04"
+  },
+  {
+    "label_id": 2,
+    "company_name": "Greengrowfertilizers Corp.",
+    "fertiliser_name": "BloomMax 9-18-26",
+    "registration_number": "",
+    "lot_number": "L0002",
+    "user": "user1",
+    "upload_date": "2024-07-04"
+  },
+  {
+    "label_id": 3,
+    "company_name": "Agrobloom Corp.",
+    "fertiliser_name": "BloomMax 23-23-18",
+    "registration_number": "",
+    "lot_number": "L0003",
+    "user": "user5",
+    "upload_date": "2024-07-04"
+  },
+  {
+    "label_id": 4,
+    "company_name": "Greengrowfertilizers Corp.",
+    "fertiliser_name": "BloomMax 3-14-7",
+    "registration_number": "",
+    "lot_number": "L0004",
+    "user": "user5",
+    "upload_date": "2024-07-04"
+  },
+  {
+    "label_id": 5,
+    "company_name": "Agrofeed Corp.",
+    "fertiliser_name": "BloomMax 7-12-19",
+    "registration_number": "",
+    "lot_number": "L0005",
+    "user": "user5",
+    "upload_date": "2024-07-04"
+  },
+  {
+    "label_id": 6,
+    "company_name": "Greengrowfertilizers Corp.",
+    "fertiliser_name": "BloomMax 7-19-8",
+    "registration_number": "REG-0055",
+    "lot_number": "L0006",
+    "user": "user3",
+    "upload_date": "2024-07-04"
+  },
+  {
+    "label_id": 7,
+    "company_name": "Agrotechindustries Corp.",
+    "fertiliser_name": "BloomMax 26-15-0",
+    "registration_number": "",
+    "lot_number": "L0007",
+    "user": "user4",
+    "upload_date": "2024-07-04"
+  },
+  {
+    "label_id": 8,
+    "company_name": "Agrofert Corp.",
+    "fertiliser_name": "BloomMax 23-27-0",
+    "registration_number": "",
+    "lot_number": "L0008",
+    "user": "user3",
+    "upload_date": "2024-07-04"
+  },
+  {
+    "label_id": 9,
+    "company_name": "Agrotechindustries Corp.",
+    "fertiliser_name": "BloomMax 10-3-10",
+    "registration_number": "",
+    "lot_number": "L0009",
+    "user": "user1",
+    "upload_date": "2024-07-04"
+  },
+  {
+    "label_id": 10,
+    "company_name": "Agrofert Corp.",
+    "fertiliser_name": "BloomMax 2-26-15",
+    "registration_number": "REG-0941",
+    "lot_number": "L00010",
+    "user": "user4",
+    "upload_date": "2024-07-04"
+  },
+  {
+    "label_id": 11,
+    "company_name": "Agrofeed Corp.",
+    "fertiliser_name": "BloomMax 15-20-24",
+    "registration_number": "",
+    "lot_number": "L00011",
+    "user": "user5",
+    "upload_date": "2024-07-04"
+  },
+  {
+    "label_id": 12,
+    "company_name": "Agrobloom Corp.",
+    "fertiliser_name": "BloomMax 16-30-19",
+    "registration_number": "",
+    "lot_number": "L00012",
+    "user": "user3",
+    "upload_date": "2024-07-04"
+  },
+  {
+    "label_id": 13,
+    "company_name": "Agrobloom Corp.",
+    "fertiliser_name": "BloomMax 30-7-5",
+    "registration_number": "",
+    "lot_number": "L00013",
+    "user": "user2",
+    "upload_date": "2024-07-04"
+  },
+  {
+    "label_id": 14,
+    "company_name": "Agrobloom Corp.",
+    "fertiliser_name": "BloomMax 16-3-18",
+    "registration_number": "",
+    "lot_number": "L00014",
+    "user": "user2",
+    "upload_date": "2024-07-04"
+  },
+  {
+    "label_id": 15,
+    "company_name": "Greengrowfertilizers Corp.",
+    "fertiliser_name": "BloomMax 0-21-20",
+    "registration_number": "REG-0069",
+    "lot_number": "L00015",
+    "user": "user4",
+    "upload_date": "2024-07-04"
+  }
+]
