@@ -59,13 +59,14 @@ const ConfirmPage = () => {
     }
 
     Object.keys(to_send).forEach(key => {
-      const value = data.sections.find(section=> key.startsWith(section.label))!.inputs.find(input=>key===input.id)!.value
+      const flat_map = data.sections.flatMap(section => section.inputs)
+      const value = flat_map.find(input=> input.id===key)?.value
       if (["string","object"].indexOf(typeof to_send[key]) > -1 && value){
         to_send[key] = value[0]
       }else if(value){
         to_send[key] = value
       }else{
-        to_send[key] = ""
+        to_send[key] = to_send[key]
       }
     })
 
