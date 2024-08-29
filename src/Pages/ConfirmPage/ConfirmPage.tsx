@@ -73,7 +73,7 @@ const ConfirmPage = () => {
         "Content-Type": "application/json",
         Authorization: "Basic " + document.cookie.split("auth=")[1].split(";")[0],
       },
-      body: JSON.stringify(state.data),
+      body: JSON.stringify(to_send),
     })
       .then((response) => response.json())
       .then((data) => {
