@@ -52,7 +52,7 @@ export const populateFromJSON = (form: Data, data: any) => {
         input.value = [data[input.id]];
       } else if (
           Array.isArray(data[input.id]) &&
-          data[input.id].lenght === 0
+          data[input.id].length === 0
       ) {
         input.value = [""]
         input.isAlreadyTable = true
