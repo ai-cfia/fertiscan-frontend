@@ -51,6 +51,12 @@ export const populateFromJSON = (form: Data, data: any) => {
       if (typeof data[input.id] == "string") {
         input.value = [data[input.id]];
       } else if (
+          Array.isArray(data[input.id]) &&
+          data[input.id].lenght === 0
+      ) {
+        input.value = [""]
+        input.isAlreadyTable = true
+      } else if (
         Array.isArray(data[input.id]) &&
         typeof data[input.id][0] == "string"
       ) {
