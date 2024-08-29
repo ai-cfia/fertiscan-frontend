@@ -58,15 +58,17 @@ const ConfirmPage = () => {
       guaranteed_analysis:[],
     }
 
+    const flat_map = data.sections.flatMap(section => section.inputs)
     Object.keys(to_send).forEach(key => {
-      const flat_map = data.sections.flatMap(section => section.inputs)
-      const value = flat_map.find(input=> input.id===key)?.value
-      if (["string","object"].indexOf(typeof to_send[key]) > -1 && value){
-        to_send[key] = value[0]
-      }else if(value){
-        to_send[key] = value
-      }else{
-        to_send[key] = to_send[key]
+      const value = flat_map.find(input=> input.id===key)!.value || undefined
+      if(value){
+        if (["string","object"].indexOf(typeof to_send[key]) > -1){
+          if(value[0]){
+            to_send[key] = value[0]
+          }
+        }else{
+          to_send[key] = value
+        }
       }
     })
 
