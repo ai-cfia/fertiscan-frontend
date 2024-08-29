@@ -65,6 +65,12 @@ export const populateFromJSON = (form: Data, data: any) => {
       } else if (typeof data[input.id] == "object" && data[input.id] != null) {
         input.value = [data[input.id]];
         input.isInputObjectList = true;
+      } else if (input.id == "density" || input.id == "volume") {
+        input.value = [{
+          value:"",
+          unit:"",
+        }];
+        input.isInputObjectList = true;
       }
     });
   });
