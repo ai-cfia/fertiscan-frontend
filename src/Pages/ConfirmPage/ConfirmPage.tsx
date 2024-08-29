@@ -19,6 +19,54 @@ const ConfirmPage = () => {
   };
 
   const submitForm = () => {
+    const to_send : {[key:string]:(string|string[] | { [key: string]: string }[] | {} )} =
+    {
+      company_name:"",
+      company_address:"",
+      company_website:"",
+      company_phone_number:"",
+      manufacturer_name:"",
+      manufacturer_address:"",
+      manufacturer_website:"",
+      manufacturer_phone_number:"",
+      fertiliser_name:"",
+      registration_number:"",
+      lot_number:"",
+      weight:[],
+      density:{
+        value:"",
+        unit:""
+      },
+      volume:{
+        value:"",
+        unit:""
+      },
+      npk:"",
+      warranty:"",
+      cautions_en:[],
+      instructions_en:[],
+      micronutrients_en:[],
+      ingredients_en:[],
+      specifications_en:[],
+      first_aid_en:[],
+      cautions_fr:[],
+      instructions_fr:[],
+      micronutrients_fr:[],
+      ingredients_fr:[],
+      specifications_fr:[],
+      first_aid_fr:[],
+      guaranteed_analysis:[],
+    }
+
+    Object.keys(to_send).forEach(key => {
+      const value = data.sections.find(section=> key.startsWith(section.label))?.inputs.find(input=>key===input.id)?.value
+      if (["string","object"].indexOf(typeof to_send[key]) > -1 && value){
+        to_send[key] = value[0]
+      }else if(value){
+        to_send[key] = value
+      }
+    })
+
     fetch(process.env.VITE_API_URL + "/inspections", {
       method: "POST",
       headers: {
