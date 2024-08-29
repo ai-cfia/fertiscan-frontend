@@ -59,11 +59,13 @@ const ConfirmPage = () => {
     }
 
     Object.keys(to_send).forEach(key => {
-      const value = data.sections.find(section=> key.startsWith(section.label))?.inputs.find(input=>key===input.id)?.value
+      const value = data.sections.find(section=> key.startsWith(section.label))!.inputs.find(input=>key===input.id)!.value
       if (["string","object"].indexOf(typeof to_send[key]) > -1 && value){
         to_send[key] = value[0]
       }else if(value){
         to_send[key] = value
+      }else{
+        to_send[key] = ""
       }
     })
 
