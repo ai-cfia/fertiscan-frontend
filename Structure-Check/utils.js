@@ -410,10 +410,11 @@ function isMainFunctionComponent(path, state, filePath) {
         }
     }
 
-    if (nodeName === mainComponentName) {
+    const isMain = nodeName === mainComponentName;
+
+    if (isMain) {
         state.hasMainComponent = true;
         state.mainComponentPath = path;
-        return true;
     }
 
     if (path.isVariableDeclaration()) {
@@ -442,7 +443,7 @@ function isMainFunctionComponent(path, state, filePath) {
         });
     }
 
-    return false;
+    return isMain;
 }
   
 /**

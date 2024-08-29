@@ -21,7 +21,8 @@ const createSection = () => ({
     exports: [],  
     mainComponent: [],  
     jsx: [],  
-    nodes: []  
+    nodes: [],
+    others:[] 
 });  
   
 const createInnerSection = (node, section = createSection(), mainComponentPath = null, isMainComponent = false) => ({  
@@ -61,7 +62,8 @@ const sections = {
     },    
     exports: [],    
     mainComponent: [],    
-    nodes: []    
+    nodes: [],
+    others:[]
 };    
   
 const visitedNodes = new Set();  

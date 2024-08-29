@@ -43,6 +43,7 @@ const {
     reportVariablePlacementIssue   
 } = require('./utils'); 
 const { program } = require('blessed');
+const { isCallExpression } = require('typescript');
 
 /**
  * Processes an ImportDeclaration within the AST to ensure that imports are declared before other specific code constructs.
@@ -63,7 +64,6 @@ const { program } = require('blessed');
 function handleImportDeclaration(path, state, filePath) {  
     console.log('Import statement detected:', path.node.type);  
     sections.imports.push(path.node);
-    console.log(sections);
     if (path.scope.path.type !== 'Program') {  
         console.log(`Reporting error: Imports should not be declared inside a function or component. FilePath: ${filePath}`);
         reportError(path.node, 'Imports should not be declared inside a function or component.', filePath);  
@@ -461,12 +461,10 @@ function handleMainReactComponent(path, state, filePath) {
     state.topLevelState.hasReactComponent = true;  
     state.topLevelState.hasMainComponent = true;  
     state.topLevelState.mainComponentPath = path;  
-    visitedNodes.add(path.node);
-    enterReactComponent(state);  
 
     const innerSection = traverseReactComponent(path, state, filePath);  
     const mainComponent = createInnerSection(path.node, innerSection, path, true);   
-    sections.mainComponent.push(mainComponent);  
+    sections.mainComponent.push(mainComponent.section);  // Correctly assigning the main component section
 }
 
 
@@ -758,10 +756,15 @@ const handleReturnStatement = (path, state, filePath) => {
       
     const functionPath = path.findParent(p =>  
         p.isFunctionDeclaration() ||  
-        p.isFunctionExpression() ||  
-        p.isArrowFunctionExpression()  
-    );  
-  
+        isFunctionExpression(p) ||  
+        p.isArrowFunctionExpression()||
+        isCustomHook(p) ||
+        isReactFunctionalComponent(p)||
+        isStyledComponent(p)||
+        isContextCreation(p)||
+        isMainFunctionComponent(p, state, filePath)||
+        isCallExpression(p) 
+); 
     if (!functionPath) {  
         console.warn('Could not find parent function for the return statement.');  
     } else {  
@@ -903,7 +906,7 @@ function handleClassComponent(path, state, filePath, sections) {
 const handleHooksAndEffects = (path, state, filePath) => {
     console.log('Hook or effect detected:', path.node.type);
 
-    if(isMainFunctionComponent(path, state, filePath)) {
+    if (isMainFunctionComponent(path, state, filePath)) {
         handleMainReactComponent(path, state, filePath);
     }
 
@@ -911,7 +914,17 @@ const handleHooksAndEffects = (path, state, filePath) => {
     const currentState = state.functionComponentState.insideReactComponent ? state.functionComponentState : state.topLevelState;
 
     if (path.isCallExpression()) {
-        const calleeName = path.node.callee.name;
+        let calleeName;
+
+        if (path.node.callee.type === 'Identifier') {
+            calleeName = path.node.callee.name;
+        } else if (path.node.callee.type === 'MemberExpression') {
+            calleeName = path.node.callee.property.name;
+        } else {
+            console.warn('Unsupported callee type:', path.node.callee.type);
+            calleeName = 'unknown';
+        }
+
         console.log('Call expression callee name:', calleeName);
         
         const hooks = ['useState', 'useReducer', 'useRef', 'useCallback', 'useMemo', 'useEffect', 'useLayoutEffect', 'useContext', 'useImperativeHandle', 'useDebugValue'];
@@ -983,7 +996,6 @@ const handleHooksAndEffects = (path, state, filePath) => {
         console.error('Error during traversal inside handleHooksAndEffects:', error);
     }
 };
-
 
 function handleContextCreation(path, state, filePath) {  
     console.log('Context creation detected:', path.node.type);  
@@ -1122,6 +1134,7 @@ const traverseReactComponent = (path, state, filePath) => {
                 }  
             }
         },  
+        
         exit(innerPath) {  
             if (innerPath === path) {  
                 exitReactComponent(state);  

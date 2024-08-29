@@ -3,57 +3,31 @@ const { codeFrameColumns } = require("@babel/code-frame");
 const { reportError } = require('./common');
 const { createStateTracker } = require('./stateManagement');
 const generate = require('@babel/generator').default;
-const { statSync, readFileSync } = require('fs');
-const { 
-    createSection,
-    createInnerSection,
-    createInnerReturn,
-    createMainComponent,
-    visitedNodes,
-    sections 
+const { statSync, readFileSync, writeFileSync } = require('fs');
+const fs = require('fs');
+const path = require('path');    
+
+const {
+    createSection, createInnerSection, createInnerReturn, createMainComponent,
+    visitedNodes, sections
 } = require('./sections');
-const { 
-    parseFile, 
-    createBackup, 
-    readFileContent, 
-    writeFileContent 
-} = require('./fileOperations'); 
-const { 
-    handleImportDeclaration, 
-    handleVariableDeclarator, 
-    handleFunctionalComponent, 
-    handleGlobalConstantDeclaration, 
-    handleTSInterfaceDeclaration, 
-    handleTSTypeAliasDeclaration, 
-    handleTSEnumDeclaration, 
-    handleStyledComponent, 
-    handleCustomHookDeclaration, 
-    handleLocalConstantDeclaration, 
-    handleMainReactComponent, 
-    handleHelperFunctionDeclaration, 
-    handleFunctionExpressionsAndArrowFunctions, 
-    handleExportDeclarations, 
-    handleJSXElement, 
-    handleReturnStatement, 
-    handleUseContext, 
-    handleClassComponent, 
-    handleClassMethod, 
-    handleHooksAndEffects, 
-    handleContextCreation, 
-    processFunctionType 
-} = require('./astHandlers.js'); 
-const { 
-    isMainFunctionComponent, 
-    isExportDeclarationWithName, 
-    getMainComponentNameFromFileName, 
-    isGlobalConstant, 
-    isLocalConstant 
+const {
+    parseFile, createBackup, readFileContent, writeFileContent
+} = require('./fileOperations');
+const {
+    handleImportDeclaration, handleVariableDeclarator, handleFunctionalComponent,
+    handleGlobalConstantDeclaration, handleTSInterfaceDeclaration, handleTSTypeAliasDeclaration,
+    handleTSEnumDeclaration, handleStyledComponent, handleCustomHookDeclaration,
+    handleLocalConstantDeclaration, handleMainReactComponent, handleHelperFunctionDeclaration,
+    handleFunctionExpressionsAndArrowFunctions, handleExportDeclarations,
+    handleJSXElement, handleReturnStatement, handleUseContext, handleClassComponent,
+    handleClassMethod, handleHooksAndEffects, handleContextCreation, processFunctionType
+} = require('./astHandlers.js');
+const {
+    isMainFunctionComponent, isExportDeclarationWithName, 
+    getMainComponentNameFromFileName, isGlobalConstant, isLocalConstant
 } = require('./utils');
 
-/**
- * Checks the structure and naming conventions of a given file.
- * Reads the file, parses its contents into an AST, performs various checks, and logs errors if any issues are found.
- */
 const checkFile = async (filePath, state) => {
     console.log(`Reading file: ${filePath}`);
     try {
@@ -61,44 +35,14 @@ const checkFile = async (filePath, state) => {
         const ast = parseFile(content);
 
         const sections = {
-            imports: [],
-            localConstants: new Map(),
-            constants: [],
-            contexts: [],
-            hooks: [],
-            stateHooks: [],
-            effectHooks: [],
-            handlers: [],
-            helperFunctions: [],
-            components: [],
-            classComponents: [],
-            classMethods: [],
-            classProperties: [],
-            returns: [],
-            styledComponent: [],
-            functionalComponent: [],
-            types: {
-                TSInterfaceDeclaration: [],
-                TSTypeAliasDeclaration: [],
-                TSEnumDeclaration: []
-            },
-            exports: [],
-            mainComponent: null,
-            nodes: [],
-            others: []  // Initialize others
+            imports: [], localConstants: new Map(), constants: [], contexts: [], hooks: [],
+            stateHooks: [], effectHooks: [], handlers: [], helperFunctions: [], components: [],
+            classComponents: [], classMethods: [], classProperties: [], returns: [], styledComponent: [],
+            functionalComponent: [], types: { TSInterfaceDeclaration: [], TSTypeAliasDeclaration: [], TSEnumDeclaration: [] },
+            exports: [], mainComponent: null, nodes: [], others: []  // Initialize others
         };
 
         traverse(ast, setupTraverse(state, filePath, sections));
-
-        // Check if the main component's name matches the file name
-        if (state.hasMainComponent) {
-            const mainComponentName = getMainComponentNameFromFileName(filePath);
-            if (!isExportDeclarationWithName(state.mainComponentPath, mainComponentName)) {
-                reportError(state.mainComponentPath.node, 'Main component name does not match file name.', filePath);
-            }
-        } else {
-            reportError(null, 'No main component detected. The main (Function/Component/Class) should match the file name.', filePath);
-        }
 
         console.log(`File ${filePath} checked.`);
         console.log("------------------------------------------------------------\n");
@@ -108,10 +52,15 @@ const checkFile = async (filePath, state) => {
     }
 };
 
-const setupTraverse = (state, filePath) => {
+const setupTraverse = (state, filePath, sections) => {
     return {
         enter(path) {
-            path.node.code = codeFrameColumns(readFileContent(filePath), path.node.loc, { highlightCode: true });
+            const node = path.node;
+            if (node) {
+                node.code = codeFrameColumns(readFileContent(filePath), node.loc, { highlightCode: true });
+            } else {
+                console.error(`Null or undefined node encountered at enter path: ${path.toString()}`);
+            }
         },
         ImportDeclaration(path) {
             handleNode(path, handleImportDeclaration, state, filePath, sections);
@@ -126,108 +75,249 @@ const setupTraverse = (state, filePath) => {
             }
         },
         TSTypeAliasDeclaration(path) {
-            handleNode(path, handleTSTypeAliasDeclaration, state, filePath);
+            handleNode(path, handleTSTypeAliasDeclaration, state, filePath, sections);
         },
         TSInterfaceDeclaration(path) {
-            handleNode(path, handleTSInterfaceDeclaration, state, filePath);
+            handleNode(path, handleTSInterfaceDeclaration, state, filePath, sections);
         },
         TSEnumDeclaration(path) {
-            handleNode(path, handleTSEnumDeclaration, state, filePath);
+            handleNode(path, handleTSEnumDeclaration, state, filePath, sections);
         },
         FunctionDeclaration(path) {
             if (isMainFunctionComponent(path, state, filePath)) {
                 handleNode(path, handleMainReactComponent, state, filePath, sections);
             } else {
-                handleNode(path, handleHelperFunctionDeclaration, state, filePath);
+                handleNode(path, handleHelperFunctionDeclaration, state, filePath, sections);
             }
         },
         'ArrowFunctionExpression|FunctionExpression': {
             enter(path) {
                 if (isMainFunctionComponent(path, state, filePath)) {
-                    handleNode(path, handleMainReactComponent, state, filePath);
+                    handleNode(path, handleMainReactComponent, state, filePath, sections);
                 } else {
-                    handleNode(path, handleFunctionExpressionsAndArrowFunctions, state, filePath);
+                    handleNode(path, handleFunctionExpressionsAndArrowFunctions, state, filePath, sections);
                 }
             }
         },
         ClassDeclaration(path) {
-            handleNode(path, handleClassComponent, state, filePath);
+            handleNode(path, handleClassComponent, state, filePath, sections);
         },
         CallExpression(path) {
             if (isMainFunctionComponent(path, state, filePath)) {
-                handleNode(path, handleMainReactComponent, state, filePath);
+                handleNode(path, handleMainReactComponent, state, filePath, sections);
             } else {
-                handleNode(path, handleHooksAndEffects, state, filePath);
+                handleNode(path, handleHooksAndEffects, state, filePath, sections);
             }
         },
         TaggedTemplateExpression(path) {
-            if (isMainFunctionComponent(path, state, filePath)) {
-                handleNode(path, handleMainReactComponent, state, filePath);
-            } else {
-                handleNode(path, handleStyledComponent, state, filePath);
-            }
+            handleNode(path, handleStyledComponent, state, filePath, sections);
         },
         ReturnStatement(path) {
-            handleNode(path, handleReturnStatement, state, filePath);
+            handleNode(path, handleReturnStatement, state, filePath, sections);
         },
         'ExportNamedDeclaration|ExportDefaultDeclaration'(path) {
-            handleNode(path, handleExportDeclarations, state, filePath);
+            handleNode(path, handleExportDeclarations, state, filePath, sections);
         }
     };
 };
 
-const handleNode = (path, handler, state, filePath, sections = {}) => {
-    if (!visitedNodes.has(path.node) && !hasDisableCheckComment(path)) {
-        visitedNodes.add(path.node);
-        console.log(`Visiting node: ${path.node.type}`);
-        handler(path, state, filePath);
+const handleNode = (path, handler, state, filePath, sections) => {
+    const node = path.node;
+    if (node && !visitedNodes.has(node) && !hasDisableCheckComment(path)) {
+        visitedNodes.add(node);
+        console.log(`Visiting node: ${node.type}`);
+        handler(path, state, filePath, sections);
+    } else {
+        if (!node) console.error("Null or undefined node encountered:", path.toString());
     }
 };
 
 const reorderCode = (sections) => {
+    const log = [];
+    const unknownNodes = [];
+    const invalidNodes = [];  // Pour les nœuds invalides ou problématiques
+
+    // Validate the sections structure upfront
+    console.log('Debug: Sections structure before processing:', sections);
+
+    // Create a list of known sections and their content
     const orderedSections = [
-        ...(sections.imports || []),
-        ...(sections.constants || []),
-        ...(sections.contexts || []),
-        ...(sections.hooks || []),
-        ...(sections.stateHooks || []),
-        ...(sections.effectHooks || []),
-        ...(sections.handlers || []),
-        ...(sections.types.TSInterfaceDeclaration || []),
-        ...(sections.types.TSTypeAliasDeclaration || []),
-        ...(sections.types.TSEnumDeclaration || []),
-        ...(sections.helperFunctions || []),
-        ...(sections.components || []),
-        ...(sections.classComponents || []),
-        ...(sections.classMethods || []),
-        ...(sections.classProperties || []),
-        ...(sections.returns || []),
-        ...(sections.styledComponent || []),
-        ...(sections.functionalComponent || []),
+        ...sections.imports,
+        ...sections.constants,
+        ...sections.localConstants.values(),
+        ...sections.contexts,
+        ...sections.hooks,
+        ...sections.stateHooks,
+        ...sections.effectHooks,
+        ...sections.handlers,
+        ...sections.types.TSInterfaceDeclaration,
+        ...sections.types.TSTypeAliasDeclaration,
+        ...sections.types.TSEnumDeclaration,
+        ...sections.helperFunctions,
+        ...sections.components,
+        ...sections.classComponents,
+        ...sections.return,
+        ...sections.styledComponent,
+        ...sections.functionalComponent,
         ...(sections.mainComponent ? [sections.mainComponent] : []),
-        ...(sections.exports || []),
-        ...(sections.others || [])
+        ...sections.exports,
     ];
 
-    for (let [functionBodyNode, localConsts] of (sections.localConstants || new Map()).entries()) {
-        if (Array.isArray(localConsts)) {
-            const newFunctionBody = [
-                ...localConsts,
-                ...functionBodyNode.body.filter((node) => !localConsts.includes(node)),
-            ];
-            functionBodyNode.body = newFunctionBody;
+    // Init finalCode array
+    const finalCode = []; 
+
+    orderedSections.forEach(node => {
+        if (node) {
+            try {
+                if (isValidNode(node)) {
+                    // Valid node, add to finalCode
+                    finalCode.push(node);
+                } else {
+                    throw new Error('Invalid node type');
+                }
+            } catch (error) {
+                log.push({
+                    nodeType: node.type,
+                    start: node.start,
+                    end: node.end,
+                    loc: node.loc,
+                    code: node.code,
+                    error: error.message,
+                });
+                invalidNodes.push(node);  // Add to invalid nodes list
+            }
+        } else {
+            console.warn('Undefined node encountered, skipping.');
         }
+    });
+
+    // Add invalid nodes at the end with appropriate comments
+    if (invalidNodes.length > 0) {
+        finalCode.push(
+            {
+                type: 'CommentLine',
+                value: ' Invalid nodes, please check them and add disable comment',
+                leading: true,
+            }
+        );
+        invalidNodes.forEach(node => finalCode.push(node));
     }
 
-    return orderedSections.filter(Boolean);
+    // Identify any elements not placed in a specific section and add them to 'unknownNodes'
+    sections.nodes.forEach(node => {
+        if (node && !orderedSections.includes(node)) {
+            log.push({
+                nodeType: node.type,
+                start: node.start,
+                end: node.end,
+                loc: node.loc,
+                code: node.code,
+            });
+            unknownNodes.push(sanitizeUnknownNode(node)); // Collect and sanitize unknown nodes
+        }
+    });
+
+    // Add unknown nodes at the end with appropriate comments
+    if (unknownNodes.length > 0) {
+        finalCode.push(
+            {
+                type: 'CommentLine',
+                value: ' Unknown nodes, please place them and add disable comment',
+                leading: true,
+            }
+        );
+        unknownNodes.forEach(node => finalCode.push(node));
+    }
+
+    // Debug for 'unknownNodes' section
+    console.log('Debug: Unknown Nodes Section:', unknownNodes);
+
+    // Assemble final code with a comment before unknown nodes
+    const resultCode = [
+        ...finalCode.filter(isValidNode),
+        ...sections.others.map(sanitizeUnknownNode),
+    ];
+
+    // Debug final ordered sections
+    console.log('Debug: Final Ordered Code List:', resultCode);
+
+    return { orderedSections: resultCode, log };
 };
+
+// La fonction pour vérifier si un nœud est valide (est inchangée)
+const isValidNode = (node) => {
+    return node && typeof node.type === 'string';
+};
+
+// La fonction pour assainir les nœuds en supprimant les propriétés inattendues (est inchangée)
+const sanitizeUnknownNode = (node) => {
+    const validProps = [
+        'type', 'start', 'end', 'loc', 'range',
+        'id', 'generator', 'async', 'params',
+        'body', 'callee', 'arguments', 'argument',
+        'extra', 'name', 'return', 'declarations', 'specifiers'
+    ];
+
+    const sanitizedNode = {};
+
+    validProps.forEach(prop => {
+        if (node[prop] !== undefined) {
+            sanitizedNode[prop] = node[prop];
+        }
+    });
+
+    if (!sanitizedNode.type) {
+        sanitizedNode.type = 'ExpressionStatement'; // Default to ExpressionStatement if type missing
+        sanitizedNode.expression = {
+            type: 'Identifier',
+            name: '"UNKNOWN_NODE"',
+        };
+    }
+
+    return sanitizedNode;
+};
+
+
 
 const createNewAST = (orderedSections) => {
     return {
         type: 'Program',
-        body: orderedSections,
+        body: orderedSections.filter(node => node && typeof node.type === 'string'),
         sourceType: 'module',
     };
+};
+
+const ensureLogDirectoryExists = () => {
+    const logDir = path.resolve(__dirname, 'log');
+    if (!fs.existsSync(logDir)) {
+        fs.mkdirSync(logDir, { recursive: true });
+    }
+};
+
+const getCircularReplacer = () => {
+    const seen = new WeakSet();
+    return (key, value) => {
+        if (typeof value === "object" && value !== null) {
+            if (seen.has(value)) return;
+            seen.add(value);
+        }
+        return value;
+    };
+};
+
+const saveLog = (log) => {
+    ensureLogDirectoryExists();
+
+    const timestamp = new Date().toISOString().replace(/[:-]/g, '').replace(/\..+/, '');
+    const logFilePath = path.resolve(__dirname, `log/log_${timestamp}.json`);
+
+    const simplifiedLog = log.map(entry => {
+        const { nodeType, start, end, loc, code, elementType, error, filePath, newAst } = entry;
+        return { nodeType, start, end, loc, code, elementType, error, filePath, newAst: newAst && JSON.stringify(newAst, getCircularReplacer(), 2) };
+    });
+
+    fs.writeFileSync(logFilePath, JSON.stringify(simplifiedLog, null, 2), 'utf-8');
+    console.log(`Log saved to ${logFilePath}`);
 };
 
 const fixFile = async (filePath) => {
@@ -236,77 +326,69 @@ const fixFile = async (filePath) => {
     if (statSync(filePath).isFile()) {
         createBackup(filePath);
         const content = readFileContent(filePath);
-        console.log(`Original File Content: \n${content}`); // Log the original content for verification
+        console.log(`Original File Content: \n${content}`);
 
         const ast = parseFile(content);
         const state = createStateTracker();
 
-        const sections = {
-                imports: [],
-                localConstants: new Map(),
-                constants: [],
-                contexts: [],
-                hooks: [],
-                stateHooks: [],
-                effectHooks: [],
-                handlers: [],
-                helperFunctions: [],
-                components: [],
-                classComponents: [],
-                classMethods: [],
-                classProperties: [],
-                returns: [],
-                styledComponent: [],
-                functionalComponent: [],
-                types: {
-                    TSInterfaceDeclaration: [],
-                    TSTypeAliasDeclaration: [],
-                    TSEnumDeclaration: []
-                },
-                exports: [],
-                mainComponent: null,
-                nodes: [],
-                others: []
-        };
+        traverse(ast, setupTraverse(state, filePath, sections));
 
-        traverse(ast, setupTraverse(state, filePath));
+        sections.nodes.push(
+            ...sections.imports,
+            ...sections.constants,
+            ...sections.localConstants.values(),
+            ...sections.contexts,
+            ...sections.hooks,
+            ...sections.stateHooks,
+            ...sections.effectHooks,
+            ...sections.handlers,
+            ...sections.types.TSInterfaceDeclaration,
+            ...sections.types.TSTypeAliasDeclaration,
+            ...sections.types.TSEnumDeclaration,
+            ...sections.helperFunctions,
+            ...sections.components,
+            ...sections.classComponents,
+            ...sections.return,
+            ...sections.styledComponent,
+            ...sections.functionalComponent,
+            sections.mainComponent && sections.mainComponent.section,
+            ...sections.exports
+        );
 
-        // After traversal, log the populated sections for debugging
-        console.log('Sections after AST traversal:',sections);
+        const { orderedSections, log } = reorderCode(sections);
 
-        const orderedSections = reorderCode(sections);
-        console.log('Ordered Sections:', JSON.stringify(orderedSections, null, 2)); // Log ordered sections for verification
+        orderedSections.push(...sections.others.map(sanitizeUnknownNode));
 
-        let newAst = createNewAST(orderedSections);
-        console.log('New AST:', JSON.stringify(newAst, null, 2)); // Log new AST structure for verification
+        console.log('Ordered Sections:', JSON.stringify(orderedSections, getCircularReplacer(), 2));
+        console.log('Log of problematic sections:', JSON.stringify(log, getCircularReplacer(), 2));
+
+        saveLog(log);
+
+        const newAst = createNewAST(orderedSections);
 
         let newContent;
         try {
             newContent = generate(newAst, {}).code;
-            console.log('Generated Code:', newContent); // Log the generated code for verification
+            console.log('Generated Code:', newContent);
+
+            if (!newContent || newContent.trim() === '') {
+                console.error('Generated content is empty.');
+                log.push({ error: 'Generated content is empty', filePath, newAst });
+                saveLog(log);
+                return;
+            }
         } catch (error) {
             console.error('Error generating code for file:', filePath);
-            const getCircularReplacer = () => {
-                const seen = new WeakSet();
-                return (key, value) => {
-                    if (typeof value === "object" && value !== null) {
-                        if (seen.has(value)) {
-                            return;
-                        }
-                        seen.add(value);
-                    }
-                    return value;
-                };
-            };
             console.error('AST Node:', JSON.stringify(newAst, getCircularReplacer(), 2));
+            log.push({ error: 'Error generating code', filePath, newAst, error: error.message });
+            saveLog(log);
             throw error;
         }
 
         writeFileContent(filePath, newContent);
         console.log(`File ${filePath} has been fixed.`);
     } else {
-        console.error(`${filePath} is not a file.`);
-        process.exit(1);
+        console.error(`${filePath} is not a file`);
     }
 };
 
@@ -326,31 +408,11 @@ const hasDisableCheckComment = (path) => {
 
 const analyzeCode = (ast, filePath) => {
     const sections = {
-        imports: [],
-        localConstants: new Map(),
-        constants: [],
-        contexts: [],
-        hooks: [],
-        stateHooks: [],
-        effectHooks: [],
-        handlers: [],
-        helperFunctions: [],
-        components: [],
-        classComponents: [],
-        classMethods: [],
-        classProperties: [],
-        returns: [],
-        styledComponent: [],
-        functionalComponent: [],
-        types: {
-            TSInterfaceDeclaration: [],
-            TSTypeAliasDeclaration: [],
-            TSEnumDeclaration: []
-        },
-        exports: [],
-        mainComponent: null,
-        nodes: [],
-        others: []
+        imports: [], localConstants: new Map(), constants: [], contexts: [], hooks: [],
+        stateHooks: [], effectHooks: [], handlers: [], helperFunctions: [], components: [],
+        classComponents: [], classMethods: [], classProperties: [], returns: [], styledComponent: [],
+        functionalComponent: [], types: { TSInterfaceDeclaration: [], TSTypeAliasDeclaration: [], TSEnumDeclaration: [] },
+        exports: [], mainComponent: null, nodes: [], others: []  // Initialize others
     };
 
     const state = createStateTracker();
@@ -359,9 +421,10 @@ const analyzeCode = (ast, filePath) => {
     sections.nodes.push(
         ...sections.imports,
         ...sections.constants,
-        ...sections.localConstants,
+        ...sections.localConstants.values(),
         ...sections.contexts,
         ...sections.hooks,
+        ...sections.stateHooks,
         ...sections.effectHooks,
         ...sections.handlers,
         ...sections.types.TSInterfaceDeclaration,
@@ -375,7 +438,7 @@ const analyzeCode = (ast, filePath) => {
         ...sections.returns,
         ...sections.styledComponent,
         ...sections.functionalComponent,
-        sections.mainComponent,
+        sections.mainComponent && sections.mainComponent,
         ...sections.exports
     );
 
