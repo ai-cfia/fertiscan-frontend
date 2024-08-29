@@ -75,7 +75,7 @@ const FormPage = () => {
       formData.append("images", blob, blobs[i].name);
     }
 
-    return await (
+    const data = await (
       await fetch(api_url + "/analyze", {
         method: "POST",
         headers: {
@@ -89,6 +89,19 @@ const FormPage = () => {
         body: formData,
       })
     ).json();
+
+    const auth = document.cookie.split("auth=")[1].split(";")[0];
+    return await (await fetch(api_url + "/inspections", {
+      method: "POST",
+      headers: {
+        "Access-Control-Allow-Origin": "*",
+        "Access-Control-Allow-Credentials": "true",
+        "Access-Control-Allow-Headers":
+          "Origin, Content-Type, X-Amz-Date, Authorization, X-Api-Key, X-Amz-S",
+        Authorization: "Basic " + auth
+      },
+      body: JSON.stringify({ data: data }),
+    })).json();
   };
 
   const setForm = (response: unknown) => {
