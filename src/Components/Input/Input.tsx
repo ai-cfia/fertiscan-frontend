@@ -94,6 +94,10 @@ const InputComponent: React.FC<InputProps> = ({
         inputInfo.property = "approved";
         FormClickActions.emit("ApproveClick", inputInfo);
         break;
+      case "modified":
+        inputInfo.property = "approved";
+        FormClickActions.emit("ApproveClick", inputInfo);
+        break;
     }
     SyncChanges(inputInfo);
     setTimeout(() => setIsActive(false), SYNC_TIMEOUT);
