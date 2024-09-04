@@ -1,8 +1,8 @@
 import { useEffect, useRef, useState } from "react";
-import "./SavedListPage.css";
-import "./Pagination.css";
-import SavedLabelCard from "../../Components/SavedLabelCard/SavedLabelCard";
 import ReactPaginate from "react-paginate";
+import SavedLabelCard from "../../Components/SavedLabelCard/SavedLabelCard";
+import "./Pagination.css";
+import "./SavedListPage.css";
 
 const SavedListPage = () => {
   const [fetching, setFetching] = useState(true);
@@ -45,7 +45,8 @@ const SavedListPage = () => {
     } else {
       fetch(process.env.VITE_API_URL + "/inspections", {
         headers: {
-          Authorization: "Basic " + document.cookie.split("auth=")[1].split(";")[0],
+          Authorization:
+            "Basic " + document.cookie.split("auth=")[1].split(";")[0],
         },
       })
         .then((r) => r.json())

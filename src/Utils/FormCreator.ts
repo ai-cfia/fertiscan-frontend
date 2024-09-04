@@ -50,12 +50,9 @@ export const populateFromJSON = (form: Data, data: any) => {
     section.inputs.forEach((input) => {
       if (typeof data[input.id] == "string") {
         input.value = [data[input.id]];
-      } else if (
-          Array.isArray(data[input.id]) &&
-          data[input.id].length === 0
-      ) {
-        input.value = [""]
-        input.isAlreadyTable = true
+      } else if (Array.isArray(data[input.id]) && data[input.id].length === 0) {
+        input.value = [""];
+        input.isAlreadyTable = true;
       } else if (
         Array.isArray(data[input.id]) &&
         typeof data[input.id][0] == "string"
@@ -72,10 +69,12 @@ export const populateFromJSON = (form: Data, data: any) => {
         input.value = [data[input.id]];
         input.isInputObjectList = true;
       } else if (input.id == "density" || input.id == "volume") {
-        input.value = [{
-          value:"",
-          unit:"",
-        }];
+        input.value = [
+          {
+            value: "",
+            unit: "",
+          },
+        ];
         input.isInputObjectList = true;
       }
     });

@@ -1,11 +1,11 @@
-import Carousel from "../../Components/Carousel/Carousel";
-import "./ConfirmPage.css";
-import { useTranslation } from "react-i18next";
 import { useContext, useState } from "react";
-import { SessionContext, SetSessionContext } from "../../Utils/SessionContext";
+import { useTranslation } from "react-i18next";
+import Carousel from "../../Components/Carousel/Carousel";
 import Label from "../../Components/Label/Label.tsx";
-import { useAlert } from "../../Utils/AlertContext.tsx";
 import Data from "../../Model/Data-Model.tsx";
+import { useAlert } from "../../Utils/AlertContext.tsx";
+import { SessionContext, SetSessionContext } from "../../Utils/SessionContext";
+import "./ConfirmPage.css";
 
 const ConfirmPage = () => {
   const { t } = useTranslation();
@@ -19,64 +19,71 @@ const ConfirmPage = () => {
   };
 
   const submitForm = () => {
-    const to_send : {[key:string]:(string|string[] | { [key: string]: string }[] | {} )} =
-    {
-      company_name:"",
-      company_address:"",
-      company_website:"",
-      company_phone_number:"",
-      manufacturer_name:"",
-      manufacturer_address:"",
-      manufacturer_website:"",
-      manufacturer_phone_number:"",
-      fertiliser_name:"",
-      registration_number:"",
-      lot_number:"",
-      weight:[],
-      density:{
-        value:"",
-        unit:""
+    const to_send: {
+      [key: string]:
+        | string
+        | string[]
+        | { [key: string]: string }[]
+        | { [key: string]: string };
+    } = {
+      company_name: "",
+      company_address: "",
+      company_website: "",
+      company_phone_number: "",
+      manufacturer_name: "",
+      manufacturer_address: "",
+      manufacturer_website: "",
+      manufacturer_phone_number: "",
+      fertiliser_name: "",
+      registration_number: "",
+      lot_number: "",
+      weight: [],
+      density: {
+        value: "",
+        unit: "",
       },
-      volume:{
-        value:"",
-        unit:""
+      volume: {
+        value: "",
+        unit: "",
       },
-      npk:"",
-      warranty:"",
-      cautions_en:[],
-      instructions_en:[],
-      micronutrients_en:[],
-      ingredients_en:[],
-      specifications_en:[],
-      first_aid_en:[],
-      cautions_fr:[],
-      instructions_fr:[],
-      micronutrients_fr:[],
-      ingredients_fr:[],
-      specifications_fr:[],
-      first_aid_fr:[],
-      guaranteed_analysis:[],
-    }
+      npk: "",
+      warranty: "",
+      cautions_en: [],
+      instructions_en: [],
+      micronutrients_en: [],
+      ingredients_en: [],
+      specifications_en: [],
+      first_aid_en: [],
+      cautions_fr: [],
+      instructions_fr: [],
+      micronutrients_fr: [],
+      ingredients_fr: [],
+      specifications_fr: [],
+      first_aid_fr: [],
+      guaranteed_analysis: [],
+    };
 
-    const flat_map = data.sections.flatMap(section => section.inputs)
-    Object.keys(to_send).forEach(key => {
-      const value = flat_map.find(input=> input.id===key)!.value || undefined
-      if(value){
-        if (["string","object"].indexOf(typeof to_send[key]) > -1){
-          if(value[0]){
-            to_send[key] = value[0]
+    const flat_map = data.sections.flatMap((section) => section.inputs);
+    Object.keys(to_send).forEach((key) => {
+      const value =
+        flat_map.find((input) => input.id === key)!.value || undefined;
+      if (value) {
+        if (["string", "object"].indexOf(typeof to_send[key]) > -1) {
+          if (value[0]) {
+            to_send[key] = value[0];
           }
-        }else{
-          to_send[key] = value
+        } else {
+          to_send[key] = value;
         }
       }
-    })
+    });
 
     fetch(process.env.VITE_API_URL + "/inspections", {
       method: "POST",
       headers: {
         "Content-Type": "application/json",
-        Authorization: "Basic " + document.cookie.split("auth=")[1].split(";")[0],
+        Authorization:
+          "Basic " + document.cookie.split("auth=")[1].split(";")[0],
       },
       body: JSON.stringify(to_send),
     })

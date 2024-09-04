@@ -1,8 +1,8 @@
+import { useEffect, useState } from "react";
 import { useParams } from "react-router-dom";
 import Label from "../../Components/Label/Label";
-import { useEffect, useState } from "react";
-import { FertiliserForm, populateFromJSON } from "../../Utils/FormCreator";
 import Data from "../../Model/Data-Model";
+import { FertiliserForm, populateFromJSON } from "../../Utils/FormCreator";
 import "./LabelPage.css";
 
 function LabelPage() {
@@ -19,7 +19,8 @@ function LabelPage() {
     } else {
       fetch(process.env.VITE_API_URL + "/inspections/" + labelId, {
         headers: {
-          Authorization: "Basic " + document.cookie.split("auth=")[1].split(";")[0],
+          Authorization:
+            "Basic " + document.cookie.split("auth=")[1].split(";")[0],
         },
       })
         .then((r) => r.json())

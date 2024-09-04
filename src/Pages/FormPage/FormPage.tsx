@@ -75,37 +75,50 @@ const FormPage = () => {
       formData.append("images", blob, blobs[i].name);
     }
 
-    const data = await (
-      await fetch(api_url + "/analyze", {
-        method: "POST",
-        headers: {
-          "Access-Control-Allow-Origin": "*",
-          "Access-Control-Allow-Credentials": "true",
-          "Access-Control-Allow-Headers":
-            "Origin, Content-Type, X-Amz-Date, Authorization, X-Api-Key, X-Amz-Security-Token, locale",
-          "Access-Control-Allow-Methods": "GET, POST",
-          Authorization:
-            "Basic " + document.cookie.split("auth=")[1].split(";")[0],
-        },
-        body: formData,
-      })
-    ).json();
-
     const auth = document.cookie.split("auth=")[1].split(";")[0];
-    return await (
-      await fetch(api_url + "/inspections", {
-        method: "POST",
-        headers: {
-          "Access-Control-Allow-Origin": "*",
-          "Access-Control-Allow-Credentials": "true",
-          "Access-Control-Allow-Headers":
-            "Origin, Content-Type, X-Amz-Date, Authorization, X-Api-Key, X-Amz-S",
-          "Content-Type": "application/json",
-          Authorization: "Basic " + auth,
-        },
-        body: JSON.stringify(data),
+    console.log("formData", formData);
+
+    return fetch(api_url + "/analyze", {
+      method: "POST",
+      headers: {
+        "Access-Control-Allow-Origin": "*",
+        "Access-Control-Allow-Credentials": "true",
+        "Access-Control-Allow-Headers":
+          "Origin, Content-Type, X-Amz-Date, Authorization, X-Api-Key, X-Amz-Security-Token, locale",
+        "Access-Control-Allow-Methods": "GET, POST",
+        Authorization: "Basic " + auth,
+      },
+      body: formData,
+    })
+      .then((response) => {
+        if (!response.ok) {
+          throw new Error(`HTTP error! status: ${response.status}`);
+        }
+        return response.json();
       })
-    ).json();
+      .then((labelAnalysisData) => {
+        return fetch(api_url + "/inspections", {
+          method: "POST",
+          headers: {
+            "Access-Control-Allow-Origin": "*",
+            "Access-Control-Allow-Credentials": "true",
+            "Access-Control-Allow-Headers":
+              "Origin, Content-Type, X-Amz-Date, Authorization, X-Api-Key, X-Amz-S",
+            "Content-Type": "application/json",
+            Authorization: "Basic " + auth,
+          },
+          body: JSON.stringify(labelAnalysisData),
+        }).then((inspectionResponse) => {
+          if (!inspectionResponse.ok) {
+            throw new Error(`HTTP error! status: ${inspectionResponse.status}`);
+          }
+          return inspectionResponse.json();
+        });
+      })
+      .catch((error) => {
+        console.error("Error:", error);
+        throw error;
+      });
   };
 
   const setForm = (response: unknown) => {

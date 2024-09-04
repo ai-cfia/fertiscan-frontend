@@ -1,8 +1,8 @@
-import "./SettingPage.css";
+import { useState } from "react";
 import { useTranslation } from "react-i18next";
 import LanguageButton from "../../Components/LanguageButton/LanguageButton";
-import { useState } from "react";
 import { useAlert } from "../../Utils/AlertContext.tsx";
+import "./SettingPage.css";
 
 function SettingPage() {
   const { t } = useTranslation();
@@ -23,8 +23,8 @@ function SettingPage() {
       method: "POST",
       body: form,
       headers: {
-        Authorization : "Basic " + btoa(uname + ":" + password),
-      }
+        Authorization: "Basic " + btoa(uname + ":" + password),
+      },
     })
       .then((r) => {
         if (r.status !== 200) {
@@ -32,8 +32,8 @@ function SettingPage() {
             method: "POST",
             body: form,
             headers: {
-              Authorization : "Basic " +btoa(uname + ":" + password),
-            }
+              Authorization: "Basic " + btoa(uname + ":" + password),
+            },
           })
             .then((r) => {
               if (r.status !== 201) {
@@ -73,17 +73,17 @@ function SettingPage() {
             <div id={"uname"}>
               <label>{t("askForUName")} : </label>
               <input
-                  type={"text"}
-                  value={uname}
-                  onChange={(e) => setUname(e.target.value)}
+                type={"text"}
+                value={uname}
+                onChange={(e) => setUname(e.target.value)}
               ></input>
             </div>
             <div id={"password"}>
               <label>{t("askForPassword")} : </label>
               <input
-                  type={"password"}
-                  value={password}
-                  onChange={(e) => setPassword(e.target.value)}
+                type={"password"}
+                value={password}
+                onChange={(e) => setPassword(e.target.value)}
               ></input>
             </div>
           </div>
