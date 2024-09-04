@@ -1,19 +1,19 @@
 import { StrictMode, useContext, useEffect, useRef, useState } from "react";
-import "./FormPage.css";
+import { useTranslation } from "react-i18next";
+import goUpIcon from "../../assets/goUpIcon.svg";
+import Carousel from "../../Components/Carousel/Carousel.tsx";
+import ProgressBar from "../../Components/ProgressBar/ProgressBar";
+import SectionComponent from "../../Components/Section/Section.tsx";
+import Data from "../../Model/Data-Model.tsx";
+import Input from "../../Model/Input-Model.tsx";
+import Section from "../../Model/Section-Model.tsx";
+import { FormClickActions } from "../../Utils/EventChannels.tsx";
+import { FertiliserForm, populateFromJSON } from "../../Utils/FormCreator.ts";
 import {
   SessionContext,
   SetSessionContext,
 } from "../../Utils/SessionContext.tsx";
-import Carousel from "../../Components/Carousel/Carousel.tsx";
-import ProgressBar from "../../Components/ProgressBar/ProgressBar";
-import SectionComponent from "../../Components/Section/Section.tsx";
-import Section from "../../Model/Section-Model.tsx";
-import Input from "../../Model/Input-Model.tsx";
-import Data from "../../Model/Data-Model.tsx";
-import { FormClickActions } from "../../Utils/EventChannels.tsx";
-import { useTranslation } from "react-i18next";
-import goUpIcon from "../../assets/goUpIcon.svg";
-import { FertiliserForm, populateFromJSON } from "../../Utils/FormCreator.ts";
+import "./FormPage.css";
 
 const FormPage = () => {
   // For local development
@@ -84,25 +84,28 @@ const FormPage = () => {
           "Access-Control-Allow-Headers":
             "Origin, Content-Type, X-Amz-Date, Authorization, X-Api-Key, X-Amz-Security-Token, locale",
           "Access-Control-Allow-Methods": "GET, POST",
-          Authorization: "Basic " + document.cookie.split("auth=")[1].split(";")[0],
+          Authorization:
+            "Basic " + document.cookie.split("auth=")[1].split(";")[0],
         },
         body: formData,
       })
     ).json();
 
     const auth = document.cookie.split("auth=")[1].split(";")[0];
-    return await (await fetch(api_url + "/inspections", {
-      method: "POST",
-      headers: {
-        "Access-Control-Allow-Origin": "*",
-        "Access-Control-Allow-Credentials": "true",
-        "Access-Control-Allow-Headers":
-          "Origin, Content-Type, X-Amz-Date, Authorization, X-Api-Key, X-Amz-S",
-        "Content-Type": "application/json",
-        Authorization: "Basic " + auth
-      },
-      body: JSON.stringify({ data: data }),
-    })).json();
+    return await (
+      await fetch(api_url + "/inspections", {
+        method: "POST",
+        headers: {
+          "Access-Control-Allow-Origin": "*",
+          "Access-Control-Allow-Credentials": "true",
+          "Access-Control-Allow-Headers":
+            "Origin, Content-Type, X-Amz-Date, Authorization, X-Api-Key, X-Amz-S",
+          "Content-Type": "application/json",
+          Authorization: "Basic " + auth,
+        },
+        body: JSON.stringify(data),
+      })
+    ).json();
   };
 
   const setForm = (response: unknown) => {
