@@ -130,10 +130,10 @@ h1 {
   left: 17px;
 }
 
-.center{
-    display: flex;
-    justify-content: center;
-    align-items: center;
+.center {
+  display: flex;
+  justify-content: center;
+  align-items: center;
 }
 
 .full-width {

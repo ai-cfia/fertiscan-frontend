@@ -7,7 +7,7 @@
   flex-direction: column;
 }
 
-#language{
+#language {
   display: flex;
 }
 
@@ -23,20 +23,21 @@
   border-radius: 5px;
 }
 
-
-
-#login,#uname,#password{
+#login,
+#uname,
+#password {
   display: flex;
   flex-direction: column;
   align-content: start;
   justify-content: start;
 }
 
-
-#uname label,#password label{
+#uname label,
+#password label {
   width: fit-content;
 }
-#uname input,#password input{
+#uname input,
+#password input {
   width: 20%;
   height: 1em;
   padding: 10px;
@@ -45,29 +46,29 @@
   text-align: left;
 }
 
-#validate-uname{
+#validate-uname {
   display: flex;
 }
-#validate-uname input{
+#validate-uname input {
   margin: auto 20px auto 0;
   width: fit-content;
 }
-#validate-uname p{
+#validate-uname p {
   width: 35%;
   text-align: left;
 }
-.settings hr{
+.settings hr {
   width: 100%;
 }
 
-.send-uname{
+.send-uname {
   width: fit-content;
 }
 
-.send-uname:disabled{
-  background-color: #666666!important;
+.send-uname:disabled {
+  background-color: #666666 !important;
   cursor: not-allowed;
 }
-.send-uname:disabled:hover{
-  transform: none!important;
+.send-uname:disabled:hover {
+  transform: none !important;
 }
