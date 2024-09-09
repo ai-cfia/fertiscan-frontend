@@ -7,8 +7,11 @@ import SideMenu from "./Components/SideMenu/SideMenu";
 import HomePage from "./Pages/HomePage/HomePage";
 import NoPage from "./Pages/NoPage/NoPage";
 import SettingPage from "./Pages/SettingPage/SettingPage";
+import SavedListPage from "./Pages/SavedListPage/SavedListPage";
 import { AlertProvider } from "./Utils/AlertContext";
 import { SessionProvider } from "./Utils/SessionContext";
+import LabelPage from "./Pages/LabelPage/LabelPage";
+import AlertBanner from "./Components/AlertBanner/AlertBanner";
 
 function App() {
   useEffect(() => {
@@ -23,11 +26,14 @@ function App() {
           <StrictMode>
             <Header />
             <SideMenu />
+            <AlertBanner />
           </StrictMode>
           <Routes>
             <Route path="/">
               <Route index element={<HomePage />} />
               <Route path="Settings" element={<SettingPage />} />
+              <Route path="Saved" element={<SavedListPage />} />
+              <Route path="Label/:labelId" element={<LabelPage />} />
               <Route path="*" element={<NoPage />} />
             </Route>
           </Routes>

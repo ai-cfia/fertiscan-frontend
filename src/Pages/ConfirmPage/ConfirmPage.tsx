@@ -1,110 +1,106 @@
-import Carousel from "../../Components/Carousel/Carousel";
-import Section from "../../Model/Section-Model.tsx";
-import Input from "../../Model/Input-Model.tsx";
-import "./ConfirmPage.css";
-import { useTranslation } from "react-i18next";
 import { useContext, useState } from "react";
+import { useTranslation } from "react-i18next";
+import Carousel from "../../Components/Carousel/Carousel";
+import Label from "../../Components/Label/Label.tsx";
+import Data from "../../Model/Data-Model.tsx";
+import { useAlert } from "../../Utils/AlertContext.tsx";
 import { SessionContext, SetSessionContext } from "../../Utils/SessionContext";
+import "./ConfirmPage.css";
 
 const ConfirmPage = () => {
   const { t } = useTranslation();
   const { state } = useContext(SessionContext);
   const { setState } = useContext(SetSessionContext);
   const data = state.data.form;
-
-  const renderInput = (inputInfo: Input) => {
-    if (inputInfo.isAlreadyTable) {
-      return renderListInput(inputInfo);
-    } else if (inputInfo.isInputObjectList) {
-      return renderObjectInput(inputInfo);
-    } else {
-      return inputInfo.value as unknown as string;
-    }
-  };
+  const { showAlert } = useAlert();
 
   const cancel = () => {
     setState({ ...state, state: "form" });
   };
 
-  const renderListInput = (inputInfo: Input) => {
-    return (
-      <ul>
-        {inputInfo.value.map((value, index) => (
-          <li key={index}>{value as string}</li>
-        ))}
-      </ul>
-    );
-  };
+  const submitForm = () => {
+    const to_send: {
+      [key: string]:
+        | string
+        | string[]
+        | { [key: string]: string }[]
+        | { [key: string]: string };
+    } = {
+      company_name: "",
+      company_address: "",
+      company_website: "",
+      company_phone_number: "",
+      manufacturer_name: "",
+      manufacturer_address: "",
+      manufacturer_website: "",
+      manufacturer_phone_number: "",
+      fertiliser_name: "",
+      registration_number: "",
+      lot_number: "",
+      weight: [],
+      density: {
+        value: "",
+        unit: "",
+      },
+      volume: {
+        value: "",
+        unit: "",
+      },
+      npk: "",
+      warranty: "",
+      cautions_en: [],
+      instructions_en: [],
+      micronutrients_en: [],
+      ingredients_en: [],
+      specifications_en: [],
+      first_aid_en: [],
+      cautions_fr: [],
+      instructions_fr: [],
+      micronutrients_fr: [],
+      ingredients_fr: [],
+      specifications_fr: [],
+      first_aid_fr: [],
+      guaranteed_analysis: [],
+    };
 
-  const renderObjectInput = (inputInfo: Input) => {
-    const keys = Object.keys(
-      (inputInfo.value as { [key: string]: string }[])[0],
-    );
-    return (
-      <div id={inputInfo.id} className="object-input">
-        <table>
-          <colgroup>
-            <col span={1} style={{ width: "40%" }} />
-            <col span={1} style={{ width: "20%" }} />
-            <col span={1} style={{ width: "15%" }} />
-          </colgroup>
-          <thead>
-            {keys.map((key, index) => {
-              return <th key={index}>{key}</th>;
-            })}
-          </thead>
-          <tbody>
-            {inputInfo.value.map((_obj, index) => {
-              return (
-                <tr key={index}>
-                  <td>
-                    <p>
-                      {
-                        (inputInfo.value[index] as { [key: string]: string })[
-                          keys[0]
-                        ]
-                      }
-                    </p>
-                  </td>
-                  <td>
-                    <p>
-                      {
-                        (inputInfo.value[index] as { [key: string]: string })[
-                          keys[1]
-                        ]
-                      }
-                    </p>
-                  </td>
-                  <td>
-                    <p>
-                      {
-                        (inputInfo.value[index] as { [key: string]: string })[
-                          keys[2]
-                        ]
-                      }
-                    </p>
-                  </td>
-                </tr>
-              );
-            })}
-          </tbody>
-        </table>
-      </div>
-    );
-  };
+    const flat_map = data.sections.flatMap((section) => section.inputs);
+    Object.keys(to_send).forEach((key) => {
+      const value =
+        flat_map.find((input) => input.id === key)!.value || undefined;
+      if (value) {
+        if (["string", "object"].indexOf(typeof to_send[key]) > -1) {
+          if (value[0]) {
+            to_send[key] = value[0];
+          }
+        } else {
+          to_send[key] = value;
+        }
+      }
+    });
 
-  const renderSection = (section: Section) => (
-    <div key={section.label} className="${theme}">
-      <h2>{t(section.title)}</h2>
-      <ul className="data-infos">
-        {section.inputs.map((input) => (
-          <li key={input.id}>
-            <b>{input.label}:</b> {renderInput(input)}
-          </li>
-        ))}
-      </ul>
-    </div>
-  );
+    fetch(process.env.VITE_API_URL + "/inspections", {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+        Authorization:
+          "Basic " + document.cookie.split("auth=")[1].split(";")[0],
+      },
+      body: JSON.stringify(to_send),
+    })
+      .then((response) => response.json())
+      .then((data) => {
+        if (data.error) {
+          throw new Error(data.error);
+        }
+        console.log("Success:", data);
+        setState({ state: "capture", data: { pics: [], form: new Data([]) } });
+        showAlert(t("confirmSuccess"), "confirm");
+      })
+      .catch((error) => {
+        console.error("Error:", error);
+        showAlert(t("confirmError") + ` : ${error}`, "error");
+      });
+  };
 
   const [isChecked, setIsChecked] = useState(false);
 
@@ -130,7 +126,7 @@ const ConfirmPage = () => {
         id={"carousel"}
       />
       <div className="confirm-container">
-        {data.sections.map((section: Section) => renderSection(section))}
+        <Label sections={data.sections} />
         <div className="checkbox-container">
           <input
             id="confirmation-checkbox"
@@ -149,7 +145,7 @@ const ConfirmPage = () => {
           </button>
           <button
             className="button-confirmPage"
-            onClick={() => console.log("Confirm")}
+            onClick={() => submitForm()}
             disabled={!isChecked}
           >
             {t("confirmButton")}

@@ -129,3 +129,13 @@ h1 {
 .switch.active .lever:after {
   left: 17px;
 }
+
+.center {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.full-width {
+  width: 100%;
+}

@@ -5,6 +5,7 @@
   --light-text: #333;
   --dark-background: #222;
   --dark-text: #fff;
+  --header-height:200px;
 }
 
 body {

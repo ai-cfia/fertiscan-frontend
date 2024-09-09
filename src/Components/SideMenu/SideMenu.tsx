@@ -5,6 +5,7 @@ import { useContext, useRef } from "react";
 import { useNavigate } from "react-router-dom";
 import home from "../../assets/home.svg";
 import settings from "../../assets/settings.svg";
+import list from "../../assets/list.svg";
 import { SessionContext, SetSessionContext } from "../../Utils/SessionContext";
 import Data from "../../Model/Data-Model";
 
@@ -15,27 +16,7 @@ function SideMenu() {
   const SideMenuRef = useRef<HTMLDivElement | null>(null);
   const navigate = useNavigate();
 
-  const goToHome = () => {
-    switch (state.state) {
-      case "FromCaptur":
-        setState({ ...state, state: "captur" });
-        break;
-      case "FromForm":
-        setState({ ...state, state: "form" });
-        break;
-      case "FromValidation":
-        setState({ ...state, state: "validation" });
-        break;
-      default:
-        setState({
-          state: "captur",
-          data: { pics: [], form: new Data([]) },
-        });
-    }
-    navigate("/");
-  };
-
-  const goToSettings = () => {
+  const saveState = () => {
     switch (state.state) {
       case "captur":
         setState({ ...state, state: "FromCaptur" });
@@ -49,7 +30,39 @@ function SideMenu() {
       default:
         break;
     }
+  };
+
+  const retrieveState = () => {
+    switch (state.state) {
+      case "FromCaptur":
+        setState({ ...state, state: "captur" });
+        break;
+      case "FromForm":
+        setState({ ...state, state: "form" });
+        break;
+      case "FromValidation":
+        setState({ ...state, state: "validation" });
+        break;
+      default:
+        setState({
+          state: "capture",
+          data: { pics: [], form: new Data([]) },
+        });
+    }
+  };
+
+  const goToHome = () => {
+    retrieveState();
+    navigate("/");
+  };
+
+  const goToSettings = () => {
+    saveState();
     navigate("/Settings");
+  };
+  const goToSavedList = () => {
+    saveState();
+    navigate("/Saved");
   };
 
   MenuChannel.on("OpenMenu", () => {
@@ -66,14 +79,25 @@ function SideMenu() {
           <li>
             {" "}
             <a className="side-menu_item" onClick={goToHome}>
-              <img className="menu-icon" src={home}></img>{" "}
+              <img alt="home icon" className="menu-icon" src={home}></img>{" "}
               <span>{t("home")}</span>
             </a>{" "}
           </li>
           <li>
             {" "}
+            <a className="side-menu_item" onClick={goToSavedList}>
+              <img alt="list icon" className="menu-icon" src={list}></img>{" "}
+              <span>savedList</span>
+            </a>{" "}
+          </li>
+          <li>
+            {" "}
             <a className="side-menu_item" onClick={goToSettings}>
-              <img className="menu-icon" src={settings}></img>{" "}
+              <img
+                alt="setting icon"
+                className="menu-icon"
+                src={settings}
+              ></img>{" "}
               <span>{t("settings")}</span>
             </a>{" "}
           </li>

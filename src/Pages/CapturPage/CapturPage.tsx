@@ -10,6 +10,7 @@ import {
   STATE_OBJECT_SIZE_LIMIT,
 } from "../../Utils/stateObject";
 import "./CapturPage.css";
+import { useAlert } from "../../Utils/AlertContext.tsx";
 
 function CapturPage() {
   const { t } = useTranslation();
@@ -19,6 +20,7 @@ function CapturPage() {
   const [, setNewFileName] = useState("");
   const { state } = useContext(SessionContext);
   const { setState } = useContext(SetSessionContext);
+  const { showAlert } = useAlert();
 
   const handlePhotoChange = (newFiles: File[]) => {
     const newPics: BlobData[] = [];
@@ -60,7 +62,14 @@ function CapturPage() {
   };
 
   const Submit = () => {
-    setState({ ...state, state: "form" });
+    if (
+      document.cookie.split(";").filter((item) => item.includes("auth="))
+        .length === 0
+    ) {
+      showAlert(t("mustLogin"), "error");
+    } else {
+      setState({ ...state, state: "form" });
+    }
   };
 
   const handleDeletion = (toDelete: BlobData, wasShown: boolean) => {

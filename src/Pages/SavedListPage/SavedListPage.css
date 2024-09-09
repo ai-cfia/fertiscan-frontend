@@ -1,0 +1,19 @@
+.saved-label-list {
+  display: flex;
+  flex-direction: row;
+  flex-wrap: wrap;
+  margin: 0 auto;
+  width: 100%;
+  height: calc(112vh - var(--header-height));
+  overflow-y: auto;
+  overflow-x: hidden;
+  padding-bottom: 20px;
+  justify-content: center;
+}
+
+.pagination-container {
+  flex-basis: 75%;
+  display: flex;
+  justify-content: center;
+  padding: 10px 0; /* Example padding, adjust as needed */
+}
