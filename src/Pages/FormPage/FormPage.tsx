@@ -121,7 +121,7 @@ const FormPage = () => {
       });
   };
 
-  const setForm = (response: unknown) => {
+  const setForm = (response: any) => {
     setData(populateFromJSON(data, response));
     updateData();
     setState({ ...state, data: { pics: blobs, form: data } });
