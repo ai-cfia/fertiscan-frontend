@@ -49,12 +49,13 @@ const access_from_str = (obj: Inspection, path: string) => {
   // eslint-disable-next-line
   // @ts-ignore
   return path.split(".").reduce((acc, part) => acc[part], obj);
-}
+};
 
+// eslint-disable-next-line
 const put_in_obj = (obj: Inspection, path: string, value: any) => {
-  let parts = path.split(".");
-  let last = parts.pop() as string;
-  let target = parts.reduce((acc, part) => {
+  const parts = path.split(".");
+  const last = parts.pop() as string;
+  const target = parts.reduce((acc, part) => {
     // eslint-disable-next-line
     // @ts-ignore
     if (!acc[part]) {
@@ -69,20 +70,20 @@ const put_in_obj = (obj: Inspection, path: string, value: any) => {
   // eslint-disable-next-line
   // @ts-ignore
   target[last] = value;
-}
+};
 
 // eslint-disable-next-line
 export const populateFromJSON = (form: Data, data: Inspection) => {
   form.sections.forEach((section) => {
     section.inputs.forEach((input) => {
-      let value = access_from_str(data, input.id);
+      const value = access_from_str(data, input.id);
       if (typeof value == "string") {
         input.value = [value];
       } else if (Array.isArray(value)) {
-        if(value.length == 0){
+        if (value.length == 0) {
           input.isAlreadyTable = true;
           input.value = [""];
-        } else if (typeof value[0] == "string" ) {
+        } else if (typeof value[0] == "string") {
           input.value = value;
           input.isAlreadyTable = true;
         } else if (typeof value[0] == "object") {
@@ -90,6 +91,7 @@ export const populateFromJSON = (form: Data, data: Inspection) => {
           input.isInputObjectList = true;
         }
       } else if (typeof value == "object") {
+        // eslint-disable-next-line
         // @ts-ignore
         input.value = [value];
       }
@@ -99,8 +101,10 @@ export const populateFromJSON = (form: Data, data: Inspection) => {
   return form.copy();
 };
 
-
-export const createInspectionFromData = (data: Data, inspection: Inspection) =>{
+export const createInspectionFromData = (
+  data: Data,
+  inspection: Inspection,
+) => {
   data.sections.forEach((section) => {
     section.inputs.forEach((input) => {
       if (input.isAlreadyTable) {
@@ -113,5 +117,4 @@ export const createInspectionFromData = (data: Data, inspection: Inspection) =>{
     });
   });
   return inspection;
-}
-
+};

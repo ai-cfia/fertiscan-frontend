@@ -21,25 +21,30 @@ const ConfirmPage = () => {
   };
 
   const submitForm = () => {
+    const inspection = createInspectionFromData(data, state.data.inspection);
 
-    let inspection = createInspectionFromData(data, state.data.inspection);
-
-    fetch(process.env.VITE_API_URL + "/inspections/"+inspection.inspection_id, {
-      method: "PUT",
-      headers: {
-        "Content-Type": "application/json",
-        Authorization:
-          "Basic " + document.cookie.split("auth=")[1].split(";")[0],
+    fetch(
+      process.env.VITE_API_URL + "/inspections/" + inspection.inspection_id,
+      {
+        method: "PUT",
+        headers: {
+          "Content-Type": "application/json",
+          Authorization:
+            "Basic " + document.cookie.split("auth=")[1].split(";")[0],
+        },
+        body: JSON.stringify(inspection),
       },
-      body: JSON.stringify(inspection),
-    })
+    )
       .then((response) => response.json())
       .then((data) => {
         if (data.error) {
           throw new Error(data.error);
         }
         console.log("Success:", data);
-        setState({ state: "capture", data: { pics: [], form: new Data([]), inspection:{} as Inspection } });
+        setState({
+          state: "capture",
+          data: { pics: [], form: new Data([]), inspection: {} as Inspection },
+        });
         showAlert(t("confirmSuccess"), "confirm");
       })
       .catch((error) => {
