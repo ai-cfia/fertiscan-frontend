@@ -58,7 +58,7 @@ export const populateFromJSON = (form: Data, data: Inspection) => {
       let value = access_from_str(data, input.id);
       console.log(`value of ${input.id} is ${value}`);
       if (typeof value == "string") {
-        input.value = value;
+        input.value = [value];
       } else if (Array.isArray(value) && value.length === 0) {
         input.value = [""];
         input.isAlreadyTable = true;
