@@ -54,21 +54,23 @@ const SavedListPage = () => {
           if (data.error) {
             setLabels([]);
           } else {
-
-            setLabels(data.map((label: any) => {
-              return {
-                inspection_id:label[0],
-                uploaded_at:label[1],
-                updated_at:label[2],
-                sample_id:label[3],
-                picture_set_id:label[4],
-                label_info_id:label[5],
-                label_info_name:label[6],
-                label_info_manufacturer_info_id:label[7],
-                company_info_id:label[8],
-                company_info_name:label[9],
-              };
-            }));
+            setLabels(
+              // eslint-disable-next-line
+              data.map((label: any) => {
+                return {
+                  inspection_id: label[0],
+                  uploaded_at: label[1],
+                  updated_at: label[2],
+                  sample_id: label[3],
+                  picture_set_id: label[4],
+                  label_info_id: label[5],
+                  label_info_name: label[6],
+                  label_info_manufacturer_info_id: label[7],
+                  company_info_id: label[8],
+                  company_info_name: label[9],
+                };
+              }),
+            );
           }
           setFetching(false);
         });

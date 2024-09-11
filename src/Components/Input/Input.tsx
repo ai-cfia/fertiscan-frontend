@@ -229,7 +229,7 @@ const InputComponent: React.FC<InputProps> = ({
   };
 
   const createObjectInput = () => {
-    console.log("got object")
+    console.log("got object");
     console.log(inputInfo.value);
     console.log(typeof inputInfo.value);
     const keys = Object.keys(
@@ -348,7 +348,12 @@ const InputComponent: React.FC<InputProps> = ({
   };
 
   const inputCreator = () => {
-    if (inputInfo.isInputObjectList || (Array.isArray(inputInfo.value)&& typeof inputInfo.value[0] == "object" && inputInfo.value[0] != null)) {
+    if (
+      inputInfo.isInputObjectList ||
+      (Array.isArray(inputInfo.value) &&
+        typeof inputInfo.value[0] == "object" &&
+        inputInfo.value[0] != null)
+    ) {
       return createObjectInput();
     } else if (inputInfo.isAlreadyTable) {
       return createListInput();

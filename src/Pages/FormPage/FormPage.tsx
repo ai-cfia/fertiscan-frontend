@@ -8,7 +8,11 @@ import Data from "../../Model/Data-Model.tsx";
 import Input from "../../Model/Input-Model.tsx";
 import Section from "../../Model/Section-Model.tsx";
 import { FormClickActions } from "../../Utils/EventChannels.tsx";
-import { createInspectionFromData, FertiliserForm, populateFromJSON } from "../../Utils/FormCreator.ts";
+import {
+  createInspectionFromData,
+  FertiliserForm,
+  populateFromJSON,
+} from "../../Utils/FormCreator.ts";
 import {
   SessionContext,
   SetSessionContext,
@@ -121,35 +125,55 @@ const FormPage = () => {
       });
   };
 
-
   const setForm = (response: Inspection) => {
-    if(response.product.metrics.density == null){
-      response.product.metrics.density = { edited: false, unit: null, value: null };
+    if (response.product.metrics.density == null) {
+      response.product.metrics.density = {
+        edited: false,
+        unit: null,
+        value: null,
+      };
     }
-    if(response.product.metrics.volume == null){
-      response.product.metrics.volume = { edited: false, unit: null, value: null };
+    if (response.product.metrics.volume == null) {
+      response.product.metrics.volume = {
+        edited: false,
+        unit: null,
+        value: null,
+      };
     }
-    if(response.product.metrics.weight.length==0){
-      response.product.metrics.weight = [{ edited: false, unit: null, value: null }];
+    if (response.product.metrics.weight.length == 0) {
+      response.product.metrics.weight = [
+        { edited: false, unit: null, value: null },
+      ];
     }
-    if(response.micronutrients.en.length == 0){
-      response.micronutrients.en = [{ edited: false, name: "", unit: "", value: null }];
+    if (response.micronutrients.en.length == 0) {
+      response.micronutrients.en = [
+        { edited: false, name: "", unit: "", value: null },
+      ];
     }
-    if(response.micronutrients.fr.length == 0){
-      response.micronutrients.fr = [{ edited: false, name: "", unit: "", value: null }];
+    if (response.micronutrients.fr.length == 0) {
+      response.micronutrients.fr = [
+        { edited: false, name: "", unit: "", value: null },
+      ];
     }
-    if(response.specifications.en.length == 0){
-      response.specifications.en = [{ edited: false, ph: null, solubility: null, humidity: null }];
+    if (response.specifications.en.length == 0) {
+      response.specifications.en = [
+        { edited: false, ph: null, solubility: null, humidity: null },
+      ];
     }
-    if(response.specifications.fr.length == 0){
-      response.specifications.fr = [{ edited: false, ph: null, solubility: null, humidity: null }];
+    if (response.specifications.fr.length == 0) {
+      response.specifications.fr = [
+        { edited: false, ph: null, solubility: null, humidity: null },
+      ];
     }
-    if(response.product.npk == null){
+    if (response.product.npk == null) {
       response.product.npk = "";
     }
     setData(populateFromJSON(data, response));
     updateData();
-    setState({ ...state, data: { pics: blobs, form: data, inspection: response} });
+    setState({
+      ...state,
+      data: { pics: blobs, form: data, inspection: response },
+    });
   };
 
   const updateData = () => {
@@ -223,8 +247,14 @@ const FormPage = () => {
   const submitForm = () => {
     const isValid = validateFormInputs();
     setData(data.copy());
-    let new_inspection = createInspectionFromData(data, state.data.inspection);
-    setState({ ...state, data: { pics: blobs, form: data, inspection: new_inspection} });
+    const new_inspection = createInspectionFromData(
+      data,
+      state.data.inspection,
+    );
+    setState({
+      ...state,
+      data: { pics: blobs, form: data, inspection: new_inspection },
+    });
     if (isValid) {
       setState({ ...state, state: "validation" });
     }
@@ -235,8 +265,14 @@ const FormPage = () => {
     new_data.sections.find((cur) => cur.label == newSection.label) !=
       newSection;
     setData(new_data);
-    let new_inspection = createInspectionFromData(new_data, state.data.inspection);
-    setState({ ...state, data: { pics: blobs, form: new_data, inspection : new_inspection } });
+    const new_inspection = createInspectionFromData(
+      new_data,
+      state.data.inspection,
+    );
+    setState({
+      ...state,
+      data: { pics: blobs, form: new_data, inspection: new_inspection },
+    });
   };
 
   useEffect(() => {
