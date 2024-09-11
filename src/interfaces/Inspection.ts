@@ -1,4 +1,4 @@
-interface Inspection {
+export interface Inspection {
   "cautions": {
     "en": string[],
     "fr": string[],
@@ -47,8 +47,18 @@ interface Inspection {
     "website": string|null
   },
   "micronutrients": {
-    "en": string[],
-    "fr": string[]
+    "en":{
+        "edited": boolean,
+        "name": string|null,
+        "unit": string|null,
+        "value": number|null
+      }[],
+    "fr": {
+      "edited": boolean,
+      "name": string|null,
+      "unit": string|null,
+      "value": number|null
+    }[],
   },
   "product": {
     "k": number|null,
@@ -79,11 +89,122 @@ interface Inspection {
     "warranty": string|null
   },
   "specifications": {
-    "en": string[],
-    "fr": string[]
+    "en": {
+      "edited": boolean,
+      "ph": number|null,
+      "solubility": number|null,
+      "humidity": number|null
+    }[],
+    "fr": {
+      "edited": boolean,
+      "ph": number|null,
+      "solubility": number|null,
+      "humidity": number|null
+    }[]
   },
   "verified": boolean
 }
 
+export function emptyInspection  () {return{
+  cautions: {
+    en: [],
+    fr: [],
+  },
+  company: {
+    address: "",
+    id: "",
+    name: "",
+    phone_number: "",
+    website: "",
+  },
+  first_aid: {
+    en: [],
+    fr: [],
+  },
+  guaranteed_analysis: [],
+  ingredients: {
+    en: [],
+    fr: [],
+  },
+  inspection_id: "",
+  instructions: {
+    en: [],
+    fr: [],
+  },
+  manufacturer: {
+    address: "",
+    id: "",
+    name: "",
+    phone_number: "",
+    website: "",
+  },
+  micronutrients: {
+    en: [
+      {
+        edited: false,
+        name: "",
+        unit: "",
+        value: null,
+      }
+    ],
+    fr: [
+      {
+        edited: false,
+        name: "",
+        unit: "",
+        value: null,
+      }
+    ],
+  },
+  product: {
+    k: null,
+    label_id: "",
+    lot_number: "",
+    metrics: {
+      density: {
+        edited: false,
+        unit: "",
+        value: null,
+      },
+      volume: {
+        edited: false,
+        unit: "",
+        value: null,
+      },
+      weight: [
+        {
+          edited: false,
+          unit: "",
+          value: null,
+        }
+      ],
+    },
+    n: null,
+    name: "",
+    npk: "",
+    p: null,
+    registration_number: "",
+    warranty: "",
+  },
+  specifications: {
+    en: [
+      {
+        edited: false,
+        ph: null,
+        solubility: null,
+        humidity: null,
+      }
+    ],
+    fr: [
+      {
+        edited: false,
+        ph: null,
+        solubility: null,
+        humidity: null,
+      }
+    ],
+  },
+  verified: false,
+}}
 
 export default Inspection;

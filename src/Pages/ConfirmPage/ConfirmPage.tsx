@@ -6,6 +6,8 @@ import Data from "../../Model/Data-Model.tsx";
 import { useAlert } from "../../Utils/AlertContext.tsx";
 import { SessionContext, SetSessionContext } from "../../Utils/SessionContext";
 import "./ConfirmPage.css";
+import Inspection from "../../interfaces/Inspection.ts";
+import { createInspectionFromData } from "../../Utils/FormCreator.ts";
 
 const ConfirmPage = () => {
   const { t } = useTranslation();
@@ -19,73 +21,17 @@ const ConfirmPage = () => {
   };
 
   const submitForm = () => {
-    const to_send: {
-      [key: string]:
-        | string
-        | string[]
-        | { [key: string]: string }[]
-        | { [key: string]: string };
-    } = {
-      company_name: "",
-      company_address: "",
-      company_website: "",
-      company_phone_number: "",
-      manufacturer_name: "",
-      manufacturer_address: "",
-      manufacturer_website: "",
-      manufacturer_phone_number: "",
-      fertiliser_name: "",
-      registration_number: "",
-      lot_number: "",
-      weight: [],
-      density: {
-        value: "",
-        unit: "",
-      },
-      volume: {
-        value: "",
-        unit: "",
-      },
-      npk: "",
-      warranty: "",
-      cautions_en: [],
-      instructions_en: [],
-      micronutrients_en: [],
-      ingredients_en: [],
-      specifications_en: [],
-      first_aid_en: [],
-      cautions_fr: [],
-      instructions_fr: [],
-      micronutrients_fr: [],
-      ingredients_fr: [],
-      specifications_fr: [],
-      first_aid_fr: [],
-      guaranteed_analysis: [],
-    };
 
-    const flat_map = data.sections.flatMap((section) => section.inputs);
-    Object.keys(to_send).forEach((key) => {
-      const value =
-        flat_map.find((input) => input.id === key)!.value || undefined;
-      if (value) {
-        if (["string", "object"].indexOf(typeof to_send[key]) > -1) {
-          if (value[0]) {
-            to_send[key] = value[0];
-          }
-        } else {
-          to_send[key] = value;
-        }
-      }
-    });
+    let inspection = createInspectionFromData(data, state.data.inspection);
 
-    fetch(process.env.VITE_API_URL + "/inspections", {
-      method: "POST",
+    fetch(process.env.VITE_API_URL + "/inspections/"+inspection.inspection_id, {
+      method: "PUT",
       headers: {
         "Content-Type": "application/json",
         Authorization:
           "Basic " + document.cookie.split("auth=")[1].split(";")[0],
       },
-      body: JSON.stringify(to_send),
+      body: JSON.stringify(inspection),
     })
       .then((response) => response.json())
       .then((data) => {
@@ -93,7 +39,7 @@ const ConfirmPage = () => {
           throw new Error(data.error);
         }
         console.log("Success:", data);
-        setState({ state: "capture", data: { pics: [], form: new Data([]) } });
+        setState({ state: "capture", data: { pics: [], form: new Data([]), inspection:{} as Inspection } });
         showAlert(t("confirmSuccess"), "confirm");
       })
       .catch((error) => {

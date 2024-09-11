@@ -229,6 +229,9 @@ const InputComponent: React.FC<InputProps> = ({
   };
 
   const createObjectInput = () => {
+    console.log("got object")
+    console.log(inputInfo.value);
+    console.log(typeof inputInfo.value);
     const keys = Object.keys(
       (inputInfo.value as { [key: string]: string }[])[0],
     );
@@ -278,13 +281,12 @@ const InputComponent: React.FC<InputProps> = ({
                           }
                           disabled={inputInfo.disabled}
                           onChange={(event) => {
-                            const newValue = {
+                            inputInfo.value[index] = {
                               ...(inputInfo.value[index] as {
                                 [key: string]: string;
                               }),
                               [keys[keyIndex]]: event.target.value,
                             };
-                            inputInfo.value[index] = newValue;
                             propagateChange(inputInfo);
                           }}
                           onInput={(event) => {
@@ -346,7 +348,7 @@ const InputComponent: React.FC<InputProps> = ({
   };
 
   const inputCreator = () => {
-    if (inputInfo.isInputObjectList) {
+    if (inputInfo.isInputObjectList || (Array.isArray(inputInfo.value)&& typeof inputInfo.value[0] == "object" && inputInfo.value[0] != null)) {
       return createObjectInput();
     } else if (inputInfo.isAlreadyTable) {
       return createListInput();

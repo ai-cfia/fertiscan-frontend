@@ -13,7 +13,7 @@ const Label = ({ sections }: LabelProps) => {
   const renderInput = (inputInfo: Input) => {
     if (inputInfo.isAlreadyTable) {
       return renderListInput(inputInfo);
-    } else if (inputInfo.isInputObjectList) {
+    }else if (inputInfo.isInputObjectList || (Array.isArray(inputInfo.value)&& typeof inputInfo.value[0] == "object" && inputInfo.value[0] != null)) {
       return renderObjectInput(inputInfo);
     } else {
       return inputInfo.value as unknown as string;

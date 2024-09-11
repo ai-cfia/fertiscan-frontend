@@ -51,44 +51,67 @@ const access_from_str = (obj: Inspection, path: string) => {
   return path.split(".").reduce((acc, part) => acc[part], obj);
 }
 
+const put_in_obj = (obj: Inspection, path: string, value: any) => {
+  let parts = path.split(".");
+  let last = parts.pop() as string;
+  let target = parts.reduce((acc, part) => {
+    // eslint-disable-next-line
+    // @ts-ignore
+    if (!acc[part]) {
+      // eslint-disable-next-line
+      // @ts-ignore
+      acc[part] = {};
+    }
+    // eslint-disable-next-line
+    // @ts-ignore
+    return acc[part];
+  }, obj);
+  // eslint-disable-next-line
+  // @ts-ignore
+  target[last] = value;
+}
+
 // eslint-disable-next-line
 export const populateFromJSON = (form: Data, data: Inspection) => {
   form.sections.forEach((section) => {
     section.inputs.forEach((input) => {
       let value = access_from_str(data, input.id);
-      console.log(`value of ${input.id} is ${value}`);
       if (typeof value == "string") {
         input.value = [value];
-      } else if (Array.isArray(value) && value.length === 0) {
-        input.value = [""];
-        input.isAlreadyTable = true;
-      } else if (
-        Array.isArray(value) &&
-        typeof value[0] == "string"
-      ) {
-        input.value = value;
-        input.isAlreadyTable = true;
-      } else if (
-        Array.isArray(value) &&
-        typeof value[0] == "object"
-      ) {
-        input.value = value;
-        input.isInputObjectList = true;
-      } else if (typeof value == "object" && value != null) {
+      } else if (Array.isArray(value)) {
+        if(value.length == 0){
+          input.isAlreadyTable = true;
+          input.value = [""];
+        } else if (typeof value[0] == "string" ) {
+          input.value = value;
+          input.isAlreadyTable = true;
+        } else if (typeof value[0] == "object") {
+          input.value = value;
+          input.isInputObjectList = true;
+        }
+      } else if (typeof value == "object") {
         // @ts-ignore
         input.value = [value];
-        input.isInputObjectList = true;
-      } else if (input.id == "density" || input.id == "volume") {
-        input.value = [
-          {
-            value: "",
-            unit: "",
-          },
-        ];
-        input.isInputObjectList = true;
       }
     });
   });
   // for state update the function must return a new object
   return form.copy();
 };
+
+
+export const createInspectionFromData = (data: Data, inspection: Inspection) =>{
+  data.sections.forEach((section) => {
+    section.inputs.forEach((input) => {
+      if (input.isAlreadyTable) {
+        put_in_obj(inspection, input.id, input.value);
+      } else if (input.isInputObjectList) {
+        put_in_obj(inspection, input.id, input.value);
+      } else {
+        put_in_obj(inspection, input.id, input.value[0]);
+      }
+    });
+  });
+  return inspection;
+}
+

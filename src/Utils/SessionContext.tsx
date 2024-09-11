@@ -8,13 +8,14 @@ import {
   calculateStateObjectSize,
   stateObjectExceedsLimit,
 } from "./stateObject";
+import Inspection from "../interfaces/Inspection.ts";
 
 interface SessionContextType {
   state: StateType;
 }
 
 export const SessionContext = createContext<SessionContextType>({
-  state: { state: "capture", data: { pics: [], form: new Data([]) } },
+  state: { state: "capture", data: { pics: [], form: new Data([]), inspection: {} as Inspection } },
 });
 
 export const SetSessionContext = createContext({
@@ -24,6 +25,7 @@ export const SetSessionContext = createContext({
     data: {
       pics: BlobData[];
       form: Data;
+      inspection: Inspection;
     };
   }) => {},
 });
@@ -32,10 +34,10 @@ export const SetSessionContext = createContext({
 export const SessionProvider = ({ children }: React.PropsWithChildren<{}>) => {
   const initialState: {
     state: string;
-    data: { pics: BlobData[]; form: Data };
+    data: { pics: BlobData[]; form: Data; inspection: Inspection };
   } = sessionStorage.getItem("state")
     ? JSON.parse(sessionStorage.getItem("state")!)
-    : { state: "capture", data: { pics: [], form: new Data([]) } };
+    : { state: "capture", data: { pics: [], form: new Data([]), inspection: {} as Inspection } };
   const { showAlert } = useAlert();
 
   const stateReducer = (_state: StateType, newState: StateType) => {

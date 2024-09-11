@@ -25,6 +25,7 @@ function LabelPage() {
       })
         .then((r) => r.json())
         .then((data) => {
+          data = JSON.parse(data);
           setLabel(populateFromJSON(label, data));
         });
     }

@@ -2,7 +2,7 @@ import { describe, expect, it } from "vitest";
 import StateType from "../interfaces/StateType";
 import Data from "../Model/Data-Model";
 import { stateObjectExceedsLimit } from "./stateObject";
-
+import Inspection from "../interfaces/Inspection.ts";
 describe("State Object Size tests", () => {
   it("should return true if the state object size exceeds the limit", () => {
     const mockState: StateType = {
@@ -22,6 +22,7 @@ describe("State Object Size tests", () => {
           },
         ],
         form: new Data([]),
+        inspection: {} as Inspection,
       },
       state: "",
     };
@@ -49,6 +50,7 @@ describe("State Object Size tests", () => {
           },
         ],
         form: new Data([]),
+        inspection: {} as Inspection,
       },
       state: "",
     };

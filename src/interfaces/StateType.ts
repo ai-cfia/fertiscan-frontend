@@ -1,5 +1,6 @@
 import Data from "../Model/Data-Model";
 import BlobData from "./BlobData";
+import Inspection from "./Inspection.ts";
 
 /**
  * Interface representing the global state of the application.
@@ -13,6 +14,7 @@ interface StateType {
     pics: BlobData[];
     /** The fertilizer inspection form data associated with the current state. */
     form: Data;
+    inspection: Inspection;
   };
 }
 
