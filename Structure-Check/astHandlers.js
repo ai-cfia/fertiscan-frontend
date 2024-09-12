@@ -17,6 +17,7 @@ const {
     visitedNodes,
     sections
 } = require('./sections')
+const { codeFrameColumns } = require("@babel/code-frame");
 
 const {   
     isReactComponent,    
@@ -42,8 +43,12 @@ const {
     checkDeclarationKeyword,    
     reportVariablePlacementIssue   
 } = require('./utils'); 
-const { program } = require('blessed');
-const { isCallExpression } = require('typescript');
+const { isCallExpression, isStatement } = require('typescript');
+
+const {
+    parseFile, createBackup, readFileContent, writeFileContent
+} = require('./fileOperations');
+const { STATEMENT_TYPES } = require('@babel/types');
 
 /**
  * Processes an ImportDeclaration within the AST to ensure that imports are declared before other specific code constructs.
@@ -1057,88 +1062,138 @@ function hasDisableCheckComment(path) {
 }
 
 /**
+ * Handles expression statements and logs their detection.
+ * Processes and categorizes the expressions based on specified criteria.
+ *
+ * @function handleExpressionStatement
+ * @param {Object} path - The Babel path object for the expression statement node.
+ * @param {Object} state - The state object that keeps track of various code states.
+ * @param {string} filePath - The file path of the current file being processed.
+ */
+const handleExpressionStatement = (path, state, filePath) => {
+    console.log('Expression statement detected:', path.node.type);
+
+    if (path.node.expression) {
+        const expressionType = path.node.expression.type;
+        console.log('Expression type:', expressionType);
+
+        // Add your processing logic here
+        // Example: Push expression to a specific section
+        sections.expressions.push(path.node);
+    } else {
+        console.warn('Expression statement without expression:', path.node);
+    }
+};
+
+
+const handleBlockStatement = (path, state, filePath, sections) => {
+    console.log('Block statement detected:', path.node.type);
+    sections.statements.push(path.node);
+};
+
+const handleIfStatement = (path, state, filePath, sections) => {
+    console.log('Statement detected:', path.node.type);
+
+    // Check if the node is a known statement type and add additional logic if needed
+    if (path.node.type) {
+        sections.statements.push(path.node);
+    } else {
+        console.warn('Unhandled statement type:', path.node);
+    }
+};
+
+/**
  * General traversal function for React components and hooks.
  *
  * @param {Path} path - The root path of the component or hook.
  * @param {State} state - The state object to maintain the traversal state.
  * @param {string} filePath - The path to the current file being processed.
  */
-const traverseReactComponent = (path, state, filePath) => {  
+const traverseReactComponent = (path, state, filePath) => {
     const innerSection = createSection();
     console.log('Traversing React component or hook...');
 
-    const visitor = {  
-        VariableDeclaration(innerPath) {  
-            console.log('Visiting VariableDeclaration:', innerPath.node.type);
-            if (!visitedNodes.has(innerPath.node) && !hasDisableCheckComment(innerPath)) {  
-                innerPath.node.code = generate(innerPath.node).code;
-                innerPath.get('declarations').forEach(declaratorPath => {  
-                    let visitedNode = handleVariableDeclarator(declaratorPath, state, filePath, true);
-                    if (visitedNode) {  
-                        visitedNodes.add(visitedNode);  
-                        visitedNode.code = generate(visitedNode).code; // Generate code snippet for the node
-                    }  
-                });  
-            }  
-        },  
-        CallExpression(innerPath) {  
-            console.log('Visiting CallExpression:', innerPath.node.type);
-            if (!visitedNodes.has(innerPath.node) && !hasDisableCheckComment(innerPath)) {  
-                visitedNodes.add(innerPath.node);  
-                checkForContextUsageOrder(innerPath, filePath);  
-                const type = handleHooksAndEffects(innerPath, state, filePath, innerSection);
-                if (type) {  
-                    innerPath.node.code = generate(innerPath.node).code; // Generate code snippet for the node
-                }  
-            }  
-        },  
-        ReturnStatement(innerPath) {  
-            console.log('Visiting ReturnStatement:', innerPath.node.type);
-            if (!visitedNodes.has(innerPath.node) && !hasDisableCheckComment(innerPath)) {  
-                visitedNodes.add(innerPath.node);  
-                let innerReturn = handleReturnStatement(innerPath, state, filePath);
+    const visitor = {
+        enter(path) {
+            const node = path.node;
+            if (node.leadingComments || node.trailingComments) {
+                node.code = codeFrameColumns(readFileContent(filePath), node.loc, { highlightCode: true });
+            } else {
+                console.error(`Null or undefined node encountered at enter path: ${path.toString()}`);
             }
-        },  
-        JSXElement(innerPath) {  
-            console.log('Visiting JSXElement:', innerPath.node.type);
-            if (!visitedNodes.has(innerPath.node) && !hasDisableCheckComment(innerPath)) {  
-                visitedNodes.add(innerPath.node);  
-                handleJSXElement(innerPath, state, filePath);
-                innerPath.node.code = generate(innerPath.node).code; // Generate code snippet for the node
+        },
+        ImportDeclaration(path) {
+            handleNode(path, handleImportDeclaration, state, filePath, sections);
+        },
+        VariableDeclaration(path) {
+            if (isMainFunctionComponent(path, state, filePath)) {
+                handleNode(path, handleMainReactComponent, state, filePath, sections);
+            } else {
+                path.get('declarations').forEach(declaratorPath => {
+                    handleNode(declaratorPath, handleVariableDeclarator, state, filePath, sections);
+                });
             }
-        },  
-        FunctionExpression(innerPath) {  
-            console.log('Visiting FunctionExpression:', innerPath.node.type);
-            if (!visitedNodes.has(innerPath.node) && !hasDisableCheckComment(innerPath)) {  
-                visitedNodes.add(innerPath.node); 
-                let innerSection = traverseReactComponent(innerPath, state, filePath);
-                let innerSectionWrapper = createInnerSection(innerPath.node);
-                innerSectionWrapper.node.code = generate(innerPath.node).code; // Generate code snippet for the node
-                innerSectionWrapper.section = innerSection;
-
-                let type = handleHelperFunctionDeclaration(innerPath, state, filePath);  
-                switch(type) {  
-                    case "helperFunctions":
-                        innerSection.helperFunctions.push(innerSectionWrapper);
-                        break;
-                }  
+        },
+        TSTypeAliasDeclaration(path) {
+            handleNode(path, handleTSTypeAliasDeclaration, state, filePath, sections);
+        },
+        TSInterfaceDeclaration(path) {
+            handleNode(path, handleTSInterfaceDeclaration, state, filePath, sections);
+        },
+        TSEnumDeclaration(path) {
+            handleNode(path, handleTSEnumDeclaration, state, filePath, sections);
+        },
+        FunctionDeclaration(path) {
+            if (isMainFunctionComponent(path, state, filePath)) {
+                handleNode(path, handleMainReactComponent, state, filePath, sections);
+            } else {
+                handleNode(path, handleHelperFunctionDeclaration, state, filePath, sections);
             }
-        },  
-        ArrowFunctionExpression(innerPath) {  
-            console.log('Visiting ArrowFunctionExpression:', innerPath.node.type);
-            if (!visitedNodes.has(innerPath.node) && !hasDisableCheckComment(innerPath)) {  
-                let visitedNode = handleFunctionExpressionsAndArrowFunctions(innerPath, state, filePath);
-                if (visitedNode) {
-                    visitedNodes.add(visitedNode);
-                    visitedNode.code = generate(visitedNode).code; // Generate code snippet for the node
-                }  
+        },
+        'ArrowFunctionExpression|FunctionExpression': {
+            enter(path) {
+                if (isMainFunctionComponent(path, state, filePath)) {
+                    handleNode(path, handleMainReactComponent, state, filePath, sections);
+                } else {
+                    handleNode(path, handleFunctionExpressionsAndArrowFunctions, state, filePath, sections);
+                }
             }
-        },  
-        
-        exit(innerPath) {  
-            if (innerPath === path) {  
-                exitReactComponent(state);  
-            }  
+        },
+        ClassDeclaration(path) {
+            handleNode(path, handleClassComponent, state, filePath, sections);
+        },
+        CallExpression(path) {
+            if (isMainFunctionComponent(path, state, filePath)) {
+                handleNode(path, handleMainReactComponent, state, filePath, sections);
+            } else {
+                handleNode(path, handleHooksAndEffects, state, filePath, sections);
+            }
+        },
+        TaggedTemplateExpression(path) {
+            handleNode(path, handleStyledComponent, state, filePath, sections);
+        },
+        ReturnStatement(path) {
+            handleNode(path, handleReturnStatement, state, filePath, sections);
+        },
+        'ExportNamedDeclaration|ExportDefaultDeclaration'(path) {
+            handleNode(path, handleExportDeclarations, state, filePath, sections);
+        },
+        ExpressionStatement(path) {
+            handleNode(path, handleExpressionStatement, state, filePath, sections);
+        },
+        BlockStatement(path) {
+            handleNode(path, handleBlockStatement, state, filePath, sections); // Ajoutez la gestion du BlockStatement
+        },
+        IfStatement(path) {
+            handleNode(path, handleIfStatement, state, filePath, sections); // Ajoutez la gestion du IfStatement
+        },
+        Statement(path) {
+            handleNode(path, handleStatement, state, filePath, sections); // Add the handling for Statement
+        },
+        exit(innerPath) {
+            if (innerPath === path) {
+                exitReactComponent(state);
+            }
         }
     };
 
@@ -1149,9 +1204,7 @@ const traverseReactComponent = (path, state, filePath) => {
     }
 
     return innerSection;
-};
-
-
+}
 
 /**
  * Processes a function type by delegating to the appropriate handler function based on the type.
@@ -1213,6 +1266,72 @@ function processFunctionType(type, path, state, filePath) {
 }
 
 
+const handleNode = (path, handler, state, filePath, sections) => {
+    const node = path.node;
+    if (node && !visitedNodes.has(node) && !hasDisableCheckComment(path)) {
+        if(node.type){
+           visitedNodes.add(node);
+           console.log(`Visiting node: ${node.type}`);
+           handler(path, state, filePath, sections);
+        }else{
+           console.error('Unknown node type or node is null', node);
+           handleUnknownNode(node, path);
+        }
+    } else {
+        if (!node) console.error("Null or undefined node encountered:", path.toString());
+    }
+};
+
+/**
+ * Handles unknown nodes during AST traversal.
+ *
+ * @param {Object} node - The unknown node to be handled.
+ * @param {Object} path - The Babel path object for the unknown node.
+ */
+const handleUnknownNode = (node, path) => {
+    console.warn(`Unknown node type encountered: ${node ? node.type : 'null'}`);
+    if (node && path) {
+        sections.others.push({
+            node,
+            code: node.code, // Add code if available,
+            loc: path.node.loc
+        });
+    }
+};
+
+/**
+ * Handles general statement nodes within the code.
+ * Logs the detection of a statement and pushes it to the appropriate section.
+ *
+ * @function handleStatement
+ * @param {Object} path - The Babel path object for the statement node.
+ * @param {Object} state - The state object that keeps track of various code states.
+ * @param {string} filePath - The file path of the current file being processed.
+ */
+const handleStatement = (path, state, filePath) => {
+    console.log('Statement detected:', path.node.type);
+
+    // Check if the node is a known statement type and add additional logic if needed
+    if (path.node.type) {
+        sections.statements.push(path.node);
+    } else {
+        console.warn('Unhandled statement type:', path.node);
+    }
+};
+
+function sanitizeParsedCode(parsedCode) {
+    return parsedCode.body.filter(node => t.isStatement(node));
+}
+
+try {
+    const sanitizedCode = t.program(sanitizeParsedCode(parsedCode));
+    const outputCode = generate(sanitizedCode, {}).code;
+    writeFileContent(newFilePath, outputCode);
+} catch (error) {
+    console.error('Error generating code:', error);
+}
+
+
 
 module.exports = {  
 handleImportDeclaration,  
@@ -1236,6 +1355,11 @@ handleClassComponent,
 handleHooksAndEffects,  
 handleContextCreation,
 processFunctionType,
+handleExpressionStatement,
+handleBlockStatement,
+handleIfStatement,
+sanitizeParsedCode,
+
 };  
 
 

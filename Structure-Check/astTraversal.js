@@ -5,7 +5,9 @@ const { createStateTracker } = require('./stateManagement');
 const generate = require('@babel/generator').default;
 const { statSync, readFileSync, writeFileSync } = require('fs');
 const fs = require('fs');
-const path = require('path');    
+const path = require('path');
+const {t}  = require('./common');
+const { parse } = require('@babel/parser');
 
 const {
     createSection, createInnerSection, createInnerReturn, createMainComponent,
@@ -21,10 +23,10 @@ const {
     handleLocalConstantDeclaration, handleMainReactComponent, handleHelperFunctionDeclaration,
     handleFunctionExpressionsAndArrowFunctions, handleExportDeclarations,
     handleJSXElement, handleReturnStatement, handleUseContext, handleClassComponent,
-    handleClassMethod, handleHooksAndEffects, handleContextCreation, processFunctionType
+    handleClassMethod, handleHooksAndEffects, handleContextCreation, processFunctionType, handleIfStatement, sanitizeParsedCode
 } = require('./astHandlers.js');
 const {
-    isMainFunctionComponent, isExportDeclarationWithName, 
+    isMainFunctionComponent, isExportDeclarationWithName,
     getMainComponentNameFromFileName, isGlobalConstant, isLocalConstant
 } = require('./utils');
 
@@ -39,7 +41,7 @@ const checkFile = async (filePath, state) => {
             stateHooks: [], effectHooks: [], handlers: [], helperFunctions: [], components: [],
             classComponents: [], classMethods: [], classProperties: [], returns: [], styledComponent: [],
             functionalComponent: [], types: { TSInterfaceDeclaration: [], TSTypeAliasDeclaration: [], TSEnumDeclaration: [] },
-            exports: [], mainComponent: null, nodes: [], others: []  // Initialize others
+            exports: [], mainComponent: null, nodes: [], others: [], expressions: [], statements: [] // Initialize others
         };
 
         traverse(ast, setupTraverse(state, filePath, sections));
@@ -56,7 +58,7 @@ const setupTraverse = (state, filePath, sections) => {
     return {
         enter(path) {
             const node = path.node;
-            if (node) {
+            if (node && !t.isComment(node)) {
                 node.code = codeFrameColumns(readFileContent(filePath), node.loc, { highlightCode: true });
             } else {
                 console.error(`Null or undefined node encountered at enter path: ${path.toString()}`);
@@ -117,36 +119,80 @@ const setupTraverse = (state, filePath, sections) => {
         },
         'ExportNamedDeclaration|ExportDefaultDeclaration'(path) {
             handleNode(path, handleExportDeclarations, state, filePath, sections);
+        },
+        // General statement handling moved here
+        enter(path) {
+            if (path.isStatement() && !path.isReturnStatement()) { // Ensure we're not double-handling return statements
+                handleNode(path, handleIfStatement, state, filePath, sections);
+            }
+        },
+        exit(innerPath) {
+            if (innerPath === path) {
+                exitReactComponent(state);
+            }
         }
     };
 };
 
 const handleNode = (path, handler, state, filePath, sections) => {
     const node = path.node;
-    if (node && !visitedNodes.has(node) && !hasDisableCheckComment(path)) {
+    if (node && !visitedNodes.has(node) && !hasDisableCheckComment(path) && isValidNodeType(node)) {
         visitedNodes.add(node);
         console.log(`Visiting node: ${node.type}`);
-        handler(path, state, filePath, sections);
+        if (typeof handler === 'function') { // Ensure handler is a function
+            handler(path, state, filePath, sections);
+        } else {
+            console.error(`Handler is not a function for node type: ${node.type}`);
+        }
     } else {
-        if (!node) console.error("Null or undefined node encountered:", path.toString());
+        if (!node) {
+            console.error("Null or undefined node encountered:", path.toString());
+        } else if (!isValidNodeType(node)) {
+            console.error(`Invalid node type: ${node.type}`);
+            handleUnknownNode(node, path); // Handle the unknown node appropriately.
+        }
     }
 };
 
-const reorderCode = (sections) => {
+function hasDisableCheckComment(path) {
+    const containsDisableCheck = (comments) => {
+        return Array.isArray(comments) && comments.some((comment) => comment.value.includes('disable-check'));
+    };
+
+    let leadingComments = path.node.leadingComments;
+    return containsDisableCheck(leadingComments);
+}
+
+/**
+ * Handles unknown nodes during AST traversal.
+ *
+ * @param {Object} node - The unknown node to be handled.
+ * @param {Object} path - The Babel path object for the unknown node.
+ */
+const handleUnknownNode = (node, path) => {
+    console.warn(`Unknown node type encountered: ${node ? node.type : 'null'}`);
+    if (node && path) {
+        sections.others.push({
+            node,
+            code: node.code, // Add code if available,
+            loc: path.node.loc
+        });
+    }
+};
+
+const reorderCode = () => {
     const log = [];
     const unknownNodes = [];
-    const invalidNodes = [];  // Pour les nœuds invalides ou problématiques
 
-    // Validate the sections structure upfront
     console.log('Debug: Sections structure before processing:', sections);
 
-    // Create a list of known sections and their content
     const orderedSections = [
         ...sections.imports,
-        ...sections.constants,
-        ...sections.localConstants.values(),
         ...sections.contexts,
+        ...sections.constants,
+        ...Array.from(sections.localConstants.values()).flat(),
         ...sections.hooks,
+        ...sections.functionalComponent,
         ...sections.stateHooks,
         ...sections.effectHooks,
         ...sections.handlers,
@@ -154,138 +200,74 @@ const reorderCode = (sections) => {
         ...sections.types.TSTypeAliasDeclaration,
         ...sections.types.TSEnumDeclaration,
         ...sections.helperFunctions,
-        ...sections.components,
-        ...sections.classComponents,
+        ...sections.statements,
+        ...sections.expressions,
         ...sections.return,
         ...sections.styledComponent,
-        ...sections.functionalComponent,
         ...(sections.mainComponent ? [sections.mainComponent] : []),
         ...sections.exports,
     ];
 
-    // Init finalCode array
-    const finalCode = []; 
-
-    orderedSections.forEach(node => {
-        if (node) {
-            try {
-                if (isValidNode(node)) {
-                    // Valid node, add to finalCode
-                    finalCode.push(node);
-                } else {
-                    throw new Error('Invalid node type');
-                }
-            } catch (error) {
-                log.push({
-                    nodeType: node.type,
-                    start: node.start,
-                    end: node.end,
-                    loc: node.loc,
-                    code: node.code,
-                    error: error.message,
-                });
-                invalidNodes.push(node);  // Add to invalid nodes list
+    const finalCode = orderedSections.flatMap(node => {
+        try {
+            if (isValidNode(node)) {
+                return node;
             }
-        } else {
-            console.warn('Undefined node encountered, skipping.');
+            throw new Error('Invalid node type');
+        } catch (err) {
+            unknownNodes.push(node);
+            log.push({ nodeType: node?.type, start: node?.start, end: node?.end, loc: node?.loc, code: node?.code, error: err.message });
+            console.error(`Error with node: ${node?.type}, Message: ${err.message}`);
+            console.error(`Node Code: ${node?.code}`);
+            return [];
         }
     });
 
-    // Add invalid nodes at the end with appropriate comments
-    if (invalidNodes.length > 0) {
-        finalCode.push(
-            {
-                type: 'CommentLine',
-                value: ' Invalid nodes, please check them and add disable comment',
-                leading: true,
-            }
-        );
-        invalidNodes.forEach(node => finalCode.push(node));
-    }
-
-    // Identify any elements not placed in a specific section and add them to 'unknownNodes'
-    sections.nodes.forEach(node => {
-        if (node && !orderedSections.includes(node)) {
-            log.push({
-                nodeType: node.type,
-                start: node.start,
-                end: node.end,
-                loc: node.loc,
-                code: node.code,
-            });
-            unknownNodes.push(sanitizeUnknownNode(node)); // Collect and sanitize unknown nodes
-        }
-    });
-
-    // Add unknown nodes at the end with appropriate comments
     if (unknownNodes.length > 0) {
-        finalCode.push(
-            {
-                type: 'CommentLine',
-                value: ' Unknown nodes, please place them and add disable comment',
-                leading: true,
-            }
-        );
-        unknownNodes.forEach(node => finalCode.push(node));
+        finalCode.push({
+            type: 'CommentLine',
+            value: ' Unknown nodes, please place them and add disable comment',
+            leading: true,
+        });
+        finalCode.push(...unknownNodes);
+
+        console.warn(`Unknown nodes count: ${unknownNodes.length}`);
     }
 
-    // Debug for 'unknownNodes' section
-    console.log('Debug: Unknown Nodes Section:', unknownNodes);
-
-    // Assemble final code with a comment before unknown nodes
-    const resultCode = [
-        ...finalCode.filter(isValidNode),
-        ...sections.others.map(sanitizeUnknownNode),
-    ];
-
-    // Debug final ordered sections
-    console.log('Debug: Final Ordered Code List:', resultCode);
-
-    return { orderedSections: resultCode, log };
+    return { orderedSections: finalCode, log };
 };
 
-// La fonction pour vérifier si un nœud est valide (est inchangée)
+// Validate node to ensure it has essential properties
 const isValidNode = (node) => {
-    return node && typeof node.type === 'string';
+    return (
+        node && 
+        typeof node.type === 'string' &&
+        ['ExpressionStatement', 'CommentLine', /* Add other known types here */].includes(node.type)
+    );
 };
 
-// La fonction pour assainir les nœuds en supprimant les propriétés inattendues (est inchangée)
-const sanitizeUnknownNode = (node) => {
-    const validProps = [
-        'type', 'start', 'end', 'loc', 'range',
-        'id', 'generator', 'async', 'params',
-        'body', 'callee', 'arguments', 'argument',
-        'extra', 'name', 'return', 'declarations', 'specifiers'
+const isValidNodeType = (node) => {
+    const validTypes = [
+        'ImportDeclaration',
+        'VariableDeclaration',
+        'FunctionDeclaration',
+        'ArrowFunctionExpression',
+        'FunctionExpression',
+        'ClassDeclaration',
+        'CallExpression',
+        'TaggedTemplateExpression',
+        'ReturnStatement',
+        'ExportNamedDeclaration',
+        'ExportDefaultDeclaration',
+        'BlockStatement',
+        'IfStatement',
+        'ExpressionStatement',
+        'BlockStatement' // Ajout des types manquants
+        // Ajoutez d'autres types valides au besoin
     ];
-
-    const sanitizedNode = {};
-
-    validProps.forEach(prop => {
-        if (node[prop] !== undefined) {
-            sanitizedNode[prop] = node[prop];
-        }
-    });
-
-    if (!sanitizedNode.type) {
-        sanitizedNode.type = 'ExpressionStatement'; // Default to ExpressionStatement if type missing
-        sanitizedNode.expression = {
-            type: 'Identifier',
-            name: '"UNKNOWN_NODE"',
-        };
-    }
-
-    return sanitizedNode;
+    return validTypes.includes(node.type);
 };
 
-
-
-const createNewAST = (orderedSections) => {
-    return {
-        type: 'Program',
-        body: orderedSections.filter(node => node && typeof node.type === 'string'),
-        sourceType: 'module',
-    };
-};
 
 const ensureLogDirectoryExists = () => {
     const logDir = path.resolve(__dirname, 'log');
@@ -320,99 +302,76 @@ const saveLog = (log) => {
     console.log(`Log saved to ${logFilePath}`);
 };
 
+const createNewAST = (orderedSections) => ({
+    type: 'Program',
+    body: orderedSections.filter(node => node && typeof node.type === 'string'),
+    sourceType: 'module'
+});
+
+function generateAndSaveCode(parsedCode, newFilePath) {
+    const sanitizedCode = sanitizeParsedCode(parsedCode);
+    try {
+        const outputCode = generate(t.program(sanitizedCode), {}).code;
+        writeFileContent(newFilePath, outputCode);
+    } catch (error) {
+        console.error('Error generating code:', error);
+    }
+}
+
 const fixFile = async (filePath) => {
     console.log(`Fixing file: ${filePath}`);
-
     if (statSync(filePath).isFile()) {
         createBackup(filePath);
         const content = readFileContent(filePath);
-        console.log(`Original File Content: \n${content}`);
 
+        console.log(`Original File Content: \n${content}`);
         const ast = parseFile(content);
         const state = createStateTracker();
 
-        traverse(ast, setupTraverse(state, filePath, sections));
-
-        sections.nodes.push(
-            ...sections.imports,
-            ...sections.constants,
-            ...sections.localConstants.values(),
-            ...sections.contexts,
-            ...sections.hooks,
-            ...sections.stateHooks,
-            ...sections.effectHooks,
-            ...sections.handlers,
-            ...sections.types.TSInterfaceDeclaration,
-            ...sections.types.TSTypeAliasDeclaration,
-            ...sections.types.TSEnumDeclaration,
-            ...sections.helperFunctions,
-            ...sections.components,
-            ...sections.classComponents,
-            ...sections.return,
-            ...sections.styledComponent,
-            ...sections.functionalComponent,
-            sections.mainComponent && sections.mainComponent.section,
-            ...sections.exports
-        );
-
+        const sections = analyzeCode(ast, filePath);
         const { orderedSections, log } = reorderCode(sections);
 
-        orderedSections.push(...sections.others.map(sanitizeUnknownNode));
-
-        console.log('Ordered Sections:', JSON.stringify(orderedSections, getCircularReplacer(), 2));
-        console.log('Log of problematic sections:', JSON.stringify(log, getCircularReplacer(), 2));
-
-        saveLog(log);
+        orderedSections.push(...sections.others.map(sanitizeNode));
+        console.log('Ordered Sections:', orderedSections);
+        console.log('Problematic Sections Log:', log);
 
         const newAst = createNewAST(orderedSections);
+        generateAndSaveCode(newAst, filePath);
 
-        let newContent;
-        try {
-            newContent = generate(newAst, {}).code;
-            console.log('Generated Code:', newContent);
-
-            if (!newContent || newContent.trim() === '') {
-                console.error('Generated content is empty.');
-                log.push({ error: 'Generated content is empty', filePath, newAst });
-                saveLog(log);
-                return;
-            }
-        } catch (error) {
-            console.error('Error generating code for file:', filePath);
-            console.error('AST Node:', JSON.stringify(newAst, getCircularReplacer(), 2));
-            log.push({ error: 'Error generating code', filePath, newAst, error: error.message });
-            saveLog(log);
-            throw error;
-        }
-
-        writeFileContent(filePath, newContent);
-        console.log(`File ${filePath} has been fixed.`);
+        saveLog(log); // Ensure the log is saved after processing
     } else {
         console.error(`${filePath} is not a file`);
     }
 };
 
-const hasDisableCheckComment = (path) => {
-    const containsDisableCheck = (comments) => {
-        return Array.isArray(comments) && comments.some((comment) => comment.type === 'CommentLine' && comment.value.trim() === 'disable-check');
-    };
+const sanitizeNode = (node) => {
+    const validProps = [
+        'type', 'start', 'end', 'loc', 'range', 'id', 'generator', 'async',
+        'params', 'body', 'callee', 'arguments', 'argument', 'extra', 'name', 'return',
+        'declarations', 'specifiers'
+    ];
 
-    if (path) {
-        if (containsDisableCheck(path.node.leadingComments)) {
-            return true;
+    let sanitizedNode = {};
+
+    for (let key of Object.keys(node)) {
+        if (validProps.includes(key)) {
+            sanitizedNode[key] = node[key];
         }
     }
 
-    return false;
+    sanitizedNode.leadingComments = node.leadingComments || [];
+    sanitizedNode.trailingComments = node.trailingComments || [];
+
+    return sanitizedNode;
 };
 
 const analyzeCode = (ast, filePath) => {
     const sections = {
         imports: [], localConstants: new Map(), constants: [], contexts: [], hooks: [],
         stateHooks: [], effectHooks: [], handlers: [], helperFunctions: [], components: [],
-        classComponents: [], classMethods: [], classProperties: [], returns: [], styledComponent: [],
+        classComponents: [], classMethods: [], classProperties: [], return: [], styledComponent: [],
         functionalComponent: [], types: { TSInterfaceDeclaration: [], TSTypeAliasDeclaration: [], TSEnumDeclaration: [] },
-        exports: [], mainComponent: null, nodes: [], others: []  // Initialize others
+        exports: [], mainComponent: null, nodes: [], others: [], expressions: [], statements: [] // Initialize others
     };
 
     const state = createStateTracker();
@@ -435,11 +394,13 @@ const analyzeCode = (ast, filePath) => {
         ...sections.classComponents,
         ...sections.classMethods,
         ...sections.classProperties,
-        ...sections.returns,
+        ...sections.return,
+        ...sections.statements,
         ...sections.styledComponent,
         ...sections.functionalComponent,
         sections.mainComponent && sections.mainComponent,
-        ...sections.exports
+        ...sections.exports,
+        ...sections.others
     );
 
     return sections;
@@ -454,4 +415,5 @@ module.exports = {
     hasDisableCheckComment,
     fixFile,
     sections,
+    parsedCode
 };
