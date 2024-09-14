@@ -1,14 +1,14 @@
-import "./Input.css";
 import React, { useEffect, useRef, useState } from "react";
-import Input from "../../Model/Input-Model";
-import editIcon from "../../assets/edit1.svg";
-import acceptIcon from "../../assets/acceptIcon.svg";
-import deleteIcon from "../../assets/deleteIcon.svg";
-import { FormClickActions } from "../../Utils/EventChannels.tsx";
 import { useTranslation } from "react-i18next";
-import TableTextarea from "./TableTextarea/TableTextarea";
 import Skeleton from "react-loading-skeleton";
 import "react-loading-skeleton/dist/skeleton.css";
+import acceptIcon from "../../assets/acceptIcon.svg";
+import deleteIcon from "../../assets/deleteIcon.svg";
+import editIcon from "../../assets/edit1.svg";
+import Input from "../../Model/Input-Model";
+import { FormClickActions } from "../../Utils/EventChannels.tsx";
+import "./Input.css";
+import TableTextarea from "./TableTextarea/TableTextarea";
 
 interface InputProps {
   inputInfo: Input;
@@ -234,7 +234,7 @@ const InputComponent: React.FC<InputProps> = ({
     console.log(typeof inputInfo.value);
     const keys = Object.keys(
       (inputInfo.value as { [key: string]: string }[])[0],
-    );
+    ).filter((key) => !inputInfo.fieldsToAvoidDisplaying.includes(key));
     return (
       <div
         id={inputInfo.id}
