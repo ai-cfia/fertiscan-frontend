@@ -1,12 +1,17 @@
+import merge from "deepmerge";
 import { StrictMode, useContext, useEffect, useRef, useState } from "react";
 import { useTranslation } from "react-i18next";
 import goUpIcon from "../../assets/goUpIcon.svg";
 import Carousel from "../../Components/Carousel/Carousel.tsx";
 import ProgressBar from "../../Components/ProgressBar/ProgressBar";
 import SectionComponent from "../../Components/Section/Section.tsx";
+import Inspection, {
+  createDefaultInspection,
+} from "../../interfaces/Inspection.ts";
 import Data from "../../Model/Data-Model.tsx";
 import Input from "../../Model/Input-Model.tsx";
 import Section from "../../Model/Section-Model.tsx";
+import { combineMerge } from "../../Utils/deepMerge.ts";
 import { FormClickActions } from "../../Utils/EventChannels.tsx";
 import {
   createInspectionFromData,
@@ -18,7 +23,6 @@ import {
   SetSessionContext,
 } from "../../Utils/SessionContext.tsx";
 import "./FormPage.css";
-import { Inspection } from "../../interfaces/Inspection.ts";
 
 const FormPage = () => {
   // For local development
@@ -125,54 +129,16 @@ const FormPage = () => {
       });
   };
 
-  const setForm = (response: Inspection) => {
-    if (response.product.metrics.density == null) {
-      response.product.metrics.density = {
-        edited: false,
-        unit: null,
-        value: null,
-      };
-    }
-    if (response.product.metrics.volume == null) {
-      response.product.metrics.volume = {
-        edited: false,
-        unit: null,
-        value: null,
-      };
-    }
-    if (response.product.metrics.weight.length == 0) {
-      response.product.metrics.weight = [
-        { edited: false, unit: null, value: null },
-      ];
-    }
-    if (response.micronutrients.en.length == 0) {
-      response.micronutrients.en = [
-        { edited: false, name: "", unit: "", value: null },
-      ];
-    }
-    if (response.micronutrients.fr.length == 0) {
-      response.micronutrients.fr = [
-        { edited: false, name: "", unit: "", value: null },
-      ];
-    }
-    if (response.specifications.en.length == 0) {
-      response.specifications.en = [
-        { edited: false, ph: null, solubility: null, humidity: null },
-      ];
-    }
-    if (response.specifications.fr.length == 0) {
-      response.specifications.fr = [
-        { edited: false, ph: null, solubility: null, humidity: null },
-      ];
-    }
-    if (response.product.npk == null) {
-      response.product.npk = "";
-    }
-    setData(populateFromJSON(data, response));
+  const setForm = (inspectionJson: Partial<Inspection>) => {
+    const inspection = merge(createDefaultInspection(), inspectionJson, {
+      arrayMerge: combineMerge,
+    });
+
+    setData(populateFromJSON(data, inspection));
     updateData();
     setState({
       ...state,
-      data: { pics: blobs, form: data, inspection: response },
+      data: { pics: blobs, form: data, inspection },
     });
   };
 
