@@ -8,6 +8,7 @@ import settings from "../../assets/settings.svg";
 import list from "../../assets/list.svg";
 import { SessionContext, SetSessionContext } from "../../Utils/SessionContext";
 import Data from "../../Model/Data-Model";
+import Inspection from "../../interfaces/Inspection.ts";
 
 function SideMenu() {
   const { t } = useTranslation();
@@ -46,7 +47,7 @@ function SideMenu() {
       default:
         setState({
           state: "capture",
-          data: { pics: [], form: new Data([]) },
+          data: { pics: [], form: new Data([]), inspection: {} as Inspection },
         });
     }
   };
