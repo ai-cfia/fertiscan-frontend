@@ -12,13 +12,12 @@ In the project directory, you can run:
 
 - `npm run dev:host`
 
-  Starts the development server and makes it accessible over your local
-  network.
+  Starts the development server and makes it accessible over your local network.
 
 - `npm run build`
 
-  Compiles TypeScript and builds the app for production to the `dist` folder.
-  It correctly bundles React in production mode and optimizes the build for the
+  Compiles TypeScript and builds the app for production to the `dist` folder. It
+  correctly bundles React in production mode and optimizes the build for the
   best performance. Your app is ready to be deployed!
 
 - `npm run lint`
@@ -67,8 +66,7 @@ fertiscan-frontend`
 
 Welcome to our step-by-step guide designed to help new users like yourself
 effortlessly add new labels and become familiar with our platform's
-functionality.
- Let's get started.
+functionality. Let's get started.
 
 ### Saving a New Label
 
@@ -113,8 +111,8 @@ the camera switch button:
 
 Once uploaded, your file will appear in the list where you can:
 
-- Delete the file by right-clicking it and selecting "Delete" or by clicking
-the "X" button when you hover over it:
+- Delete the file by right-clicking it and selecting "Delete" or by clicking the
+"X" button when you hover over it:
 
   - ![image](https://github.com/user-attachments/assets/2e56d725-82da-48a2-a1b5-166079872399)
   - ![image](https://github.com/user-attachments/assets/8458e45d-1b24-4981-9bb8-9b41c643a121)
@@ -154,10 +152,9 @@ After approving all fields, click on the "Submit" button to proceed:
 2. If an error is spotted, select "Cancel" to go back.
     - ![image](https://github.com/user-attachments/assets/3021ba01-b4d0-42cd-8790-81e623bf808c)
 
-Once all information is verified, check the confirmation box at the bottom
-of the page.
-The final step is to click "Confirm" to send the new label information to our
-database.
+Once all information is verified, check the confirmation box at the bottom of
+the page. The final step is to click "Confirm" to send the new label information
+to our database.
 
 Congratulations! You have successfully learned how to upload and manage new
 labels on our platform. If you require further assistance or have any questions
