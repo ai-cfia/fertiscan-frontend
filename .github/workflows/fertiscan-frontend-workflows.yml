@@ -22,7 +22,7 @@ jobs:
     secrets: inherit
 
   build-and-push-gcr:
-    uses: ai-cfia/github-workflows/.github/workflows/workflow-build-push-container-github-registry.yml@63-as-a-devops-i-would-like-to-create-a-workflow-to-push-images-to-this-organisation-docker-registry
+    uses: ai-cfia/github-workflows/.github/workflows/workflow-build-push-container-github-registry.yml@154-as-a-devops-i-would-like-to-provide-compatibility-of-our-packages-across-platform
     with:
       container-name: ${{ github.event.repository.name }}
       tag: ${{ github.sha }}
