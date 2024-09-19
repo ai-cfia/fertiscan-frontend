@@ -62,6 +62,46 @@ docker build \
 - Run the image (on port 3001 for example): `docker run -p 3001:3000
 fertiscan-frontend`
 
+### Docker Compose
+
+1. Create a `.env` file from [.env.template](./.env.template) that also contains
+   env from the
+   [backend](https://github.com/ai-cfia/fertiscan-backend/blob/main/.env.template).
+   Include the following environment variables:
+
+    ```ini
+    FERTISCAN_DB_URL=postgresql://postgres:postgres@postgres:5432/fertiscan
+    BB_URL=bytebase_url
+    BB_SERVICE_ACCOUNT=your-bytebase-sa@service.bytebase.com
+    BB_SERVICE_KEY=your-bytebase-sa-key
+    BB_INSTANCE_ID=your-bytebase-instance-id
+    BB_DATABASE_ID=your-bytebase-database-id
+    ```
+
+    You can find their values in our vault under fertiscan-dev.
+
+2. Start the Docker container:
+
+    ```sh
+    docker-compose up --build
+    ```
+
+> **Side note : If you are on a ARM based machine, you will need to build the
+image with the `docker-compose build --build-arg TARGETARCH=arm64` command.**
+
+The application will be available at `http://localhost:80`. The database should
+be dynamically built based on latest schema from Bytebase.
+
+To use pgAdmin, navigate to `http://localhost:5050` and login with
+`admin@example.com` and `admin`. You can then register a new server with the
+following details:
+
+- Host: `postgres`
+- Port: `5432`
+- Username: `postgres`
+- Password: `postgres`
+- Database: `fertiscan`
+
 ## Comprehensive Guide for New Users: Uploading a New Label
 
 Welcome to our step-by-step guide designed to help new users like yourself
