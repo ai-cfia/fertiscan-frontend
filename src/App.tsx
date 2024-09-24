@@ -15,7 +15,6 @@ import AlertBanner from "./Components/AlertBanner/AlertBanner";
 import LoginPage from "./Pages/LoginPage/LoginPage";
 import { isAuthenticated } from "./Utils/Auth/AuthUtil";
 
-
 function App() {
   useEffect(() => {
     const storedLanguage = localStorage.getItem("language");
@@ -33,7 +32,10 @@ function App() {
           </StrictMode>
           <Routes>
             <Route path="/">
-              <Route index element={isAuthenticated() ? <HomePage /> : <LoginPage/>} />
+              <Route
+                index
+                element={isAuthenticated() ? <HomePage /> : <LoginPage />}
+              />
               <Route path="Settings" element={<SettingPage />} />
               <Route path="Saved" element={<SavedListPage />} />
               <Route path="Label/:labelId" element={<LabelPage />} />

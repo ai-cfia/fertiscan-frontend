@@ -4,7 +4,6 @@ import { useNavigate } from "react-router-dom";
 import { useAlert } from "../../Utils/AlertContext.tsx";
 import "./LoginPage.css";
 
-
 function LoginPage() {
   const { t } = useTranslation();
   const { showAlert } = useAlert();
@@ -48,12 +47,11 @@ function LoginPage() {
                 r.json().then((data) => {
                   showAlert(data.error, "error");
                 });
-              }
-              else {
+              } else {
                 document.cookie = `auth=${btoa(uname + ":" + password)}`;
                 showAlert(t("loggedIn"), "confirm");
                 goToHome();
-            }
+              }
             })
             .catch((e) => {
               showAlert(e, "error");
@@ -61,7 +59,7 @@ function LoginPage() {
         } else {
           document.cookie = `auth=${btoa(uname + ":" + password)}`;
           showAlert(t("registered"), "confirm");
-          goToHome()
+          goToHome();
         }
       })
       .catch((e) => {
