@@ -87,5 +87,10 @@
   "mustLogin": "You must be logged in to submit a label",
   "loggedIn": "You are successfully logged in",
   "registered": "You are successfully registered",
-  "inspection_comment": "Comment"
+  "inspection_comment": "Comment",
+  "registered": "You are successfully registered",
+  "guaranteedAnalysis_fr": "Guaranteed Analysis (French)",
+  "guaranteedAnalysis_en": "Guaranteed Analysis (English)",
+  "title":"Title",
+  "nutrients":"Nutrients"
 }

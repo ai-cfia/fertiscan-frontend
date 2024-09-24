@@ -56,6 +56,10 @@ export interface OrganizationInformation {
   website: string | null;
   phone_number: string | null;
 }
+export interface GuaranteedAnalysis{
+  title: string | null;
+  nutrients : NamedValue[];
+}
 
 export default interface Inspection {
   inspection_id: string | null;
@@ -69,8 +73,9 @@ export default interface Inspection {
   ingredients: LocalizedValues;
   specifications: LocalizedSpecifications;
   first_aid: LocalizedSubLabel;
-  guaranteed_analysis: NamedValue[];
   inspection_comment: string | null;
+  guaranteed_analysis_fr: GuaranteedAnalysis;
+  guaranteed_analysis_en: GuaranteedAnalysis;
 }
 
 export const createDefaultValue = (): Value => ({
@@ -141,6 +146,13 @@ export const createDefaultInspection = (): Inspection => ({
     fr: [createDefaultSpecification()],
   },
   first_aid: { en: [], fr: [] },
-  guaranteed_analysis: [createDefaultNamedValue()],
+  guaranteed_analysis_fr: {
+    title: null,
+    nutrients: [createDefaultNamedValue()],
+  },
+  guaranteed_analysis_en: {
+    title: null,
+    nutrients: [createDefaultNamedValue()],
+  },
   inspection_comment: null,
 });
