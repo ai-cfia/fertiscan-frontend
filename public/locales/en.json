@@ -86,5 +86,6 @@
   "login": "Login / Register",
   "mustLogin": "You must be logged in to submit a label",
   "loggedIn": "You are successfully logged in",
-  "registered": "You are successfully registered"
+  "registered": "You are successfully registered",
+  "inspection_comment": "Comment"
 }
