@@ -83,7 +83,7 @@
   "askForPassword": "Please enter your password",
   "acceptUName": "By checking this box I understand that the data I have entered will be stored and thus should not be sensitive information.",
   "reminderSensitive": "As a reminder, work email, phone number or real name are considered sensitive information.",
-  "login": "Login / Register",
+  "loginH1": "Login / Register",
   "mustLogin": "You must be logged in to submit a label",
   "loggedIn": "You are successfully logged in",
   "registered": "You are successfully registered"

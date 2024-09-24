@@ -1,0 +1,70 @@
+/* LoginPage.css */
+.login-page {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: 100vh; /* 100% de la hauteur du viewport */
+    padding: 20px;
+  }
+  
+  .login-container {
+    margin: 20px;
+    padding: 20px;
+    border: 1px solid #ccc;
+    border-radius: 5px;
+    display: flex;
+    flex-direction: column;
+  }
+  
+  #login,
+  #uname,
+  #password {
+    display: flex;
+    flex-direction: column;
+    align-content: start;
+    justify-content: start;
+  }
+  
+  #uname label,
+  #password label {
+    width: fit-content;
+  }
+  
+  #uname input,
+  #password input {
+    width: 20%;
+    padding: 10px;
+    font-size: inherit;
+    min-height: initial;
+    text-align: left;
+  }
+  
+  #validate-uname {
+    display: flex;
+    align-items: center;
+    margin-top: 10px;
+  }
+  
+  #validate-uname input {
+    margin-right: 10px;
+    width: fit-content;
+  }
+  
+  #validate-uname p {
+    flex: 1;
+    text-align: left;
+  }
+  
+  .send-uname {
+    margin-top: 20px;
+    width: fit-content;
+  }
+  
+  .send-uname:disabled {
+    background-color: #666666 !important;
+    cursor: not-allowed;
+  }
+  
+  .send-uname:disabled:hover {
+    transform: none !important;
+  }
