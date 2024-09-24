@@ -13,6 +13,7 @@ function LoginPage() {
   const [password, setPassword] = useState("");
 
   const goToHome = () => {
+    window.location.reload();
     navigate("/");
   };
 
