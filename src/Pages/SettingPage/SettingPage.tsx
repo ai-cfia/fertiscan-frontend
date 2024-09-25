@@ -56,8 +56,8 @@ function SettingsPage() {
           document.cookie = `auth=${btoa(uname + ":" + password)}`;
           showAlert(t("loggedIn"), "confirm");
           setAuth(true);
-            window.location.reload();
-          }
+          window.location.reload();
+        }
       } else {
         document.cookie = `auth=${btoa(uname + ":" + password)}`;
         showAlert(t("registered"), "confirm");
