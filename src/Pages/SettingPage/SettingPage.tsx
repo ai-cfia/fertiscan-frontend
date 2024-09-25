@@ -21,7 +21,7 @@ function SettingsPage() {
   }, []);
 
   const login = async () => {
-    setIsLoading(true); 
+    setIsLoading(true);
     const form = new FormData();
     form.append("username", uname);
     form.append("password", password);
@@ -40,13 +40,16 @@ function SettingsPage() {
         },
       });
       if (loginResponse.status !== 200) {
-        const signupResponse = await fetch(process.env.VITE_API_URL + "/signup", {
-          method: "POST",
-          body: form,
-          headers: {
-            Authorization: "Basic " + btoa(uname + ":" + password),
+        const signupResponse = await fetch(
+          process.env.VITE_API_URL + "/signup",
+          {
+            method: "POST",
+            body: form,
+            headers: {
+              Authorization: "Basic " + btoa(uname + ":" + password),
+            },
           },
-        });
+        );
         if (signupResponse.status == 401) {
           const data = await signupResponse.json();
           showAlert(data.error, "error");
@@ -64,7 +67,7 @@ function SettingsPage() {
     } catch (e) {
       showAlert(String(e), "error");
     } finally {
-      setIsLoading(false); 
+      setIsLoading(false);
     }
   };
 
@@ -128,9 +131,9 @@ function SettingsPage() {
               <button
                 className="language-button en send-uname"
                 onClick={login}
-                disabled={!uname_validated || uname === "" || isLoading} 
+                disabled={!uname_validated || uname === "" || isLoading}
               >
-                {isLoading ? t("loading...") : t("login")} 
+                {isLoading ? t("loading...") : t("login")}
               </button>
             </div>
           )}
