@@ -119,12 +119,12 @@ function SettingsPage() {
                     checked={uname_validated}
                     onChange={() => setUnameValidated(!uname_validated)}
                   />
-                </div>
-                <p id={"accept-uname"}>
-                  {t("acceptUName")}
-                  <br />
-                  {t("reminderSensitive")}
+                  <p id={"accept-uname"}>
+                    {t("acceptUName")}
+                    <br />
+                    {t("reminderSensitive")}
                 </p>
+                </div>
               </div>
               <button
                 className={"language-button en send-uname"}
