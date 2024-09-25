@@ -4,6 +4,7 @@ import LanguageButton from "../../Components/LanguageButton/LanguageButton";
 import "./SettingPage.css";
 import { isAuthenticated, logout } from "../../Utils/Auth/AuthUtil";
 import { useNavigate } from "react-router-dom";
+import { useAlert } from "../../Utils/AlertContext";
 
 function SettingsPage() {
   const { t } = useTranslation();
