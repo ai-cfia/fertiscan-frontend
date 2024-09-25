@@ -83,7 +83,8 @@
   "askForPassword": "Veuillez indiquer votre mot de passe",
   "acceptUName": "En cochant cette case je comprends que l'information que j'ai entrée va être stocker et ne doit donc pas être de nature sensible.",
   "reminderSensitive": "Pour rappel, une adresse courriel professionnelle, une numéro de téléphone ou un nom et prénom sont considéré comme des informations sensibles.",
-  "loginH1": "Se connecter ou s'enregistrer",
+  "login": "Se connecter / S'enregistrer",
+  "logout": "Se déconnecter",
   "mustLogin": "Vous devez être connecté pour enregistrer un label",
   "loggedIn": "Vous êtes connecté",
   "registered": "Vous êtes enregistré"

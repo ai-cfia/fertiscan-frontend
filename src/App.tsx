@@ -12,7 +12,6 @@ import { AlertProvider } from "./Utils/AlertContext";
 import { SessionProvider } from "./Utils/SessionContext";
 import LabelPage from "./Pages/LabelPage/LabelPage";
 import AlertBanner from "./Components/AlertBanner/AlertBanner";
-import LoginPage from "./Pages/LoginPage/LoginPage";
 import { isAuthenticated } from "./Utils/Auth/AuthUtil";
 
 function App() {
@@ -34,13 +33,12 @@ function App() {
             <Route path="/">
               <Route
                 index
-                element={isAuthenticated() ? <HomePage /> : <LoginPage />}
+                element={isAuthenticated() ? <HomePage /> : <SettingPage/>}
               />
               <Route path="Settings" element={<SettingPage />} />
               <Route path="Saved" element={<SavedListPage />} />
               <Route path="Label/:labelId" element={<LabelPage />} />
               <Route path="*" element={<NoPage />} />
-              <Route path="Login" element={<LoginPage />} />
             </Route>
           </Routes>
         </BrowserRouter>
