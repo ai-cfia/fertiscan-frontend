@@ -205,9 +205,11 @@ const DragDropFileInput: React.FC<FileInputProps> = ({
     );
   };
 
-  const handleCameraToggle = async (event: React.MouseEvent<HTMLDivElement>) => {
+  const handleCameraToggle = async (
+    event: React.MouseEvent<HTMLDivElement>,
+  ) => {
     event.preventDefault();
-    
+
     // Request camera permission only when toggling to camera mode
     if (!toggleMode) {
       try {
