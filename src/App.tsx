@@ -33,7 +33,7 @@ function App() {
             <Route path="/">
               <Route
                 index
-                element={isAuthenticated() ? <HomePage /> : <SettingPage/>}
+                element={isAuthenticated() ? <HomePage /> : <SettingPage />}
               />
               <Route path="Settings" element={<SettingPage />} />
               <Route path="Saved" element={<SavedListPage />} />

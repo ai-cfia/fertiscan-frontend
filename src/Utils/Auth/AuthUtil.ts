@@ -16,5 +16,5 @@ export const isAuthenticated = () => {
 
 export const logout = () => {
   // Set the cookie's expiry date to a past date to effectively remove it
-  document.cookie = 'auth=; expires=Thu, 01 Jan 1970 00:00:00 UTC; path=/;';
+  document.cookie = "auth=; expires=Thu, 01 Jan 1970 00:00:00 UTC; path=/;";
 };
