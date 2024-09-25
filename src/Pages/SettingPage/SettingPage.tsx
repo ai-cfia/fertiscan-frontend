@@ -1,10 +1,10 @@
 import { useEffect, useState } from "react";
 import { useTranslation } from "react-i18next";
 import LanguageButton from "../../Components/LanguageButton/LanguageButton";
-import "./SettingPage.css";
 import { isAuthenticated, logout } from "../../Utils/Auth/AuthUtil";
 import { useNavigate } from "react-router-dom";
 import { useAlert } from "../../Utils/AlertContext";
+import "./SettingPage.css";
 
 function SettingsPage() {
   const { t } = useTranslation();
