@@ -2,13 +2,11 @@ import { useEffect, useState } from "react";
 import { useTranslation } from "react-i18next";
 import LanguageButton from "../../Components/LanguageButton/LanguageButton";
 import { isAuthenticated, logout } from "../../Utils/Auth/AuthUtil";
-import { useNavigate } from "react-router-dom";
 import { useAlert } from "../../Utils/AlertContext";
 import "./SettingPage.css";
 
 function SettingsPage() {
   const { t } = useTranslation();
-  const navigate = useNavigate();
   const { showAlert } = useAlert();
   const [uname_validated, setUnameValidated] = useState(false);
   const [uname, setUname] = useState("");
@@ -29,6 +27,7 @@ function SettingsPage() {
       document.cookie = `auth=${btoa(uname + ":" + password)}`;
       showAlert(t("loggedIn"), "confirm");
       setIsLoading(false);
+      window.location.reload();
       return;
     }
     try {
@@ -57,12 +56,13 @@ function SettingsPage() {
           document.cookie = `auth=${btoa(uname + ":" + password)}`;
           showAlert(t("loggedIn"), "confirm");
           setAuth(true);
-          navigate("/");
-        }
+            window.location.reload();
+          }
       } else {
         document.cookie = `auth=${btoa(uname + ":" + password)}`;
         showAlert(t("registered"), "confirm");
         setAuth(true);
+        window.location.reload();
       }
     } catch (e) {
       showAlert(String(e), "error");
