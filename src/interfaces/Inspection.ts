@@ -56,9 +56,9 @@ export interface OrganizationInformation {
   website: string | null;
   phone_number: string | null;
 }
-export interface GuaranteedAnalysis{
+export interface GuaranteedAnalysis {
   title: string | null;
-  nutrients : NamedValue[];
+  nutrients: NamedValue[];
 }
 
 export default interface Inspection {
