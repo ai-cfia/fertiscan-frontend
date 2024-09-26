@@ -70,6 +70,7 @@ export default interface Inspection {
   specifications: LocalizedSpecifications;
   first_aid: LocalizedSubLabel;
   guaranteed_analysis: NamedValue[];
+  inspection_comment: string | null;
 }
 
 export const createDefaultValue = (): Value => ({
@@ -141,4 +142,5 @@ export const createDefaultInspection = (): Inspection => ({
   },
   first_aid: { en: [], fr: [] },
   guaranteed_analysis: [createDefaultNamedValue()],
+  inspection_comment: null,
 });

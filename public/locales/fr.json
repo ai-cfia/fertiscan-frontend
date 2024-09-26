@@ -86,5 +86,6 @@
   "login": "Se connecter / S'enregistrer",
   "mustLogin": "Vous devez être connecté pour enregistrer un label",
   "loggedIn": "Vous êtes connecté",
-  "registered": "Vous êtes enregistré"
+  "registered": "Vous êtes enregistré",
+  "inspection_comment": "Commentaire"
 }
