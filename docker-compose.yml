@@ -3,7 +3,7 @@ version: '3.8'
 services:
   nginx:
     image: ghcr.io/ai-cfia/nginx:0.0.3
-    container_name: fertiscan-nginx
+    container_name: fertiscan-frontend-nginx
     restart: always
     ports:
       - "80:80"
