@@ -9,7 +9,7 @@ import list from "../../assets/list.svg";
 import { SessionContext, SetSessionContext } from "../../Utils/SessionContext";
 import Data from "../../Model/Data-Model";
 import Inspection from "../../interfaces/Inspection.ts";
-import { isAuthenticated, } from "../../Utils/Auth/AuthUtil";
+import { isAuthenticated } from "../../Utils/Auth/AuthUtil";
 
 function SideMenu() {
   const { t } = useTranslation();
@@ -57,11 +57,9 @@ function SideMenu() {
     retrieveState();
     if (isAuthenticated()) {
       navigate("/");
-    }
-    else{
+    } else {
       navigate("/Settings");
     }
-
   };
 
   const goToSettings = () => {
