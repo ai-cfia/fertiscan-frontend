@@ -13,9 +13,13 @@ const isAuthenticated = () => {
   return false;
 };
 
+const login = (username: string, password: string) => {
+  document.cookie = `auth=${btoa(username + ":" + password)}`;
+};
+
 const logout = () => {
   // Set the cookie's expiry date to a past date to effectively remove it
   document.cookie = "auth=; expires=Thu, 01 Jan 1970 00:00:00 UTC; path=/;";
 };
 
-export { isAuthenticated, logout };
+export { isAuthenticated, login, logout };

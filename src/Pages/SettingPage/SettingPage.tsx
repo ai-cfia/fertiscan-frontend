@@ -1,7 +1,7 @@
 import { useEffect, useState } from "react";
 import { useTranslation } from "react-i18next";
 import LanguageButton from "../../Components/LanguageButton/LanguageButton";
-import { isAuthenticated, logout } from "../../Utils/Auth/AuthUtil";
+import { isAuthenticated, login as authLogin, logout } from "../../Utils/Auth/AuthUtil";
 import { useAlert } from "../../Utils/AlertContext";
 import "./SettingPage.css";
 
@@ -18,54 +18,74 @@ function SettingsPage() {
     setAuth(isAuthenticated());
   }, []);
 
+  interface RequestOptions extends RequestInit {
+    timeout?: number;
+  }
+
+  interface MakeRequestResponse extends Response {}
+
+  const makeRequest = async (endpoint: string): Promise<MakeRequestResponse> => {
+    const form = new FormData();
+    form.append("username", uname);
+    form.append("password", password);
+    const response = await timeoutFetch(endpoint, {
+      method: "POST",
+      body: form,
+      headers: {
+        Authorization: "Basic " + btoa(uname + ":" + password),
+      },
+    });
+    return response;
+  };
+
+  const timeoutFetch = async (url: string, options: RequestOptions, timeout = 5000): Promise<Response> => {
+    const controller = new AbortController();
+    const { signal } = controller;
+    const fetchPromise = fetch(url, { ...options, signal });
+    const timeoutId = setTimeout(() => controller.abort(), timeout);
+    try {
+      return await fetchPromise;
+    } finally {
+      clearTimeout(timeoutId);
+    }
+  };
+
+  const finalizeAuth = (messageKey: string) => {
+    authLogin(uname, password);
+    showAlert(t(messageKey), "confirm");
+    setAuth(true);
+    window.location.reload();
+  };
+
   const login = async () => {
     setIsLoading(true);
     const form = new FormData();
     form.append("username", uname);
     form.append("password", password);
     if (process.env.VITE_APP_ACTIVATE_USING_JSON === "true") {
-      document.cookie = `auth=${btoa(uname + ":" + password)}`;
-      showAlert(t("loggedIn"), "confirm");
+      finalizeAuth("loggedIn");
       setIsLoading(false);
-      window.location.reload();
       return;
     }
     try {
-      const loginResponse = await fetch(process.env.VITE_API_URL + "/login", {
-        method: "POST",
-        body: form,
-        headers: {
-          Authorization: "Basic " + btoa(uname + ":" + password),
-        },
-      });
-      if (loginResponse.status !== 200) {
-        const signupResponse = await fetch(
-          process.env.VITE_API_URL + "/signup",
-          {
-            method: "POST",
-            body: form,
-            headers: {
-              Authorization: "Basic " + btoa(uname + ":" + password),
-            },
-          },
-        );
-        if (signupResponse.status == 401) {
+      const loginResponse = await makeRequest(process.env.VITE_API_URL + "/login");
+      if (loginResponse.status > 200 && loginResponse.status < 299) {
+        const signupResponse = await makeRequest(process.env.VITE_API_URL + "/signup");
+        if (signupResponse.status > 200 && signupResponse.status < 299) {
           const data = await signupResponse.json();
           showAlert(data.error, "error");
         } else {
-          document.cookie = `auth=${btoa(uname + ":" + password)}`;
-          showAlert(t("loggedIn"), "confirm");
-          setAuth(true);
-          window.location.reload();
+          finalizeAuth("registered");
         }
       } else {
-        document.cookie = `auth=${btoa(uname + ":" + password)}`;
-        showAlert(t("registered"), "confirm");
-        setAuth(true);
-        window.location.reload();
+        finalizeAuth("loggedIn");
       }
-    } catch (e) {
-      showAlert(String(e), "error");
+    } catch (e: any) {
+      if (e.name === 'AbortError') {
+        showAlert(t('requestTimeout'), 'error'); // Add a translation key for requestTimeout
+      } else {
+        showAlert(String(e), "error");
+      }
     } finally {
       setIsLoading(false);
     }
