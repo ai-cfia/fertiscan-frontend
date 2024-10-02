@@ -91,5 +91,6 @@
   "guaranteedAnalysis_fr": "Analyse garantie (français)",
   "guaranteedAnalysis_en": "Analyse garantie (anglais)",
   "title":"Titre",
-  "nutrients":"Nutriments"
+  "nutrients":"Nutriments",
+  "addComment": "Ajouter un commentaire"
 }
