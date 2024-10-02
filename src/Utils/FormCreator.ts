@@ -34,8 +34,14 @@ export const FertiliserForm = () =>
       new Input(t("instructions_fr"), "instructions.fr"),
       new Input(t("ingredients_en"), "ingredients.en"),
       new Input(t("ingredients_fr"), "ingredients.fr"),
-      new Input(t("guaranteedAnalysis"), "guaranteed_analysis"),
-      new Input(t("inspection_comment"), "inspection_comment"),
+    ]),
+    new Section(t("guaranteedAnalysis"), "guaranteed_analysis_fr", [
+      new Input(t("title"), "guaranteed_analysis.title"),
+      new Input(t("guaranteedAnalysis_en"), "guaranteed_analysis.en"),
+      new Input(t("guaranteedAnalysis_fr"), "guaranteed_analysis.fr"),
+    ]),
+    new Section(t("inspection_comment"), "inspection_comment", [
+      new Input(t("addComment"), "inspection_comment"),
     ]),
   ]);
 
