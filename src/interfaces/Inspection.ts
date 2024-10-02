@@ -69,10 +69,7 @@ export default interface Inspection {
   product: ProductInformation;
   cautions: LocalizedSubLabel;
   instructions: LocalizedSubLabel;
-  micronutrients: LocalizedValues;
   ingredients: LocalizedValues;
-  specifications: LocalizedSpecifications;
-  first_aid: LocalizedSubLabel;
   inspection_comment: string | null;
   guaranteed_analysis_fr: GuaranteedAnalysis;
   guaranteed_analysis_en: GuaranteedAnalysis;
@@ -133,19 +130,10 @@ export const createDefaultInspection = (): Inspection => ({
   },
   cautions: { en: [], fr: [] },
   instructions: { en: [], fr: [] },
-  micronutrients: {
-    en: [createDefaultNamedValue()],
-    fr: [createDefaultNamedValue()],
-  },
   ingredients: {
     en: [createDefaultNamedValue()],
     fr: [createDefaultNamedValue()],
   },
-  specifications: {
-    en: [createDefaultSpecification()],
-    fr: [createDefaultSpecification()],
-  },
-  first_aid: { en: [], fr: [] },
   guaranteed_analysis_fr: {
     title: null,
     nutrients: [createDefaultNamedValue()],

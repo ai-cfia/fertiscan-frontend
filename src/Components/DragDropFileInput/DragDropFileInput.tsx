@@ -189,24 +189,8 @@ const DragDropFileInput: React.FC<FileInputProps> = ({
     input.click();
   };
 
-  // This function gets the camera permission status
-  const getCameraPermission = async () => {
-    try {
-      setHasPermission(
-        (await navigator.mediaDevices.getUserMedia({ video: true }))
-          ? true
-          : false,
-      );
-    } catch (err) {
-      setHasPermission(false);
-    }
-  };
-
   const selectCamera = async () => {
-    if (hasPermission === null) {
-      await getCameraPermission();
-      if (!hasPermission) return;
-    } else if (!hasPermission) {
+    if (!hasPermission) {
       return;
     }
 
@@ -225,18 +209,21 @@ const DragDropFileInput: React.FC<FileInputProps> = ({
     event: React.MouseEvent<HTMLDivElement>,
   ) => {
     event.preventDefault();
-    getCameraPermission();
-    if (!hasPermission) {
-      showAlert(t("cameraPermissionError"), "error");
-      return;
+
+    // Request camera permission only when toggling to camera mode
+    if (!toggleMode) {
+      try {
+        await navigator.mediaDevices.getUserMedia({ video: true });
+        setHasPermission(true);
+      } catch (err) {
+        setHasPermission(false);
+        showAlert(t("cameraPermissionError"), "error");
+        return;
+      }
     }
+
     setToggleMode((currentMode) => !currentMode);
   };
-
-  // Check camera permissions when the component mounts
-  useEffect(() => {
-    getCameraPermission();
-  }, []);
 
   useEffect(() => {
     if (toggleMode && cameraSwitch.current) {
