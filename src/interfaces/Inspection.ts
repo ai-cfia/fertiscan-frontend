@@ -37,18 +37,6 @@ export interface ProductInformation {
   k: number | null;
 }
 
-export interface Specification {
-  humidity: number | null;
-  ph: number | null;
-  solubility: number | null;
-  edited: boolean;
-}
-
-export interface LocalizedSpecifications {
-  en: Specification[];
-  fr: Specification[];
-}
-
 export interface OrganizationInformation {
   id: string | null;
   name: string | null;
@@ -56,9 +44,16 @@ export interface OrganizationInformation {
   website: string | null;
   phone_number: string | null;
 }
+
+export interface Title {
+  en: string | null;
+  fr: string | null;
+}
+
 export interface GuaranteedAnalysis {
-  title: string | null;
-  nutrients: NamedValue[];
+  title: Title;
+  en: NamedValue[];
+  fr: NamedValue[];
 }
 
 export default interface Inspection {
@@ -71,8 +66,7 @@ export default interface Inspection {
   instructions: LocalizedSubLabel;
   ingredients: LocalizedValues;
   inspection_comment: string | null;
-  guaranteed_analysis_fr: GuaranteedAnalysis;
-  guaranteed_analysis_en: GuaranteedAnalysis;
+  guaranteed_analysis: GuaranteedAnalysis;
 }
 
 export const createDefaultValue = (): Value => ({
@@ -88,11 +82,9 @@ export const createDefaultNamedValue = (): NamedValue => ({
   edited: false,
 });
 
-export const createDefaultSpecification = (): Specification => ({
-  humidity: null,
-  ph: null,
-  solubility: null,
-  edited: false,
+export const createDefaultTitle = (): Title => ({
+  en: null,
+  fr: null,
 });
 
 export const createDefaultInspection = (): Inspection => ({
@@ -134,13 +126,10 @@ export const createDefaultInspection = (): Inspection => ({
     en: [createDefaultNamedValue()],
     fr: [createDefaultNamedValue()],
   },
-  guaranteed_analysis_fr: {
-    title: null,
-    nutrients: [createDefaultNamedValue()],
-  },
-  guaranteed_analysis_en: {
-    title: null,
-    nutrients: [createDefaultNamedValue()],
+  guaranteed_analysis: {
+    title: createDefaultTitle(),
+    en: [createDefaultNamedValue()],
+    fr: [createDefaultNamedValue()],
   },
   inspection_comment: null,
 });
