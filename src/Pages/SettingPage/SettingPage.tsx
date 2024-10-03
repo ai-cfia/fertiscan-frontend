@@ -1,15 +1,14 @@
 import { useEffect, useState } from "react";
+import { useNavigate } from "react-router-dom";
 import { useTranslation } from "react-i18next";
 import LanguageButton from "../../Components/LanguageButton/LanguageButton";
-import {
-  isAuthenticated,
-  login as authLogin,
-  logout,
-} from "../../Utils/Auth/AuthUtil";
+import { isAuthenticated, login as authLogin, logout } from "../../Utils/Auth/AuthUtil";
 import { useAlert } from "../../Utils/AlertContext";
 import "./SettingPage.css";
 
-function SettingsPage() {
+const SettingsPage = () => {
+
+  const navigate = useNavigate();
   const { t } = useTranslation();
   const { showAlert } = useAlert();
   const [uname_validated, setUnameValidated] = useState(false);
@@ -28,9 +27,7 @@ function SettingsPage() {
 
   interface MakeRequestResponse extends Response {}
 
-  const makeRequest = async (
-    endpoint: string,
-  ): Promise<MakeRequestResponse> => {
+  const makeRequest = async (endpoint: string): Promise<MakeRequestResponse> => {
     const form = new FormData();
     form.append("username", uname);
     form.append("password", password);
@@ -44,11 +41,7 @@ function SettingsPage() {
     return response;
   };
 
-  const timeoutFetch = async (
-    url: string,
-    options: RequestOptions,
-    timeout = 5000,
-  ): Promise<Response> => {
+  const timeoutFetch = async (url: string, options: RequestOptions, timeout = 5000): Promise<Response> => {
     const controller = new AbortController();
     const { signal } = controller;
     const fetchPromise = fetch(url, { ...options, signal });
@@ -65,6 +58,7 @@ function SettingsPage() {
     showAlert(t(messageKey), "confirm");
     setAuth(true);
     window.location.reload();
+    navigate("/");
   };
 
   const login = async () => {
@@ -78,13 +72,9 @@ function SettingsPage() {
       return;
     }
     try {
-      const loginResponse = await makeRequest(
-        process.env.VITE_API_URL + "/login",
-      );
+      const loginResponse = await makeRequest(process.env.VITE_API_URL + "/login");
       if (loginResponse.status > 200 && loginResponse.status < 299) {
-        const signupResponse = await makeRequest(
-          process.env.VITE_API_URL + "/signup",
-        );
+        const signupResponse = await makeRequest(process.env.VITE_API_URL + "/signup");
         if (signupResponse.status > 200 && signupResponse.status < 299) {
           const data = await signupResponse.json();
           showAlert(data.error, "error");
@@ -94,9 +84,9 @@ function SettingsPage() {
       } else {
         finalizeAuth("loggedIn");
       }
-    } catch (e) {
-      if (e instanceof Error && e.name === "AbortError") {
-        showAlert(t("requestTimeout"), "error"); // Add a translation key for requestTimeout
+    } catch (e: any) {
+      if (e.name === 'AbortError') {
+        showAlert(t('requestTimeout'), 'error'); // Add a translation key for requestTimeout
       } else {
         showAlert(String(e), "error");
       }
@@ -175,6 +165,6 @@ function SettingsPage() {
       </div>
     </div>
   );
-}
+};
 
 export default SettingsPage;
