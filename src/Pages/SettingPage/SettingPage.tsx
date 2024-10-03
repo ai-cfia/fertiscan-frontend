@@ -66,7 +66,6 @@ const SettingsPage = () => {
     authLogin(uname, password);
     showAlert(t(messageKey), "confirm");
     setAuth(true);
-    window.location.reload();
     navigate("/");
   };
 
