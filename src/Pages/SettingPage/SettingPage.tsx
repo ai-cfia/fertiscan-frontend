@@ -1,13 +1,14 @@
+import axios from "axios";
 import { useEffect, useState } from "react";
-import { useNavigate } from "react-router-dom";
 import { useTranslation } from "react-i18next";
+import { useNavigate } from "react-router-dom";
 import LanguageButton from "../../Components/LanguageButton/LanguageButton";
+import { useAlert } from "../../Utils/AlertContext";
 import {
-  isAuthenticated,
   login as authLogin,
+  isAuthenticated,
   logout,
 } from "../../Utils/Auth/AuthUtil";
-import { useAlert } from "../../Utils/AlertContext";
 import "./SettingPage.css";
 
 const SettingsPage = () => {
@@ -24,44 +25,6 @@ const SettingsPage = () => {
     setAuth(isAuthenticated());
   }, []);
 
-  interface RequestOptions extends RequestInit {
-    timeout?: number;
-  }
-
-  interface MakeRequestResponse extends Response {}
-
-  const makeRequest = async (
-    endpoint: string,
-  ): Promise<MakeRequestResponse> => {
-    const form = new FormData();
-    form.append("username", uname);
-    form.append("password", password);
-    const response = await timeoutFetch(endpoint, {
-      method: "POST",
-      body: form,
-      headers: {
-        Authorization: "Basic " + btoa(uname + ":" + password),
-      },
-    });
-    return response;
-  };
-
-  const timeoutFetch = async (
-    url: string,
-    options: RequestOptions,
-    timeout = 5000,
-  ): Promise<Response> => {
-    const controller = new AbortController();
-    const { signal } = controller;
-    const fetchPromise = fetch(url, { ...options, signal });
-    const timeoutId = setTimeout(() => controller.abort(), timeout);
-    try {
-      return await fetchPromise;
-    } finally {
-      clearTimeout(timeoutId);
-    }
-  };
-
   const finalizeAuth = (messageKey: string) => {
     authLogin(uname, password);
     showAlert(t(messageKey), "confirm");
@@ -71,40 +34,62 @@ const SettingsPage = () => {
 
   const login = async () => {
     setIsLoading(true);
-    const form = new FormData();
-    form.append("username", uname);
-    form.append("password", password);
+
     if (process.env.VITE_APP_ACTIVATE_USING_JSON === "true") {
       finalizeAuth("loggedIn");
       setIsLoading(false);
       return;
     }
-    try {
-      const loginResponse = await makeRequest(
+
+    console.info("logging in");
+    axios
+      .post(
         process.env.VITE_API_URL + "/login",
-      );
-      if (loginResponse.status > 200 && loginResponse.status < 299) {
-        const signupResponse = await makeRequest(
-          process.env.VITE_API_URL + "/signup",
-        );
-        if (signupResponse.status > 200 && signupResponse.status < 299) {
-          const data = await signupResponse.json();
-          showAlert(data.error, "error");
-        } else {
-          finalizeAuth("registered");
-        }
-      } else {
+        new URLSearchParams({ uname, password }),
+        {
+          headers: {
+            Authorization: "Basic " + btoa(uname + ":" + password),
+          },
+          timeout: 5000,
+        },
+      )
+      .then((response) => {
+        console.log(response);
         finalizeAuth("loggedIn");
-      }
-    } catch (e) {
-      if (e instanceof Error && e.name === "AbortError") {
-        showAlert(t("requestTimeout"), "error"); // Add a translation key for requestTimeout
-      } else {
-        showAlert(String(e), "error");
-      }
-    } finally {
-      setIsLoading(false);
-    }
+      })
+      .catch((error) => {
+        if (error.response) {
+          console.error("login failed:", error.response);
+          console.info("signing up");
+          axios
+            .post(
+              `${process.env.VITE_API_URL}/signup`,
+              new URLSearchParams({
+                username: uname,
+                password: password,
+              }),
+              {
+                headers: {
+                  Authorization: "Basic " + btoa(uname + ":" + password),
+                },
+                timeout: 5000,
+              },
+            )
+            .then((response) => {
+              console.log(response);
+              finalizeAuth("registered");
+            })
+            .catch((error) => {
+              console.error("unexpected error during signup", error.message);
+              showAlert(String(error), "error");
+            });
+        }
+        console.error("unexpected error during login:", error.message);
+        showAlert(String(error), "error");
+      })
+      .finally(() => {
+        setIsLoading(false);
+      });
   };
 
   const handleLogout = () => {
