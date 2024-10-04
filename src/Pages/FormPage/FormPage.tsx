@@ -134,6 +134,8 @@ const FormPage = () => {
       arrayMerge: combineMerge,
     });
 
+    console.log("setForm inspection", inspection);
+
     setData(populateFromJSON(data, inspection));
     updateData();
     setState({

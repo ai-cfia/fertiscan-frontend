@@ -87,5 +87,11 @@
   "logout": "Se déconnecter",
   "mustLogin": "Vous devez être connecté pour enregistrer un label",
   "loggedIn": "Vous êtes connecté",
-  "registered": "Vous êtes enregistré"
+  "registered": "Vous êtes enregistré",
+  "inspection_comment": "Commentaire",
+  "guaranteedAnalysis_fr": "Analyse garantie (français)",
+  "guaranteedAnalysis_en": "Analyse garantie (anglais)",
+  "title":"Titre",
+  "nutrients":"Nutriments",
+  "addComment": "Ajouter un commentaire"
 }
