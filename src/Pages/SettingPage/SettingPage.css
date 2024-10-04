@@ -23,6 +23,20 @@
   border-radius: 5px;
 }
 
+.settings hr {
+  width: 100%;
+}
+
+/* LoginPage.css */
+.login-page {
+  margin: 20px;
+  padding: 20px;
+  border: 1px solid #ccc;
+  border-radius: 5px;
+  display: flex;
+  flex-direction: column;
+}
+
 #login,
 #uname,
 #password {
@@ -36,6 +50,7 @@
 #password label {
   width: fit-content;
 }
+
 #uname input,
 #password input {
   width: 20%;
@@ -49,16 +64,15 @@
 #validate-uname {
   display: flex;
 }
+
 #validate-uname input {
   margin: auto 20px auto 0;
   width: fit-content;
 }
+
 #validate-uname p {
   width: 35%;
   text-align: left;
-}
-.settings hr {
-  width: 100%;
 }
 
 .send-uname {
@@ -69,6 +83,7 @@
   background-color: #666666 !important;
   cursor: not-allowed;
 }
+
 .send-uname:disabled:hover {
   transform: none !important;
 }

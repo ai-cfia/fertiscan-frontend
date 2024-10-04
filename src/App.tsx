@@ -12,6 +12,7 @@ import { AlertProvider } from "./Utils/AlertContext";
 import { SessionProvider } from "./Utils/SessionContext";
 import LabelPage from "./Pages/LabelPage/LabelPage";
 import AlertBanner from "./Components/AlertBanner/AlertBanner";
+import { isAuthenticated } from "./Utils/Auth/AuthUtil";
 
 function App() {
   useEffect(() => {
@@ -30,7 +31,10 @@ function App() {
           </StrictMode>
           <Routes>
             <Route path="/">
-              <Route index element={<HomePage />} />
+              <Route
+                index
+                element={isAuthenticated() ? <HomePage /> : <SettingPage />}
+              />
               <Route path="Settings" element={<SettingPage />} />
               <Route path="Saved" element={<SavedListPage />} />
               <Route path="Label/:labelId" element={<LabelPage />} />
