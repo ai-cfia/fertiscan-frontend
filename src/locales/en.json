@@ -71,9 +71,9 @@
   "currentStateSize": "Upload limit",
   "confirmSuccess": "The label has been successfully submitted",
   "confirmError": "An error occurred while submitting the label",
-  "fileElementToolTip":"Right click to see the options menu",
-  "delete":"Delete",
-  "invalidImageTypeAlert":"File type not valid (Accepted: JPG/PNG/HEIF)",
+  "fileElementToolTip": "Right click to see the options menu",
+  "delete": "Delete",
+  "invalidImageTypeAlert": "File type not valid (Accepted: JPG/PNG/HEIF)",
   "fertilizer-name": "Fertilizer Name",
   "company-name": "Company Name",
   "user": "Inspector",
@@ -91,7 +91,8 @@
   "inspection_comment": "Comment",
   "guaranteedAnalysis_fr": "Guaranteed Analysis (French)",
   "guaranteedAnalysis_en": "Guaranteed Analysis (English)",
-  "title":"Title",
-  "nutrients":"Nutrients",
+  "title_en": "Title (English)",
+  "title_fr": "Title (French)",
+  "nutrients": "Nutrients",
   "addComment": "Add a comment"
 }
