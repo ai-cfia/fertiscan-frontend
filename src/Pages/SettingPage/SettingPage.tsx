@@ -53,8 +53,7 @@ const SettingsPage = () => {
           timeout: 5000,
         },
       )
-      .then((response) => {
-        console.log(response);
+      .then(() => {
         finalizeAuth("loggedIn");
       })
       .catch((error) => {
@@ -75,17 +74,17 @@ const SettingsPage = () => {
                 timeout: 5000,
               },
             )
-            .then((response) => {
-              console.log(response);
+            .then(() => {
               finalizeAuth("registered");
             })
             .catch((error) => {
               console.error("unexpected error during signup", error.message);
               showAlert(String(error), "error");
             });
+        } else {
+          console.error("unexpected error during login:", error.message);
+          showAlert(String(error), "error");
         }
-        console.error("unexpected error during login:", error.message);
-        showAlert(String(error), "error");
       })
       .finally(() => {
         setIsLoading(false);
