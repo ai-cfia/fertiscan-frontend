@@ -38,7 +38,7 @@ const Label = ({ sections }: LabelProps) => {
   const renderObjectInput = (inputInfo: Input) => {
     const keys = Object.keys(
       (inputInfo.value as { [key: string]: string }[])[0],
-    );
+    ).filter((key) => !inputInfo.fieldsToAvoidDisplaying.includes(key));
 
     return (
       <div id={inputInfo.id} className="object-input">

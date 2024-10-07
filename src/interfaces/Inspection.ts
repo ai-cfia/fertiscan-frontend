@@ -20,8 +20,8 @@ export interface LocalizedSubLabel {
 
 export interface Metrics {
   weight: Value[];
-  volume: Value;
-  density: Value;
+  volume: Value | null;
+  density: Value | null;
 }
 
 export interface ProductInformation {
@@ -29,7 +29,7 @@ export interface ProductInformation {
   label_id: string | null;
   registration_number: string | null;
   lot_number: string | null;
-  metrics: Metrics;
+  metrics: Metrics | null;
   npk: string | null;
   warranty: string | null;
   n: number | null;
@@ -51,7 +51,7 @@ export interface Title {
 }
 
 export interface GuaranteedAnalysis {
-  title: Title;
+  title: Title | null;
   en: NamedValue[];
   fr: NamedValue[];
 }
@@ -59,14 +59,14 @@ export interface GuaranteedAnalysis {
 export default interface Inspection {
   inspection_id: string | null;
   verified: boolean;
-  company: OrganizationInformation;
-  manufacturer: OrganizationInformation;
-  product: ProductInformation;
-  cautions: LocalizedSubLabel;
-  instructions: LocalizedSubLabel;
-  ingredients: LocalizedValues;
+  company: OrganizationInformation | null;
+  manufacturer: OrganizationInformation | null;
+  product: ProductInformation | null;
+  cautions: LocalizedSubLabel | null;
+  instructions: LocalizedSubLabel | null;
+  ingredients: LocalizedValues | null;
   inspection_comment: string | null;
-  guaranteed_analysis: GuaranteedAnalysis;
+  guaranteed_analysis: GuaranteedAnalysis | null;
 }
 
 export const createDefaultValue = (): Value => ({
