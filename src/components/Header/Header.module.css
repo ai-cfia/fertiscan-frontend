@@ -1,0 +1,28 @@
+.header {
+    background-color: #333;
+    color: white;
+    padding: 10px 20px;
+    text-align: center;
+    width: 100%;
+}
+
+.navLinks {
+    display: flex;
+    justify-content: center;
+    list-style: none;
+    padding: 0;
+}
+
+.navLinks li {
+    margin: 0 10px;
+}
+
+.navLinks a {
+    color: white;
+    text-decoration: none;
+    transition: color 0.3s;
+}
+
+.navLinks a:hover {
+    color: #ddd;
+}
