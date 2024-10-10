@@ -17,6 +17,9 @@ const Header: React.FC = () => {
                     <Link href="/" passHref>
                         <Button color="inherit">Home</Button>
                     </Link>
+                    <Link href="/captur" passHref>
+                        <Button color="inherit">Capture</Button>
+                    </Link>
                     <Link href="/about" passHref>
                         <Button color="inherit">About</Button>
                     </Link>
