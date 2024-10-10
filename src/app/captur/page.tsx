@@ -1,11 +1,12 @@
 "use client";
 import React, { useState } from 'react';
 import { createTheme, ThemeProvider } from '@mui/material/styles';
-import { Box, Button, Container, IconButton, Typography, AppBar, Toolbar, Icon } from '@mui/material';
+import { Box, Button, IconButton, Typography, Icon } from '@mui/material';
 import Grid from '@mui/material/Grid2';
-import { CloudUpload, Menu, AccountCircle } from '@mui/icons-material';
+import { CloudUpload } from '@mui/icons-material';
 import { styled } from '@mui/system';
-import Paper from '@mui/material/Paper';
+import CancelOutlinedIcon from '@mui/icons-material/CancelOutlined';
+import ContextMenu from '@/components/ContextMenu/ContextMenu';
 
 
 // Création du thème
@@ -18,9 +19,14 @@ const theme = createTheme({
 });
 
 // Styles personnalisés en utilisant styled de MUI
-const UploadSection = styled(Box)(({ theme }) => ({
+interface UploadSectionProps {
+    showImageInDropZone: boolean;
+}
+
+const UploadSection = styled(Box)<UploadSectionProps>(({ theme, showImageInDropZone }) => ({
     display: 'flex', // Enables flexbox
     height: '100%',
+    minHeight:'100%',
     flexDirection: 'column', // Stacks children vertically
     justifyContent: 'center', // Centers children vertically in the container
     alignItems: 'center', // Centers children horizontally in the container
@@ -28,13 +34,13 @@ const UploadSection = styled(Box)(({ theme }) => ({
     borderRadius: theme.shape.borderRadius,
     textAlign: 'center',
     padding: theme.spacing(8), // Increased padding
-    backgroundColor: '#C5C5C5',
+    backgroundColor: showImageInDropZone ? '#C5C5C5': 'transparent',
+
 }));
 
 const UploadedImage = styled('img')(({ theme }) => ({
     maxWidth: '100%',
     height: 'auto',
-    borderRadius: theme.shape.borderRadius,
     [theme.breakpoints.up('md')]: {
         maxWidth: '30%',
     },
@@ -59,8 +65,9 @@ const SubmitButton = styled(Button)(({ theme }) => ({
 // Styles pour l'icône de fermeture
 const CloseIconButton = styled(IconButton)(({ theme }) => ({
     position: 'absolute',
-    top: theme.spacing(0.5),
-    right: theme.spacing(0.5),
+    top: theme.spacing(-3),
+    right: theme.spacing(-1.5),
+    color: 'black',
     display: 'flex',
 }));
 
@@ -77,9 +84,14 @@ const UploadedFileContainer = styled(Box)(({ theme }) => ({
     },
     '&:hover': {
         '.MuiIconButton-root': {
-            display: 'flex', // This displays the button on hover
+            display: 'flex',
         },
     },
+}));
+
+const FileElement = styled(Box)(({ theme }) => ({
+    display: 'flex',
+    alignItems: 'center',
 }));
 
 const FileListBox = styled(Box)(({ theme }) => ({
@@ -88,74 +100,97 @@ const FileListBox = styled(Box)(({ theme }) => ({
     height: '100%',
     backgroundColor: '#C5C5C5',
     flexDirection: 'column',
-    padding: theme.spacing(2), 
+    padding: theme.spacing(2),
     borderRadius: 10,
 }));
 
-// Composant principal
+
+
+
 function Capture() {
     const [hovered, setHovered] = useState(false);
+    const [showImageInDropZone, setShowImageInDropZone] = useState(false);
+    const handleRightClick = (event: React.MouseEvent<HTMLDivElement>) => {
+        event.preventDefault();
+        setContextMenuAnchor({ mouseX: event.clientX - 2, mouseY: event.clientY + 4 });
+      };
+      
+    const [contextMenuAnchor, setContextMenuAnchor] = useState<{ mouseX: number; mouseY: number } | null>(null);
 
+    const handleCloseContextMenu = () => {
+      setContextMenuAnchor(null);
+    };
     return (
         <ThemeProvider theme={theme}>
-
-                <Grid container rowSpacing={1}  columnSpacing={{ xs: 1, sm: 2, md: 3 }} justifyContent="center" height="80vh" marginTop="10vh"  sx={{
-          '--Grid-borderWidth': '5px',
-          borderTop: 'var(--Grid-borderWidth) solid',
-          borderLeft: 'var(--Grid-borderWidth) solid',
-          borderColor: 'divider',
-          '& > div': {
-            borderRight: 'var(--Grid-borderWidth) solid',
-            borderBottom: 'var(--Grid-borderWidth) solid',
-            borderColor: 'black',
-          },
-        }}>
-                    <Grid size={{ xs: 10, md:7, lg: 5 }}>
-                        <UploadSection>
-                            <CloudUpload style={{ fontSize: 50, color: '#033a5b' }} />
-                            <Typography variant="h6">Drag & Drop to upload Files</Typography>
-                            <Typography variant="h6">OR</Typography>
-                            <Button variant="contained" style={{ backgroundColor: '#033a5b', color: '#fff', marginTop: '16px' }}>
-                                Browse File
-                            </Button>
+            <Box sx={{ backgroundColor: "#C5C5C5", height: "100vh", paddingTop: "10vh" }} >
+                <Grid container rowSpacing={1} columnSpacing={{ xs: 1, sm: 2, md: 3 }} justifyContent="center" height="80vh">
+                    <Grid size={{ xs: 10, md: 7, lg: 5 }}>
+                        <UploadSection showImageInDropZone={showImageInDropZone}>
+                            {showImageInDropZone ? (
+                                <img src="/img/placeholder.png" alt="Uploaded file" style={{ display:'block', height:'100%', objectFit: 'fill'  }} />
+                            ) : (
+                                <>
+                                    <CloudUpload style={{ fontSize: '120', color: '#033a5b' }} />
+                                    <Typography variant="h6" sx={{ fontSize: { xs: '0.7rem', md: '1rem', lg: '1rem' } }}>
+                                        <b>Drag & Drop to upload Files</b>
+                                    </Typography>
+                                    <Typography variant="h6" sx={{ fontSize: { xs: '0.7rem', md: '1rem', lg: '1rem' } }}>
+                                        <b>OR</b>
+                                    </Typography>
+                                    <Button variant="contained" style={{ backgroundColor: '#033a5b', color: '#fff',  }}>
+                                        Browse File
+                                    </Button>
+                                </>
+                            )}
                         </UploadSection>
                     </Grid>
-                    <Grid size={{xs: 10, md:4, lg: 4 }}>
-                    <FileListBox>
-                                <Typography variant="h6" gutterBottom>
-                                    Uploaded files
-                                </Typography>
-                                <UploadedFileContainer
-                                    onMouseEnter={() => setHovered(true)}
-                                    onMouseLeave={() => setHovered(false)}
-                                >
-                                    <Box display="flex" justifyContent="space-between" alignItems="center" >
-                                        <Box display="flex" alignItems="center">
-                                            <UploadedImage src="/img/placeholder.png" alt="uploaded file" />
-                                            <Typography variant="h6" style={{ marginLeft: '16px' }}>
+                    <Grid size={{ xs: 10, md: 4, lg: 4 }}>
+                        <FileListBox>
+                            <Typography variant="h6" gutterBottom>
+                                Uploaded files
+                            </Typography>
+                            <UploadedFileContainer
+                                onMouseEnter={() => setHovered(true)}
+                                onMouseLeave={() => setHovered(false)}
+                            >
+                                <Box display="flex" justifyContent="space-between" alignItems="center">
+                                    <FileElement onContextMenu={handleRightClick}>
+                                        <UploadedImage src="/img/placeholder.png" alt="uploaded file"
+                                            onMouseEnter={() => setShowImageInDropZone(true)}
+                                            onMouseLeave={() => setShowImageInDropZone(false)}
+                                        />
+                                        {/* Need to add on mouse leave */}
+                                         <ContextMenu 
+                                        contextMenuPosition={contextMenuAnchor} 
+                                        setContextMenuPosition={setContextMenuAnchor}
+                                        handleClose={handleCloseContextMenu}
+                                        />
+                                        <Typography variant="h6" sx={{ fontSize: { xs: '0.7rem', md: '1rem', lg: '1rem' } }} style={{ marginLeft: '16px' }}>
+                                            <b>
                                                 filename.jpg
-                                            </Typography>
-                                        </Box>
-                                        {hovered && (
-                                            <CloseIconButton edge="end" aria-label="delete">
-                                                <Icon>close</Icon> {/* Placeholder for close icon */}
-                                            </CloseIconButton>
-                                        )}
-                                    </Box>
-                                </UploadedFileContainer>
-                            </FileListBox>
+                                            </b>
+                                        </Typography>
+                                    </FileElement>
+                                    {hovered && (
+                                        <CloseIconButton edge="end" aria-label="delete">
+                                            <CancelOutlinedIcon fontSize='large'/>
+                                        </CloseIconButton>
+                                    )}
+                                </Box>
+                            </UploadedFileContainer>
+                        </FileListBox>
                     </Grid>
-                    <Grid size={{ xs: 10, md:7, lg: 5 }} display={{ xs: 'none', md:'flex' }}>
+                    <Grid size={{ xs: 10, md: 7, lg: 5 }} display={{ xs: 'none', md: 'flex' }}>
                     </Grid>
-                    <Grid size={{xs: 10, md:4, lg: 4 }}>
-                    <SubmitButton variant="contained" fullWidth>
+                    <Grid size={{ xs: 10, md: 4, lg: 4 }}>
+                        <SubmitButton variant="contained" fullWidth>
                             Submit
                         </SubmitButton>
                     </Grid>
                 </Grid>
-            
+            </Box>
 
-    </ThemeProvider>
+        </ThemeProvider>
     );
 }
 

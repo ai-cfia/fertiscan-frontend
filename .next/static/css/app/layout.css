@@ -303,3 +303,15 @@ a {
   }
 }
 
+/*!***********************************************************************************************************************************************************************************************************************************************************************************!*\
+  !*** css ./node_modules/next/dist/build/webpack/loaders/css-loader/src/index.js??ruleSet[1].rules[14].oneOf[7].use[2]!./node_modules/next/dist/build/webpack/loaders/postcss-loader/src/index.js??ruleSet[1].rules[14].oneOf[7].use[3]!./src/components/Header/Header.module.css ***!
+  \***********************************************************************************************************************************************************************************************************************************************************************************/
+.Header_logo__1FRrW {
+    width: 30%;
+    height: auto;
+}
+
+.Header_languageButton__AIqpm{
+    text-transform: unset !important;
+    text-decoration: underline !important;
+}
