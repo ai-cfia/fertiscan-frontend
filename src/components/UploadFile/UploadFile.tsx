@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useState } from 'react';
 import { Box, IconButton } from '@mui/material';
 import { CancelOutlined as CancelOutlinedIcon } from '@mui/icons-material';
 import ContextMenu from '@/components/ContextMenu/ContextMenu';
@@ -9,8 +9,8 @@ interface UploadFileProps {
     setShowImageInDropZone: (show: boolean) => void;
     contextMenuAnchor: { mouseX: number; mouseY: number } | null;
     setContextMenuAnchor: (anchor: { mouseX: number; mouseY: number } | null) => void;
-    hovered: boolean;
 }
+
 
 const UploadFile: React.FC<UploadFileProps> = ({
     handleRightClick,
@@ -18,9 +18,24 @@ const UploadFile: React.FC<UploadFileProps> = ({
     setShowImageInDropZone,
     contextMenuAnchor,
     setContextMenuAnchor,
-    hovered,
 }) => {
+    const [hovered, setHovered] = useState(false);
+
     return (
+        
+        <Box
+        sx={{
+            border: '2px solid #05486C',
+            borderRadius: 1,
+            p: 2,
+            backgroundColor: '#C5C5C5',
+            position: 'relative',
+            marginBottom: 2,
+            display: 'flex',
+        }}
+        onMouseEnter={() => setHovered(true)}
+        onMouseLeave={() => setHovered(false)}
+    >
         <Box
             sx={{
                 display: 'flex',
@@ -62,6 +77,7 @@ const UploadFile: React.FC<UploadFileProps> = ({
                 </IconButton>
             )}
         </Box>
+    </Box>
     );
 };
 

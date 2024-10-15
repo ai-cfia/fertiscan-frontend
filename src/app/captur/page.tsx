@@ -8,7 +8,7 @@ import ContextMenu from '@/components/ContextMenu/ContextMenu';
 import LoginModal from '@/components/Login/Login';
 import UploadFile from '@/components/UploadFile/UploadFile';
 
-// Créer le thème
+// modifier cela pour utiliser le theme principale de l'app
 const theme = createTheme({
     palette: {
         primary: {
@@ -18,7 +18,6 @@ const theme = createTheme({
 });
 
 function Capture() {
-    const [hovered, setHovered] = useState(false);
     const [showImageInDropZone, setShowImageInDropZone] = useState(false);
     const [loginModalOpen, setLoginModalOpen] = useState(false);
     const [contextMenuAnchor, setContextMenuAnchor] = useState<{ mouseX: number; mouseY: number } | null>(null);
@@ -102,29 +101,14 @@ function Capture() {
                             <Typography variant="h6" gutterBottom>
                                 Uploaded files
                             </Typography>
-                            <Box
-                                sx={{
-                                    border: '2px solid #05486C',
-                                    borderRadius: 1,
-                                    p: 2,
-                                    backgroundColor: '#C5C5C5',
-                                    position: 'relative',
-                                    marginBottom: 2,
-                                    display: 'flex',
-                                    [theme.breakpoints.down('sm')]: { p: 1 },
-                                }}
-                                onMouseEnter={() => setHovered(true)}
-                                onMouseLeave={() => setHovered(false)}
-                            >
+
                                 <UploadFile
                                     handleRightClick={handleRightClick}
                                     handleCloseContextMenu={handleCloseContextMenu}
                                     setShowImageInDropZone={setShowImageInDropZone}
                                     contextMenuAnchor={contextMenuAnchor}
                                     setContextMenuAnchor={setContextMenuAnchor}
-                                    hovered={hovered}
                                 />
-                            </Box>
                         </Box>
                     </Grid2>
                     <Grid2 size={{ xs: 10, md: 7 }} sx={{ display: { xs: 'none', md: 'flex' } }}>
