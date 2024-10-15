@@ -1,6 +1,6 @@
 import { extractImagesFromPdf } from "pdf-extract-image";
-import { GlobalWorkerOptions,  } from "pdfjs-dist";
-import pdfjs from "pdfjs-dist";
+import { GlobalWorkerOptions } from "pdfjs-dist";
+import { version } from 'pdfjs-dist/package.json'; // Use the version from the package.json
 
 export type FileType = "pdf" | "png" | "jpg";
 
@@ -26,6 +26,9 @@ export interface FileInfo {
     uploadDate: Date;
     type: FileType;
 }
+
+// Ensure the PDF.js worker uses the correct version from the package.json
+GlobalWorkerOptions.workerSrc = `https://cdnjs.cloudflare.com/ajax/libs/pdf.js/${version}/pdf.worker.min.js`;
 
 export class FileUploaded {
     private info: FileInfo;
@@ -104,7 +107,8 @@ export class FileUploaded {
         const images: string[] = [];
         const buffer = await fetch(this.info.path).then(res => res.arrayBuffer());
         const pdfBuffer = Buffer.from(buffer);
-        GlobalWorkerOptions.workerSrc = `//cdnjs.cloudflare.com/ajax/libs/pdf.js/${pdfjs.version}/pdf.worker.min.js`;        const extractedImages = await extractImagesFromPdf(pdfBuffer);
+
+        const extractedImages = await extractImagesFromPdf(pdfBuffer);
         for (const image of extractedImages) {
             const mimeType = 'image/png'; // Assuming the extracted images are PNGs
             const blob = new Blob([image], { type: mimeType });
@@ -125,7 +129,7 @@ export class FileUploaded {
     async detectType(): Promise<FileType | { type: "pdf", images: string[] }> {
         const response = await fetch(this.info.path);
         const type = response.headers.get('Content-Type');
-        
+
         if (!type) throw new Error('Cannot determine the file type');
 
         if (type.includes('pdf')) {
