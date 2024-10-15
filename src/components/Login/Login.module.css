@@ -1,0 +1,55 @@
+.modalStyle {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    width: 90%;
+    max-width: 400px;
+    background-color: #0e507f;
+    border-radius: 10px;
+    box-shadow: 5px 5px 15px rgba(0, 0, 0, 0.2);
+    padding: 32px;
+    color: white;
+    text-align: center; /* Center align text inside the modal */
+  }
+  
+  .input {
+    margin-bottom: 16px;
+    border-color: white;
+    border-radius: 5px;
+  }
+  
+  .input label.Mui-focused {
+    color: #0e507f;
+  }
+  
+  .checkBoxLabel {
+    color: white;
+    font-size: 0.875rem; /* Adjusted text size */
+  }
+  
+  .button {
+    background-color: white;
+    color: #0e507f;
+    margin-top: 16px;
+    padding: 10px; /* Extra padding for better appearance */
+  }
+  
+  .button:hover {
+    background-color: white;
+    color: #0e507f;
+    box-shadow: none;
+  }
+  
+  .link {
+    color: white;
+    margin-top: 16px;
+    display: block;
+    text-align: center;
+    font-size: 0.875rem; /* Adjusted text size */
+  }
+  
+  .typography {
+    margin-bottom: 24px;
+    font-size: 1.5rem; /* Adjusted heading size */
+  }

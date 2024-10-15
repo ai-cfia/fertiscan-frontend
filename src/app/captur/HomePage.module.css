@@ -1,0 +1,126 @@
+.upload-section {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  border: 3px dashed #033a5b;
+  border-radius: var(--theme-border-radius);
+  text-align: center;
+  padding: var(--theme-spacing-8);
+  background-size: cover;
+  background-color: transparent;
+  width: 100%;
+  height: 100%;
+  min-height: 350px;
+}
+
+.upload-section.md {
+  min-height: 400px;
+}
+
+.uploaded-image {
+  max-width: 100%;
+  height: auto;
+}
+
+.uploaded-image.md {
+  max-width: 30%;
+}
+
+.uploaded-image.xs {
+  max-width: 20%;
+}
+
+.submit-button {
+  background-color: #033a5b;
+  color: #fff;
+  display: flex;
+}
+
+.submit-button:hover {
+  background-color: #022d46;
+}
+
+.submit-button.sm {
+  width: 100%;
+}
+
+.close-icon-button {
+  position: absolute;
+  top: var(--theme-spacing-3);
+  right: var(--theme-spacing-1_5);
+  color: black;
+  display: flex;
+}
+
+.uploaded-file-container {
+  border: 2px solid #05486C;
+  border-radius: var(--theme-border-radius);
+  padding: var(--theme-spacing-2);
+  background-color: #C5C5C5;
+  position: relative;
+  margin-bottom: var(--theme-spacing-2);
+  display: flex;
+}
+
+.uploaded-file-container.sm {
+  padding: var(--theme-spacing-1);
+}
+
+.uploaded-file-container:hover .MuiIconButton-root {
+  display: flex;
+}
+
+.file-element {
+  display: flex;
+  align-items: center;
+}
+
+.file-list-box {
+  border: 3px solid #05486C;
+  display: flex;
+  height: 100%;
+  flex-direction: column;
+  padding: var(--theme-spacing-2);
+  border-radius: 10px;
+}
+
+.adaptive-image {
+  max-width: 100%;
+  max-height: 100%;
+}
+
+.uploaded-section-text-container {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  text-align: center;
+}
+
+.uploaded-section-text-container.sm {
+  min-width: 100px;
+}
+
+.browse-file-button {
+  background-color: #033a5b;
+  color: #fff;
+  display: flex;
+}
+
+.browse-file-button:hover {
+  background-color: #022d46;
+}
+
+.browse-file-button.sm {
+  width: 80%;
+  font-size: 0.5rem;
+}
+
+.browse-file-button.md {
+  font-size: 0.7rem;
+}
+
+.browse-file-button.lg {
+  font-size: 1rem;
+}
