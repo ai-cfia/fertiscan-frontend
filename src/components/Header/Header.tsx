@@ -19,6 +19,18 @@ const Header: React.FC = () => {
                             <Image className={styles.logo} src={"/img/CFIA FIP FR WHITE 1.png"} alt="logo" width={0} height={0} sizes={"100vw"}/>
                         </Link>
                     </Typography>
+                    <Link href="/" passHref>
+                        <Button color="inherit">Home</Button>
+                    </Link>
+                    <Link href="/captur" passHref>
+                        <Button color="inherit">Capture</Button>
+                    </Link>
+                    <Link href="/about" passHref>
+                        <Button color="inherit">About</Button>
+                    </Link>
+                    <Link href="/contact" passHref>
+                        <Button color="inherit">Contact</Button>
+                    </Link>
                     <Button color={"inherit"} className={styles.languageButton}>
                         Français
                     </Button>
