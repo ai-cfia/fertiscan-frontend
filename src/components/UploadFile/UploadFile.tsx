@@ -6,21 +6,28 @@ import ContextMenu from '@/components/ContextMenu/ContextMenu';
 interface UploadFileProps {
     handleRightClick: (event: React.MouseEvent<HTMLDivElement>) => void;
     handleCloseContextMenu: () => void;
-    setShowImageInDropZone: (show: boolean) => void;
+    setDropZoneState: (show: boolean, url:string) => void;
     contextMenuAnchor: { mouseX: number; mouseY: number } | null;
     setContextMenuAnchor: (anchor: { mouseX: number; mouseY: number } | null) => void;
+    fileName: string;
+    fileUrl: string;
 }
 
 
 const UploadFile: React.FC<UploadFileProps> = ({
     handleRightClick,
+    fileUrl,
     handleCloseContextMenu,
-    setShowImageInDropZone,
+    setDropZoneState,
     contextMenuAnchor,
     setContextMenuAnchor,
+    fileName,
 }) => {
     const [hovered, setHovered] = useState(false);
 
+    const SendActionContextMenu = (action: string): void => {
+        console.log(action);
+    };
     return (
         
         <Box
@@ -45,15 +52,18 @@ const UploadFile: React.FC<UploadFileProps> = ({
                 width: '100%',
                 fontSize: { xs: '0.5rem', sm: '1rem' },
             }}
-            onContextMenu={handleRightClick}
+            onContextMenu={(event) => {
+                handleRightClick(event);
+                SendActionContextMenu("Right-clicked");
+            }}
             onMouseLeave={handleCloseContextMenu}
         >
             <Box
                 component="img"
-                src="/img/placeholder.png"
+                src={fileUrl}
                 alt="uploaded file"
-                onMouseEnter={() => setShowImageInDropZone(true)}
-                onMouseLeave={() => setShowImageInDropZone(false)}
+                onMouseEnter={() => setDropZoneState(true, fileUrl)}
+                onMouseLeave={() => setDropZoneState(false, "")}
                 sx={{ maxWidth: { xs: '15%', sm: '10%', md: '20%' }, height: 'auto' }}
             />
             <ContextMenu

@@ -17,11 +17,15 @@
     "@mui/material": "^6.1.3",
     "@mui/material-nextjs": "^6.1.2",
     "next": "14.2.14",
+    "pdf-extract-image": "^0.0.2",
+    "pdfjs-dist": "^4.7.76",
     "react": "^18",
     "react-dom": "^18"
   },
   "devDependencies": {
     "@types/node": "^20",
+    "@types/pako": "^2.0.3",
+    "@types/pngjs": "^6.0.5",
     "@types/react": "^18",
     "@types/react-dom": "^18",
     "eslint": "^8",
