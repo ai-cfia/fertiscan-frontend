@@ -7,7 +7,6 @@ import { CloudUpload } from '@mui/icons-material';
 import ChooseImageModal from '@/components/PdfImageModal/ChooseImageModal';
 import LoginModal from '@/components/Login/Login'; 
 import UploadFile from '@/components/UploadFile/UploadFile'; 
-import ConfirmationDialog from '@/components/PdfImageModal/ChooseImageModal';
 import { FileUploaded, FileType, } from '@/Classes/File/File'; 
 
 const theme = createTheme({ 
@@ -20,42 +19,73 @@ const theme = createTheme({
 
 interface DropzoneState { 
     visible: boolean; 
-    url: string | null; 
+    image_url: string | null; 
 }
 
 function Capture() { 
-    const [dropzoneState, setDropzoneState] = useState<DropzoneState>({ visible: false, url: null }); 
-    const [loginModalOpen, setLoginModalOpen] = useState(false); 
+    // Login Modal State
+    const [loginModalOpen, setLoginModalOpen] = useState(false);
+    const handleLoginModalOpen = () => setLoginModalOpen(true); 
+    const handleLoginModalClose = () => setLoginModalOpen(false);  
+
+    // Context Menu State
     const [contextMenuAnchor, setContextMenuAnchor] = useState<{ mouseX: number; mouseY: number } | null>(null); 
+    const [open, setOpen] = useState(false);
+    const handleClose = () => setOpen(false);
+    // Dropzone State
+    const [dropzoneState, setDropzoneState] = useState<DropzoneState>({ visible: false, image_url: null }); 
+
+    // Uploaded files/ images State
     const [uploadedFiles, setUploadedFiles] = useState<FileUploaded[]>([]);
     const [images, setImages] = useState<string[]>([]);
-    const handleRightClick = (event: React.MouseEvent<HTMLDivElement>) => { 
+    
+    // Function Dropzone
+    async function handleDrop (event: React.DragEvent<HTMLDivElement>) { 
         event.preventDefault(); 
-        setContextMenuAnchor({ mouseX: event.clientX - 2, mouseY: event.clientY + 4 }); 
+        let files = event.dataTransfer.files; 
+        if (files && files.length > 0) { 
+            processFile(files[0]);
+        }
     };
 
-    const handleLoginModalOpen = () => setLoginModalOpen(true); 
-    const handleLoginModalClose = () => setLoginModalOpen(false); 
-    const handleCloseContextMenu = () => setContextMenuAnchor(null);
+    function handleDragOver (event: React.DragEvent<HTMLDivElement>) { 
+        event.preventDefault(); 
+    }
 
-    const handleFileUpload = (event: React.ChangeEvent<HTMLInputElement>) => { 
-        const files = event.target.files; 
+    function handleSetDropzoneState (show: boolean, image_url: string) { 
+        setDropzoneState({ visible: show, image_url }); 
+    }
+    
+    // Function Context Menu
+    function handleCloseContextMenu () {
+        setContextMenuAnchor(null)
+    }
+
+    function handleRightClick(event: React.MouseEvent<HTMLDivElement>) { 
+        event.preventDefault(); 
+        setContextMenuAnchor({ mouseX: event.clientX - 2, mouseY: event.clientY + 4 }); 
+
+    }
+
+    // Function File Upload
+    function handleFileUpload(event: React.ChangeEvent<HTMLInputElement>) { 
+        let files = event.target.files; 
         if (files && files.length > 0) { 
             processFile(files[0]);
         } 
-    };
+    }
 
-    const handleConfirm = (selectedImages: string[]) => {
-        const newFiles: FileUploaded[] = [];
-        const baseFileName = 'pdf';
+    function handleConfirm (selectedImages: string[]) {
+        let newFiles: FileUploaded[] = [];
+        let baseFileName = 'pdf';
 
         let count = 1;
-        for (const url of selectedImages) {
-            const imageFile = new FileUploaded({
+        for (let url of selectedImages) {
+            let imageFile = new FileUploaded({
                 dimension: { width: 0, height: 0 },
                 path: url,
                 user: { username: 'Anonymous' },
-                type: 'png', // Assuming the extracted images are PNGs
+                type: 'png', 
                 uploadDate: new Date(),
                 tags: [{ name: `${baseFileName}_picture_${count}` }]
             });
@@ -64,11 +94,10 @@ function Capture() {
         }
 
         setUploadedFiles(prevFiles => [...prevFiles, ...newFiles]);
-    };
+    }
 
-
-    const processFile = async (file: File) => {
-        const newFile = new FileUploaded({
+    async function processFile (file: File) {
+        let newFile = new FileUploaded({
             dimension: { width: 0, height: 0 },
             path: URL.createObjectURL(file),
             user: { username: 'Anonymous' },
@@ -76,34 +105,17 @@ function Capture() {
             uploadDate: new Date(),
         });
 
-        const detectedType = await newFile.detectType();
+        let detectedType = await newFile.detectType();
 
         if (typeof detectedType === 'object' && detectedType.type === 'pdf') {
-            const images = await newFile.extractPagesFromPDF(await (await fetch(newFile.getInfo().path)).arrayBuffer());
+            let images = await newFile.extractPagesFromPDF(await (await fetch(newFile.getInfo().path)).arrayBuffer());
             setImages(images);
             setOpen(true);
         } else {
             setUploadedFiles(prevFiles => [...prevFiles, newFile]);
         }
-    };
+    }
 
-    const handleDrop = async (event: React.DragEvent<HTMLDivElement>) => { 
-        event.preventDefault(); 
-        const files = event.dataTransfer.files; 
-        if (files && files.length > 0) { 
-            processFile(files[0]);
-        }
-    };
-
-    const handleDragOver = (event: React.DragEvent<HTMLDivElement>) => { 
-        event.preventDefault(); 
-    };
-
-    const handleSetDropzoneState = (show: boolean, url: string) => { 
-        setDropzoneState({ visible: show, url }); 
-    };
-    const [open, setOpen] = useState(false);
-    const handleClose = () => setOpen(false);
 
     return ( 
         <ThemeProvider theme={theme}> 
@@ -129,11 +141,11 @@ function Capture() {
                             onDragOver={handleDragOver} 
                             onDrop={handleDrop} 
                         > 
-                            {dropzoneState.visible && dropzoneState.url ? ( 
+                            {dropzoneState.visible && dropzoneState.image_url ? ( 
                                 <Box> 
                                     <Box 
                                         component="img" 
-                                        src={dropzoneState.url} 
+                                        src={dropzoneState.image_url} 
                                         alt="Uploaded file" 
                                         sx={{ width: { xs: '100%', sm: 'auto', md: 'auto' }, maxWidth: '100%', maxHeight: '100%' }} 
                                     /> 

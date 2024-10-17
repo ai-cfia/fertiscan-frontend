@@ -12,12 +12,13 @@ const ContextMenu: React.FC<ContextMenuProps> = ({
   handleClose,
   
 }) => {
-  const handleCloseContextMenu = () => {
+  function handleCloseContextMenu () {
     if (handleClose) {
       handleClose();
     }
-  };
-  const SendActionContextMenu = () => {
+  }
+
+  function SendActionContextMenu () {
     console.log("Rename");
   }
 
