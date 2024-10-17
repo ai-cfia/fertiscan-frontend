@@ -1,6 +1,9 @@
-import { extractImagesFromPdf } from "pdf-extract-image";
-import { GlobalWorkerOptions } from "pdfjs-dist";
-import { version } from 'pdfjs-dist/package.json'; // Use the version from the package.json
+let pdfjsLib: any;
+if (typeof window !== 'undefined') {
+    import('@/utils/pdfjssetup').then(mod => {
+        pdfjsLib = mod.pdfjsLib;
+    });
+}
 
 export type FileType = "pdf" | "png" | "jpg";
 
@@ -26,9 +29,6 @@ export interface FileInfo {
     uploadDate: Date;
     type: FileType;
 }
-
-// Ensure the PDF.js worker uses the correct version from the package.json
-GlobalWorkerOptions.workerSrc = `https://cdnjs.cloudflare.com/ajax/libs/pdf.js/${version}/pdf.worker.min.js`;
 
 export class FileUploaded {
     private info: FileInfo;
@@ -86,8 +86,8 @@ export class FileUploaded {
         const y = (height - img.height * scale) / 2;
 
         if (ctx) {
-            ctx.fillStyle = 'white';  // Or any color you want to fill the background with.
-            ctx.fillRect(0, 0, width, height);  // Fill background
+            ctx.fillStyle = 'white';
+            ctx.fillRect(0, 0, width, height);
             ctx.drawImage(img, x, y, img.width * scale, img.height * scale);
         }
 
@@ -102,38 +102,52 @@ export class FileUploaded {
             }, "image/png");
         });
     }
-
-    async extractImagesFromPdf(): Promise<string[]> {
-        const images: string[] = [];
-        const buffer = await fetch(this.info.path).then(res => res.arrayBuffer());
-        const pdfBuffer = Buffer.from(buffer);
-
-        const extractedImages = await extractImagesFromPdf(pdfBuffer);
-        for (const image of extractedImages) {
-            const mimeType = 'image/png'; // Assuming the extracted images are PNGs
-            const blob = new Blob([image], { type: mimeType });
-            const url = URL.createObjectURL(blob);
-            images.push(url);
+    async extractPagesFromPDF(fileBuffer: ArrayBuffer) {
+        if (!pdfjsLib) {
+            throw new Error('pdfjsLib is not loaded');
         }
 
-        // Process each extracted image
-        const processedImages = [];
-        for (const imageUrl of images) {
-            const processedImage = await this.processImage(900, 900, imageUrl);
-            processedImages.push(processedImage);
+        const typedArray = new Uint8Array(fileBuffer);
+        const pdf = await pdfjsLib.getDocument(typedArray).promise;
+        const imageList = [];
+
+        for (let i = 1; i <= pdf.numPages; i++) {
+            const page = await pdf.getPage(i);
+
+            const viewport = page.getViewport({ scale: 1 });
+            const canvas = document.createElement('canvas');
+            canvas.width = viewport.width;
+            canvas.height = viewport.height;
+            const context = canvas.getContext('2d');
+
+            if (context) {
+                const renderContext = {
+                    canvasContext: context,
+                    viewport: viewport,
+                };
+                await page.render(renderContext).promise;
+
+                const imageUrl = canvas.toDataURL('image/png');
+                imageList.push(imageUrl);
+            }
         }
 
-        return processedImages;
+        return imageList;
     }
 
-    async detectType(): Promise<FileType | { type: "pdf", images: string[] }> {
+    async detectType(): Promise<FileType | { type: "pdf", images: string[] }> {  
+        if (typeof window === 'undefined') {
+            return 'pdf' as FileType;
+        }
+
         const response = await fetch(this.info.path);
         const type = response.headers.get('Content-Type');
 
         if (!type) throw new Error('Cannot determine the file type');
 
         if (type.includes('pdf')) {
-            const images = await this.extractImagesFromPdf();
+            const arrayBuffer = await response.arrayBuffer();
+            const images = await this.extractPagesFromPDF(arrayBuffer);
             return { type: "pdf", images };
         } else if (type.includes('png') || type.includes('jpeg') || type.includes('jpg')) {
             return type.slice(type.indexOf('/') + 1) as FileType;
@@ -142,5 +156,3 @@ export class FileUploaded {
         }
     }
 }
-
-export { extractImagesFromPdf };
