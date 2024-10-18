@@ -14,7 +14,7 @@ interface UploadFileProps {
 }
 
 
-const UploadFile: React.FC<UploadFileProps> = ({
+const UploadFile: React.FC<UploadFileProps & { handleRename: (newName: string) => void }> = ({
     handleRightClick,
     fileUrl,
     handleCloseContextMenu,
@@ -22,6 +22,7 @@ const UploadFile: React.FC<UploadFileProps> = ({
     contextMenuAnchor,
     setContextMenuAnchor,
     fileName,
+    handleRename
 }) => {
     const [hovered, setHovered] = useState(false);
 
@@ -69,8 +70,9 @@ const UploadFile: React.FC<UploadFileProps> = ({
             <ContextMenu
                 contextMenuPosition={contextMenuAnchor}
                 handleClose={handleCloseContextMenu}
+                handleRename={handleRename}
             />
-            <b>filename.jpg</b>
+            <b>{fileName}</b>
             {hovered && (
                 <IconButton
                     edge="end"

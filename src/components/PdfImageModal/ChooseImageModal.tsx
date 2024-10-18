@@ -10,7 +10,7 @@ const style = {
   transform: 'translate(-50%, -50%)',
   width: '50%',
   height: '50%',
-  bgcolor: '#05486C',  // Updated background color
+  bgcolor: '#05486C',
   boxShadow: 24,
   overflow: 'hidden',
 };

@@ -59,9 +59,13 @@ export class FileUploaded {
     }
 
     rename(newName: string) {
-        const pathParts = this.info.path.split('/');
-        pathParts[pathParts.length - 1] = newName;
-        this.info.path = pathParts.join('/');
+        
+        if (this.info.tags && this.info.tags.length >= 1) {
+            this.info.tags[0] = { name: newName };
+        } else {
+            // If tags are undefined or empty, create or add the new name as a tag
+            this.addTag({ name: newName });
+        }
     }
 
     static newFile(dimension: Dimension, path: string, user: User, type: FileType, tags?: Tag[]): FileUploaded {
@@ -70,27 +74,27 @@ export class FileUploaded {
         return new FileUploaded(fileInfo);
     }
 
-    async processImage(width: number, height: number, imagePath: string): Promise<string> {
+    async processImage(imagePath: string): Promise<string> {
         const img = new Image();
         img.src = imagePath;
+        
+        // Wait for the image to load
         await new Promise((resolve) => { img.onload = resolve; });
-
+    
+        // Create a canvas element
         const canvas = document.createElement("canvas");
         const ctx = canvas.getContext("2d");
-
-        canvas.width = width;
-        canvas.height = height;
-
-        const scale = Math.min(width / img.width, height / img.height);
-        const x = (width - img.width * scale) / 2;
-        const y = (height - img.height * scale) / 2;
-
+    
+        // Set canvas size to image size
+        canvas.width = img.width;
+        canvas.height = img.height;
+    
+        // Draw the image in its original dimensions
         if (ctx) {
-            ctx.fillStyle = 'white';
-            ctx.fillRect(0, 0, width, height);
-            ctx.drawImage(img, x, y, img.width * scale, img.height * scale);
+            ctx.drawImage(img, 0, 0);
         }
-
+    
+        // Return a Promise that resolves to the data URL of the canvas image
         return new Promise((resolve, reject) => {
             canvas.toBlob((blob) => {
                 if (blob) {
@@ -102,6 +106,7 @@ export class FileUploaded {
             }, "image/png");
         });
     }
+
     async extractPagesFromPDF(fileBuffer: ArrayBuffer) {
         if (!pdfjsLib) {
             throw new Error('pdfjsLib is not loaded');
@@ -114,7 +119,7 @@ export class FileUploaded {
         for (let i = 1; i <= pdf.numPages; i++) {
             const page = await pdf.getPage(i);
 
-            const viewport = page.getViewport({ scale: 1 });
+            const viewport = page.getViewport({ scale: 3 });
             const canvas = document.createElement('canvas');
             canvas.width = viewport.width;
             canvas.height = viewport.height;

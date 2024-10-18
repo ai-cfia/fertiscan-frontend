@@ -5,11 +5,13 @@ import MenuItem from '@mui/material/MenuItem';
 interface ContextMenuProps {
   contextMenuPosition: { mouseX: number; mouseY: number } | null;
   handleClose?: () => void;
+  handleRename: (newName: string) => void;
 }
 
 const ContextMenu: React.FC<ContextMenuProps> = ({
   contextMenuPosition,
   handleClose,
+  handleRename,
   
 }) => {
   function handleCloseContextMenu () {
@@ -29,7 +31,13 @@ const ContextMenu: React.FC<ContextMenuProps> = ({
       anchorReference="anchorPosition"
       anchorPosition={contextMenuPosition ? { top: contextMenuPosition.mouseY, left: contextMenuPosition.mouseX } : undefined}
     >
-      <MenuItem onClick={SendActionContextMenu}>Rename</MenuItem>
+      <MenuItem onClick={() => {
+        let newName = prompt("Please enter new name"); // Ask user for a new name
+        if (newName) {
+          handleRename(newName); // Call parent's handleRename with the new name
+          handleCloseContextMenu(); // Close the menu
+        }
+      }}>Rename</MenuItem>
       <MenuItem onClick={handleCloseContextMenu}>Delete</MenuItem>
       <MenuItem onClick={handleCloseContextMenu}>Not analyze</MenuItem>
     </Menu>

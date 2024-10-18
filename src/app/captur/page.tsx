@@ -1,7 +1,7 @@
 "use client";
 import React, { useState, useEffect } from 'react'; 
 import { createTheme, ThemeProvider } from '@mui/material/styles'; 
-import { Box, Button, Typography } from '@mui/material'; 
+import { Box, Button, Container, Typography } from '@mui/material'; 
 import Grid2 from '@mui/material/Grid2'; 
 import { CloudUpload } from '@mui/icons-material'; 
 import ChooseImageModal from '@/components/PdfImageModal/ChooseImageModal';
@@ -66,6 +66,18 @@ function Capture() {
         setContextMenuAnchor({ mouseX: event.clientX - 2, mouseY: event.clientY + 4 }); 
 
     }
+            // Function to rename a file
+        interface RenameHandler {
+            (index: number, newName: string): void;
+        }
+
+        const handleRename: RenameHandler = (index, newName) => {
+            setUploadedFiles(
+                uploadedFiles.map((file, i) => 
+                    i === index ? new FileUploaded({ ...file.getInfo(), tags: [{ name: newName }] }) : file
+                )
+            );
+        };
 
     // Function File Upload
     function handleFileUpload(event: React.ChangeEvent<HTMLInputElement>) { 
@@ -120,36 +132,42 @@ function Capture() {
     return ( 
         <ThemeProvider theme={theme}> 
             <Box sx={{ paddingTop: '10vh' }}> 
-                <Grid2 container rowSpacing={1} columnSpacing={{ xs: 1, sm: 2, md: 3 }} justifyContent="center" height="80vh"> 
+                <Grid2 container rowSpacing={1} columnSpacing={{ xs: 1, sm: 2, md: 3 }} justifyContent="center"   sx={{ height: "80vh" }}> 
                     <Grid2 size={{ xs: 10, md: 7 }}> 
                         <Box 
-                            sx={{ 
-                                display: 'flex', 
-                                flexDirection: 'column', 
-                                justifyContent: 'center', 
-                                alignItems: 'center', 
-                                border: '3px dashed #033a5b', 
-                                borderRadius: 1, 
-                                textAlign: 'center', 
-                                p: 1, 
-                                backgroundSize: 'cover', 
-                                backgroundColor: 'transparent', 
-                                width: '100%', 
-                                height: '100%', 
-                                minHeight: { xs: '350px', md: '400px' }, 
-                            }} 
+                                sx={{
+                                    display: 'flex',
+                                    position: 'relative',
+                                    flexDirection: 'column',
+                                    justifyContent: 'center',
+                                    alignItems: 'center',
+                                    border: '3px dashed #033a5b',
+                                    borderRadius: 1,
+                                    textAlign: 'center',
+                                    p: 1,
+                                    backgroundSize: 'contain',
+                                    backgroundColor: 'transparent',
+                                    width: '100%',
+                                    height: '100%',
+                                    minHeight: { xs: '350px', md: '400px' },
+                                    minWidth: '133.44px', 
+                                }}
                             onDragOver={handleDragOver} 
                             onDrop={handleDrop} 
                         > 
                             {dropzoneState.visible && dropzoneState.image_url ? ( 
-                                <Box> 
                                     <Box 
                                         component="img" 
                                         src={dropzoneState.image_url} 
                                         alt="Uploaded file" 
-                                        sx={{ width: { xs: '100%', sm: 'auto', md: 'auto' }, maxWidth: '100%', maxHeight: '100%' }} 
+                                        sx={{ 
+                                            position: 'absolute',
+                                            maxWidth: '100%',
+                                            maxHeight: '100%',
+                                            objectFit: 'contain',
+                                            border: '2px solid #033a5b',
+                                        }} 
                                     /> 
-                                </Box> 
                             ) : ( 
                                 <Box sx={{ textAlign: 'center' }}> 
                                     <CloudUpload sx={{ fontSize: '120px', color: '#033a5b' }} /> 
@@ -176,23 +194,64 @@ function Capture() {
                             )} 
                         </Box> 
                     </Grid2> 
-                    <Grid2 size={{ xs: 10, md: 4 }} display={'flex'} maxHeight={'100vh'}> 
+                    <Grid2 size={{ xs: 10, md: 4 }} display={'flex'}> 
+                        <Box
+                        sx={{
+                            display: 'flex',
+                                    position: 'relative',
+                                    flexDirection: 'column',
+                                    justifyContent: 'center',
+                                    alignItems: 'center',
+                                    border: '2px solid #033a5b',
+                                    borderRadius: 1,
+                                    textAlign: 'center',
+                                    p: 1,
+                                    backgroundSize: 'contain',
+                                    backgroundColor: 'transparent',
+                                    width: '100%',
+                                    height: '100%',
+                                    minHeight: { xs: '350px', md: '400px' },
+                                    overflowY: 'auto',
+                                    overflowX: 'hidden',
+                                    minWidth: '133.44px', 
+                                    // Styles for the scrollbar for Webkit browsers (Chrome, Safari, and newer Edge)
+                                    '&::-webkit-scrollbar': {
+                                        width: '20px',
+                                        marginRight: '10px'
+                                },
+                                    '&::-webkit-scrollbar-thumb': {
+                                        backgroundColor: '#022d46',
+                                        borderRadius: '10px',
+                                        WebkitBackgroundClip:'content-box',
+                                        border: '5px solid transparent'        
+                                    },
+                                    '&::-webkit-scrollbar-track': {
+                                        backgroundColor: 'transparent',
+                                    },
+                                }}
+                            >
                         <Box 
-                            sx={{ 
-                                border: '3px solid #05486C', 
-                                display: 'flex', 
-                                flexDirection: 'column', 
-                                p: 2, 
-                                borderRadius: 1, 
-                                width: '100%', 
-                                height: '100%', 
-                                overflowY: 'auto',
-                            }} 
+                            sx={{
+                                position: 'absolute',
+                                top: uploadedFiles.length === 0 ? '50%' : 'initial',
+                                left: uploadedFiles.length === 0 ? '50%' : 'initial',
+                                transform: uploadedFiles.length === 0 ? 'translate(-50%, -50%)' : 'none', // center the box when there are no uploaded files
+                                width: '100%',
+                                height: '100%',
+                                display: 'flex',
+                                flexDirection: 'column',
+                                justifyContent: uploadedFiles.length === 0 ? 'center' : 'flex-start',
+                                alignItems: uploadedFiles.length === 0 ? 'center' : 'flex-start',
+                                textAlign: 'center',
+                                maxWidth: '100%',
+                                maxHeight: '100%',
+                                objectFit: 'contain',
+                                p: uploadedFiles.length !== 0 ? 2 : 0, // padding when there are files
+                            }}
                         > 
-                            <Typography variant="h6" gutterBottom> 
-                                Uploaded files 
+                            <Typography variant="h6" gutterBottom>
+                                {uploadedFiles.length > 0 ? 'Uploaded files' : 'No files uploaded'}
                             </Typography>
-
                             {uploadedFiles.map((file, index) => ( 
                                 <UploadFile 
                                     key={index} 
@@ -201,11 +260,13 @@ function Capture() {
                                     setDropZoneState={handleSetDropzoneState} 
                                     contextMenuAnchor={contextMenuAnchor} 
                                     setContextMenuAnchor={setContextMenuAnchor} 
-                                    fileName={file.getInfo().tags?.[0]?.name || file.getInfo().path.split('/').pop() || 'filename.jpg'} 
+                                    fileName={file.getInfo().tags?.[0]?.name || file.getInfo().path.split('/').pop()||"filename.jpg"} 
                                     fileUrl={file.getInfo().path} 
+                                    handleRename={(newName) => handleRename(index, newName)}
                                 /> 
                             ))} 
                         </Box> 
+                        </Box>
                     </Grid2> 
                     <Grid2 size={{ xs: 10, md: 7 }} sx={{ display: { xs: 'none', md: 'flex' } }}> 
                         <Button variant="contained" color="primary" onClick={handleLoginModalOpen}> 

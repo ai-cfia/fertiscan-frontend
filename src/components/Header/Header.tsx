@@ -12,7 +12,7 @@ const Header: React.FC = () => {
             <AppBar position="static">
                 <Toolbar>
 
-                    <IconButton color={"inherit"} edge="start" aria-label="menu" >
+                    <IconButton color={"inherit"} edge="start" aria-label="menu">
                         <MenuIcon sx={{fontSize: {xs: '5vw',md: '3vw', xl:'3vw'}}}/>
                     </IconButton>
 
@@ -32,7 +32,6 @@ const Header: React.FC = () => {
                             <AccountCircleIcon fontSize={"large"} sx={{fontSize: {xs: '3vw',md: '3vw', xl:'2.5vw'}}}/>
                         </IconButton>
                     </Box>
-
                 </Toolbar>
             </AppBar>
         </Box>
