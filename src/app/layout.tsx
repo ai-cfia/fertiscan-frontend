@@ -7,6 +7,7 @@ import theme from './theme';
 import Header from "@/Components/Header";
 import SideNav from "@/Components/Sidenav";
 import {useState} from "react";
+import {Box} from "@mui/material";
 
 const roboto = Roboto({
     weight: ['300', '400', '500', '700'],
@@ -17,21 +18,31 @@ const roboto = Roboto({
 
 
 export default function RootLayout({children}: Readonly<{ children: React.ReactNode;}>) {
-    const [mobileOpen, setMobileOpen] = useState(false);
+    const [SideNavOpen, setSideNavOpen] = useState(false);
 
     const handleDrawerToggle = () => {
         console.log("aaaa")
-        setMobileOpen(!mobileOpen);
-        console.log(mobileOpen);
+        setSideNavOpen(!SideNavOpen);
+        console.log(SideNavOpen);
     };
     return (
         <html lang="en">
         <body className={roboto.variable}>
         <AppRouterCacheProvider>
             <ThemeProvider theme={theme}>
-                <Header handleDrawerToggle={handleDrawerToggle}/>
-                <SideNav mobileOpen={mobileOpen} handleDrawerToggle={handleDrawerToggle}/>
-                {children}
+                <SideNav open={SideNavOpen}/>
+                <Box
+                    sx={{
+                        transition: theme.transitions.create(['margin', 'width'], {
+                            easing: theme.transitions.easing.sharp,
+                            duration: theme.transitions.duration.leavingScreen,
+                        })
+                    }}
+                    marginLeft={SideNavOpen? '240px' : 0}
+                >
+                    <Header isSideNavOpen={SideNavOpen} handleDrawerToggle={handleDrawerToggle}/>
+                    {children}
+                </Box>
             </ThemeProvider>
         </AppRouterCacheProvider>
         </body>

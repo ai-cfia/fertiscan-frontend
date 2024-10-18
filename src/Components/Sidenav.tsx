@@ -1,62 +1,60 @@
-import { Drawer, Divider, List, ListItem, ListItemText, Toolbar, Box } from '@mui/material';
+import * as React from 'react';
+import {Drawer, Box, List, ListItemButton, ListItemText, Toolbar, Typography} from '@mui/material';
+import {useTheme} from "@mui/material";
 
-const drawerWidth = 240;
-
-interface SideNaveProps {
-    mobileOpen: boolean;
-    handleDrawerToggle: () => void;
+interface DrawerMenuProps {
+    open: boolean;
 }
 
-
-export default function SideNav({ mobileOpen, handleDrawerToggle }: SideNaveProps) {
-    // Drawer content
-    const drawer = (
-        <div>
-            <Toolbar />
-            <Divider />
+const SideNav = ({ open }: DrawerMenuProps) => {
+    const theme = useTheme();
+    const drawerContent = (
+        <Box
+             sx={{
+                 width: 250,
+                 color: theme.palette.text.primary
+             }}
+        >
+            <Toolbar>
+                <Typography>
+                    Menu
+                </Typography>
+            </Toolbar>
             <List>
-                {['Home', 'About', 'Services', 'Contact'].map((text) => (
-                    <ListItem button key={text}>
-                        <ListItemText primary={text} />
-                    </ListItem>
-                ))}
+                <ListItemButton>
+                    <ListItemText primary="Item 1" />
+                </ListItemButton>
+                <ListItemButton>
+                    <ListItemText primary="Item 2" />
+                </ListItemButton>
+                {/* Add more items as needed */}
             </List>
-        </div>
+        </Box>
     );
 
     return (
-        <Box
-            component="nav"
-            sx={{ width: { sm: drawerWidth }, flexShrink: { sm: 0 } }}
-            aria-label="mailbox folders"
+        <Drawer
+            sx={{
+                width: 240,
+                flexShrink: 0,
+                '& .MuiDrawer-paper': {
+                    width: 240,
+                    boxSizing: 'border-box',
+                },
+            }}
+            variant="persistent"
+            anchor="left"
+            open={open}
+            PaperProps={{
+                sx: {
+                    backgroundColor: theme.palette.secondary.main,
+                }
+            }}
         >
-            {/* Mobile drawer */}
-            <Drawer
-                variant="temporary"
-                open={mobileOpen}
-                onClose={handleDrawerToggle}
-                ModalProps={{
-                    keepMounted: true, // Better open performance on mobile.
-                }}
-                sx={{
-                    display: { xs: 'block', sm: 'none' },
-                    '& .MuiDrawer-paper': { boxSizing: 'border-box', width: drawerWidth },
-                }}
-            >
-                {drawer}
-            </Drawer>
+            {drawerContent}
 
-            {/* Desktop drawer */}
-            <Drawer
-                variant="permanent"
-                sx={{
-                    display: { xs: 'none', sm: 'block' },
-                    '& .MuiDrawer-paper': { boxSizing: 'border-box', width: drawerWidth },
-                }}
-                open
-            >
-                {drawer}
-            </Drawer>
-        </Box>
+        </Drawer>
     );
-}
+};
+
+export default SideNav;
