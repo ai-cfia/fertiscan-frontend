@@ -1,13 +1,3 @@
 .logo {
     position: relative !important;
 }
-
-.languageButton{
-    text-transform: unset !important;
-    text-decoration: underline !important;
-    width: fit-content !important;
-    align-self: center;
-}
-.languageButton > text{
-    justify-self: center;
-}
