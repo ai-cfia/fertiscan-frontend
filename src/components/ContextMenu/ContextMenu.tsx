@@ -8,20 +8,17 @@ interface ContextMenuProps {
   handleRename: (newName: string) => void;
 }
 
-const ContextMenu: React.FC<ContextMenuProps> = ({
+const ContextMenu: React.FC<ContextMenuProps & { handleDelete: () => void }> = ({
   contextMenuPosition,
   handleClose,
   handleRename,
+  handleDelete,
   
 }) => {
   function handleCloseContextMenu () {
     if (handleClose) {
       handleClose();
     }
-  }
-
-  function SendActionContextMenu () {
-    console.log("Rename");
   }
 
   return (
@@ -32,14 +29,18 @@ const ContextMenu: React.FC<ContextMenuProps> = ({
       anchorPosition={contextMenuPosition ? { top: contextMenuPosition.mouseY, left: contextMenuPosition.mouseX } : undefined}
     >
       <MenuItem onClick={() => {
-        let newName = prompt("Please enter new name"); // Ask user for a new name
+        let newName = prompt("Please enter new name");
         if (newName) {
-          handleRename(newName); // Call parent's handleRename with the new name
-          handleCloseContextMenu(); // Close the menu
+          handleRename(newName);
+          handleCloseContextMenu();
         }
       }}>Rename</MenuItem>
-      <MenuItem onClick={handleCloseContextMenu}>Delete</MenuItem>
-      <MenuItem onClick={handleCloseContextMenu}>Not analyze</MenuItem>
+      <MenuItem onClick={() => {
+          console.log("Delete is not implemented in the context menu right now");
+          handleDelete();
+          handleCloseContextMenu();
+      }}>Delete</MenuItem>
+      <MenuItem onClick={handleCloseContextMenu}>Do not analyzed</MenuItem>
     </Menu>
   );
 }

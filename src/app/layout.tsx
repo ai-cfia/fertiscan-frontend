@@ -6,6 +6,7 @@ import { Roboto } from 'next/font/google';
 import { ThemeProvider } from '@mui/material/styles';
 import theme from './theme';
 import Header from "@/components/Header/Header";
+import SideMenu from "@/components/SideMenu/SideMenu";
 
 const roboto = Roboto({
       weight: ['300', '400', '500', '700'],
@@ -24,12 +25,13 @@ export default function RootLayout({
 }: Readonly<{
   children: React.ReactNode;
 }>) {
+
   return (
     <html lang="en">
       <body className={roboto.variable}>
         <AppRouterCacheProvider>
           <ThemeProvider theme={theme}>
-            <Header />
+            <Header/>
             {children}
           </ThemeProvider>
         </AppRouterCacheProvider>

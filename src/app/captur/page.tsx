@@ -1,7 +1,7 @@
 "use client";
-import React, { useState, useEffect } from 'react';
+import React, { useState } from 'react';
 import { createTheme, ThemeProvider } from '@mui/material/styles';
-import { Box, Button, Container, Typography, Stack } from '@mui/material';
+import { Box, Button, Typography, Stack } from '@mui/material';
 import Grid2 from '@mui/material/Grid2';
 import { CloudUpload } from '@mui/icons-material';
 import ChooseImageModal from '@/components/PdfImageModal/ChooseImageModal';
