@@ -95,7 +95,18 @@ function Capture() {
     }
 
     function handleConfirm(selectedFiles: FileUploaded[]) {
-        setUploadedFiles(prevFiles => [...prevFiles, ...selectedFiles]);
+        let index=0;
+        for (let file of selectedFiles) {
+            let newFile = new FileUploaded({
+                dimension: { width: 0, height: 0 },
+                path: file.getInfo().path,
+                user: file.getInfo().user,
+                type: file.getInfo().type,
+                uploadDate: new Date(),
+            });
+            newFile.addTag({ name: 'Extracted'+index++ }),
+            setUploadedFiles(prevFiles => [...prevFiles, newFile]);
+        }
     }
 
     async function processFile(file: File) {
