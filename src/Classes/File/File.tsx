@@ -68,6 +68,7 @@ export class FileUploaded {
         }
     }
 
+
     static newFile(dimension: Dimension, path: string, user: User, type: FileType, tags?: Tag[]): FileUploaded {
         const uploadDate = new Date();
         const fileInfo: FileInfo = { dimension, path, user, type, uploadDate, tags };
@@ -106,41 +107,53 @@ export class FileUploaded {
             }, "image/png");
         });
     }
+    
 
-    async extractPagesFromPDF(fileBuffer: ArrayBuffer) {
+    async extractPagesFromPDF(fileBuffer: ArrayBuffer): Promise<FileUploaded[]> {
         if (!pdfjsLib) {
             throw new Error('pdfjsLib is not loaded');
         }
-
+    
         const typedArray = new Uint8Array(fileBuffer);
         const pdf = await pdfjsLib.getDocument(typedArray).promise;
-        const imageList = [];
-
+        const filesExtracted = [];
+    
         for (let i = 1; i <= pdf.numPages; i++) {
             const page = await pdf.getPage(i);
-
-            const viewport = page.getViewport({ scale: 3 });
+            const viewport = page.getViewport({ scale: 1.5 }); // Adjust scale as needed
             const canvas = document.createElement('canvas');
             canvas.width = viewport.width;
             canvas.height = viewport.height;
             const context = canvas.getContext('2d');
-
+    
             if (context) {
                 const renderContext = {
                     canvasContext: context,
                     viewport: viewport,
                 };
                 await page.render(renderContext).promise;
-
-                const imageUrl = canvas.toDataURL('image/png');
-                imageList.push(imageUrl);
+    
+                const blob = await new Promise<Blob|null>(resolve => canvas.toBlob(resolve));
+                if (blob) {
+                    const imageUrl = URL.createObjectURL(blob);
+    
+                    const imageFile = FileUploaded.newFile(
+                        { width: canvas.width, height: canvas.height },
+                        imageUrl, 
+                        this.info.user, 
+                        "png",
+                        [{ name: `Page ${i}` }]
+                    );
+    
+                    filesExtracted.push(imageFile);
+                }
             }
         }
-
-        return imageList;
+    
+        return filesExtracted;
     }
 
-    async detectType(): Promise<FileType | { type: "pdf", images: string[] }> {  
+    async detectType(): Promise<FileType | { type: "pdf", images: FileUploaded[] }> {  
         if (typeof window === 'undefined') {
             return 'pdf' as FileType;
         }

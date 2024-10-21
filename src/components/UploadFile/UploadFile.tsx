@@ -14,7 +14,7 @@ interface UploadFileProps {
 }
 
 
-const UploadFile: React.FC<UploadFileProps & { handleRename: (newName: string) => void }> = ({
+const UploadFile: React.FC<UploadFileProps & { handleRename: (newName: string) => void } & {handleDelete:(url:string) => void}> = ({
     handleRightClick,
     fileUrl,
     handleCloseContextMenu,
@@ -22,7 +22,8 @@ const UploadFile: React.FC<UploadFileProps & { handleRename: (newName: string) =
     contextMenuAnchor,
     setContextMenuAnchor,
     fileName,
-    handleRename
+    handleRename,
+    handleDelete,
 }) => {
     const [hovered, setHovered] = useState(false);
 
@@ -84,6 +85,7 @@ const UploadFile: React.FC<UploadFileProps & { handleRename: (newName: string) =
                         color: 'black',
                         display: 'flex',
                     }}
+                    onClick={()=> handleDelete(fileUrl)}
                 >
                     <CancelOutlinedIcon sx={{ fontSize: { xs: 'medium' } }} />
                 </IconButton>

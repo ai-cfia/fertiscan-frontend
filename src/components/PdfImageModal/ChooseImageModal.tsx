@@ -2,6 +2,7 @@ import React, { useState } from 'react';
 import {
   Modal, Box, AppBar, Toolbar, Typography, IconButton, Grid, Checkbox, Backdrop, Fade, Button
 } from '@mui/material';
+import { FileUploaded } from '@/Classes/File/File';
 
 const style = {
   position: 'absolute',
@@ -18,17 +19,16 @@ const style = {
 interface ChooseImageModalProps {
   open: boolean;
   handleClose: () => void;
-  images: string[];
-  mainImage: string;
-  onConfirm: (selectedImages: string[]) => void;
+  images: FileUploaded[];
+  onConfirm: (selectedImages: FileUploaded[]) => void;
 }
 
-const ChooseImageModal: React.FC<ChooseImageModalProps> = ({ open, handleClose, images, mainImage, onConfirm }) => {
-  const [selectedImages, setSelectedImages] = useState<string[]>([]);
+const ChooseImageModal: React.FC<ChooseImageModalProps> = ({ open, handleClose, images, onConfirm }) => {
+  const [selectedImages, setSelectedImages] = useState<FileUploaded[]>([]);
 
-  const handleSelectImage = (image: string) => {
+  const handleSelectImage = (selectedImage: FileUploaded) => {
     setSelectedImages(prevState =>
-      prevState.includes(image) ? prevState.filter(img => img !== image) : [...prevState, image]
+      prevState.includes(selectedImage) ? prevState.filter(img => img !== selectedImage) : [...prevState, selectedImage]
     );
   };
 
@@ -67,18 +67,18 @@ const ChooseImageModal: React.FC<ChooseImageModalProps> = ({ open, handleClose, 
             </Toolbar>
           </AppBar>
           <Grid container direction="row" sx={{ overflowX: 'scroll', height: '100%', backgroundColor: '#05486C' }}>
-            {images.map((src, index) => (
+            {images.map((fileUploaded, index) => (
               <Box key={index} sx={{ position: 'relative', margin: '4px' }}>
                 <Box
                   component="img"
-                  src={src}
+                  src={fileUploaded.getInfo().path} 
                   alt={`Thumbnail ${index + 1}`}
                   style={{ height: '200px', objectFit: 'cover', }}
-                  onClick={() => handleSelectImage(src)}
+                  onClick={() => handleSelectImage(fileUploaded)}
                 />
                 <Checkbox
-                  checked={selectedImages.includes(src)}
-                  onChange={() => handleSelectImage(src)}
+                  checked={selectedImages.includes(fileUploaded)}
+                  onChange={() => handleSelectImage(fileUploaded)}
                   sx={{
                     position: 'absolute',
                     top: '4px',
