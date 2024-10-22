@@ -1,6 +1,8 @@
 # Next.js Application
 
-This project is a **Next.js v14.2.15** application using **TypeScript**, **Material UI**, **Zustand** for state management, and **Jest** with **React Testing Library** for unit testing.
+This project is a **Next.js v14.2.15** application using **TypeScript**,
+**Material UI**, **Zustand** for state management, and **Jest** with **React
+Testing Library** for unit testing.
 
 ## Table of Contents
 
@@ -43,11 +45,13 @@ Make sure you have the following installed on your machine:
 
    `npm run dev`
 
-The application should now be running at [http://localhost:3000](http://localhost:3000).
+The application should now be running at
+[http://localhost:3000](http://localhost:3000).
 
 ## Folder Structure
 
-This project follows a modular file structure based on Next.js v14's `src/app` directory layout. Here's an overview:
+This project follows a modular file structure based on Next.js v14's `src/app`
+directory layout. Here's an overview:
 
 ```bash
 src/
@@ -75,7 +79,8 @@ To start the development server:
 
 `npm run dev`
 
-This will launch the application at [http://localhost:3000](http://localhost:3000).
+This will launch the application at
+[http://localhost:3000](http://localhost:3000).
 
 To build the application for production:
 
@@ -87,7 +92,8 @@ To start the production build:
 
 ## Testing
 
-We use **Jest** and **React Testing Library** to test components and application logic.
+We use **Jest** and **React Testing Library** to test components and application
+logic.
 
 ### Running Tests
 
@@ -95,13 +101,16 @@ To run all tests:
 
 npm run test
 
-Tests are located in the `__tests__` directories adjacent to the components or pages they test.
+Tests are located in the `__tests__` directories adjacent to the components or
+pages they test.
 
 ## Theming
 
-This project uses **Material UI** for theming. The theme is configured in the `src/app/theme.ts` file.
+This project uses **Material UI** for theming. The theme is configured in the
+`src/app/theme.ts` file.
 
-To apply the theme globally in your application, you can use the `ThemeProvider` component provided by Material UI in your `src/app/layout.tsx` file.
+To apply the theme globally in your application, you can use the `ThemeProvider`
+component provided by Material UI in your `src/app/layout.tsx` file.
 
 ### Applying the Theme
 
@@ -125,7 +134,8 @@ export default function Layout({ children }: { children: React.ReactNode }) {
 
 ### Using the Theme in Components
 
-You can access the theme inside any component using Material UI’s `useTheme` hook or by applying the theme values directly through the MUI components.
+You can access the theme inside any component using Material UI’s `useTheme`
+hook or by applying the theme values directly through the MUI components.
 
 Example using `useTheme`:
 
@@ -149,13 +159,16 @@ const Header = () => {
 export default Header;
 ```
 
-In this example, the `Header` component uses the primary color from the theme for the background and the secondary color for the text. You can access any part of the theme (e.g., spacing, typography) in a similar way with `useTheme`.
+In this example, the `Header` component uses the primary color from the theme
+for the background and the secondary color for the text. You can access any part
+of the theme (e.g., spacing, typography) in a similar way with `useTheme`.
 
 ---
 
 ## State Management
 
-We use **Zustand** for lightweight state management. The store is located in the `src/store/useStore.ts` file.
+We use **Zustand** for lightweight state management. The store is located in the
+`src/store/useStore.ts` file.
 
 Example store setup:
 
@@ -178,11 +191,14 @@ export default useStore;
 
 ## Contribution Guidelines
 
-We encourage all contributors to follow the guidelines outlined in our [CONTRIBUTING.md](https://github.com/ai-cfia/.github/blob/main/profile/CONTRIBUTING.md) document.
+We encourage all contributors to follow the guidelines outlined in our
+[CONTRIBUTING.md](https://github.com/ai-cfia/.github/blob/main/profile/CONTRIBUTING.md)
+document.
 
 ### Forking and Cloning
 
-1. Fork the repository by clicking on the 'Fork' button on the top-right of the repository page.
+1. Fork the repository by clicking on the 'Fork' button on the top-right of the
+   repository page.
 2. Clone the forked repository to your local machine:
 
    ```bash
@@ -197,7 +213,9 @@ We encourage all contributors to follow the guidelines outlined in our [CONTRIBU
    git checkout -b feature/your-feature-name
    ```
 
-2. Make your changes, ensuring they adhere to the [CONTRIBUTING.md](https://github.com/ai-cfia/.github/blob/main/profile/CONTRIBUTING.md) guidelines.
+2. Make your changes, ensuring they adhere to the
+   [CONTRIBUTING.md](https://github.com/ai-cfia/.github/blob/main/profile/CONTRIBUTING.md)
+   guidelines.
 3. Run the test suite to verify:
 
    ```bash
@@ -212,7 +230,8 @@ We encourage all contributors to follow the guidelines outlined in our [CONTRIBU
    git push origin feature/your-feature-name
    ```
 
-5. Open a Pull Request (PR) from your feature branch, providing a clear description of the changes.
+5. Open a Pull Request (PR) from your feature branch, providing a clear
+   description of the changes.
 
 ### Code Style
 
@@ -222,4 +241,5 @@ We encourage all contributors to follow the guidelines outlined in our [CONTRIBU
 
 ## License
 
-This project is licensed under the MIT License. See the [LICENSE](LICENSE) file for details.
+This project is licensed under the MIT License. See the [LICENSE](LICENSE) file
+for details.
