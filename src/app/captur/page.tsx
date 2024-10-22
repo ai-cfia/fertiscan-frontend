@@ -8,6 +8,7 @@ import ChooseImageModal from '@/components/PdfImageModal/ChooseImageModal';
 import LoginModal from '@/components/Login/Login';
 import UploadFile from '@/components/UploadFile/UploadFile';
 import { FileUploaded, FileType, } from '@/Classes/File/File';
+import SignUpModal from '@/components/SignUp/SignUp';
 
 const theme = createTheme({
     palette: {
@@ -280,7 +281,7 @@ function Capture() {
                         <Button variant="contained" color="primary" onClick={handleLoginModalOpen}>
                             Open Login Modal
                         </Button>
-                        <LoginModal open={loginModalOpen} onClose={handleLoginModalClose} />
+                        <SignUpModal open={loginModalOpen} onClose={handleLoginModalClose} />
                     </Grid2>
                     <Grid2 size={{ xs: 10, md: 4 }}>
                         <Button

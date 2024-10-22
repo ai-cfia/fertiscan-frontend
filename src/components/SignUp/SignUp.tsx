@@ -10,23 +10,27 @@ import ErrorOutlineOutlinedIcon from '@mui/icons-material/ErrorOutlineOutlined';
 
 const theme = createTheme();
 
-interface LoginModalProps {
+interface SignUpModalProps {
   open: boolean;
   onClose: () => void;
 }
 
-const LoginModal: React.FC<LoginModalProps> = ({ open, onClose }) => {
+const SignUpModal: React.FC<SignUpModalProps> = ({ open, onClose }) => {
   const [showPassword, setShowPassword] = useState(false);
-  const [checked, setChecked] = useState(false);
+  const [showConfirmationPassword, setShowConfirmationPassword] = useState(false);
   const [username, setUsername] = useState('');
   const [password, setPassword] = useState('');
+  const [confirmationPassword, setConfirmationPassword] = useState('');
   const [usernameError, setUsernameError] = useState('');
   const [passwordError, setPasswordError] = useState('');
-
+  
   const handleClickShowPassword = () => setShowPassword(!showPassword);
   const handleMouseDownPassword = (event: React.MouseEvent<HTMLButtonElement>) => event.preventDefault();
-  const handleCheckChange = () => setChecked(!checked);
 
+  const handleClickShowConfirmationPassword = () => setShowConfirmationPassword(!showConfirmationPassword);
+  const handleMouseDownConfirmationPassword = (event: React.MouseEvent<HTMLButtonElement>) => event.preventDefault();
+
+  
   const validateInputs = () => {
     let valid = true;
     if (username.trim() === '') {
@@ -43,12 +47,19 @@ const LoginModal: React.FC<LoginModalProps> = ({ open, onClose }) => {
       setPasswordError('');
     }
 
+    if (confirmationPassword.trim() === '') {
+        setPasswordError('Confirmation password is required');
+        valid = false;
+      } else {
+        setPasswordError('');
+      }
+
     return valid;
-  };
+  }
 
   const handleLogin = () => {
     if (validateInputs()) {
-      onClose();
+        onClose();
     }
   };
 
@@ -69,7 +80,7 @@ const LoginModal: React.FC<LoginModalProps> = ({ open, onClose }) => {
           color: 'white',
           textAlign: 'left'
         }}>
-          <Typography variant="h5" component="h1" sx={{ marginBottom: '24px', fontSize: '2.5rem' }}>Login</Typography>
+          <Typography variant="h5" component="h1" sx={{ marginBottom: '24px', fontSize: '2.5rem' }}>Sign Up</Typography>
 
           <FormControl component="fieldset" variant="standard" sx={{ m: 0 }}>
             <FormGroup>
@@ -130,11 +141,44 @@ const LoginModal: React.FC<LoginModalProps> = ({ open, onClose }) => {
                 </Box>
               )}
 
-              <FormControlLabel
-                control={<Checkbox name="checked" color="primary" checked={checked} onChange={handleCheckChange} sx={{ color: '#fff' }} />}
-                label={<span style={{ color: 'white', fontSize: '0.875rem' }}> By checking this box I understand that the data I have entered will be stored and thus should not be sensitive information. </span>}
-                sx={{ marginBottom: '16px' }}
+            <TextField
+                id="Confirmationpassword"
+                fullWidth
+                variant="standard"
+                label="Password Confirmation"
+                type={showPassword ? "text" : "password"}
+                placeholder="Password Confirmation"
+                value={password}
+                onChange={(e) => setConfirmationPassword(e.target.value)}
+                InputProps={{
+                  style: { color: 'white' },
+                  startAdornment: (
+                    <InputAdornment position="start">
+                      <Lock />
+                    </InputAdornment>
+                  ),
+                  endAdornment: (
+                    <InputAdornment position="end">
+                      <IconButton
+                        aria-label="toggle password visibility"
+                        onClick={handleClickShowConfirmationPassword}
+                        onMouseDown={handleMouseDownConfirmationPassword}
+                      >
+                        {showPassword ? <Visibility /> : <VisibilityOff />}
+                      </IconButton>
+                    </InputAdornment>
+                  )
+                }}
+                sx={{ marginBottom: '16px', '.MuiInputLabel-root.Mui-focused': { color: '#0e507f' } }}
               />
+              {passwordError && (
+                <Box display="flex" alignItems="center" sx={{ color: 'error.main', marginBottom: 2 }}>
+                  <ErrorOutlineOutlinedIcon fontSize='medium' />
+                  <FormHelperText error sx={{ marginLeft: 1 }}>
+                    The username or password is not valid. Please try again!
+                  </FormHelperText>
+                </Box>
+              )}
 
               <Typography variant="body2" sx={{ color: 'white', fontSize: '0.875rem', marginBottom: '16px' }}>
                 <span>As a reminder, work email, phone number or real name are considered sensitive information.</span>
@@ -152,7 +196,6 @@ const LoginModal: React.FC<LoginModalProps> = ({ open, onClose }) => {
                 '&:hover': { backgroundColor: 'white', color: '#0e507f', boxShadow: 'none', fontSize:'1.5rem' }
               }}
               onClick={handleLogin}
-              disabled={!checked}
             >
               Login
             </Button>
@@ -172,4 +215,4 @@ const LoginModal: React.FC<LoginModalProps> = ({ open, onClose }) => {
   );
 };
 
-export default LoginModal;
+export default SignUpModal;
