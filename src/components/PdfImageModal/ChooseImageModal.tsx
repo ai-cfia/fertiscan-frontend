@@ -9,8 +9,8 @@ const style = {
   top: '50%',
   left: '50%',
   transform: 'translate(-50%, -50%)',
-  width: '50%',
-  height: '50%',
+  width: '60%',
+  height: '60%',
   bgcolor: '#05486C',
   boxShadow: 24,
   overflow: 'hidden',
@@ -30,6 +30,14 @@ const ChooseImageModal: React.FC<ChooseImageModalProps> = ({ open, handleClose, 
     setSelectedImages(prevState =>
       prevState.includes(selectedImage) ? prevState.filter(img => img !== selectedImage) : [...prevState, selectedImage]
     );
+  };
+
+  const handleSelectAll = () => {
+    if (selectedImages.length === images.length) {
+      setSelectedImages([]);
+    } else {
+      setSelectedImages(images);
+    }
   };
 
   const handleConfirm = () => {
@@ -63,33 +71,53 @@ const ChooseImageModal: React.FC<ChooseImageModalProps> = ({ open, handleClose, 
               >
                 Confirm
               </Button>
+              <Button
+                variant="contained"
+                sx={{
+                  backgroundColor: '#05486C',
+                  color: 'white',
+                  marginLeft: '16px',
+                  '&:hover': { backgroundColor: '#ffffffcc' }
+                }}
+                onClick={handleSelectAll}
+              >
+                {selectedImages.length === images.length ? 'Deselect All' : 'Select All'}
+              </Button>
               <Box sx={{ flexGrow: 1 }} />
             </Toolbar>
           </AppBar>
-          <Grid container direction="row" sx={{ overflowX: 'scroll', height: '100%', backgroundColor: '#05486C' }}>
+          <Grid container spacing={2} sx={{ p: 2, height: 'calc(100% - 64px)', overflowY: 'auto', backgroundColor: '#05486C' }}>
             {images.map((fileUploaded, index) => (
-              <Box key={index} sx={{ position: 'relative', margin: '4px' }}>
-                <Box
-                  component="img"
-                  src={fileUploaded.getInfo().path} 
-                  alt={`Thumbnail ${index + 1}`}
-                  style={{ height: '200px', objectFit: 'cover', }}
-                  onClick={() => handleSelectImage(fileUploaded)}
-                />
-                <Checkbox
-                  checked={selectedImages.includes(fileUploaded)}
-                  onChange={() => handleSelectImage(fileUploaded)}
-                  sx={{
-                    position: 'absolute',
-                    top: '4px',
-                    left: '4px',
-                    backgroundColor: '#C5C5C5',
-                    borderRadius: '50%',
-                    cursor: 'pointer'
-                  }}
-                  color="secondary"
-                />
-              </Box>
+              <Grid item key={index} xs={12} sm={6}>
+                <Box sx={{ position: 'relative' }}>
+                  <Box
+                    component="img"
+                    src={fileUploaded.getInfo().path}
+                    alt={`Thumbnail ${index + 1}`}
+                    sx={{
+                      width: '75%',
+                      height: '100%',
+                      objectFit: 'cover',
+                      borderRadius: '8px',
+                      cursor: 'pointer'
+                    }}
+                    onClick={() => handleSelectImage(fileUploaded)}
+                  />
+                  <Checkbox
+                    checked={selectedImages.includes(fileUploaded)}
+                    onChange={() => handleSelectImage(fileUploaded)}
+                    sx={{
+                      position: 'absolute',
+                      top: '8px',
+                      left: '8px',
+                      backgroundColor: '#C5C5C5',
+                      borderRadius: '50%',
+                      cursor: 'pointer'
+                    }}
+                    color="secondary"
+                  />
+                </Box>
+              </Grid>
             ))}
           </Grid>
         </Box>
