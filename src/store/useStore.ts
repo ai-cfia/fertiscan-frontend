@@ -1,5 +1,5 @@
 // src/store/useStore.ts
-import {create} from 'zustand';
+import { create } from "zustand";
 
 interface StoreState {
   counter: number;

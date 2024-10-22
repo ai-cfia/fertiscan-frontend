@@ -12,7 +12,6 @@ This project is a **Next.js v14.2.15** application using **TypeScript**, **Mater
 - [State Management](#state-management)
 - [Contribution Guidelines](#contribution-guidelines)
 
-
 ## Getting Started
 
 ### Prerequisites
@@ -25,7 +24,7 @@ Make sure you have the following installed on your machine:
 ### Installation
 
 1. Clone the repository:
-   
+
    `git clone https://github.com/your-username/your-repo.git`
 
 2. Navigate to the project directory:
@@ -46,12 +45,11 @@ Make sure you have the following installed on your machine:
 
 The application should now be running at [http://localhost:3000](http://localhost:3000).
 
-
 ## Folder Structure
 
 This project follows a modular file structure based on Next.js v14's `src/app` directory layout. Here's an overview:
 
-```
+```bash
 src/
 ├── app/
 │   ├── some-page/
@@ -71,7 +69,6 @@ src/
     └── useStore.ts         # Zustand store for state management
 ```
 
-
 ## Running the Project
 
 To start the development server:
@@ -88,7 +85,6 @@ To start the production build:
 
 `npm run start`
 
-
 ## Testing
 
 We use **Jest** and **React Testing Library** to test components and application logic.
@@ -100,7 +96,6 @@ To run all tests:
 npm run test
 
 Tests are located in the `__tests__` directories adjacent to the components or pages they test.
-
 
 ## Theming
 
@@ -166,7 +161,7 @@ Example store setup:
 
 ```typescript
 // src/store/useStore.ts
-import create from 'zustand';
+import create from "zustand";
 
 interface StoreState {
   counter: number;
@@ -181,7 +176,6 @@ const useStore = create<StoreState>((set) => ({
 export default useStore;
 ```
 
-
 ## Contribution Guidelines
 
 We encourage all contributors to follow the guidelines outlined in our [CONTRIBUTING.md](https://github.com/ai-cfia/.github/blob/main/profile/CONTRIBUTING.md) document.
@@ -190,6 +184,7 @@ We encourage all contributors to follow the guidelines outlined in our [CONTRIBU
 
 1. Fork the repository by clicking on the 'Fork' button on the top-right of the repository page.
 2. Clone the forked repository to your local machine:
+
    ```bash
    git clone https://github.com/your-username/your-repo.git
    ```
@@ -197,17 +192,20 @@ We encourage all contributors to follow the guidelines outlined in our [CONTRIBU
 ### Working on an Issue
 
 1. Always create a new branch for the feature or bugfix you're working on:
+
    ```bash
    git checkout -b feature/your-feature-name
    ```
 
 2. Make your changes, ensuring they adhere to the [CONTRIBUTING.md](https://github.com/ai-cfia/.github/blob/main/profile/CONTRIBUTING.md) guidelines.
 3. Run the test suite to verify:
+
    ```bash
    npm run test
    ```
 
 4. Once your changes are complete, commit and push them to your fork:
+
    ```bash
    git add .
    git commit -m "Description of your feature/bugfix"
@@ -215,12 +213,12 @@ We encourage all contributors to follow the guidelines outlined in our [CONTRIBU
    ```
 
 5. Open a Pull Request (PR) from your feature branch, providing a clear description of the changes.
+
 ### Code Style
 
 - Follow the ESLint and Prettier configurations provided.
 - Write unit tests for your code.
 - Ensure the app runs without errors before submitting.
-
 
 ## License
 

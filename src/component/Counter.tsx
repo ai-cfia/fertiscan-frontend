@@ -1,7 +1,7 @@
 // src/components/Counter.tsx
-import React from 'react';
-import { Button, Typography } from '@mui/material';
-import useStore from '@/store/useStore';
+import useStore from "@/store/useStore";
+import { Button, Typography } from "@mui/material";
+import React from "react";
 
 const Counter: React.FC = () => {
   const { counter, increment } = useStore();
