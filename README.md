@@ -1,238 +1,243 @@
-# Fertiscan Frontend
+# Next.js Application
 
-## Available Scripts
+This project is a **Next.js v14.2.15** application using **TypeScript**,
+**Material UI**, **Zustand** for state management, and **Jest** with **React
+Testing Library** for unit testing.
 
-In the project directory, you can run:
+## Table of Contents
 
-- `npm run dev`
+- [Getting Started](#getting-started)
+- [Folder Structure](#folder-structure)
+- [Running the Project](#running-the-project)
+- [Testing](#testing)
+- [Theming](#theming)
+- [State Management](#state-management)
+- [Contribution Guidelines](#contribution-guidelines)
 
-  Starts the development server. Open `localhost:5173` to view it in your
-  browser. The app will automatically reload if you make changes to the code.
-  You will see build errors and lint warnings in the console.
+## Getting Started
 
-- `npm run dev:host`
+### Prerequisites
 
-  Starts the development server and makes it accessible over your local network.
+Make sure you have the following installed on your machine:
 
-- `npm run build`
+- Node.js (v14 or later)
+- npm (or yarn)
 
-  Compiles TypeScript and builds the app for production to the `dist` folder. It
-  correctly bundles React in production mode and optimizes the build for the
-  best performance. Your app is ready to be deployed!
+### Installation
 
-- `npm run lint`
+1. Clone the repository:
 
-  Runs ESLint to find problems in your code.
+   `git clone https://github.com/your-username/your-repo.git`
 
-- `npm run lint:fix`
+2. Navigate to the project directory:
 
-  Runs ESLint to find and fix problems in your code automatically.
+   `cd your-repo`
 
-- `npm run preview`
+3. Install the dependencies:
 
-  Locally previews the production build.
+   `npm install`
 
-- `npm run test`
+4. Copy the `.env.template`:
 
-  Launches the test runner.
+   `cp .env.template .env`
 
-- `npm run test:watch`
+5. Start the development server:
 
-  Launches the test runner in interactive watch mode.
+   `npm run dev`
 
-- `npm run test:coverage`
+The application should now be running at `http://localhost:3000`.
 
-  Runs tests and generates a coverage report.
+## Folder Structure
 
-## Running the App Using Docker
+This project follows a modular file structure based on Next.js v14's `src/app`
+directory layout. Here's an overview:
 
-- For local testing, build the Docker image with default values: `docker build
--t fertiscan-frontend .`
-
-- Production build:
-
-```sh
-docker build \
-  --build-arg ARG_API_URL=http://your_api_url \
-  --build-arg ARG_REACT_APP_ACTIVATE_USING_JSON=false \
-  --build-arg ARG_REACT_APP_STATE_OBJECT_SIZE_LIMIT=4194304 \
-  -t fertiscan-frontend .
+```bash
+src/
+├── app/
+│   ├── some-page/
+│   │   ├── page.tsx       # Corresponds to the URL /some-page
+│   │   └── __tests__/
+│   │       └── some-page.test.tsx
+│   ├── layout.tsx         # Main layout for the application
+│   ├── theme.ts           # Material UI theme configuration
+│   └── page.tsx           # Homepage (URL: /)
+│
+├── Components/
+│   ├── __tests__/
+│   │   └── Header.test.tsx # Unit tests for the Header component
+│   └── Header.tsx          # Header component
+│
+└── store/
+    └── useStore.ts         # Zustand store for state management
 ```
 
-- Run the image (on port 3001 for example): `docker run -p 3001:3000
-fertiscan-frontend`
+## Running the Project
 
-### Docker Compose
+To start the development server:
 
-1. Create a `.env` file from [.env.template](./.env.template) that also contains
-   env from the
-   [backend](https://github.com/ai-cfia/fertiscan-backend/blob/main/.env.template).
-   Include the following environment variables:
+`npm run dev`
 
-    ```ini
-    FERTISCAN_DB_URL=postgresql://postgres:postgres@postgres:5432/fertiscan
-    BB_URL=bytebase_url
-    BB_SERVICE_ACCOUNT=your-bytebase-sa@service.bytebase.com
-    BB_SERVICE_KEY=your-bytebase-sa-key
-    BB_INSTANCE_ID=your-bytebase-instance-id
-    BB_DATABASE_ID=your-bytebase-database-id
-    ```
+This will launch the application at `http://localhost:3000`.
 
-    You can find their values in our vault under fertiscan-dev.
+To build the application for production:
 
-2. Start the Docker container:
+`npm run build`
 
-    ```sh
-    docker-compose up --build
-    ```
+To start the production build:
 
-> **Side note : If you are on a ARM based machine, you will need to build the
-image with the `docker-compose build --build-arg TARGETARCH=arm64` command.**
+`npm run start`
 
-The application will be available at `http://localhost:80`. The database should
-be dynamically built based on latest schema from Bytebase.
+## Testing
 
-To use pgAdmin, navigate to `http://localhost:5050` and login with
-`admin@example.com` and `admin`. You can then register a new server with the
-following details:
+We use **Jest** and **React Testing Library** to test components and application
+logic.
 
-- Host: `postgres`
-- Port: `5432`
-- Username: `postgres`
-- Password: `postgres`
-- Database: `fertiscan`
+### Running Tests
 
-## Comprehensive Guide for New Users: Uploading a New Label
+To run all tests:
 
-Welcome to our step-by-step guide designed to help new users like yourself
-effortlessly add new labels and become familiar with our platform's
-functionality. Let's get started.
+npm run test
 
-### Saving a New Label
+Tests are located in the `__tests__` directories adjacent to the components or
+pages they test.
 
-#### Step 1: Accessing the Website
+## Theming
 
-Navigate to
+This project uses **Material UI** for theming. The theme is configured in the
+`src/app/theme.ts` file.
 
-<!--https://fertiscan.inspection.alpha.canada.ca/-->
+To apply the theme globally in your application, you can use the `ThemeProvider`
+component provided by Material UI in your `src/app/layout.tsx` file.
 
-Upon loading the page, you should see the following:
+### Applying the Theme
 
-- ![image](https://github.com/user-attachments/assets/57b59947-13bf-4f2e-bb58-c730c2745a2e)
+In your `layout.tsx`:
 
-#### Step 2: Choosing Upload Method
+```typescript
+// src/app/layout.tsx
+import { ThemeProvider } from '@mui/material/styles';
+import CssBaseline from '@mui/material/CssBaseline';
+import theme from './theme'; // Import your custom theme
 
-You have two options to proceed:
+export default function Layout({ children }: { children: React.ReactNode }) {
+  return (
+    <ThemeProvider theme={theme}>
+      <CssBaseline /> {/* This resets browser default styling */}
+      {children}
+    </ThemeProvider>
+  );
+}
+```
 
-- Use the camera feature
-- Upload a file
+### Using the Theme in Components
 
-To toggle between the camera and file upload options, follow these steps:
+You can access the theme inside any component using Material UI’s `useTheme`
+hook or by applying the theme values directly through the MUI components.
 
-##### Using the Camera Feature
+Example using `useTheme`:
 
-1. Grant camera access to your browser:
+```typescript
+// src/Components/Header.tsx
+import { useTheme } from '@mui/material/styles';
+import Typography from '@mui/material/Typography';
 
-    - ![image](https://github.com/user-attachments/assets/c1613265-acf5-4030-80eb-0c3e57bddf27)
-  
-2. Click the "Switch" button to activate the camera:
-    - ![image](https://github.com/user-attachments/assets/1f720f81-c27e-429c-b569-290faa01aba7)
-3. Once in the camera view, you can switch between front and rear cameras using
-the camera switch button:
-4. When ready, capture your picture by clicking on "Capture."
+const Header = () => {
+  const theme = useTheme();
 
-##### Uploading a File
+  return (
+    <header style={{ backgroundColor: theme.palette.primary.main, padding: '1rem' }}>
+      <Typography variant="h4" color="secondary">
+        Welcome to the Application
+      </Typography>
+    </header>
+  );
+};
 
-1. Click on the large upload area:
-    - ![image](https://github.com/user-attachments/assets/e3e9736f-0da4-440f-b19b-cac49bc602cb)
-2. Select the desired file from your computer and confirm by clicking "Open."
+export default Header;
+```
 
-#### Step 3: Managing Uploaded Files
+In this example, the `Header` component uses the primary color from the theme
+for the background and the secondary color for the text. You can access any part
+of the theme (e.g., spacing, typography) in a similar way with `useTheme`.
 
-Once uploaded, your file will appear in the list where you can:
+---
 
-- Delete the file by right-clicking it and selecting "Delete" or by clicking the
-"X" button when you hover over it:
+## State Management
 
-  - ![image](https://github.com/user-attachments/assets/2e56d725-82da-48a2-a1b5-166079872399)
-  - ![image](https://github.com/user-attachments/assets/8458e45d-1b24-4981-9bb8-9b41c643a121)
+We use **Zustand** for lightweight state management. The store is located in the
+`src/store/useStore.ts` file.
 
-- Rename the file by right-clicking and choosing "Rename." Confirm the new name
- by clicking "Confirm":
+Example store setup:
 
-  - ![image](https://github.com/user-attachments/assets/93a603ba-2d3d-4f94-a784-bebef5722e25)
-  - ![image](https://github.com/user-attachments/assets/8c9fa0eb-3fc9-4bdb-ace9-199f4e055bc7)
+```typescript
+// src/store/useStore.ts
+import create from "zustand";
 
-#### Step 4: Submitting Your Label(s)
+interface StoreState {
+  counter: number;
+  increment: () => void;
+}
 
-After uploading all necessary files, click "Submit" at the bottom of the page:
+const useStore = create<StoreState>((set) => ({
+  counter: 0,
+  increment: () => set((state) => ({ counter: state.counter + 1 })),
+}));
 
-#### Step 5: Approving Label Information
+export default useStore;
+```
 
-A new page will display, requiring you to verify each information field:
+## Contribution Guidelines
 
-- ![image](https://github.com/user-attachments/assets/5c1f0c14-0422-4989-92ac-5de0c685cc8f)
+We encourage all contributors to follow the guidelines outlined in our
+[CONTRIBUTING.md](https://github.com/ai-cfia/.github/blob/main/profile/CONTRIBUTING.md)
+document.
 
-1. Confirm every field by clicking the checkmark next to it. A green indicator
-on the progress bar signifies approval:
-    - ![image](https://github.com/user-attachments/assets/495d90db-2088-4365-b125-e9d6281d27d0)
-2. Click on the progress bar sections to jump to specific fields as needed.
-3. Zoom in on images for a clearer view.
-4. Ensure that all information in each field is accurate.
-5. Any field left unapproved will result in a notification:
+### Forking and Cloning
 
-    - ![image](https://github.com/user-attachments/assets/409607e0-f8f2-435c-b67b-c7fd9eaa611a)
+1. Fork the repository by clicking on the 'Fork' button on the top-right of the
+   repository page.
+2. Clone the forked repository to your local machine:
 
-#### Step 6: Final Confirmation Before Submission
+   ```bash
+   git clone https://github.com/your-username/your-repo.git
+   ```
 
-After approving all fields, click on the "Submit" button to proceed:
+### Working on an Issue
 
-1. Review the confirmation page thoroughly:
-    - ![image](https://github.com/user-attachments/assets/30ffee47-fddf-46e7-9e0f-3d879c4130a4)
-2. If an error is spotted, select "Cancel" to go back.
-    - ![image](https://github.com/user-attachments/assets/3021ba01-b4d0-42cd-8790-81e623bf808c)
+1. Always create a new branch for the feature or bugfix you're working on:
 
-Once all information is verified, check the confirmation box at the bottom of
-the page. The final step is to click "Confirm" to send the new label information
-to our database.
+   ```bash
+   git checkout -b feature/your-feature-name
+   ```
 
-Congratulations! You have successfully learned how to upload and manage new
-labels on our platform. If you require further assistance or have any questions
-, don't hesitate to reach out for support.
+2. Make your changes, ensuring they adhere to the
+   [CONTRIBUTING.md](https://github.com/ai-cfia/.github/blob/main/profile/CONTRIBUTING.md)
+   guidelines.
+3. Run the test suite to verify:
 
-### How to View Saved Labels
+   ```bash
+   npm run test
+   ```
 
-This guide will take you through the simple process of viewing all the labels
-you've previously saved. Follow these easy steps to get started.
+4. Once your changes are complete, commit and push them to your fork:
 
-#### Step 1: Accessing the Labels Overview
+   ```bash
+   git add .
+   git commit -m "Description of your feature/bugfix"
+   git push origin feature/your-feature-name
+   ```
 
-1. Locate and click on the second icon in the side menu:
+5. Open a Pull Request (PR) from your feature branch, providing a clear
+   description of the changes.
 
-    - ![image](https://github.com/user-attachments/assets/f27a1dd6-6861-4e0a-9c04-16a2d538a33c)
+### Code Style
 
-#### Step 2: Browsing Your Saved Labels
+- Follow the ESLint and Prettier configurations provided.
+- Write unit tests for your code.
+- Ensure the app runs without errors before submitting.
 
-1. Upon clicking the icon, you'll be directed to the page displaying all the
-saved labels:
-    - ![image](https://github.com/user-attachments/assets/66e7b0ce-36da-4cb0-b0f8-b6ef1aa6d6b2)
-2. Scroll down to review all available labels. Pagination options may be
-available if you have multiple pages of saved labels.
-3. To see detailed information for a specific label, simply click on the label
-entry you are interested in.
+## License
 
-    - ![image](https://github.com/user-attachments/assets/c9db9320-ee98-4a63-9908-9865475ee77c)
-
-### How to switch application language
-
-#### Step 1: Accessing the setting page
-
-1. Locathe and click on the third icon in the side menu
-
-    - ![image](https://github.com/user-attachments/assets/d27c121e-ebc6-4b2d-8ef4-18d1867ced64)
-
-### Step 2: Change the language
-
-1. Upon clicking the icon, you'll be directed to the page displaying the
-setting.
-2. Click on the button to switch the language between French and English.
+This project is licensed under the MIT License. See the [LICENSE](LICENSE) file
+for details.
