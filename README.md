@@ -78,8 +78,7 @@ To start the development server:
 
 `npm run dev`
 
-This will launch the application at
-[http://localhost:3000](http://localhost:3000).
+This will launch the application at `http://localhost:3000`.
 
 To build the application for production:
 
