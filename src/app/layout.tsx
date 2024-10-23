@@ -4,31 +4,28 @@ import SideNav from "@/component/Sidenav";
 import { Box } from "@mui/material";
 import { AppRouterCacheProvider } from "@mui/material-nextjs/v14-appRouter";
 import { ThemeProvider } from "@mui/material/styles";
-import { Roboto } from "next/font/google";
 import { useState } from "react";
 import "./globals.css";
 import theme from "./theme";
-
-const roboto = Roboto({
-  weight: ["300", "400", "500", "700"],
-  subsets: ["latin"],
-  display: "swap",
-  variable: "--font-roboto",
-});
+import UserPopup from "@/component/Userpopup";
 
 export default function RootLayout({
   children,
 }: Readonly<{ children: React.ReactNode }>) {
   const [SideNavOpen, setSideNavOpen] = useState(false);
+  const [UserPopUpOpen, setUserPopUpOpen] = useState(false);
 
-  const handleDrawerToggle = () => {
-    console.log("aaaa");
+  const handleSideNavToggle = () => {
     setSideNavOpen(!SideNavOpen);
-    console.log(SideNavOpen);
   };
+
+  const handleUserPopUpToggle = () => {
+    setUserPopUpOpen(!UserPopUpOpen);
+  };
+
   return (
     <html lang="en">
-      <body className={roboto.variable}>
+      <body>
         <AppRouterCacheProvider>
           <ThemeProvider theme={theme}>
             <SideNav open={SideNavOpen} />
@@ -43,10 +40,13 @@ export default function RootLayout({
             >
               <Header
                 isSideNavOpen={SideNavOpen}
-                handleDrawerToggle={handleDrawerToggle}
+                isUserPopUpOpen={UserPopUpOpen}
+                handleSideNavToggle={handleSideNavToggle}
+                handleUserPopUpToggle={handleUserPopUpToggle}
               />
               {children}
             </Box>
+            <UserPopup open={UserPopUpOpen} />
           </ThemeProvider>
         </AppRouterCacheProvider>
       </body>
