@@ -13,16 +13,18 @@ import {
 import Image from "next/image";
 import Link from "next/link";
 import styled from "@emotion/styled";
-import { useStore } from "@/store/useStore";
 import { getSize } from "@/utils/themeUtils";
 import useBreakpoints from "@/utils/useBreakpoints";
 import Usermenu from "@/components/Usermenu";
+import { useState } from "react";
 
 // Defining a styled component for the logo using emotion's styled
 const Logo = styled(Image)`
   position: relative !important;
 `;
-
+interface HeaderProps {
+  setSideNavOpen: (open: boolean | ((prevOpen: boolean) => boolean)) => void;
+}
 /**
  * Header Component
  *
@@ -34,17 +36,19 @@ const Logo = styled(Image)`
  * - User pop-up component
  *
  */
-const Header = () => {
+
+
+const Header: React.FC<HeaderProps> = ({ setSideNavOpen }) => {
   const theme = useTheme();
   const breakpoints = useBreakpoints();
-  const { setSideNavOpen, sideNavOpen, setUserPopUpOpen, setAnchorElement } =
-    useStore();
+  const [anchorElement, setAnchorElement] = useState<null | HTMLElement>(null);
+  const [userPopUpOpen, setUserPopUpOpen] = useState(false);
 
   /**
    * Function to handle the toggling of the side navigation menu
    */
   const handleSideNavToggle = () => {
-    setSideNavOpen(!sideNavOpen);
+    setSideNavOpen((prevOpen) => !prevOpen);
   };
 
   /**
@@ -128,7 +132,14 @@ const Header = () => {
           </Box>
         </Toolbar>
       </AppBar>
-      <Usermenu />
+
+      <Usermenu
+        anchorElement={anchorElement}
+        userPopUpOpen={userPopUpOpen}
+        setUserPopUpOpen={setUserPopUpOpen}
+        setAnchorElement={setAnchorElement}
+      />
+
     </Box>
   );
 };

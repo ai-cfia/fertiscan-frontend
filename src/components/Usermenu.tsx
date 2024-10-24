@@ -1,4 +1,4 @@
-import React from "react";
+import React, { ReactElement } from "react";
 import {
   Menu,
   MenuItem,
@@ -10,11 +10,16 @@ import {
   useMediaQuery,
 } from "@mui/material";
 import { Logout, Settings, AccountCircle } from "@mui/icons-material";
-import { useStore } from "@/store/useStore";
 import { usePlaceholder } from "@/classe/User";
 import { getSize } from "@/utils/themeUtils";
 import useBreakpoints from "@/utils/useBreakpoints";
 
+type UsermenuProps = {
+  anchorElement: null | HTMLElement;
+  userPopUpOpen: boolean;
+  setUserPopUpOpen: (open: boolean) => void;
+  setAnchorElement: (anchorEl: null | HTMLElement) => void;
+};
 
 /**
  * UserPopup Component
@@ -25,11 +30,15 @@ import useBreakpoints from "@/utils/useBreakpoints";
  *
  * It utilizes Material-UI components for styling and layout.
  */
-const Usermenu = () => {
+const Usermenu = ({
+  anchorElement,
+  userPopUpOpen,
+  setUserPopUpOpen,
+  setAnchorElement
+}: UsermenuProps): ReactElement => {
   const theme = useTheme();
   const breakpoints = useBreakpoints();
   const isMobile = useMediaQuery(theme.breakpoints.down("sm"));
-  const { anchorElement, userPopUpOpen, setUserPopUpOpen, setAnchorElement } = useStore();
 
   // Placeholder user details (for demonstration)
   const placeholderUser = usePlaceholder();
