@@ -1,3 +1,15 @@
 {
-  "extends": ["next/core-web-vitals", "next/typescript"]
+  "extends": ["next/core-web-vitals", "next/typescript"],
+  "overrides": [
+    {
+      "files": ["**/*.test.js", "**/*.test.jsx", "**/*.spec.js", "**/*.spec.jsx"],
+      "rules": {
+        // Disable specific rules for test files
+        "no-unused-expressions": "off",
+        "no-unused-vars": "off"
+        // Alternatively, to turn off all rules for test files:
+        // "no-unused-expressions": "off"
+      }
+    }
+  ]
 }
