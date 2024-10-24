@@ -3,7 +3,189 @@ import { createTheme } from "@mui/material/styles";
 
 const theme = createTheme({
   typography: {
-    fontFamily: "var(--font-roboto)",
+    fontFamily: "Roboto, Arial, sans-serif",
+    h1: {
+      fontSize: "1.5rem", // Default for xs
+      [createTheme().breakpoints.up("sm")]: {
+        fontSize: "2rem",
+      },
+      [createTheme().breakpoints.up("md")]: {
+        fontSize: "2.5rem",
+      },
+      [createTheme().breakpoints.up("lg")]: {
+        fontSize: "3rem",
+      },
+      [createTheme().breakpoints.up("xl")]: {
+        fontSize: "3.5rem",
+      },
+    },
+    h2: {
+      fontSize: "1.25rem", // Default for xs
+      [createTheme().breakpoints.up("sm")]: {
+        fontSize: "1.5rem",
+      },
+      [createTheme().breakpoints.up("md")]: {
+        fontSize: "2rem",
+      },
+      [createTheme().breakpoints.up("lg")]: {
+        fontSize: "2.5rem",
+      },
+      [createTheme().breakpoints.up("xl")]: {
+        fontSize: "3rem",
+      },
+    },
+    h3: {
+      fontSize: "1rem", // Default for xs
+      [createTheme().breakpoints.up("sm")]: {
+        fontSize: "1.2rem",
+      },
+      [createTheme().breakpoints.up("md")]: {
+        fontSize: "1.5rem",
+      },
+      [createTheme().breakpoints.up("lg")]: {
+        fontSize: "2rem",
+      },
+      [createTheme().breakpoints.up("xl")]: {
+        fontSize: "2.4rem",
+      },
+    },
+    h4: {
+      fontSize: "0.875rem", // Default for xs
+      [createTheme().breakpoints.up("sm")]: {
+        fontSize: "1rem",
+      },
+      [createTheme().breakpoints.up("md")]: {
+        fontSize: "1.25rem",
+      },
+      [createTheme().breakpoints.up("lg")]: {
+        fontSize: "1.5rem",
+      },
+      [createTheme().breakpoints.up("xl")]: {
+        fontSize: "1.75rem",
+      },
+    },
+    h5: {
+      fontSize: "0.75rem", // Default for xs
+      [createTheme().breakpoints.up("sm")]: {
+        fontSize: "0.875rem",
+      },
+      [createTheme().breakpoints.up("md")]: {
+        fontSize: "1rem",
+      },
+      [createTheme().breakpoints.up("lg")]: {
+        fontSize: "1.25rem",
+      },
+      [createTheme().breakpoints.up("xl")]: {
+        fontSize: "1.5rem",
+      },
+    },
+    h6: {
+      fontSize: "0.45rem", // Default for xs
+      [createTheme().breakpoints.up("sm")]: {
+        fontSize: "0.55rem",
+      },
+      [createTheme().breakpoints.up("md")]: {
+        fontSize: "0.875rem",
+      },
+      [createTheme().breakpoints.up("lg")]: {
+        fontSize: "1rem",
+      },
+      [createTheme().breakpoints.up("xl")]: {
+        fontSize: "1.25rem",
+      },
+    },
+    body1: {
+      fontSize: "0.875rem", // Default for xs
+      [createTheme().breakpoints.up("sm")]: {
+        fontSize: "1rem",
+      },
+      [createTheme().breakpoints.up("md")]: {
+        fontSize: "1.1rem",
+      },
+      [createTheme().breakpoints.up("lg")]: {
+        fontSize: "1.2rem",
+      },
+      [createTheme().breakpoints.up("xl")]: {
+        fontSize: "1.3rem",
+      },
+    },
+    body2: {
+      fontSize: "0.75rem", // Default for xs
+      [createTheme().breakpoints.up("sm")]: {
+        fontSize: "0.875rem",
+      },
+      [createTheme().breakpoints.up("md")]: {
+        fontSize: "1rem",
+      },
+      [createTheme().breakpoints.up("lg")]: {
+        fontSize: "1.1rem",
+      },
+      [createTheme().breakpoints.up("xl")]: {
+        fontSize: "1.2rem",
+      },
+    },
+    caption: {
+      fontSize: "0.4rem", // Default for xs
+      [createTheme().breakpoints.up("sm")]: {
+        fontSize: "0.5rem",
+      },
+      [createTheme().breakpoints.up("md")]: {
+        fontSize: "0.6rem",
+      },
+      [createTheme().breakpoints.up("lg")]: {
+        fontSize: "0.6rem",
+      },
+      [createTheme().breakpoints.up("xl")]: {
+        fontSize: "0.7rem",
+      },
+    },
+  },
+  iconSizes: {
+    small: {
+      xs: "10px",
+      sm: "15px",
+      md: "20px",
+      lg: "25px",
+      xl: "30px",
+    },
+    medium: {
+      xs: "15px",
+      sm: "20px",
+      md: "25px",
+      lg: "30px",
+      xl: "35px",
+    },
+    // TODO: Determine icon sizes for large, and extra large icons
+    large: {
+      xs: "20px",
+      sm: "24px",
+      md: "28px",
+      lg: "32px",
+      xl: "36px",
+    },
+    xl: {
+      xs: "24px",
+      sm: "28px",
+      md: "32px",
+      lg: "36px",
+      xl: "40px",
+    },
+  },
+  logoSizes: {
+    width: {
+      xs: "40vw",
+      sm: "35vw",
+      md: "30vw",
+      lg: "25vw",
+      xl: "20vw",
+    },
+    height: {
+      xs: "100%",
+      sm: "90%",
+      md: "80%",
+      lg: "70%",
+      xl: "50%",
+    },
   },
   cssVariables: true,
   palette: {
@@ -45,6 +227,9 @@ const theme = createTheme({
             backgroundColor: "#a30034", // Darker Pink on hover
           },
         },
+      },
+      defaultProps: {
+        disableRipple: true, // No more ripple animation
       },
     },
     MuiStepIcon: {
@@ -112,7 +297,11 @@ const theme = createTheme({
       styleOverrides: {
         root: {
           color: "#ffffff", // White icon buttons
+          disableRipple: true, // Disable ripple effect
         },
+      },
+      defaultProps: {
+        disableRipple: true, // No more ripple, on the whole application 💣!
       },
     },
     MuiTypography: {
