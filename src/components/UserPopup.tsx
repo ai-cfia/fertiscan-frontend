@@ -15,14 +15,27 @@ import { usePlaceholder } from "@/classe/User";
 import { getSize } from "@/utils/themeUtils";
 import useBreakpoints from "@/utils/useBreakpoints";
 
+/**
+ * UserPopup Component
+ *
+ * This component renders a User Popup which appears when the user clicks on the
+ * account icon in the header. It provides options to view the user's profile,
+ * navigate to the dashboard, and log out. It also displays the current app version.
+ *
+ * It utilizes Material-UI components for styling and layout.
+ */
 const UserPopup = () => {
   const theme = useTheme();
   const breakpoints = useBreakpoints();
   const isMobile = useMediaQuery(theme.breakpoints.down("sm"));
-  const { anchorElement, userPopUpOpen, setUserPopUpOpen, setAnchorElement } =
-    useStore();
+  const { anchorElement, userPopUpOpen, setUserPopUpOpen, setAnchorElement } = useStore();
+
+  // Placeholder user details (for demonstration)
   const placeholderUser = usePlaceholder();
 
+  /**
+   * Function to handle closing the user popup
+   */
   const handleClose = () => {
     setUserPopUpOpen(false);
     setAnchorElement(null);

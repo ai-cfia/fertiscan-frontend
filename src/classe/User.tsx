@@ -1,3 +1,13 @@
+/**
+ * User class
+ * This is gonna be remove when connection to database is implemented
+ * @interface IUser
+ * @property {string} username - The username of the user
+ * @property {string} password - The password of the user
+ * @property {boolean} connected - The connection status of the user
+ * @property {Date | null} lastConnection - The date of the last connectio
+ *
+ */
 interface IUser {
   username: string;
   password: string;

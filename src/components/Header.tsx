@@ -17,20 +17,39 @@ import { useStore } from "@/store/useStore";
 import { getSize } from "@/utils/themeUtils";
 import useBreakpoints from "@/utils/useBreakpoints";
 
+// Defining a styled component for the logo using emotion's styled
 const Logo = styled(Image)`
   position: relative !important;
 `;
 
+/**
+ * Header Component
+ *
+ * This component renders the header of the web application which includes:
+ * - Navigation menu toggle button
+ * - Logo of the application
+ * - Language button
+ * - User account icon button
+ * - User pop-up component
+ *
+ */
 const Header = () => {
   const theme = useTheme();
   const breakpoints = useBreakpoints();
   const { setSideNavOpen, sideNavOpen, setUserPopUpOpen, setAnchorElement } =
     useStore();
 
+  /**
+   * Function to handle the toggling of the side navigation menu
+   */
   const handleSideNavToggle = () => {
     setSideNavOpen(!sideNavOpen);
   };
 
+  /**
+   * Function to handle the toggling of the user pop-up
+   * @param {React.MouseEvent<HTMLElement>} event - The mouse event triggering the popup
+   */
   const handleUserPopUpToggle = (event: React.MouseEvent<HTMLElement>) => {
     setUserPopUpOpen(true);
     setAnchorElement(event.currentTarget);
