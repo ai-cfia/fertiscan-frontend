@@ -12,7 +12,6 @@ import {
 import Image from "next/image";
 import Link from "next/link";
 import styled from "@emotion/styled";
-import { useStore } from "@/store/useStore";
 import { getSize } from "@/utils/themeUtils";
 import useBreakpoints from "@/utils/useBreakpoints";
 
@@ -32,17 +31,18 @@ const Logo = styled(Image)`
  * - User pop-up component
  *
  */
-const Header = () => {
+interface HeaderProps {
+  setSideNavOpen: (open: boolean | ((prevOpen: boolean) => boolean)) => void;
+}
+
+const Header: React.FC<HeaderProps> = ({ setSideNavOpen }) => {
   const theme = useTheme();
   const breakpoints = useBreakpoints();
-  const { setSideNavOpen, sideNavOpen } =
-    useStore();
-
   /**
    * Function to handle the toggling of the side navigation menu
    */
   const handleSideNavToggle = () => {
-    setSideNavOpen(!sideNavOpen);
+    setSideNavOpen((prevOpen) => !prevOpen);
   };
 
   return (
