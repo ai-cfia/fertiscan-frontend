@@ -228,6 +228,9 @@ const theme = createTheme({
           },
         },
       },
+      defaultProps: {
+        disableRipple: true, // No more ripple animation
+      },
     },
     MuiStepIcon: {
       styleOverrides: {
@@ -294,7 +297,11 @@ const theme = createTheme({
       styleOverrides: {
         root: {
           color: "#ffffff", // White icon buttons
+          disableRipple: true, // Disable ripple effect
         },
+      },
+      defaultProps: {
+        disableRipple: true, // No more ripple, on the whole application 💣!
       },
     },
     MuiTypography: {
