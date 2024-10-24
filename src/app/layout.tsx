@@ -7,18 +7,19 @@ import { ThemeProvider } from "@mui/material/styles";
 import { useStore } from "@/store/useStore";
 import "./globals.css";
 import theme from "./theme";
+import { useState } from "react";
 
 export default function RootLayout({
   children,
 }: Readonly<{ children: React.ReactNode }>) {
-  const { sideNavOpen } = useStore();
+  const [SideNavOpen, setSideNavOpen] = useState(false);
 
   return (
     <html lang="en">
       <body>
         <AppRouterCacheProvider>
           <ThemeProvider theme={theme}>
-            <SideNav open={sideNavOpen} />
+            <SideNav open={SideNavOpen} />
             {/* Margin adjustment based on SideNav state */}
             <Box
               sx={{
@@ -27,7 +28,7 @@ export default function RootLayout({
                   duration: theme.transitions.duration.leavingScreen,
                 }),
               }}
-              marginLeft={sideNavOpen ? "240px" : 0}
+              marginLeft={SideNavOpen ? "240px" : 0}
             >
               <Header />
               {children}
