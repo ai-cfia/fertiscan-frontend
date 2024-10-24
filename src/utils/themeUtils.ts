@@ -1,8 +1,8 @@
 import { Theme } from "@mui/material/styles";
-import { Breakpoints } from "@/type/breakpoints"; // Update the import path as necessary
+import { Breakpoints } from "@/type/breakpoints";
 
-// Utility function to get icon size
-export const getIconSize = (
+// Utility function to get size
+export const getSize = (
   theme: Theme,
   size: "small" | "medium" | "large" | "xl",
   breakpoints: Breakpoints,
@@ -14,5 +14,6 @@ export const getIconSize = (
   if (isLarge) return theme.iconSizes[size].lg;
   if (isMedium) return theme.iconSizes[size].md;
   if (isSmall) return theme.iconSizes[size].sm;
+  if (isExtraSmall) return theme.iconSizes[size].xs;
   return theme.iconSizes[size].xs;
 };

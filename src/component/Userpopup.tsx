@@ -1,4 +1,4 @@
-import React from 'react';
+import React from "react";
 import {
   Menu,
   MenuItem,
@@ -8,18 +8,19 @@ import {
   Box,
   Typography,
   useMediaQuery,
-} from '@mui/material';
-import { Logout, Settings, AccountCircle } from '@mui/icons-material';
-import { useStore } from '@/store/useStore';
-import { usePlaceholder } from '@/classe/User';
-import { getIconSize } from '@/utils/themeUtils';  // Adjust the import path as necessary
-import useBreakpoints from '@/utils/useBreakpoints';
+} from "@mui/material";
+import { Logout, Settings, AccountCircle } from "@mui/icons-material";
+import { useStore } from "@/store/useStore";
+import { usePlaceholder } from "@/classe/User";
+import { getSize } from "@/utils/themeUtils";
+import useBreakpoints from "@/utils/useBreakpoints";
 
 const UserPopup = () => {
   const theme = useTheme();
   const breakpoints = useBreakpoints();
-  const isMobile = useMediaQuery(theme.breakpoints.down('sm'));
-  const { anchorElement, userPopUpOpen, setUserPopUpOpen, setAnchorElement } = useStore();
+  const isMobile = useMediaQuery(theme.breakpoints.down("sm"));
+  const { anchorElement, userPopUpOpen, setUserPopUpOpen, setAnchorElement } =
+    useStore();
   const placeholderUser = usePlaceholder();
 
   const handleClose = () => {
@@ -37,33 +38,38 @@ const UserPopup = () => {
       PaperProps={{
         elevation: 0,
         sx: {
-          overflow: 'visible',
-          filter: 'drop-shadow(0px 2px 8px rgba(0,0,0,0.32))',
+          overflow: "visible",
+          filter: "drop-shadow(0px 2px 8px rgba(0,0,0,0.32))",
           mt: 1.5,
           bgcolor: theme.palette.secondary.main,
           color: theme.palette.text.secondary,
           minWidth: 120,
-          '&::before': {
+          "&::before": {
             content: '""',
-            display: 'block',
-            position: 'absolute',
+            display: "block",
+            position: "absolute",
             top: 0,
-            right: 20,
+            right: 15,
             width: 10,
             height: 10,
-            bgcolor: 'background.paper',
-            transform: 'translateY(-50%) rotate(45deg)',
+            bgcolor: "background.paper",
+            transform: "translateY(-50%) rotate(45deg)",
             zIndex: 0,
           },
-        }
+        },
       }}
-      transformOrigin={{ horizontal: 'right', vertical: 'top' }}
-      anchorOrigin={{ horizontal: 'right', vertical: 'bottom' }}
+      transformOrigin={{ horizontal: "right", vertical: "top" }}
+      anchorOrigin={{ horizontal: "right", vertical: "bottom" }}
     >
-      <MenuItem sx={{minWidth:36}}>
-      <ListItemIcon sx={{ color: theme.palette.text.secondary, fontSize: getIconSize(theme, 'small', breakpoints) }}>
+      <MenuItem sx={{ minWidth: 36 }}>
+        <ListItemIcon
+          sx={{
+            color: theme.palette.text.secondary,
+            fontSize: getSize(theme, "small", breakpoints),
+          }}
+        >
           <AccountCircle fontSize="inherit" />
-      </ListItemIcon>
+        </ListItemIcon>
         <Typography
           variant="h6"
           sx={{
@@ -75,7 +81,12 @@ const UserPopup = () => {
       </MenuItem>
       <Divider />
       <MenuItem onClick={handleClose}>
-      <ListItemIcon sx={{ color: theme.palette.text.secondary, fontSize: getIconSize(theme, 'small', breakpoints) }}>
+        <ListItemIcon
+          sx={{
+            color: theme.palette.text.secondary,
+            fontSize: getSize(theme, "small", breakpoints),
+          }}
+        >
           <Settings fontSize="inherit" />
         </ListItemIcon>
         <Typography
@@ -96,7 +107,7 @@ const UserPopup = () => {
         pt={1}
         pb={0}
         sx={{
-          flexWrap: isMobile ? 'nowrap' : 'wrap'
+          flexWrap: isMobile ? "nowrap" : "wrap",
         }}
       >
         {isMobile ? (
@@ -104,19 +115,21 @@ const UserPopup = () => {
             <MenuItem
               onClick={handleClose}
               sx={{
-                justifyContent: 'center',
-                width: '100%',
+                justifyContent: "center",
+                width: "100%",
               }}
             >
-              <ListItemIcon sx={{ color: theme.palette.text.secondary, fontSize: getIconSize(theme, 'small', breakpoints), justifyContent:'center' }}>
+              <ListItemIcon
+                sx={{
+                  color: theme.palette.text.secondary,
+                  fontSize: getSize(theme, "small", breakpoints),
+                  justifyContent: "center",
+                }}
+              >
                 <Logout fontSize="inherit" />
               </ListItemIcon>
             </MenuItem>
-            <Typography
-              variant="caption"
-              textAlign="center"
-              width="100%"
-            >
+            <Typography variant="caption" textAlign="center" width="100%">
               App Version: alpha 0.2.1
             </Typography>
           </>
@@ -126,9 +139,9 @@ const UserPopup = () => {
               variant="caption"
               alignSelf="end"
               sx={{
-                overflow: 'hidden',
-                textOverflow: 'ellipsis',
-                whiteSpace: 'nowrap',
+                overflow: "hidden",
+                textOverflow: "ellipsis",
+                whiteSpace: "nowrap",
                 mr: 2,
               }}
             >
@@ -138,10 +151,15 @@ const UserPopup = () => {
               onClick={handleClose}
               sx={{
                 paddingRight: 0,
-                justifyContent: 'flex-end',
+                justifyContent: "flex-end",
               }}
             >
-              <ListItemIcon sx={{ color: theme.palette.text.secondary, fontSize: getIconSize(theme, 'small', breakpoints) }}>
+              <ListItemIcon
+                sx={{
+                  color: theme.palette.text.secondary,
+                  fontSize: getSize(theme, "small", breakpoints),
+                }}
+              >
                 <Logout fontSize="inherit" />
               </ListItemIcon>
             </MenuItem>

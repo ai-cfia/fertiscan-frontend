@@ -127,10 +127,10 @@ const theme = createTheme({
     caption: {
       fontSize: "0.4rem", // Default for xs
       [createTheme().breakpoints.up("sm")]: {
-        fontSize: "0.45rem",
+        fontSize: "0.5rem",
       },
       [createTheme().breakpoints.up("md")]: {
-        fontSize: "0.5rem",
+        fontSize: "0.6rem",
       },
       [createTheme().breakpoints.up("lg")]: {
         fontSize: "0.6rem",
@@ -149,12 +149,13 @@ const theme = createTheme({
       xl: "30px",
     },
     medium: {
-      xs: "16px",
-      sm: "18px",
-      md: "20px",
-      lg: "22px",
-      xl: "24px",
+      xs: "15px",
+      sm: "20px",
+      md: "25px",
+      lg: "30px",
+      xl: "35px",
     },
+    // TODO: Determine icon sizes for large, and extra large icons
     large: {
       xs: "20px",
       sm: "24px",
@@ -168,6 +169,22 @@ const theme = createTheme({
       md: "32px",
       lg: "36px",
       xl: "40px",
+    },
+  },
+  logoSizes: {
+    width: {
+      xs: "40vw",
+      sm: "35vw",
+      md: "30vw",
+      lg: "25vw",
+      xl: "20vw",
+    },
+    height: {
+      xs: "100%",
+      sm: "90%",
+      md: "80%",
+      lg: "70%",
+      xl: "50%",
     },
   },
   cssVariables: true,
