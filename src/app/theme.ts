@@ -125,18 +125,18 @@ const theme = createTheme({
       },
     },
     caption: {
-      fontSize: "0.6rem", // Default for xs
+      fontSize: "0.4rem", // Default for xs
       [createTheme().breakpoints.up("sm")]: {
-        fontSize: "0.65rem",
+        fontSize: "0.45rem",
       },
       [createTheme().breakpoints.up("md")]: {
-        fontSize: "0.7rem",
+        fontSize: "0.5rem",
       },
       [createTheme().breakpoints.up("lg")]: {
-        fontSize: "0.75rem",
+        fontSize: "0.6rem",
       },
       [createTheme().breakpoints.up("xl")]: {
-        fontSize: "0.8rem",
+        fontSize: "0.7rem",
       },
     },
   },

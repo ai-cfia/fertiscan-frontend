@@ -12,27 +12,19 @@ import {
 import { Logout, Settings, AccountCircle } from '@mui/icons-material';
 import { useStore } from '@/store/useStore';
 import { usePlaceholder } from '@/classe/User';
+import { getIconSize } from '@/utils/themeUtils';  // Adjust the import path as necessary
+import useBreakpoints from '@/utils/useBreakpoints';
 
 const UserPopup = () => {
   const theme = useTheme();
+  const breakpoints = useBreakpoints();
   const isMobile = useMediaQuery(theme.breakpoints.down('sm'));
-  const isSmall = useMediaQuery(theme.breakpoints.down('sm'));
-  const isMedium = useMediaQuery(theme.breakpoints.up('md'));
-  const isLarge = useMediaQuery(theme.breakpoints.up('lg'));
-
   const { anchorElement, userPopUpOpen, setUserPopUpOpen, setAnchorElement } = useStore();
   const placeholderUser = usePlaceholder();
 
   const handleClose = () => {
     setUserPopUpOpen(false);
     setAnchorElement(null);
-  };
-
-  const getIconSize = (size: 'small' | 'medium' | 'large' | 'xl') => {
-    if (isLarge) return theme.iconSizes[size].lg;
-    if (isMedium) return theme.iconSizes[size].md;
-    if (isSmall) return theme.iconSizes[size].sm;
-    return theme.iconSizes[size].xs;
   };
 
   return (
@@ -50,6 +42,7 @@ const UserPopup = () => {
           mt: 1.5,
           bgcolor: theme.palette.secondary.main,
           color: theme.palette.text.secondary,
+          minWidth: 120,
           '&::before': {
             content: '""',
             display: 'block',
@@ -68,7 +61,7 @@ const UserPopup = () => {
       anchorOrigin={{ horizontal: 'right', vertical: 'bottom' }}
     >
       <MenuItem sx={{minWidth:36}}>
-      <ListItemIcon sx={{ color: theme.palette.text.secondary, fontSize: getIconSize('small') }}>
+      <ListItemIcon sx={{ color: theme.palette.text.secondary, fontSize: getIconSize(theme, 'small', breakpoints) }}>
           <AccountCircle fontSize="inherit" />
       </ListItemIcon>
         <Typography
@@ -82,7 +75,7 @@ const UserPopup = () => {
       </MenuItem>
       <Divider />
       <MenuItem onClick={handleClose}>
-      <ListItemIcon sx={{ color: theme.palette.text.secondary, fontSize: getIconSize('small') }}>
+      <ListItemIcon sx={{ color: theme.palette.text.secondary, fontSize: getIconSize(theme, 'small', breakpoints) }}>
           <Settings fontSize="inherit" />
         </ListItemIcon>
         <Typography
@@ -115,7 +108,7 @@ const UserPopup = () => {
                 width: '100%',
               }}
             >
-              <ListItemIcon sx={{ color: theme.palette.text.secondary, fontSize: getIconSize('small') }}>
+              <ListItemIcon sx={{ color: theme.palette.text.secondary, fontSize: getIconSize(theme, 'small', breakpoints), justifyContent:'center' }}>
                 <Logout fontSize="inherit" />
               </ListItemIcon>
             </MenuItem>
@@ -148,7 +141,7 @@ const UserPopup = () => {
                 justifyContent: 'flex-end',
               }}
             >
-              <ListItemIcon sx={{ color: theme.palette.text.secondary, fontSize: getIconSize('small') }}>
+              <ListItemIcon sx={{ color: theme.palette.text.secondary, fontSize: getIconSize(theme, 'small', breakpoints) }}>
                 <Logout fontSize="inherit" />
               </ListItemIcon>
             </MenuItem>
