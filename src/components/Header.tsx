@@ -12,7 +12,6 @@ import {
 import Image from "next/image";
 import Link from "next/link";
 import styled from "@emotion/styled";
-import UserPopup from "@/components/UserPopup";
 import { useStore } from "@/store/useStore";
 import { getSize } from "@/utils/themeUtils";
 import useBreakpoints from "@/utils/useBreakpoints";
@@ -36,7 +35,7 @@ const Logo = styled(Image)`
 const Header = () => {
   const theme = useTheme();
   const breakpoints = useBreakpoints();
-  const { setSideNavOpen, sideNavOpen, setUserPopUpOpen, setAnchorElement } =
+  const { setSideNavOpen, sideNavOpen } =
     useStore();
 
   /**
@@ -44,15 +43,6 @@ const Header = () => {
    */
   const handleSideNavToggle = () => {
     setSideNavOpen(!sideNavOpen);
-  };
-
-  /**
-   * Function to handle the toggling of the user pop-up
-   * @param {React.MouseEvent<HTMLElement>} event - The mouse event triggering the popup
-   */
-  const handleUserPopUpToggle = (event: React.MouseEvent<HTMLElement>) => {
-    setUserPopUpOpen(true);
-    setAnchorElement(event.currentTarget);
   };
 
   return (
@@ -120,14 +110,13 @@ const Header = () => {
             <IconButton
               color="inherit"
               sx={{ fontSize: getSize(theme, "medium", breakpoints) }}
-              onClick={handleUserPopUpToggle}
+              onClick={()=>console.log("User Account Clicked")}
             >
               <AccountCircleIcon fontSize="inherit" />
             </IconButton>
           </Box>
         </Toolbar>
       </AppBar>
-      <UserPopup />
     </Box>
   );
 };

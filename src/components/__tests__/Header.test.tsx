@@ -22,8 +22,6 @@ describe('Header Component', () => {
     (useStore as unknown as jest.Mock).mockReturnValue({
       setSideNavOpen: jest.fn(),
       sideNavOpen: false,
-      setUserPopUpOpen: jest.fn(),
-      setAnchorElement: jest.fn(),
     });
 
     // Mock implementation for useBreakpoints
@@ -64,23 +62,4 @@ describe('Header Component', () => {
     expect(setSideNavOpen).toHaveBeenCalledWith(!sideNavOpen);
   });
 
-  it('handles user popup toggle', () => {
-    const { setUserPopUpOpen, setAnchorElement } = useStore();
-
-    render(
-      <ThemeProvider theme={theme}>
-        <Header />
-      </ThemeProvider>
-    );
-
-    const accountButton = screen.getAllByRole('button').find(btn => btn.querySelector('[data-testid="AccountCircleIcon"]'));
-    if (accountButton) {
-      fireEvent.click(accountButton);
-    } else {
-      throw new Error("Account button not found");
-    }
-
-    expect(setUserPopUpOpen).toHaveBeenCalledWith(true);
-    expect(setAnchorElement).toHaveBeenCalled();
-  });
 });
