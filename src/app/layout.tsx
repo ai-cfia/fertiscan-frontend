@@ -1,6 +1,6 @@
 "use client";
-import Header from "@/component/Header";
-import SideNav from "@/component/Sidenav";
+import Header from "@/components/Header";
+import SideNav from "@/components/Sidenav";
 import { Box } from "@mui/material";
 import { AppRouterCacheProvider } from "@mui/material-nextjs/v14-appRouter";
 import { ThemeProvider } from "@mui/material/styles";

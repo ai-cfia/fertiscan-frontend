@@ -12,7 +12,7 @@ import {
 import Image from "next/image";
 import Link from "next/link";
 import styled from "@emotion/styled";
-import UserPopup from "@/component/UserPopup";
+import UserPopup from "@/components/UserPopup";
 import { useStore } from "@/store/useStore";
 import { getSize } from "@/utils/themeUtils";
 import useBreakpoints from "@/utils/useBreakpoints";
