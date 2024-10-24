@@ -1,14 +1,19 @@
-// src/store/useStore.ts
 import { create } from "zustand";
 
-interface StoreState {
-  counter: number;
-  increment: () => void;
+interface State {
+  sideNavOpen: boolean;
+  userPopUpOpen: boolean;
+  anchorElement: null | HTMLElement;
+  setSideNavOpen: (open: boolean) => void;
+  setUserPopUpOpen: (open: boolean) => void;
+  setAnchorElement: (el: null | HTMLElement) => void;
 }
 
-const useStore = create<StoreState>((set) => ({
-  counter: 0,
-  increment: () => set((state) => ({ counter: state.counter + 1 })),
+export const useStore = create<State>((set) => ({
+  sideNavOpen: false,
+  userPopUpOpen: false,
+  anchorElement: null,
+  setSideNavOpen: (open) => set({ sideNavOpen: open }),
+  setUserPopUpOpen: (open) => set({ userPopUpOpen: open }),
+  setAnchorElement: (element) => set({ anchorElement: element }),
 }));
-
-export default useStore;

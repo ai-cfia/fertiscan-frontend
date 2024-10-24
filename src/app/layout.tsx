@@ -4,31 +4,22 @@ import SideNav from "@/component/Sidenav";
 import { Box } from "@mui/material";
 import { AppRouterCacheProvider } from "@mui/material-nextjs/v14-appRouter";
 import { ThemeProvider } from "@mui/material/styles";
-import { useState } from "react";
+import { useStore } from "@/store/useStore";
 import "./globals.css";
 import theme from "./theme";
-import UserPopup from "@/component/Userpopup";
 
 export default function RootLayout({
   children,
 }: Readonly<{ children: React.ReactNode }>) {
-  const [SideNavOpen, setSideNavOpen] = useState(false);
-  const [UserPopUpOpen, setUserPopUpOpen] = useState(false);
-
-  const handleSideNavToggle = () => {
-    setSideNavOpen(!SideNavOpen);
-  };
-
-  const handleUserPopUpToggle = () => {
-    setUserPopUpOpen(!UserPopUpOpen);
-  };
+  const { sideNavOpen } = useStore();
 
   return (
     <html lang="en">
       <body>
         <AppRouterCacheProvider>
           <ThemeProvider theme={theme}>
-            <SideNav open={SideNavOpen} />
+            <SideNav open={sideNavOpen} />
+            {/* Margin adjustment based on SideNav state */}
             <Box
               sx={{
                 transition: theme.transitions.create(["margin", "width"], {
@@ -36,17 +27,11 @@ export default function RootLayout({
                   duration: theme.transitions.duration.leavingScreen,
                 }),
               }}
-              marginLeft={SideNavOpen ? "240px" : 0}
+              marginLeft={sideNavOpen ? "240px" : 0}
             >
-              <Header
-                isSideNavOpen={SideNavOpen}
-                isUserPopUpOpen={UserPopUpOpen}
-                handleSideNavToggle={handleSideNavToggle}
-                handleUserPopUpToggle={handleUserPopUpToggle}
-              />
+              <Header />
               {children}
             </Box>
-            <UserPopup open={UserPopUpOpen} />
           </ThemeProvider>
         </AppRouterCacheProvider>
       </body>

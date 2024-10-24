@@ -1,89 +1,162 @@
-import React, { useState } from "react";
-import { Drawer, Box, Typography, Button, IconButton, useTheme, MenuItem, Avatar, Menu, ListItemIcon, Divider} from "@mui/material";
-import PersonIcon from '@mui/icons-material/Person';
-import { Logout, PersonAdd, Settings } from "@mui/icons-material";
+import React from 'react';
+import {
+  Menu,
+  MenuItem,
+  ListItemIcon,
+  Divider,
+  useTheme,
+  Box,
+  Typography,
+  useMediaQuery,
+} from '@mui/material';
+import { Logout, Settings, AccountCircle } from '@mui/icons-material';
+import { useStore } from '@/store/useStore';
+import { usePlaceholder } from '@/classe/User';
 
-interface DrawerUserProps {
-    open: boolean;
-  }
+const UserPopup = () => {
+  const theme = useTheme();
+  const isMobile = useMediaQuery(theme.breakpoints.down('sm'));
+  const isSmall = useMediaQuery(theme.breakpoints.down('sm'));
+  const isMedium = useMediaQuery(theme.breakpoints.up('md'));
+  const isLarge = useMediaQuery(theme.breakpoints.up('lg'));
 
-  // Need to modify anchor to place it in the layout/header file and also need to modify the styling and content of it 
-const UserPopup = ({ open }: DrawerUserProps) => {
-const [anchorEl, setAnchorEl] = React.useState<null | HTMLElement>(null);
-const theme = useTheme();
-  const placeholderUser = {
-    username: "User-test-1",
-    version: "alpha 0.2.0"
-  };
+  const { anchorElement, userPopUpOpen, setUserPopUpOpen, setAnchorElement } = useStore();
+  const placeholderUser = usePlaceholder();
+
   const handleClose = () => {
-    setAnchorEl(null);
+    setUserPopUpOpen(false);
+    setAnchorElement(null);
+  };
+
+  const getIconSize = (size: 'small' | 'medium' | 'large' | 'xl') => {
+    if (isLarge) return theme.iconSizes[size].lg;
+    if (isMedium) return theme.iconSizes[size].md;
+    if (isSmall) return theme.iconSizes[size].sm;
+    return theme.iconSizes[size].xs;
   };
 
   return (
     <Menu
-        anchorEl={anchorEl}
-        id="account-menu"
-        open={open}
-        onClose={handleClose}
-        onClick={handleClose}
-        slotProps={{
-          paper: {
-            elevation: 0,
-            sx: {
-              overflow: 'visible',
-              filter: 'drop-shadow(0px 2px 8px rgba(0,0,0,0.32))',
-              mt: 1.5,
-              '& .MuiAvatar-root': {
-                width: 32,
-                height: 32,
-                ml: -0.5,
-                mr: 1,
-              },
-              '&::before': {
-                content: '""',
-                display: 'block',
-                position: 'absolute',
-                top: 0,
-                right: 14,
-                width: 10,
-                height: 10,
-                bgcolor: 'background.paper',
-                transform: 'translateY(-50%) rotate(45deg)',
-                zIndex: 0,
-              },
-            },
+      anchorEl={anchorElement}
+      id="account-menu"
+      open={userPopUpOpen}
+      onClose={handleClose}
+      onClick={handleClose}
+      PaperProps={{
+        elevation: 0,
+        sx: {
+          overflow: 'visible',
+          filter: 'drop-shadow(0px 2px 8px rgba(0,0,0,0.32))',
+          mt: 1.5,
+          bgcolor: theme.palette.secondary.main,
+          color: theme.palette.text.secondary,
+          '&::before': {
+            content: '""',
+            display: 'block',
+            position: 'absolute',
+            top: 0,
+            right: 20,
+            width: 10,
+            height: 10,
+            bgcolor: 'background.paper',
+            transform: 'translateY(-50%) rotate(45deg)',
+            zIndex: 0,
           },
+        }
+      }}
+      transformOrigin={{ horizontal: 'right', vertical: 'top' }}
+      anchorOrigin={{ horizontal: 'right', vertical: 'bottom' }}
+    >
+      <MenuItem sx={{minWidth:36}}>
+      <ListItemIcon sx={{ color: theme.palette.text.secondary, fontSize: getIconSize('small') }}>
+          <AccountCircle fontSize="inherit" />
+      </ListItemIcon>
+        <Typography
+          variant="h6"
+          sx={{
+            color: theme.palette.text.secondary,
+          }}
+        >
+          {placeholderUser.getUsername()}
+        </Typography>
+      </MenuItem>
+      <Divider />
+      <MenuItem onClick={handleClose}>
+      <ListItemIcon sx={{ color: theme.palette.text.secondary, fontSize: getIconSize('small') }}>
+          <Settings fontSize="inherit" />
+        </ListItemIcon>
+        <Typography
+          variant="h6"
+          sx={{
+            color: theme.palette.text.secondary,
+          }}
+        >
+          Dashboard
+        </Typography>
+      </MenuItem>
+      <Box
+        display="flex"
+        flexDirection={isMobile ? "column" : "row"}
+        justifyContent="space-between"
+        alignItems={isMobile ? "center" : "flex-end"}
+        px={2}
+        pt={1}
+        pb={0}
+        sx={{
+          flexWrap: isMobile ? 'nowrap' : 'wrap'
         }}
-        transformOrigin={{ horizontal: 'right', vertical: 'top' }}
-        anchorOrigin={{ horizontal: 'right', vertical: 'bottom' }}
       >
-        <MenuItem onClick={handleClose}>
-          <Avatar /> Profile
-        </MenuItem>
-        <MenuItem onClick={handleClose}>
-          <Avatar /> My account
-        </MenuItem>
-        <Divider />
-        <MenuItem onClick={handleClose}>
-          <ListItemIcon>
-            <PersonAdd fontSize="small" />
-          </ListItemIcon>
-          Add another account
-        </MenuItem>
-        <MenuItem onClick={handleClose}>
-          <ListItemIcon>
-            <Settings fontSize="small" />
-          </ListItemIcon>
-          Settings
-        </MenuItem>
-        <MenuItem onClick={handleClose}>
-          <ListItemIcon>
-            <Logout fontSize="small" />
-          </ListItemIcon>
-          Logout
-        </MenuItem>
-        </Menu>
-    );
-  };
+        {isMobile ? (
+          <>
+            <MenuItem
+              onClick={handleClose}
+              sx={{
+                justifyContent: 'center',
+                width: '100%',
+              }}
+            >
+              <ListItemIcon sx={{ color: theme.palette.text.secondary, fontSize: getIconSize('small') }}>
+                <Logout fontSize="inherit" />
+              </ListItemIcon>
+            </MenuItem>
+            <Typography
+              variant="caption"
+              textAlign="center"
+              width="100%"
+            >
+              App Version: alpha 0.2.1
+            </Typography>
+          </>
+        ) : (
+          <>
+            <Typography
+              variant="caption"
+              alignSelf="end"
+              sx={{
+                overflow: 'hidden',
+                textOverflow: 'ellipsis',
+                whiteSpace: 'nowrap',
+                mr: 2,
+              }}
+            >
+              App Version: alpha 0.2.1
+            </Typography>
+            <MenuItem
+              onClick={handleClose}
+              sx={{
+                paddingRight: 0,
+                justifyContent: 'flex-end',
+              }}
+            >
+              <ListItemIcon sx={{ color: theme.palette.text.secondary, fontSize: getIconSize('small') }}>
+                <Logout fontSize="inherit" />
+              </ListItemIcon>
+            </MenuItem>
+          </>
+        )}
+      </Box>
+    </Menu>
+  );
+};
 
 export default UserPopup;
