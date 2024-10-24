@@ -1,3 +1,4 @@
+
 import AccountCircleIcon from "@mui/icons-material/AccountCircle";
 import MenuIcon from "@mui/icons-material/Menu";
 import {
@@ -15,6 +16,7 @@ import styled from "@emotion/styled";
 import { useStore } from "@/store/useStore";
 import { getSize } from "@/utils/themeUtils";
 import useBreakpoints from "@/utils/useBreakpoints";
+import Usermenu from "@/components/Usermenu";
 
 // Defining a styled component for the logo using emotion's styled
 const Logo = styled(Image)`
@@ -35,7 +37,7 @@ const Logo = styled(Image)`
 const Header = () => {
   const theme = useTheme();
   const breakpoints = useBreakpoints();
-  const { setSideNavOpen, sideNavOpen } =
+  const { setSideNavOpen, sideNavOpen, setUserPopUpOpen, setAnchorElement } =
     useStore();
 
   /**
@@ -43,6 +45,15 @@ const Header = () => {
    */
   const handleSideNavToggle = () => {
     setSideNavOpen(!sideNavOpen);
+  };
+
+  /**
+   * Function to handle the toggling of the user pop-up
+   * @param {React.MouseEvent<HTMLElement>} event - The mouse event triggering the popup
+   */
+  const handleUserPopUpToggle = (event: React.MouseEvent<HTMLElement>) => {
+    setUserPopUpOpen(true);
+    setAnchorElement(event.currentTarget);
   };
 
   return (
@@ -110,13 +121,14 @@ const Header = () => {
             <IconButton
               color="inherit"
               sx={{ fontSize: getSize(theme, "medium", breakpoints) }}
-              onClick={()=>console.log("User Account Clicked")}
+              onClick={handleUserPopUpToggle}
             >
               <AccountCircleIcon fontSize="inherit" />
             </IconButton>
           </Box>
         </Toolbar>
       </AppBar>
+      <Usermenu />
     </Box>
   );
 };

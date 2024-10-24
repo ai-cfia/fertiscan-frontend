@@ -15,18 +15,24 @@ import { Breakpoints } from "@/type/breakpoints";
  */
 export const getSize = (
   theme: Theme,
-  size: "small" | "medium" | "large" | "xl",
+  size: "xs" | "small" | "medium" | "large" | "xl",
   breakpoints: Breakpoints,
 ): string => {
+  if (!theme.iconSizes || !theme.iconSizes[size]) {
+    console.error("Icon sizes not defined in theme for size:", size);
+    return "1rem";
+  }
+
   const { isExtraSmall, isSmall, isMedium, isLarge, isExtraLarge } =
     breakpoints;
 
   // Determine the size value to return based on the current screen size
-  if (isExtraLarge) return theme.iconSizes[size].xl;
-  if (isLarge) return theme.iconSizes[size].lg;
-  if (isMedium) return theme.iconSizes[size].md;
-  if (isSmall) return theme.iconSizes[size].sm;
-  if (isExtraSmall) return theme.iconSizes[size].xs;
+  if (isExtraLarge && theme.iconSizes[size].xl) return theme.iconSizes[size].xl;
+  if (isLarge && theme.iconSizes[size].lg) return theme.iconSizes[size].lg;
+  if (isMedium && theme.iconSizes[size].md) return theme.iconSizes[size].md;
+  if (isSmall && theme.iconSizes[size].sm) return theme.iconSizes[size].sm;
+  if (isExtraSmall && theme.iconSizes[size].xs) return theme.iconSizes[size].xs;
 
-  return theme.iconSizes[size].xs;
+  // As a fallback, return the extra-small size or a default if not available
+  return theme.iconSizes[size].xs || "1rem";
 };

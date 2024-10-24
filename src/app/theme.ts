@@ -141,6 +141,13 @@ const theme = createTheme({
     },
   },
   iconSizes: {
+    xs: {
+      xs: "16px",
+      sm: "18px",
+      md: "20px",
+      lg: "22px",
+      xl: "24px",
+    },
     small: {
       xs: "10px",
       sm: "15px",
@@ -309,6 +316,11 @@ const theme = createTheme({
         root: {
           color: "#ffffff", // White text
         },
+      },
+    },
+    MuiMenuItem: {
+      defaultProps: {
+        disableRipple: true,
       },
     },
     MuiLink: {
