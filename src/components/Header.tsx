@@ -75,8 +75,8 @@ const Header = () => {
                 <Logo
                   src="/img/CFIA FIP FR WHITE 1.png"
                   alt="logo"
-                  layout="fill"
-                  objectPosition="50% 50%"
+                  fill={true}
+                  priority
                 />
               </Link>
             </Box>

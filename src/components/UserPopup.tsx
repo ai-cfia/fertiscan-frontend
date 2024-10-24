@@ -32,7 +32,7 @@ const UserPopup = () => {
     <Menu
       anchorEl={anchorElement}
       id="account-menu"
-      open={userPopUpOpen}
+      open={userPopUpOpen||false}
       onClose={handleClose}
       onClick={handleClose}
       PaperProps={{
