@@ -1,103 +1,85 @@
-import React from "react";
-import { render, fireEvent, screen } from "@testing-library/react";
-import Usermenu from "../Usermenu";
-import { useStore } from "@/store/useStore";
-import { usePlaceholder } from "@/classe/User";
-import { ThemeProvider } from "@mui/material/styles";
-import theme from "@/app/theme";
+import React from 'react';
+import { render, fireEvent, screen } from '@testing-library/react';
+import Usermenu from '../Usermenu';
+import { usePlaceholder } from '@/classe/User';
+import { ThemeProvider } from '@mui/material/styles';
+import theme from '@/app/theme';
 
-// Mock the hooks that the Usermenu component uses
-jest.mock("../../store/useStore", () => ({
-  useStore: jest.fn(),
-}));
-jest.mock("../../classe/User", () => ({
+jest.mock('../../classe/User', () => ({
   usePlaceholder: jest.fn(),
 }));
 
-// Dummy placeholder user
 const dummyUser = {
-  getUsername: jest.fn().mockReturnValue("TestUser"),
+  getUsername: jest.fn().mockReturnValue('placeholderUser'),
 };
 
-// Mock usePlaceholder hook
 usePlaceholder.mockReturnValue(dummyUser);
 
-// Variables to control the useStore mock
-const mockSetUserPopUpOpen = jest.fn();
-const mockSetAnchorElement = jest.fn();
+describe('Usermenu', () => {
+  const mockSetUserPopUpOpen = jest.fn();
+  const mockSetAnchorElement = jest.fn();
+  let anchorElement = null;
 
-useStore.mockReturnValue({
-  anchorElement: null,
-  userPopUpOpen: false,
-  setUserPopUpOpen: mockSetUserPopUpOpen,
-  setAnchorElement: mockSetAnchorElement,
-});
-
-describe("Usermenu", () => {
-  // Resets mock function calls before each test
   beforeEach(() => {
-    jest.clearAllMocks();
-    useStore.mockReturnValue({
-      ...useStore(),
-      userPopUpOpen: false, // Default value for visibility
-    });
+    // Reset the mock function calls before each test
+    mockSetUserPopUpOpen.mockReset();
+    mockSetAnchorElement.mockReset();
+    anchorElement = document.createElement('div'); // Create a new div element to be used as an anchor
   });
 
-  // Test case 1
-  it("renders without crashing", () => {
+  it('renders without crashing', () => {
     render(
       <ThemeProvider theme={theme}>
-        <Usermenu />
+        <Usermenu
+          anchorElement={anchorElement}
+          userPopUpOpen={false}
+          setUserPopUpOpen={mockSetUserPopUpOpen}
+          setAnchorElement={mockSetAnchorElement}
+        />
       </ThemeProvider>,
     );
   });
 
-  // Test case 2
-  it("the menu is not visible when userPopUpOpen is false", () => {
-    const mockAnchorEl = document.createElement("div");
-    useStore.mockReturnValueOnce({
-      ...useStore(),
-      userPopUpOpen: false,
-      anchorEl: mockAnchorEl,
-    });
+  it('the menu becomes not visible when userPopUpOpen is false', () => {
     render(
       <ThemeProvider theme={theme}>
-        <Usermenu />
+        <Usermenu
+          anchorElement={anchorElement}
+          userPopUpOpen={false}
+          setUserPopUpOpen={mockSetUserPopUpOpen}
+          setAnchorElement={mockSetAnchorElement}
+        />
       </ThemeProvider>,
     );
-    expect(screen.queryByText("Dashboard")).not.toBeInTheDocument();
+    expect(screen.queryByTestId('user-menu')).toBeNull();
   });
 
-  // Test case 3
-  it("the menu becomes visible when userPopUpOpen is true", () => {
-    const mockAnchorEl = document.createElement("div");
-    useStore.mockReturnValueOnce({
-      ...useStore(),
-      userPopUpOpen: true,
-      anchorEl: mockAnchorEl,
-    });
+  it('the menu becomes visible when userPopUpOpen is true', () => {
     render(
       <ThemeProvider theme={theme}>
-        <Usermenu />
+        <Usermenu
+          anchorElement={anchorElement}
+          userPopUpOpen={true}
+          setUserPopUpOpen={mockSetUserPopUpOpen}
+          setAnchorElement={mockSetAnchorElement}
+        />
       </ThemeProvider>,
     );
-    expect(screen.getByText("Dashboard")).toBeInTheDocument();
+    expect(screen.getByText('Dashboard')).toBeVisible();
   });
 
-  // Test case 4
-  it("closes the menu when a MenuItem is clicked", () => {
-    const mockAnchorEl = document.createElement("div");
-    useStore.mockReturnValueOnce({
-      ...useStore(),
-      userPopUpOpen: true,
-      anchorEl: mockAnchorEl,
-    });
+  it('closes the menu when a MenuItem is clicked', () => {
     render(
       <ThemeProvider theme={theme}>
-        <Usermenu />
+        <Usermenu
+          anchorElement={anchorElement}
+          userPopUpOpen={true}
+          setUserPopUpOpen={mockSetUserPopUpOpen}
+          setAnchorElement={mockSetAnchorElement}
+        />
       </ThemeProvider>,
     );
-    fireEvent.click(screen.getByText("Dashboard"));
+    fireEvent.click(screen.getByText('Dashboard'));
     expect(mockSetUserPopUpOpen).toHaveBeenCalledWith(false);
     expect(mockSetAnchorElement).toHaveBeenCalledWith(null);
   });

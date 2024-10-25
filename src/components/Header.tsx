@@ -124,6 +124,7 @@ const Header: React.FC<HeaderProps> = ({ setSideNavOpen }) => {
             </Button>
             <IconButton
               color="inherit"
+              data-testid="account-menu-icon"
               sx={{ fontSize: getSize(theme, "medium", breakpoints) }}
               onClick={handleUserPopUpToggle}
             >

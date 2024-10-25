@@ -58,6 +58,7 @@ const Usermenu = ({
       open={userPopUpOpen||false}
       onClose={handleClose}
       onClick={handleClose}
+      data-testid="user-menu"
       transitionDuration={0}
       PaperProps={{
         elevation: 0,
