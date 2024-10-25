@@ -211,25 +211,28 @@ const theme = createTheme({
     },
   },
   components: {
-    MuiButton: {
-      styleOverrides: {
-        containedPrimary: {
-          backgroundColor: "#05486C", // Dark Blue
-          color: "#ffffff", // White text
-          "&:hover": {
-            backgroundColor: "#043152", // Darker Blue on hover
-          },
-        },
-        containedSecondary: {
-          backgroundColor: "#CBC9C9", // Light Grey
-          color: "#000000", // Black text
-          "&:hover": {
-            backgroundColor: "#a30034", // Darker Pink on hover
-          },
-        },
-      },
+    MuiButtonBase: {
       defaultProps: {
-        disableRipple: true, // No more ripple animation
+        disableRipple: true,
+      },
+      styleOverrides: {
+        root: {
+          containedPrimary: {
+            textTransform: "none", // No text transformation
+            backgroundColor: "#05486C", // Dark Blue
+            color: "#ffffff", // White text
+            "&:hover": {
+              backgroundColor: "#043152", // Darker Blue on hover
+            },
+          },
+          containedSecondary: {
+            backgroundColor: "#CBC9C9", // Light Grey
+            color: "#000000", // Black text
+            "&:hover": {
+              backgroundColor: "#a30034", // Darker Pink on hover
+            },
+          },
+        },
       },
     },
     MuiStepIcon: {
@@ -297,11 +300,7 @@ const theme = createTheme({
       styleOverrides: {
         root: {
           color: "#ffffff", // White icon buttons
-          disableRipple: true, // Disable ripple effect
         },
-      },
-      defaultProps: {
-        disableRipple: true, // No more ripple, on the whole application 💣!
       },
     },
     MuiTypography: {
