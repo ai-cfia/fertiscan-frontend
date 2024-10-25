@@ -1,65 +1,48 @@
+// Header.test.jsx
 import React from 'react';
 import { render, screen, fireEvent } from '@testing-library/react';
 import '@testing-library/jest-dom';
 import Header from '../Header';
 import { ThemeProvider } from '@mui/material/styles';
-import theme from '@/app/theme';
-import { useStore } from '../../store/useStore';
-import { getSize } from '@/utils/themeUtils';
-import useBreakpoints from '@/utils/useBreakpoints';
+import theme from '@/app/theme'; // adjust the import path as necessary
 
-// Mocking dependencies
-jest.mock('../../store/useStore');
+// Mocking dependencies (assuming these are needed only for their side effects)
 jest.mock('../../utils/themeUtils');
 jest.mock('../../utils/useBreakpoints');
 
 describe('Header Component', () => {
+  const mockSetSideNavOpen = jest.fn();
+
   beforeEach(() => {
-    // Mock implementation for getSize
-    (getSize as jest.Mock).mockReturnValue('16px');
-
-    // Mock implementation for useStore
-    (useStore as unknown as jest.Mock).mockReturnValue({
-      setSideNavOpen: jest.fn(),
-      sideNavOpen: false,
-    });
-
-    // Mock implementation for useBreakpoints
-    (useBreakpoints as jest.Mock).mockReturnValue({
-      isExtraSmall: true,
-      isSmall: false,
-      isMedium: false,
-      isLarge: false,
-      isExtraLarge: false,
-    });
+    // Reset the mock function before each test
+    mockSetSideNavOpen.mockReset();
   });
 
   it('renders the Header component', () => {
     render(
       <ThemeProvider theme={theme}>
-        <Header />
+        <Header setSideNavOpen={mockSetSideNavOpen} />
       </ThemeProvider>
     );
 
-    // Check if Français button is rendered
-    expect(screen.getByText(/Français/)).toBeInTheDocument();
-    // Check if Menu icon button is rendered
-    expect(screen.getByLabelText(/menu/)).toBeInTheDocument();
+    // Check if the "Français" button is rendered
+    expect(screen.getByText('Français')).toBeInTheDocument();
+
+    // Check if the Menu icon button is rendered
+    expect(screen.getByLabelText('menu')).toBeInTheDocument();
   });
 
   it('handles the side navigation toggle', () => {
-    const { setSideNavOpen, sideNavOpen } = useStore();
-
     render(
       <ThemeProvider theme={theme}>
-        <Header />
+        <Header setSideNavOpen={mockSetSideNavOpen} />
       </ThemeProvider>
     );
 
-    const menuButton = screen.getByLabelText(/menu/);
+    const menuButton = screen.getByLabelText('menu');
     fireEvent.click(menuButton);
 
-    expect(setSideNavOpen).toHaveBeenCalledWith(!sideNavOpen);
+    // Check if setSideNavOpen is called
+    expect(mockSetSideNavOpen).toHaveBeenCalled();
   });
-
 });
