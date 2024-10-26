@@ -1,40 +1,8 @@
-"use client";
 import { createTheme } from "@mui/material/styles";
 
 const theme = createTheme({
   typography: {
     fontFamily: "Roboto, Arial, sans-serif",
-  },
-  iconSizes: {
-    small: {
-      xs: "10px",
-      sm: "15px",
-      md: "20px",
-      lg: "25px",
-      xl: "30px",
-    },
-    medium: {
-      xs: "15px",
-      sm: "20px",
-      md: "25px",
-      lg: "30px",
-      xl: "35px",
-    },
-    // TODO: Determine icon sizes for large, and extra large icons
-    large: {
-      xs: "20px",
-      sm: "24px",
-      md: "28px",
-      lg: "32px",
-      xl: "36px",
-    },
-    xl: {
-      xs: "24px",
-      sm: "28px",
-      md: "32px",
-      lg: "36px",
-      xl: "40px",
-    },
   },
   logoSizes: {
     width: {
@@ -179,6 +147,13 @@ const theme = createTheme({
       styleOverrides: {
         root: {
           color: "#ffffff", // White links
+        },
+      },
+    },
+    MuiSvgIcon: {
+      styleOverrides: {
+        root: {
+          fontSize: "38px", // Larger icon size
         },
       },
     },

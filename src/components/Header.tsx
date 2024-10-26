@@ -1,5 +1,3 @@
-import { getSize } from "@/utils/themeUtils";
-import useBreakpoints from "@/utils/useBreakpoints";
 import styled from "@emotion/styled";
 import AccountCircleIcon from "@mui/icons-material/AccountCircle";
 import MenuIcon from "@mui/icons-material/Menu";
@@ -35,7 +33,6 @@ interface HeaderProps {
 
 const Header: React.FC<HeaderProps> = ({ setSideNavOpen }) => {
   const theme = useTheme();
-  const breakpoints = useBreakpoints();
 
   /**
    * Function to handle the toggling of the side navigation menu
@@ -54,10 +51,9 @@ const Header: React.FC<HeaderProps> = ({ setSideNavOpen }) => {
             color="inherit"
             edge="start"
             aria-label="menu"
-            sx={{ fontSize: getSize(theme, "medium", breakpoints) }}
             onClick={handleSideNavToggle}
           >
-            <MenuIcon sx={{ fontSize: "inherit" }} />
+            <MenuIcon />
           </IconButton>
 
           {/* Logo container in the center */}
@@ -96,28 +92,27 @@ const Header: React.FC<HeaderProps> = ({ setSideNavOpen }) => {
           </Box>
 
           {/* User interaction components */}
-          <Box sx={{ display: "flex", alignItems: "end" }}>
+          <Box
+            sx={{
+              display: "flex",
+            }}
+          >
             {/* Language toggle button */}
             <Button
-              color="inherit"
               sx={{
-                padding: { xs: "0.1vw", md: "0.5vw", lg: "0.5vw", xl: "0.5vw" },
-                display: "contents",
+                alignSelf: "center",
                 textTransform: "unset",
               }}
             >
-              <Typography
-                sx={{ alignSelf: "center", textDecoration: "underline" }}
-              >
-                {" "}
-                Français{" "}
+              <Typography sx={{ textDecoration: "underline" }}>
+                Français
               </Typography>
             </Button>
 
             {/* User account icon button */}
             <IconButton
               color="inherit"
-              sx={{ fontSize: getSize(theme, "medium", breakpoints) }}
+              sx={{ alignSelf: "center" }}
               onClick={() => console.log("User Account Clicked")}
             >
               <AccountCircleIcon fontSize="inherit" />
