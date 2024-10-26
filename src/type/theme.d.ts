@@ -10,16 +10,16 @@ import { ResponsiveStyleValue } from "@mui/system";
 
 declare module "@mui/material/styles" {
   interface Theme {
-    // Custom sizes for logo, defined by responsive width and height
-    logoSizes: {
+    // Custom size for logo, defined by responsive width and height
+    logoSize: {
       width: ResponsiveStyleValue<string | number>;
       height: ResponsiveStyleValue<string | number>;
     };
   }
 
   interface ThemeOptions {
-    // Optional custom sizes for logo, with partial responsive width and height
-    logoSizes?: {
+    // Optional custom size for logo, with partial responsive width and height
+    logoSize?: {
       width?: ResponsiveStyleValue<string | number>;
       height?: ResponsiveStyleValue<string | number>;
     };

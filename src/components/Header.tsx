@@ -1,3 +1,4 @@
+import theme from "@/app/theme";
 import styled from "@emotion/styled";
 import AccountCircleIcon from "@mui/icons-material/AccountCircle";
 import MenuIcon from "@mui/icons-material/Menu";
@@ -8,7 +9,7 @@ import {
   IconButton,
   Toolbar,
   Typography,
-  useTheme,
+  useMediaQuery,
 } from "@mui/material";
 import Image from "next/image";
 import Link from "next/link";
@@ -32,7 +33,7 @@ interface HeaderProps {
 }
 
 const Header: React.FC<HeaderProps> = ({ setSideNavOpen }) => {
-  const theme = useTheme();
+  const isSmallScreen = useMediaQuery(theme.breakpoints.down("md"));
 
   /**
    * Function to handle the toggling of the side navigation menu
@@ -42,72 +43,57 @@ const Header: React.FC<HeaderProps> = ({ setSideNavOpen }) => {
   };
 
   return (
-    <Box sx={{ flexGrow: 1 }}>
-      {/* AppBar component for the header */}
-      <AppBar position="static">
-        <Toolbar>
-          {/* Navigation menu toggle button */}
-          <IconButton
-            color="inherit"
-            edge="start"
-            aria-label="menu"
-            onClick={handleSideNavToggle}
-          >
-            <MenuIcon />
-          </IconButton>
+    <AppBar position="static">
+      <Toolbar sx={{ justifyContent: "space-between", height: "100%" }}>
+        {/* Navigation menu toggle button on the left */}
+        <IconButton edge="start" onClick={handleSideNavToggle}>
+          <MenuIcon />
+        </IconButton>
 
-          {/* Logo container in the center */}
-          <Box
-            position="relative"
-            sx={{ width: "100%", display: "flex", justifyContent: "center" }}
-          >
-            <Box
-              sx={{
-                ...theme.logoSizes,
-              }}
-            >
-              {/* Link to the home page with the logo */}
-              <Link href="https://inspection.canada.ca">
-                <Logo
-                  src="/img/CFIA_FIP_FR_WHITE_1.png"
-                  alt="logo"
-                  fill={true}
-                  priority
-                />
-              </Link>
-            </Box>
-          </Box>
+        {/* Logo container in the center */}
+        <Box
+          sx={{
+            ...theme.logoSize,
+          }}
+        >
+          <Link href="https://inspection.canada.ca">
+            <Logo
+              src="/img/CFIA_FIP_FR_WHITE_1.png"
+              alt="logo"
+              fill={true}
+              priority
+            />
+          </Link>
+        </Box>
 
-          {/* User interaction components */}
-          <Box
+        {/* User interaction components on the right */}
+        <Box
+          sx={{
+            display: "flex",
+          }}
+        >
+          {/* Language toggle button */}
+          <Button
             sx={{
-              display: "flex",
+              alignSelf: "center",
+              textTransform: "unset",
             }}
           >
-            {/* Language toggle button */}
-            <Button
-              sx={{
-                alignSelf: "center",
-                textTransform: "unset",
-              }}
-            >
-              <Typography sx={{ textDecoration: "underline" }}>
-                Français
-              </Typography>
-            </Button>
+            <Typography sx={{ textDecoration: "underline" }}>
+              {isSmallScreen ? "FR" : "Français"}
+            </Typography>
+          </Button>
 
-            {/* User account icon button */}
-            <IconButton
-              color="inherit"
-              sx={{ alignSelf: "center" }}
-              onClick={() => console.log("User Account Clicked")}
-            >
-              <AccountCircleIcon fontSize="inherit" />
-            </IconButton>
-          </Box>
-        </Toolbar>
-      </AppBar>
-    </Box>
+          {/* User account icon button */}
+          <IconButton
+            sx={{ alignSelf: "center" }}
+            onClick={() => console.log("User Account Clicked")}
+          >
+            <AccountCircleIcon />
+          </IconButton>
+        </Box>
+      </Toolbar>
+    </AppBar>
   );
 };
 

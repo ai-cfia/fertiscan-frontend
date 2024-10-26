@@ -4,20 +4,11 @@ const theme = createTheme({
   typography: {
     fontFamily: "Roboto, Arial, sans-serif",
   },
-  logoSizes: {
+  logoSize: {
     width: {
-      xs: "40vw",
-      sm: "35vw",
-      md: "30vw",
-      lg: "25vw",
-      xl: "20vw",
-    },
-    height: {
-      xs: "100%",
-      sm: "90%",
-      md: "80%",
-      lg: "70%",
-      xl: "50%",
+      xs: "290px",
+      sm: "390px",
+      md: "512px",
     },
   },
   cssVariables: true,
@@ -119,6 +110,7 @@ const theme = createTheme({
       styleOverrides: {
         root: {
           backgroundColor: "#05486C", // Dark Blue background
+          height: "64px", // Height of the AppBar
         },
       },
     },
