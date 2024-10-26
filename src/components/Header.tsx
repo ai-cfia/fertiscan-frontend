@@ -63,20 +63,7 @@ const Header: React.FC<HeaderProps> = ({ setSideNavOpen }) => {
           >
             <Box
               sx={{
-                width: {
-                  xs: theme.logoSizes.width.xs,
-                  sm: theme.logoSizes.width.sm,
-                  md: theme.logoSizes.width.md,
-                  lg: theme.logoSizes.width.lg,
-                  xl: theme.logoSizes.width.xl,
-                },
-                height: {
-                  xs: theme.logoSizes.height.xs,
-                  sm: theme.logoSizes.height.sm,
-                  md: theme.logoSizes.height.md,
-                  lg: theme.logoSizes.height.lg,
-                  xl: theme.logoSizes.height.xl,
-                },
+                ...theme.logoSizes,
               }}
             >
               {/* Link to the home page with the logo */}

@@ -1,4 +1,5 @@
 import "@mui/material/styles";
+import { ResponsiveStyleValue } from "@mui/system";
 
 /**
  * Extending Material-UI Theme
@@ -9,51 +10,18 @@ import "@mui/material/styles";
 
 declare module "@mui/material/styles" {
   interface Theme {
-    // Custom sizes for icons, based on different size variants
-    iconSizes: {
-      small: SizeVariant;
-      medium: SizeVariant;
-      large: SizeVariant;
-      xl: SizeVariant;
-    };
-
-    // Custom sizes for logo, defined by width and height variants
+    // Custom sizes for logo, defined by responsive width and height
     logoSizes: {
-      width: SizeVariant;
-      height: SizeVariant;
+      width: ResponsiveStyleValue<string | number>;
+      height: ResponsiveStyleValue<string | number>;
     };
   }
 
   interface ThemeOptions {
-    // Optional custom sizes for icons, with partial size variants
-    iconSizes?: {
-      small?: Partial<SizeVariant>;
-      medium?: Partial<SizeVariant>;
-      large?: Partial<SizeVariant>;
-      xl?: Partial<SizeVariant>;
-    };
-
-    // Optional custom sizes for logo, with partial size variants for width and height
+    // Optional custom sizes for logo, with partial responsive width and height
     logoSizes?: {
-      width?: Partial<SizeVariant>;
-      height?: Partial<SizeVariant>;
+      width?: ResponsiveStyleValue<string | number>;
+      height?: ResponsiveStyleValue<string | number>;
     };
-  }
-
-  interface SizeVariant {
-    // Size for extra small screens
-    xs: string;
-
-    // Size for small screens
-    sm: string;
-
-    // Size for medium screens
-    md: string;
-
-    // Size for large screens
-    lg: string;
-
-    // Size for extra large screens
-    xl: string;
   }
 }
