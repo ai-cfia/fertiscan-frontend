@@ -41,12 +41,13 @@ const theme = createTheme({
       },
       styleOverrides: {
         root: {
+          textTransform: "none",
           containedPrimary: {
             textTransform: "none",
             backgroundColor: "#05486C", // Dark Blue
             color: "#ffffff", // White text
             "&:hover": {
-              backgroundColor: "#043152", // Darker Blue on hover
+              backgroundColor: "#032f47", // Darker Blue on hover
             },
           },
           containedSecondary: {
@@ -54,7 +55,7 @@ const theme = createTheme({
             backgroundColor: "#CBC9C9", // Light Grey
             color: "#000000", // Black text
             "&:hover": {
-              backgroundColor: "#696969", // Darker grey on hover
+              backgroundColor: "#032f47", // Darker grey on hover
             },
           },
         },
