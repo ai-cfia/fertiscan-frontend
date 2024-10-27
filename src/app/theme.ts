@@ -155,7 +155,7 @@ const theme = createTheme({
       lg: "30px",
       xl: "35px",
     },
-    // TODO: Determine icon sizes for large, and extra large icons
+    // TODO: Determine icon sizes for large icons
     large: {
       xs: "20px",
       sm: "24px",
@@ -164,11 +164,11 @@ const theme = createTheme({
       xl: "36px",
     },
     xl: {
-      xs: "24px",
-      sm: "28px",
-      md: "32px",
-      lg: "36px",
-      xl: "40px",
+      xs: "40px",
+      sm: "60px",
+      md: "80px",
+      lg: "100px",
+      xl: "120px",
     },
   },
   logoSizes: {
