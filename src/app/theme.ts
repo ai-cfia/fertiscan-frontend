@@ -2,6 +2,29 @@
 import { createTheme } from "@mui/material/styles";
 
 const theme = createTheme({
+  cssVariables: true,
+  palette: {
+    mode: "light",
+    primary: {
+      main: "#7B7B7B", // Dark grey (Default color)
+    },
+    secondary: {
+      main: "#05486C", // Dark Blue (Selected)
+    },
+    error: {
+      main: "#f44336", // Red
+    },
+    success: {
+      main: "#4caf50", // Green
+    },
+    background: {
+      default: "#C5C5C5", // Light Grey
+    },
+    text: {
+      primary: "#000000", // Black
+      secondary: "#ffffff", // White
+    },
+  },
   typography: {
     fontFamily: "Roboto, Arial, sans-serif",
     h1: {
@@ -141,13 +164,6 @@ const theme = createTheme({
     },
   },
   iconSizes: {
-    xs: {
-      xs: "16px",
-      sm: "18px",
-      md: "20px",
-      lg: "22px",
-      xl: "24px",
-    },
     small: {
       xs: "10px",
       sm: "15px",
@@ -194,49 +210,41 @@ const theme = createTheme({
       xl: "50%",
     },
   },
-  cssVariables: true,
-  palette: {
-    mode: "light",
-    primary: {
-      main: "#7B7B7B", // Dark grey (Default color)
-    },
-    secondary: {
-      main: "#05486C", // Dark Blue (Selected)
-    },
-    error: {
-      main: "#f44336", // Red
-    },
-    success: {
-      main: "#4caf50", // Green
-    },
-    background: {
-      default: "#C5C5C5", // Light Grey
-    },
-    text: {
-      primary: "#000000", // Black
-      secondary: "#ffffff", // White
-    },
-  },
   components: {
-    MuiButton: {
+    MuiButtonBase: {
+      defaultProps: {
+        disableRipple: true,
+      },
       styleOverrides: {
-        containedPrimary: {
-          backgroundColor: "#05486C", // Dark Blue
-          color: "#ffffff", // White text
-          "&:hover": {
-            backgroundColor: "#043152", // Darker Blue on hover
+        root: {
+          containedPrimary: {
+            textTransform: "none",
+            backgroundColor: "#05486C", // Dark Blue
+            color: "#ffffff", // White text
+            "&:hover": {
+              backgroundColor: "#032f47", // Darker Blue on hover
+            },
           },
-        },
-        containedSecondary: {
-          backgroundColor: "#CBC9C9", // Light Grey
-          color: "#000000", // Black text
-          "&:hover": {
-            backgroundColor: "#a30034", // Darker Pink on hover
+          containedSecondary: {
+            textTransform: "none",
+            backgroundColor: "#CBC9C9", // Light Grey
+            color: "#000000", // Black text
+            "&:hover": {
+              backgroundColor: "#032f47", // Darker grey on hover
+            },
           },
         },
       },
-      defaultProps: {
-        disableRipple: true, // No more ripple animation
+    },
+    MuiIconButton: {
+      styleOverrides: {
+        root: {
+          color: "#ffffff", // White icon buttons
+          "&:hover": {
+            backgroundColor: "#053f5e", // Dark Blue on hover
+            color: "#000000", // Black text
+          },
+        },
       },
     },
     MuiStepIcon: {
@@ -300,17 +308,6 @@ const theme = createTheme({
         },
       },
     },
-    MuiIconButton: {
-      styleOverrides: {
-        root: {
-          color: "#ffffff", // White icon buttons
-          disableRipple: true, // Disable ripple effect
-        },
-      },
-      defaultProps: {
-        disableRipple: true, // No more ripple, on the whole application 💣!
-      },
-    },
     MuiTypography: {
       styleOverrides: {
         root: {
@@ -318,15 +315,27 @@ const theme = createTheme({
         },
       },
     },
-    MuiMenuItem: {
-      defaultProps: {
-        disableRipple: true,
-      },
-    },
     MuiLink: {
       styleOverrides: {
         root: {
           color: "#ffffff", // White links
+        },
+      },
+    },
+    MuiMenuItem: {
+      styleOverrides: {
+        root: {
+          color: "#ffffff", // White text
+          "&:hover": {
+            backgroundColor: "#032f47", // Dark Blue on hover
+          },
+        },
+      },
+    },
+    MuiListItemIcon: {
+      styleOverrides: {
+        root: {
+          color: "#ffffff", // Black icons
         },
       },
     },

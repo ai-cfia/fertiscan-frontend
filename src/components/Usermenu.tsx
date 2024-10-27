@@ -40,7 +40,6 @@ const Usermenu = ({
   const breakpoints = useBreakpoints();
   const isMobile = useMediaQuery(theme.breakpoints.down("sm"));
 
-  // Placeholder user details (for demonstration)
   const placeholderUser = usePlaceholder();
 
   /**
@@ -88,8 +87,8 @@ const Usermenu = ({
     >
       <MenuItem sx={{ minWidth: 36 }}>
         <ListItemIcon
+          color= "secondary"
           sx={{
-            color: theme.palette.text.secondary,
             fontSize: getSize(theme, "small", breakpoints),
           }}
         >
@@ -97,9 +96,7 @@ const Usermenu = ({
         </ListItemIcon>
         <Typography
           variant="h6"
-          sx={{
-            color: theme.palette.text.secondary,
-          }}
+          color="secondary"
         >
           {placeholderUser.getUsername()}
         </Typography>
@@ -107,8 +104,8 @@ const Usermenu = ({
       <Divider />
       <MenuItem onClick={handleClose}>
         <ListItemIcon
+        color="secondary"
           sx={{
-            color: theme.palette.text.secondary,
             fontSize: getSize(theme, "small", breakpoints),
           }}
         >
