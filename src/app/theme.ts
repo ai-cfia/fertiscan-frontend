@@ -2,6 +2,29 @@
 import { createTheme } from "@mui/material/styles";
 
 const theme = createTheme({
+  cssVariables: true,
+  palette: {
+    mode: "light",
+    primary: {
+      main: "#7B7B7B", // Dark grey (Default color)
+    },
+    secondary: {
+      main: "#05486C", // Dark Blue (Selected)
+    },
+    error: {
+      main: "#f44336", // Red
+    },
+    success: {
+      main: "#4caf50", // Green
+    },
+    background: {
+      default: "#C5C5C5", // Light Grey
+    },
+    text: {
+      primary: "#000000", // Black
+      secondary: "#ffffff", // White
+    },
+  },
   typography: {
     fontFamily: "Roboto, Arial, sans-serif",
     h1: {
@@ -155,7 +178,7 @@ const theme = createTheme({
       lg: "30px",
       xl: "35px",
     },
-    // TODO: Determine icon sizes for large icons
+    // TODO: Determine icon sizes for large, and extra large icons
     large: {
       xs: "20px",
       sm: "24px",
@@ -187,29 +210,6 @@ const theme = createTheme({
       xl: "50%",
     },
   },
-  cssVariables: true,
-  palette: {
-    mode: "light",
-    primary: {
-      main: "#7B7B7B", // Dark grey (Default color)
-    },
-    secondary: {
-      main: "#05486C", // Dark Blue (Selected)
-    },
-    error: {
-      main: "#f44336", // Red
-    },
-    success: {
-      main: "#4caf50", // Green
-    },
-    background: {
-      default: "#C5C5C5", // Light Grey
-    },
-    text: {
-      primary: "#000000", // Black
-      secondary: "#ffffff", // White
-    },
-  },
   components: {
     MuiButtonBase: {
       defaultProps: {
@@ -217,20 +217,33 @@ const theme = createTheme({
       },
       styleOverrides: {
         root: {
+          textTransform: "none",
           containedPrimary: {
-            textTransform: "none", // No text transformation
+            textTransform: "none",
             backgroundColor: "#05486C", // Dark Blue
             color: "#ffffff", // White text
             "&:hover": {
-              backgroundColor: "#043152", // Darker Blue on hover
+              backgroundColor: "#032f47", // Darker Blue on hover
             },
           },
           containedSecondary: {
+            textTransform: "none",
             backgroundColor: "#CBC9C9", // Light Grey
             color: "#000000", // Black text
             "&:hover": {
-              backgroundColor: "#a30034", // Darker Pink on hover
+              backgroundColor: "#032f47", // Darker grey on hover
             },
+          },
+        },
+      },
+    },
+    MuiIconButton: {
+      styleOverrides: {
+        root: {
+          color: "#ffffff", // White icon buttons
+          "&:hover": {
+            backgroundColor: "#053f5e", // Dark Blue on hover
+            color: "#000000", // Black text
           },
         },
       },
@@ -296,13 +309,6 @@ const theme = createTheme({
         },
       },
     },
-    MuiIconButton: {
-      styleOverrides: {
-        root: {
-          color: "#ffffff", // White icon buttons
-        },
-      },
-    },
     MuiTypography: {
       styleOverrides: {
         root: {
@@ -314,6 +320,23 @@ const theme = createTheme({
       styleOverrides: {
         root: {
           color: "#ffffff", // White links
+        },
+      },
+    },
+    MuiMenuItem: {
+      styleOverrides: {
+        root: {
+          color: "#ffffff", // White text
+          "&:hover": {
+            backgroundColor: "#032f47", // Dark Blue on hover
+          },
+        },
+      },
+    },
+    MuiListItemIcon: {
+      styleOverrides: {
+        root: {
+          color: "#ffffff", // Black icons
         },
       },
     },

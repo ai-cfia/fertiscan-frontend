@@ -1,6 +1,5 @@
 "use client"
-import { ThemeProvider } from "@emotion/react";
-import { Box, Button, Grid2, Stack, Typography, useTheme } from "@mui/material";
+import { Box, Button, Grid2, Stack, ThemeProvider, Typography, useTheme } from "@mui/material";
 import { useState } from "react";
 import { CloudUpload } from "@mui/icons-material";
 import { getSize } from "@/utils/themeUtils";
@@ -19,6 +18,7 @@ function Home() {
 
 
   return (
+    <ThemeProvider theme={theme}>
              <Box sx={{ paddingTop: '10vh' }}>
                 <Grid2 container rowSpacing={1} columnSpacing={{ xs: 1, sm: 2, md: 3 }} justifyContent="center" sx={{ height: "80vh" }}>
                     <Grid2 size={{ xs: 10, md: 7 }}>
@@ -29,7 +29,8 @@ function Home() {
                                 flexDirection: 'column',
                                 justifyContent: 'center',
                                 alignItems: 'center',
-                                border: '3px dashed #033a5b',
+                                border: '3px dashed ',
+                                borderColor: theme.palette.secondary.main,
                                 borderRadius: 1,
                                 textAlign: 'center',
                                 p: 1,
@@ -53,24 +54,23 @@ function Home() {
                                         maxWidth: '100%',
                                         maxHeight: '100%',
                                         objectFit: 'contain',
-                                        border: '2px solid #033a5b',
+                                        border: '2px solid',
+                                        borderColor: theme.palette.secondary.main,
                                     }}
                                 />
                             ) : (
                                 <Box sx={{ textAlign: 'center' }}>
                                     <CloudUpload sx={{ fontSize:  getSize(theme, "xl", breakpoints) , color: theme.palette.secondary.main }} />
-                                    <Typography variant="h3" sx={{color:theme.palette.secondary.main}}>
-                                        <b>Drag & Drop to upload Files</b>
+                                    <Typography variant="h3" color={theme.palette.secondary.main}>
+                                        <b>Drag & Drop To Upload Files</b>
                                     </Typography>
-                                    <Typography variant="h3" sx={{color:theme.palette.secondary.main}}>
+                                    <Typography variant="h3" color={theme.palette.secondary.main}>
                                         <b>OR</b>
                                     </Typography>
                                     <Button
                                         variant="contained"
-                                        component="label">
-                                      <Typography variant="button" sx={{color:theme.palette.secondary.main}}>
+                                        color="secondary">
                                         Browse File
-                                      </Typography>
                                         <input type="file" accept=".png,.jpg,.jpeg,.pdf" hidden onChange={()=>console.log("handleFileUpload")} />
                                     </Button>
                                 </Box>
@@ -162,6 +162,7 @@ function Home() {
                     </Grid2>
                 </Grid2>
               </Box>
+    </ThemeProvider>
   );
 }
 
