@@ -1,9 +1,10 @@
 "use client"
 import { ThemeProvider } from "@emotion/react";
-import theme from "./theme";
-import { Box, Button, Grid2, Stack, Typography } from "@mui/material";
+import { Box, Button, Grid2, Stack, Typography, useTheme } from "@mui/material";
 import { useState } from "react";
 import { CloudUpload } from "@mui/icons-material";
+import { getSize } from "@/utils/themeUtils";
+import useBreakpoints from "@/utils/useBreakpoints";
 
 interface DropzoneState {
   visible: boolean;
@@ -11,12 +12,14 @@ interface DropzoneState {
 }
 
 function Home() {
+  const theme = useTheme();
+  const breakpoints = useBreakpoints();
   const [dropzoneState, setDropzoneState] = useState<DropzoneState>({ visible: false, image_url: null });
   const [uploadedFiles, setUploadedFiles] = useState<File[]>([]);
 
+
   return (
-      <ThemeProvider theme={theme}>
-         <Box sx={{ paddingTop: '10vh' }}>
+             <Box sx={{ paddingTop: '10vh' }}>
                 <Grid2 container rowSpacing={1} columnSpacing={{ xs: 1, sm: 2, md: 3 }} justifyContent="center" sx={{ height: "80vh" }}>
                     <Grid2 size={{ xs: 10, md: 7 }}>
                         <Box
@@ -55,24 +58,19 @@ function Home() {
                                 />
                             ) : (
                                 <Box sx={{ textAlign: 'center' }}>
-                                    <CloudUpload sx={{ fontSize: '120px', color: '#033a5b' }} />
-                                    <Typography variant="h6" sx={{ fontSize: { xs: '0.7rem', md: '1rem', lg: '1rem' } }}>
+                                    <CloudUpload sx={{ fontSize:  getSize(theme, "xl", breakpoints) , color: theme.palette.secondary.main }} />
+                                    <Typography variant="h3" sx={{color:theme.palette.secondary.main}}>
                                         <b>Drag & Drop to upload Files</b>
                                     </Typography>
-                                    <Typography variant="h6" sx={{ fontSize: { xs: '0.7rem', md: '1rem', lg: '1rem' } }}>
+                                    <Typography variant="h3" sx={{color:theme.palette.secondary.main}}>
                                         <b>OR</b>
                                     </Typography>
                                     <Button
                                         variant="contained"
-                                        component="label"
-                                        sx={{
-                                            backgroundColor: '#033a5b',
-                                            color: '#fff',
-                                            '&:hover': { backgroundColor: '#022d46' },
-                                            fontSize: { xs: '0.5rem', sm: '0.7rem', md: '0.7rem', lg: '0.8rem' },
-                                        }}
-                                    >
+                                        component="label">
+                                      <Typography variant="button" sx={{color:theme.palette.secondary.main}}>
                                         Browse File
+                                      </Typography>
                                         <input type="file" accept=".png,.jpg,.jpeg,.pdf" hidden onChange={()=>console.log("handleFileUpload")} />
                                     </Button>
                                 </Box>
@@ -105,7 +103,7 @@ function Home() {
                                     marginRight: '10px'
                                 },
                                 '&::-webkit-scrollbar-thumb': {
-                                    backgroundColor: '#022d46',
+                                    backgroundColor: theme.palette.secondary.main,
                                     borderRadius: '10px',
                                     WebkitBackgroundClip: 'content-box',
                                     border: '5px solid transparent'
@@ -131,7 +129,7 @@ function Home() {
                                     maxWidth: '100%',
                                     maxHeight: '100%',
                                     objectFit: 'contain',
-                                    p: uploadedFiles.length !== 0 ? 2 : 0, // padding when there are files
+                                    p: uploadedFiles.length !== 0 ? 2 : 0,
                                 }}
                             >
                                 <Typography variant="h6" gutterBottom>
@@ -139,7 +137,7 @@ function Home() {
                                 </Typography>
                                 <Stack
                                     direction="column"
-                                    spacing={2}  // adjust spacing as needed
+                                    spacing={2}
                                     sx={{ width: '100%', alignItems: 'flex-start' }}
                                 >
                                 </Stack>
@@ -153,7 +151,7 @@ function Home() {
                             variant="contained"
                             fullWidth
                             sx={{
-                                backgroundColor: '#033a5b',
+                                backgroundColor: theme.palette.secondary.main,
                                 color: '#fff',
                                 minWidth: '133.44px',
                                 '&:hover': { backgroundColor: '#022d46' },
@@ -164,7 +162,6 @@ function Home() {
                     </Grid2>
                 </Grid2>
               </Box>
-      </ThemeProvider>
   );
 }
 
