@@ -12,8 +12,7 @@ import { Breakpoints } from "@/type/breakpoints";
 const useBreakpoints = (): Breakpoints => {
   const theme = useTheme();
 
-  // Determine what is the screen size
-
+  // Determine what is the screen size based on the theme breakpoints
   const isExtraSmall = useMediaQuery(theme.breakpoints.down("xs"));
   const isSmall = useMediaQuery(theme.breakpoints.between("xs", "sm"));
   const isMedium = useMediaQuery(theme.breakpoints.between("sm", "md"));

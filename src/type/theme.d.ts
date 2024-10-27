@@ -11,6 +11,7 @@ declare module "@mui/material/styles" {
   interface Theme {
     // Custom sizes for icons, based on different size variants
     iconSizes: {
+      xs: SizeVariant;
       small: SizeVariant;
       medium: SizeVariant;
       large: SizeVariant;
@@ -27,6 +28,7 @@ declare module "@mui/material/styles" {
   interface ThemeOptions {
     // Optional custom sizes for icons, with partial size variants
     iconSizes?: {
+      xs?: Partial<SizeVariant>;
       small?: Partial<SizeVariant>;
       medium?: Partial<SizeVariant>;
       large?: Partial<SizeVariant>;

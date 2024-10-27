@@ -15,7 +15,7 @@ import { Breakpoints } from "@/type/breakpoints";
  */
 export const getSize = (
   theme: Theme,
-  size: "small" | "medium" | "large" | "xl",
+  size: "xs" | "small" | "medium" | "large" | "xl",
   breakpoints: Breakpoints,
 ): string => {
   const { isExtraSmall, isSmall, isMedium, isLarge, isExtraLarge } =
