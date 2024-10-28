@@ -1,3 +1,6 @@
+import theme from "@/app/theme";
+import useBreakpoints from "@/utils/useBreakpoints";
+import styled from "@emotion/styled";
 import AccountCircleIcon from "@mui/icons-material/AccountCircle";
 import MenuIcon from "@mui/icons-material/Menu";
 import {
@@ -7,13 +10,9 @@ import {
   IconButton,
   Toolbar,
   Typography,
-  useTheme,
 } from "@mui/material";
 import Image from "next/image";
 import Link from "next/link";
-import styled from "@emotion/styled";
-import { getSize } from "@/utils/themeUtils";
-import useBreakpoints from "@/utils/useBreakpoints";
 
 // Defining a styled component for the logo using emotion's styled
 const Logo = styled(Image)`
@@ -28,16 +27,14 @@ const Logo = styled(Image)`
  * - Logo of the application
  * - Language button
  * - User account icon button
- * - User pop-up component
- *
  */
 interface HeaderProps {
   setSideNavOpen: (open: boolean | ((prevOpen: boolean) => boolean)) => void;
 }
 
 const Header: React.FC<HeaderProps> = ({ setSideNavOpen }) => {
-  const theme = useTheme();
-  const breakpoints = useBreakpoints();
+  const { isDownXs, isBetweenXsSm, isBetweenSmMd } = useBreakpoints();
+
   /**
    * Function to handle the toggling of the side navigation menu
    */
@@ -46,77 +43,72 @@ const Header: React.FC<HeaderProps> = ({ setSideNavOpen }) => {
   };
 
   return (
-    <Box sx={{ flexGrow: 1 }}>
-      <AppBar position="static">
-        <Toolbar>
+    <AppBar position="static" data-testid="header-appbar">
+      <Toolbar
+        sx={{ justifyContent: "space-between", height: "100%" }}
+        data-testid="header-toolbar"
+      >
+        {/* Navigation menu toggle button on the left */}
+        <IconButton
+          edge="start"
+          onClick={handleSideNavToggle}
+          data-testid="menu-toggle-button"
+        >
+          <MenuIcon />
+        </IconButton>
+
+        {/* Logo container in the center */}
+        <Box
+          sx={{
+            ...theme.logoSize,
+          }}
+          data-testid="logo-container"
+        >
+          <Link href="https://inspection.canada.ca">
+            <Logo
+              src="/img/CFIA_FIP_FR_WHITE_1.png"
+              alt="logo"
+              fill={true}
+              priority
+              data-testid="logo-image"
+            />
+          </Link>
+        </Box>
+
+        {/* User interaction components on the right */}
+        <Box
+          sx={{
+            display: "flex",
+          }}
+          data-testid="user-interaction-box"
+        >
+          {/* Language toggle button */}
+          <Button
+            sx={{
+              alignSelf: "center",
+              textTransform: "unset",
+            }}
+            data-testid="language-toggle-button"
+          >
+            <Typography
+              sx={{ textDecoration: "underline" }}
+              data-testid="language-text"
+            >
+              {isDownXs || isBetweenXsSm || isBetweenSmMd ? "FR" : "Français"}
+            </Typography>
+          </Button>
+
+          {/* User account icon button */}
           <IconButton
-            edge="start"
-            aria-label="menu"
-            sx={{ fontSize: getSize(theme, "medium", breakpoints) }}
-            onClick={handleSideNavToggle}
+            sx={{ alignSelf: "center" }}
+            onClick={() => console.log("User Account Clicked")}
+            data-testid="user-account-button"
           >
-            <MenuIcon sx={{ fontSize: "inherit" }} />
+            <AccountCircleIcon />
           </IconButton>
-          <Box
-            position="relative"
-            sx={{ width: "100%", display: "flex", justifyContent: "center" }}
-          >
-            <Box
-              sx={{
-                width: {
-                  xs: theme.logoSizes.width.xs,
-                  sm: theme.logoSizes.width.sm,
-                  md: theme.logoSizes.width.md,
-                  lg: theme.logoSizes.width.lg,
-                  xl: theme.logoSizes.width.xl,
-                },
-                height: {
-                  xs: theme.logoSizes.height.xs,
-                  sm: theme.logoSizes.height.sm,
-                  md: theme.logoSizes.height.md,
-                  lg: theme.logoSizes.height.lg,
-                  xl: theme.logoSizes.height.xl,
-                },
-              }}
-            >
-              <Link href="https://inspection.canada.ca">
-                <Logo
-                  src="/img/CFIA FIP FR WHITE 1.png"
-                  alt="logo"
-                  fill={true}
-                  priority
-                />
-              </Link>
-            </Box>
-          </Box>
-          <Box sx={{ display: "flex", alignItems: "end" }}>
-            <Button
-              variant="contained"
-              color="primary"
-              sx={{
-                padding: { xs: "0.1vw", md: "0.5vw", lg: "0.5vw", xl: "0.5vw" },
-                display: "contents",
-                textTransform: "unset",
-              }}
-            >
-              <Typography
-                variant="h6"
-                sx={{ alignSelf: "center", textDecoration: "underline" }}
-              >
-                {" "}
-                Français{" "}
-              </Typography>
-            </Button>
-            <IconButton
-              sx={{ fontSize: getSize(theme, "medium", breakpoints) }}
-              onClick={()=>console.log("User Account Clicked")}
-            >
-              <AccountCircleIcon fontSize="inherit" />
-            </IconButton>
-          </Box>
-        </Toolbar>
-      </AppBar>
-    </Box>
+        </Box>
+      </Toolbar>
+    </AppBar>
   );
 };
 
