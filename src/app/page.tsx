@@ -4,6 +4,7 @@ import { useState } from "react";
 import { CloudUpload } from "@mui/icons-material";
 import { getSize } from "@/utils/themeUtils";
 import useBreakpoints from "@/utils/useBreakpoints";
+import FileElement from "@/components/FileElement";
 
 interface DropzoneState {
   visible: boolean;
@@ -61,10 +62,10 @@ function Home() {
                             ) : (
                                 <Box sx={{ textAlign: 'center' }}>
                                     <CloudUpload sx={{ fontSize:  getSize(theme, "xl", breakpoints) , color: theme.palette.secondary.main }} />
-                                    <Typography variant="h3" color={theme.palette.secondary.main}>
+                                    <Typography variant="h4" color={theme.palette.secondary.main}>
                                         <b>Drag & Drop To Upload Files</b>
                                     </Typography>
-                                    <Typography variant="h3" color={theme.palette.secondary.main}>
+                                    <Typography variant="h4" color={theme.palette.secondary.main}>
                                         <b>OR</b>
                                     </Typography>
                                     <Button
@@ -85,7 +86,8 @@ function Home() {
                                 flexDirection: 'column',
                                 justifyContent: 'center',
                                 alignItems: 'center',
-                                border: '2px solid #033a5b',
+                                border: '2px solid',
+                                borderColor: theme.palette.secondary.main,
                                 borderRadius: 1,
                                 textAlign: 'center',
                                 p: 1,
@@ -138,8 +140,30 @@ function Home() {
                                 <Stack
                                     direction="column"
                                     spacing={2}
-                                    sx={{ width: '100%', alignItems: 'flex-start' }}
+                                    sx={{ width: '100%', alignItems: 'center' }}
                                 >
+                                    {/*{uploadedFiles.map((file, index) => (*/}
+                                        <FileElement
+                                        key={1}
+                                        fileName={"file.getInfo().tags?.[0]?.name || file.getInfo().path.split('/').pop() || filename.jpg"}
+                                        fileUrl={"file.getInfo().path"}
+                                        setDropZoneState={function (show: boolean, url: string): void {
+                                          console.log("setDropZoneState");
+                                        }}
+                                        handleDelete={() => console.log("handleDelete")}
+
+                                        />
+                                        <FileElement
+                                        key={2}
+                                        fileName={"file.getInfo().tags?.[0]?.name || file.getInfo().path.split('/').pop() || filename.jpg"}
+                                        fileUrl={"file.getInfo().path"}
+                                        setDropZoneState={function (show: boolean, url: string): void {
+                                          console.log("setDropZoneState");
+                                        }}
+                                        handleDelete={() => console.log("handleDelete")}
+                                        />
+
+                                    {/*))}*/}
                                 </Stack>
                             </Box>
                         </Box>
@@ -149,12 +173,10 @@ function Home() {
                     <Grid2 size={{ xs: 10, md: 4 }}>
                         <Button
                             variant="contained"
+                            color="secondary"
                             fullWidth
                             sx={{
-                                backgroundColor: theme.palette.secondary.main,
-                                color: '#fff',
                                 minWidth: '133.44px',
-                                '&:hover': { backgroundColor: '#022d46' },
                             }}
                         >
                             Submit
