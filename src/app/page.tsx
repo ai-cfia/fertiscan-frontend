@@ -5,6 +5,8 @@ import { CloudUpload } from "@mui/icons-material";
 import { getSize } from "@/utils/themeUtils";
 import useBreakpoints from "@/utils/useBreakpoints";
 import FileElement from "@/components/FileElement";
+import { FileUploaded, FileType, } from '@/classe/File';
+
 
 interface DropzoneState {
   visible: boolean;
