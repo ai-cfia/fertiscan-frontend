@@ -43,10 +43,17 @@ const Header: React.FC<HeaderProps> = ({ setSideNavOpen }) => {
   };
 
   return (
-    <AppBar position="static">
-      <Toolbar sx={{ justifyContent: "space-between", height: "100%" }}>
+    <AppBar position="static" data-testid="header-appbar">
+      <Toolbar
+        sx={{ justifyContent: "space-between", height: "100%" }}
+        data-testid="header-toolbar"
+      >
         {/* Navigation menu toggle button on the left */}
-        <IconButton edge="start" onClick={handleSideNavToggle}>
+        <IconButton
+          edge="start"
+          onClick={handleSideNavToggle}
+          data-testid="menu-toggle-button"
+        >
           <MenuIcon />
         </IconButton>
 
@@ -55,6 +62,7 @@ const Header: React.FC<HeaderProps> = ({ setSideNavOpen }) => {
           sx={{
             ...theme.logoSize,
           }}
+          data-testid="logo-container"
         >
           <Link href="https://inspection.canada.ca">
             <Logo
@@ -62,6 +70,7 @@ const Header: React.FC<HeaderProps> = ({ setSideNavOpen }) => {
               alt="logo"
               fill={true}
               priority
+              data-testid="logo-image"
             />
           </Link>
         </Box>
@@ -71,6 +80,7 @@ const Header: React.FC<HeaderProps> = ({ setSideNavOpen }) => {
           sx={{
             display: "flex",
           }}
+          data-testid="user-interaction-box"
         >
           {/* Language toggle button */}
           <Button
@@ -78,8 +88,12 @@ const Header: React.FC<HeaderProps> = ({ setSideNavOpen }) => {
               alignSelf: "center",
               textTransform: "unset",
             }}
+            data-testid="language-toggle-button"
           >
-            <Typography sx={{ textDecoration: "underline" }}>
+            <Typography
+              sx={{ textDecoration: "underline" }}
+              data-testid="language-text"
+            >
               {isDownXs || isBetweenXsSm || isBetweenSmMd ? "FR" : "Français"}
             </Typography>
           </Button>
@@ -88,6 +102,7 @@ const Header: React.FC<HeaderProps> = ({ setSideNavOpen }) => {
           <IconButton
             sx={{ alignSelf: "center" }}
             onClick={() => console.log("User Account Clicked")}
+            data-testid="user-account-button"
           >
             <AccountCircleIcon />
           </IconButton>
