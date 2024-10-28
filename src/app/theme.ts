@@ -1,16 +1,6 @@
 import { createTheme } from "@mui/material/styles";
 
 const theme = createTheme({
-  typography: {
-    fontFamily: "Roboto, Arial, sans-serif",
-  },
-  logoSize: {
-    width: {
-      xs: "290px",
-      sm: "390px",
-      md: "512px",
-    },
-  },
   cssVariables: true,
   palette: {
     mode: "light",
@@ -34,6 +24,16 @@ const theme = createTheme({
       secondary: "#ffffff", // White
     },
   },
+  typography: {
+    fontFamily: "Roboto, Arial, sans-serif",
+  },
+  logoSize: {
+    width: {
+      xs: "290px",
+      sm: "390px",
+      md: "512px",
+    },
+  },
   components: {
     MuiButtonBase: {
       defaultProps: {
@@ -42,7 +42,7 @@ const theme = createTheme({
       styleOverrides: {
         root: {
           containedPrimary: {
-            textTransform: "none", // No text transformation
+            textTransform: "none",
             backgroundColor: "#05486C", // Dark Blue
             color: "#ffffff", // White text
             "&:hover": {
@@ -50,11 +50,23 @@ const theme = createTheme({
             },
           },
           containedSecondary: {
+            textTransform: "none",
             backgroundColor: "#CBC9C9", // Light Grey
             color: "#000000", // Black text
             "&:hover": {
-              backgroundColor: "#a30034", // Darker Pink on hover
+              backgroundColor: "#696969", // Darker grey on hover
             },
+          },
+        },
+      },
+    },
+    MuiIconButton: {
+      styleOverrides: {
+        root: {
+          color: "#ffffff", // White icon buttons
+          "&:hover": {
+            backgroundColor: "#053f5e", // Dark Blue on hover
+            color: "#000000", // Black text
           },
         },
       },
@@ -118,13 +130,6 @@ const theme = createTheme({
       styleOverrides: {
         root: {
           color: "#ffffff", // White text
-        },
-      },
-    },
-    MuiIconButton: {
-      styleOverrides: {
-        root: {
-          color: "#ffffff", // White icon buttons
         },
       },
     },
