@@ -1,5 +1,5 @@
-import { useTheme, useMediaQuery } from "@mui/material";
 import { Breakpoints } from "@/type/breakpoints";
+import { useMediaQuery, useTheme } from "@mui/material";
 
 /**
  * Custom Hook: useBreakpoints
@@ -12,14 +12,13 @@ import { Breakpoints } from "@/type/breakpoints";
 const useBreakpoints = (): Breakpoints => {
   const theme = useTheme();
 
-  // Determine what is the screen size based on the theme breakpoints
-  const isExtraSmall = useMediaQuery(theme.breakpoints.down("xs"));
-  const isSmall = useMediaQuery(theme.breakpoints.between("xs", "sm"));
-  const isMedium = useMediaQuery(theme.breakpoints.between("sm", "md"));
-  const isLarge = useMediaQuery(theme.breakpoints.between("md", "lg"));
-  const isExtraLarge = useMediaQuery(theme.breakpoints.up("lg"));
-
-  return { isExtraSmall, isSmall, isMedium, isLarge, isExtraLarge };
+  return {
+    isDownXs: useMediaQuery(theme.breakpoints.down("xs")),
+    isBetweenXsSm: useMediaQuery(theme.breakpoints.between("xs", "sm")),
+    isBetweenSmMd: useMediaQuery(theme.breakpoints.between("sm", "md")),
+    isBetweenMdLg: useMediaQuery(theme.breakpoints.between("md", "lg")),
+    isUpLg: useMediaQuery(theme.breakpoints.up("lg")),
+  };
 };
 
 export default useBreakpoints;

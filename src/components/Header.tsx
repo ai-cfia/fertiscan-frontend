@@ -1,4 +1,5 @@
 import theme from "@/app/theme";
+import useBreakpoints from "@/utils/useBreakpoints";
 import styled from "@emotion/styled";
 import AccountCircleIcon from "@mui/icons-material/AccountCircle";
 import MenuIcon from "@mui/icons-material/Menu";
@@ -9,7 +10,6 @@ import {
   IconButton,
   Toolbar,
   Typography,
-  useMediaQuery,
 } from "@mui/material";
 import Image from "next/image";
 import Link from "next/link";
@@ -33,7 +33,7 @@ interface HeaderProps {
 }
 
 const Header: React.FC<HeaderProps> = ({ setSideNavOpen }) => {
-  const isSmallScreen = useMediaQuery(theme.breakpoints.down("md"));
+  const { isDownXs, isBetweenXsSm, isBetweenSmMd } = useBreakpoints();
 
   /**
    * Function to handle the toggling of the side navigation menu
@@ -80,7 +80,7 @@ const Header: React.FC<HeaderProps> = ({ setSideNavOpen }) => {
             }}
           >
             <Typography sx={{ textDecoration: "underline" }}>
-              {isSmallScreen ? "FR" : "Français"}
+              {isDownXs || isBetweenXsSm || isBetweenSmMd ? "FR" : "Français"}
             </Typography>
           </Button>
 

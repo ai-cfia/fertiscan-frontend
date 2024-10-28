@@ -7,8 +7,7 @@ import { ThemeProvider } from '@mui/material/styles';
 import theme from '@/app/theme'; // adjust the import path as necessary
 
 // Mocking dependencies (assuming these are needed only for their side effects)
-jest.mock('../../utils/themeUtils');
-jest.mock('../../utils/useBreakpoints');
+// jest.mock('../../utils/useBreakpoints');
 
 describe('Header Component', () => {
   const mockSetSideNavOpen = jest.fn();

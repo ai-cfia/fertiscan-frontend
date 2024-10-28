@@ -6,17 +6,17 @@
  */
 export type Breakpoints = {
   // Represents if the screen size is extra small
-  isExtraSmall: boolean;
+  isDownXs: boolean;
 
   // Represents if the screen size is small
-  isSmall: boolean;
+  isBetweenXsSm: boolean;
 
   // Represents if the screen size is medium
-  isMedium: boolean;
+  isBetweenSmMd: boolean;
 
   // Represents if the screen size is large
-  isLarge: boolean;
+  isBetweenMdLg: boolean;
 
   // Represents if the screen size is extra large
-  isExtraLarge: boolean;
+  isUpLg: boolean;
 };
