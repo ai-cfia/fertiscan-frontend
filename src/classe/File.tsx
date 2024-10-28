@@ -1,4 +1,4 @@
-export type FileType = "pdf" | "png" | "jpg";
+type FileType = "pdf" | "png" | "jpg";
 
 interface Dimension {
     width: number;
@@ -14,7 +14,7 @@ interface Tag {
     description?: string;
 }
 
-export interface FileInfo {
+interface FileInfo {
     dimension: Dimension;
     path: string;
     user: User;
@@ -23,7 +23,7 @@ export interface FileInfo {
     type: FileType;
 }
 
-export class FileUploaded {
+class FileUploaded {
     private info: FileInfo;
 
     constructor(info: FileInfo) {
@@ -82,3 +82,4 @@ export class FileUploaded {
         }
     }
 }
+export type { FileUploaded, FileType, FileInfo };
