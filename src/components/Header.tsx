@@ -50,7 +50,6 @@ const Header: React.FC<HeaderProps> = ({ setSideNavOpen }) => {
       <AppBar position="static">
         <Toolbar>
           <IconButton
-            color="inherit"
             edge="start"
             aria-label="menu"
             sx={{ fontSize: getSize(theme, "medium", breakpoints) }}
@@ -92,7 +91,8 @@ const Header: React.FC<HeaderProps> = ({ setSideNavOpen }) => {
           </Box>
           <Box sx={{ display: "flex", alignItems: "end" }}>
             <Button
-              color="inherit"
+              variant="contained"
+              color="primary"
               sx={{
                 padding: { xs: "0.1vw", md: "0.5vw", lg: "0.5vw", xl: "0.5vw" },
                 display: "contents",
@@ -108,7 +108,6 @@ const Header: React.FC<HeaderProps> = ({ setSideNavOpen }) => {
               </Typography>
             </Button>
             <IconButton
-              color="inherit"
               sx={{ fontSize: getSize(theme, "medium", breakpoints) }}
               onClick={()=>console.log("User Account Clicked")}
             >
