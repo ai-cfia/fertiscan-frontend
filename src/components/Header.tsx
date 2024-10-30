@@ -1,4 +1,6 @@
-
+import Usermenu from "@/components/Usermenu";
+import useBreakpoints from "@/utils/useBreakpoints";
+import styled from "@emotion/styled";
 import AccountCircleIcon from "@mui/icons-material/AccountCircle";
 import MenuIcon from "@mui/icons-material/Menu";
 import {
@@ -12,10 +14,6 @@ import {
 } from "@mui/material";
 import Image from "next/image";
 import Link from "next/link";
-import styled from "@emotion/styled";
-import { getSize } from "@/utils/themeUtils";
-import useBreakpoints from "@/utils/useBreakpoints";
-import Usermenu from "@/components/Usermenu";
 import { useState } from "react";
 
 // Defining a styled component for the logo using emotion's styled
@@ -33,14 +31,11 @@ interface HeaderProps {
  * - Logo of the application
  * - Language button
  * - User account icon button
- * - User pop-up component
- *
  */
-
 
 const Header: React.FC<HeaderProps> = ({ setSideNavOpen }) => {
   const theme = useTheme();
-  const breakpoints = useBreakpoints();
+  const { isDownXs, isBetweenXsSm, isBetweenSmMd } = useBreakpoints();
   const [anchorElement, setAnchorElement] = useState<null | HTMLElement>(null);
   const [userPopUpOpen, setUserPopUpOpen] = useState(false);
 
@@ -62,73 +57,68 @@ const Header: React.FC<HeaderProps> = ({ setSideNavOpen }) => {
 
   return (
     <Box sx={{ flexGrow: 1 }}>
-      <AppBar position="static">
-        <Toolbar>
+      <AppBar position="static" data-testid="header-appbar">
+        <Toolbar
+          sx={{ justifyContent: "space-between", height: "100%" }}
+          data-testid="header-toolbar"
+        >
+          {/* Navigation menu toggle button on the left */}
           <IconButton
-            color="inherit"
             edge="start"
-            aria-label="menu"
-            sx={{ fontSize: getSize(theme, "medium", breakpoints) }}
             onClick={handleSideNavToggle}
+            data-testid="menu-toggle-button"
           >
-            <MenuIcon sx={{ fontSize: "inherit" }} />
+            <MenuIcon />
           </IconButton>
+
+          {/* Logo container in the center */}
           <Box
-            position="relative"
-            sx={{ width: "100%", display: "flex", justifyContent: "center" }}
+            sx={{
+              ...theme.logoSize,
+            }}
+            data-testid="logo-container"
           >
-            <Box
-              sx={{
-                width: {
-                  xs: theme.logoSizes.width.xs,
-                  sm: theme.logoSizes.width.sm,
-                  md: theme.logoSizes.width.md,
-                  lg: theme.logoSizes.width.lg,
-                  xl: theme.logoSizes.width.xl,
-                },
-                height: {
-                  xs: theme.logoSizes.height.xs,
-                  sm: theme.logoSizes.height.sm,
-                  md: theme.logoSizes.height.md,
-                  lg: theme.logoSizes.height.lg,
-                  xl: theme.logoSizes.height.xl,
-                },
-              }}
-            >
-              <Link href="https://inspection.canada.ca">
-                <Logo
-                  src="/img/CFIA FIP FR WHITE 1.png"
-                  alt="logo"
-                  fill={true}
-                  priority
-                />
-              </Link>
-            </Box>
+            <Link href="https://inspection.canada.ca">
+              <Logo
+                src="/img/CFIA_FIP_FR_WHITE_1.png"
+                alt="logo"
+                fill={true}
+                priority
+                data-testid="logo-image"
+              />
+            </Link>
           </Box>
-          <Box sx={{ display: "flex", alignItems: "end" }}>
+
+          {/* User interaction components on the right */}
+          <Box
+            sx={{
+              display: "flex",
+            }}
+            data-testid="user-interaction-box"
+          >
+            {/* Language toggle button */}
             <Button
-              color="inherit"
               sx={{
-                padding: { xs: "0.1vw", md: "0.5vw", lg: "0.5vw", xl: "0.5vw" },
-                display: "contents",
+                alignSelf: "center",
                 textTransform: "unset",
               }}
+              data-testid="language-toggle-button"
             >
               <Typography
-                variant="h6"
-                sx={{ alignSelf: "center", textDecoration: "underline" }}
+                sx={{ textDecoration: "underline" }}
+                data-testid="language-text"
               >
-                {" "}
-                Français{" "}
+                {isDownXs || isBetweenXsSm || isBetweenSmMd ? "FR" : "Français"}
               </Typography>
             </Button>
+
+            {/* User account icon button */}
             <IconButton
-              color="inherit"
-              data-testid="account-menu-icon"
-              sx={{ fontSize: getSize(theme, "medium", breakpoints) }}
+              sx={{ alignSelf: "center" }}
               onClick={handleUserPopUpToggle}
+              data-testid="user-account-button"
             >
-              <AccountCircleIcon fontSize="inherit" />
+              <AccountCircleIcon />
             </IconButton>
           </Box>
         </Toolbar>
@@ -140,7 +130,6 @@ const Header: React.FC<HeaderProps> = ({ setSideNavOpen }) => {
         setUserPopUpOpen={setUserPopUpOpen}
         setAnchorElement={setAnchorElement}
       />
-
     </Box>
   );
 };

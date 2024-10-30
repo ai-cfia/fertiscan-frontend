@@ -15,6 +15,12 @@
     "test:watch": "jest --watch",
     "test:coverage": "jest --coverage"
   },
+  "eslintIgnore": [
+    "**/*.test.ts",
+    "**/*.test.tsx",
+    "**/*.spec.ts",
+    "**/*.spec.tsx"
+  ],
   "dependencies": {
     "@emotion/react": "^11.13.3",
     "@emotion/styled": "^11.13.0",
