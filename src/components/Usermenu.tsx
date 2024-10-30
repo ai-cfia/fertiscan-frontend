@@ -1,18 +1,17 @@
-import React, { ReactElement } from "react";
+import { usePlaceholder } from "@/classe/User";
+import { AccountCircle, Logout, Settings } from "@mui/icons-material";
 import {
+  Box,
+  Divider,
+  ListItemIcon,
   Menu,
   MenuItem,
-  ListItemIcon,
-  Divider,
-  useTheme,
-  Box,
   Typography,
   useMediaQuery,
+  useTheme,
 } from "@mui/material";
-import { Logout, Settings, AccountCircle } from "@mui/icons-material";
-import { usePlaceholder } from "@/classe/User";
-import { getSize } from "@/utils/themeUtils";
-import useBreakpoints from "@/utils/useBreakpoints";
+import { ReactElement } from "react";
+// import useBreakpoints from "@/utils/useBreakpoints";
 
 type UsermenuProps = {
   anchorElement: null | HTMLElement;
@@ -34,10 +33,10 @@ const Usermenu = ({
   anchorElement,
   userPopUpOpen,
   setUserPopUpOpen,
-  setAnchorElement
+  setAnchorElement,
 }: UsermenuProps): ReactElement => {
   const theme = useTheme();
-  const breakpoints = useBreakpoints();
+  // const breakpoints = useBreakpoints();
   const isMobile = useMediaQuery(theme.breakpoints.down("sm"));
 
   const placeholderUser = usePlaceholder();
@@ -54,7 +53,7 @@ const Usermenu = ({
     <Menu
       anchorEl={anchorElement}
       id="account-menu"
-      open={userPopUpOpen||false}
+      open={userPopUpOpen || false}
       onClose={handleClose}
       onClick={handleClose}
       data-testid="user-menu"
@@ -86,39 +85,17 @@ const Usermenu = ({
       anchorOrigin={{ horizontal: "right", vertical: "bottom" }}
     >
       <MenuItem sx={{ minWidth: 36 }}>
-        <ListItemIcon
-          color= "secondary"
-          sx={{
-            fontSize: getSize(theme, "small", breakpoints),
-          }}
-        >
-          <AccountCircle fontSize="inherit" />
+        <ListItemIcon>
+          <AccountCircle  />
         </ListItemIcon>
-        <Typography
-          variant="h6"
-          color="secondary"
-        >
-          {placeholderUser.getUsername()}
-        </Typography>
+        <Typography>{placeholderUser.getUsername()}</Typography>
       </MenuItem>
       <Divider />
       <MenuItem onClick={handleClose}>
-        <ListItemIcon
-        color="secondary"
-          sx={{
-            fontSize: getSize(theme, "small", breakpoints),
-          }}
-        >
-          <Settings fontSize="inherit" />
+        <ListItemIcon >
+          <Settings />
         </ListItemIcon>
-        <Typography
-          variant="h6"
-          sx={{
-            color: theme.palette.text.secondary,
-          }}
-        >
-          Dashboard
-        </Typography>
+        <Typography>Dashboard</Typography>
       </MenuItem>
       <Box
         display="flex"
@@ -144,7 +121,6 @@ const Usermenu = ({
               <ListItemIcon
                 sx={{
                   color: theme.palette.text.secondary,
-                  fontSize: getSize(theme, "small", breakpoints),
                   justifyContent: "center",
                 }}
               >
@@ -176,13 +152,8 @@ const Usermenu = ({
                 justifyContent: "flex-end",
               }}
             >
-              <ListItemIcon
-                sx={{
-                  color: theme.palette.text.secondary,
-                  fontSize: getSize(theme, "small", breakpoints),
-                }}
-              >
-                <Logout fontSize="inherit" />
+              <ListItemIcon>
+                <Logout />
               </ListItemIcon>
             </MenuItem>
           </>

@@ -161,13 +161,14 @@ const theme = createTheme({
           "&:hover": {
             backgroundColor: "#032f47", // Dark Blue on hover
           },
+          gap: '0.5rem'
         },
       },
     },
     MuiListItemIcon: {
       styleOverrides: {
         root: {
-          color: "#ffffff", // Black icons
+          color: "#ffffff", // White icons
         },
       },
     },
