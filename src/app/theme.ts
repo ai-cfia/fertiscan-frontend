@@ -1,10 +1,6 @@
-"use client";
 import { createTheme } from "@mui/material/styles";
 
 const theme = createTheme({
-  typography: {
-    fontFamily: "var(--font-roboto)",
-  },
   cssVariables: true,
   palette: {
     mode: "light",
@@ -28,21 +24,49 @@ const theme = createTheme({
       secondary: "#ffffff", // White
     },
   },
+  typography: {
+    fontFamily: "Roboto, Arial, sans-serif",
+  },
+  logoSize: {
+    width: {
+      xs: "290px",
+      sm: "390px",
+      md: "512px",
+    },
+  },
   components: {
-    MuiButton: {
+    MuiButtonBase: {
+      defaultProps: {
+        disableRipple: true,
+      },
       styleOverrides: {
-        containedPrimary: {
-          backgroundColor: "#05486C", // Dark Blue
-          color: "#ffffff", // White text
-          "&:hover": {
-            backgroundColor: "#043152", // Darker Blue on hover
+        root: {
+          containedPrimary: {
+            textTransform: "none",
+            backgroundColor: "#05486C", // Dark Blue
+            color: "#ffffff", // White text
+            "&:hover": {
+              backgroundColor: "#043152", // Darker Blue on hover
+            },
+          },
+          containedSecondary: {
+            textTransform: "none",
+            backgroundColor: "#CBC9C9", // Light Grey
+            color: "#000000", // Black text
+            "&:hover": {
+              backgroundColor: "#696969", // Darker grey on hover
+            },
           },
         },
-        containedSecondary: {
-          backgroundColor: "#CBC9C9", // Light Grey
-          color: "#000000", // Black text
+      },
+    },
+    MuiIconButton: {
+      styleOverrides: {
+        root: {
+          color: "#ffffff", // White icon buttons
           "&:hover": {
-            backgroundColor: "#a30034", // Darker Pink on hover
+            backgroundColor: "#053f5e", // Dark Blue on hover
+            color: "#000000", // Black text
           },
         },
       },
@@ -98,6 +122,7 @@ const theme = createTheme({
       styleOverrides: {
         root: {
           backgroundColor: "#05486C", // Dark Blue background
+          height: "64px", // Height of the AppBar
         },
       },
     },
@@ -105,13 +130,6 @@ const theme = createTheme({
       styleOverrides: {
         root: {
           color: "#ffffff", // White text
-        },
-      },
-    },
-    MuiIconButton: {
-      styleOverrides: {
-        root: {
-          color: "#ffffff", // White icon buttons
         },
       },
     },
@@ -126,6 +144,13 @@ const theme = createTheme({
       styleOverrides: {
         root: {
           color: "#ffffff", // White links
+        },
+      },
+    },
+    MuiSvgIcon: {
+      styleOverrides: {
+        root: {
+          fontSize: "38px", // Larger icon size
         },
       },
     },
