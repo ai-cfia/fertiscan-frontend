@@ -2,7 +2,6 @@
 import { Box, Button, Grid2, Stack, ThemeProvider, Typography, useTheme } from "@mui/material";
 import { useState } from "react";
 import { CloudUpload } from "@mui/icons-material";
-import { getSize } from "@/utils/themeUtils";
 import useBreakpoints from "@/utils/useBreakpoints";
 import FileElement from "@/components/FileElement";
 import { FileUploaded, FileType, } from '@/classe/File';
@@ -63,7 +62,7 @@ function Home() {
                                 />
                             ) : (
                                 <Box sx={{ textAlign: 'center' }}>
-                                    <CloudUpload sx={{ fontSize:  getSize(theme, "xl", breakpoints) , color: theme.palette.secondary.main }} />
+                                    <CloudUpload sx={{color: theme.palette.secondary.main }} />
                                     <Typography variant="h4" color={theme.palette.secondary.main}>
                                         <b>Drag & Drop To Upload Files</b>
                                     </Typography>

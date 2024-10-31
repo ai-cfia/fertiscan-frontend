@@ -1,7 +1,6 @@
 import React, { useState } from "react";
 import { Box, IconButton, Typography, useTheme } from "@mui/material";
 import useBreakpoints from "@/utils/useBreakpoints";
-import { getSize } from "@/utils/themeUtils";
 import { CancelOutlined as CancelOutlinedIcon } from '@mui/icons-material';
 
 
@@ -48,7 +47,7 @@ return (
             >
                 <Box
                 component="img"
-                src={fileUrl}
+                src={fileUrl ? "/img/image.png" : fileUrl}
                 alt="uploaded file"
                     sx={{
                         display: "flex",
@@ -76,7 +75,7 @@ return (
                     }}
                     onClick={()=> handleDelete(fileUrl)}
                 >
-                    <CancelOutlinedIcon sx={{ fontSize: getSize(theme, "medium", breakpoints) }} />
+                    <CancelOutlinedIcon/>
                 </IconButton>
             )}
             </Box>
