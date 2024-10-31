@@ -1,4 +1,6 @@
-import { FormControl, Input, InputAdornment } from "@mui/material";
+import { FormControl, IconButton, Input, InputAdornment } from "@mui/material";
+import { useState } from "react";
+import { Visibility, VisibilityOff } from "@mui/icons-material";
 
 interface IconInputProps {
   id: string;
@@ -22,12 +24,38 @@ const IconInput = ({
   value,
   setValue,
 }: IconInputProps) => {
+  const [hasFocus, setFocus] = useState(false);
+  const [trueType, setTrueType] = useState(type);
+  const [showPassword, setShowPassword] = useState(false)
+
+
+  const handleClickShowPassword =()=>{
+
+    setTrueType(!showPassword?"text":"password")
+    setShowPassword(!showPassword)
+  }
+
+  const showPasswordAndornment = type==="password" ?
+    <InputAdornment position="end">
+      <IconButton
+        aria-label={
+          showPassword ? 'hide the password' : 'display the password'
+        }
+        onClick={handleClickShowPassword}
+        edge="end"
+      >
+        {showPassword ? <VisibilityOff sx={{fontSize:"medium"}}/> : <Visibility sx={{fontSize:"medium"}}/>}
+      </IconButton>
+    </InputAdornment>
+  :
+    <></>
+
   return (
     <FormControl variant="standard">
       <Input
         id={id}
         placeholder={placeholder}
-        type={type}
+        type={trueType}
         sx={{
           color: 'white',
           backgroundColor: 'transparent',
@@ -41,11 +69,18 @@ const IconInput = ({
         }}
         value={value}
         onChange={(e) => setValue(e.target.value)}
+        onFocus={()=>setFocus(true)}
+        onBlur={()=>{
+          setFocus(false)
+          setTrueType("password")
+        }}
         startAdornment={
           <InputAdornment position="start">
             {icon}
           </InputAdornment>
         }
+        endAdornment={showPasswordAndornment}
+        data-testid={"input"}
       ></Input>
     </FormControl>
   )
