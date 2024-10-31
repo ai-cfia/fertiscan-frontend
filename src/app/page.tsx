@@ -22,7 +22,7 @@ function Home() {
 
     async function handleDrop(event: React.DragEvent<HTMLDivElement>) {
         event.preventDefault();
-        let files = event.dataTransfer.files;
+        const files = event.dataTransfer.files;
         if (files && files.length > 0) {
             processFile(files[0]);
         }
@@ -33,7 +33,7 @@ function Home() {
     }
 
     async function processFile(file: File) {
-        let newFile = new FileUploaded({
+        const newFile = new FileUploaded({
             dimension: { width: 0, height: 0 },
             path: URL.createObjectURL(file),
             user: { username: 'Anonymous' },
@@ -41,7 +41,7 @@ function Home() {
             uploadDate: new Date(),
         });
 
-        let detectedType = await newFile.detectType();
+        const detectedType = await newFile.detectType();
 
         if (typeof detectedType === 'object' && detectedType.type === 'pdf') {
            // TODO:  https://github.com/ai-cfia/fertiscan-frontend/blob/256-nextjs-test/src/app/captur/page.tsx
@@ -191,7 +191,12 @@ function Home() {
                                             fileName={file instanceof FileUploaded ? file.getInfo().tags?.[0]?.name || file.getInfo().path.split('/').pop() || "filename.jpg" : file.name}
                                             fileUrl={file instanceof FileUploaded ? file.getInfo().path : URL.createObjectURL(file)}
                                             //handleRename={()=>console.log("(newName) => handleRename(index, newName)")}
-                                            handleDelete={() => {file instanceof FileUploaded && handleDelete(file.getInfo().path), setDropzoneState({ visible: false, image_url: null })}}
+                                            handleDelete={() => {
+                                                if (file instanceof FileUploaded) {
+                                                    handleDelete(file.getInfo().path);
+                                                    setDropzoneState({ visible: false, image_url: null });
+                                                }
+                                            }}
                                         />
                                     ))}
                                 </Stack>

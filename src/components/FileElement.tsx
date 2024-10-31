@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-import { Box, Grid2, IconButton, Typography, useTheme, Container, Divider } from "@mui/material";
+import { Grid2, IconButton, Typography, useTheme, Divider } from "@mui/material";
 import DeleteIcon from "@mui/icons-material/Delete";
 interface FileElementProps {
   setDropZoneState: (show: boolean, url: string) => void;
@@ -16,8 +16,8 @@ const FileElement: React.FC<
   return (
     <>
       <Grid2
-        onMouseEnter={() => {setHovered(true), setDropZoneState(true, fileUrl)}}
-        onMouseLeave={() => {setHovered(false), setDropZoneState(false, "")}}
+        onMouseEnter={() => {setHovered(true); setDropZoneState(true, fileUrl)}}
+        onMouseLeave={() => {setHovered(false); setDropZoneState(false, "")}}
         sx={{
           position: "relative",
           height: "100%",
@@ -31,7 +31,6 @@ const FileElement: React.FC<
           border: "1px solid",
           borderColor: "primary.main",
           backgroundColor: "background.default",
-
         }}
 
       >
@@ -58,6 +57,7 @@ const FileElement: React.FC<
                     {fileName}
                 </Typography>
             </Grid2>
+            {hovered &&
             <IconButton
                 edge="end"
                 aria-label="delete"
@@ -74,7 +74,7 @@ const FileElement: React.FC<
               >
                 <DeleteIcon sx={{ fontSize: '1.7rem' }} />
         </IconButton>
-
+    }
           </Grid2>
     </>
   );
