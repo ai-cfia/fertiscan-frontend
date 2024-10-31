@@ -31,8 +31,8 @@ const FileElement: React.FC<FileElementProps  & {handleDelete:(fileUrl:string) =
                 display: "flex",
                 borderRadius: 2,
             }}
-            onMouseEnter={() => setDropZoneState(true, fileUrl)}
-            onMouseLeave={() => setDropZoneState(false, "")}
+            onMouseEnter={() =>{setHovered(true), setDropZoneState(true, fileUrl)}}
+            onMouseLeave={() => {setHovered(false), setDropZoneState(false, "")}}
             >
                 <Box
                 sx={{

@@ -14,7 +14,7 @@ interface DropzoneState {
 function Home() {
   const theme = useTheme();
   const [dropzoneState, setDropzoneState] = useState<DropzoneState>({ visible: false, image_url: null });
-const [uploadedFiles, setUploadedFiles] = useState<(File | FileUploaded)[]>([]);
+  const [uploadedFiles, setUploadedFiles] = useState<(File | FileUploaded)[]>([]);
 
   function handleSetDropzoneState(show: boolean, image_url: string) {
     setDropzoneState({ visible: show, image_url });
@@ -48,6 +48,10 @@ const [uploadedFiles, setUploadedFiles] = useState<(File | FileUploaded)[]>([]);
         } else {
             setUploadedFiles(prevFiles => [...prevFiles, newFile]);
         }
+    }
+
+    function handleDelete(url: string) {
+        setUploadedFiles(uploadedFiles.filter(file => file instanceof FileUploaded && file.getInfo().path !== url));
     }
 
 
@@ -187,7 +191,7 @@ const [uploadedFiles, setUploadedFiles] = useState<(File | FileUploaded)[]>([]);
                                             fileName={file instanceof FileUploaded ? file.getInfo().tags?.[0]?.name || file.getInfo().path.split('/').pop() || "filename.jpg" : file.name}
                                             fileUrl={file instanceof FileUploaded ? file.getInfo().path : URL.createObjectURL(file)}
                                             //handleRename={()=>console.log("(newName) => handleRename(index, newName)")}
-                                            handleDelete={()=>console.log("() => handleDelete(file.getInfo().path)")}
+                                            handleDelete={() => {file instanceof FileUploaded && handleDelete(file.getInfo().path), setDropzoneState({ visible: false, image_url: null })}}
                                         />
                                     ))}
                                 </Stack>
