@@ -82,4 +82,5 @@ class FileUploaded {
         }
     }
 }
-export type { FileUploaded, FileType, FileInfo };
+export default FileUploaded;
+export type { FileType, FileInfo };
