@@ -155,6 +155,23 @@ const theme = createTheme({
         },
       },
     },
+    MuiMenuItem: {
+      styleOverrides: {
+        root: {
+          color: "#ffffff", // White text
+          "&:hover": {
+            backgroundColor: "#032f47", // Dark Blue on hover
+          },
+        },
+      },
+    },
+    MuiListItemIcon: {
+      styleOverrides: {
+        root: {
+          color: "#ffffff", // Black icons
+        },
+      },
+    },
   },
 });
 export default theme;
