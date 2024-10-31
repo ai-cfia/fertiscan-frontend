@@ -159,9 +159,9 @@ const theme = createTheme({
         root: {
           color: "#ffffff", // White text
           "&:hover": {
-            backgroundColor: "#032f47", // Dark Blue on hover
+            backgroundColor: "#053f5e", // Dark Blue on hover
           },
-          gap: '0.5rem'
+          gap: "0.5rem",
         },
       },
     },
@@ -169,6 +169,9 @@ const theme = createTheme({
       styleOverrides: {
         root: {
           color: "#ffffff", // White icons
+          "&:hover": {
+            color: "#000000", // Black on hover
+          },
         },
       },
     },

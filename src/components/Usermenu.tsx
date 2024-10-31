@@ -1,18 +1,27 @@
 import { usePlaceholder } from "@/classe/User";
+import useBreakpoints from "@/utils/useBreakpoints";
 import { AccountCircle, Logout, Settings } from "@mui/icons-material";
 import {
   Box,
-  Divider,
   ListItemIcon,
   Menu,
   MenuItem,
   Typography,
-  useMediaQuery,
   useTheme,
 } from "@mui/material";
 import { ReactElement } from "react";
 // import useBreakpoints from "@/utils/useBreakpoints";
 
+/**
+ * UsermenuProps
+ *
+ * Interface for the Usermenu component
+ *
+ * @param {null | HTMLElement} anchorElement - The anchor element for the user popup
+ * @param {boolean} userPopUpOpen - The state of the user popup
+ * @param {(open: boolean) => void} setUserPopUpOpen - Function to set the user popup state
+ * @param {(anchorEl: null | HTMLElement) => void} setAnchorElement - Function to set the anchor element
+ */
 type UsermenuProps = {
   anchorElement: null | HTMLElement;
   userPopUpOpen: boolean;
@@ -27,7 +36,9 @@ type UsermenuProps = {
  * account icon in the header. It provides options to view the user's profile,
  * navigate to the dashboard, and log out. It also displays the current app version.
  *
- * It utilizes Material-UI components for styling and layout.
+ * @param {UsermenuProps} props - The properties of the Usermenu component
+ * @returns {ReactElement} A Usermenu component
+ *
  */
 const Usermenu = ({
   anchorElement,
@@ -36,18 +47,25 @@ const Usermenu = ({
   setAnchorElement,
 }: UsermenuProps): ReactElement => {
   const theme = useTheme();
-  // const breakpoints = useBreakpoints();
-  const isMobile = useMediaQuery(theme.breakpoints.down("sm"));
-
+  const { isDownXs, isBetweenXsSm} = useBreakpoints();
   const placeholderUser = usePlaceholder();
 
   /**
    * Function to handle closing the user popup
    */
-  const handleClose = () => {
+  const handleClose = (): void => {
     setUserPopUpOpen(false);
     setAnchorElement(null);
   };
+
+  /**
+   * Prevents the default behavior of the event
+   */
+  const preventDefault = (event: React.MouseEvent<HTMLLIElement, MouseEvent>): void => {
+    event.preventDefault();
+  };
+
+  window.addEventListener('resize', handleClose);
 
   return (
     <Menu
@@ -58,6 +76,7 @@ const Usermenu = ({
       onClick={handleClose}
       data-testid="user-menu"
       transitionDuration={0}
+      keepMounted
       PaperProps={{
         elevation: 0,
         sx: {
@@ -67,55 +86,70 @@ const Usermenu = ({
           bgcolor: theme.palette.secondary.main,
           color: theme.palette.text.secondary,
           minWidth: 120,
+          border: "1.5px solid",
+          borderColor: theme.palette.text.primary,
           "&::before": {
             content: '""',
             display: "block",
             position: "absolute",
+            borderLeft: "1.5px solid",
+            borderTop: "1.5px solid",
+            borderColor: theme.palette.text.primary,
             top: 0,
-            right: 15,
-            width: 10,
-            height: 10,
-            bgcolor: "background.paper",
-            transform: "translateY(-50%) rotate(45deg)",
+            transform: "translateY(-54%) rotate(45deg)",
             zIndex: 0,
+            bgcolor: theme.palette.secondary.main,
+            width: 15,
+            height: 15,
+            left: 'calc(88% - 7.5px)', // Adjusting lozenge to center it
           },
         },
       }}
       transformOrigin={{ horizontal: "right", vertical: "top" }}
       anchorOrigin={{ horizontal: "right", vertical: "bottom" }}
     >
-      <MenuItem sx={{ minWidth: 36 }}>
-        <ListItemIcon>
-          <AccountCircle  />
-        </ListItemIcon>
-        <Typography>{placeholderUser.getUsername()}</Typography>
-      </MenuItem>
-      <Divider />
-      <MenuItem onClick={handleClose}>
+      <MenuItem
+      sx={{
+        minWidth: 36,
+        borderBottom: '1px solid #043f5f', // Placeholder for divider since divider have an unremovable margin
+        ':hover': {
+          backgroundColor: 'transparent',
+        },
+        cursor: 'default',
+      }}
+      onClick={preventDefault}
+    >
+      <ListItemIcon>
+        <AccountCircle />
+      </ListItemIcon>
+      <Typography>{placeholderUser.getUsername()}</Typography>
+    </MenuItem>
+      <MenuItem onClick={handleClose} data-testid="dashboard-menu-item">
         <ListItemIcon >
-          <Settings />
+          <Settings sx={{ "&:hover": {color:"#fff"}}} />
         </ListItemIcon>
         <Typography>Dashboard</Typography>
       </MenuItem>
       <Box
         display="flex"
-        flexDirection={isMobile ? "column" : "row"}
+        flexDirection={(isDownXs || isBetweenXsSm) ? "column" : "row"}
         justifyContent="space-between"
-        alignItems={isMobile ? "center" : "flex-end"}
+        alignItems={(isDownXs || isBetweenXsSm) ? "center" : "flex-end"}
         px={2}
         pt={1}
         pb={0}
         sx={{
-          flexWrap: isMobile ? "nowrap" : "wrap",
+          flexWrap: (isDownXs || isBetweenXsSm) ? "nowrap" : "wrap",
         }}
       >
-        {isMobile ? (
+        {(isDownXs || isBetweenXsSm) ? (
           <>
             <MenuItem
               onClick={handleClose}
               sx={{
                 justifyContent: "center",
-                width: "100%",
+                borderRadius: 1,
+                p: 0.5,
               }}
             >
               <ListItemIcon
@@ -124,7 +158,7 @@ const Usermenu = ({
                   justifyContent: "center",
                 }}
               >
-                <Logout fontSize="inherit" />
+                <Logout />
               </ListItemIcon>
             </MenuItem>
             <Typography variant="caption" textAlign="center" width="100%">
@@ -148,12 +182,13 @@ const Usermenu = ({
             <MenuItem
               onClick={handleClose}
               sx={{
-                paddingRight: 0,
+                padding: 0,
                 justifyContent: "flex-end",
+                borderRadius: 1,
               }}
             >
-              <ListItemIcon>
-                <Logout />
+              <ListItemIcon >
+                <Logout sx={{borderRadius:10}}/>
               </ListItemIcon>
             </MenuItem>
           </>

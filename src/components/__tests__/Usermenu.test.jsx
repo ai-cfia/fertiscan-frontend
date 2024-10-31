@@ -51,7 +51,7 @@ describe('Usermenu', () => {
         />
       </ThemeProvider>,
     );
-    expect(screen.queryByTestId('user-menu')).toBeNull();
+    expect(screen.queryByTestId('user-menu')).not.toBeVisible();
   });
 
   it('the menu becomes visible when userPopUpOpen is true', () => {
@@ -65,7 +65,7 @@ describe('Usermenu', () => {
         />
       </ThemeProvider>,
     );
-    expect(screen.getByText('Dashboard')).toBeVisible();
+    expect(screen.getByTestId('dashboard-menu-item')).toBeVisible();
   });
 
   it('closes the menu when a MenuItem is clicked', () => {
@@ -79,7 +79,7 @@ describe('Usermenu', () => {
         />
       </ThemeProvider>,
     );
-    fireEvent.click(screen.getByText('Dashboard'));
+    fireEvent.click(screen.getByTestId('dashboard-menu-item'));
     expect(mockSetUserPopUpOpen).toHaveBeenCalledWith(false);
     expect(mockSetAnchorElement).toHaveBeenCalledWith(null);
   });
