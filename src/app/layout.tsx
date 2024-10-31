@@ -11,6 +11,7 @@ import { useTranslation } from "react-i18next";
 import "./globals.css";
 import "./i18n";
 import theme from "./theme";
+import RouteGuard from "@/components/RouteGuard";
 
 export default function RootLayout({
   children,
@@ -39,9 +40,11 @@ export default function RootLayout({
       <body>
         <AppRouterCacheProvider>
           <ThemeProvider theme={theme}>
-            <SideNav open={sideNavOpen} onClose={handleDrawerClose} />
-            <Header setSideNavOpen={setSideNavOpen} />
-            <Box className="mt-16">{children}</Box>
+            <RouteGuard>
+              <SideNav open={sideNavOpen} onClose={handleDrawerClose} />
+              <Header setSideNavOpen={setSideNavOpen} />
+              <Box className="mt-16">{children}</Box>
+            </RouteGuard>
           </ThemeProvider>
         </AppRouterCacheProvider>
       </body>
