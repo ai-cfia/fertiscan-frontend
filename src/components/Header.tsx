@@ -1,3 +1,4 @@
+"use client";
 import UserMenu from "@/components/UserMenu";
 import useBreakpoints from "@/utils/useBreakpoints";
 import styled from "@emotion/styled";

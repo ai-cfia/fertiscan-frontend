@@ -1,3 +1,4 @@
+"use client";
 import { usePlaceholder } from "@/classe/User";
 import useBreakpoints from "@/utils/useBreakpoints";
 import { AccountCircle, Logout, Settings } from "@mui/icons-material";
@@ -9,24 +10,28 @@ import {
   Typography,
   useTheme,
 } from "@mui/material";
-import { ReactElement } from "react";
+import {
+  Dispatch,
+  ReactElement,
+  SetStateAction,
+  useCallback,
+  useEffect,
+} from "react";
 // import useBreakpoints from "@/utils/useBreakpoints";
 
 /**
- * UserMenuProps
+ * Props for the UserMenu component
  *
- * Interface for the UserMenu component
- *
- * @param {null | HTMLElement} anchorElement - The anchor element for the user popup
- * @param {boolean} userPopUpOpen - The state of the user popup
- * @param {(open: boolean) => void} setUserPopUpOpen - Function to set the user popup state
- * @param {(anchorEl: null | HTMLElement) => void} setAnchorElement - Function to set the anchor element
+ * @property {HTMLElement | null} anchorElement - The element that serves as the anchor for the user popup.
+ * @property {boolean} userPopUpOpen - Indicates whether the user popup is open.
+ * @property {Dispatch<SetStateAction<boolean>>} setUserPopUpOpen - Function to set the open state of the user popup.
+ * @property {Dispatch<SetStateAction<HTMLElement | null>>} setAnchorElement - Function to set the anchor element for the popup.
  */
 type UserMenuProps = {
   anchorElement: null | HTMLElement;
   userPopUpOpen: boolean;
-  setUserPopUpOpen: (open: boolean) => void;
-  setAnchorElement: (anchorEl: null | HTMLElement) => void;
+  setUserPopUpOpen: Dispatch<SetStateAction<boolean>>;
+  setAnchorElement: Dispatch<SetStateAction<HTMLElement | null>>;
 };
 
 /**
@@ -47,25 +52,30 @@ const UserMenu = ({
   setAnchorElement,
 }: UserMenuProps): ReactElement => {
   const theme = useTheme();
-  const { isDownXs, isBetweenXsSm} = useBreakpoints();
+  const { isDownXs, isBetweenXsSm } = useBreakpoints();
   const placeholderUser = usePlaceholder();
 
   /**
    * Function to handle closing the user popup
    */
-  const handleClose = (): void => {
+  const handleClose = useCallback((): void => {
     setUserPopUpOpen(false);
     setAnchorElement(null);
-  };
+  }, [setUserPopUpOpen, setAnchorElement]);
 
   /**
    * Prevents the default behavior of the event
    */
-  const preventDefault = (event: React.MouseEvent<HTMLLIElement, MouseEvent>): void => {
+  const preventDefault = (
+    event: React.MouseEvent<HTMLLIElement, MouseEvent>,
+  ): void => {
     event.preventDefault();
   };
 
-  window.addEventListener('resize', handleClose);
+  useEffect(() => {
+    window.addEventListener("resize", handleClose);
+    return () => window.removeEventListener("resize", handleClose);
+  }, [handleClose]);
 
   return (
     <Menu
@@ -101,7 +111,7 @@ const UserMenu = ({
             bgcolor: theme.palette.secondary.main,
             width: 15,
             height: 15,
-            left: 'calc(88% - 7.5px)', // Adjusting lozenge to center it
+            left: "calc(88% - 7.5px)", // Adjusting lozenge to center it
           },
         },
       }}
@@ -109,40 +119,40 @@ const UserMenu = ({
       anchorOrigin={{ horizontal: "right", vertical: "bottom" }}
     >
       <MenuItem
-      sx={{
-        minWidth: 36,
-        borderBottom: '1px solid #043f5f', // Placeholder for divider since divider have an unremovable margin
-        ':hover': {
-          backgroundColor: 'transparent',
-        },
-        cursor: 'default',
-      }}
-      onClick={preventDefault}
-    >
-      <ListItemIcon>
-        <AccountCircle />
-      </ListItemIcon>
-      <Typography>{placeholderUser.getUsername()}</Typography>
-    </MenuItem>
+        sx={{
+          minWidth: 36,
+          borderBottom: "1px solid #043f5f", // Placeholder for divider since divider have an unremovable margin
+          ":hover": {
+            backgroundColor: "transparent",
+          },
+          cursor: "default",
+        }}
+        onClick={preventDefault}
+      >
+        <ListItemIcon>
+          <AccountCircle />
+        </ListItemIcon>
+        <Typography>{placeholderUser.getUsername()}</Typography>
+      </MenuItem>
       <MenuItem onClick={handleClose} data-testid="dashboard-menu-item">
-        <ListItemIcon >
-          <Settings sx={{ "&:hover": {color:"#fff"}}} />
+        <ListItemIcon>
+          <Settings sx={{ "&:hover": { color: "#fff" } }} />
         </ListItemIcon>
         <Typography>Dashboard</Typography>
       </MenuItem>
       <Box
         display="flex"
-        flexDirection={(isDownXs || isBetweenXsSm) ? "column" : "row"}
+        flexDirection={isDownXs || isBetweenXsSm ? "column" : "row"}
         justifyContent="space-between"
-        alignItems={(isDownXs || isBetweenXsSm) ? "center" : "flex-end"}
+        alignItems={isDownXs || isBetweenXsSm ? "center" : "flex-end"}
         px={2}
         pt={1}
         pb={0}
         sx={{
-          flexWrap: (isDownXs || isBetweenXsSm) ? "nowrap" : "wrap",
+          flexWrap: isDownXs || isBetweenXsSm ? "nowrap" : "wrap",
         }}
       >
-        {(isDownXs || isBetweenXsSm) ? (
+        {isDownXs || isBetweenXsSm ? (
           <>
             <MenuItem
               onClick={handleClose}
@@ -187,8 +197,8 @@ const UserMenu = ({
                 borderRadius: 1,
               }}
             >
-              <ListItemIcon >
-                <Logout sx={{borderRadius:10}}/>
+              <ListItemIcon>
+                <Logout sx={{ borderRadius: 10 }} />
               </ListItemIcon>
             </MenuItem>
           </>
