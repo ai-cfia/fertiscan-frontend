@@ -98,7 +98,7 @@ function Home() {
                                 />
                             ) : (
                                 <Box sx={{ textAlign: 'center' }}>
-                                    <CloudUpload sx={{color: theme.palette.secondary.main }} />
+                                    <CloudUpload sx={{color: theme.palette.secondary.main, fontSize: '7rem'}} />
                                     <Typography variant="h4" color={theme.palette.secondary.main}>
                                         <b>Drag & Drop To Upload Files</b>
                                     </Typography>
@@ -129,7 +129,7 @@ function Home() {
                                 textAlign: 'center',
                                 p: 1,
                                 backgroundSize: 'contain',
-                                backgroundColor: 'transparent',
+                                backgroundColor: theme.palette.secondary.main,
                                 width: '100%',
                                 height: '100%',
                                 minHeight: { xs: '350px', md: '400px' },
@@ -142,10 +142,10 @@ function Home() {
                                     marginRight: '10px'
                                 },
                                 '&::-webkit-scrollbar-thumb': {
-                                    backgroundColor: theme.palette.secondary.main,
+                                    backgroundColor: theme.palette.text.primary,
                                     borderRadius: '10px',
                                     WebkitBackgroundClip: 'content-box',
-                                    border: '5px solid transparent'
+                                    border: '6px solid transparent'
                                 },
                                 '&::-webkit-scrollbar-track': {
                                     backgroundColor: 'transparent',
@@ -171,8 +171,8 @@ function Home() {
                                     p: uploadedFiles.length !== 0 ? 2 : 0,
                                 }}
                             >
-                                <Typography variant="h6" gutterBottom>
-                                    {uploadedFiles.length > 0 ? 'Uploaded files' : 'No files uploaded'}
+                                <Typography variant="h5" color={theme.palette.text.primary} gutterBottom>
+                                   <b> {uploadedFiles.length > 0 ? 'Uploaded files'+" ("+uploadedFiles.length+")" : 'No files uploaded'}</b>
                                 </Typography>
                                 <Stack
                                     direction="column"
@@ -201,6 +201,7 @@ function Home() {
                     <Grid2 size={{ xs: 10, md: 7 }} sx={{ display: { xs: 'none', md: 'flex' } }}>
                     </Grid2>
                     <Grid2 size={{ xs: 10, md: 4 }}>
+                        {uploadedFiles.length > 0 && (
                         <Button
                             variant="contained"
                             color="secondary"
@@ -211,6 +212,7 @@ function Home() {
                         >
                             Submit
                         </Button>
+                        )}
                     </Grid2>
                 </Grid2>
               </Box>

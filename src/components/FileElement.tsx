@@ -1,80 +1,83 @@
 import React, { useState } from "react";
-import { Box, IconButton, Typography, useTheme } from "@mui/material";
-import { CancelOutlined as CancelOutlinedIcon } from '@mui/icons-material';
-
-
-
+import { Box, Grid2, IconButton, Typography, useTheme, Container, Divider } from "@mui/material";
+import DeleteIcon from "@mui/icons-material/Delete";
 interface FileElementProps {
-    setDropZoneState: (show: boolean, url:string) => void;
-    fileName: string;
-    fileUrl: string;
+  setDropZoneState: (show: boolean, url: string) => void;
+  fileName: string;
+  fileUrl: string;
 }
 
-const FileElement: React.FC<FileElementProps  & {handleDelete:(fileUrl:string) => void}> = ({
-    setDropZoneState,
-    fileName,
-    fileUrl,
-    handleDelete,
-}) => {
-    const theme = useTheme();
-    const [hovered, setHovered] = useState(false);
+const FileElement: React.FC<
+  FileElementProps & { handleDelete: (fileUrl: string) => void }
+> = ({ setDropZoneState, fileName, fileUrl, handleDelete }) => {
+  const theme = useTheme();
+  const [hovered, setHovered] = useState(false);
 
-    return (
-        <Box
-            sx={{
-                border: "2px solid",
-                borderColor: hovered ? theme.palette.secondary.main : theme.palette.primary.main,
-                p:2,
-                backgroundColor: hovered ? "#032f47" : theme.palette.secondary.main,
-                position: "relative",
-                marginBottom: 2,
-                display: "flex",
-                borderRadius: 2,
+  return (
+    <>
+      <Grid2
+        onMouseEnter={() => {setHovered(true), setDropZoneState(true, fileUrl)}}
+        onMouseLeave={() => {setHovered(false), setDropZoneState(false, "")}}
+        sx={{
+          position: "relative",
+          height: "100%",
+          width: "100%",
+          minHeight: "90px",
+          display: "flex",
+          alignItems: "center",
+          justifyContent: "center",
+          overflow: "hidden",
+          borderRadius: 1,
+          border: "1px solid",
+          borderColor: "primary.main",
+          backgroundColor: "background.default",
+
+        }}
+
+      >
+        <Grid2 size={20} sx={{position: "relative", display:"flex", justifyContent:"center", alignItems:"center"}}>
+          <img
+            src={fileUrl}
+            alt="uploaded file"
+            style={{
+              maxWidth: "100%",
+              maxHeight: "90px",
+              objectFit: "fill",
+              padding: "5px",
             }}
-            onMouseEnter={() =>{setHovered(true), setDropZoneState(true, fileUrl)}}
-            onMouseLeave={() => {setHovered(false), setDropZoneState(false, "")}}
-            >
-                <Box
+          />
+          </Grid2>
+          <Divider orientation="vertical" flexItem sx={{color:theme.palette.primary.dark, borderRightWidth: 3 }} />
+          <Grid2 size={80} sx={{position: "relative", justifyContent:"center", alignItems:"center"}}>
+                <Typography variant="h6"
+                sx={{color:theme.palette.text.primary,
+                    overflow: "hidden",
+                    textOverflow: "ellipsis",
+                    whiteSpace: "nowrap"
+                    }}>
+                    {fileName}
+                </Typography>
+            </Grid2>
+            <IconButton
+                edge="end"
+                aria-label="delete"
                 sx={{
-                    display: "flex",
-                    alignItems: "center",
-                    width: "100%",
-                    columnGap: 1,
-                    maxHeight: '90px',
+                  position: "absolute",
+                  top: -8,
+                  right: 3,
+                  color: "black",
+                  ':hover': {
+                    backgroundColor: "transparent",
+                  },
                 }}
-                >
-                    <Box
-                    component="img"
-                    src={fileUrl}
-                    alt="uploaded file"
-                        sx={{
-                            display: "flex",
-                            alignItems: "center",
-                            justifyContent: "center",
-                            maxWidth: { xs: '15%', sm: '10%', md: '20%' },
-                            height: 'auto',
-                            backgroundColor: theme.palette.background.default,
-                        }}
-                    />
-                        <Typography variant="h6" color={theme.palette.text.primary}><b>{fileName}</b></Typography>
-                        {hovered && (
-                    <IconButton
-                        edge="end"
-                        aria-label="delete"
-                        sx={{
-                            position: 'absolute',
-                            top: { xs: -2, sm: -2.4, md: -3 },
-                            right: { xs: -0.5, sm: -0.8, md: -1.5 },
-                            color: 'black',
-                            display: 'flex',
-                        }}
-                        onClick={()=> handleDelete(fileUrl)}
-                    >
-                        <CancelOutlinedIcon/>
-                    </IconButton>
-                )}
-                </Box>
-            </Box>
-    );
-    }
+                onClick={() => handleDelete(fileUrl)}
+              >
+                <DeleteIcon sx={{ fontSize: '1.7rem' }} />
+        </IconButton>
+
+          </Grid2>
+    </>
+  );
+};
+
 export default FileElement;
