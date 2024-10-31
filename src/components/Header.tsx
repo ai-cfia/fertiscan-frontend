@@ -1,4 +1,4 @@
-import Usermenu from "@/components/Usermenu";
+import UserMenu from "@/components/UserMenu";
 import useBreakpoints from "@/utils/useBreakpoints";
 import styled from "@emotion/styled";
 import AccountCircleIcon from "@mui/icons-material/AccountCircle";
@@ -124,7 +124,7 @@ const Header: React.FC<HeaderProps> = ({ setSideNavOpen }) => {
         </Toolbar>
       </AppBar>
 
-      <Usermenu
+      <UserMenu
         anchorElement={anchorElement}
         userPopUpOpen={userPopUpOpen}
         setUserPopUpOpen={setUserPopUpOpen}

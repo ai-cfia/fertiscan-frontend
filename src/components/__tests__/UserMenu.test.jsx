@@ -1,9 +1,9 @@
-import React from 'react';
-import { render, fireEvent, screen } from '@testing-library/react';
-import Usermenu from '../Usermenu';
+import theme from '@/app/theme';
 import { usePlaceholder } from '@/classe/User';
 import { ThemeProvider } from '@mui/material/styles';
-import theme from '@/app/theme';
+import { fireEvent, render, screen } from '@testing-library/react';
+import React from 'react';
+import UserMenu from '../UserMenu';
 
 jest.mock('../../classe/User', () => ({
   usePlaceholder: jest.fn(),
@@ -15,7 +15,7 @@ const dummyUser = {
 
 usePlaceholder.mockReturnValue(dummyUser);
 
-describe('Usermenu', () => {
+describe('UserMenu', () => {
   const mockSetUserPopUpOpen = jest.fn();
   const mockSetAnchorElement = jest.fn();
   let anchorElement = null;
@@ -30,7 +30,7 @@ describe('Usermenu', () => {
   it('renders without crashing', () => {
     render(
       <ThemeProvider theme={theme}>
-        <Usermenu
+        <UserMenu
           anchorElement={anchorElement}
           userPopUpOpen={false}
           setUserPopUpOpen={mockSetUserPopUpOpen}
@@ -43,7 +43,7 @@ describe('Usermenu', () => {
   it('the menu becomes not visible when userPopUpOpen is false', () => {
     render(
       <ThemeProvider theme={theme}>
-        <Usermenu
+        <UserMenu
           anchorElement={anchorElement}
           userPopUpOpen={false}
           setUserPopUpOpen={mockSetUserPopUpOpen}
@@ -57,7 +57,7 @@ describe('Usermenu', () => {
   it('the menu becomes visible when userPopUpOpen is true', () => {
     render(
       <ThemeProvider theme={theme}>
-        <Usermenu
+        <UserMenu
           anchorElement={anchorElement}
           userPopUpOpen={true}
           setUserPopUpOpen={mockSetUserPopUpOpen}
@@ -71,7 +71,7 @@ describe('Usermenu', () => {
   it('closes the menu when a MenuItem is clicked', () => {
     render(
       <ThemeProvider theme={theme}>
-        <Usermenu
+        <UserMenu
           anchorElement={anchorElement}
           userPopUpOpen={true}
           setUserPopUpOpen={mockSetUserPopUpOpen}

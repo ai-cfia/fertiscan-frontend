@@ -13,16 +13,16 @@ import { ReactElement } from "react";
 // import useBreakpoints from "@/utils/useBreakpoints";
 
 /**
- * UsermenuProps
+ * UserMenuProps
  *
- * Interface for the Usermenu component
+ * Interface for the UserMenu component
  *
  * @param {null | HTMLElement} anchorElement - The anchor element for the user popup
  * @param {boolean} userPopUpOpen - The state of the user popup
  * @param {(open: boolean) => void} setUserPopUpOpen - Function to set the user popup state
  * @param {(anchorEl: null | HTMLElement) => void} setAnchorElement - Function to set the anchor element
  */
-type UsermenuProps = {
+type UserMenuProps = {
   anchorElement: null | HTMLElement;
   userPopUpOpen: boolean;
   setUserPopUpOpen: (open: boolean) => void;
@@ -36,16 +36,16 @@ type UsermenuProps = {
  * account icon in the header. It provides options to view the user's profile,
  * navigate to the dashboard, and log out. It also displays the current app version.
  *
- * @param {UsermenuProps} props - The properties of the Usermenu component
- * @returns {ReactElement} A Usermenu component
+ * @param {UserMenuProps} props - The properties of the UserMenu component
+ * @returns {ReactElement} A UserMenu component
  *
  */
-const Usermenu = ({
+const UserMenu = ({
   anchorElement,
   userPopUpOpen,
   setUserPopUpOpen,
   setAnchorElement,
-}: UsermenuProps): ReactElement => {
+}: UserMenuProps): ReactElement => {
   const theme = useTheme();
   const { isDownXs, isBetweenXsSm} = useBreakpoints();
   const placeholderUser = usePlaceholder();
@@ -198,4 +198,4 @@ const Usermenu = ({
   );
 };
 
-export default Usermenu;
+export default UserMenu;
