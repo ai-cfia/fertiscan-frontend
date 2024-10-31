@@ -81,7 +81,7 @@ const [uploadedFiles, setUploadedFiles] = useState<(File | FileUploaded)[]>([]);
                             {dropzoneState.visible && dropzoneState.image_url ? (
                                 <Box
                                     component="img"
-                                    src={dropzoneState.image_url ? "/img/image.png" : dropzoneState.image_url}
+                                    src={dropzoneState.image_url}
                                     alt="Uploaded file"
                                     sx={{
                                         position: 'absolute',

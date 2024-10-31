@@ -45,7 +45,7 @@ const FileElement: React.FC<FileElementProps  & {handleDelete:(fileUrl:string) =
                 >
                     <Box
                     component="img"
-                    src={fileUrl ? "/img/image.png" : fileUrl}
+                    src={fileUrl}
                     alt="uploaded file"
                         sx={{
                             display: "flex",
