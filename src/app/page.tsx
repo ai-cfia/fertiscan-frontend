@@ -2,7 +2,6 @@
 import { Box, Button, Grid2, Stack, ThemeProvider, Typography, useTheme } from "@mui/material";
 import { useState } from "react";
 import { CloudUpload } from "@mui/icons-material";
-import useBreakpoints from "@/utils/useBreakpoints";
 import FileElement from "@/components/FileElement";
 import { FileUploaded, FileType, } from '@/classe/File';
 
@@ -14,9 +13,12 @@ interface DropzoneState {
 
 function Home() {
   const theme = useTheme();
-  const breakpoints = useBreakpoints();
   const [dropzoneState, setDropzoneState] = useState<DropzoneState>({ visible: false, image_url: null });
   const [uploadedFiles, setUploadedFiles] = useState<File[]>([]);
+
+  function handleSetDropzoneState(show: boolean, image_url: string) {
+    setDropzoneState({ visible: show, image_url });
+}
 
 
   return (
@@ -49,7 +51,7 @@ function Home() {
                             {dropzoneState.visible && dropzoneState.image_url ? (
                                 <Box
                                     component="img"
-                                    src={dropzoneState.image_url}
+                                    src={dropzoneState.image_url ? "/img/image.png" : dropzoneState.image_url}
                                     alt="Uploaded file"
                                     sx={{
                                         position: 'absolute',
@@ -148,9 +150,7 @@ function Home() {
                                         key={1}
                                         fileName={"file.getInfo().tags?.[0]?.name || file.getInfo().path.split('/').pop() || filename.jpg"}
                                         fileUrl={"file.getInfo().path"}
-                                        setDropZoneState={function (show: boolean, url: string): void {
-                                          console.log("setDropZoneState");
-                                        }}
+                                        setDropZoneState={handleSetDropzoneState}
                                         handleDelete={() => console.log("handleDelete")}
 
                                         />

@@ -17,69 +17,65 @@ const FileElement: React.FC<FileElementProps  & {handleDelete:(fileUrl:string) =
     fileUrl,
     handleDelete,
 }) => {
-const theme = useTheme();
-const breakpoints = useBreakpoints();
-const [hovered, setHovered] = useState(false);
+    const theme = useTheme();
+    const [hovered, setHovered] = useState(false);
 
-return (
-    <Box
-        sx={{
-            border: "2px solid",
-            borderColor: hovered ? theme.palette.secondary.main : theme.palette.primary.main,
-            p:2,
-            backgroundColor: hovered ? "#032f47" : theme.palette.secondary.main,
-            position: "relative",
-            marginBottom: 2,
-            display: "flex",
-            borderRadius: 2,
-        }}
-        onMouseEnter={() => setHovered(true)}
-        onMouseLeave={() => setHovered(false)}
-        >
-            <Box
+    return (
+        <Box
             sx={{
+                border: "2px solid",
+                borderColor: hovered ? theme.palette.secondary.main : theme.palette.primary.main,
+                p:2,
+                backgroundColor: hovered ? "#032f47" : theme.palette.secondary.main,
+                position: "relative",
+                marginBottom: 2,
                 display: "flex",
-                alignItems: "center",
-                width: "100%",
-                columnGap: 1,
-                maxHeight: '90px',
+                borderRadius: 2,
             }}
+            onMouseEnter={() => setDropZoneState(true, fileUrl)}
+            onMouseLeave={() => setDropZoneState(false, "")}
             >
                 <Box
-                component="img"
-                src={fileUrl ? "/img/image.png" : fileUrl}
-                alt="uploaded file"
-                    sx={{
-                        display: "flex",
-                        alignItems: "center",
-                        justifyContent: "center",
-                        maxWidth: { xs: '15%', sm: '10%', md: '20%' },
-                        height: 'auto',
-                        backgroundColor: theme.palette.background.default,
-                    }}
-                    onMouseEnter={() => setHovered(true)}
-                    onMouseLeave={() => setHovered(false)}
-
-                />
-                    <Typography variant="h6" color={theme.palette.text.primary}><b>{fileName}</b></Typography>
-                    {hovered && (
-                <IconButton
-                    edge="end"
-                    aria-label="delete"
-                    sx={{
-                        position: 'absolute',
-                        top: { xs: -2, sm: -2.4, md: -3 },
-                        right: { xs: -0.5, sm: -0.8, md: -1.5 },
-                        color: 'black',
-                        display: 'flex',
-                    }}
-                    onClick={()=> handleDelete(fileUrl)}
+                sx={{
+                    display: "flex",
+                    alignItems: "center",
+                    width: "100%",
+                    columnGap: 1,
+                    maxHeight: '90px',
+                }}
                 >
-                    <CancelOutlinedIcon/>
-                </IconButton>
-            )}
+                    <Box
+                    component="img"
+                    src={fileUrl ? "/img/image.png" : fileUrl}
+                    alt="uploaded file"
+                        sx={{
+                            display: "flex",
+                            alignItems: "center",
+                            justifyContent: "center",
+                            maxWidth: { xs: '15%', sm: '10%', md: '20%' },
+                            height: 'auto',
+                            backgroundColor: theme.palette.background.default,
+                        }}
+                    />
+                        <Typography variant="h6" color={theme.palette.text.primary}><b>{fileName}</b></Typography>
+                        {hovered && (
+                    <IconButton
+                        edge="end"
+                        aria-label="delete"
+                        sx={{
+                            position: 'absolute',
+                            top: { xs: -2, sm: -2.4, md: -3 },
+                            right: { xs: -0.5, sm: -0.8, md: -1.5 },
+                            color: 'black',
+                            display: 'flex',
+                        }}
+                        onClick={()=> handleDelete(fileUrl)}
+                    >
+                        <CancelOutlinedIcon/>
+                    </IconButton>
+                )}
+                </Box>
             </Box>
-        </Box>
-);
-}
+    );
+    }
 export default FileElement;
