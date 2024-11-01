@@ -40,7 +40,7 @@ describe("UserMenu", () => {
     );
   });
 
-  it("the menu becomes not visible when isUserMenuOpen is false", () => {
+  it("is not visible when isUserMenuOpen is false", () => {
     render(
       <ThemeProvider theme={theme}>
         <UserMenu
@@ -54,7 +54,7 @@ describe("UserMenu", () => {
     expect(screen.queryByTestId("user-menu")).not.toBeVisible();
   });
 
-  it("the menu becomes visible when isUserMenuOpen is true", () => {
+  it("is visible when isUserMenuOpen is true", () => {
     render(
       <ThemeProvider theme={theme}>
         <UserMenu
@@ -65,10 +65,10 @@ describe("UserMenu", () => {
         />
       </ThemeProvider>,
     );
-    expect(screen.getByTestId("dashboard-menu-item")).toBeVisible();
+    expect(screen.getByTestId("user-menu")).toBeVisible();
   });
 
-  it("closes the menu when a MenuItem is clicked", () => {
+  it("closes when a MenuItem is clicked", () => {
     render(
       <ThemeProvider theme={theme}>
         <UserMenu
@@ -82,5 +82,22 @@ describe("UserMenu", () => {
     fireEvent.click(screen.getByTestId("dashboard-menu-item"));
     expect(mocksetIsUserMenuOpen).toHaveBeenCalledWith(false);
     expect(mockSetAnchorElement).toHaveBeenCalledWith(null);
+  });
+
+  it("renders the sub components", () => {
+    render(
+      <ThemeProvider theme={theme}>
+        <UserMenu
+          anchorElement={anchorElement}
+          isUserMenuOpen={true}
+          setIsUserMenuOpen={mocksetIsUserMenuOpen}
+          setAnchorElement={mockSetAnchorElement}
+        />
+      </ThemeProvider>,
+    );
+    expect(screen.getByTestId("dashboard-menu-item")).toBeVisible();
+    expect(screen.getByTestId("profile-menu-item")).toBeVisible();
+    expect(screen.getByTestId("logout-menu-item")).toBeVisible();
+    expect(screen.getByTestId("app-version")).toBeVisible();
   });
 });

@@ -90,6 +90,7 @@ const UserMenu = ({
       <MenuItem
         sx={{ minWidth: 36 }}
         onClick={(event) => event.preventDefault()}
+        data-testid="profile-menu-item"
       >
         <ListItemIcon>
           <AccountCircle />
@@ -103,7 +104,7 @@ const UserMenu = ({
         <Typography>Dashboard</Typography>
       </MenuItem>
       <Divider />
-      <MenuItem>
+      <MenuItem data-testid="logout-menu-item">
         <ListItemIcon>
           <Logout />
         </ListItemIcon>
@@ -116,6 +117,7 @@ const UserMenu = ({
         sx={{
           display: "block",
         }}
+        data-testid="app-version"
       >
         App Version: alpha 0.2.1
       </Typography>
