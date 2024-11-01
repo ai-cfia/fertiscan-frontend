@@ -1,9 +1,8 @@
 "use client";
 import { usePlaceholder } from "@/classe/User";
-import useBreakpoints from "@/utils/useBreakpoints";
 import { AccountCircle, Logout, Settings } from "@mui/icons-material";
 import {
-  Box,
+  Divider,
   ListItemIcon,
   Menu,
   MenuItem,
@@ -52,7 +51,6 @@ const UserMenu = ({
   setAnchorElement,
 }: UserMenuProps): ReactElement => {
   const theme = useTheme();
-  const { isDownXs, isBetweenXsSm } = useBreakpoints();
   const placeholderUser = usePlaceholder();
 
   /**
@@ -87,48 +85,18 @@ const UserMenu = ({
       data-testid="user-menu"
       transitionDuration={0}
       keepMounted
-      PaperProps={{
-        elevation: 0,
-        sx: {
-          overflow: "visible",
-          filter: "drop-shadow(0px 2px 8px rgba(0,0,0,0.32))",
-          mt: 1.5,
-          bgcolor: theme.palette.secondary.main,
-          color: theme.palette.text.secondary,
-          minWidth: 120,
-          border: "1.5px solid",
-          borderColor: theme.palette.text.primary,
-          "&::before": {
-            content: '""',
-            display: "block",
-            position: "absolute",
-            borderLeft: "1.5px solid",
-            borderTop: "1.5px solid",
-            borderColor: theme.palette.text.primary,
-            top: 0,
-            transform: "translateY(-54%) rotate(45deg)",
-            zIndex: 0,
+      slotProps={{
+        paper: {
+          elevation: 0,
+          sx: {
+            filter: "drop-shadow(0px 2px 8px rgba(0,0,0,0.32))",
             bgcolor: theme.palette.secondary.main,
-            width: 15,
-            height: 15,
-            left: "calc(88% - 7.5px)", // Adjusting lozenge to center it
+            color: theme.palette.text.secondary,
           },
         },
       }}
-      transformOrigin={{ horizontal: "right", vertical: "top" }}
-      anchorOrigin={{ horizontal: "right", vertical: "bottom" }}
     >
-      <MenuItem
-        sx={{
-          minWidth: 36,
-          borderBottom: "1px solid #043f5f", // Placeholder for divider since divider have an unremovable margin
-          ":hover": {
-            backgroundColor: "transparent",
-          },
-          cursor: "default",
-        }}
-        onClick={preventDefault}
-      >
+      <MenuItem sx={{ minWidth: 36 }} onClick={preventDefault}>
         <ListItemIcon>
           <AccountCircle />
         </ListItemIcon>
@@ -136,74 +104,27 @@ const UserMenu = ({
       </MenuItem>
       <MenuItem onClick={handleClose} data-testid="dashboard-menu-item">
         <ListItemIcon>
-          <Settings sx={{ "&:hover": { color: "#fff" } }} />
+          <Settings />
         </ListItemIcon>
         <Typography>Dashboard</Typography>
       </MenuItem>
-      <Box
-        display="flex"
-        flexDirection={isDownXs || isBetweenXsSm ? "column" : "row"}
-        justifyContent="space-between"
-        alignItems={isDownXs || isBetweenXsSm ? "center" : "flex-end"}
-        px={2}
-        pt={1}
-        pb={0}
+      <Divider />
+      <MenuItem>
+        <ListItemIcon>
+          <Logout />
+        </ListItemIcon>
+        <Typography>Log out</Typography>
+      </MenuItem>
+      <Divider />
+      <Typography
+        variant="caption"
+        textAlign="center"
         sx={{
-          flexWrap: isDownXs || isBetweenXsSm ? "nowrap" : "wrap",
+          display: "block",
         }}
       >
-        {isDownXs || isBetweenXsSm ? (
-          <>
-            <MenuItem
-              onClick={handleClose}
-              sx={{
-                justifyContent: "center",
-                borderRadius: 1,
-                p: 0.5,
-              }}
-            >
-              <ListItemIcon
-                sx={{
-                  color: theme.palette.text.secondary,
-                  justifyContent: "center",
-                }}
-              >
-                <Logout />
-              </ListItemIcon>
-            </MenuItem>
-            <Typography variant="caption" textAlign="center" width="100%">
-              App Version: alpha 0.2.1
-            </Typography>
-          </>
-        ) : (
-          <>
-            <Typography
-              variant="caption"
-              alignSelf="end"
-              sx={{
-                overflow: "hidden",
-                textOverflow: "ellipsis",
-                whiteSpace: "nowrap",
-                mr: 2,
-              }}
-            >
-              App Version: alpha 0.2.1
-            </Typography>
-            <MenuItem
-              onClick={handleClose}
-              sx={{
-                padding: 0,
-                justifyContent: "flex-end",
-                borderRadius: 1,
-              }}
-            >
-              <ListItemIcon>
-                <Logout sx={{ borderRadius: 10 }} />
-              </ListItemIcon>
-            </MenuItem>
-          </>
-        )}
-      </Box>
+        App Version: alpha 0.2.1
+      </Typography>
     </Menu>
   );
 };

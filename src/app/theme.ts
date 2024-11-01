@@ -170,9 +170,6 @@ const theme = createTheme({
       styleOverrides: {
         root: {
           color: "#ffffff", // White icons
-          "&:hover": {
-            color: "#000000", // Black on hover
-          },
         },
       },
     },
