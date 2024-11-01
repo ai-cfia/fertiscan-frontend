@@ -1,3 +1,4 @@
+"use client";
 import { createTheme } from "@mui/material/styles";
 
 const theme = createTheme({
@@ -147,10 +148,20 @@ const theme = createTheme({
         },
       },
     },
-    MuiSvgIcon: {
+    MuiMenuItem: {
       styleOverrides: {
         root: {
-          fontSize: "38px", // Larger icon size
+          color: "#ffffff", // White text
+          "&:hover": {
+            backgroundColor: "#053f5e", // Dark Blue on hover
+          },
+        },
+      },
+    },
+    MuiListItemIcon: {
+      styleOverrides: {
+        root: {
+          color: "#ffffff", // White icons
         },
       },
     },
