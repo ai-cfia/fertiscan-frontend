@@ -58,12 +58,6 @@ const UserMenu = ({
     setAnchorElement(null);
   }, [setIsUserMenuOpen, setAnchorElement]);
 
-  const preventDefault = (
-    event: React.MouseEvent<HTMLLIElement, MouseEvent>,
-  ): void => {
-    event.preventDefault();
-  };
-
   useEffect(() => {
     window.addEventListener("resize", handleClose);
     return () => window.removeEventListener("resize", handleClose);
@@ -90,7 +84,10 @@ const UserMenu = ({
         },
       }}
     >
-      <MenuItem sx={{ minWidth: 36 }} onClick={preventDefault}>
+      <MenuItem
+        sx={{ minWidth: 36 }}
+        onClick={(event) => event.preventDefault()}
+      >
         <ListItemIcon>
           <AccountCircle />
         </ListItemIcon>
