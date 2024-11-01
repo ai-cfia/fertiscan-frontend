@@ -44,4 +44,18 @@ describe("Header Component", () => {
     // Check if setSideNavOpen is called
     expect(mockSetSideNavOpen).toHaveBeenCalled();
   });
+
+  it("opens the user menu when the user account button is clicked", () => {
+    render(
+      <ThemeProvider theme={theme}>
+        <Header setSideNavOpen={mockSetSideNavOpen} />
+      </ThemeProvider>,
+    );
+
+    const userAccountButton = screen.getByTestId("user-account-button");
+    fireEvent.click(userAccountButton);
+
+    // Check if the user menu is opened
+    expect(screen.getByTestId("user-menu")).toBeVisible();
+  });
 });
