@@ -1,6 +1,7 @@
 "use client";
 import { usePlaceholder } from "@/classe/User";
-import { AccountCircle, Logout, Settings } from "@mui/icons-material";
+import { AccountCircle, Logout } from "@mui/icons-material";
+import DashboardIcon from "@mui/icons-material/Dashboard";
 import {
   Divider,
   ListItemIcon,
@@ -97,7 +98,7 @@ const UserMenu = ({
       </MenuItem>
       <MenuItem onClick={handleClose} data-testid="dashboard-menu-item">
         <ListItemIcon>
-          <Settings />
+          <DashboardIcon />
         </ListItemIcon>
         <Typography>Dashboard</Typography>
       </MenuItem>
