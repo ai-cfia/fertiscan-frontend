@@ -38,21 +38,14 @@ const Header: React.FC<HeaderProps> = ({ setSideNavOpen }) => {
   const theme = useTheme();
   const { isDownXs, isBetweenXsSm, isBetweenSmMd } = useBreakpoints();
   const [anchorElement, setAnchorElement] = useState<null | HTMLElement>(null);
-  const [userPopUpOpen, setUserPopUpOpen] = useState(false);
+  const [isUserMenuOpen, setIsUserMenuOpen] = useState(false);
 
-  /**
-   * Function to handle the toggling of the side navigation menu
-   */
   const handleSideNavToggle = () => {
     setSideNavOpen((prevOpen) => !prevOpen);
   };
 
-  /**
-   * Function to handle the toggling of the user pop-up
-   * @param {React.MouseEvent<HTMLElement>} event - The mouse event triggering the popup
-   */
-  const handleUserPopUpToggle = (event: React.MouseEvent<HTMLElement>) => {
-    setUserPopUpOpen(true);
+  const handleUserMenuToggle = (event: React.MouseEvent<HTMLElement>) => {
+    setIsUserMenuOpen(true);
     setAnchorElement(event.currentTarget);
   };
 
@@ -116,7 +109,7 @@ const Header: React.FC<HeaderProps> = ({ setSideNavOpen }) => {
             {/* User account icon button */}
             <IconButton
               sx={{ alignSelf: "center" }}
-              onClick={handleUserPopUpToggle}
+              onClick={handleUserMenuToggle}
               data-testid="user-account-button"
             >
               <AccountCircleIcon />
@@ -127,8 +120,8 @@ const Header: React.FC<HeaderProps> = ({ setSideNavOpen }) => {
 
       <UserMenu
         anchorElement={anchorElement}
-        userPopUpOpen={userPopUpOpen}
-        setUserPopUpOpen={setUserPopUpOpen}
+        isUserMenuOpen={isUserMenuOpen}
+        setIsUserMenuOpen={setIsUserMenuOpen}
         setAnchorElement={setAnchorElement}
       />
     </Box>

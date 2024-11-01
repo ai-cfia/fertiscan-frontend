@@ -21,22 +21,22 @@ import {
 /**
  * Props for the UserMenu component
  *
- * @property {HTMLElement | null} anchorElement - The element that serves as the anchor for the user popup.
- * @property {boolean} userPopUpOpen - Indicates whether the user popup is open.
- * @property {Dispatch<SetStateAction<boolean>>} setUserPopUpOpen - Function to set the open state of the user popup.
- * @property {Dispatch<SetStateAction<HTMLElement | null>>} setAnchorElement - Function to set the anchor element for the popup.
+ * @property {HTMLElement | null} anchorElement - The element that serves as the anchor for the user menu.
+ * @property {boolean} isUserMenuOpen - Indicates whether the user menu is open.
+ * @property {Dispatch<SetStateAction<boolean>>} setIsUserMenuOpen - Function to set the open state of the user menu.
+ * @property {Dispatch<SetStateAction<HTMLElement | null>>} setAnchorElement - Function to set the anchor element for the user menu.
  */
 type UserMenuProps = {
   anchorElement: null | HTMLElement;
-  userPopUpOpen: boolean;
-  setUserPopUpOpen: Dispatch<SetStateAction<boolean>>;
+  isUserMenuOpen: boolean;
+  setIsUserMenuOpen: Dispatch<SetStateAction<boolean>>;
   setAnchorElement: Dispatch<SetStateAction<HTMLElement | null>>;
 };
 
 /**
- * UserPopup Component
+ * UserMenu Component
  *
- * This component renders a User Popup which appears when the user clicks on the
+ * This component renders a User Menu which appears when the user clicks on the
  * account icon in the header. It provides options to view the user's profile,
  * navigate to the dashboard, and log out. It also displays the current app version.
  *
@@ -46,24 +46,18 @@ type UserMenuProps = {
  */
 const UserMenu = ({
   anchorElement,
-  userPopUpOpen,
-  setUserPopUpOpen,
+  isUserMenuOpen,
+  setIsUserMenuOpen,
   setAnchorElement,
 }: UserMenuProps): ReactElement => {
   const theme = useTheme();
   const placeholderUser = usePlaceholder();
 
-  /**
-   * Function to handle closing the user popup
-   */
   const handleClose = useCallback((): void => {
-    setUserPopUpOpen(false);
+    setIsUserMenuOpen(false);
     setAnchorElement(null);
-  }, [setUserPopUpOpen, setAnchorElement]);
+  }, [setIsUserMenuOpen, setAnchorElement]);
 
-  /**
-   * Prevents the default behavior of the event
-   */
   const preventDefault = (
     event: React.MouseEvent<HTMLLIElement, MouseEvent>,
   ): void => {
@@ -79,7 +73,7 @@ const UserMenu = ({
     <Menu
       anchorEl={anchorElement}
       id="account-menu"
-      open={userPopUpOpen || false}
+      open={isUserMenuOpen || false}
       onClose={handleClose}
       onClick={handleClose}
       data-testid="user-menu"
