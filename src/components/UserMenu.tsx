@@ -73,6 +73,8 @@ const UserMenu = ({
       data-testid="user-menu"
       transitionDuration={0}
       keepMounted
+      transformOrigin={{ horizontal: "right", vertical: "top" }}
+      anchorOrigin={{ horizontal: "right", vertical: "bottom" }}
       slotProps={{
         paper: {
           elevation: 0,

@@ -62,7 +62,7 @@ const Header: React.FC<HeaderProps> = ({ setSideNavOpen }) => {
             onClick={handleSideNavToggle}
             data-testid="menu-toggle-button"
           >
-            <MenuIcon />
+            <MenuIcon fontSize="large" />
           </IconButton>
 
           {/* Logo container in the center */}
@@ -112,7 +112,7 @@ const Header: React.FC<HeaderProps> = ({ setSideNavOpen }) => {
               onClick={handleUserMenuToggle}
               data-testid="user-account-button"
             >
-              <AccountCircleIcon />
+              <AccountCircleIcon fontSize="large" />
             </IconButton>
           </Box>
         </Toolbar>
