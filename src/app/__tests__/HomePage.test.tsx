@@ -1,19 +1,18 @@
+/* eslint-disable react/display-name */
 import { render, screen, fireEvent } from "@testing-library/react";
 import userEvent from "@testing-library/user-event";
-import { fetch, Response } from "whatwg-fetch";
+import { Response } from "whatwg-fetch";
 import Home from "../page";
 
 // Mock the FileElement component
 jest.mock(
   "../../components/FileElement",
-  () =>
+  ()  =>
     ({
-      setDropZoneState,
       fileName,
       fileUrl,
       handleDelete,
     }: {
-      setDropZoneState: any;
       fileName: string;
       fileUrl: string;
       handleDelete: (url: string) => void;
@@ -223,8 +222,7 @@ describe("Home Component", () => {
     // Hover on the file element
     fireEvent.mouseEnter(fileElement);
 
-    // Check that the image is displayed in the dropzone
-    const dropzone = screen.getByTestId("dropzone");
+    // Check that the image is displayed when hovering on the file element
     expect(screen.getByTestId("hovered-image")).toBeInTheDocument();
   });
 

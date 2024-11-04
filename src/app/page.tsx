@@ -11,7 +11,7 @@ import {
 import { useState } from "react";
 import { CloudUpload } from "@mui/icons-material";
 import FileElement from "@/components/FileElement";
-import FileUploaded, { FileType } from "@/classe/File";
+import FileUploaded from "@/classe/File";
 
 /**
  * Represents the state of a dropzone component.
@@ -93,7 +93,7 @@ function Home() {
  * @param {React.ChangeEvent<HTMLInputElement>} event - The file input change event.
  */
   function handleFileUpload(event: React.ChangeEvent<HTMLInputElement>) {
-    let files = event.target.files;
+    const files = event.target.files;
     if (files && files.length > 0) {
       for (let i = 0; i < files.length; i++) {
         processFile(files[i]);
@@ -169,7 +169,8 @@ function Home() {
  * @param {ImageLoadEvent} event - The image load event containing the image dimensions.
  */
   function handleImageLoad(event: ImageLoadEvent) {
-    const { width, height } = event.target;
+    const { width } = event.target;
+
     const dropzoneElement = document.getElementById("dropzone");
     if (!dropzoneElement) {
       console.error("Dropzone element not found");
