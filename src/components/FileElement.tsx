@@ -75,7 +75,7 @@ const FileElement: React.FC<
                 }}
                 onClick={() => handleDelete(fileUrl)}
               >
-                <DeleteIcon sx={{ fontSize: '1.7rem' }} />
+                <DeleteIcon data-testid="delete" sx={{ fontSize: '1.7rem' }} />
         </IconButton>
     }
           </Grid2>

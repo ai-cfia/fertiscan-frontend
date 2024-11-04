@@ -23,7 +23,7 @@ class FileUploaded {
         this.info.name = file.name;
         this.info.type = file.type.split('/')[1] as FileType;
         this.info.uploadDate = new Date();
-        this.info.path = path?.length > 0 ? path : "ImageNamePLaceHolder";
+        this.info.path = path;
     }
 
     getInfo(): FileInfo {
@@ -50,10 +50,12 @@ class FileUploaded {
           throw new Error('Content-Type header is missing');
         }
 
-        if (contentType.includes('pdf')) {
+        console.log(`detectType: Content-Type for ${path} is ${contentType}`);
+
+        if (contentType.includes('application/pdf')) {
           return { type: "pdf", images: [] };
-        } else if (contentType.includes('png') || contentType.includes('jpeg') || contentType.includes('jpg')) {
-          return contentType.slice(contentType.indexOf('/') + 1) as FileType;
+        } else if (contentType.includes('image/png') || contentType.includes('image/jpeg')) {
+          return contentType.split('/')[1] as FileType;
         } else {
           throw new Error('Unsupported file type');
         }

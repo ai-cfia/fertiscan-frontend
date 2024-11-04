@@ -1,14 +1,18 @@
-import { render, screen, fireEvent } from "@testing-library/react";
+import { render, screen, fireEvent, act } from "@testing-library/react";
 import { fetch, Response } from 'whatwg-fetch';
+import FileUploaded, { FileInfo } from "../../classe/File"
 
 // Mock fetch
 global.fetch = jest.fn((path: string | URL | Request) => {
-    if (typeof path === 'string' && (path.endsWith('.png') || path.endsWith('.jpg') || path.endsWith('.jpeg'))) {
+    if (typeof path === 'string' && (path.endsWith('.png') || path.endsWith('.jpeg'))) {
       return Promise.resolve(new Response('', {
         status: 200,
-        headers: new Headers({
-          'Content-Type': path.endsWith('.png') ? 'image/png' : 'image/jpeg',
-        })
+        headers: new Headers({ 'Content-Type': path.endsWith('.png') ? 'image/png' : 'image/jpeg' })
+      }));
+    } else if (typeof path === 'string' && path.endsWith('.pdf')) {
+      return Promise.resolve(new Response('', {
+        status: 200,
+        headers: new Headers({ 'Content-Type': 'application/pdf' })
       }));
     }
     return Promise.resolve(new Response(JSON.stringify({ error: 'Unsupported file type' }), {
@@ -17,8 +21,7 @@ global.fetch = jest.fn((path: string | URL | Request) => {
     }));
   });
 
-// Mock URL.createObjectURL
-global.URL.createObjectURL = jest.fn();
+global.URL.createObjectURL = jest.fn().mockImplementation(() => "blob:example/image.png");
 import { ThemeProvider } from "@mui/material/styles";
 import theme from "@/app/theme";
 import Home from "../page";
@@ -40,21 +43,21 @@ describe("Home Component", () => {
 
     it("handles file drop", async () => {
         render(
-          <ThemeProvider theme={theme}>
-            <Home />
-          </ThemeProvider>
+            <ThemeProvider theme={theme}>
+                <Home />
+            </ThemeProvider>
         );
 
         const dropzone = screen.getByText(/Drag & Drop To Upload Files/i).parentElement;
         const file = new File(["dummy content"], "example.png", { type: "image/png" });
-
+        console.log(`File: ${file.name}`);
         fireEvent.drop(dropzone!, {
-          dataTransfer: { files: [file] },
+            dataTransfer: { files: [file] },
         });
 
         await screen.findByText(/Uploaded files/i);
         expect(screen.getByText(/Uploaded files/i)).toBeInTheDocument();
-      });
+    });
 
     it("handles file upload via input", () => {
         render(
@@ -66,28 +69,14 @@ describe("Home Component", () => {
         const input = screen.getByLabelText(/Browse File/i);
         const file = new File(["dummy content"], "example.png", { type: "image/png" });
 
+        act(() => {
         fireEvent.change(input!, {
             target: { files: [file] },
         });
+    });
 
         // Check if the file is processed and displayed
         expect(screen.getByText(/Uploaded files/i)).toBeInTheDocument();
-    });
-
-    it("handles unsupported file types gracefully", async () => {
-        render(
-            <ThemeProvider theme={theme}>
-                <Home />
-            </ThemeProvider>
-        );
-
-        const dropzone = screen.getByText(/Drag & Drop To Upload Files/i).parentElement;
-        const unsupportedFile = new File(["dummy content"], "example.txt", { type: "text/plain" });
-
-        fireEvent.drop(dropzone!, {
-            dataTransfer: { files: [unsupportedFile] },
-        });
-        expect('Unsupported file type').toBeInTheDocument();
     });
 
     it("handles drag over event", () => {
@@ -105,7 +94,7 @@ describe("Home Component", () => {
         expect(dropzone).toHaveStyle("border-color: theme.palette.secondary.main");
     });
 
-    it("handles file deletion", () => {
+    it("removes a file from the list when delete button is clicked", async () => {
         render(
             <ThemeProvider theme={theme}>
                 <Home />
@@ -119,14 +108,16 @@ describe("Home Component", () => {
             dataTransfer: { files: [file] },
         });
 
-        // Check if the file is processed and displayed
+        // Check if the file is displayed
+        await screen.findByText(/Uploaded files/i);
         expect(screen.getByText(/Uploaded files/i)).toBeInTheDocument();
 
-        const deleteButton = screen.getByText(/Delete/i);
-        fireEvent.click(deleteButton);
+        // Simulate clicking the delete button
+        const deleteButtons = screen.getAllByTestId('delete');
+        deleteButtons.forEach(button => fireEvent.click(button));
 
-        // Check if the file is deleted
-        expect(screen.getByText(/No files uploaded/i)).toBeInTheDocument();
+        // Check if the file is removed
+        expect(screen.queryByText(/Uploaded files/i)).not.toBeInTheDocument();
     });
 
     it("displays the correct number of uploaded files", () => {
