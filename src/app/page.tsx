@@ -7,14 +7,15 @@ import FileUploaded, { FileType } from '@/classe/File';
 
 
 interface DropzoneState {
-  visible: boolean;
-  image_url: string | null;
-}
+    visible: boolean;
+    image_url: string | null;
+    fillPercentage?: number;
+  }
 
 function Home() {
   const theme = useTheme();
-  const [dropzoneState, setDropzoneState] = useState<DropzoneState>({ visible: false, image_url: null });
-  const [uploadedFiles, setUploadedFiles] = useState<(File | FileUploaded)[]>([]);
+  const [dropzoneState, setDropzoneState] = useState<DropzoneState>({ visible: false, image_url: null, fillPercentage: 0  });
+  const [uploadedFiles, setUploadedFiles] = useState<(FileUploaded)[]>([]);
 
   function handleSetDropzoneState(show: boolean, image_url: string) {
     setDropzoneState({ visible: show, image_url });
@@ -44,16 +45,20 @@ function Home() {
     }
 
     async function processFile(file: File) {
-        const newFile = new FileUploaded({
-            dimension: { width: 0, height: 0 },
-            path: URL.createObjectURL(file),
-            user: { username: 'Anonymous' },
-            type: file.type.split('/')[1] as FileType,
-            uploadDate: new Date(),
-        });
 
-        const detectedType = await newFile.detectType();
+        const alreadyExists = uploadedFiles.some(uploadedFile =>
+            uploadedFile.getInfo().name === file.name
+        );
 
+        if (alreadyExists) {
+            // TODO: Implement error message
+            return;
+        }
+
+        // TODO: Implement user link to file uploaded.
+        const newFile = FileUploaded.newFile({ username: 'user' }, URL.createObjectURL(file), file);
+
+        const detectedType = await FileUploaded.detectType(newFile.getInfo().path);
         if (typeof detectedType === 'object' && detectedType.type === 'pdf') {
            // TODO:  https://github.com/ai-cfia/fertiscan-frontend/blob/256-nextjs-test/src/app/captur/page.tsx
         } else {
@@ -63,6 +68,35 @@ function Home() {
 
     function handleDelete(url: string) {
         setUploadedFiles(uploadedFiles.filter(file => file instanceof FileUploaded && file.getInfo().path !== url));
+    }
+
+    interface ImageLoadEvent extends React.SyntheticEvent<HTMLImageElement> {
+        target: HTMLImageElement;
+    }
+
+    interface ParentDimensions {
+        width: number;
+        height: number;
+    }
+
+    function handleImageLoad(event: ImageLoadEvent) {
+        const { width, height } = event.target;
+        const parentDimensions: ParentDimensions = { width: 0, height: 0 }; // Replace with actual logic to get parent dimensions
+
+        const widthPercentage = (width / parentDimensions.width) * 100;
+        const heightPercentage = (height / parentDimensions.height) * 100;
+
+        if (widthPercentage >= 90 || heightPercentage >= 90) {
+            setDropzoneState(prevState => ({
+                ...prevState,
+                fillPercentage: Math.max(widthPercentage, heightPercentage),
+            }));
+        } else {
+            setDropzoneState(prevState => ({
+                ...prevState,
+                fillPercentage: 0,
+            }));
+        }
     }
 
 
@@ -98,13 +132,15 @@ function Home() {
                                     component="img"
                                     src={dropzoneState.image_url}
                                     alt="Uploaded file"
+                                    onLoad={(event: ImageLoadEvent) => handleImageLoad(event)}
                                     sx={{
                                         position: 'absolute',
                                         maxWidth: '100%',
                                         maxHeight: '100%',
                                         objectFit: 'contain',
-                                        border: '2px solid',
                                         borderColor: theme.palette.secondary.main,
+                                        width: dropzoneState.fillPercentage && dropzoneState.fillPercentage >= 90 ? '80%' : 'auto',
+                                        height: dropzoneState.fillPercentage && dropzoneState.fillPercentage >= 90 ? '80%' : 'auto',
                                     }}
                                 />
                             ) : (
@@ -142,7 +178,7 @@ function Home() {
                                 p: 1,
                                 backgroundSize: 'contain',
                                 backgroundColor: 'transparent',
-                                width: '90%',
+                                width: '100%',
                                 height: '90%',
                                 minHeight: { xs: '350px', md: '400px' },
                                 overflowY: 'auto',
@@ -169,7 +205,7 @@ function Home() {
                                     position: 'absolute',
                                     top: uploadedFiles.length === 0 ? '50%' : 'initial',
                                     left: uploadedFiles.length === 0 ? '50%' : 'initial',
-                                    transform: uploadedFiles.length === 0 ? 'translate(-50%, -50%)' : 'none', // center the box when there are no uploaded files
+                                    transform: uploadedFiles.length === 0 ? 'translate(-50%, -50%)' : 'none',
                                     width: '100%',
                                     height: '100%',
                                     display: 'flex',
@@ -200,14 +236,12 @@ function Home() {
                                             setDropZoneState={handleSetDropzoneState}
                                             //contextMenuAnchor={()=>console.log("contextMenuAnchor")}
                                             //setContextMenuAnchor={()=>console.log("setContextMenuAnchor")}
-                                            fileName={file instanceof FileUploaded ? file.getInfo().tags?.[0]?.name || file.getInfo().path.split('/').pop() || "filename.jpg" : file.name}
-                                            fileUrl={file instanceof FileUploaded ? file.getInfo().path : URL.createObjectURL(file)}
+                                            fileName={file.getInfo().name}
+                                            fileUrl={file.getInfo().path}
                                             //handleRename={()=>console.log("(newName) => handleRename(index, newName)")}
                                             handleDelete={() => {
-                                                if (file instanceof FileUploaded) {
                                                     handleDelete(file.getInfo().path);
                                                     setDropzoneState({ visible: false, image_url: null });
-                                                }
                                             }}
                                         />
                                     ))}
@@ -224,6 +258,7 @@ function Home() {
                             color="secondary"
                             fullWidth
                             sx={{
+                                width: '100%',
                                 minWidth: '133.44px',
                             }}
                         >

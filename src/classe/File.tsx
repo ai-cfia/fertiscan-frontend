@@ -1,85 +1,74 @@
 type FileType = "pdf" | "png" | "jpg";
 
-interface Dimension {
-    width: number;
-    height: number;
-}
-
 interface User {
     username: string;
 }
 
-interface Tag {
-    name: string;
-    description?: string;
-}
-
 interface FileInfo {
-    dimension: Dimension;
     path: string;
     user: User;
-    tags?: Tag[];
+    file: File;
     uploadDate: Date;
     type: FileType;
+    name: string;
 }
 
 class FileUploaded {
     private info: FileInfo;
+    private file: File;
 
-    constructor(info: FileInfo) {
+    constructor(info: FileInfo, path: string, file: File) {
         this.info = info;
+        this.file = file;
+        this.info.name = file.name;
+        this.info.type = file.type.split('/')[1] as FileType;
+        this.info.uploadDate = new Date();
+        this.info.path = path?.length > 0 ? path : "ImageNamePLaceHolder";
     }
 
     getInfo(): FileInfo {
         return this.info;
     }
 
-    addTag(tag: Tag) {
-        if (!this.info.tags) {
-            this.info.tags = [];
-        }
-        this.info.tags.push(tag);
-    }
-
-    removeTag(tagName: string) {
-        if (this.info.tags) {
-            this.info.tags = this.info.tags.filter(tag => tag.name !== tagName);
-        }
+    getFile(): File {
+        return this.file;
     }
 
     updatePath(newPath: string) {
         this.info.path = newPath;
     }
 
-    rename(newName: string) {
-        if (this.info.tags && this.info.tags.length >= 1) {
-            this.info.tags[0] = { name: newName };
-        } else {
-            this.addTag({ name: newName });
-        }
+    setName(newName: string) {
+        this.info.name = newName;
     }
 
-    static newFile(dimension: Dimension, path: string, user: User, type: FileType, tags?: Tag[]): FileUploaded {
-        const uploadDate = new Date();
-        const fileInfo: FileInfo = { dimension, path, user, type, uploadDate, tags };
-        return new FileUploaded(fileInfo);
-    }
+    static async detectType(path: string): Promise<FileType | { type: "pdf", images: FileUploaded[] }> {
+        const response = await fetch(path);
+        const contentType = response.headers.get('Content-Type');
 
-    async detectType(): Promise<FileType | { type: "pdf", images: FileUploaded[] }> {
-        const response = await fetch(this.info.path);
-        const type = response.headers.get('Content-Type');
-        if (!type) {
+        if (!contentType) {
             throw new Error('Content-Type header is missing');
         }
-        {/* if (type.includes('pdf')) {
-            // Implement the logic to extract images from a PDF file in other PR see: https://github.com/ai-cfia/fertiscan-frontend/blob/256-nextjs-test/src/Classes/File/File.tsx
-        } else */
-        }
-        if (type.includes('png') || type.includes('jpeg') || type.includes('jpg')) {
-            return type.slice(type.indexOf('/') + 1) as FileType;
+
+        if (contentType.includes('pdf')) {
+            return { type: "pdf", images: [] };
+        } else if (contentType.includes('png') || contentType.includes('jpeg') || contentType.includes('jpg')) {
+            return contentType.slice(contentType.indexOf('/') + 1) as FileType;
         } else {
             throw new Error('Unsupported file type');
         }
+    }
+
+    static newFile(user: User, path:string, file: File): FileUploaded {
+        const fileInfo: FileInfo = {
+            path: path,
+            user: user,
+            file: file,
+            uploadDate: new Date(),
+            type: file.type.split('/')[1] as FileType,
+            name: file.name
+        };
+        return new FileUploaded(fileInfo, path, file);
     }
 }
 export default FileUploaded;

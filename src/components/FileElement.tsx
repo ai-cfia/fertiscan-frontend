@@ -1,6 +1,7 @@
 import React, { useState } from "react";
 import { Grid2, IconButton, Typography, useTheme, Divider } from "@mui/material";
 import DeleteIcon from "@mui/icons-material/Delete";
+
 interface FileElementProps {
   setDropZoneState: (show: boolean, url: string) => void;
   fileName: string;
