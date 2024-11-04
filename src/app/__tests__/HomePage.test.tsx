@@ -2,7 +2,8 @@
 import { render, screen, fireEvent } from "@testing-library/react";
 import userEvent from "@testing-library/user-event";
 import { Response } from "whatwg-fetch";
-import Home from "../SearchPage/page";
+import Home from "../page";
+
 
 // Mock the FileElement component
 jest.mock(
