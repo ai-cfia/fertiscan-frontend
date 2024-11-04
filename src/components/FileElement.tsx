@@ -53,7 +53,9 @@ const FileElement: React.FC<
                 sx={{color:theme.palette.text.primary,
                     overflow: "hidden",
                     textOverflow: "ellipsis",
-                    whiteSpace: "nowrap"
+                    whiteSpace: "nowrap",
+                    textAlign: "start",
+                    marginLeft:"10px"
                     }}>
                     {fileName}
                 </Typography>
