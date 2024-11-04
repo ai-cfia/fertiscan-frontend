@@ -24,9 +24,20 @@ function Home() {
         event.preventDefault();
         const files = event.dataTransfer.files;
         if (files && files.length > 0) {
-            processFile(files[0]);
+            for (let i = 0; i < files.length; i++) {
+                processFile(files[i]);
+            }
         }
     };
+
+    function handleFileUpload(event: React.ChangeEvent<HTMLInputElement>) {
+        let files = event.target.files;
+        if (files && files.length > 0) {
+            for (let i = 0; i < files.length; i++) {
+                processFile(files[i]);
+            }
+        }
+    }
 
     function handleDragOver(event: React.DragEvent<HTMLDivElement>) {
         event.preventDefault();
@@ -59,7 +70,7 @@ function Home() {
     <ThemeProvider theme={theme}>
              <Box sx={{ paddingTop: '10vh' }}>
                 <Grid2 container rowSpacing={1} columnSpacing={{ xs: 1, sm: 2, md: 3 }} justifyContent="center" sx={{ height: "80vh" }}>
-                    <Grid2 size={{ xs: 10, md: 7 }}>
+                    <Grid2 container justifyContent="center" alignContent="center" size={{ xs: 10, md: 7, }}>
                         <Box
                             sx={{
                                 display: 'flex',
@@ -74,8 +85,8 @@ function Home() {
                                 p: 1,
                                 backgroundSize: 'contain',
                                 backgroundColor: 'transparent',
-                                width: '100%',
-                                height: '100%',
+                                width: '90%',
+                                height: '90%',
                                 minHeight: { xs: '350px', md: '400px' },
                                 minWidth: '133.44px',
                             }}
@@ -99,23 +110,24 @@ function Home() {
                             ) : (
                                 <Box sx={{ textAlign: 'center' }}>
                                     <CloudUpload sx={{color: theme.palette.secondary.main, fontSize: '7rem'}} />
-                                    <Typography variant="h4" color={theme.palette.secondary.main}>
+                                    <Typography variant="h5" color={theme.palette.secondary.main}>
                                         <b>Drag & Drop To Upload Files</b>
                                     </Typography>
-                                    <Typography variant="h4" color={theme.palette.secondary.main}>
+                                    <Typography variant="h5" color={theme.palette.secondary.main}>
                                         <b>OR</b>
                                     </Typography>
                                     <Button
                                         variant="contained"
+                                        component="label"
                                         color="secondary">
-                                        Browse File
-                                        <input type="file" accept=".png,.jpg,.jpeg,.pdf" hidden onChange={()=>console.log("handleFileUpload")} />
+                                        <b>Browse File</b>
+                                        <input type="file" accept=".png,.jpg,.jpeg,"/*.pdf*/ multiple hidden onChange={handleFileUpload} />
                                     </Button>
                                 </Box>
                             )}
                         </Box>
                     </Grid2>
-                    <Grid2 size={{ xs: 10, md: 4 }} display={'flex'}>
+                    <Grid2 container size={{ xs: 10, md: 4 }} display={'flex'} alignContent="center">
                         <Box
                             sx={{
                                 display: 'flex',
@@ -129,9 +141,9 @@ function Home() {
                                 textAlign: 'center',
                                 p: 1,
                                 backgroundSize: 'contain',
-                                backgroundColor: theme.palette.secondary.main,
-                                width: '100%',
-                                height: '100%',
+                                backgroundColor: 'transparent',
+                                width: '90%',
+                                height: '90%',
                                 minHeight: { xs: '350px', md: '400px' },
                                 overflowY: 'auto',
                                 overflowX: 'hidden',
@@ -172,7 +184,7 @@ function Home() {
                                 }}
                             >
                                 <Typography variant="h5" color={theme.palette.text.primary} gutterBottom>
-                                   <b> {uploadedFiles.length > 0 ? 'Uploaded files'+" ("+uploadedFiles.length+")" : 'No files uploaded'}</b>
+                                   <b> {uploadedFiles.length > 0 ? 'Uploaded files'+" ("+uploadedFiles.length+")" : 'No uploaded files'}</b>
                                 </Typography>
                                 <Stack
                                     direction="column"
