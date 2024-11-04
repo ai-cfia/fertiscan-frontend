@@ -128,9 +128,11 @@ function Home() {
                             }}
                             onDragOver={handleDragOver}
                             onDrop={handleDrop}
+                            data-testid="dropzone"
                         >
                             {dropzoneState.visible && dropzoneState.image_url ? (
                                 <Box
+                                    data-testid="hovered-image"
                                     component="img"
                                     src={dropzoneState.image_url}
                                     alt="Uploaded file"
@@ -256,6 +258,7 @@ function Home() {
                     <Grid2 size={{ xs: 10, md: 4 }}>
                         {uploadedFiles.length > 0 && (
                         <Button
+                            data-testid="submit-button"
                             variant="contained"
                             color="secondary"
                             fullWidth

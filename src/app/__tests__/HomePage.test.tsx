@@ -1,207 +1,209 @@
-import { render, screen, fireEvent, act } from "@testing-library/react";
+import { render, screen, fireEvent } from '@testing-library/react';
+import userEvent from '@testing-library/user-event';
 import { fetch, Response } from 'whatwg-fetch';
-import FileUploaded, { FileInfo } from "../../classe/File"
+import Home from '../page';
 
-// Mock fetch
-global.fetch = jest.fn((path: string | URL | Request) => {
-    if (typeof path === 'string' && (path.endsWith('.png') || path.endsWith('.jpeg'))) {
-      return Promise.resolve(new Response('', {
-        status: 200,
-        headers: new Headers({ 'Content-Type': path.endsWith('.png') ? 'image/png' : 'image/jpeg' })
-      }));
-    } else if (typeof path === 'string' && path.endsWith('.pdf')) {
-      return Promise.resolve(new Response('', {
-        status: 200,
-        headers: new Headers({ 'Content-Type': 'application/pdf' })
-      }));
-    }
-    return Promise.resolve(new Response(JSON.stringify({ error: 'Unsupported file type' }), {
-      status: 400,
-      headers: new Headers({ 'Content-Type': 'application/json' })
-    }));
-  });
+// Mock the FileElement component
+jest.mock('../../components/FileElement', () => ({ setDropZoneState, fileName, fileUrl, handleDelete }: { setDropZoneState: any, fileName: string, fileUrl: string, handleDelete: (url: string) => void }) => (
+  <div data-testid="file-element">
+    <span data-testid="file-name">{fileName}</span>
+    <button data-testid="delete" onClick={() => handleDelete(fileUrl)}>Delete</button>
+  </div>
+));
 
 global.URL.createObjectURL = jest.fn().mockImplementation(() => "blob:example/image.png");
-import { ThemeProvider } from "@mui/material/styles";
-import theme from "@/app/theme";
-import Home from "../page";
+global.fetch = jest.fn((path: string | URL | Request) => {
+    if (typeof path === 'string' && (path.endsWith('.png') || path.endsWith('.jpeg'))) {
+        return Promise.resolve(new Response('', {
+        status: 200,
+        headers: new Headers({ 'Content-Type': path.endsWith('.png') ? 'image/png' : 'image/jpeg' })
+        }));
+    } else if (typeof path === 'string' && path.endsWith('.pdf')) {
+        return Promise.resolve(new Response('', {
+        status: 200,
+        headers: new Headers({ 'Content-Type': 'application/pdf' })
+        }));
+    }
+    return Promise.resolve(new Response(JSON.stringify({ error: 'Unsupported file type' }), {
+        status: 400,
+        headers: new Headers({ 'Content-Type': 'application/json' })
+    }));
+    });
 
 describe("Home Component", () => {
-    it("renders the Home component and its sub-components", () => {
-        render(
-            <ThemeProvider theme={theme}>
-                <Home />
-            </ThemeProvider>
-        );
+  it("should allow file uploads and display the uploaded files", async () => {
+    render(<Home />);
 
-        // Check if the drag and drop area is rendered
-        expect(screen.getByText(/Drag & Drop To Upload Files/i)).toBeInTheDocument();
+    // Mock file
+    const file = new File(['hello'], 'hello.png', { type: 'image/png' });
 
-        // Check if the Browse File button is rendered
-        expect(screen.getByText(/Browse File/i)).toBeInTheDocument();
+    // Find the file input element and upload the file
+    const input = screen.getByLabelText(/browse file/i);
+    userEvent.upload(input, file);
+
+    // Check that the file was uploaded and appears in the list.
+    const fileElement = await screen.findByTestId("file-element");
+    expect(fileElement).toBeInTheDocument();
+
+    const fileName = await screen.findByTestId("file-name");
+    expect(fileName).toHaveTextContent("hello.png");
+
+    // Find and click the delete button
+    const deleteButton = screen.getByTestId("delete");
+    fireEvent.click(deleteButton);
+
+    // Check that the file was removed
+    expect(screen.queryByTestId("file-element")).not.toBeInTheDocument();
+  });
+
+    it("should allow file uploads via drag and drop", async () => {
+        render(<Home />);
+
+        // Mock file
+        const file = new File(['hello'], 'hello.png', { type: 'image/png' });
+
+        // Find the dropzone and simulate the drop event
+        const dropzone = screen.getByTestId("dropzone");
+        fireEvent.drop(dropzone, { dataTransfer: { files: [file] } });
+
+        // Check that the file was uploaded and appears in the list.
+        const fileElement = await screen.findByTestId("file-element");
+        expect(fileElement).toBeInTheDocument();
+
+        const fileName = await screen.findByTestId("file-name");
+        expect(fileName).toHaveTextContent("hello.png");
+
+        // Find and click the delete button
+        const deleteButton = screen.getByTestId("delete");
+        fireEvent.click(deleteButton);
+
+        // Check that the file was removed
+        expect(screen.queryByTestId("file-element")).not.toBeInTheDocument();
     });
 
-    it("handles file drop", async () => {
-        render(
-            <ThemeProvider theme={theme}>
-                <Home />
-            </ThemeProvider>
-        );
+    it("should allow file upload via input", async () => {
+        render(<Home />);
 
-        const dropzone = screen.getByText(/Drag & Drop To Upload Files/i).parentElement;
-        const file = new File(["dummy content"], "example.png", { type: "image/png" });
-        console.log(`File: ${file.name}`);
-        fireEvent.drop(dropzone!, {
-            dataTransfer: { files: [file] },
-        });
+        // Mock file
+        const file = new File(['hello'], 'hello.png', { type: 'image/png' });
 
-        await screen.findByText(/Uploaded files/i);
-        expect(screen.getByText(/Uploaded files/i)).toBeInTheDocument();
+        // Find the file input element and upload the file
+        const input = screen.getByLabelText(/browse file/i);
+        userEvent.upload(input, file);
+
+        // Check that the file was uploaded and appears in the list.
+        const fileElement = await screen.findByTestId("file-element");
+        expect(fileElement).toBeInTheDocument();
+
+        const fileName = await screen.findByTestId("file-name");
+        expect(fileName).toHaveTextContent("hello.png");
+
+        // Find and click the delete button
+        const deleteButton = screen.getByTestId("delete");
+        fireEvent.click(deleteButton);
+
+        // Check that the file was removed
+        expect(screen.queryByTestId("file-element")).not.toBeInTheDocument();
     });
 
-    it("handles file upload via input", () => {
-        render(
-            <ThemeProvider theme={theme}>
-                <Home />
-            </ThemeProvider>
-        );
+    it("The button submit should not be visible when no file is uploaded", () => {
+        render(<Home />);
 
-        const input = screen.getByLabelText(/Browse File/i);
-        const file = new File(["dummy content"], "example.png", { type: "image/png" });
-
-        act(() => {
-        fireEvent.change(input!, {
-            target: { files: [file] },
-        });
+        expect(screen.queryByTestId("submit-button")).not.toBeInTheDocument();
     });
 
-        // Check if the file is processed and displayed
-        expect(screen.getByText(/Uploaded files/i)).toBeInTheDocument();
+    it("The button submit should be visible when a file is uploaded", async () => {
+        render(<Home />);
+
+       // Mock file
+       const file = new File(['hello'], 'hello.png', { type: 'image/png' });
+
+       // Find the file input element and upload the file
+       const input = screen.getByLabelText(/browse file/i);
+       userEvent.upload(input, file);
+
+       // Check that the file was uploaded and appears in the list.
+       const fileElement = await screen.findByTestId("file-element");
+       expect(fileElement).toBeInTheDocument();
+
+       const fileName = await screen.findByTestId("file-name");
+       expect(fileName).toHaveTextContent("hello.png");
+
+        // Check that the submit button is visible
+        expect(screen.getByTestId("submit-button")).toBeInTheDocument();
     });
 
-    it("handles drag over event", () => {
-        render(
-            <ThemeProvider theme={theme}>
-                <Home />
-            </ThemeProvider>
-        );
+    it("The file count should be displayed when a file is uploaded", async () => {
+        render(<Home />);
 
-        const dropzone = screen.getByText(/Drag & Drop To Upload Files/i).parentElement;
+        // Mock file
+       const file = new File(['hello'], 'hello.png', { type: 'image/png' });
 
-        fireEvent.dragOver(dropzone!);
+       // Find the file input element and upload the file
+       const input = screen.getByLabelText(/browse file/i);
+       userEvent.upload(input, file);
 
-        // Check if the drag over event is handled
-        expect(dropzone).toHaveStyle("border-color: theme.palette.secondary.main");
+       // Check that the file was uploaded and appears in the list.
+       const fileElement = await screen.findByTestId("file-element");
+       expect(fileElement).toBeInTheDocument();
+
+       const fileName = await screen.findByTestId("file-name");
+       expect(fileName).toHaveTextContent("hello.png");
+
+        // Check that the file count is displayed
+        expect(screen.getByText("Uploaded files (1)")).toBeInTheDocument();
     });
 
-    it("removes a file from the list when delete button is clicked", async () => {
-        render(
-            <ThemeProvider theme={theme}>
-                <Home />
-            </ThemeProvider>
-        );
+    it("The file count should be updated when multiple files are uploaded", async () => {
+        render(<Home />);
 
-        const dropzone = screen.getByText(/Drag & Drop To Upload Files/i).parentElement;
-        const file = new File(["dummy content"], "example.png", { type: "image/png" });
+        // Mock file
+       const file = new File(['hello'], 'hello.png', { type: 'image/png' });
+       const file2 = new File(['hello2'], 'hello2.png', { type: 'image/png' });
 
-        fireEvent.drop(dropzone!, {
-            dataTransfer: { files: [file] },
-        });
+       // Find the file input element and upload the file
+       const input = screen.getByLabelText(/browse file/i);
+       userEvent.upload(input, [file, file2]);
 
-        // Check if the file is displayed
-        await screen.findByText(/Uploaded files/i);
-        expect(screen.getByText(/Uploaded files/i)).toBeInTheDocument();
+       // Check that the file was uploaded and appears in the list.
+       const fileElement = await screen.findByText("hello.png");
+       expect(fileElement).toBeInTheDocument();
 
-        // Simulate clicking the delete button
-        const deleteButtons = screen.getAllByTestId('delete');
-        deleteButtons.forEach(button => fireEvent.click(button));
+        // Check that the file was uploaded and appears in the list.
+        const fileElement2 = await screen.findByText("hello2.png");
+        expect(fileElement2).toBeInTheDocument();
 
-        // Check if the file is removed
-        expect(screen.queryByText(/Uploaded files/i)).not.toBeInTheDocument();
+        // Check that the file count is displayed
+        expect(screen.getByText("Uploaded files (2)")).toBeInTheDocument();
     });
 
-    it("displays the correct number of uploaded files", () => {
-        render(
-            <ThemeProvider theme={theme}>
-                <Home />
-            </ThemeProvider>
-        );
+    it("displays the uploaded image in the dropzone when hovering on the fileElement", async () => {
+        render(<Home />);
 
-        const dropzone = screen.getByText(/Drag & Drop To Upload Files/i).parentElement;
-        const file1 = new File(["dummy content"], "example1.png", { type: "image/png" });
-        const file2 = new File(["dummy content"], "example2.png", { type: "image/png" });
+        // Mock file
+        const file = new File(['hello'], 'hello.png', { type: 'image/png' });
 
-        fireEvent.drop(dropzone!, {
-            dataTransfer: { files: [file1, file2] },
-        });
+        // Find the file input element and upload the file
+        const input = screen.getByLabelText(/browse file/i);
+        userEvent.upload(input, file);
 
-        // Check if the correct number of files is displayed
-        expect(screen.getByText(/Uploaded files \(2\)/i)).toBeInTheDocument();
-    });
+        // Check that the file was uploaded and appears in the list.
+        const fileElement = await screen.findByTestId("file-element");
+        expect(fileElement).toBeInTheDocument();
 
-    it("handles multiple file uploads", () => {
-        render(
-            <ThemeProvider theme={theme}>
-                <Home />
-            </ThemeProvider>
-        );
 
-        const input = screen.getByLabelText(/Browse File/i).querySelector("input");
-        const file1 = new File(["dummy content"], "example1.png", { type: "image/png" });
-        const file2 = new File(["dummy content"], "example2.png", { type: "image/png" });
+        // Hover on the file element
+        fireEvent.mouseEnter(fileElement);
 
-        fireEvent.change(input!, {
-            target: { files: [file1, file2] },
-        });
-
-        // Check if the files are processed and displayed
-        expect(screen.getByText(/Uploaded files \(2\)/i)).toBeInTheDocument();
-    });
-
-    it("displays the uploaded image in the dropzone", () => {
-        render(
-            <ThemeProvider theme={theme}>
-                <Home />
-            </ThemeProvider>
-        );
-
-        const dropzone = screen.getByText(/Drag & Drop To Upload Files/i).parentElement;
-        const file = new File(["dummy content"], "example.png", { type: "image/png" });
-
-        fireEvent.drop(dropzone!, {
-            dataTransfer: { files: [file] },
-        });
-
-        // Check if the uploaded image is displayed in the dropzone
-        expect(screen.getByAltText(/Uploaded file/i)).toBeInTheDocument();
+        // Check that the image is displayed in the dropzone
+        const dropzone = screen.getByTestId("dropzone");
+        expect(screen.getByTestId("hovered-image")).toBeInTheDocument();
     });
 
     it("displays 'No files uploaded' when there are no files", () => {
-        render(
-            <ThemeProvider theme={theme}>
-                <Home />
-            </ThemeProvider>
-        );
+        render(<Home />);
 
-        // Check if the 'No files uploaded' message is displayed
-        expect(screen.getByText(/No files uploaded/i)).toBeInTheDocument();
+        expect(screen.getByText("No files uploaded")).toBeInTheDocument();
     });
 
-    it("displays the submit button when files are uploaded", () => {
-        render(
-            <ThemeProvider theme={theme}>
-                <Home />
-            </ThemeProvider>
-        );
-
-        const dropzone = screen.getByText(/Drag & Drop To Upload Files/i).parentElement;
-        const file = new File(["dummy content"], "example.png", { type: "image/png" });
-
-        fireEvent.drop(dropzone!, {
-            dataTransfer: { files: [file] },
-        });
-
-        // Check if the submit button is displayed
-        expect(screen.getByText(/Submit/i)).toBeInTheDocument();
-    });
 });
