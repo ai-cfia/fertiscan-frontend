@@ -8,12 +8,28 @@ import {
 } from "@mui/material";
 import DeleteIcon from "@mui/icons-material/Delete";
 
+/**
+ * FileElementProps interface to define the props for the FileElement component
+ * @param setDropZoneState: function to set the dropzone state
+ * @param fileName: name of the file
+ * @param fileUrl: url of the file
+ */
 interface FileElementProps {
   setDropZoneState: (show: boolean, url: string) => void;
   fileName: string;
   fileUrl: string;
 }
 
+/**
+ *
+ * FileElement component to display the uploaded file
+ * @param setDropZoneState: function to set the dropzone state
+ * @param fileName: name of the file
+ * @param fileUrl: url of the file
+ * @param handleDelete: function to handle the deletion of the file
+ *
+ * @returns
+ */
 const FileElement: React.FC<
   FileElementProps & { handleDelete: (fileUrl: string) => void }
 > = ({ setDropZoneState, fileName, fileUrl, handleDelete }) => {

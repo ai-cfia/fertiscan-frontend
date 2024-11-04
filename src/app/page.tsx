@@ -13,10 +13,41 @@ import { CloudUpload } from "@mui/icons-material";
 import FileElement from "@/components/FileElement";
 import FileUploaded, { FileType } from "@/classe/File";
 
+/**
+ * Represents the state of a dropzone component.
+ *
+ * @interface DropzoneState
+ * @property {boolean} visible - Indicates whether the dropzone is visible.
+ * @property {string | null} image_url - The URL of the image in the dropzone, or null if no image is present.
+ * @property {number} [fillPercentage] - Optional property representing the fill percentage of the dropzone.
+ */
 interface DropzoneState {
   visible: boolean;
   image_url: string | null;
   fillPercentage?: number;
+}
+
+/**
+ * Interface representing an image load event in a React application.
+ * Extends the React.SyntheticEvent interface with a target of type HTMLImageElement.
+ *
+ * @interface ImageLoadEvent
+ * @extends {React.SyntheticEvent<HTMLImageElement>}
+ * @property {HTMLImageElement} target - The target element of the event, which is an HTMLImageElement.
+ */
+interface ImageLoadEvent extends React.SyntheticEvent<HTMLImageElement> {
+    target: HTMLImageElement;
+}
+
+/**
+ * Interface representing the dimensions of a parent element.
+ *
+ * @property {number} width - The width of the parent element.
+ * @property {number} height - The height of the parent element.
+ */
+interface ParentDimensions {
+    width: number;
+    height: number;
 }
 
 function Home() {
@@ -26,12 +57,26 @@ function Home() {
     image_url: null,
     fillPercentage: 0,
   });
+
   const [uploadedFiles, setUploadedFiles] = useState<FileUploaded[]>([]);
 
+/**
+ * Updates the state of the dropzone component.
+ *
+ * @param {boolean} show - Determines whether the dropzone should be visible.
+ * @param {string} image_url - The URL of the image to be displayed in the dropzone.
+ */
   function handleSetDropzoneState(show: boolean, image_url: string) {
     setDropzoneState({ visible: show, image_url });
   }
 
+
+/**
+ * Handles the drop event for a drag-and-drop operation.
+ * Prevents the default behavior and processes each file dropped.
+ *
+ * @param {React.DragEvent<HTMLDivElement>} event - The drag event triggered by dropping files.
+ */
   async function handleDrop(event: React.DragEvent<HTMLDivElement>) {
     event.preventDefault();
     const files = event.dataTransfer.files;
@@ -42,24 +87,41 @@ function Home() {
     }
   }
 
+/**
+ * Handles the file upload event, processes each selected file, and updates the dropzone state.
+ *
+ * @param {React.ChangeEvent<HTMLInputElement>} event - The file input change event.
+ */
   function handleFileUpload(event: React.ChangeEvent<HTMLInputElement>) {
     let files = event.target.files;
     if (files && files.length > 0) {
       for (let i = 0; i < files.length; i++) {
         processFile(files[i]);
       }
-      // Set the dropzone state to make the uploaded file visible
-      setDropzoneState({
-        visible: true,
-        image_url: URL.createObjectURL(files[0]),
-      });
     }
   }
 
+/**
+ * Handles the drag over event for a div element.
+ *
+ * @param event - The drag event triggered when an element is dragged over the div.
+ * @remarks This function prevents the default behavior of the drag over event.
+ */
   function handleDragOver(event: React.DragEvent<HTMLDivElement>) {
     event.preventDefault();
   }
 
+/**
+ * Processes a file by checking if it already exists in the uploaded files list,
+ * and if not, creates a new file object and detects its type.
+ *
+ * @param {File} file - The file to be processed.
+ * @returns {Promise<void>} - A promise that resolves when the file processing is complete.
+ *
+ * @todo Implement error message when the file already exists.
+ * @todo Implement user link to the uploaded file.
+ * @todo Handle the case when the detected file type is a PDF.
+ */
   async function processFile(file: File) {
     const alreadyExists = uploadedFiles.some(
       (uploadedFile) => uploadedFile.getInfo().name === file.name,
@@ -85,6 +147,11 @@ function Home() {
     }
   }
 
+/**
+ * Handles the deletion of a file from the uploaded files list.
+ *
+ * @param {string} url - The URL of the file to be deleted.
+ */
   function handleDelete(url: string) {
     setUploadedFiles(
       uploadedFiles.filter(
@@ -93,26 +160,32 @@ function Home() {
     );
   }
 
-  interface ImageLoadEvent extends React.SyntheticEvent<HTMLImageElement> {
-    target: HTMLImageElement;
-  }
-
-  interface ParentDimensions {
-    width: number;
-    height: number;
-  }
-
+/**
+ * Handles the image load event and calculates the fill percentage of the image
+ * relative to its parent dimensions. If the width or height percentage of the
+ * image is greater than or equal to 90%, it updates the dropzone state with the
+ * maximum fill percentage. Otherwise, it sets the fill percentage to 0.
+ *
+ * @param {ImageLoadEvent} event - The image load event containing the image dimensions.
+ */
   function handleImageLoad(event: ImageLoadEvent) {
     const { width, height } = event.target;
-    const parentDimensions: ParentDimensions = { width: 0, height: 0 }; // Replace with actual logic to get parent dimensions
+    const dropzoneElement = document.getElementById("dropzone");
+    if (!dropzoneElement) {
+      console.error("Dropzone element not found");
+      return;
+    }
 
+    // Get the dimensions of the dropzone element
+    const { width: parentWidth, height: parentHeight } = dropzoneElement.getBoundingClientRect();
+
+    const parentDimensions: ParentDimensions = { width: parentWidth, height: parentHeight };
     const widthPercentage = (width / parentDimensions.width) * 100;
-    const heightPercentage = (height / parentDimensions.height) * 100;
 
-    if (widthPercentage >= 90 || heightPercentage >= 90) {
+    if (widthPercentage >= 70 ) {
       setDropzoneState((prevState) => ({
         ...prevState,
-        fillPercentage: Math.max(widthPercentage, heightPercentage),
+        fillPercentage: Math.max(widthPercentage, 100),
       }));
     } else {
       setDropzoneState((prevState) => ({
@@ -133,6 +206,8 @@ function Home() {
           sx={{ height: "80vh" }}
         >
           <Grid2
+            id="dropzone"
+            data-testid="dropzone"
             container
             justifyContent="center"
             alignContent="center"
@@ -159,7 +234,6 @@ function Home() {
               }}
               onDragOver={handleDragOver}
               onDrop={handleDrop}
-              data-testid="dropzone"
             >
               {dropzoneState.visible && dropzoneState.image_url ? (
                 <Box
