@@ -11,6 +11,7 @@ const SearchPage: React.FC = () => {
     <html lang="en">
       <body>
         <AppRouterCacheProvider>
+          <ThemeProvider theme={theme}>
             <Box
               sx={{
                 display: "flex",
@@ -26,6 +27,7 @@ const SearchPage: React.FC = () => {
                 This is a place holder for the real search page component
               </Typography>
             </Box>
+          </ThemeProvider>
         </AppRouterCacheProvider>
       </body>
     </html>
