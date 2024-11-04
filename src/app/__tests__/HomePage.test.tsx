@@ -229,6 +229,6 @@ describe("Home Component", () => {
   it("displays 'No files uploaded' when there are no files", () => {
     render(<Home />);
 
-    expect(screen.getByText("No files uploaded")).toBeInTheDocument();
+    expect(screen.getByText("No uploaded files")).toBeInTheDocument();
   });
 });
