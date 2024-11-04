@@ -37,6 +37,8 @@ function Home() {
             for (let i = 0; i < files.length; i++) {
                 processFile(files[i]);
             }
+            // Set the dropzone state to make the uploaded file visible
+            setDropzoneState({ visible: true, image_url: URL.createObjectURL(files[0]) });
         }
     }
 

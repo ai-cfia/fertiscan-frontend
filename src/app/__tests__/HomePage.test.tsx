@@ -1,4 +1,51 @@
 import { render, screen, fireEvent } from "@testing-library/react";
+
+// Mock fetch
+global.fetch = jest.fn((path: string | URL | Request) => {
+  if (typeof path === 'string' && path.endsWith(".png")) {
+    return Promise.resolve({
+      ok: true,
+      status: 200,
+      json: () => Promise.resolve({}),
+      headers: new Headers({
+        "Content-Type": "image/png"
+      }),
+      redirected: false,
+      statusText: "OK",
+      type: "basic",
+      url: "",
+      clone: jest.fn(),
+      body: null,
+      bodyUsed: false,
+      arrayBuffer: jest.fn(),
+      blob: jest.fn(),
+      formData: jest.fn(),
+      text: jest.fn(),
+    });
+  }
+  return Promise.resolve({
+    ok: false,
+    status: 400,
+    json: () => Promise.resolve({ error: "Unsupported file type" }),
+    headers: new Headers({
+      "Content-Type": "application/json"
+    }),
+    redirected: false,
+    statusText: "Bad Request",
+    type: "basic",
+    url: "",
+    clone: jest.fn(),
+    body: null,
+    bodyUsed: false,
+    arrayBuffer: jest.fn(),
+    blob: jest.fn(),
+    formData: jest.fn(),
+    text: jest.fn(),
+  });
+});
+
+// Mock URL.createObjectURL
+global.URL.createObjectURL = jest.fn();
 import { ThemeProvider } from "@mui/material/styles";
 import theme from "@/app/theme";
 import Home from "../page";
@@ -43,7 +90,7 @@ describe("Home Component", () => {
             </ThemeProvider>
         );
 
-        const input = screen.getByLabelText(/Browse File/i).querySelector("input");
+        const input = screen.getByLabelText(/Browse File/i);
         const file = new File(["dummy content"], "example.png", { type: "image/png" });
 
         fireEvent.change(input!, {
