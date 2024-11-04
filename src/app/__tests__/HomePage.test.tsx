@@ -3,7 +3,6 @@ import { render, screen, fireEvent } from "@testing-library/react";
 import userEvent from "@testing-library/user-event";
 import { Response } from "whatwg-fetch";
 import Home from "../page";
-import { hover } from "@testing-library/user-event/dist/cjs/convenience/hover.js";
 
 // Mock the FileElement component
 jest.mock(
