@@ -207,14 +207,14 @@ function Home() {
           sx={{ height: "80vh" }}
         >
           <Grid2
-            id="dropzone"
-            data-testid="dropzone"
             container
             justifyContent="center"
             alignContent="center"
             size={{ xs: 10, md: 7 }}
           >
             <Box
+            data-testid="dropzone"
+            id="dropzone"
               sx={{
                 display: "flex",
                 position: "relative",

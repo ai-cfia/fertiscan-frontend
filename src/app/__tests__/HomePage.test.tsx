@@ -78,7 +78,7 @@ describe("Home Component", () => {
     expect(fileName).toHaveTextContent("hello.png");
 
     // Find and click the delete button
-    const deleteButton = await screen.getByTestId("delete");
+    const deleteButton = screen.getByTestId("delete");
     fireEvent.click(deleteButton);
 
     // Check that the file was removed
