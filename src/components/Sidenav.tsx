@@ -1,3 +1,5 @@
+import React from 'react';
+import Link from 'next/link';
 import {
   Box,
   Drawer,
@@ -16,6 +18,7 @@ interface DrawerMenuProps {
 
 const SideNav = ({ open, onClose }: DrawerMenuProps) => {
   const theme = useTheme();
+
   const drawerContent = (
     <Box
       sx={{
@@ -23,20 +26,22 @@ const SideNav = ({ open, onClose }: DrawerMenuProps) => {
         color: theme.palette.text.primary,
       }}
       role="presentation"
-      onClick={onClose} // Added this to close the drawer when an item is clicked
-      onKeyDown={onClose} // Also close the drawer when a key is pressed (e.g., Esc)
+      onClick={onClose}
     >
       <Toolbar>
-        <Typography>Menu</Typography>
+        <Typography variant="h5">FertiScan</Typography>
       </Toolbar>
       <List>
+      <Link href="/" passHref>
         <ListItemButton>
           <ListItemText primary="Item 1" />
         </ListItemButton>
+      </Link>
+      <Link href="/search" passHref>
         <ListItemButton>
           <ListItemText primary="Item 2" />
         </ListItemButton>
-        {/* Add more items as needed */}
+      </Link>
       </List>
     </Box>
   );
@@ -51,7 +56,6 @@ const SideNav = ({ open, onClose }: DrawerMenuProps) => {
           boxSizing: "border-box",
         },
       }}
-      transitionDuration={0}
       variant="temporary"
       anchor="left"
       open={open}
