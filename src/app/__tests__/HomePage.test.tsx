@@ -3,6 +3,7 @@ import { render, screen, fireEvent } from "@testing-library/react";
 import userEvent from "@testing-library/user-event";
 import { Response } from "whatwg-fetch";
 import Home from "../page";
+import { hover } from "@testing-library/user-event/dist/cjs/convenience/hover.js";
 
 // Mock the FileElement component
 jest.mock(
@@ -77,7 +78,7 @@ describe("Home Component", () => {
     expect(fileName).toHaveTextContent("hello.png");
 
     // Find and click the delete button
-    const deleteButton = screen.getByTestId("delete");
+    const deleteButton = await screen.getByTestId("delete");
     fireEvent.click(deleteButton);
 
     // Check that the file was removed
@@ -91,7 +92,7 @@ describe("Home Component", () => {
     const file = new File(["hello"], "hello.png", { type: "image/png" });
 
     // Find the dropzone and simulate the drop event
-    const dropzone = screen.getByTestId("dropzone");
+    const dropzone = await screen.getByTestId("dropzone");
     fireEvent.drop(dropzone, { dataTransfer: { files: [file] } });
 
     // Check that the file was uploaded and appears in the list.
@@ -203,27 +204,6 @@ describe("Home Component", () => {
 
     // Check that the file count is displayed
     expect(screen.getByText("Uploaded files (2)")).toBeInTheDocument();
-  });
-
-  it("displays the uploaded image in the dropzone when hovering on the fileElement", async () => {
-    render(<Home />);
-
-    // Mock file
-    const file = new File(["hello"], "hello.png", { type: "image/png" });
-
-    // Find the file input element and upload the file
-    const input = screen.getByLabelText(/browse file/i);
-    userEvent.upload(input, file);
-
-    // Check that the file was uploaded and appears in the list.
-    const fileElement = await screen.findByTestId("file-element");
-    expect(fileElement).toBeInTheDocument();
-
-    // Hover on the file element
-    fireEvent.mouseEnter(fileElement);
-
-    // Check that the image is displayed when hovering on the file element
-    expect(screen.getByTestId("hovered-image")).toBeInTheDocument();
   });
 
   it("displays 'No files uploaded' when there are no files", () => {

@@ -238,8 +238,8 @@ function Home() {
             >
               {dropzoneState.visible && dropzoneState.image_url ? (
                 <Box
-                  data-testid="hovered-image"
-                  component="img"
+                data-testid="hovered-image"
+                component="img"
                   src={dropzoneState.image_url}
                   alt="Uploaded file"
                   onLoad={(event: ImageLoadEvent) => handleImageLoad(event)}
