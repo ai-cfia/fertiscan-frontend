@@ -47,17 +47,17 @@ class FileUploaded {
         const contentType = response.headers.get('Content-Type');
 
         if (!contentType) {
-            throw new Error('Content-Type header is missing');
+          throw new Error('Content-Type header is missing');
         }
 
         if (contentType.includes('pdf')) {
-            return { type: "pdf", images: [] };
+          return { type: "pdf", images: [] };
         } else if (contentType.includes('png') || contentType.includes('jpeg') || contentType.includes('jpg')) {
-            return contentType.slice(contentType.indexOf('/') + 1) as FileType;
+          return contentType.slice(contentType.indexOf('/') + 1) as FileType;
         } else {
-            throw new Error('Unsupported file type');
+          throw new Error('Unsupported file type');
         }
-    }
+      }
 
     static newFile(user: User, path:string, file: File): FileUploaded {
         const fileInfo: FileInfo = {

@@ -1,48 +1,21 @@
 import { render, screen, fireEvent } from "@testing-library/react";
+import { fetch, Response } from 'whatwg-fetch';
 
 // Mock fetch
 global.fetch = jest.fn((path: string | URL | Request) => {
-  if (typeof path === 'string' && path.endsWith(".png")) {
-    return Promise.resolve({
-      ok: true,
-      status: 200,
-      json: () => Promise.resolve({}),
-      headers: new Headers({
-        "Content-Type": "image/png"
-      }),
-      redirected: false,
-      statusText: "OK",
-      type: "basic",
-      url: "",
-      clone: jest.fn(),
-      body: null,
-      bodyUsed: false,
-      arrayBuffer: jest.fn(),
-      blob: jest.fn(),
-      formData: jest.fn(),
-      text: jest.fn(),
-    });
-  }
-  return Promise.resolve({
-    ok: false,
-    status: 400,
-    json: () => Promise.resolve({ error: "Unsupported file type" }),
-    headers: new Headers({
-      "Content-Type": "application/json"
-    }),
-    redirected: false,
-    statusText: "Bad Request",
-    type: "basic",
-    url: "",
-    clone: jest.fn(),
-    body: null,
-    bodyUsed: false,
-    arrayBuffer: jest.fn(),
-    blob: jest.fn(),
-    formData: jest.fn(),
-    text: jest.fn(),
+    if (typeof path === 'string' && (path.endsWith('.png') || path.endsWith('.jpg') || path.endsWith('.jpeg'))) {
+      return Promise.resolve(new Response('', {
+        status: 200,
+        headers: new Headers({
+          'Content-Type': path.endsWith('.png') ? 'image/png' : 'image/jpeg',
+        })
+      }));
+    }
+    return Promise.resolve(new Response(JSON.stringify({ error: 'Unsupported file type' }), {
+      status: 400,
+      headers: new Headers({ 'Content-Type': 'application/json' })
+    }));
   });
-});
 
 // Mock URL.createObjectURL
 global.URL.createObjectURL = jest.fn();
@@ -65,23 +38,23 @@ describe("Home Component", () => {
         expect(screen.getByText(/Browse File/i)).toBeInTheDocument();
     });
 
-    it("handles file drop", () => {
+    it("handles file drop", async () => {
         render(
-            <ThemeProvider theme={theme}>
-                <Home />
-            </ThemeProvider>
+          <ThemeProvider theme={theme}>
+            <Home />
+          </ThemeProvider>
         );
 
         const dropzone = screen.getByText(/Drag & Drop To Upload Files/i).parentElement;
         const file = new File(["dummy content"], "example.png", { type: "image/png" });
 
         fireEvent.drop(dropzone!, {
-            dataTransfer: { files: [file] },
+          dataTransfer: { files: [file] },
         });
 
-        // Check if the file is processed and displayed
+        await screen.findByText(/Uploaded files/i);
         expect(screen.getByText(/Uploaded files/i)).toBeInTheDocument();
-    });
+      });
 
     it("handles file upload via input", () => {
         render(
@@ -99,6 +72,22 @@ describe("Home Component", () => {
 
         // Check if the file is processed and displayed
         expect(screen.getByText(/Uploaded files/i)).toBeInTheDocument();
+    });
+
+    it("handles unsupported file types gracefully", async () => {
+        render(
+            <ThemeProvider theme={theme}>
+                <Home />
+            </ThemeProvider>
+        );
+
+        const dropzone = screen.getByText(/Drag & Drop To Upload Files/i).parentElement;
+        const unsupportedFile = new File(["dummy content"], "example.txt", { type: "text/plain" });
+
+        fireEvent.drop(dropzone!, {
+            dataTransfer: { files: [unsupportedFile] },
+        });
+        expect('Unsupported file type').toBeInTheDocument();
     });
 
     it("handles drag over event", () => {
