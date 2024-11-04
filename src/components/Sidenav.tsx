@@ -11,9 +11,10 @@ import {
 
 interface DrawerMenuProps {
   open: boolean;
+  onClose: () => void;
 }
 
-const SideNav = ({ open }: DrawerMenuProps) => {
+const SideNav = ({ open, onClose }: DrawerMenuProps) => {
   const theme = useTheme();
   const drawerContent = (
     <Box
@@ -21,6 +22,9 @@ const SideNav = ({ open }: DrawerMenuProps) => {
         width: 250,
         color: theme.palette.text.primary,
       }}
+      role="presentation"
+      onClick={onClose} // Added this to close the drawer when an item is clicked
+      onKeyDown={onClose} // Also close the drawer when a key is pressed (e.g., Esc)
     >
       <Toolbar>
         <Typography>Menu</Typography>
@@ -47,9 +51,14 @@ const SideNav = ({ open }: DrawerMenuProps) => {
           boxSizing: "border-box",
         },
       }}
-      variant="persistent"
+      transitionDuration={0}
+      variant="temporary"
       anchor="left"
       open={open}
+      onClose={onClose}
+      ModalProps={{
+        keepMounted: true,
+      }}
       PaperProps={{
         sx: {
           backgroundColor: theme.palette.secondary.main,
