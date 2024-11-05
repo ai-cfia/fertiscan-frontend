@@ -3,6 +3,7 @@ import React from "react";
 import { Box, Stack, Typography, useTheme } from "@mui/material";
 import FileElement from "@/components/FileElement";
 import FileUploaded from '@/classe/File';
+import { DropzoneState } from '@/types'; // Adjust the import path as necessary
 
 /**
  * Props for the FileList component.
@@ -12,7 +13,7 @@ import FileUploaded from '@/classe/File';
 interface FileListProps {
   uploadedFiles: FileUploaded[];
   setUploadedFiles: React.Dispatch<React.SetStateAction<FileUploaded[]>>;
-  handleSetDropzoneState: (show: boolean, image_url: string) => void;
+  setDropzoneState: React.Dispatch<React.SetStateAction<DropzoneState>>;
 }
 
 /**
@@ -30,7 +31,7 @@ interface FileListProps {
 const FileList: React.FC<FileListProps> = ({
   uploadedFiles,
   setUploadedFiles,
-  handleSetDropzoneState
+  setDropzoneState
 }) => {
   const theme = useTheme();
 
@@ -40,7 +41,7 @@ const FileList: React.FC<FileListProps> = ({
         (file) => file instanceof FileUploaded && file.getInfo().path !== url,
       ),
     );
-    handleSetDropzoneState(false, "");
+    setDropzoneState({ visible: false, image_url: null });
   };
 
   return (
@@ -122,7 +123,7 @@ const FileList: React.FC<FileListProps> = ({
           {uploadedFiles.map((file, index) => (
             <FileElement
               key={index}
-              setDropZoneState={handleSetDropzoneState}
+              setDropzoneState={setDropzoneState}
               fileName={file.getInfo().name}
               fileUrl={file.getInfo().path}
               handleDelete={() => handleDelete(file.getInfo().path)}

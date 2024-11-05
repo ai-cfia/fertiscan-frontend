@@ -15,10 +15,6 @@ function HomePage() {
   });
   const [uploadedFiles, setUploadedFiles] = useState<FileUploaded[]>([]);
 
-  function handleSetDropzoneState(show: boolean, image_url: string | null) {
-    setDropzoneState({ visible: show, image_url });
-  }
-
   return (
     <ThemeProvider theme={theme}>
       <Box sx={{ paddingTop: "10vh" }}>
@@ -52,7 +48,7 @@ function HomePage() {
             <FileList
               uploadedFiles={uploadedFiles}
               setUploadedFiles={setUploadedFiles}
-              handleSetDropzoneState={handleSetDropzoneState}
+              setDropzoneState={setDropzoneState}
             />
           </Grid2>
           <Grid2

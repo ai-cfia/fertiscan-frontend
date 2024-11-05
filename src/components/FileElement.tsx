@@ -7,6 +7,7 @@ import {
   Divider,
 } from "@mui/material";
 import DeleteIcon from "@mui/icons-material/Delete";
+import { DropzoneState } from "@/types";
 
 /**
  * FileElementProps interface to define the props for the FileElement component
@@ -15,7 +16,7 @@ import DeleteIcon from "@mui/icons-material/Delete";
  * @param fileUrl: url of the file
  */
 interface FileElementProps {
-  setDropZoneState: (show: boolean, url: string) => void;
+  setDropzoneState: React.Dispatch<React.SetStateAction<DropzoneState>>;
   fileName: string;
   fileUrl: string;
 }
@@ -32,7 +33,7 @@ interface FileElementProps {
  */
 const FileElement: React.FC<
   FileElementProps & { handleDelete: (fileUrl: string) => void }
-> = ({ setDropZoneState, fileName, fileUrl, handleDelete }) => {
+> = ({ setDropzoneState, fileName, fileUrl, handleDelete }) => {
   const theme = useTheme();
   const [hovered, setHovered] = useState(false);
 
@@ -41,11 +42,11 @@ const FileElement: React.FC<
       <Grid2
         onMouseEnter={() => {
           setHovered(true);
-          setDropZoneState(true, fileUrl);
+          setDropzoneState({ visible: true, image_url: fileUrl});
         }}
         onMouseLeave={() => {
           setHovered(false);
-          setDropZoneState(false, "");
+          setDropzoneState({ visible: false, image_url: ""});
         }}
         sx={{
           position: "relative",
