@@ -4,7 +4,7 @@ import { Box, Button, Grid2, ThemeProvider, useTheme, Tooltip } from "@mui/mater
 import FileUploaded from "@/classe/File";
 import Dropzone from "@/components/Dropzone";
 import FileList from "@/components/FileList";
-import type { DropzoneState, ImageLoadEvent, ParentDimensions } from "@/types";
+import type { DropzoneState } from "@/types";
 
 function HomePage() {
   const theme = useTheme();
@@ -17,89 +17,6 @@ function HomePage() {
 
   function handleSetDropzoneState(show: boolean, image_url: string | null) {
     setDropzoneState({ visible: show, image_url });
-  }
-
-  async function handleDrop(event: React.DragEvent<HTMLDivElement>) {
-    event.preventDefault();
-    const files = event.dataTransfer.files;
-    if (files && files.length > 0) {
-      for (let i = 0; i < files.length; i++) {
-        processFile(files[i]);
-      }
-    }
-  }
-
-  function handleFileUpload(event: React.ChangeEvent<HTMLInputElement>) {
-    const files = event.target.files;
-    if (files && files.length > 0) {
-      for (let i = 0; i < files.length; i++) {
-        processFile(files[i]);
-      }
-    }
-  }
-
-  async function processFile(file: File) {
-    const alreadyExists = uploadedFiles.some(
-      (uploadedFile) => uploadedFile.getInfo().name === file.name,
-    );
-
-    if (alreadyExists) {
-      // TODO: Implement error message
-      return;
-    }
-
-    const newFile = FileUploaded.newFile(
-      { username: "user" },
-      URL.createObjectURL(file),
-      file,
-    );
-
-    const detectedType = await FileUploaded.detectType(newFile.getInfo().path);
-    if (typeof detectedType === "object" && detectedType.type === "pdf") {
-      // TODO: Handle PDF files
-    } else {
-      setUploadedFiles((prevFiles) => [...prevFiles, newFile]);
-    }
-  }
-
-  function handleDelete(url: string) {
-    setUploadedFiles(
-      uploadedFiles.filter(
-        (file) => file instanceof FileUploaded && file.getInfo().path !== url,
-      ),
-    );
-  }
-
-  /**
-   * Handles the image load event and updates the dropzone state based on the image width.
-   */
-  function handleImageLoad(event: ImageLoadEvent) {
-    const { width } = event.target;
-
-    const dropzoneElement = document.getElementById("dropzone");
-    if (!dropzoneElement) {
-      console.error("Dropzone element not found");
-      return;
-    }
-
-    const { width: parentWidth } = dropzoneElement.getBoundingClientRect();
-    const parentDimensions: ParentDimensions = {
-      width: parentWidth,
-      height: 0,
-    };
-    const widthPercentage = (width / parentDimensions.width) * 100;
-
-    if (widthPercentage >= 70) {
-      setDropzoneState((prevState) => ({
-        ...prevState,
-        fillPercentage: Math.max(widthPercentage, 100),
-      }));
-    } else {
-      setDropzoneState((prevState) => ({
-        ...prevState,
-        fillPercentage: 0,
-      }));
-    }
   }
 
   return (
@@ -119,10 +36,8 @@ function HomePage() {
             size={{ xs: 10, md: 7 }}
           >
             <Dropzone
-              handleFileUpload={handleFileUpload}
-              handleDragOver={(event) => event.preventDefault()}
-              handleDrop={handleDrop}
-              handleImageLoad={handleImageLoad}
+              uploadedFiles={uploadedFiles}
+              setUploadedFiles={setUploadedFiles}
               dropzoneState={dropzoneState}
               setDropzoneState={setDropzoneState}
             />
@@ -136,7 +51,7 @@ function HomePage() {
           >
             <FileList
               uploadedFiles={uploadedFiles}
-              handleDelete={handleDelete}
+              setUploadedFiles={setUploadedFiles}
               handleSetDropzoneState={handleSetDropzoneState}
             />
           </Grid2>

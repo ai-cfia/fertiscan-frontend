@@ -3,40 +3,110 @@ import React from 'react';
 import { Box, Button, Typography, useTheme } from '@mui/material';
 import { CloudUpload } from '@mui/icons-material';
 import type { ImageLoadEvent, DropzoneState } from '@/types';
+import FileUploaded from "@/classe/File";
 
 /**
  * Props for the Dropzone component.
  *
  * @interface DropzoneProps
- *
- * @property {function} handleFileUpload - Function to handle file upload events.
- * @property {function} handleDragOver - Function to handle drag over events.
- * @property {function} handleDrop - Function to handle drop events.
- * @property {function} handleImageLoad - Function to handle image load events.
- * @property {DropzoneState} dropzoneState - State of the dropzone.
- * @property {React.Dispatch<React.SetStateAction<DropzoneState>>} setDropzoneState - Function to update the dropzone state.
  */
 interface DropzoneProps {
-  handleFileUpload: (event: React.ChangeEvent<HTMLInputElement>) => void;
-  handleDragOver: (event: React.DragEvent<HTMLDivElement>) => void;
-  handleDrop: (event: React.DragEvent<HTMLDivElement>) => void;
-  handleImageLoad: (event: ImageLoadEvent) => void;
+  uploadedFiles: FileUploaded[];
+  setUploadedFiles: React.Dispatch<React.SetStateAction<FileUploaded[]>>;
   dropzoneState: DropzoneState;
   setDropzoneState: React.Dispatch<React.SetStateAction<DropzoneState>>;
 }
 
 /**
  * Dropzone component for handling file uploads via drag-and-drop or file selection.
+ *
+ * @property {FileUploaded[]} uploadedFiles - An array of uploaded files.
+ * @property {React.Dispatch<React.SetStateAction<FileUploaded[]>>} setUploadedFiles - Function to update the uploaded files state.
+ * @property {DropzoneState} dropzoneState - State of the dropzone.
+ * @property {React.Dispatch<React.SetStateAction<DropzoneState>>} setDropzoneState - Function to update the dropzone state.
  */
 const Dropzone: React.FC<DropzoneProps> = ({
-  handleFileUpload,
-  handleDragOver,
-  handleDrop,
-  handleImageLoad,
+  uploadedFiles,
+  setUploadedFiles,
   dropzoneState,
   setDropzoneState
 }) => {
   const theme = useTheme();
+
+  function handleDragOver(event: React.DragEvent<HTMLDivElement>) {
+    event.preventDefault();
+  }
+
+  async function handleDrop(event: React.DragEvent<HTMLDivElement>) {
+    event.preventDefault();
+    const files = event.dataTransfer.files;
+    if (files && files.length > 0) {
+      for (let i = 0; i < files.length; i++) {
+        processFile(files[i]);
+      }
+    }
+  }
+
+  function handleFileUpload(event: React.ChangeEvent<HTMLInputElement>) {
+    const files = event.target.files;
+    if (files && files.length > 0) {
+      for (let i = 0; i < files.length; i++) {
+        processFile(files[i]);
+      }
+    }
+  }
+
+  async function processFile(file: File) {
+    const alreadyExists = uploadedFiles.some(
+      (uploadedFile) => uploadedFile.getInfo().name === file.name,
+    );
+
+    if (alreadyExists) {
+      // TODO: Implement error message
+      return;
+    }
+
+    const newFile = FileUploaded.newFile(
+      { username: "user" },
+      URL.createObjectURL(file),
+      file,
+    );
+
+    const detectedType = await FileUploaded.detectType(newFile.getInfo().path);
+    if (typeof detectedType === "object" && detectedType.type === "pdf") {
+      // TODO: Handle PDF files
+    } else {
+      setUploadedFiles((prevFiles) => [...prevFiles, newFile]);
+    }
+  }
+
+  /**
+   * Handles the image load event and updates the dropzone state based on the image width.
+   */
+  function handleImageLoad(event: ImageLoadEvent) {
+    const { width } = event.target;
+
+    const dropzoneElement = document.getElementById("dropzone");
+    if (!dropzoneElement) {
+      console.error("Dropzone element not found");
+      return;
+    }
+
+    const { width: parentWidth } = dropzoneElement.getBoundingClientRect();
+    const widthPercentage = (width / parentWidth) * 100;
+
+    if (widthPercentage >= 70) {
+      setDropzoneState((prevState) => ({
+        ...prevState,
+        fillPercentage: Math.max(widthPercentage, 100),
+      }));
+    } else {
+      setDropzoneState((prevState) => ({
+        ...prevState,
+        fillPercentage: 0,
+      }));
+    }
+  }
 
   return (
     <Box

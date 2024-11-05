@@ -2,21 +2,16 @@
 import React from "react";
 import { Box, Stack, Typography, useTheme } from "@mui/material";
 import FileElement from "@/components/FileElement";
-import type { DropzoneState } from '@/types';
 import FileUploaded from '@/classe/File';
 
 /**
  * Props for the FileList component.
  *
  * @interface FileListProps
- *
- * @property {FileUploaded[]} uploadedFiles - An array of uploaded files.
- * @property {(url: string) => void} handleDelete - Function to handle the deletion of a file by its URL.
- * @property {(show: boolean, image_url: string) => void} handleSetDropzoneState - Function to set the state of the dropzone, including whether to show it and the URL of the image.
  */
 interface FileListProps {
   uploadedFiles: FileUploaded[];
-  handleDelete: (url: string) => void;
+  setUploadedFiles: React.Dispatch<React.SetStateAction<FileUploaded[]>>;
   handleSetDropzoneState: (show: boolean, image_url: string) => void;
 }
 
@@ -27,13 +22,26 @@ interface FileListProps {
  * @component
  * @param {FileListProps} props - The properties for the FileList component.
  * @param {Array} props.uploadedFiles - An array of uploaded file objects.
- * @param {Function} props.handleDelete - Function to handle the deletion of a file.
+ * @param {Function} props.setUploadedFiles - Function to update the uploaded files state.
  * @param {Function} props.handleSetDropzoneState - Function to set the state of the dropzone.
  *
  * @returns {JSX.Element} The rendered FileList component.
  */
-const FileList: React.FC<FileListProps> = ({ uploadedFiles, handleDelete, handleSetDropzoneState }) => {
+const FileList: React.FC<FileListProps> = ({
+  uploadedFiles,
+  setUploadedFiles,
+  handleSetDropzoneState
+}) => {
   const theme = useTheme();
+
+  const handleDelete = (url: string) => {
+    setUploadedFiles(
+      uploadedFiles.filter(
+        (file) => file instanceof FileUploaded && file.getInfo().path !== url,
+      ),
+    );
+    handleSetDropzoneState(false, "");
+  };
 
   return (
     <Box
@@ -117,10 +125,7 @@ const FileList: React.FC<FileListProps> = ({ uploadedFiles, handleDelete, handle
               setDropZoneState={handleSetDropzoneState}
               fileName={file.getInfo().name}
               fileUrl={file.getInfo().path}
-              handleDelete={() => {
-                handleDelete(file.getInfo().path);
-                handleSetDropzoneState(false, "");
-              }}
+              handleDelete={() => handleDelete(file.getInfo().path)}
             />
           ))}
         </Stack>
