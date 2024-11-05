@@ -50,7 +50,7 @@ const FileList: React.FC<FileListProps> = ({ uploadedFiles, handleDelete, handle
         p: 1,
         backgroundSize: "contain",
         backgroundColor: "transparent",
-        width: "100%",
+        width: {xs:"90%", md:"100%"},
         height: "90%",
         minHeight: { xs: "350px", md: "400px" },
         overflowY: "auto",

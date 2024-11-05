@@ -1,6 +1,6 @@
 "use client";
 import React, { useState } from "react";
-import { Box, Button, Grid2, ThemeProvider, useTheme } from "@mui/material";
+import { Box, Button, Grid2, ThemeProvider, useTheme, Tooltip } from "@mui/material";
 import FileUploaded from "@/classe/File";
 import Dropzone from "@/components/Dropzone";
 import FileList from "@/components/FileList";
@@ -112,7 +112,7 @@ function HomePage() {
           <Grid2
             container
             justifyContent="center"
-            alignContent="center"
+            alignContent="end"
             size={{ xs: 10, md: 7 }}
           >
             <Dropzone
@@ -128,7 +128,8 @@ function HomePage() {
             container
             size={{ xs: 10, md: 4 }}
             display={"flex"}
-            alignContent="center"
+            alignContent="end"
+            justifyContent="center"
           >
             <FileList
               uploadedFiles={uploadedFiles}
@@ -140,21 +141,25 @@ function HomePage() {
             size={{ xs: 10, md: 7 }}
             sx={{ display: { xs: "none", md: "flex" } }}
           ></Grid2>
-          <Grid2 size={{ xs: 10, md: 4 }}>
-            {uploadedFiles.length > 0 && (
+          <Grid2 size={{ xs: 10, md: 4 }} justifyContent="center" display={{xs:"flex", md:"flow"}}
+          >
+            <Tooltip data-testid="hint-submit-button-disabled" title="You need to upload a minimum of 1 file to start analyse" sx={{fontSize:"1rem"}}>
+              <span style={{ display:"flex", justifyContent:"center", width: '100%' }}>
               <Button
                 data-testid="submit-button"
                 variant="contained"
                 color="secondary"
+                disabled={uploadedFiles.length === 0}
                 fullWidth
                 sx={{
-                  width: "100%",
+                  width: {xs:"90%", md:"100%"},
                   minWidth: "133.44px",
                 }}
               >
                 Submit
               </Button>
-            )}
+              </span>
+              </Tooltip>
           </Grid2>
         </Grid2>
       </Box>
