@@ -70,6 +70,9 @@ function HomePage() {
     );
   }
 
+  /**
+   * Handles the image load event and updates the dropzone state based on the image width.
+   */
   function handleImageLoad(event: ImageLoadEvent) {
     const { width } = event.target;
 
