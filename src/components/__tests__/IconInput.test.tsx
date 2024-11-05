@@ -4,6 +4,7 @@ import "@testing-library/jest-dom";
 import { fireEvent, render, screen } from "@testing-library/react";
 import IconInput from "@/components/IconInput";
 import BugReportIcon from '@mui/icons-material/BugReport';
+import React from "react";
 
 describe("IconInput Component", () => {
   let mockValue = ""
@@ -25,15 +26,30 @@ describe("IconInput Component", () => {
       </ThemeProvider>,
     );
 
+    const input = screen.getByTestId("input");
+
     // Check if the icon passed in the props is rendered
     expect(screen.getByTestId("test-icon")).toBeInTheDocument();
 
     // Check if the input is rendered
-    expect(screen.getByTestId("input")).toBeInTheDocument();
+    expect(input).toBeInTheDocument();
 
     // Check that there is no showPassword button even when the input is focussed
-    fireEvent.click(screen.getByTestId("input"))
+    fireEvent.click(input)
     expect(screen.queryByTestId("VisibilityIcon")).not.toBeInTheDocument();
+
+
+
+    fireEvent.focus(input);
+    
+    const nativeInputValueSetter = Object.getOwnPropertyDescriptor(
+      window.HTMLInputElement.prototype,
+      'value')!.set;
+    nativeInputValueSetter!.call((input as HTMLInputElement), "A");
+    const event = new Event('input', { bubbles: true });
+    input.dispatchEvent(event)
+    expect(mockChangeInputValue).toHaveBeenCalled();
+    expect(mockValue).toBe("A");
 
   });
 
