@@ -11,9 +11,6 @@ import { DropzoneState } from "@/types";
 
 /**
  * FileElementProps interface to define the props for the FileElement component
- * @param setDropZoneState: function to set the dropzone state
- * @param fileName: name of the file
- * @param fileUrl: url of the file
  */
 interface FileElementProps {
   setDropzoneState: React.Dispatch<React.SetStateAction<DropzoneState>>;
@@ -36,6 +33,11 @@ const FileElement: React.FC<
 > = ({ setDropzoneState, fileName, fileUrl, handleDelete }) => {
   const theme = useTheme();
   const [hovered, setHovered] = useState(false);
+
+  const isValidObjectURL = (url: string) => {
+    const pattern = /^blob:http:\/\/|https:\/\/[a-zA-Z0-9\-_.]+\/[a-zA-Z0-9\-_.]+$/;
+    return pattern.test(url);
+  };
 
   return (
     <>
@@ -72,16 +74,18 @@ const FileElement: React.FC<
             alignItems: "center",
           }}
         >
-          <img
-            src={fileUrl}
-            alt="uploaded file"
-            style={{
-              maxWidth: "100%",
-              maxHeight: "90px",
-              objectFit: "fill",
-              padding: "5px",
-            }}
-          />
+          {isValidObjectURL(fileUrl) && (
+            <img
+              src={fileUrl}
+              alt="uploaded file"
+              style={{
+                maxWidth: "100%",
+                maxHeight: "90px",
+                objectFit: "fill",
+                padding: "5px",
+              }}
+              />
+            )}
         </Grid2>
         <Divider
           orientation="vertical"
