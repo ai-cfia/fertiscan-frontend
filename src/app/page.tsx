@@ -6,7 +6,7 @@ import Dropzone from "@/components/Dropzone";
 import FileList from "@/components/FileList";
 import type { DropzoneState, ImageLoadEvent, ParentDimensions } from "@/types";
 
-function Home() {
+function HomePage() {
   const theme = useTheme();
   const [dropzoneState, setDropzoneState] = useState<DropzoneState>({
     visible: false,
@@ -36,10 +36,6 @@ function Home() {
         processFile(files[i]);
       }
     }
-  }
-
-  function handleDragOver(event: React.DragEvent<HTMLDivElement>) {
-    event.preventDefault();
   }
 
   async function processFile(file: File) {
@@ -121,7 +117,7 @@ function Home() {
           >
             <Dropzone
               handleFileUpload={handleFileUpload}
-              handleDragOver={handleDragOver}
+              handleDragOver={(event) => event.preventDefault()}
               handleDrop={handleDrop}
               handleImageLoad={handleImageLoad}
               dropzoneState={dropzoneState}
@@ -165,5 +161,4 @@ function Home() {
     </ThemeProvider>
   );
 }
-
-export default Home;
+export default HomePage;

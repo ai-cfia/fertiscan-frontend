@@ -2,7 +2,7 @@
 import { render, screen, fireEvent } from "@testing-library/react";
 import userEvent from "@testing-library/user-event";
 import { Response } from "whatwg-fetch";
-import Home from "../page";
+import HomePage from "../page";
 
 // Mock the FileElement component
 jest.mock(
@@ -58,9 +58,9 @@ global.fetch = jest.fn((path: string | URL | Request) => {
   );
 });
 
-describe("Home Component", () => {
+describe("HomePage Component", () => {
   it("should allow file uploads and display the uploaded files", async () => {
-    render(<Home />);
+    render(<HomePage />);
 
     // Mock file
     const file = new File(["hello"], "hello.png", { type: "image/png" });
@@ -85,7 +85,7 @@ describe("Home Component", () => {
   });
 
   it("should allow file uploads via drag and drop", async () => {
-    render(<Home />);
+    render(<HomePage />);
 
     // Mock file
     const file = new File(["hello"], "hello.png", { type: "image/png" });
@@ -110,7 +110,7 @@ describe("Home Component", () => {
   });
 
   it("should allow file upload via input", async () => {
-    render(<Home />);
+    render(<HomePage />);
 
     // Mock file
     const file = new File(["hello"], "hello.png", { type: "image/png" });
@@ -135,13 +135,13 @@ describe("Home Component", () => {
   });
 
   it("The button submit should not be visible when no file is uploaded", () => {
-    render(<Home />);
+    render(<HomePage />);
 
     expect(screen.queryByTestId("submit-button")).not.toBeInTheDocument();
   });
 
   it("The button submit should be visible when a file is uploaded", async () => {
-    render(<Home />);
+    render(<HomePage />);
 
     // Mock file
     const file = new File(["hello"], "hello.png", { type: "image/png" });
@@ -162,7 +162,7 @@ describe("Home Component", () => {
   });
 
   it("The file count should be displayed when a file is uploaded", async () => {
-    render(<Home />);
+    render(<HomePage />);
 
     // Mock file
     const file = new File(["hello"], "hello.png", { type: "image/png" });
@@ -183,7 +183,7 @@ describe("Home Component", () => {
   });
 
   it("The file count should be updated when multiple files are uploaded", async () => {
-    render(<Home />);
+    render(<HomePage />);
 
     // Mock file
     const file = new File(["hello"], "hello.png", { type: "image/png" });
@@ -206,7 +206,7 @@ describe("Home Component", () => {
   });
 
   it("displays 'No files uploaded' when there are no files", () => {
-    render(<Home />);
+    render(<HomePage />);
 
     expect(screen.getByText("No uploaded files")).toBeInTheDocument();
   });
