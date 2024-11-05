@@ -33,7 +33,7 @@ describe("IconInput Component", () => {
 
     // Check that there is no showPassword button even when the input is focussed
     fireEvent.click(screen.getByTestId("input"))
-    expect(screen.queryByTestId("show-password")).not.toBeInTheDocument();
+    expect(screen.queryByTestId("VisibilityIcon")).not.toBeInTheDocument();
 
   });
 
@@ -54,7 +54,7 @@ describe("IconInput Component", () => {
     // Check if the input is a password input
     expect(realInput).toHaveAttribute('type','password');
 
-    const showPassword = screen.getByTestId("show-password");
+    const showPassword = screen.getByTestId("VisibilityIcon");
     // Check that when the input is not focussed, the show password button is not visible
     expect(showPassword).not.toBeVisible();
 
