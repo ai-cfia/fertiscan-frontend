@@ -5,11 +5,14 @@ import {
   Drawer,
   List,
   ListItemButton,
+  ListItemIcon,
   ListItemText,
   Toolbar,
   Typography,
   useTheme,
 } from "@mui/material";
+import SearchIcon from '@mui/icons-material/Search';
+import HomeIcon from '@mui/icons-material/Home';
 
 interface DrawerMenuProps {
   open: boolean;
@@ -34,12 +37,18 @@ const SideNav = ({ open, onClose }: DrawerMenuProps) => {
       <List>
       <Link href="/" passHref>
         <ListItemButton>
-          <ListItemText primary="Item 1" />
+          <ListItemIcon>
+            <HomeIcon />
+          </ListItemIcon>
+          <ListItemText primary="New inspection" />
         </ListItemButton>
       </Link>
       <Link href="/search" passHref>
         <ListItemButton>
-          <ListItemText primary="Item 2" />
+          <ListItemIcon>
+            <SearchIcon />
+          </ListItemIcon>
+          <ListItemText primary="Search" />
         </ListItemButton>
       </Link>
       </List>
