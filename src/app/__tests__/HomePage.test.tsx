@@ -134,12 +134,6 @@ describe("HomePage Component", () => {
     expect(screen.queryByTestId("file-element")).not.toBeInTheDocument();
   });
 
-  it("The button submit should not be visible when no file is uploaded", () => {
-    render(<HomePage />);
-
-    expect(screen.queryByTestId("submit-button")).not.toBeInTheDocument();
-  });
-
   it("The button submit should be visible when a file is uploaded", async () => {
     render(<HomePage />);
 
@@ -209,5 +203,25 @@ describe("HomePage Component", () => {
     render(<HomePage />);
 
     expect(screen.getByText("No uploaded files")).toBeInTheDocument();
+  });
+
+  it("The button submit should be deactivated when no file is uploaded", () => {
+    render(<HomePage />);
+
+    // Check that the submit button is disabled
+    const submitButton = screen.getByTestId("submit-button");
+    expect(submitButton).toBeDisabled();
+  });
+
+  it("The toolTip should showUp only when the button is disabled", () => {
+    render(<HomePage />);
+
+    // Check that the submit button is disabled
+    const submitButton = screen.getByTestId("submit-button");
+    expect(submitButton).toBeDisabled();
+
+    // Check that the tooltip is visible
+    const tooltip = screen.getByTestId("hint-submit-button-disabled");
+    expect(tooltip).toBeInTheDocument();
   });
 });
