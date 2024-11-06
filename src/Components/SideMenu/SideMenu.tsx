@@ -58,17 +58,17 @@ function SideMenu() {
     if (isAuthenticated()) {
       navigate("/");
     } else {
-      navigate("/Settings");
+      navigate("/settings");
     }
   };
 
   const goToSettings = () => {
     saveState();
-    navigate("/Settings");
+    navigate("/settings");
   };
   const goToSavedList = () => {
     saveState();
-    navigate("/Saved");
+    navigate("/saved");
   };
 
   MenuChannel.on("OpenMenu", () => {

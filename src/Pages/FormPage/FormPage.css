@@ -18,18 +18,19 @@
   align-items: start;
 }
 
+
 @media only screen and (min-width: 1230px) {
   .formPage-container {
     grid-template-areas: "pics data progress-bar";
     grid-template-columns: 40% 53% 12%;
     justify-items: center;
   }
-  .carousel-wrapper {
+  /* .carousel-wrapper {
     grid-area: pics;
     margin-left: 15%!important;
     margin-top: 30%;
     max-width: 80% !important;
-  }
+  } */
 
   .formPage-container .carousel-wrapper{
     grid-area: pics;
@@ -83,6 +84,7 @@
     height: 50%!important;
   }
 }
+
 
 @media only screen and (min-width: 1230px) {
   .carousel-wrapper {
