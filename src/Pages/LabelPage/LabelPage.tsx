@@ -1,11 +1,12 @@
 import axios from "axios";
 import merge from "deepmerge";
 import { useEffect, useState } from "react";
-import { useParams } from "react-router-dom";
+import { useNavigate, useParams } from "react-router-dom";
 import Label from "../../Components/Label/Label";
 import { createDefaultInspection } from "../../interfaces/Inspection";
 import Data from "../../Model/Data-Model";
 import { useAlert } from "../../Utils/AlertContext";
+import { isAuthenticated } from "../../Utils/Auth/AuthUtil";
 import { combineMerge } from "../../Utils/deepMerge";
 import { FertiliserForm, populateFromJSON } from "../../Utils/FormCreator";
 import "./LabelPage.css";
@@ -15,6 +16,12 @@ function LabelPage() {
   const labelId = params.labelId;
   const [label, setLabel] = useState<Data>(FertiliserForm());
   const { showAlert } = useAlert();
+  const navigate = useNavigate();
+
+  useEffect(() => {
+    if (!isAuthenticated()) navigate("/settings");
+  }, [navigate]);
+
   useEffect(() => {
     if (process.env.REACT_APP_ACTIVATE_USING_JSON == "true") {
       fetch("/debug/" + labelId + ".json")

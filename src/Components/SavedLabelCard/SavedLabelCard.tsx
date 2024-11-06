@@ -14,8 +14,8 @@ const SavedLabelCard: React.FC<SavedLabelCardProps> = ({ label }) => {
 
   const handleClick = () => {
     return () => {
-      console.log("Clicked" + label.inspection_id);
-      navigate(`/label/${label.inspection_id}`);
+      console.log("Clicked" + label.id);
+      navigate(`/label/${label.id}`);
     };
   };
 

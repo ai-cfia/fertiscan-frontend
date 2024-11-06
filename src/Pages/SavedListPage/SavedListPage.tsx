@@ -1,6 +1,8 @@
 import { useEffect, useRef, useState } from "react";
 import ReactPaginate from "react-paginate";
+import { useNavigate } from "react-router-dom";
 import SavedLabelCard from "../../Components/SavedLabelCard/SavedLabelCard";
+import { isAuthenticated } from "../../Utils/Auth/AuthUtil";
 import "./Pagination.css";
 import "./SavedListPage.css";
 
@@ -32,6 +34,11 @@ const SavedListPage = () => {
       listContainer.current.scrollTo({ top: 0, behavior: "smooth" });
     }
   };
+  const navigate = useNavigate();
+
+  useEffect(() => {
+    if (!isAuthenticated()) navigate("/settings");
+  }, [navigate]);
 
   // Effect for fetching labels data
   useEffect(() => {
@@ -54,23 +61,7 @@ const SavedListPage = () => {
           if (data.error) {
             setLabels([]);
           } else {
-            setLabels(
-              // eslint-disable-next-line
-              data.map((label: any) => {
-                return {
-                  inspection_id: label[0],
-                  uploaded_at: label[1],
-                  updated_at: label[2],
-                  sample_id: label[3],
-                  picture_set_id: label[4],
-                  label_info_id: label[5],
-                  label_info_name: label[6],
-                  label_info_manufacturer_info_id: label[7],
-                  company_info_id: label[8],
-                  company_info_name: label[9],
-                };
-              }),
-            );
+            setLabels(data);
           }
           setFetching(false);
         });
