@@ -1,5 +1,5 @@
 interface LabelPreview {
-  inspection_id: string;
+  id: string;
   uploaded_at: string;
   updated_at: string;
   sample_id: string;

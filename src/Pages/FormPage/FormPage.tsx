@@ -80,7 +80,7 @@ const FormPage = () => {
     const formData = new FormData();
     for (let i = 0; i < blobs.length; i++) {
       const blob = await fetch(blobs[i].blob).then((r) => r.blob());
-      formData.append("images", blob, blobs[i].name);
+      formData.append("files", blob, blobs[i].name);
     }
 
     const auth = document.cookie.split("auth=")[1].split(";")[0];
@@ -89,11 +89,6 @@ const FormPage = () => {
     return fetch(api_url + "/analyze", {
       method: "POST",
       headers: {
-        "Access-Control-Allow-Origin": "*",
-        "Access-Control-Allow-Credentials": "true",
-        "Access-Control-Allow-Headers":
-          "Origin, Content-Type, X-Amz-Date, Authorization, X-Api-Key, X-Amz-Security-Token, locale",
-        "Access-Control-Allow-Methods": "GET, POST",
         Authorization: "Basic " + auth,
       },
       body: formData,
@@ -105,17 +100,14 @@ const FormPage = () => {
         return response.json();
       })
       .then((labelAnalysisData) => {
+        formData.append("label_data", JSON.stringify(labelAnalysisData));
+
         return fetch(api_url + "/inspections", {
           method: "POST",
           headers: {
-            "Access-Control-Allow-Origin": "*",
-            "Access-Control-Allow-Credentials": "true",
-            "Access-Control-Allow-Headers":
-              "Origin, Content-Type, X-Amz-Date, Authorization, X-Api-Key, X-Amz-S",
-            "Content-Type": "application/json",
             Authorization: "Basic " + auth,
           },
-          body: JSON.stringify(labelAnalysisData),
+          body: formData,
         }).then((inspectionResponse) => {
           if (!inspectionResponse.ok) {
             throw new Error(`HTTP error! status: ${inspectionResponse.status}`);
