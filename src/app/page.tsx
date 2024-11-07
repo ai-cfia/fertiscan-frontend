@@ -18,15 +18,6 @@ function HomePage() {
 
   return (
     <Box sx={{ paddingTop: "10vh" }}>
-      <Button
-        disabled={Boolean(alert)}
-        variant="outlined"
-        onClick={() =>
-          showAlert('Click the close icon to see the Collapse transition in action! Click the close icon to see the Collapse transition in action! Click the close icon to see the Collapse transition in action! Click the close icon to see the Collapse transition in action! Click the close icon to see the Collapse transition in action! Click the close icon to see the Collapse transition in action! Click the close icon to see the Collapse transition in action! Click the close icon to see the Collapse transition in action! Click the close icon to see the Collapse transition in action! Click the close icon to see the Collapse transition in action! Click the close icon to see the Collapse transition in action!', 'success')
-        }
-      >
-        Re-open
-      </Button>
       <Grid2
         container
         rowSpacing={1}
