@@ -9,6 +9,7 @@ interface IconInputProps {
   type: string;
   value: string;
   setValue: (value: string) => void;
+  dataTestId?: string;
 }
 
 /**
@@ -23,6 +24,7 @@ const IconInput = ({
   type,
   value,
   setValue,
+  dataTestId,
 }: IconInputProps) => {
   const [hasFocus, setFocus] = useState(false);
   const [trueType, setTrueType] = useState(type);
@@ -77,7 +79,7 @@ const IconInput = ({
     <></>
 
   return (
-    <FormControl variant="standard">
+    <FormControl variant="standard" data-testid={dataTestId}>
       <Input
         id={id}
         placeholder={placeholder}
