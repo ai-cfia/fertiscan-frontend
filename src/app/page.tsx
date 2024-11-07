@@ -1,11 +1,10 @@
 "use client";
-import React, { useState } from "react";
-import { Box, Button, Grid2, Tooltip } from "@mui/material";
 import FileUploaded from "@/classe/File";
 import Dropzone from "@/components/Dropzone";
 import FileList from "@/components/FileList";
 import type { DropzoneState } from "@/types";
-import useAlertStore from "@/stores/alertStore";
+import { Box, Button, Grid2, Tooltip } from "@mui/material";
+import { useState } from "react";
 
 function HomePage() {
   const [dropzoneState, setDropzoneState] = useState<DropzoneState>({
@@ -14,7 +13,6 @@ function HomePage() {
     fillPercentage: 0,
   });
   const [uploadedFiles, setUploadedFiles] = useState<FileUploaded[]>([]);
-  const { alert, showAlert } = useAlertStore();
 
   return (
     <Box sx={{ paddingTop: "10vh" }}>

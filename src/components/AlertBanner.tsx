@@ -1,24 +1,25 @@
 "use client";
-import CloseIcon from '@mui/icons-material/Close';
-import Alert from '@mui/material/Alert';
-import Box from '@mui/material/Box';
-import Collapse from '@mui/material/Collapse';
-import IconButton from '@mui/material/IconButton';
-import Typography from '@mui/material/Typography';
-import { useEffect, useRef } from 'react';
-import useAlertStore from '../stores/alertStore';
+import CloseIcon from "@mui/icons-material/Close";
+import Alert from "@mui/material/Alert";
+import Box from "@mui/material/Box";
+import Collapse from "@mui/material/Collapse";
+import IconButton from "@mui/material/IconButton";
+import Typography from "@mui/material/Typography";
+import { useCallback, useEffect, useRef } from "react";
+import useAlertStore from "../stores/alertStore";
 
-const AUTO_DISMISS_TIME = Number(process.env.NEXT_PUBLIC_AUTO_DISMISS_TIME) || 5000;
+const AUTO_DISMISS_TIME =
+  Number(process.env.NEXT_PUBLIC_AUTO_DISMISS_TIME) || 5000;
 
 const AlertBanner: React.FC = () => {
   const { alert, hideAlert } = useAlertStore();
   const autoDismissTimerRef = useRef<NodeJS.Timeout | null>(null);
 
-  const startAutoDismissTimer = () => {
+  const startAutoDismissTimer = useCallback(() => {
     autoDismissTimerRef.current = setTimeout(() => {
       hideAlert();
     }, AUTO_DISMISS_TIME);
-  };
+  }, [hideAlert]);
 
   const clearAutoDismissTimer = () => {
     if (autoDismissTimerRef.current) {
@@ -32,10 +33,10 @@ const AlertBanner: React.FC = () => {
       startAutoDismissTimer();
     }
     return () => clearAutoDismissTimer();
-  }, [alert, hideAlert]);
+  }, [alert, hideAlert, startAutoDismissTimer]);
 
   return (
-    <Box sx={{ width: '100%' }}>
+    <Box sx={{ width: "100%" }}>
       <Collapse in={Boolean(alert)}>
         {alert && (
           <Alert
@@ -43,23 +44,20 @@ const AlertBanner: React.FC = () => {
             onMouseEnter={clearAutoDismissTimer}
             onMouseLeave={startAutoDismissTimer}
             action={
-              <IconButton
-                size="small"
-                onClick={hideAlert}
-              >
+              <IconButton size="small" onClick={hideAlert}>
                 <CloseIcon color={alert.type} />
               </IconButton>
             }
           >
             <Typography
-              variant='body2'
-              color='inherit'
+              variant="body2"
+              color="inherit"
               sx={{
-                display: '-webkit-box',
+                display: "-webkit-box",
                 WebkitLineClamp: 2,
-                WebkitBoxOrient: 'vertical',
-                overflow: 'hidden',
-                textOverflow: 'ellipsis',
+                WebkitBoxOrient: "vertical",
+                overflow: "hidden",
+                textOverflow: "ellipsis",
               }}
             >
               {alert.message}
