@@ -3,24 +3,15 @@ import { ThemeProvider } from "@mui/material/styles";
 import "@testing-library/jest-dom";
 import { fireEvent, render, screen } from "@testing-library/react";
 import LoginModal from "@/components/LoginModal";
+import { act } from "react";
 
 describe("LoginModal Component", () => {
 
   // eslint-disable-next-line @typescript-eslint/no-unused-vars
-  const mockErrorLogin = jest.fn((username:string,password:string)=>{
-    return new Error("User "+username+" was not found").message
-  });
+  const mockErrorLogin = jest.fn((username:string,password:string)=>"User "+username+" was not found");
   // eslint-disable-next-line @typescript-eslint/no-unused-vars
-  const mockErrorSignup = jest.fn((username:string,password:string,confirm:string)=>{
-    return new Error("User "+username+" already exists").message
-  });
+  const mockErrorSignup = jest.fn((username:string,password:string,confirm:string)=>"User "+username+" already exists");
 
-
-
-  beforeEach(() => {
-    mockErrorLogin.mockReset();
-    mockErrorSignup.mockReset();
-  });
 
   it("renders a LoginModal component and check that the login features and only them are present", ()=>{
 
@@ -119,7 +110,7 @@ describe("LoginModal Component", () => {
     expect(screen.getByTestId("modal-submit")).not.toBeDisabled();
   });
 
-  it("checks that the error message is displayed when the login fails", ()=>{
+  it("checks that the error message is displayed when the login fails (waits 200ms for state)", async ()=>{
     render(
       <ThemeProvider theme={theme}>
         <LoginModal isOpen={true} login={mockErrorLogin} signup={mockErrorSignup}/>
@@ -130,17 +121,18 @@ describe("LoginModal Component", () => {
     // Fill the password input
     fireEvent.change(screen.getByTestId("modal-password").getElementsByTagName("input")[0],{target:{value:"password"}});
     // Click on the submit button
-    fireEvent.click(screen.getByTestId("modal-submit"));
-    new Promise((r)=>setTimeout(r,20)).then(()=> {//! forced to wait for update !
+    await act(async () => {
+      fireEvent.click(screen.getByTestId("modal-submit"));
       // Check that the mock function is called
       expect(mockErrorLogin).toHaveBeenCalled();
-      // Check that the error message is displayed
-      expect(screen.getByTestId("modal-error-message")).toBeInTheDocument();
-      expect(screen.getByTestId("modal-error-message")).toHaveTextContent("User test was not found");
-    });
+      await new Promise((r) => setTimeout(r, 200))//! forced to wait for update !
+    })
+    // Check that the error message is displayed
+    expect(screen.getByTestId("modal-error-message")).toBeInTheDocument();
+    expect(screen.getByTestId("modal-error-message")).toHaveTextContent("User test was not found");
   });
 
-  it("checks that the error message is displayed when the signup fails", ()=>{
+  it("checks that the error message is displayed when the signup fails (waits 200ms for state)", async ()=>{
     render(
       <ThemeProvider theme={theme}>
         <LoginModal isOpen={true} login={mockErrorLogin} signup={mockErrorSignup}/>
@@ -156,15 +148,16 @@ describe("LoginModal Component", () => {
     fireEvent.change(screen.getByTestId("modal-confirm-password").getElementsByTagName("input")[0],{target:{value:"password"}});
     // Check the reminder
     fireEvent.click(screen.getByTestId("modal-reminder"));
-    // Click on the submit button
-    fireEvent.click(screen.getByTestId("modal-submit"));
-    new Promise((r)=>setTimeout(r,20)).then(()=> {//! forced to wait for update !
+    await act(async () => {
+      // Click on the submit button
+      fireEvent.click(screen.getByTestId("modal-submit"));
       // Check that the mock function is called
       expect(mockErrorSignup).toHaveBeenCalled();
-      // Check that the error message is displayed
-      expect(screen.getByTestId("modal-error-message")).toBeInTheDocument();
-      expect(screen.getByTestId("modal-error-message")).toHaveTextContent("User test already exists");
+      await new Promise((r)=>setTimeout(r,200))//! forced to wait for update !
     });
+    // Check that the error message is displayed
+    expect(screen.getByTestId("modal-error-message")).toBeInTheDocument();
+    expect(screen.getByTestId("modal-error-message")).toHaveTextContent("User test already exists");
   });
 
 });

@@ -4,7 +4,7 @@ import "@testing-library/jest-dom";
 import { fireEvent, render, screen } from "@testing-library/react";
 import IconInput from "@/components/IconInput";
 import BugReportIcon from '@mui/icons-material/BugReport';
-import React from "react";
+import React, { act } from "react";
 
 describe("IconInput Component", () => {
   let mockValue = ""
@@ -14,10 +14,6 @@ describe("IconInput Component", () => {
     <BugReportIcon data-testid={"test-icon"}></BugReportIcon>
   )
 
-  beforeEach(() => {
-    mockChangeInputValue.mockReset();
-
-  });
 
   it("renders a text IconInput component and its sub-components", () => {
     render(
@@ -40,7 +36,7 @@ describe("IconInput Component", () => {
 
   });
 
-  it("checks that the value setter function is called and that the value is changed",()=>{
+  it("checks that the value setter function is called and that the value is changed (waits 200ms for state)",async ()=>{
     render(
       <ThemeProvider theme={theme}>
         <IconInput id={"testInput"} icon={testIcon} placeholder={"test input"} type={"text"} value={mockValue} setValue={mockChangeInputValue}/>
@@ -58,10 +54,11 @@ describe("IconInput Component", () => {
         value:"A"
       }
     })
-    expect(mockChangeInputValue).toHaveBeenCalled();
-    new Promise((r)=>setTimeout(r,20)).then(()=>{//! forced to wait for update !
-      expect(mockValue).toBe("A");
-    });
+    await act(async ()=>{
+      expect(mockChangeInputValue).toHaveBeenCalled();
+      await new Promise((r)=>setTimeout(r,200))//! forced to wait for update !
+    })
+    expect(mockValue).toBe("A");
   })
 
   it("renders a password IconInput component and its sub-components", () => {
