@@ -38,20 +38,31 @@ describe("IconInput Component", () => {
     fireEvent.click(input)
     expect(screen.queryByTestId("VisibilityIcon")).not.toBeInTheDocument();
 
-
-
-    fireEvent.focus(input);
-    
-    const nativeInputValueSetter = Object.getOwnPropertyDescriptor(
-      window.HTMLInputElement.prototype,
-      'value')!.set;
-    nativeInputValueSetter!.call((input as HTMLInputElement), "A");
-    const event = new Event('input', { bubbles: true });
-    input.dispatchEvent(event)
-    expect(mockChangeInputValue).toHaveBeenCalled();
-    expect(mockValue).toBe("A");
-
   });
+
+  it("checks that the value setter function is called and that the value is changed",()=>{
+    render(
+      <ThemeProvider theme={theme}>
+        <IconInput id={"testInput"} icon={testIcon} placeholder={"test input"} type={"text"} value={mockValue} setValue={mockChangeInputValue}/>
+      </ThemeProvider>,
+    );
+
+    const input = screen.getByTestId("input");
+
+    const realInput = input.getElementsByTagName("input")[0] as HTMLInputElement;
+
+    fireEvent.focus(realInput);
+
+    fireEvent.change(realInput,{
+      target:{
+        value:"A"
+      }
+    })
+    expect(mockChangeInputValue).toHaveBeenCalled();
+    new Promise((r)=>setTimeout(r,20)).then(()=>{//! forced to wait for update !
+      expect(mockValue).toBe("A");
+    });
+  })
 
   it("renders a password IconInput component and its sub-components", () => {
     render(

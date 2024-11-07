@@ -47,8 +47,6 @@ const IconInput = ({
   }
 
   const handleInputBlur = (e:React.FocusEvent<HTMLElement>) => {
-    console.log(e.currentTarget)
-    console.log("aaaaa")
     if(type=="password"){
       const adornment = document.getElementById(id+"-show_password");
       if(adornment!.matches(':hover')){
