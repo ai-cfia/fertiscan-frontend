@@ -15,51 +15,62 @@ function HomePage() {
   const [uploadedFiles, setUploadedFiles] = useState<FileUploaded[]>([]);
 
   return (
-      <Box sx={{ paddingTop: "10vh" }}>
+    <Box sx={{ paddingTop: "10vh" }}>
+      <Grid2
+        container
+        rowSpacing={1}
+        columnSpacing={{ xs: 1, sm: 2, md: 3 }}
+        justifyContent="center"
+        sx={{ height: "80vh" }}
+      >
         <Grid2
           container
-          rowSpacing={1}
-          columnSpacing={{ xs: 1, sm: 2, md: 3 }}
           justifyContent="center"
-          sx={{ height: "80vh" }}
+          alignContent="end"
+          size={{ xs: 10, md: 7 }}
         >
-          <Grid2
-            container
-            justifyContent="center"
-            alignContent="end"
-            size={{ xs: 10, md: 7 }}
+          <Dropzone
+            uploadedFiles={uploadedFiles}
+            setUploadedFiles={setUploadedFiles}
+            dropzoneState={dropzoneState}
+            setDropzoneState={setDropzoneState}
+          />
+        </Grid2>
+        <Grid2
+          container
+          size={{ xs: 10, md: 4 }}
+          display={"flex"}
+          alignContent="end"
+          justifyContent="center"
+        >
+          <FileList
+            uploadedFiles={uploadedFiles}
+            setUploadedFiles={setUploadedFiles}
+            setDropzoneState={setDropzoneState}
+          />
+        </Grid2>
+        <Grid2
+          size={{ xs: 10, md: 7 }}
+          sx={{ display: { xs: "none", md: "flex" } }}
+        ></Grid2>
+        <Grid2
+          size={{ xs: 10, md: 4 }}
+          justifyContent="center"
+          display={{ xs: "flex", md: "flow" }}
+        >
+          <Tooltip
+            data-testid="hint-submit-button-disabled"
+            title="You need to upload a minimum of 1 file to start analyse"
+            disableHoverListener={uploadedFiles.length !== 0}
+            placement="top"
           >
-            <Dropzone
-              uploadedFiles={uploadedFiles}
-              setUploadedFiles={setUploadedFiles}
-              dropzoneState={dropzoneState}
-              setDropzoneState={setDropzoneState}
-            />
-          </Grid2>
-          <Grid2
-            container
-            size={{ xs: 10, md: 4 }}
-            display={"flex"}
-            alignContent="end"
-            justifyContent="center"
-          >
-            <FileList
-              uploadedFiles={uploadedFiles}
-              setUploadedFiles={setUploadedFiles}
-              setDropzoneState={setDropzoneState}
-            />
-          </Grid2>
-          <Grid2
-            size={{ xs: 10, md: 7 }}
-            sx={{ display: { xs: "none", md: "flex" } }}
-          ></Grid2>
-          <Grid2 size={{ xs: 10, md: 4 }} justifyContent="center" display={{xs:"flex", md:"flow"}}
-          >
-            <Tooltip data-testid="hint-submit-button-disabled" title="You need to upload a minimum of 1 file to start analyse"
-                     disableHoverListener={uploadedFiles.length !== 0}
-                     placement="top"
-                     >
-              <span style={{ display:"flex", justifyContent:"center", width: '100%' }}>
+            <span
+              style={{
+                display: "flex",
+                justifyContent: "center",
+                width: "100%",
+              }}
+            >
               <Button
                 data-testid="submit-button"
                 variant="contained"
@@ -67,17 +78,17 @@ function HomePage() {
                 disabled={uploadedFiles.length === 0}
                 fullWidth
                 sx={{
-                  width: {xs:"90%", md:"100%"},
+                  width: { xs: "90%", md: "100%" },
                   minWidth: "133.44px",
                 }}
               >
                 Submit
               </Button>
-              </span>
-              </Tooltip>
-          </Grid2>
+            </span>
+          </Tooltip>
         </Grid2>
-      </Box>
+      </Grid2>
+    </Box>
   );
 }
 export default HomePage;
