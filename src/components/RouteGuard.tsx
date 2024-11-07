@@ -9,13 +9,13 @@ const RouteGuard = ({children}: Readonly<{ children: React.ReactNode }>) => {
   // eslint-disable-next-line @typescript-eslint/no-unused-vars
   const handleLogin = (username:string, password:string)=>{
     // TODO: Implement login
-    return "";
+    return "Error Login";
   }
 
   // eslint-disable-next-line @typescript-eslint/no-unused-vars
   const handleSignup = (username:string, password:string, confirm:string)=>{
     // TODO: Implement signup
-    return "";
+    return "Error Signup";
   }
 
   useEffect(()=>{

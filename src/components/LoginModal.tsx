@@ -22,13 +22,16 @@ const LoginModal = ({isOpen, login, signup}:LoginProps) => {
   const [password, setPassword] = useState('');
   const [confirmPassword, setConfirmPassword] = useState('');
   const [checkedReminder, setReminderChecked] = useState(false);
+  const [errorMessage, setErrorMessage] = useState('');
 
 
   const handleSubmit = ()=>{
     if(isSignup){
-      signup(username,password,confirmPassword);
+      const message = signup(username,password,confirmPassword);
+      setErrorMessage(message)
     }else{
-      login(username,password);
+      const message = login(username,password);
+      setErrorMessage(message);
     }
   }
 
@@ -122,15 +125,17 @@ const LoginModal = ({isOpen, login, signup}:LoginProps) => {
             color: theme.palette.error.main,
           }}
           height={"20px"}
-        ></Typography>
+        >{errorMessage}</Typography>
         <Button
           data-testid={"modal-submit"}
           disabled={username==="" || password==="" || (isSignup && (confirmPassword==="" || !checkedReminder))}
           sx={{
             backgroundColor:"white",
             color:theme.palette.text.primary,
+            pointerEvents:"all !important",
+            cursor: ((username==="" || password==="" || (isSignup && (confirmPassword==="" || !checkedReminder)))? "not-allowed" : "pointer")+" !important",
           }}
-          onClick={() => handleSubmit}
+          onClick={handleSubmit}
         >{isSignup? "Sign Up" : "Login"}</Button>
         <Typography
           data-testid={"modal-change"}
