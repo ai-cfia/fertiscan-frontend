@@ -35,7 +35,7 @@ const FileElement: React.FC<
   const [hovered, setHovered] = useState(false);
 
   const isValidObjectURL = (url: string) => {
-    const pattern = /^blob:http:\/\/|https:\/\/[a-zA-Z0-9\-_.]+\/[a-zA-Z0-9\-_.]+$/;
+    const pattern = /^(blob:http:\/\/|https:\/\/[a-zA-Z0-9\-_.]+\/[a-zA-Z0-9\-_.]+)$/;
     return pattern.test(url);
   };
 
@@ -44,11 +44,11 @@ const FileElement: React.FC<
       <Grid2
         onMouseEnter={() => {
           setHovered(true);
-          setDropzoneState({ visible: true, image_url: fileUrl});
+          setDropzoneState({ visible: true, imageUrl: fileUrl});
         }}
         onMouseLeave={() => {
           setHovered(false);
-          setDropzoneState({ visible: false, image_url: ""});
+          setDropzoneState({ visible: false, imageUrl: ""});
         }}
         sx={{
           position: "relative",

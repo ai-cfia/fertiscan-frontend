@@ -133,11 +133,11 @@ const Dropzone: React.FC<DropzoneProps> = ({
       onDragOver={handleDragOver}
       onDrop={handleDrop}
     >
-      {dropzoneState.visible && dropzoneState.image_url ? (
+      {dropzoneState.visible && dropzoneState.imageUrl ? (
         <Box
           data-testid="hovered-image"
           component="img"
-          src={dropzoneState.image_url}
+          src={dropzoneState.imageUrl}
           alt="Uploaded file"
           onLoad={handleImageLoad}
           sx={{

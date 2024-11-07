@@ -1,22 +1,20 @@
 "use client";
 import React, { useState } from "react";
-import { Box, Button, Grid2, ThemeProvider, useTheme, Tooltip } from "@mui/material";
+import { Box, Button, Grid2, Tooltip } from "@mui/material";
 import FileUploaded from "@/classe/File";
 import Dropzone from "@/components/Dropzone";
 import FileList from "@/components/FileList";
 import type { DropzoneState } from "@/types";
 
 function HomePage() {
-  const theme = useTheme();
   const [dropzoneState, setDropzoneState] = useState<DropzoneState>({
     visible: false,
-    image_url: null,
+    imageUrl: null,
     fillPercentage: 0,
   });
   const [uploadedFiles, setUploadedFiles] = useState<FileUploaded[]>([]);
 
   return (
-    <ThemeProvider theme={theme}>
       <Box sx={{ paddingTop: "10vh" }}>
         <Grid2
           container
@@ -57,7 +55,10 @@ function HomePage() {
           ></Grid2>
           <Grid2 size={{ xs: 10, md: 4 }} justifyContent="center" display={{xs:"flex", md:"flow"}}
           >
-            <Tooltip data-testid="hint-submit-button-disabled" title="You need to upload a minimum of 1 file to start analyse" sx={{fontSize:"1rem"}}>
+            <Tooltip data-testid="hint-submit-button-disabled" title="You need to upload a minimum of 1 file to start analyse"
+                     disableHoverListener={uploadedFiles.length !== 0}
+                     placement="top"
+                     >
               <span style={{ display:"flex", justifyContent:"center", width: '100%' }}>
               <Button
                 data-testid="submit-button"
@@ -77,7 +78,6 @@ function HomePage() {
           </Grid2>
         </Grid2>
       </Box>
-    </ThemeProvider>
   );
 }
 export default HomePage;
