@@ -1,7 +1,6 @@
 import { Box, Button, Checkbox, FormControlLabel, FormGroup, Modal, Typography } from "@mui/material";
 import AccountCircleIcon from "@mui/icons-material/AccountCircle";
 import LockIcon from '@mui/icons-material/Lock';
-import { useRouter } from "next/navigation";
 import theme from "@/app/theme";
 import IconInput from "@/components/IconInput";
 import { useState } from "react";
@@ -12,9 +11,10 @@ import { useState } from "react";
 
 interface LoginProps {
   isOpen: boolean;
+  login: (username:string, password:string)=>string;
+  signup: (username:string, password:string, confirm:string)=>string;
 }
-const LoginModal = ({isOpen}:LoginProps) => {
-  const router = useRouter();
+const LoginModal = ({isOpen, login, signup}:LoginProps) => {
 
   const [isSignup, setIsSignup] = useState(false);
 
@@ -23,10 +23,18 @@ const LoginModal = ({isOpen}:LoginProps) => {
   const [confirmPassword, setConfirmPassword] = useState('');
   const [checkedReminder, setReminderChecked] = useState(false);
 
+
+  const handleSubmit = ()=>{
+    if(isSignup){
+      signup(username,password,confirmPassword);
+    }else{
+      login(username,password);
+    }
+  }
+
   return (
     <Modal
       open={isOpen}
-      onClose={() => router.push('/')}
     >
       <Box sx={{
         position: 'absolute',
@@ -45,7 +53,7 @@ const LoginModal = ({isOpen}:LoginProps) => {
         flexDirection: 'column',
 
       }}>
-        <Typography id="modal-modal-title" variant="h3" component="h2">
+        <Typography data-testid={"modal-title"} id="modal-title" variant="h3" component="h2">
           {isSignup ? 'Sign Up' : 'Login'}
         </Typography>
         <form
@@ -60,6 +68,7 @@ const LoginModal = ({isOpen}:LoginProps) => {
         >
         <IconInput
           id={"username"}
+          dataTestId={"modal-username"}
           icon={
             <AccountCircleIcon sx={{color:"white", marginBottom:1}}></AccountCircleIcon>
           }
@@ -69,6 +78,7 @@ const LoginModal = ({isOpen}:LoginProps) => {
           setValue={setUsername}/>
         <IconInput
           id={"password"}
+          dataTestId={"modal-password"}
           icon={
             <LockIcon sx={{color:"white", marginBottom:1}}></LockIcon>
           }
@@ -79,7 +89,8 @@ const LoginModal = ({isOpen}:LoginProps) => {
         />
         {isSignup && (
           <IconInput
-            id={"confirmPassword"}
+            id={"confirm-password"}
+            dataTestId={"modal-confirm-password"}
             icon={
               <LockIcon sx={{color:"white", marginBottom:1}}></LockIcon>
             }
@@ -92,6 +103,7 @@ const LoginModal = ({isOpen}:LoginProps) => {
         {isSignup && (
           <FormGroup>
             <FormControlLabel
+              data-testid={"modal-reminder"}
               control={<Checkbox value={checkedReminder} onChange={()=>setReminderChecked(!checkedReminder)}/>}
               label={
                 <Typography sx={{fontSize:"x-small"}}>
@@ -104,29 +116,33 @@ const LoginModal = ({isOpen}:LoginProps) => {
         )}
 
         <Typography
-          id={"error_message"}
+          id={"error-message"}
+          data-testid={"modal-error-message"}
           sx={{
             color: theme.palette.error.main,
           }}
           height={"20px"}
         ></Typography>
         <Button
+          data-testid={"modal-submit"}
           disabled={username==="" || password==="" || (isSignup && (confirmPassword==="" || !checkedReminder))}
           sx={{
             backgroundColor:"white",
             color:theme.palette.text.primary,
           }}
-          onClick={() => console.log("Login")}
-        >{isSignup? "Sign up" : "Login"}</Button>
+          onClick={() => handleSubmit}
+        >{isSignup? "Sign Up" : "Login"}</Button>
         <Typography
+          data-testid={"modal-change"}
           id={"toggleSign"}
           sx={{
             color: theme.palette.text.secondary,
           }}
         >
-          {isSignup ? "Already have an account?" : "Don't have an account?"}
+          {isSignup ? "Already have an account? " : "Don't have an account? "}
           <a
             id={"toggleSignButton"}
+            data-testid={"modal-change-button"}
             style={{
               color: theme.palette.text.secondary,
               textDecoration: "underline",
@@ -136,7 +152,7 @@ const LoginModal = ({isOpen}:LoginProps) => {
               setIsSignup(!isSignup)
               setReminderChecked(false)
             }}
-          >{isSignup? "Login":"Sign up"}</a>
+          >{isSignup? "Login":"Sign Up"}</a>
         </Typography>
       </form>
       </Box>

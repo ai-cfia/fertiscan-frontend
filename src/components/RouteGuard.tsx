@@ -5,6 +5,19 @@ const RouteGuard = ({children}: Readonly<{ children: React.ReactNode }>) => {
   const [isAuth, setAuth] = useState(false)
 
 
+
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
+  const handleLogin = (username:string, password:string)=>{
+    // TODO: Implement login
+    return "";
+  }
+
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
+  const handleSignup = (username:string, password:string, confirm:string)=>{
+    // TODO: Implement signup
+    return "";
+  }
+
   useEffect(()=>{
     const cookieStore = new Map();
     const cookies = document.cookie.split(';');
@@ -20,10 +33,9 @@ const RouteGuard = ({children}: Readonly<{ children: React.ReactNode }>) => {
 
 
 
-
   return (
     <div>
-      <LoginModal isOpen={!isAuth} />
+      <LoginModal isOpen={!isAuth} login={handleLogin} signup={handleSignup}/>
       {children}
     </div>
   )
