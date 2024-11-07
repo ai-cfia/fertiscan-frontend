@@ -41,7 +41,7 @@ const FileList: React.FC<FileListProps> = ({
         (file) => file instanceof FileUploaded && file.getInfo().path !== url,
       ),
     );
-    setDropzoneState({ visible: false, image_url: null });
+    setDropzoneState({ visible: false, imageUrl: null });
   };
 
   return (

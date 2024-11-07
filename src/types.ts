@@ -10,7 +10,7 @@ interface DropzoneState {
   /**
    * The URL of the image associated with the dropzone, or null if no image is present.
    */
-  image_url: string | null;
+  imageUrl: string | null;
 
   /**
    * The percentage of the dropzone that is filled, if applicable.
