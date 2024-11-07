@@ -1,6 +1,6 @@
 "use client";
 import React, { useState } from "react";
-import { Box, Button, Grid2, useTheme, Tooltip } from "@mui/material";
+import { Box, Button, Grid2, Tooltip } from "@mui/material";
 import FileUploaded from "@/classe/File";
 import Dropzone from "@/components/Dropzone";
 import FileList from "@/components/FileList";
