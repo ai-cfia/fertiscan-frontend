@@ -66,7 +66,6 @@ const theme = createTheme({
         root: {
           color: "#ffffff", // White icon buttons
           "&:hover": {
-            backgroundColor: "#053f5e", // Dark Blue on hover
             color: "#000000", // Black text
           },
         },
@@ -164,6 +163,11 @@ const theme = createTheme({
           color: "#ffffff", // White icons
         },
       },
+    },
+    MuiCollapse: {
+      defaultProps: {
+        timeout: 0,
+      }
     },
   },
 });
