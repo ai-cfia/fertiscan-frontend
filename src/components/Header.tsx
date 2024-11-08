@@ -16,6 +16,7 @@ import {
 import Image from "next/image";
 import Link from "next/link";
 import { useState } from "react";
+import AlertBanner from "./AlertBanner";
 
 // Defining a styled component for the logo using emotion's styled
 const Logo = styled(Image)`
@@ -50,6 +51,7 @@ const Header: React.FC<HeaderProps> = ({ setSideNavOpen }) => {
   };
 
   return (
+    <>
     <Box sx={{ flexGrow: 1 }}>
       <AppBar position="static" data-testid="header-appbar">
         <Toolbar
@@ -124,7 +126,9 @@ const Header: React.FC<HeaderProps> = ({ setSideNavOpen }) => {
         setIsUserMenuOpen={setIsUserMenuOpen}
         setAnchorElement={setAnchorElement}
       />
-    </Box>
+      </Box>
+      <AlertBanner></AlertBanner>
+    </>
   );
 };
 

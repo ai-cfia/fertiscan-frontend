@@ -1,10 +1,10 @@
 "use client";
-import React, { useState } from "react";
-import { Box, Button, Grid2, Tooltip } from "@mui/material";
 import FileUploaded from "@/classe/File";
 import Dropzone from "@/components/Dropzone";
 import FileList from "@/components/FileList";
 import type { DropzoneState } from "@/types";
+import { Box, Button, Grid2, Tooltip } from "@mui/material";
+import { useState } from "react";
 
 function HomePage() {
   const [dropzoneState, setDropzoneState] = useState<DropzoneState>({
