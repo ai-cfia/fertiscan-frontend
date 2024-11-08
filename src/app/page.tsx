@@ -4,7 +4,6 @@ import Dropzone from "@/components/Dropzone";
 import FileList from "@/components/FileList";
 import type { DropzoneState } from "@/types";
 import { Box, Button, Grid2, Tooltip } from "@mui/material";
-import Link from "next/link";
 import { useState } from "react";
 
 function HomePage() {
@@ -17,10 +16,6 @@ function HomePage() {
 
   return (
     <Box sx={{ paddingTop: "10vh" }}>
-      <Link href="/label-data-validation">
-        Click to go to Label Data Validation Page
-      </Link>
-
       <Grid2
         container
         rowSpacing={1}
