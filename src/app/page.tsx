@@ -2,9 +2,8 @@
 import FileUploaded from "@/classe/File";
 import Dropzone from "@/components/Dropzone";
 import FileList from "@/components/FileList";
-import useAlertStore from "@/stores/alertStore";
 import type { DropzoneState } from "@/types";
-import { Box, Button, Grid2, Link, Tooltip } from "@mui/material";
+import { Box, Button, Grid2, Tooltip } from "@mui/material";
 import { useState } from "react";
 
 function HomePage() {
@@ -14,18 +13,9 @@ function HomePage() {
     fillPercentage: 0,
   });
   const [uploadedFiles, setUploadedFiles] = useState<FileUploaded[]>([]);
-  const { showAlert } = useAlertStore();
 
   return (
     <Box sx={{ paddingTop: "10vh" }}>
-      <Button
-        onClick={() => {
-          showAlert("Whatever", "success");
-        }}
-      >
-        Click
-      </Button>
-      <Link href="/label-data-validation">Form</Link>
       <Grid2
         container
         rowSpacing={1}
