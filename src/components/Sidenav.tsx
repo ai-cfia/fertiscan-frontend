@@ -39,6 +39,7 @@ const SideNav = ({ open }: DrawerMenuProps) => {
 
   return (
     <Drawer
+      className="darkContainer"
       sx={{
         width: 240,
         flexShrink: 0,
