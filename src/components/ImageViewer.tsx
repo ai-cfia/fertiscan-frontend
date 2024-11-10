@@ -2,6 +2,8 @@
 import { Box, Button } from "@mui/material";
 import Image from "next/image";
 import { useEffect, useState } from "react";
+import type { ReactZoomPanPinchRef } from "react-zoom-pan-pinch";
+import { TransformComponent, TransformWrapper } from "react-zoom-pan-pinch";
 import "swiper/css";
 import { Swiper, SwiperClass, SwiperSlide } from "swiper/react";
 
@@ -14,11 +16,12 @@ const ImageViewer: React.FC<ImageViewerProps> = ({ imageFiles }) => {
   const [swiperInstance, setSwiperInstance] = useState<SwiperClass | null>(
     null,
   );
+  const [zoomRefs, setZoomRefs] = useState<ReactZoomPanPinchRef[]>([]);
+  const [activeIndex, setActiveIndex] = useState(0);
 
   useEffect(() => {
     const urls = imageFiles.map((file) => URL.createObjectURL(file));
     setImageUrls(urls);
-
     return () => {
       urls.forEach((url) => URL.revokeObjectURL(url));
     };
@@ -31,37 +34,67 @@ const ImageViewer: React.FC<ImageViewerProps> = ({ imageFiles }) => {
     >
       <Swiper
         slidesPerView={1}
-        loop
+        loop={false}
         speed={0}
         data-testid="swiper"
         className="w-full bg-gray-50"
         onSwiper={(swiper) => setSwiperInstance(swiper)}
+        onSlideChange={(swiper) => setActiveIndex(swiper.activeIndex)}
         noSwiping
         noSwipingClass="no-swipe"
       >
         {imageUrls.map((url, index) => (
           <SwiperSlide key={index} data-testid={`slide-${index + 1}`}>
-            <Image
-              src={url}
-              alt={`Slide ${index + 1}`}
-              className="h-full w-full object-contain no-swipe"
-              width={500}
-              height={500}
-              data-testid="image-slide"
-            />
+            <Box className="w-full h-full no-swipe">
+              <TransformWrapper
+                key={index}
+                onInit={(ref) => {
+                  setZoomRefs((prevRefs) => {
+                    const newRefs = [...prevRefs];
+                    newRefs[index] = ref;
+                    return newRefs;
+                  });
+                }}
+                zoomAnimation={{ disabled: true, animationTime: 0 }}
+                panning={{ velocityDisabled: true }}
+                velocityAnimation={{ disabled: true }}
+              >
+                <TransformComponent
+                  wrapperStyle={{
+                    width: "100%",
+                    height: "100%",
+                  }}
+                  contentStyle={{
+                    width: "100%",
+                    height: "100%",
+                  }}
+                >
+                  <Image
+                    className="w-full h-full object-contain"
+                    src={url}
+                    alt={`Slide ${index + 1}`}
+                    width={500}
+                    height={500}
+                    data-testid="image-slide"
+                  />
+                </TransformComponent>
+              </TransformWrapper>
+            </Box>
           </SwiperSlide>
         ))}
       </Swiper>
-      <ControlBar swiper={swiperInstance} />
+
+      <ControlBar swiper={swiperInstance} zoomRef={zoomRefs[activeIndex]} />
     </Box>
   );
 };
 
 interface ControlBarProps {
   swiper: SwiperClass | null;
+  zoomRef: ReactZoomPanPinchRef | null;
 }
 
-const ControlBar: React.FC<ControlBarProps> = ({ swiper }) => {
+const ControlBar: React.FC<ControlBarProps> = ({ swiper, zoomRef }) => {
   return (
     <Box
       display="flex"
@@ -83,6 +116,30 @@ const ControlBar: React.FC<ControlBarProps> = ({ swiper }) => {
         data-testid="next-button"
       >
         Next
+      </Button>
+      <Button
+        variant="contained"
+        onClick={() => zoomRef?.zoomIn()}
+        data-testid="zoom-in-button"
+        disabled={!zoomRef}
+      >
+        Zoom In
+      </Button>
+      <Button
+        variant="contained"
+        onClick={() => zoomRef?.zoomOut()}
+        data-testid="zoom-out-button"
+        disabled={!zoomRef}
+      >
+        Zoom Out
+      </Button>
+      <Button
+        variant="contained"
+        onClick={() => zoomRef?.resetTransform()}
+        data-testid="reset-button"
+        disabled={!zoomRef}
+      >
+        Reset
       </Button>
     </Box>
   );
