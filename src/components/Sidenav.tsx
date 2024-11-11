@@ -8,11 +8,13 @@ import {
   ListItemIcon,
   ListItemText,
   Toolbar,
+  Tooltip,
   Typography,
   useTheme,
 } from "@mui/material";
 import SearchIcon from '@mui/icons-material/Search';
 import HomeIcon from '@mui/icons-material/Home';
+import BugReportIcon from '@mui/icons-material/BugReport';
 
 interface DrawerMenuProps {
   open: boolean;
@@ -21,39 +23,6 @@ interface DrawerMenuProps {
 
 const SideNav = ({ open, onClose }: DrawerMenuProps) => {
   const theme = useTheme();
-
-  const drawerContent = (
-    <Box
-      sx={{
-        width: 250,
-        color: theme.palette.text.primary,
-      }}
-      role="presentation"
-      onClick={onClose}
-    >
-      <Toolbar>
-        <Typography variant="h5">FertiScan</Typography>
-      </Toolbar>
-      <List>
-      <Link href="/" passHref>
-        <ListItemButton>
-          <ListItemIcon>
-            <HomeIcon />
-          </ListItemIcon>
-          <ListItemText primary="New inspection" />
-        </ListItemButton>
-      </Link>
-      <Link href="/search" passHref>
-        <ListItemButton>
-          <ListItemIcon>
-            <SearchIcon />
-          </ListItemIcon>
-          <ListItemText primary="Search" />
-        </ListItemButton>
-      </Link>
-      </List>
-    </Box>
-  );
 
   return (
     <Drawer
@@ -75,10 +44,64 @@ const SideNav = ({ open, onClose }: DrawerMenuProps) => {
       PaperProps={{
         sx: {
           backgroundColor: theme.palette.secondary.main,
+          overflowX: "hidden"
         },
       }}
     >
-      {drawerContent}
+      <Box
+        sx={{
+          width: 250,
+          height: '100%', // Ensure the box takes the full height of the drawer
+          display: 'flex',
+          flexDirection: 'column',
+          justifyContent: 'space-between', // This will push the last item to the bottom
+          color: theme.palette.text.primary,
+        }}
+        role="presentation"
+        onClick={onClose}
+      >
+        <div>
+          <Toolbar>
+            <Typography variant="h5">FertiScan</Typography>
+          </Toolbar>
+          <List>
+            <Link href="/" passHref >
+            <Tooltip title="Go to New Inspection" placement='right'>
+              <ListItemButton>
+                <ListItemIcon>
+                  <HomeIcon />
+                </ListItemIcon>
+                <ListItemText primary="New inspection" />
+              </ListItemButton>
+              </Tooltip>
+            </Link>
+          <Tooltip title="Go to Search Page" placement='right'>
+            <Link href="/SearchPage" passHref>
+              <ListItemButton>
+                <ListItemIcon>
+                  <SearchIcon />
+                </ListItemIcon>
+                <ListItemText primary="Search" />
+              </ListItemButton>
+            </Link>
+          </Tooltip>
+          </List>
+        </div>
+        <div>
+          <List>
+            <Tooltip title="Report an issue" placement='right'>
+            <Link href="https://github.com/ai-cfia/fertiscan-frontend/issues/new/choose" passHref>
+              <ListItemButton>
+                <ListItemIcon>
+                  <BugReportIcon />
+                </ListItemIcon>
+                <ListItemText primary="Report an issue" />
+              </ListItemButton>
+            </Link>
+            </Tooltip>
+          </List>
+        </div>
+      </Box>
     </Drawer>
   );
 };
