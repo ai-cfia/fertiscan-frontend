@@ -13,13 +13,6 @@ export default function RootLayout({
 }: Readonly<{ children: React.ReactNode }>) {
   const [sideNavOpen, setSideNavOpen] = useState(false);
 
-  const handleDrawerToggle = (open: boolean) => (event: React.KeyboardEvent | React.MouseEvent) => {
-    if (event.type === 'keydown' && ((event as React.KeyboardEvent).key === 'esc')) {
-      return;
-    }
-    setSideNavOpen(open);
-  };
-
   const handleDrawerClose = () => {
     setSideNavOpen(false);
   };

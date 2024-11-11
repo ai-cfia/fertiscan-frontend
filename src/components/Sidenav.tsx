@@ -51,13 +51,14 @@ const SideNav = ({ open, onClose }: DrawerMenuProps) => {
       <Box
         sx={{
           width: 250,
-          height: '100%', // Ensure the box takes the full height of the drawer
+          height: '100%',
           display: 'flex',
           flexDirection: 'column',
-          justifyContent: 'space-between', // This will push the last item to the bottom
+          justifyContent: 'space-between',
           color: theme.palette.text.primary,
         }}
         role="presentation"
+        data-testid="backdrop"
         onClick={onClose}
       >
         <div>
@@ -65,18 +66,18 @@ const SideNav = ({ open, onClose }: DrawerMenuProps) => {
             <Typography variant="h5">FertiScan</Typography>
           </Toolbar>
           <List>
-            <Link href="/" passHref >
-            <Tooltip title="Go to New Inspection" placement='right'>
+          <Tooltip title="Go to New Inspection" placement='right'>
+            <Link href="/" passHref data-testid="new-inspection-button" >
               <ListItemButton>
                 <ListItemIcon>
                   <HomeIcon />
                 </ListItemIcon>
                 <ListItemText primary="New inspection" />
               </ListItemButton>
-              </Tooltip>
             </Link>
+            </Tooltip>
           <Tooltip title="Go to Search Page" placement='right'>
-            <Link href="/SearchPage" passHref>
+            <Link href="/SearchPage" passHref data-testid="search-page-button">
               <ListItemButton>
                 <ListItemIcon>
                   <SearchIcon />
@@ -90,7 +91,7 @@ const SideNav = ({ open, onClose }: DrawerMenuProps) => {
         <div>
           <List>
             <Tooltip title="Report an issue" placement='right'>
-            <Link href="https://github.com/ai-cfia/fertiscan-frontend/issues/new/choose" passHref>
+            <Link href="https://github.com/ai-cfia/fertiscan-frontend/issues/new/choose" passHref data-testid="report-issue-button">
               <ListItemButton>
                 <ListItemIcon>
                   <BugReportIcon />
