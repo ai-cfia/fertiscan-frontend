@@ -67,7 +67,6 @@ const theme = createTheme({
         root: {
           color: "#ffffff", // White icon buttons
           "&:hover": {
-            backgroundColor: "#053f5e", // Dark Blue on hover
             color: "#000000", // Black text
           },
         },
@@ -154,23 +153,6 @@ const theme = createTheme({
         root: {
           color: "#ffffff", // White text
           "&:hover": {
-            backgroundColor: "#053f5e", // Dark Blue on hover
-          },
-        },
-      },
-    },
-    MuiListItemIcon: {
-      styleOverrides: {
-        root: {
-          color: "#ffffff", // White icons
-        },
-      },
-    },
-    MuiMenuItem: {
-      styleOverrides: {
-        root: {
-          color: "#ffffff", // White text
-          "&:hover": {
             backgroundColor: "#032f47", // Dark Blue on hover
           },
         },
@@ -181,6 +163,11 @@ const theme = createTheme({
         root: {
           color: "#ffffff", // Black icons
         },
+      },
+    },
+    MuiCollapse: {
+      defaultProps: {
+        timeout: 0,
       },
     },
   },
