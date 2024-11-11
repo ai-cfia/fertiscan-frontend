@@ -8,7 +8,7 @@ function LabelDataValidationPage() {
 
   const handleFileChange = (event: React.ChangeEvent<HTMLInputElement>) => {
     if (event.target.files) {
-      setImageFiles(Array.from(event.target.files)); // Convert FileList to an array
+      setImageFiles(Array.from(event.target.files));
     }
   };
 

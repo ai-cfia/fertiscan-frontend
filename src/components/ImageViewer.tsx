@@ -1,5 +1,10 @@
-"use client";
+import ArrowBackIosIcon from "@mui/icons-material/ArrowBackIos";
+import ArrowForwardIosIcon from "@mui/icons-material/ArrowForwardIos";
+import YoutubeSearchedForIcon from "@mui/icons-material/YoutubeSearchedFor";
+import ZoomInIcon from "@mui/icons-material/ZoomIn";
+import ZoomOutIcon from "@mui/icons-material/ZoomOut";
 import { Box, Button } from "@mui/material";
+import Tooltip from "@mui/material/Tooltip";
 import Image from "next/image";
 import { useEffect, useState } from "react";
 import type { ReactZoomPanPinchRef } from "react-zoom-pan-pinch";
@@ -22,14 +27,26 @@ const ImageViewer: React.FC<ImageViewerProps> = ({ imageFiles }) => {
   useEffect(() => {
     const urls = imageFiles.map((file) => URL.createObjectURL(file));
     setImageUrls(urls);
+    setZoomRefs((prevRefs) =>
+      Array.from({ length: urls.length }, (_, i) => prevRefs[i] || null),
+    );
+    zoomRefs.forEach((ref) => ref?.resetTransform());
     return () => {
       urls.forEach((url) => URL.revokeObjectURL(url));
     };
-  }, [imageFiles]);
+  }, [imageFiles, setZoomRefs, setImageUrls, setActiveIndex]);
+
+  const handleInit = (index: number, ref: ReactZoomPanPinchRef) => {
+    setZoomRefs((prevRefs) => {
+      const newRefs = [...prevRefs];
+      newRefs[index] = ref;
+      return newRefs;
+    });
+  };
 
   return (
     <Box
-      className="flex flex-col items-center justify-center max-w-full"
+      className="flex flex-col items-center justify-center max-w-full border-2 bg-gray-100 border-gray-100"
       data-testid="image-viewer"
     >
       <Swiper
@@ -37,7 +54,7 @@ const ImageViewer: React.FC<ImageViewerProps> = ({ imageFiles }) => {
         loop={false}
         speed={0}
         data-testid="swiper"
-        className="w-full bg-gray-50"
+        className="w-full h-full"
         onSwiper={(swiper) => setSwiperInstance(swiper)}
         onSlideChange={(swiper) => setActiveIndex(swiper.activeIndex)}
         noSwiping
@@ -45,21 +62,16 @@ const ImageViewer: React.FC<ImageViewerProps> = ({ imageFiles }) => {
       >
         {imageUrls.map((url, index) => (
           <SwiperSlide key={index} data-testid={`slide-${index + 1}`}>
-            <Box className="w-full h-full no-swipe">
+            <Box className="no-swipe w-full h-full">
               <TransformWrapper
                 key={index}
-                onInit={(ref) => {
-                  setZoomRefs((prevRefs) => {
-                    const newRefs = [...prevRefs];
-                    newRefs[index] = ref;
-                    return newRefs;
-                  });
-                }}
+                onInit={(ref) => handleInit(index, ref)}
                 zoomAnimation={{ disabled: true, animationTime: 0 }}
                 panning={{ velocityDisabled: true }}
                 velocityAnimation={{ disabled: true }}
               >
                 <TransformComponent
+                  key={index}
                   wrapperStyle={{
                     width: "100%",
                     height: "100%",
@@ -70,7 +82,8 @@ const ImageViewer: React.FC<ImageViewerProps> = ({ imageFiles }) => {
                   }}
                 >
                   <Image
-                    className="w-full h-full object-contain"
+                    key={index}
+                    className="object-contain w-full h-full"
                     src={url}
                     alt={`Slide ${index + 1}`}
                     width={500}
@@ -84,63 +97,83 @@ const ImageViewer: React.FC<ImageViewerProps> = ({ imageFiles }) => {
         ))}
       </Swiper>
 
-      <ControlBar swiper={swiperInstance} zoomRef={zoomRefs[activeIndex]} />
+      <ControlBar
+        swiper={swiperInstance}
+        zoomRefs={zoomRefs}
+        activeIndex={activeIndex}
+      />
     </Box>
   );
 };
 
 interface ControlBarProps {
   swiper: SwiperClass | null;
-  zoomRef: ReactZoomPanPinchRef | null;
+  zoomRefs: ReactZoomPanPinchRef[];
+  activeIndex: number;
 }
 
-const ControlBar: React.FC<ControlBarProps> = ({ swiper, zoomRef }) => {
+const ControlBar: React.FC<ControlBarProps> = ({
+  swiper,
+  zoomRefs,
+  activeIndex,
+}) => {
+  const currentZoomRef = zoomRefs[activeIndex] ?? null;
+
   return (
     <Box
-      display="flex"
-      justifyContent="center"
-      gap={2}
-      mt={2}
+      className="flex items-center justify-center gap-4 p-4"
       data-testid="control-bar"
     >
-      <Button
-        variant="contained"
-        onClick={() => swiper?.slidePrev()}
-        data-testid="prev-button"
-      >
-        Prev
-      </Button>
-      <Button
-        variant="contained"
-        onClick={() => swiper?.slideNext()}
-        data-testid="next-button"
-      >
-        Next
-      </Button>
-      <Button
-        variant="contained"
-        onClick={() => zoomRef?.zoomIn()}
-        data-testid="zoom-in-button"
-        disabled={!zoomRef}
-      >
-        Zoom In
-      </Button>
-      <Button
-        variant="contained"
-        onClick={() => zoomRef?.zoomOut()}
-        data-testid="zoom-out-button"
-        disabled={!zoomRef}
-      >
-        Zoom Out
-      </Button>
-      <Button
-        variant="contained"
-        onClick={() => zoomRef?.resetTransform()}
-        data-testid="reset-button"
-        disabled={!zoomRef}
-      >
-        Reset
-      </Button>
+      <Tooltip title="Previous">
+        <Button
+          variant="contained"
+          onClick={() => swiper?.slidePrev()}
+          data-testid="prev-button"
+          disabled={activeIndex <= 0}
+        >
+          <ArrowBackIosIcon />
+        </Button>
+      </Tooltip>
+      <Tooltip title="Next">
+        <Button
+          variant="contained"
+          onClick={() => swiper?.slideNext()}
+          data-testid="next-button"
+          disabled={activeIndex >= zoomRefs.length - 1}
+        >
+          <ArrowForwardIosIcon />
+        </Button>
+      </Tooltip>
+      <Tooltip title="Zoom In">
+        <Button
+          variant="contained"
+          onClick={() => currentZoomRef?.zoomIn()}
+          data-testid="zoom-in-button"
+          disabled={!currentZoomRef}
+        >
+          <ZoomInIcon />
+        </Button>
+      </Tooltip>
+      <Tooltip title="Zoom Out">
+        <Button
+          variant="contained"
+          onClick={() => currentZoomRef?.zoomOut()}
+          data-testid="zoom-out-button"
+          disabled={!currentZoomRef}
+        >
+          <ZoomOutIcon />
+        </Button>
+      </Tooltip>
+      <Tooltip title="Reset zoom">
+        <Button
+          variant="contained"
+          onClick={() => zoomRefs.forEach((ref) => ref?.resetTransform())}
+          data-testid="reset-button"
+          disabled={!currentZoomRef}
+        >
+          <YoutubeSearchedForIcon />
+        </Button>
+      </Tooltip>
     </Box>
   );
 };
