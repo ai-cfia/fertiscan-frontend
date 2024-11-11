@@ -10,6 +10,8 @@ import { useEffect, useState } from "react";
 import type { ReactZoomPanPinchRef } from "react-zoom-pan-pinch";
 import { TransformComponent, TransformWrapper } from "react-zoom-pan-pinch";
 import "swiper/css";
+import "swiper/css/pagination";
+import { Pagination } from "swiper/modules";
 import { Swiper, SwiperClass, SwiperSlide } from "swiper/react";
 
 interface ImageViewerProps {
@@ -59,6 +61,8 @@ const ImageViewer: React.FC<ImageViewerProps> = ({ imageFiles }) => {
         onSlideChange={(swiper) => setActiveIndex(swiper.activeIndex)}
         noSwiping
         noSwipingClass="no-swipe"
+        pagination={{ clickable: true }} // Enable pagination
+        modules={[Pagination]} // Register the Pagination module
       >
         {imageUrls.map((url, index) => (
           <SwiperSlide key={index} data-testid={`slide-${index + 1}`}>
