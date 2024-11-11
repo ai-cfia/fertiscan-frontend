@@ -125,7 +125,7 @@ const ControlBar: React.FC<ControlBarProps> = ({
 
   return (
     <Box
-      className="flex items-center justify-center gap-4 p-4"
+      className="flex items-center justify-center gap-4 p-4 flex-wrap"
       data-testid="control-bar"
     >
       <Tooltip title="Previous">

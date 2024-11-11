@@ -1,10 +1,13 @@
 "use client";
 import ImageViewer from "@/components/ImageViewer";
+import useBreakpoints from "@/utils/useBreakpoints";
 import { Box, Button, Container } from "@mui/material";
 import { useState } from "react";
 
 function LabelDataValidationPage() {
   const [imageFiles, setImageFiles] = useState<File[]>([]);
+  const { isDownXs, isBetweenXsSm, isBetweenSmMd } = useBreakpoints();
+  const isMdOrBelow = isDownXs || isBetweenXsSm || isBetweenSmMd;
 
   const handleFileChange = (event: React.ChangeEvent<HTMLInputElement>) => {
     if (event.target.files) {
@@ -22,9 +25,11 @@ function LabelDataValidationPage() {
       maxWidth={false}
       data-testid="container"
     >
-      <Box className="p-4 mt-4" data-testid="stepper">
-        stepper
-      </Box>
+      {!isMdOrBelow && (
+        <Box className="p-4 mt-4" data-testid="stepper">
+          stepper
+        </Box>
+      )}
 
       <Box className="flex flex-col md:flex-row" data-testid="main-content">
         <Box
@@ -33,6 +38,12 @@ function LabelDataValidationPage() {
         >
           <ImageViewer imageFiles={imageFiles} />
         </Box>
+
+        {isMdOrBelow && (
+          <Box className="p-4 mt-4 border" data-testid="stepper-md">
+            stepper
+          </Box>
+        )}
 
         <Box
           className="flex w-full p-4 justify-center min-w-0 min-h-[500px]"
