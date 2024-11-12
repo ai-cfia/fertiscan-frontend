@@ -8,6 +8,8 @@ import {
 } from "@mui/material";
 import DeleteIcon from "@mui/icons-material/Delete";
 import { DropzoneState } from "@/types";
+import Link from "next/link";
+import Image from "next/image";
 
 /**
  * FileElementProps interface to define the props for the FileElement component
@@ -35,7 +37,7 @@ const FileElement: React.FC<
   const [hovered, setHovered] = useState(false);
 
   const isValidObjectURL = (url: string) => {
-    const pattern = /^(blob:http:\/\/|https:\/\/[a-zA-Z0-9\-_.]+\/[a-zA-Z0-9\-_.]+)$/;
+    const pattern = /^(blob:+http:\/\/|https:\/\/)[a-zA-Z0-9\-_.]+(?:\.[a-zA-Z0-9\-_.]+)*(?::\d+)?\/[a-zA-Z0-9\-_.]+$/;
     return pattern.test(url);
   };
 
@@ -75,16 +77,16 @@ const FileElement: React.FC<
           }}
         >
           {isValidObjectURL(fileUrl) && (
-            <img
+            <Link href={fileUrl !== null ? fileUrl : "#"}>
+            <Image
+              className="cursor-pointer !relative max-h-[90px] max-w-full p-1"
               src={fileUrl}
               alt="uploaded file"
-              style={{
-                maxWidth: "100%",
-                maxHeight: "90px",
-                objectFit: "fill",
-                padding: "5px",
-              }}
+              fill={true}
+              priority
+              data-testid="logo-image"
               />
+              </Link>
             )}
         </Grid2>
         <Divider
