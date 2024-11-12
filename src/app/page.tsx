@@ -15,18 +15,16 @@ function HomePage() {
   const [uploadedFiles, setUploadedFiles] = useState<FileUploaded[]>([]);
 
   return (
-    <Box sx={{ paddingTop: "10vh" }}>
+    <Box className="pt-[10vh]">
       <Grid2
+        className="h-[80vh] justify-center"
         container
         rowSpacing={1}
         columnSpacing={{ xs: 1, sm: 2, md: 3 }}
-        justifyContent="center"
-        sx={{ height: "80vh" }}
       >
         <Grid2
+          className="content-end justify-center"
           container
-          justifyContent="center"
-          alignContent="end"
           size={{ xs: 10, md: 7 }}
         >
           <Dropzone
@@ -37,11 +35,9 @@ function HomePage() {
           />
         </Grid2>
         <Grid2
+          className="flex content-end justify-center"
           container
           size={{ xs: 10, md: 4 }}
-          display={"flex"}
-          alignContent="end"
-          justifyContent="center"
         >
           <FileList
             uploadedFiles={uploadedFiles}
@@ -49,14 +45,10 @@ function HomePage() {
             setDropzoneState={setDropzoneState}
           />
         </Grid2>
+        <Grid2 sx={{ display: { xs: "none", md: "flex" }}} size={{ xs: 10, md: 7 }} /> {/* Work around since tailwind dont work for none */}
         <Grid2
-          size={{ xs: 10, md: 7 }}
-          sx={{ display: { xs: "none", md: "flex" } }}
-        ></Grid2>
-        <Grid2
+          className="xs:flex md:flow-root justify-center"
           size={{ xs: 10, md: 4 }}
-          justifyContent="center"
-          display={{ xs: "flex", md: "flow" }}
         >
           <Tooltip
             data-testid="hint-submit-button-disabled"
@@ -64,23 +56,14 @@ function HomePage() {
             disableHoverListener={uploadedFiles.length !== 0}
             placement="top"
           >
-            <span
-              style={{
-                display: "flex",
-                justifyContent: "center",
-                width: "100%",
-              }}
-            >
+            <span className="flex justify-center w-full">
               <Button
+                className="xs:w-[96%] md:w-[100%] min-w-[133.44px] max-h-[40px]"
                 data-testid="submit-button"
                 variant="contained"
                 color="secondary"
                 disabled={uploadedFiles.length === 0}
                 fullWidth
-                sx={{
-                  width: { xs: "90%", md: "100%" },
-                  minWidth: "133.44px",
-                }}
               >
                 Submit
               </Button>
