@@ -8,7 +8,6 @@ import {
 } from "@mui/material";
 import DeleteIcon from "@mui/icons-material/Delete";
 import { DropzoneState } from "@/types";
-import Link from "next/link";
 import Image from "next/image";
 
 /**
@@ -52,66 +51,42 @@ const FileElement: React.FC<
           setHovered(false);
           setDropzoneState({ visible: false, imageUrl: ""});
         }}
-        sx={{
-          position: "relative",
-          height: "100%",
-          width: "100%",
-          minHeight: "90px",
-          display: "flex",
-          alignItems: "center",
-          justifyContent: "center",
-          overflow: "hidden",
-          borderRadius: 1,
-          border: "1px solid",
-          borderColor: "primary.main",
-          backgroundColor: "background.default",
-        }}
+        className="relative h-full w-full min-h-[90px] flex items-center
+                  justify-center overflow-hidden rounded border-2 border-neutral-600 bg-neutral-200"
       >
         <Grid2
           size={20}
-          sx={{
-            position: "relative",
-            display: "flex",
-            justifyContent: "center",
-            alignItems: "center",
-          }}
+          className="relative flex justify-center items-center"
         >
           {isValidObjectURL(fileUrl) && (
-            <Link href={fileUrl !== null ? fileUrl : "#"}>
-            <Image
-              className="cursor-pointer !relative max-h-[90px] max-w-full p-1"
-              src={fileUrl}
-              alt="uploaded file"
-              fill={true}
-              priority
-              data-testid="logo-image"
-              />
-              </Link>
+            <div>
+              <Image
+                className="!relative max-h-[90px] max-w-full p-1"
+                src={fileUrl}
+                alt="uploaded file"
+                fill={true}
+                priority
+                data-testid="logo-image"
+                />
+            </div>
             )}
+
         </Grid2>
         <Divider
           orientation="vertical"
           flexItem
-          sx={{ color: theme.palette.primary.dark, borderRightWidth: 3 }}
+          color={theme.palette.primary.dark}
+          sx={{  borderRightWidth: 3 }} // className="border-r-2" dont work
         />
         <Grid2
           size={80}
-          sx={{
-            position: "relative",
-            justifyContent: "center",
-            alignItems: "center",
-          }}
+          className="relative flex items"
+
         >
           <Typography
             variant="h6"
-            sx={{
-              color: theme.palette.text.primary,
-              overflow: "hidden",
-              textOverflow: "ellipsis",
-              whiteSpace: "nowrap",
-              textAlign: "start",
-              marginLeft: "10px",
-            }}
+            color= {theme.palette.text.primary}
+            className="overflow-hidden text-ellipsis whitespace-nowrap text-start pl-2"
           >
             {fileName}
           </Typography>
@@ -120,18 +95,10 @@ const FileElement: React.FC<
           <IconButton
             edge="end"
             aria-label="delete"
-            sx={{
-              position: "absolute",
-              top: -8,
-              right: 3,
-              color: "black",
-              ":hover": {
-                backgroundColor: "transparent",
-              },
-            }}
+            style={{ color: "black", position: "absolute", top: "-5px", right: 5 }}
             onClick={() => handleDelete(fileUrl)}
           >
-            <DeleteIcon data-testid="delete" sx={{ fontSize: "1.7rem" }} />
+            <DeleteIcon data-testid="delete" style={{ fontSize: "1.7rem" }} />
           </IconButton>
         )}
       </Grid2>
