@@ -2,6 +2,7 @@ import React from 'react';
 import Link from 'next/link';
 import {
   Box,
+  Divider,
   Drawer,
   List,
   ListItemButton,
@@ -65,7 +66,9 @@ const SideNav = ({ open, onClose }: DrawerMenuProps) => {
           <Toolbar>
             <Typography variant="h5">FertiScan</Typography>
           </Toolbar>
+
           <List>
+          <Divider />
           <Tooltip title="Go to New Inspection" placement='right'>
             <Link href="/" passHref data-testid="new-inspection-button" >
               <ListItemButton>
@@ -76,6 +79,7 @@ const SideNav = ({ open, onClose }: DrawerMenuProps) => {
               </ListItemButton>
             </Link>
             </Tooltip>
+            <Divider />
           <Tooltip title="Go to Search Page" placement='right'>
             <Link href="/SearchPage" passHref data-testid="search-page-button">
               <ListItemButton>
@@ -86,10 +90,12 @@ const SideNav = ({ open, onClose }: DrawerMenuProps) => {
               </ListItemButton>
             </Link>
           </Tooltip>
+          <Divider />
           </List>
         </div>
         <div>
           <List>
+          <Divider />
             <Tooltip title="Report an issue" placement='right'>
             <Link href="https://github.com/ai-cfia/fertiscan-frontend/issues/new/choose" passHref data-testid="report-issue-button">
               <ListItemButton>
