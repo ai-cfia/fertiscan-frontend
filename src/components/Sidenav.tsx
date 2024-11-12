@@ -11,7 +11,6 @@ import {
   Toolbar,
   Tooltip,
   Typography,
-  useTheme,
 } from "@mui/material";
 import SearchIcon from '@mui/icons-material/Search';
 import HomeIcon from '@mui/icons-material/Home';
@@ -23,18 +22,9 @@ interface DrawerMenuProps {
 }
 
 const SideNav = ({ open, onClose }: DrawerMenuProps) => {
-  const theme = useTheme();
-
   return (
     <Drawer
-      sx={{
-        width: 240,
-        flexShrink: 0,
-        "& .MuiDrawer-paper": {
-          width: 240,
-          boxSizing: "border-box",
-        },
-      }}
+      className='w-60 flex-shrink-0'
       variant="temporary"
       anchor="left"
       open={open}
@@ -43,21 +33,10 @@ const SideNav = ({ open, onClose }: DrawerMenuProps) => {
         keepMounted: true,
       }}
       PaperProps={{
-        sx: {
-          backgroundColor: theme.palette.secondary.main,
-          overflowX: "hidden"
-        },
+        className:"w-60 box-border overflow-x-hidden",
       }}
     >
-      <Box
-        sx={{
-          width: 250,
-          height: '100%',
-          display: 'flex',
-          flexDirection: 'column',
-          justifyContent: 'space-between',
-          color: theme.palette.text.primary,
-        }}
+      <Box className="w-250 h-full flex flex-col justify-between text-white bg-sky-900"
         role="presentation"
         data-testid="backdrop"
         onClick={onClose}
