@@ -26,7 +26,6 @@ const SideNav = ({ open, onClose }: DrawerMenuProps) => {
     <Drawer
       className='darkContainer w-[240px] flex-shrink-0'
       variant="temporary"
-      variant="persistent"
       anchor="left"
       open={open}
       onClose={onClose}
