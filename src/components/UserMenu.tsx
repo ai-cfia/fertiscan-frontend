@@ -78,17 +78,12 @@ const UserMenu = ({
       anchorOrigin={{ horizontal: "right", vertical: "bottom" }}
       slotProps={{
         paper: {
-          elevation: 0,
-          sx: {
-            filter: "drop-shadow(0px 2px 8px rgba(0,0,0,0.32))",
-            bgcolor: theme.palette.secondary.main,
-            color: theme.palette.text.secondary,
-          },
+          className: "!bg-sky-900 !text-white !shadow-2xl !filter !shadow-[rgba(0,0,0,0.5)_0px_2px_8px] ",
         },
       }}
     >
       <MenuItem
-        sx={{ minWidth: 36 }}
+        className="min-w-[36px]"
         onClick={(event) => event.preventDefault()}
         data-testid="profile-menu-item"
       >
@@ -114,9 +109,7 @@ const UserMenu = ({
       <Typography
         variant="caption"
         textAlign="center"
-        sx={{
-          display: "block",
-        }}
+        className="block"
         data-testid="app-version"
       >
         App Version: alpha 0.2.1
