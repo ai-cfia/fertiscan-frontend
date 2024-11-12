@@ -100,13 +100,13 @@ const StepControls: React.FC<CustomStepperProps> = ({
 
   return (
     <>
-      <Typography sx={{ mt: 2, mb: 1, py: 1 }}>
+      <Typography className="mt-2 mb-1 py-1">
         {allStepsCompleted
           ? "All steps completed - you're finished"
           : `Step ${activeStep + 1}`}
       </Typography>
 
-      <Box sx={{ display: "flex", justifyContent: "center", gap: 2, pt: 2 }}>
+      <Box className="flex justify-center gap-2 pt-2">
         <Button
           color="secondary"
           disabled={activeStep === 0}
