@@ -1,13 +1,13 @@
-import React, { useState } from "react";
+import { DropzoneState } from "@/types";
+import DeleteIcon from "@mui/icons-material/Delete";
 import {
+  Divider,
   Grid2,
   IconButton,
   Typography,
   useTheme,
-  Divider,
 } from "@mui/material";
-import DeleteIcon from "@mui/icons-material/Delete";
-import { DropzoneState } from "@/types";
+import React, { useState } from "react";
 
 /**
  * FileElementProps interface to define the props for the FileElement component
@@ -35,7 +35,8 @@ const FileElement: React.FC<
   const [hovered, setHovered] = useState(false);
 
   const isValidObjectURL = (url: string) => {
-    const pattern = /^(blob:http:\/\/|https:\/\/[a-zA-Z0-9\-_.]+\/[a-zA-Z0-9\-_.]+)$/;
+    const pattern =
+      /^(blob:http:\/\/|https:\/\/[a-zA-Z0-9\-_.]+\/[a-zA-Z0-9\-_.]+)$/;
     return pattern.test(url);
   };
 
@@ -44,11 +45,11 @@ const FileElement: React.FC<
       <Grid2
         onMouseEnter={() => {
           setHovered(true);
-          setDropzoneState({ visible: true, imageUrl: fileUrl});
+          setDropzoneState({ visible: true, imageUrl: fileUrl });
         }}
         onMouseLeave={() => {
           setHovered(false);
-          setDropzoneState({ visible: false, imageUrl: ""});
+          setDropzoneState({ visible: false, imageUrl: "" });
         }}
         sx={{
           position: "relative",
@@ -84,8 +85,8 @@ const FileElement: React.FC<
                 objectFit: "fill",
                 padding: "5px",
               }}
-              />
-            )}
+            />
+          )}
         </Grid2>
         <Divider
           orientation="vertical"

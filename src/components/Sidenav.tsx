@@ -24,8 +24,9 @@ interface DrawerMenuProps {
 const SideNav = ({ open, onClose }: DrawerMenuProps) => {
   return (
     <Drawer
-      className='w-60 flex-shrink-0'
+      className='darkContainer w-[240px] flex-shrink-0'
       variant="temporary"
+      variant="persistent"
       anchor="left"
       open={open}
       onClose={onClose}
@@ -33,7 +34,7 @@ const SideNav = ({ open, onClose }: DrawerMenuProps) => {
         keepMounted: true,
       }}
       PaperProps={{
-        className:"w-60 box-border overflow-x-hidden",
+        className:"w-[240px] box-border overflow-x-hidden",
       }}
     >
       <Box className="w-250 h-full flex flex-col justify-between text-white bg-sky-900"
