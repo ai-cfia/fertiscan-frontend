@@ -18,10 +18,6 @@ import Link from "next/link";
 import { useState } from "react";
 import AlertBanner from "./AlertBanner";
 
-// Defining a styled component for the logo using emotion's styled
-const Logo = styled(Image)`
-  position: relative !important;
-`;
 interface HeaderProps {
   setSideNavOpen: (open: boolean | ((prevOpen: boolean) => boolean)) => void;
 }
@@ -52,80 +48,75 @@ const Header: React.FC<HeaderProps> = ({ setSideNavOpen }) => {
 
   return (
     <>
-    <Box sx={{ flexGrow: 1 }}>
-      <AppBar position="static" data-testid="header-appbar">
-        <Toolbar
-          sx={{ justifyContent: "space-between", height: "100%" }}
-          data-testid="header-toolbar"
-        >
-          {/* Navigation menu toggle button on the left */}
-          <IconButton
-            edge="start"
-            onClick={handleSideNavToggle}
-            data-testid="menu-toggle-button"
+      <Box className="grow">
+        <AppBar className="!static" data-testid="header-appbar">
+          <Toolbar
+            className="justify-between h-full"
+            data-testid="header-toolbar"
           >
-            <MenuIcon fontSize="large" />
-          </IconButton>
-
-          {/* Logo container in the center */}
-          <Box
-            sx={{
-              ...theme.logoSize,
-            }}
-            data-testid="logo-container"
-          >
-            <Link href="https://inspection.canada.ca">
-              <Logo
-                src="/img/CFIA_FIP_FR_WHITE_1.png"
-                alt="logo"
-                fill={true}
-                priority
-                data-testid="logo-image"
-              />
-            </Link>
-          </Box>
-
-          {/* User interaction components on the right */}
-          <Box
-            sx={{
-              display: "flex",
-            }}
-            data-testid="user-interaction-box"
-          >
-            {/* Language toggle button */}
-            <Button
-              sx={{
-                alignSelf: "center",
-                textTransform: "unset",
-              }}
-              data-testid="language-toggle-button"
-            >
-              <Typography
-                sx={{ textDecoration: "underline" }}
-                data-testid="language-text"
-              >
-                {isDownXs || isBetweenXsSm || isBetweenSmMd ? "FR" : "Français"}
-              </Typography>
-            </Button>
-
-            {/* User account icon button */}
+            {/* Navigation menu toggle button on the left */}
             <IconButton
-              sx={{ alignSelf: "center" }}
-              onClick={handleUserMenuToggle}
-              data-testid="user-account-button"
+              edge="start"
+              onClick={handleSideNavToggle}
+              data-testid="menu-toggle-button"
             >
-              <AccountCircleIcon fontSize="large" />
+              <MenuIcon fontSize="large" />
             </IconButton>
-          </Box>
-        </Toolbar>
-      </AppBar>
 
-      <UserMenu
-        anchorElement={anchorElement}
-        isUserMenuOpen={isUserMenuOpen}
-        setIsUserMenuOpen={setIsUserMenuOpen}
-        setAnchorElement={setAnchorElement}
-      />
+            {/* Logo container in the center */}
+            <Box
+              sx={{
+                ...theme.logoSize,
+              }}
+              data-testid="logo-container"
+            >
+              <Link href="https://inspection.canada.ca">
+                <Image
+                  className="cursor-pointer !relative"
+                  src="/img/CFIA_FIP_FR_WHITE_1.png"
+                  alt="logo"
+                  fill={true}
+                  priority
+                  data-testid="logo-image"
+                />
+              </Link>
+            </Box>
+
+            {/* User interaction components on the right */}
+            <Box className="flex" data-testid="user-interaction-box">
+              {/* Language toggle button */}
+              <Button
+                className="align-center"
+                data-testid="language-toggle-button"
+              >
+                <Typography
+                  className="lowercase underline"
+                  data-testid="language-text"
+                >
+                  {isDownXs || isBetweenXsSm || isBetweenSmMd
+                    ? "FR"
+                    : "Français"}
+                </Typography>
+              </Button>
+
+              {/* User account icon button */}
+              <IconButton
+                className="self-center"
+                onClick={handleUserMenuToggle}
+                data-testid="user-account-button"
+              >
+                <AccountCircleIcon fontSize="large" />
+              </IconButton>
+            </Box>
+          </Toolbar>
+        </AppBar>
+
+        <UserMenu
+          anchorElement={anchorElement}
+          isUserMenuOpen={isUserMenuOpen}
+          setIsUserMenuOpen={setIsUserMenuOpen}
+          setAnchorElement={setAnchorElement}
+        />
       </Box>
       <AlertBanner></AlertBanner>
     </>
