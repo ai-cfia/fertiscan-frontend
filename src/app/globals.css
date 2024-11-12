@@ -25,3 +25,11 @@ body {
     text-wrap: balance;
   }
 }
+
+.swiper-pagination-bullet {
+  opacity: 0.3 !important;
+}
+
+.swiper-pagination-bullet-active {
+  opacity: 1 !important;
+}
