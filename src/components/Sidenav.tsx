@@ -4,6 +4,7 @@ import {
   Box,
   Divider,
   Drawer,
+  Icon,
   List,
   ListItemButton,
   ListItemIcon,
@@ -12,6 +13,7 @@ import {
   Tooltip,
   Typography,
 } from "@mui/material";
+import Image from 'next/image';
 import SearchIcon from '@mui/icons-material/Search';
 import HomeIcon from '@mui/icons-material/Home';
 import BugReportIcon from '@mui/icons-material/BugReport';
@@ -42,8 +44,11 @@ const SideNav = ({ open, onClose }: DrawerMenuProps) => {
         onClick={onClose}
       >
         <div>
-          <Toolbar>
-            <Typography variant="h5">FertiScan</Typography>
+          <Toolbar className='flex'>
+              <Icon>
+                <Image src="/img/CFIA_small_logo.ico" alt="CFIA/ACIA Logo" width="40" height="40" />
+              </Icon>
+                <Typography className="pl-2 self-center" variant="h6"><b>FertiScan</b></Typography>
           </Toolbar>
 
           <List>
