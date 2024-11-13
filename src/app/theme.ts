@@ -1,4 +1,5 @@
 "use client";
+import { colors } from "@mui/material";
 import { createTheme } from "@mui/material/styles";
 
 const theme = createTheme({
@@ -12,17 +13,17 @@ const theme = createTheme({
       main: "#0c4a6e", // Dark Blue (Selected)
     },
     error: {
-      main: "#f44336", // Red
+      main: colors.red["500"],
     },
     success: {
-      main: "#4caf50", // Green
+      main: colors.green["500"],
     },
     background: {
       default: "#C5C5C5", // Light Grey
     },
     text: {
-      primary: "#000000", // Black
-      secondary: "#ffffff", // White
+      primary: colors.common.black,
+      secondary: colors.common.white,
     },
   },
   typography: {
@@ -40,34 +41,15 @@ const theme = createTheme({
       defaultProps: {
         disableRipple: true,
       },
-      styleOverrides: {
-        root: {
-          textTransform: "none",
-          containedPrimary: {
-            textTransform: "none",
-            backgroundColor: "#05486C", // Dark Blue
-            color: "#ffffff", // White text
-            "&:hover": {
-              backgroundColor: "#032f47", // Darker Blue on hover
-            },
-          },
-          containedSecondary: {
-            textTransform: "none",
-            backgroundColor: "#CBC9C9", // Light Grey
-            color: "#000000", // Black text
-            "&:hover": {
-              backgroundColor: "#032f47", // Darker grey on hover
-            },
-          },
-        },
-      },
     },
     MuiIconButton: {
       styleOverrides: {
         root: {
-          color: "#ffffff", // White icon buttons
-          "&:hover": {
-            color: "#000000", // Black text
+          ".darkContainer &": {
+            color: colors.common.white,
+            "&:hover": {
+              color: colors.common.black,
+            },
           },
         },
       },
@@ -75,15 +57,15 @@ const theme = createTheme({
     MuiStepIcon: {
       styleOverrides: {
         root: {
-          color: "#7B7B7B", // Default Grey
-          "&.MuiStepIcon-active": {
+          color: "#7B7B7B",
+          "&.Mui-active": {
             color: "#05486C", // Dark Blue when active
           },
-          "&.MuiStepIcon-completed": {
-            color: "#4caf50", // Green when completed
+          "&.Mui-completed": {
+            color: colors.green["500"],
           },
-          "&.MuiStepIcon-error": {
-            color: "#f44336", // Red when error
+          "&.Mui-error": {
+            color: colors.red["500"],
           },
         },
       },
@@ -92,16 +74,13 @@ const theme = createTheme({
       styleOverrides: {
         label: {
           "&.Mui-active": {
-            color: "rgba(0, 0, 0, 0.54)",
+            color: "#05486C", // Dark Blue when active
           },
-          "&.MuiStepLabel-active": {
-            color: "#05486C !important", // Dark Blue when active
+          "&.Mui-completed": {
+            color: colors.green["500"],
           },
-          "&.MuiStepLabel-completed": {
-            color: "#4caf50 !important", // Green when completed
-          },
-          "&.MuiStepLabel-error": {
-            color: "#f44336 !important", // Red when error
+          "&.Mui-error": {
+            color: colors.red["500"],
           },
           color: "#7B7B7B", // Default Grey
         },
@@ -110,9 +89,9 @@ const theme = createTheme({
     MuiInputBase: {
       styleOverrides: {
         root: {
-          backgroundColor: "#FFFFFF", // Background color white
+          backgroundColor: colors.common.white,
           border: "3px solid #BEBCBC", // Stroke color
-          color: "#000000", // Text color black
+          color: colors.common.black,
           "&::placeholder": {
             color: "#BCBABA", // Placeholder color
           },
@@ -122,38 +101,39 @@ const theme = createTheme({
     MuiAppBar: {
       styleOverrides: {
         root: {
-          backgroundColor: "#05486C", // Dark Blue background
-          height: "64px", // Height of the AppBar
-        },
-      },
-    },
-    MuiToolbar: {
-      styleOverrides: {
-        root: {
-          color: "#ffffff", // White text
+          "&.header": {
+            backgroundColor: "#05486C", // Dark Blue background
+            height: "64px", // Height of the AppBar
+          },
         },
       },
     },
     MuiTypography: {
       styleOverrides: {
         root: {
-          color: "#ffffff", // White text
+          ".darkContainer &": {
+            color: colors.common.white,
+          },
         },
       },
     },
     MuiLink: {
       styleOverrides: {
         root: {
-          color: "#ffffff", // White links
+          ".darkContainer &": {
+            color: colors.common.white,
+          },
         },
       },
     },
     MuiMenuItem: {
       styleOverrides: {
         root: {
-          color: "#ffffff", // White text
-          "&:hover": {
-            backgroundColor: "#032f47", // Dark Blue on hover
+          ".darkContainer &": {
+            color: colors.common.white,
+            "&:hover": {
+              backgroundColor: "#032f47", // Dark blue background on hover within darkContainer
+            },
           },
         },
       },
@@ -161,7 +141,9 @@ const theme = createTheme({
     MuiListItemIcon: {
       styleOverrides: {
         root: {
-          color: "#ffffff", // Black icons
+          ".darkContainer &": {
+            color: colors.common.white,
+          },
         },
       },
     },

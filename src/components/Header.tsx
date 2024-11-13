@@ -49,7 +49,7 @@ const Header: React.FC<HeaderProps> = ({ setSideNavOpen }) => {
   return (
     <>
       <Box className="grow">
-        <AppBar className="!static" data-testid="header-appbar">
+        <AppBar className="!static darkContainer" data-testid="header-appbar">
           <Toolbar
             className="justify-between h-full"
             data-testid="header-toolbar"

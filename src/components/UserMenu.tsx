@@ -66,6 +66,7 @@ const UserMenu = ({
 
   return (
     <Menu
+      className="darkContainer"
       anchorEl={anchorElement}
       id="account-menu"
       open={isUserMenuOpen || false}
