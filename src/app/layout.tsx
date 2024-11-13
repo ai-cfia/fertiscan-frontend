@@ -23,10 +23,8 @@ export default function RootLayout({
         <AppRouterCacheProvider>
           <ThemeProvider theme={theme}>
             <SideNav open={sideNavOpen} onClose={handleDrawerClose} />
-            <Box>
               <Header setSideNavOpen={setSideNavOpen} />
               {children}
-            </Box>
           </ThemeProvider>
         </AppRouterCacheProvider>
       </body>
