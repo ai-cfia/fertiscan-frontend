@@ -23,7 +23,6 @@ export default function RootLayout({
         <AppRouterCacheProvider>
           <ThemeProvider theme={theme}>
             <SideNav open={sideNavOpen} onClose={handleDrawerClose} />
-            {/* Margin adjustment based on SideNav state */}
             <Box>
               <Header setSideNavOpen={setSideNavOpen} />
               {children}
