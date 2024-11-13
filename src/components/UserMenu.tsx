@@ -8,7 +8,6 @@ import {
   Menu,
   MenuItem,
   Typography,
-  useTheme,
 } from "@mui/material";
 import {
   Dispatch,
@@ -51,7 +50,6 @@ const UserMenu = ({
   setIsUserMenuOpen,
   setAnchorElement,
 }: UserMenuProps): ReactElement => {
-  const theme = useTheme();
   const placeholderUser = usePlaceholder();
 
   const handleClose = useCallback((): void => {

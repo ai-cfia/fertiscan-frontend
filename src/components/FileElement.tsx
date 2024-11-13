@@ -1,5 +1,3 @@
-import { DropzoneState } from "@/types";
-import DeleteIcon from "@mui/icons-material/Delete";
 import {
   Divider,
   Grid2,

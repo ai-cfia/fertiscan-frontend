@@ -1,7 +1,6 @@
 "use client";
 import UserMenu from "@/components/UserMenu";
 import useBreakpoints from "@/utils/useBreakpoints";
-import styled from "@emotion/styled";
 import AccountCircleIcon from "@mui/icons-material/AccountCircle";
 import MenuIcon from "@mui/icons-material/Menu";
 import {
