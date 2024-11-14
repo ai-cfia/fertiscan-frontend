@@ -11,8 +11,8 @@ import { useState } from "react";
 
 interface LoginProps {
   isOpen: boolean;
-  login: (username:string, password:string)=>string;
-  signup: (username:string, password:string, confirm:string)=>string;
+  login: (username:string, password:string)=>Promise<string>;
+  signup: (username:string, password:string, confirm:string)=>Promise<string>;
 }
 const LoginModal = ({isOpen, login, signup}:LoginProps) => {
 
@@ -27,11 +27,13 @@ const LoginModal = ({isOpen, login, signup}:LoginProps) => {
 
   const handleSubmit = ()=>{
     if(isSignup){
-      const message = signup(username,password,confirmPassword);
-      setErrorMessage(message)
+      signup(username,password,confirmPassword).then(message=>{
+        setErrorMessage(message)
+      })
     }else{
-      const message = login(username,password);
-      setErrorMessage(message);
+      login(username,password).then(message=>{
+        setErrorMessage(message);
+      })
     }
   }
 
