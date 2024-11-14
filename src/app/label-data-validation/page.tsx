@@ -4,6 +4,7 @@ import HorizontalNonLinearStepper, {
   StepStatus,
 } from "@/components/HorizontalNonLinearStepper";
 import ImageViewer from "@/components/ImageViewer";
+import Organizations from "@/components/Organizations";
 import useBreakpoints from "@/utils/useBreakpoints";
 import { Box, Button, Container, Typography } from "@mui/material";
 import * as React from "react";
@@ -40,11 +41,11 @@ function LabelDataValidationPage() {
       {!isMdOrBelow && (
         <Box className="p-4 mt-4" data-testid="stepper">
           <HorizontalNonLinearStepper
-          steps={steps}
-          activeStep={activeStep}
-          setActiveStep={setActiveStep}
-          stepStatuses={stepStatuses}
-        />
+            steps={steps}
+            activeStep={activeStep}
+            setActiveStep={setActiveStep}
+            stepStatuses={stepStatuses}
+          />
         </Box>
       )}
 
@@ -59,11 +60,11 @@ function LabelDataValidationPage() {
         {isMdOrBelow && (
           <Box className="p-4 mt-4 border" data-testid="stepper-md">
             <HorizontalNonLinearStepper
-          steps={steps}
-          activeStep={activeStep}
-          setActiveStep={setActiveStep}
-          stepStatuses={stepStatuses}
-        />
+              steps={steps}
+              activeStep={activeStep}
+              setActiveStep={setActiveStep}
+              stepStatuses={stepStatuses}
+            />
           </Box>
         )}
 
@@ -72,16 +73,17 @@ function LabelDataValidationPage() {
           data-testid="form-container"
         >
           <Box
-            className="w-full h-[400px] p-4 text-center font-bold bg-gray-400"
+            className="w-full h-[400px] p-4 text-center "
             data-testid="form-placeholder"
           >
-            <StepControls
+            {/* <StepControls
               steps={steps}
               activeStep={activeStep}
               setActiveStep={setActiveStep}
               stepStatuses={stepStatuses}
               setStepStatuses={setStepStatuses}
-            />
+            /> */}
+            <Organizations />
           </Box>
         </Box>
       </Box>
@@ -200,45 +202,3 @@ const StepControls: React.FC<CustomStepperProps> = ({
 };
 
 export default LabelDataValidationPage;
-
-
-
-
-
-
-
-// function LabelDataValidationPage() {
-  
-
-//   return (
-//     <Container
-//       className="flex flex-col h-screen max-w-[1920px] overflow-hidden"
-//       maxWidth={false}
-//     >
-//       <Box className="p-4 mt-4">
-//         <HorizontalNonLinearStepper
-//           steps={steps}
-//           activeStep={activeStep}
-//           setActiveStep={setActiveStep}
-//           stepStatuses={stepStatuses}
-//         />
-//       </Box>
-
-//       <Box className="flex flex-1 overflow-hidden flex-col md:flex-row">
-//         <Box className="flex-1 p-4 flex justify-center">
-//           {/* Carousel Placeholder: To be removed, just for testing */}
-//           <Box className="w-full h-3/4 p-4 text-center font-bold bg-gray-300">
-//             Carousel Placeholder
-//           </Box>
-//         </Box>
-
-//         <Box className="flex flex-1 p-4 justify-center overflow-y-auto">
-//           {/* Form Placeholder: To be removed, just for testing */}
-//           <Box className="w-full h-3/4 p-4 text-center font-bold bg-gray-400">
-//             <StepControls
-//               steps={steps}
-//               activeStep={activeStep}
-//               setActiveStep={setActiveStep}
-//               stepStatuses={stepStatuses}
-//               setStepStatuses={setStepStatuses}
-//             />

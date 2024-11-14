@@ -11,6 +11,7 @@ const config: Config = {
       colors: {
         background: "var(--background)",
         foreground: "var(--foreground)",
+        "fertiscan-blue": "#05486C",
       },
     },
     // Updated breakpoints to match MUI’s defaults

@@ -21,10 +21,6 @@ const theme = createTheme({
     background: {
       default: "#C5C5C5", // Light Grey
     },
-    text: {
-      primary: colors.common.black,
-      secondary: colors.common.white,
-    },
   },
   typography: {
     fontFamily: "Roboto, Arial, sans-serif",
@@ -83,18 +79,6 @@ const theme = createTheme({
             color: colors.red["500"],
           },
           color: "#7B7B7B", // Default Grey
-        },
-      },
-    },
-    MuiInputBase: {
-      styleOverrides: {
-        root: {
-          backgroundColor: colors.common.white,
-          border: "3px solid #BEBCBC", // Stroke color
-          color: colors.common.black,
-          "&::placeholder": {
-            color: "#BCBABA", // Placeholder color
-          },
         },
       },
     },
