@@ -36,7 +36,7 @@ const AlertBanner: React.FC = () => {
   }, [alert, hideAlert, startAutoDismissTimer]);
 
   return (
-    <Box sx={{ width: "100%" }}>
+    <Box className="w-full">
       <Collapse in={Boolean(alert)}>
         {alert && (
           <Alert
@@ -50,14 +50,13 @@ const AlertBanner: React.FC = () => {
             }
           >
             <Typography
+            className="overflow-hidden text-ellipsis"
               variant="body2"
               color="inherit"
-              sx={{
+              style={{
                 display: "-webkit-box",
                 WebkitLineClamp: 2,
                 WebkitBoxOrient: "vertical",
-                overflow: "hidden",
-                textOverflow: "ellipsis",
               }}
             >
               {alert.message}

@@ -112,24 +112,8 @@ const Dropzone: React.FC<DropzoneProps> = ({
     <Box
       data-testid="dropzone"
       id="dropzone"
-      sx={{
-        display: 'flex',
-        position: 'relative',
-        flexDirection: 'column',
-        justifyContent: 'center',
-        alignItems: 'center',
-        border: '3px dashed ',
-        borderColor: theme.palette.secondary.main,
-        borderRadius: 1,
-        textAlign: 'center',
-        p: 1,
-        backgroundSize: 'contain',
-        backgroundColor: 'transparent',
-        width: '90%',
-        height: '90%',
-        minHeight: { xs: '350px', md: '400px' },
-        minWidth: '133.44px',
-      }}
+      className="relative flex flex-col justify-center items-center border-dashed border-4 border-sky-900 rounded text-center
+                p-1 bg-transparent bg-contain w-[90%] h-[90%] xs:min-h-[350px] md:min-h-[400px] min-w-[133.44px]"
       onDragOver={handleDragOver}
       onDrop={handleDrop}
     >
@@ -140,28 +124,14 @@ const Dropzone: React.FC<DropzoneProps> = ({
           src={dropzoneState.imageUrl}
           alt="Uploaded file"
           onLoad={handleImageLoad}
-          sx={{
-            position: 'absolute',
-            maxWidth: '100%',
-            maxHeight: '100%',
-            objectFit: 'contain',
-            borderColor: theme.palette.secondary.main,
-            width:
-              dropzoneState.fillPercentage &&
-              dropzoneState.fillPercentage >= 90
-                ? '80%'
-                : 'auto',
-            height:
-              dropzoneState.fillPercentage &&
-              dropzoneState.fillPercentage >= 90
-                ? '80%'
-                : 'auto',
-          }}
+          className={`absolute max-w-full max-h-full object-contain ${ dropzoneState.fillPercentage && dropzoneState.fillPercentage >= 90
+              ? 'w-[80%] h-[80%]'
+              : 'w-auto h-auto'}`}
         />
       ) : (
-        <Box sx={{ textAlign: 'center' }}>
+        <Box className="text-center">
           <CloudUpload
-            sx={{
+            style={{
               color: theme.palette.secondary.main,
               fontSize: '7rem',
             }}

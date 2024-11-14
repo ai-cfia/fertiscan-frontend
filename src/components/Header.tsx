@@ -1,7 +1,6 @@
 "use client";
 import UserMenu from "@/components/UserMenu";
 import useBreakpoints from "@/utils/useBreakpoints";
-import styled from "@emotion/styled";
 import AccountCircleIcon from "@mui/icons-material/AccountCircle";
 import MenuIcon from "@mui/icons-material/Menu";
 import {
@@ -18,10 +17,6 @@ import Link from "next/link";
 import { useState } from "react";
 import AlertBanner from "./AlertBanner";
 
-// Defining a styled component for the logo using emotion's styled
-const Logo = styled(Image)`
-  position: relative !important;
-`;
 interface HeaderProps {
   setSideNavOpen: (open: boolean | ((prevOpen: boolean) => boolean)) => void;
 }
@@ -52,14 +47,10 @@ const Header: React.FC<HeaderProps> = ({ setSideNavOpen }) => {
 
   return (
     <>
-      <Box sx={{ flexGrow: 1 }}>
-        <AppBar
-          position="static"
-          data-testid="header-appbar"
-          className="header darkContainer"
-        >
+      <Box className="grow ">
+        <AppBar className="!static header darkContainer" data-testid="header-appbar">
           <Toolbar
-            sx={{ justifyContent: "space-between", height: "100%" }}
+            className="justify-between h-full"
             data-testid="header-toolbar"
           >
             {/* Navigation menu toggle button on the left */}
@@ -67,7 +58,6 @@ const Header: React.FC<HeaderProps> = ({ setSideNavOpen }) => {
               edge="start"
               onClick={handleSideNavToggle}
               data-testid="menu-toggle-button"
-              className="whiteIconButton"
             >
               <MenuIcon fontSize="large" />
             </IconButton>
@@ -80,7 +70,8 @@ const Header: React.FC<HeaderProps> = ({ setSideNavOpen }) => {
               data-testid="logo-container"
             >
               <Link href="https://inspection.canada.ca">
-                <Logo
+                <Image
+                  className="cursor-pointer !relative"
                   src="/img/CFIA_FIP_FR_WHITE_1.png"
                   alt="logo"
                   fill={true}
@@ -91,22 +82,14 @@ const Header: React.FC<HeaderProps> = ({ setSideNavOpen }) => {
             </Box>
 
             {/* User interaction components on the right */}
-            <Box
-              sx={{
-                display: "flex",
-              }}
-              data-testid="user-interaction-box"
-            >
+            <Box className="flex" data-testid="user-interaction-box">
               {/* Language toggle button */}
               <Button
-                sx={{
-                  alignSelf: "center",
-                  textTransform: "unset",
-                }}
+                className="align-center"
                 data-testid="language-toggle-button"
               >
                 <Typography
-                  sx={{ textDecoration: "underline" }}
+                  className="normal-case underline"
                   data-testid="language-text"
                 >
                   {isDownXs || isBetweenXsSm || isBetweenSmMd
@@ -117,10 +100,9 @@ const Header: React.FC<HeaderProps> = ({ setSideNavOpen }) => {
 
               {/* User account icon button */}
               <IconButton
-                sx={{ alignSelf: "center" }}
+                className="self-center"
                 onClick={handleUserMenuToggle}
                 data-testid="user-account-button"
-                className="whiteIconButton"
               >
                 <AccountCircleIcon fontSize="large" />
               </IconButton>

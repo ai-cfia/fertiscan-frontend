@@ -46,63 +46,22 @@ const FileList: React.FC<FileListProps> = ({
 
   return (
     <Box
-      sx={{
-        display: "flex",
-        position: "relative",
-        flexDirection: "column",
-        justifyContent: "center",
-        alignItems: "center",
-        border: "2px solid",
-        borderColor: theme.palette.secondary.main,
-        borderRadius: 1,
-        textAlign: "center",
-        p: 1,
-        backgroundSize: "contain",
-        backgroundColor: "transparent",
-        width: {xs:"90%", md:"100%"},
-        height: "90%",
-        minHeight: { xs: "350px", md: "400px" },
-        overflowY: "auto",
-        overflowX: "hidden",
-        minWidth: "133.44px",
-        "&::-webkit-scrollbar": {
-          width: "20px",
-          marginRight: "10px",
-        },
-        "&::-webkit-scrollbar-thumb": {
-          backgroundColor: theme.palette.text.primary,
-          borderRadius: "10px",
-          WebkitBackgroundClip: "content-box",
-          border: "6px solid transparent",
-        },
-        "&::-webkit-scrollbar-track": {
-          backgroundColor: "transparent",
-        },
-      }}
+      className={`flex relative flex-col justify-center items-center border-2 border-sky-900
+                rounded text-center p-1 bg-transparent bg-contain xs:w-[90%] md:w-[100%] h-[90%]
+                xs:min-h-[350px] md:min-h-[400px] overflow-y-auto overflow-x-hidden min-w-[133.44px]
+                [&::-webkit-scrollbar]:w-[10px]
+                [&::-webkit-scrollbar]:mr-[10px]
+                [&::-webkit-scrollbar-thumb]:bg-sky-900
+                [&::-webkit-scrollbar-thumb]:rounded-full
+                [&::-webkit-scrollbar-thumb]:border-6-solid-transparent
+                [&::-webkit-scrollbar-track]:bg-transparent`}
     >
       <Box
-        sx={{
-          position: "absolute",
-          top: uploadedFiles.length === 0 ? "50%" : "initial",
-          left: uploadedFiles.length === 0 ? "50%" : "initial",
-          transform:
-            uploadedFiles.length === 0
-              ? "translate(-50%, -50%)"
-              : "none",
-          width: "100%",
-          height: "100%",
-          display: "flex",
-          flexDirection: "column",
-          justifyContent:
-            uploadedFiles.length === 0 ? "center" : "flex-start",
-          alignItems:
-            uploadedFiles.length === 0 ? "center" : "flex-start",
-          textAlign: "center",
-          maxWidth: "100%",
-          maxHeight: "100%",
-          objectFit: "contain",
-          p: uploadedFiles.length !== 0 ? 2 : 0,
-        }}
+        className={`absolute transform w-full h-full flex flex-col
+                    ${uploadedFiles.length === 0 ? "justify-center items-center p-0 left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2"
+                      : "justify-start items-start p-2 left-0 top-0 translate-x-none translate-y-none"}
+                    text-center max-w-full max-h-full object-contain ` }
+
       >
         <Typography
           variant="h5"
@@ -116,9 +75,9 @@ const FileList: React.FC<FileListProps> = ({
           </b>
         </Typography>
         <Stack
+          className="w-full flex flex-col items-center"
           direction="column"
           spacing={2}
-          sx={{ width: "100%", alignItems: "center" }}
         >
           {uploadedFiles.map((file, index) => (
             <FileElement

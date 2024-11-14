@@ -10,7 +10,7 @@ const theme = createTheme({
       main: "#7B7B7B", // Dark grey (Default color)
     },
     secondary: {
-      main: "#05486C", // Dark Blue (Selected)
+      main: "#0c4a6e", // Dark Blue (Selected)
     },
     error: {
       main: colors.red["500"],
