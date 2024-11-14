@@ -7,15 +7,38 @@ const RouteGuard = ({children}: Readonly<{ children: React.ReactNode }>) => {
 
 
   // eslint-disable-next-line @typescript-eslint/no-unused-vars
-  const handleLogin = (username:string, password:string)=>{
-    // TODO: Implement login
-    return "Error Login";
+  const handleLogin = async (username:string, password:string)=>{
+    const headers = new Headers();
+    headers.append('Authorization', 'Basic '+btoa(username+":"+password))
+    const res = await fetch(process.env.API_URL+"/login",{
+      method: "POST",
+      headers:headers
+    })
+    if(res.status != 200){
+      if(res.status == 404){
+        return "Couldnt find resource, backend might be off"
+      }
+      return "Invalid username or password"
+    }else{
+      document.cookie="token="+btoa(username)+";"
+      return ""
+    }
   }
 
   // eslint-disable-next-line @typescript-eslint/no-unused-vars
-  const handleSignup = (username:string, password:string, confirm:string)=>{
-    // TODO: Implement signup
-    return "Error Signup";
+  const handleSignup = async (username:string, password:string, confirm:string)=>{
+    const headers = new Headers();
+    headers.append('Authorization', 'Basic '+btoa(username+":"+password))
+    const res = await fetch(process.env.API_URL+"/login",{
+      method: "POST",
+      headers:headers
+    })
+    if(res.status != 200){
+      return "Error during creation of user"
+    }else{
+      document.cookie="token="+btoa(username)+";"
+      return ""
+    }
   }
 
   useEffect(()=>{
