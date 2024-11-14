@@ -31,10 +31,10 @@
     "next": "14.2.15",
     "react": "^18",
     "react-dom": "^18",
-    "tailwind-scrollbar": "^3.1.0",
-    "tailwindcss-filters": "^3.0.0",
     "react-zoom-pan-pinch": "^3.6.1",
     "swiper": "^11.1.14",
+    "tailwind-scrollbar": "^3.1.0",
+    "tailwindcss-filters": "^3.0.0",
     "ts-node": "^10.9.2",
     "zustand": "^5.0.0"
   },

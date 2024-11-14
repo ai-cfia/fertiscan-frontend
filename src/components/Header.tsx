@@ -47,8 +47,8 @@ const Header: React.FC<HeaderProps> = ({ setSideNavOpen }) => {
 
   return (
     <>
-      <Box className="grow">
-        <AppBar className="!static darkContainer" data-testid="header-appbar">
+      <Box className="grow ">
+        <AppBar className="!static header darkContainer" data-testid="header-appbar">
           <Toolbar
             className="justify-between h-full"
             data-testid="header-toolbar"
@@ -89,7 +89,7 @@ const Header: React.FC<HeaderProps> = ({ setSideNavOpen }) => {
                 data-testid="language-toggle-button"
               >
                 <Typography
-                  className="lowercase underline"
+                  className="normal-case underline"
                   data-testid="language-text"
                 >
                   {isDownXs || isBetweenXsSm || isBetweenSmMd
