@@ -2,10 +2,8 @@
 import Dummy from "@/components/Dummy";
 import ImageViewer from "@/components/ImageViewer";
 import OrganizationForm from "@/components/OrganizationForm";
-import {
-  FieldStatus,
-  Organization,
-} from "@/components/OrganizationInformation";
+import { Organization } from "@/components/OrganizationInformation";
+import { InputStatus } from "@/components/StatusInput";
 import {
   HorizontalNonLinearStepper,
   StepComponentProps,
@@ -26,44 +24,44 @@ function LabelDataValidationPage() {
     {
       name: {
         value: "GreenGrow Inc.",
-        status: FieldStatus.Unverified,
+        status: InputStatus.Unverified,
         errorMessage: null,
       },
       address: {
         value: "123 Green Road, Farmville, State, 12345",
-        status: FieldStatus.Unverified,
+        status: InputStatus.Unverified,
         errorMessage: null,
       },
       website: {
         value: "https://www.greengrow.com",
-        status: FieldStatus.Unverified,
+        status: InputStatus.Unverified,
         errorMessage: null,
       },
       phoneNumber: {
         value: "123-456-7890",
-        status: FieldStatus.Unverified,
+        status: InputStatus.Unverified,
         errorMessage: null,
       },
     },
     {
       name: {
         value: "GreenGrow Inc.",
-        status: FieldStatus.Unverified,
+        status: InputStatus.Unverified,
         errorMessage: null,
       },
       address: {
         value: "123 Green Road, Farmville, State, 12345",
-        status: FieldStatus.Unverified,
+        status: InputStatus.Unverified,
         errorMessage: null,
       },
       website: {
         value: "https://www.greengrow.com",
-        status: FieldStatus.Unverified,
+        status: InputStatus.Unverified,
         errorMessage: null,
       },
       phoneNumber: {
         value: "123-456-7890",
-        status: FieldStatus.Unverified,
+        status: InputStatus.Unverified,
         errorMessage: null,
       },
     },

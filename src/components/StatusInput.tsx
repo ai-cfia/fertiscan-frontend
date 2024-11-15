@@ -1,68 +1,87 @@
 import CheckIcon from "@mui/icons-material/Check";
 import { Box, Divider, IconButton, InputBase, Typography } from "@mui/material";
-import React, { useState } from "react";
-import { FieldStatus } from "./OrganizationInformation";
+import { useState } from "react";
+import { Controller, useFormContext, useWatch } from "react-hook-form";
 
-function StatusInput({
+export enum InputStatus {
+  Verified = "verified",
+  Unverified = "unverified",
+  Error = "error",
+}
+
+function InputWithStatus({
   label,
   placeholder,
-  value,
-  setValue,
-  status,
-  setStatus,
+  name,
+  statusName,
   className = "",
 }: {
   label: string;
   placeholder: string;
-  value: string;
-  setValue: React.Dispatch<React.SetStateAction<string>>;
-  status: FieldStatus;
-  setStatus: React.Dispatch<React.SetStateAction<FieldStatus>>;
-  // errorMessage: string | null;
-  // setErrorMessage: React.Dispatch<React.SetStateAction<string | null>>;
+  name: string;
+  statusName: string;
   className?: string;
 }) {
+  const { control } = useFormContext();
   const [isFocused, setIsFocused] = useState(false);
 
-  const toggleVerified = () => {
-    if (status !== FieldStatus.Error) {
+  const statusValue = useWatch({
+    control,
+    name: statusName,
+  });
+
+  const toggleVerified = (
+    currentStatus: InputStatus,
+    setStatus: (value: InputStatus) => void,
+  ) => {
+    if (currentStatus !== InputStatus.Error) {
       setStatus(
-        status === FieldStatus.Verified
-          ? FieldStatus.Unverified
-          : FieldStatus.Verified,
+        currentStatus === InputStatus.Verified
+          ? InputStatus.Unverified
+          : InputStatus.Verified,
       );
     }
   };
 
   return (
     <Box
-      className={`flex items-center p-1 w-full border-2 rounded-tr-md rounded-br-md ${isFocused ? "border-fertiscan-blue" : ""} ${className}`}
+      className={`flex items-center p-1 w-full border-2 rounded-tr-md rounded-br-md ${
+        isFocused ? "border-fertiscan-blue" : ""
+      } ${className}`}
     >
       <Typography className="px-2 !font-bold select-none">{label}</Typography>
-
-      <InputBase
-        className="ml-2 flex-1 !text-[15px]"
-        placeholder={placeholder}
-        value={value}
-        onChange={(e) => setValue(e.target.value)}
-        onFocus={() => setIsFocused(true)}
-        onBlur={() => setIsFocused(false)}
-        disabled={status === FieldStatus.Verified}
+      <Controller
+        name={name}
+        control={control}
+        render={({ field }) => (
+          <InputBase
+            {...field}
+            className="ml-2 flex-1 !text-[15px]"
+            placeholder={placeholder}
+            onFocus={() => setIsFocused(true)}
+            onBlur={() => setIsFocused(false)}
+            disabled={statusValue === InputStatus.Verified}
+          />
+        )}
       />
-
       <Divider
         orientation="vertical"
         flexItem
         className={isFocused ? "!border-fertiscan-blue" : ""}
       />
-
-      <IconButton onClick={toggleVerified}>
-        <CheckIcon
-          className={status === FieldStatus.Verified ? "text-green-500" : ""}
-        />
-      </IconButton>
+      <Controller
+        name={statusName}
+        control={control}
+        render={({ field: { value, onChange } }) => (
+          <IconButton onClick={() => toggleVerified(value, onChange)}>
+            <CheckIcon
+              className={value === InputStatus.Verified ? "text-green-500" : ""}
+            />
+          </IconButton>
+        )}
+      />
     </Box>
   );
 }
 
-export default StatusInput;
+export default InputWithStatus;
