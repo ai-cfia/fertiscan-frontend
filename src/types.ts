@@ -44,18 +44,3 @@ interface ParentDimensions {
 
 export type { DropzoneState, ImageLoadEvent, ParentDimensions };
 
-export type Field = {
-  value: string;
-  isChecked: boolean;
-};
-
-export type Organization = {
-  name: Field;
-  address: Field;
-  website: Field;
-  phoneNumber: Field;
-};
-
-export type OrganizationsData = {
-  organizations: Organization[];
-};

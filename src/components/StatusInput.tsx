@@ -1,27 +1,38 @@
 import CheckIcon from "@mui/icons-material/Check";
 import { Box, Divider, IconButton, InputBase, Typography } from "@mui/material";
 import React, { useState } from "react";
+import { FieldStatus } from "./OrganizationInformation";
 
-interface CheckedInputProps {
-  label: string;
-  placeholder: string;
-  value: string;
-  setValue: React.Dispatch<React.SetStateAction<string>>;
-  isChecked: boolean;
-  setIsChecked: React.Dispatch<React.SetStateAction<boolean>>;
-  className?: string;
-}
-
-const CheckedInput: React.FC<CheckedInputProps> = ({
+function StatusInput({
   label,
   placeholder,
   value,
   setValue,
-  isChecked,
-  setIsChecked,
+  status,
+  setStatus,
   className = "",
-}) => {
+}: {
+  label: string;
+  placeholder: string;
+  value: string;
+  setValue: React.Dispatch<React.SetStateAction<string>>;
+  status: FieldStatus;
+  setStatus: React.Dispatch<React.SetStateAction<FieldStatus>>;
+  // errorMessage: string | null;
+  // setErrorMessage: React.Dispatch<React.SetStateAction<string | null>>;
+  className?: string;
+}) {
   const [isFocused, setIsFocused] = useState(false);
+
+  const toggleVerified = () => {
+    if (status !== FieldStatus.Error) {
+      setStatus(
+        status === FieldStatus.Verified
+          ? FieldStatus.Unverified
+          : FieldStatus.Verified,
+      );
+    }
+  };
 
   return (
     <Box
@@ -36,7 +47,7 @@ const CheckedInput: React.FC<CheckedInputProps> = ({
         onChange={(e) => setValue(e.target.value)}
         onFocus={() => setIsFocused(true)}
         onBlur={() => setIsFocused(false)}
-        disabled={isChecked}
+        disabled={status === FieldStatus.Verified}
       />
 
       <Divider
@@ -45,11 +56,13 @@ const CheckedInput: React.FC<CheckedInputProps> = ({
         className={isFocused ? "!border-fertiscan-blue" : ""}
       />
 
-      <IconButton onClick={() => setIsChecked(!isChecked)}>
-        <CheckIcon className={isChecked ? "text-green-500" : ""} />
+      <IconButton onClick={toggleVerified}>
+        <CheckIcon
+          className={status === FieldStatus.Verified ? "text-green-500" : ""}
+        />
       </IconButton>
     </Box>
   );
-};
+}
 
-export default CheckedInput;
+export default StatusInput;
