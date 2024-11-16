@@ -1,13 +1,15 @@
+import { FieldStatus } from "@/types/field";
 import CheckIcon from "@mui/icons-material/Check";
-import { Box, Divider, IconButton, InputBase, Typography } from "@mui/material";
+import {
+  Box,
+  Divider,
+  IconButton,
+  InputBase,
+  Typography,
+  Tooltip,
+} from "@mui/material";
 import { useState } from "react";
 import { Controller, useFormContext, useWatch } from "react-hook-form";
-
-export enum InputStatus {
-  Verified = "verified",
-  Unverified = "unverified",
-  Error = "error",
-}
 
 function InputWithStatus({
   label,
@@ -31,17 +33,22 @@ function InputWithStatus({
   });
 
   const toggleVerified = (
-    currentStatus: InputStatus,
-    setStatus: (value: InputStatus) => void,
+    currentStatus: FieldStatus,
+    setStatus: (value: FieldStatus) => void,
   ) => {
-    if (currentStatus !== InputStatus.Error) {
+    if (currentStatus !== FieldStatus.Error) {
       setStatus(
-        currentStatus === InputStatus.Verified
-          ? InputStatus.Unverified
-          : InputStatus.Verified,
+        currentStatus === FieldStatus.Verified
+          ? FieldStatus.Unverified
+          : FieldStatus.Verified,
       );
     }
   };
+
+  const tooltipText =
+    statusValue === FieldStatus.Verified
+      ? "Mark as Unverified"
+      : "Mark as Verified";
 
   return (
     <Box
@@ -60,7 +67,7 @@ function InputWithStatus({
             placeholder={placeholder}
             onFocus={() => setIsFocused(true)}
             onBlur={() => setIsFocused(false)}
-            disabled={statusValue === InputStatus.Verified}
+            disabled={statusValue === FieldStatus.Verified}
           />
         )}
       />
@@ -73,11 +80,13 @@ function InputWithStatus({
         name={statusName}
         control={control}
         render={({ field: { value, onChange } }) => (
-          <IconButton onClick={() => toggleVerified(value, onChange)}>
-            <CheckIcon
-              className={value === InputStatus.Verified ? "text-green-500" : ""}
-            />
-          </IconButton>
+          <Tooltip title={tooltipText} enterDelay={1000}>
+            <IconButton onClick={() => toggleVerified(value, onChange)}>
+              <CheckIcon
+                className={value === FieldStatus.Verified ? "text-green-500" : ""}
+              />
+            </IconButton>
+          </Tooltip>
         )}
       />
     </Box>

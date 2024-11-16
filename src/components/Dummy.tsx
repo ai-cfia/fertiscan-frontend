@@ -1,11 +1,7 @@
 import { StepComponentProps } from "./stepper";
 
-export interface DummyProps extends StepComponentProps {
-  dummy: string;
-}
-
-function Dummy({ dummy }: DummyProps) {
-  return <div>{dummy}</div>;
+function Dummy({ title }: StepComponentProps) {
+  return <div>{title}</div>;
 }
 
 export default Dummy;

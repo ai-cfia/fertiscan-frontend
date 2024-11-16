@@ -1,3 +1,4 @@
+import { LabelData } from "@/types/organization";
 import { Button } from "@mui/material";
 import Box from "@mui/material/Box";
 import Step from "@mui/material/Step";
@@ -15,6 +16,8 @@ export interface StepComponentProps {
   title: string;
   status: StepStatus;
   setStatus: React.Dispatch<React.SetStateAction<StepStatus>>;
+  labelData: LabelData;
+  setLabelData: React.Dispatch<React.SetStateAction<LabelData>>;
 }
 
 export interface StepperProps {
@@ -74,6 +77,7 @@ export const StepperControls: React.FC<StepperProps> = ({
           disabled={activeStep === 0}
           onClick={handleBack}
           variant="contained"
+          color="secondary"
         >
           Back
         </Button>
@@ -81,6 +85,7 @@ export const StepperControls: React.FC<StepperProps> = ({
           onClick={handleNext}
           disabled={activeStep >= stepsTotal - 1}
           variant="contained"
+          color="secondary"
         >
           Next
         </Button>
