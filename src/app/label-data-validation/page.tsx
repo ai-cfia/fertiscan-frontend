@@ -1,17 +1,19 @@
 "use client";
 import DummyStepComponent from "@/components/DummyStepComponent";
 import ImageViewer from "@/components/ImageViewer";
+import OrganizationsForm from "@/components/OrganizationsForm";
 import {
   HorizontalNonLinearStepper,
   StepperControls,
   StepStatus,
 } from "@/components/stepper";
+import { FieldStatus } from "@/types/Field";
 import { FormComponentProps } from "@/types/FormComponentProps";
 import { LabelData, TEST_LABEL_DATA } from "@/types/LabelData";
+import { checkOrganizationStatus } from "@/types/Organization";
 import useBreakpoints from "@/utils/useBreakpoints";
 import { Box, Button, Container } from "@mui/material";
-import * as React from "react";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 
 function LabelDataValidationPage() {
   const [imageFiles, setImageFiles] = useState<File[]>([]);
@@ -20,26 +22,28 @@ function LabelDataValidationPage() {
   const isLgOrBelow =
     isDownXs || isBetweenXsSm || isBetweenSmMd || isBetweenMdLg;
   const [labelData, setLabelData] = useState<LabelData>(TEST_LABEL_DATA);
-  const [stepStatus, setStepStatus] = useState<StepStatus>(
+  const [activeStep, setActiveStep] = useState(0);
+  const [organizationsStepStatus, setOrganizationsStepStatus] =
+    useState<StepStatus>(StepStatus.Incomplete);
+  const [dummyStepStatus, setDummyStepStatus] = useState<StepStatus>(
     StepStatus.Incomplete,
   );
-  const [activeStep, setActiveStep] = useState(0);
 
   const createStep = (
+    title: string,
     StepComponent: React.FC<FormComponentProps>,
-    props: FormComponentProps,
     stepStatus: StepStatus,
-    setStepStatus: React.Dispatch<React.SetStateAction<StepStatus>>,
+    setStepStatusState: React.Dispatch<React.SetStateAction<StepStatus>>,
   ) => {
     return {
-      title: props.title,
-      stepStatus,
-      setStepStatus,
+      title: title,
+      stepStatus: stepStatus,
+      setStepStatus: setStepStatusState,
       render: () => (
         <StepComponent
-          title={props.title}
-          labelData={props.labelData}
-          setLabelData={props.setLabelData}
+          title={title}
+          labelData={labelData}
+          setLabelData={setLabelData}
         />
       ),
     };
@@ -47,24 +51,16 @@ function LabelDataValidationPage() {
 
   const steps = [
     createStep(
-      DummyStepComponent,
-      {
-        title: "Dummy 1",
-        labelData: labelData,
-        setLabelData: setLabelData,
-      },
-      stepStatus,
-      setStepStatus,
+      "Organizations",
+      OrganizationsForm,
+      organizationsStepStatus,
+      setOrganizationsStepStatus,
     ),
     createStep(
+      "Dummy Step",
       DummyStepComponent,
-      {
-        title: "Dummy 2",
-        labelData: labelData,
-        setLabelData: setLabelData,
-      },
-      stepStatus,
-      setStepStatus,
+      dummyStepStatus,
+      setDummyStepStatus,
     ),
   ];
 
@@ -77,6 +73,15 @@ function LabelDataValidationPage() {
   const openFileDialog = () => {
     document.getElementById("file-input")?.click();
   };
+
+  useEffect(() => {
+    const verified = labelData.organizations.every((org) =>
+      checkOrganizationStatus(org, FieldStatus.Verified),
+    );
+    setOrganizationsStepStatus(
+      verified ? StepStatus.Completed : StepStatus.Incomplete,
+    );
+  }, [labelData.organizations, setOrganizationsStepStatus]);
 
   return (
     <Container
