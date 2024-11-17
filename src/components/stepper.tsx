@@ -1,4 +1,3 @@
-import { LabelData } from "@/types/LabelData";
 import { Button } from "@mui/material";
 import Box from "@mui/material/Box";
 import Step from "@mui/material/Step";
@@ -10,14 +9,6 @@ export enum StepStatus {
   Incomplete = "incomplete",
   Completed = "completed",
   Error = "error",
-}
-
-export interface StepComponentProps {
-  title: string;
-  status: StepStatus;
-  setStatus: React.Dispatch<React.SetStateAction<StepStatus>>;
-  labelData: LabelData;
-  setLabelData: React.Dispatch<React.SetStateAction<LabelData>>;
 }
 
 export interface StepperProps {

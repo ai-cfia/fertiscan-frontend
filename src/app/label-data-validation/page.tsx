@@ -3,10 +3,10 @@ import DummyStepComponent from "@/components/DummyStepComponent";
 import ImageViewer from "@/components/ImageViewer";
 import {
   HorizontalNonLinearStepper,
-  StepComponentProps,
   StepperControls,
   StepStatus,
 } from "@/components/stepper";
+import { FormComponentProps } from "@/types/FormComponentProps";
 import { LabelData, TEST_LABEL_DATA } from "@/types/LabelData";
 import useBreakpoints from "@/utils/useBreakpoints";
 import { Box, Button, Container } from "@mui/material";
@@ -19,27 +19,25 @@ function LabelDataValidationPage() {
     useBreakpoints();
   const isLgOrBelow =
     isDownXs || isBetweenXsSm || isBetweenSmMd || isBetweenMdLg;
-  const [activeStep, setActiveStep] = useState(0);
   const [labelData, setLabelData] = useState<LabelData>(TEST_LABEL_DATA);
-  const [dummyStatus, setDummyStatus] = useState<StepStatus>(
+  const [stepStatus, setStepStatus] = useState<StepStatus>(
     StepStatus.Incomplete,
   );
+  const [activeStep, setActiveStep] = useState(0);
 
   const createStep = (
-    StepComponent: React.FC<StepComponentProps>,
-    props: StepComponentProps,
+    StepComponent: React.FC<FormComponentProps>,
+    props: FormComponentProps,
+    stepStatus: StepStatus,
+    setStepStatus: React.Dispatch<React.SetStateAction<StepStatus>>,
   ) => {
     return {
       title: props.title,
-      status: props.status,
-      setStatus: props.setStatus,
-      labelData: props.labelData,
-      setLabelData: props.setLabelData,
+      stepStatus,
+      setStepStatus,
       render: () => (
         <StepComponent
           title={props.title}
-          status={props.status}
-          setStatus={props.setStatus}
           labelData={props.labelData}
           setLabelData={props.setLabelData}
         />
@@ -48,28 +46,27 @@ function LabelDataValidationPage() {
   };
 
   const steps = [
-    createStep(DummyStepComponent, {
-      title: "Dummy 1",
-      status: dummyStatus,
-      setStatus: setDummyStatus,
-      labelData: labelData,
-      setLabelData: setLabelData,
-    }),
-    createStep(DummyStepComponent, {
-      title: "Dummy 2",
-      status: dummyStatus,
-      setStatus: setDummyStatus,
-      labelData: labelData,
-      setLabelData: setLabelData,
-    }),
+    createStep(
+      DummyStepComponent,
+      {
+        title: "Dummy 1",
+        labelData: labelData,
+        setLabelData: setLabelData,
+      },
+      stepStatus,
+      setStepStatus,
+    ),
+    createStep(
+      DummyStepComponent,
+      {
+        title: "Dummy 2",
+        labelData: labelData,
+        setLabelData: setLabelData,
+      },
+      stepStatus,
+      setStepStatus,
+    ),
   ];
-
-  const stepperProps = {
-    stepTitles: steps.map((step) => step.title),
-    stepStatuses: steps.map((step) => step.status),
-    activeStep,
-    setActiveStep,
-  };
 
   const handleFileChange = (event: React.ChangeEvent<HTMLInputElement>) => {
     if (event.target.files) {
@@ -90,15 +87,18 @@ function LabelDataValidationPage() {
       {!isLgOrBelow && (
         <Box className="p-4 mt-4" data-testid="stepper">
           <HorizontalNonLinearStepper
-            stepTitles={stepperProps.stepTitles}
-            stepStatuses={stepperProps.stepStatuses}
-            activeStep={stepperProps.activeStep}
-            setActiveStep={stepperProps.setActiveStep}
+            stepTitles={steps.map((step) => step.title)}
+            stepStatuses={steps.map((step) => step.stepStatus)}
+            activeStep={activeStep}
+            setActiveStep={setActiveStep}
           />
         </Box>
       )}
 
-      <Box className="flex flex-col lg:flex-row gap-4" data-testid="main-content">
+      <Box
+        className="flex flex-col lg:flex-row gap-4"
+        data-testid="main-content"
+      >
         <Box
           className="flex w-full justify-center min-w-0 h-[720px]"
           data-testid="swiper-container"
@@ -109,10 +109,10 @@ function LabelDataValidationPage() {
         {isLgOrBelow && (
           <Box className="p-4 mt-4" data-testid="stepper-md">
             <HorizontalNonLinearStepper
-              stepTitles={stepperProps.stepTitles}
-              stepStatuses={stepperProps.stepStatuses}
-              activeStep={stepperProps.activeStep}
-              setActiveStep={stepperProps.setActiveStep}
+              stepTitles={steps.map((step) => step.title)}
+              stepStatuses={steps.map((step) => step.stepStatus)}
+              activeStep={activeStep}
+              setActiveStep={setActiveStep}
             />
           </Box>
         )}
@@ -124,10 +124,10 @@ function LabelDataValidationPage() {
           <Box className="w-full text-center" data-testid="forms">
             <Box className="">{steps[activeStep].render()}</Box>
             <StepperControls
-              stepTitles={stepperProps.stepTitles}
-              stepStatuses={stepperProps.stepStatuses}
-              activeStep={stepperProps.activeStep}
-              setActiveStep={stepperProps.setActiveStep}
+              stepTitles={steps.map((step) => step.title)}
+              stepStatuses={steps.map((step) => step.stepStatus)}
+              activeStep={activeStep}
+              setActiveStep={setActiveStep}
             />
           </Box>
         </Box>
