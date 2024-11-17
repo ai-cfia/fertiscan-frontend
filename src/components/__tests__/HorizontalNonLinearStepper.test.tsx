@@ -1,54 +1,74 @@
-import HorizontalNonLinearStepper, {
-  StepStatus,
-} from "@/components/HorizontalNonLinearStepper";
 import { fireEvent, render, screen } from "@testing-library/react";
+import React, { useState } from "react";
+import {
+  HorizontalNonLinearStepper,
+  StepperControls,
+  StepStatus,
+} from "../stepper";
 
-describe("HorizontalNonLinearStepper Rendering", () => {
-  const steps = ["Step 1", "Step 2", "Step 3", "Step 4"];
-  const activeStep = 1;
-  const stepStatuses: { [key: number]: StepStatus } = {
-    0: StepStatus.Completed,
-    1: StepStatus.Incomplete,
-    2: StepStatus.Error,
-    3: StepStatus.Incomplete,
-  };
+interface TestStepperWrapperProps {
+  steps?: string[];
+  initialStepStatuses?: StepStatus[];
+  initialActiveStep?: number;
+}
 
-  it("renders the correct number of steps based on steps prop", () => {
-    render(
+const TestStepperWrapper: React.FC<TestStepperWrapperProps> = ({
+  steps = ["Step 1", "Step 2", "Step 3", "Step 4"],
+  initialStepStatuses = [
+    StepStatus.Completed,
+    StepStatus.Incomplete,
+    StepStatus.Error,
+    StepStatus.Incomplete,
+  ],
+  initialActiveStep = 0,
+}) => {
+  const [activeStep, setActiveStep] = useState<number>(initialActiveStep);
+  const [stepStatuses] = useState<StepStatus[]>(initialStepStatuses);
+
+  return (
+    <>
       <HorizontalNonLinearStepper
-        steps={steps}
+        stepTitles={steps}
         activeStep={activeStep}
-        setActiveStep={() => {}}
+        setActiveStep={setActiveStep}
         stepStatuses={stepStatuses}
-      />,
-    );
+      />
+      <StepperControls
+        stepTitles={steps}
+        activeStep={activeStep}
+        setActiveStep={setActiveStep}
+        stepStatuses={stepStatuses}
+      />
+    </>
+  );
+};
 
-    const renderedSteps = screen.getAllByRole("button");
-    expect(renderedSteps).toHaveLength(steps.length);
+describe("HorizontalNonLinearStepper with StepperControls", () => {
+  it("renders the correct number of steps", () => {
+    const { container } = render(<TestStepperWrapper />);
+    const renderedSteps = container.querySelectorAll(".MuiStepButton-root");
+    expect(renderedSteps).toHaveLength(4);
   });
 
-  it("indicates the correct active step based on activeStep prop", () => {
-    render(
-      <HorizontalNonLinearStepper
-        steps={steps}
-        activeStep={activeStep}
-        setActiveStep={() => {}}
-        stepStatuses={stepStatuses}
-      />,
-    );
-
-    const activeStepButton = screen.getAllByRole("button")[activeStep];
+  it("indicates the correct active step", () => {
+    const { container } = render(<TestStepperWrapper initialActiveStep={1} />);
+    const activeStepButton = container.querySelectorAll(
+      ".MuiStepButton-root",
+    )[1];
     expect(activeStepButton).toHaveAttribute("aria-current", "step");
   });
 
-  it("displays each step's status correctly (complete, incomplete, error)", () => {
+  it("displays step statuses correctly", () => {
+    const steps = ["Step 1", "Step 2", "Step 3", "Step 4"];
+    const stepStatuses = [
+      StepStatus.Completed,
+      StepStatus.Incomplete,
+      StepStatus.Error,
+      StepStatus.Incomplete,
+    ];
+
     render(
-      <HorizontalNonLinearStepper
-        steps={steps}
-        activeStep={activeStep}
-        setActiveStep={() => {}}
-        stepStatuses={stepStatuses}
-      />,
+      <TestStepperWrapper steps={steps} initialStepStatuses={stepStatuses} />,
     );
 
     steps.forEach((_, index) => {
@@ -64,116 +84,62 @@ describe("HorizontalNonLinearStepper Rendering", () => {
       }
     });
   });
-});
 
-describe("HorizontalNonLinearStepper Functionality", () => {
-  const steps = ["Step 1", "Step 2", "Step 3", "Step 4"];
-  let activeStep = 0;
-  let stepStatuses = {
-    0: StepStatus.Incomplete,
-    1: StepStatus.Incomplete,
-    2: StepStatus.Incomplete,
-    3: StepStatus.Incomplete,
-  };
+  it("navigates to the next step when 'Next' button is clicked", () => {
+    const { container } = render(<TestStepperWrapper />);
+    const nextButton = screen.getByText("Next");
+    fireEvent.click(nextButton);
 
-  const setActiveStep = jest.fn((newStep) => {
-    activeStep = newStep;
+    const activeStepButton = container.querySelectorAll(
+      ".MuiStepButton-root",
+    )[1];
+    expect(activeStepButton).toHaveAttribute("aria-current", "step");
   });
 
-  const setStepStatuses = jest.fn((updateFn) => {
-    stepStatuses = updateFn(stepStatuses);
+  it("navigates to the previous step when 'Back' button is clicked", () => {
+    const { container } = render(<TestStepperWrapper initialActiveStep={1} />);
+    const backButton = screen.getByText("Back");
+    fireEvent.click(backButton);
+
+    const activeStepButton = container.querySelectorAll(
+      ".MuiStepButton-root",
+    )[0];
+    expect(activeStepButton).toHaveAttribute("aria-current", "step");
   });
 
-  it("changes active step when a step is clicked", () => {
-    render(
-      <HorizontalNonLinearStepper
-        steps={steps}
-        activeStep={activeStep}
-        setActiveStep={setActiveStep}
-        stepStatuses={stepStatuses}
+  it("disables 'Back' button on the first step", () => {
+    render(<TestStepperWrapper />);
+    const backButton = screen.getByText("Back");
+    const nextButton = screen.getByText("Next");
+
+    expect(backButton).toBeDisabled();
+    expect(nextButton).not.toBeDisabled();
+  });
+
+  it("disables 'Next' button on the last step", () => {
+    render(<TestStepperWrapper initialActiveStep={3} />);
+    const nextButton = screen.getByText("Next");
+
+    expect(nextButton).toBeDisabled();
+  });
+
+  it("handles an empty steps array without errors", () => {
+    const { container } = render(
+      <TestStepperWrapper steps={[]} initialStepStatuses={[]} />,
+    );
+    const stepButtons = container.querySelectorAll(".MuiStepButton-root");
+    expect(stepButtons).toHaveLength(0);
+  });
+
+  it("handles out-of-range activeStep gracefully", () => {
+    const { container } = render(
+      <TestStepperWrapper
+        steps={["Step 1", "Step 2"]}
+        initialActiveStep={5}
+        initialStepStatuses={[StepStatus.Completed, StepStatus.Incomplete]}
       />,
     );
-
-    const secondStepButton = screen.getByText("Step 2").closest("button");
-    if (secondStepButton) fireEvent.click(secondStepButton);
-
-    expect(setActiveStep).toHaveBeenCalledWith(1);
-  });
-
-  it("marks a step as completed when set to StepStatus.Complete", () => {
-    render(
-      <HorizontalNonLinearStepper
-        steps={steps}
-        activeStep={1}
-        setActiveStep={setActiveStep}
-        stepStatuses={stepStatuses}
-        setStepStatuses={setStepStatuses}
-      />,
-    );
-
-    setStepStatuses((prevStatuses: { [key: number]: StepStatus }) => ({
-      ...prevStatuses,
-      1: StepStatus.Completed,
-    }));
-
-    expect(stepStatuses[1]).toBe(StepStatus.Completed);
-  });
-
-  it("displays an error indication when step status is StepStatus.Error", () => {
-    render(
-      <HorizontalNonLinearStepper
-        steps={steps}
-        activeStep={2}
-        setActiveStep={setActiveStep}
-        stepStatuses={{
-          ...stepStatuses,
-          2: StepStatus.Error,
-        }}
-      />,
-    );
-
-    const errorStepLabel = screen.getByText("Step 3");
-    expect(errorStepLabel).toHaveClass("Mui-error");
+    const renderedSteps = container.querySelectorAll(".MuiStepButton-root");
+    expect(renderedSteps).toHaveLength(2);
   });
 });
-
-describe("HorizontalNonLinearStepper Edge Cases", () => {
-    it("handles empty steps array without error", () => {
-      render(
-        <HorizontalNonLinearStepper
-          steps={[]}
-          activeStep={0}
-          setActiveStep={() => {}}
-          stepStatuses={{}}
-        />
-      );
-  
-      const stepButtons = screen.queryAllByRole("button");
-      expect(stepButtons).toHaveLength(0);
-    });
-  
-    it("handles out-of-range indexes in activeStep or stepStatuses gracefully", () => {
-      const steps = ["Step 1", "Step 2"];
-      const activeStep = 5; 
-      const stepStatuses = {
-        0: StepStatus.Completed,
-        5: StepStatus.Error,
-      };
-  
-      render(
-        <HorizontalNonLinearStepper
-          steps={steps}
-          activeStep={activeStep}
-          setActiveStep={() => {}}
-          stepStatuses={stepStatuses}
-        />
-      );
-  
-      const renderedSteps = screen.getAllByRole("button");
-      expect(renderedSteps).toHaveLength(steps.length);
-  
-      steps.forEach((stepLabel) => {
-        expect(screen.queryByText(stepLabel)).toBeInTheDocument();
-      });
-    });
-  });
