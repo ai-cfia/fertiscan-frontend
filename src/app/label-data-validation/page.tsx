@@ -9,7 +9,7 @@ import {
 } from "@/components/stepper";
 import { FieldStatus } from "@/types/Field";
 import { FormComponentProps } from "@/types/FormComponentProps";
-import { LabelData, TEST_LABEL_DATA } from "@/types/LabelData";
+import { DEFAULT_LABEL_DATA, LabelData } from "@/types/LabelData";
 import { checkOrganizationStatus } from "@/types/Organization";
 import useBreakpoints from "@/utils/useBreakpoints";
 import { Box, Button, Container } from "@mui/material";
@@ -21,7 +21,7 @@ function LabelDataValidationPage() {
     useBreakpoints();
   const isLgOrBelow =
     isDownXs || isBetweenXsSm || isBetweenSmMd || isBetweenMdLg;
-  const [labelData, setLabelData] = useState<LabelData>(TEST_LABEL_DATA);
+  const [labelData, setLabelData] = useState<LabelData>(DEFAULT_LABEL_DATA);
   const [activeStep, setActiveStep] = useState(0);
   const [organizationsStepStatus, setOrganizationsStepStatus] =
     useState<StepStatus>(StepStatus.Incomplete);
