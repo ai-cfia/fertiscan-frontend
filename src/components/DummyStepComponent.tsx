@@ -1,6 +1,6 @@
-import { StepComponentProps } from "./stepper";
+import { FormComponentProps } from "@/types/types";
 
-function DummyStepComponent({ title }: StepComponentProps) {
+function DummyStepComponent({ title }: FormComponentProps) {
   return <div data-testid={title}>{title}</div>;
 }
 
