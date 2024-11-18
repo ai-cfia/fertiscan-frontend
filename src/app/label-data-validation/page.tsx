@@ -1,4 +1,5 @@
 "use client";
+import BaseInformationForm from "@/components/BaseInformationForm";
 import DummyStepComponent from "@/components/DummyStepComponent";
 import ImageViewer from "@/components/ImageViewer";
 import {
@@ -7,10 +8,9 @@ import {
   StepStatus,
 } from "@/components/stepper";
 import { FormComponentProps } from "@/types/FormComponentProps";
-import { LabelData, TEST_LABEL_DATA } from "@/types/LabelData";
+import { DEFAULT_LABEL_DATA, LabelData } from "@/types/LabelData";
 import useBreakpoints from "@/utils/useBreakpoints";
 import { Box, Button, Container } from "@mui/material";
-import * as React from "react";
 import { useState } from "react";
 
 function LabelDataValidationPage() {
@@ -19,27 +19,29 @@ function LabelDataValidationPage() {
     useBreakpoints();
   const isLgOrBelow =
     isDownXs || isBetweenXsSm || isBetweenSmMd || isBetweenMdLg;
-  const [labelData, setLabelData] = useState<LabelData>(TEST_LABEL_DATA);
-  const [stepStatus, setStepStatus] = useState<StepStatus>(
+  const [labelData, setLabelData] = useState<LabelData>(DEFAULT_LABEL_DATA);
+  const [activeStep, setActiveStep] = useState(0);
+  const [baseInformationStepStatus, setBaseInformationStepStatus] =
+    useState<StepStatus>(StepStatus.Incomplete);
+  const [dummyStepStatus, setDummyStepStatus] = useState<StepStatus>(
     StepStatus.Incomplete,
   );
-  const [activeStep, setActiveStep] = useState(0);
 
   const createStep = (
+    title: string,
     StepComponent: React.FC<FormComponentProps>,
-    props: FormComponentProps,
     stepStatus: StepStatus,
-    setStepStatus: React.Dispatch<React.SetStateAction<StepStatus>>,
+    setStepStatusState: React.Dispatch<React.SetStateAction<StepStatus>>,
   ) => {
     return {
-      title: props.title,
-      stepStatus,
-      setStepStatus,
+      title: title,
+      stepStatus: stepStatus,
+      setStepStatus: setStepStatusState,
       render: () => (
         <StepComponent
-          title={props.title}
-          labelData={props.labelData}
-          setLabelData={props.setLabelData}
+          title={title}
+          labelData={labelData}
+          setLabelData={setLabelData}
         />
       ),
     };
@@ -47,24 +49,16 @@ function LabelDataValidationPage() {
 
   const steps = [
     createStep(
-      DummyStepComponent,
-      {
-        title: "Dummy 1",
-        labelData: labelData,
-        setLabelData: setLabelData,
-      },
-      stepStatus,
-      setStepStatus,
+      "Base Information",
+      BaseInformationForm,
+      baseInformationStepStatus,
+      setBaseInformationStepStatus,
     ),
     createStep(
+      "Dummy Step",
       DummyStepComponent,
-      {
-        title: "Dummy 2",
-        labelData: labelData,
-        setLabelData: setLabelData,
-      },
-      stepStatus,
-      setStepStatus,
+      dummyStepStatus,
+      setDummyStepStatus,
     ),
   ];
 
