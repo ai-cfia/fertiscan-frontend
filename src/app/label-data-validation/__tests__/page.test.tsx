@@ -12,18 +12,18 @@ describe("LabelDataValidationPage", () => {
   it("displays only the correct step component when control buttons are clicked", () => {
     render(<LabelDataValidationPage />);
 
-    expect(screen.getByTestId("Dummy 1")).toBeInTheDocument();
-    expect(screen.queryByTestId("Dummy 2")).not.toBeInTheDocument();
+    expect(screen.getByTestId("organizations-form")).toBeInTheDocument();
+    expect(screen.queryByTestId("Dummy Step")).not.toBeInTheDocument();
 
     const nextButton = screen.getByText("Next");
     fireEvent.click(nextButton);
-    expect(screen.getByTestId("Dummy 2")).toBeInTheDocument();
-    expect(screen.queryByTestId("Dummy 1")).not.toBeInTheDocument();
+    expect(screen.getByTestId("Dummy Step")).toBeInTheDocument();
+    expect(screen.queryByTestId("organizations-form")).not.toBeInTheDocument();
 
     const backButton = screen.getByText("Back");
     fireEvent.click(backButton);
-    expect(screen.getByTestId("Dummy 1")).toBeInTheDocument();
-    expect(screen.queryByTestId("Dummy 2")).not.toBeInTheDocument();
+    expect(screen.getByTestId("organizations-form")).toBeInTheDocument();
+    expect(screen.queryByTestId("Dummy Step")).not.toBeInTheDocument();
   });
 
   it("does not navigate beyond the first or last step", () => {
@@ -33,13 +33,13 @@ describe("LabelDataValidationPage", () => {
     const backButton = screen.getByText("Back");
 
     fireEvent.click(backButton);
-    expect(screen.getByTestId("Dummy 1")).toBeInTheDocument();
-    expect(screen.queryByTestId("Dummy 2")).not.toBeInTheDocument();
+    expect(screen.getByTestId("organizations-form")).toBeInTheDocument();
+    expect(screen.queryByTestId("Dummy Step")).not.toBeInTheDocument();
 
     fireEvent.click(nextButton);
     fireEvent.click(nextButton);
-    expect(screen.getByTestId("Dummy 2")).toBeInTheDocument();
-    expect(screen.queryByTestId("Dummy 1")).not.toBeInTheDocument();
+    expect(screen.getByTestId("Dummy Step")).toBeInTheDocument();
+    expect(screen.queryByTestId("organizations-form")).not.toBeInTheDocument();
   });
 
   it("renders the mocked image viewer", () => {

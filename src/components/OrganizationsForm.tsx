@@ -92,41 +92,64 @@ const OrganizationsForm: React.FC<FormComponentProps> = ({
             >
               <OrganizationInformation index={index} />
               <Box className="flex flex-wrap mt-4 justify-end gap-2">
-                <Tooltip title="Mark all as Verified" enterDelay={1000}>
-                  <Button
-                    variant="outlined"
-                    color="secondary"
-                    onClick={() =>
-                      setAllFieldsStatus(index, FieldStatus.Verified)
-                    }
-                    disabled={areAllFieldStatus(index, FieldStatus.Verified)}
-                    data-testid={`verify-all-btn-${index}`}
-                  >
-                    <DoneAllIcon />
-                  </Button>
+                <Tooltip
+                  title="Mark all as Verified"
+                  enterDelay={1000}
+                  disableHoverListener={areAllFieldStatus(
+                    index,
+                    FieldStatus.Verified,
+                  )}
+                >
+                  <span>
+                    <Button
+                      variant="outlined"
+                      color="secondary"
+                      onClick={() =>
+                        setAllFieldsStatus(index, FieldStatus.Verified)
+                      }
+                      disabled={areAllFieldStatus(index, FieldStatus.Verified)}
+                      data-testid={`verify-all-btn-${index}`}
+                    >
+                      <DoneAllIcon />
+                    </Button>
+                  </span>
                 </Tooltip>
-                <Tooltip title="Mark all as Unverified" enterDelay={1000}>
-                  <Button
-                    variant="outlined"
-                    color="secondary"
-                    onClick={() =>
-                      setAllFieldsStatus(index, FieldStatus.Unverified)
-                    }
-                    disabled={areAllFieldStatus(index, FieldStatus.Unverified)}
-                    data-testid={`unverify-all-btn-${index}`}
-                  >
-                    <RemoveDoneIcon />
-                  </Button>
+                <Tooltip
+                  title="Mark all as Unverified"
+                  enterDelay={1000}
+                  disableHoverListener={areAllFieldStatus(
+                    index,
+                    FieldStatus.Unverified,
+                  )}
+                >
+                  <span>
+                    <Button
+                      variant="outlined"
+                      color="secondary"
+                      onClick={() =>
+                        setAllFieldsStatus(index, FieldStatus.Unverified)
+                      }
+                      disabled={areAllFieldStatus(
+                        index,
+                        FieldStatus.Unverified,
+                      )}
+                      data-testid={`unverify-all-btn-${index}`}
+                    >
+                      <RemoveDoneIcon />
+                    </Button>
+                  </span>
                 </Tooltip>
                 <Tooltip title="Remove Organization" enterDelay={1000}>
-                  <Button
-                    variant="outlined"
-                    color="secondary"
-                    onClick={() => remove(index)}
-                    data-testid={`remove-org-btn-${index}`}
-                  >
-                    <RemoveIcon />
-                  </Button>
+                  <span>
+                    <Button
+                      variant="outlined"
+                      color="secondary"
+                      onClick={() => remove(index)}
+                      data-testid={`remove-org-btn-${index}`}
+                    >
+                      <RemoveIcon />
+                    </Button>
+                  </span>
                 </Tooltip>
               </Box>
             </Box>
