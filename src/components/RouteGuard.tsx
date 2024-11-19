@@ -23,10 +23,10 @@ const RouteGuard = ({ children }: Readonly<{ children: React.ReactNode }>) => {
     }
   };
 
-  // eslint-disable-next-line @typescript-eslint/no-unused-vars
   const handleSignup = async (
     username: string,
     password: string,
+    // eslint-disable-next-line @typescript-eslint/no-unused-vars
     confirm: string,
   ) => {
     const headers = new Headers();
