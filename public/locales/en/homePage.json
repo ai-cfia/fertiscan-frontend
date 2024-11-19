@@ -1,6 +1,6 @@
 {
     "submit_button": "Submit",
-    "submit_button_disabled_hint": "You need to add a minimum of 1 file to start analyse",
+    "submit_button_disabled_hint": "You need to add a minimum of 1 file to start the analysis",
     "fileList":{
         "uploadedfiles": "Uploaded Files",
         "noUploadedfiles": "No uploaded files"
@@ -8,7 +8,7 @@
     "fileElement": {
         "altText": {
             "uploadedFileAlt": "Uploaded file picture",
-            "deleteFileAlt": "Delete file Button icon"
+            "deleteFileAlt": "Delete file button icon"
         }
     },
     "dropzone": {
