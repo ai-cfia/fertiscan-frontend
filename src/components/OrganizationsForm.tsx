@@ -1,10 +1,11 @@
-import { FieldStatus } from "@/types/Field";
-import { FormComponentProps } from "@/types/FormComponentProps";
-import { LabelData } from "@/types/LabelData";
-import Organization, {
+import {
   checkOrganizationStatus,
   DEFAULT_ORGANIZATION,
-} from "@/types/Organization";
+  FieldStatus,
+  FormComponentProps,
+  LabelData,
+  Organization,
+} from "@/types/types";
 import AddIcon from "@mui/icons-material/Add";
 import DoneAllIcon from "@mui/icons-material/DoneAll";
 import RemoveIcon from "@mui/icons-material/Remove";

@@ -7,10 +7,13 @@ import {
   StepperControls,
   StepStatus,
 } from "@/components/stepper";
-import { FieldStatus } from "@/types/Field";
-import { FormComponentProps } from "@/types/FormComponentProps";
-import { DEFAULT_LABEL_DATA, LabelData } from "@/types/LabelData";
-import { checkOrganizationStatus } from "@/types/Organization";
+import {
+  checkOrganizationStatus,
+  DEFAULT_LABEL_DATA,
+  FieldStatus,
+  FormComponentProps,
+  LabelData,
+} from "@/types/types";
 import useBreakpoints from "@/utils/useBreakpoints";
 import { Box, Button, Container } from "@mui/material";
 import { useEffect, useState } from "react";

@@ -1,4 +1,4 @@
-import Field, { FieldStatus } from "@/types/Field";
+import { Field, FieldStatus } from "@/types/types";
 import { fireEvent, render, screen } from "@testing-library/react";
 import { FormProvider, useForm } from "react-hook-form";
 import InputWithStatus from "../InputWithStatus";

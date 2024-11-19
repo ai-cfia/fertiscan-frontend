@@ -1,6 +1,9 @@
-import { FieldStatus } from "@/types/Field";
-import { LabelData } from "@/types/LabelData";
-import Organization, { DEFAULT_ORGANIZATION } from "@/types/Organization";
+import {
+  DEFAULT_ORGANIZATION,
+  FieldStatus,
+  LabelData,
+  Organization,
+} from "@/types/types";
 import { fireEvent, render, screen } from "@testing-library/react";
 import { useEffect, useState } from "react";
 import { FormProvider, useForm } from "react-hook-form";

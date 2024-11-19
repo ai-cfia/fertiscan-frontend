@@ -1,4 +1,4 @@
-import { FieldStatus } from "@/types/Field";
+import { FieldStatus } from "@/types/types";
 import CheckIcon from "@mui/icons-material/Check";
 import {
   Box,
