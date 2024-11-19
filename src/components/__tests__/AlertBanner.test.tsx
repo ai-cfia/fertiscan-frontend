@@ -7,13 +7,17 @@ const AUTO_DISMISS_TIME =
 
 describe("AlertBanner", () => {
   beforeEach(() => {
-    useAlertStore.setState({
-      alert: { message: "Test alert", type: "success" },
+    act(() => {
+      useAlertStore.setState({
+        alert: { message: "Test alert", type: "success" },
+      });
     });
   });
 
   afterEach(() => {
-    useAlertStore.setState({ alert: null });
+    act(() => {
+      useAlertStore.setState({ alert: null });
+    });
   });
 
   it("renders the alert banner when alert is present", () => {
@@ -22,7 +26,9 @@ describe("AlertBanner", () => {
   });
 
   it("does not render the alert banner when alert is absent", () => {
-    useAlertStore.setState({ alert: null });
+    act(() => {
+      useAlertStore.setState({ alert: null });
+    });
     render(<AlertBanner />);
     expect(screen.queryByText("Test alert")).not.toBeInTheDocument();
   });

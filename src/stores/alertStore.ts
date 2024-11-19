@@ -1,4 +1,4 @@
-import { Alert, AlertSeverity } from "@/types/alert";
+import Alert, { AlertSeverity } from "@/types/Alert";
 import { create } from "zustand";
 
 interface AlertState {

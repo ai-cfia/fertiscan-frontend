@@ -1,3 +1,7 @@
+import { AlertColor } from "@mui/material/Alert";
+import { AlertPropsColorOverrides } from "@mui/material/Alert/Alert";
+import { OverridableStringUnion } from "@mui/types";
+
 /**
  * Represents the state of a dropzone component.
  */
@@ -43,3 +47,43 @@ interface ParentDimensions {
 }
 
 export type { DropzoneState, ImageLoadEvent, ParentDimensions };
+
+export type AlertSeverity = OverridableStringUnion<
+  AlertColor,
+  AlertPropsColorOverrides
+>;
+
+export interface Alert {
+  message: string;
+  type: AlertSeverity;
+}
+
+export enum FieldStatus {
+  Verified = "verified",
+  Unverified = "unverified",
+  Error = "error",
+}
+
+export type Field = {
+  value: string;
+  status: FieldStatus;
+  errorMessage: string | null;
+};
+
+export type LabelData = {
+  companyName: string;
+};
+
+export const DEFAULT_LABEL_DATA: LabelData = {
+  companyName: "",
+};
+
+export const TEST_LABEL_DATA: LabelData = {
+  companyName: "Test Company",
+};
+
+export interface FormComponentProps {
+  title: string;
+  labelData: LabelData;
+  setLabelData: React.Dispatch<React.SetStateAction<LabelData>>;
+}
