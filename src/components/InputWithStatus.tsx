@@ -45,11 +45,6 @@ function InputWithStatus({
     }
   };
 
-  const tooltipText =
-    statusValue === FieldStatus.Verified
-      ? "Mark as Unverified"
-      : "Mark as Verified";
-
   return (
     <Box
       className={`flex items-center p-1 w-full border-2 rounded-tr-md rounded-br-md ${
@@ -88,7 +83,14 @@ function InputWithStatus({
         name={statusName}
         control={control}
         render={({ field: { value, onChange } }) => (
-          <Tooltip title={tooltipText} enterDelay={1000}>
+          <Tooltip
+            title={
+              statusValue === FieldStatus.Verified
+                ? "Mark as Unverified"
+                : "Mark as Verified"
+            }
+            enterDelay={1000}
+          >
             <IconButton
               onClick={() => toggleVerified(value, onChange)}
               data-testid={`toggle-status-btn-${statusName}`}
