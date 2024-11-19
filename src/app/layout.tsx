@@ -6,6 +6,7 @@ import { ThemeProvider } from "@mui/material/styles";
 import { useState } from "react";
 import "./globals.css";
 import theme from "./theme";
+import RouteGuard from "@/components/RouteGuard";
 
 export default function RootLayout({
   children,
@@ -21,9 +22,11 @@ export default function RootLayout({
       <body>
         <AppRouterCacheProvider>
           <ThemeProvider theme={theme}>
-            <SideNav open={sideNavOpen} onClose={handleDrawerClose} />
+            <RouteGuard>
+              <SideNav open={sideNavOpen} onClose={handleDrawerClose} />
               <Header setSideNavOpen={setSideNavOpen} />
               {children}
+            </RouteGuard>
           </ThemeProvider>
         </AppRouterCacheProvider>
       </body>
