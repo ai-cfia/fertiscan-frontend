@@ -108,9 +108,9 @@ const Header: React.FC<HeaderProps> = ({ setSideNavOpen }) => {
                   className="normal-case underline"
                   data-testid="language-text"
                 >
-                  {language === 'en'
-                    ? (isDownXs || isBetweenXsSm || isBetweenSmMd ? t('language.short') : t('language.full'))
-                    : (isDownXs || isBetweenXsSm || isBetweenSmMd ? t('language.short', { lng: 'fr' }) : t('language.full', { lng: 'fr' }))}
+                 {language === 'en'
+        ? (isDownXs || isBetweenXsSm || isBetweenSmMd ? t('language.short', { lng: 'fr' }) : t('language.full', { lng: 'fr' }))
+        : (isDownXs || isBetweenXsSm || isBetweenSmMd ? t('language.short', { lng: 'en' }) : t('language.full', { lng: 'en' }))}
                 </Typography>
               </Button>
 

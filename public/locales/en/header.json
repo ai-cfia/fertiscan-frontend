@@ -12,7 +12,7 @@
         "altText":{
             "CFIALogoAlt":"ACIA Logo",
             "newInspectionButtonIcon":"New inspection button icon",
-            "SearchPageButtonIcon":"Search page button icon",
+            "searchPageButtonIcon":"Search page button icon",
             "reportIssueButtonIcon":"Report issue button icon"
         },
         "FertiScan":"FertiScan",

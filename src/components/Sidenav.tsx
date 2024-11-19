@@ -65,7 +65,7 @@ const SideNav = ({ open, onClose }: DrawerMenuProps) => {
             <Divider />
             <Link href="/SearchPage" passHref data-testid="search-page-button">
               <ListItemButton>
-                <ListItemIcon aria-label={t("sideNav.altText.SearchPageButtonIcon")}>
+                <ListItemIcon aria-label={t("sideNav.altText.searchPageButtonIcon")}>
                   <SearchIcon />
                 </ListItemIcon>
                 <ListItemText primary={t("sideNav.searchPage")} />
@@ -79,7 +79,7 @@ const SideNav = ({ open, onClose }: DrawerMenuProps) => {
           <Divider />
             <Link href="https://github.com/ai-cfia/fertiscan-frontend/issues/new/choose" passHref data-testid="report-issue-button">
               <ListItemButton>
-                <ListItemIcon aria-label={t("sideNav.altText.RepportIssueButtonIcon")}>
+                <ListItemIcon aria-label={t("sideNav.altText.reportIssueButtonIcon")}>
                   <BugReportIcon />
                 </ListItemIcon>
                 <ListItemText primary={t("sideNav.repportIssue")} />

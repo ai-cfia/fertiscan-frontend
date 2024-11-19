@@ -88,20 +88,20 @@ const UserMenu = ({
         onClick={(event) => event.preventDefault()}
         data-testid="profile-menu-item"
       >
-        <ListItemIcon aria-label={t("userMenu.userIcon")}>
+        <ListItemIcon aria-label={t("userMenu.altText.userIcon")}>
           <AccountCircle />
         </ListItemIcon>
         <Typography>{placeholderUser.getUsername()}</Typography>
       </MenuItem>
       <MenuItem onClick={handleClose} data-testid="dashboard-menu-item">
-        <ListItemIcon aria-label={t("userMenu.dashboardIcon")}>
+        <ListItemIcon aria-label={t("userMenu.altText.dashboardIcon")}>
           <DashboardIcon />
         </ListItemIcon>
         <Typography>{t("userMenu.dashboard")}</Typography>
       </MenuItem>
       <Divider />
       <MenuItem data-testid="logout-menu-item">
-        <ListItemIcon aria-label={t("userMenu.logoutIcon")}>
+        <ListItemIcon aria-label={t("userMenu.altText.logoutIcon")}>
           <Logout />
         </ListItemIcon>
         <Typography>{t("userMenu.logout")}</Typography>

@@ -12,7 +12,7 @@
         "altText": {
             "CFIALogoAlt": "CFIA Logo",
             "newInspectionButtonIcon": "Icône du bouton Nouvelle inspection",
-            "SearchPageButtonIcon": "Icône du bouton Page de recherche",
+            "searchPageButtonIcon": "Icône du bouton Page de recherche",
             "reportIssueButtonIcon": "Icône du bouton Signaler un problème"
         },
         "FertiScan":"FertiScan",

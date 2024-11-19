@@ -6,7 +6,7 @@ import {
   useTheme,
 } from "@mui/material";
 import DeleteIcon from "@mui/icons-material/Delete";
-import { DropzoneState } from "@/types";
+import { DropzoneState } from "@/types/types";
 import Image from "next/image";
 import React, { useState } from "react";
 import { useTranslation } from "react-i18next";
