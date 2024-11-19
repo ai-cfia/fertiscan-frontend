@@ -17,6 +17,7 @@ import Image from 'next/image';
 import SearchIcon from '@mui/icons-material/Search';
 import HomeIcon from '@mui/icons-material/Home';
 import BugReportIcon from '@mui/icons-material/BugReport';
+import { useTranslation } from 'react-i18next';
 
 interface DrawerMenuProps {
   open: boolean;
@@ -24,6 +25,7 @@ interface DrawerMenuProps {
 }
 
 const SideNav = ({ open, onClose }: DrawerMenuProps) => {
+  const { t } = useTranslation('header');
   return (
     <Drawer
       className='darkContainer w-[240px] flex-shrink-0'
@@ -38,7 +40,7 @@ const SideNav = ({ open, onClose }: DrawerMenuProps) => {
         className:"w-[240px] box-border overflow-x-hidden",
       }}
     >
-      <Box className="w-250 h-full flex flex-col justify-between text-white bg-sky-900"
+      <Box className="w-[250px] h-full flex flex-col justify-between text-white bg-sky-900"
         role="presentation"
         data-testid="backdrop"
         onClick={onClose}
@@ -46,50 +48,44 @@ const SideNav = ({ open, onClose }: DrawerMenuProps) => {
         <div>
           <Toolbar className='flex'>
               <Icon>
-                <Image src="/img/CFIA_small_logo.ico" alt="CFIA/ACIA Logo" width="40" height="40" />
+                <Image src="/img/CFIA_small_logo.ico" alt={t("sideNav.altText.CFIALogoAlt")} width="40" height="40" />
               </Icon>
-                <Typography className="pl-2 self-center" variant="h6"><b>FertiScan</b></Typography>
+                <Typography className="pl-2 self-center" variant="h6"><b>{t("sideNav.FertiScan")}</b></Typography>
           </Toolbar>
 
           <List>
           <Divider />
-          <Tooltip title="Go to New Inspection" placement='right'>
             <Link href="/" passHref data-testid="new-inspection-button" >
               <ListItemButton>
-                <ListItemIcon>
+                <ListItemIcon aria-label={t("sideNav.altText.newInspectionButtonIcon")}>
                   <HomeIcon />
                 </ListItemIcon>
-                <ListItemText primary="New inspection" />
+                <ListItemText primary={t("sideNav.newInspection")} />
               </ListItemButton>
             </Link>
-            </Tooltip>
             <Divider />
-          <Tooltip title="Go to Search Page" placement='right'>
             <Link href="/SearchPage" passHref data-testid="search-page-button">
               <ListItemButton>
-                <ListItemIcon>
+                <ListItemIcon aria-label={t("sideNav.altText.SearchPageButtonIcon")}>
                   <SearchIcon />
                 </ListItemIcon>
-                <ListItemText primary="Search" />
+                <ListItemText primary={t("sideNav.searchPage")} />
               </ListItemButton>
             </Link>
-          </Tooltip>
           <Divider />
           </List>
         </div>
         <div>
           <List>
           <Divider />
-            <Tooltip title="Report an issue" placement='right'>
             <Link href="https://github.com/ai-cfia/fertiscan-frontend/issues/new/choose" passHref data-testid="report-issue-button">
               <ListItemButton>
-                <ListItemIcon>
+                <ListItemIcon aria-label={t("sideNav.altText.RepportIssueButtonIcon")}>
                   <BugReportIcon />
                 </ListItemIcon>
-                <ListItemText primary="Report an issue" />
+                <ListItemText primary={t("sideNav.repportIssue")} />
               </ListItemButton>
             </Link>
-            </Tooltip>
           </List>
         </div>
       </Box>

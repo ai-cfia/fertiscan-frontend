@@ -17,6 +17,7 @@ import Link from "next/link";
 import { useState } from "react";
 import AlertBanner from "./AlertBanner";
 import i18next from "i18next";
+import { useTranslation } from "react-i18next";
 
 interface HeaderProps {
   setSideNavOpen: (open: boolean | ((prevOpen: boolean) => boolean)) => void;
@@ -37,7 +38,8 @@ const Header: React.FC<HeaderProps> = ({ setSideNavOpen }) => {
   const { isDownXs, isBetweenXsSm, isBetweenSmMd } = useBreakpoints();
   const [anchorElement, setAnchorElement] = useState<null | HTMLElement>(null);
   const [isUserMenuOpen, setIsUserMenuOpen] = useState(false);
-  const [language, setLanguage] = useState('en'); // default language
+  const [language, setLanguage] = useState('en');
+  const { t } = useTranslation('header');
 
   const handleSideNavToggle = () => {
     setSideNavOpen((prevOpen) => !prevOpen);
@@ -52,7 +54,7 @@ const Header: React.FC<HeaderProps> = ({ setSideNavOpen }) => {
   const changeLanguage = (lang: string) => {
     i18next.changeLanguage(lang, (err, t) => {
       if (err) return console.log('something went wrong loading', err);
-      t('key'); // -> same as i18next.t
+      t('key');
       setLanguage(lang);
     });
   };
@@ -67,6 +69,7 @@ const Header: React.FC<HeaderProps> = ({ setSideNavOpen }) => {
           >
             {/* Navigation menu toggle button on the left */}
             <IconButton
+              aria-label={t('altText.sideMenuToggleAlt')}
               edge="start"
               onClick={handleSideNavToggle}
               data-testid="menu-toggle-button"
@@ -85,7 +88,7 @@ const Header: React.FC<HeaderProps> = ({ setSideNavOpen }) => {
                 <Image
                   className="cursor-pointer !relative"
                   src="/img/CFIA_FIP_FR_WHITE_1.png"
-                  alt="logo"
+                  alt={t('altText.logoCFIAAlt')}
                   fill={true}
                   priority
                   data-testid="logo-image"
@@ -105,12 +108,15 @@ const Header: React.FC<HeaderProps> = ({ setSideNavOpen }) => {
                   className="normal-case underline"
                   data-testid="language-text"
                 >
-                  {language === 'en' ? (isDownXs || isBetweenXsSm || isBetweenSmMd ? "FR" : "Français") : (isDownXs || isBetweenXsSm || isBetweenSmMd ? "EN" : "English")}
+                  {language === 'en'
+                    ? (isDownXs || isBetweenXsSm || isBetweenSmMd ? t('language.short') : t('language.full'))
+                    : (isDownXs || isBetweenXsSm || isBetweenSmMd ? t('language.short', { lng: 'fr' }) : t('language.full', { lng: 'fr' }))}
                 </Typography>
               </Button>
 
               {/* User account icon button */}
               <IconButton
+                aria-label={t('altText.userAccountAlt')}
                 className="self-center"
                 onClick={handleUserMenuToggle}
                 data-testid="user-account-button"

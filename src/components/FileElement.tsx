@@ -9,6 +9,7 @@ import DeleteIcon from "@mui/icons-material/Delete";
 import { DropzoneState } from "@/types";
 import Image from "next/image";
 import React, { useState } from "react";
+import { useTranslation } from "react-i18next";
 
 /**
  * FileElementProps interface to define the props for the FileElement component
@@ -33,6 +34,7 @@ const FileElement: React.FC<
   FileElementProps & { handleDelete: (fileUrl: string) => void }
 > = ({ setDropzoneState, fileName, fileUrl, handleDelete }) => {
   const theme = useTheme();
+  const { t } = useTranslation("homePage");
   const [hovered, setHovered] = useState(false);
 
   const isValidObjectURL = (url: string) => {
@@ -63,7 +65,7 @@ const FileElement: React.FC<
               <Image
                 className="!relative max-h-[90px] max-w-full p-1"
                 src={fileUrl}
-                alt="uploaded file"
+                alt={t("fileElement.altText.uploadedFileAlt")}
                 fill={true}
                 priority
                 data-testid="logo-image"
@@ -93,7 +95,7 @@ const FileElement: React.FC<
         {hovered && (
           <IconButton
             edge="end"
-            aria-label="delete"
+            aria-label={t("fileElement.altText.deleteFileAlt")}
             style={{ color: "black", position: "absolute", top: "-5px", right: 5 }}
             onClick={() => handleDelete(fileUrl)}
           >

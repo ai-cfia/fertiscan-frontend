@@ -1,9 +1,10 @@
 "use client";
-import React from "react";
+import React, { Suspense } from "react";
 import { Box, Stack, Typography, useTheme } from "@mui/material";
 import FileElement from "@/components/FileElement";
-import FileUploaded from '@/classe/File';
-import { DropzoneState } from '@/types'; // Adjust the import path as necessary
+import FileUploaded from "@/classe/File";
+import { DropzoneState } from "@/types"; // Adjust the import path as necessary
+import { useTranslation } from "react-i18next";
 
 /**
  * Props for the FileList component.
@@ -31,9 +32,10 @@ interface FileListProps {
 const FileList: React.FC<FileListProps> = ({
   uploadedFiles,
   setUploadedFiles,
-  setDropzoneState
+  setDropzoneState,
 }) => {
   const theme = useTheme();
+  const { t, i18n } = useTranslation("homePage");
 
   const handleDelete = (url: string) => {
     setUploadedFiles(
@@ -45,8 +47,9 @@ const FileList: React.FC<FileListProps> = ({
   };
 
   return (
-    <Box
-      className={`flex relative flex-col justify-center items-center border-2 border-sky-900
+    <Suspense fallback="loading">
+      <Box
+        className={`flex relative flex-col justify-center items-center border-2 border-sky-900
                 rounded text-center p-1 bg-transparent bg-contain xs:w-[90%] md:w-[100%] h-[90%]
                 xs:min-h-[350px] md:min-h-[400px] overflow-y-auto overflow-x-hidden min-w-[133.44px]
                 [&::-webkit-scrollbar]:w-[10px]
@@ -55,42 +58,48 @@ const FileList: React.FC<FileListProps> = ({
                 [&::-webkit-scrollbar-thumb]:rounded-full
                 [&::-webkit-scrollbar-thumb]:border-6-solid-transparent
                 [&::-webkit-scrollbar-track]:bg-transparent`}
-    >
-      <Box
-        className={`absolute transform w-full h-full flex flex-col
-                    ${uploadedFiles.length === 0 ? "justify-center items-center p-0 left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2"
-                      : "justify-start items-start p-2 left-0 top-0 translate-x-none translate-y-none"}
-                    text-center max-w-full max-h-full object-contain ` }
-
       >
-        <Typography
-          variant="h5"
-          color={theme.palette.text.primary}
-          gutterBottom
+        <Box
+          className={`absolute transform w-full h-full flex flex-col
+                    ${
+                      uploadedFiles.length === 0
+                        ? "justify-center items-center p-0 left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2"
+                        : "justify-start items-start p-2 left-0 top-0 translate-x-none translate-y-none"
+                    }
+                    text-center max-w-full max-h-full object-contain `}
         >
-          <b>
-            {uploadedFiles.length > 0
-              ? "Uploaded files" + " (" + uploadedFiles.length + ")"
-              : "No uploaded files"}
-          </b>
-        </Typography>
-        <Stack
-          className="w-full flex flex-col items-center"
-          direction="column"
-          spacing={2}
-        >
-          {uploadedFiles.map((file, index) => (
-            <FileElement
-              key={index}
-              setDropzoneState={setDropzoneState}
-              fileName={file.getInfo().name}
-              fileUrl={file.getInfo().path}
-              handleDelete={() => handleDelete(file.getInfo().path)}
-            />
-          ))}
-        </Stack>
+          <Typography
+            variant="h5"
+            color={theme.palette.text.primary}
+            gutterBottom
+          >
+            <b>
+              {uploadedFiles.length > 0
+                ? t("fileList.uploadedfiles") +
+                  " (" +
+                  uploadedFiles.length +
+                  ")"
+                : t("fileList.noUploadedfiles")}
+            </b>
+          </Typography>
+          <Stack
+            className="w-full flex flex-col items-center"
+            direction="column"
+            spacing={2}
+          >
+            {uploadedFiles.map((file, index) => (
+              <FileElement
+                key={index}
+                setDropzoneState={setDropzoneState}
+                fileName={file.getInfo().name}
+                fileUrl={file.getInfo().path}
+                handleDelete={() => handleDelete(file.getInfo().path)}
+              />
+            ))}
+          </Stack>
+        </Box>
       </Box>
-    </Box>
+    </Suspense>
   );
 };
 
