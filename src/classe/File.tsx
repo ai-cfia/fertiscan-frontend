@@ -83,8 +83,6 @@ class FileUploaded {
             throw new Error("Content-Type header is missing");
         }
 
-        console.log(`detectType: Content-Type for ${path} is ${contentType}`);
-
         if (contentType.includes("application/pdf")) {
             return { type: "pdf", images: [] };
         } else if (

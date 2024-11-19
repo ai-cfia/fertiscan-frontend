@@ -10,7 +10,7 @@ const theme = createTheme({
       main: "#7B7B7B", // Dark grey (Default color)
     },
     secondary: {
-      main: "#0c4a6e", // Dark Blue (Selected)
+      main: "#05486C", // Dark Blue (Selected)
     },
     error: {
       main: colors.red["500"],
@@ -20,10 +20,6 @@ const theme = createTheme({
     },
     background: {
       default: "#C5C5C5", // Light Grey
-    },
-    text: {
-      primary: colors.common.black,
-      secondary: colors.common.white,
     },
   },
   typography: {
@@ -83,18 +79,6 @@ const theme = createTheme({
             color: colors.red["500"],
           },
           color: "#7B7B7B", // Default Grey
-        },
-      },
-    },
-    MuiInputBase: {
-      styleOverrides: {
-        root: {
-          backgroundColor: colors.common.white,
-          border: "3px solid #BEBCBC", // Stroke color
-          color: colors.common.black,
-          "&::placeholder": {
-            color: "#BCBABA", // Placeholder color
-          },
         },
       },
     },

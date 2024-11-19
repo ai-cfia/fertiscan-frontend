@@ -32,11 +32,14 @@ const ImageViewer: React.FC<ImageViewerProps> = ({ imageFiles }) => {
     setZoomRefs((prevRefs) =>
       Array.from({ length: urls.length }, (_, i) => prevRefs[i] || null),
     );
-    zoomRefs.forEach((ref) => ref?.resetTransform());
     return () => {
       urls.forEach((url) => URL.revokeObjectURL(url));
     };
   }, [imageFiles, setZoomRefs, setImageUrls, setActiveIndex]);
+
+  useEffect(() => {
+    zoomRefs.forEach((ref) => ref?.resetTransform());
+  }, [imageFiles, zoomRefs]);
 
   const handleInit = (index: number, ref: ReactZoomPanPinchRef) => {
     setZoomRefs((prevRefs) => {
