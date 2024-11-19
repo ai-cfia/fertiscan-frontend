@@ -10,7 +10,6 @@ import {
   ListItemIcon,
   ListItemText,
   Toolbar,
-  Tooltip,
   Typography,
 } from "@mui/material";
 import Image from 'next/image';

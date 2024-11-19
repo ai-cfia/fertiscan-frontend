@@ -3,7 +3,7 @@ import React, { Suspense } from "react";
 import { Box, Stack, Typography, useTheme } from "@mui/material";
 import FileElement from "@/components/FileElement";
 import FileUploaded from "@/classe/File";
-import { DropzoneState } from "@/types"; // Adjust the import path as necessary
+import { DropzoneState } from "@/types/types"; // Adjust the import path as necessary
 import { useTranslation } from "react-i18next";
 
 /**
@@ -35,7 +35,7 @@ const FileList: React.FC<FileListProps> = ({
   setDropzoneState,
 }) => {
   const theme = useTheme();
-  const { t, i18n } = useTranslation("homePage");
+  const { t } = useTranslation("homePage");
 
   const handleDelete = (url: string) => {
     setUploadedFiles(

@@ -2,14 +2,14 @@
 import FileUploaded from "@/classe/File";
 import Dropzone from "@/components/Dropzone";
 import FileList from "@/components/FileList";
-import type { DropzoneState } from "@/types";
+import type { DropzoneState } from "@/types/types";
 import { Box, Button, Grid2, Tooltip } from "@mui/material";
 import { useState } from "react";
 import React, { Suspense } from "react";
 import { useTranslation } from "react-i18next";
 
 function HomePage() {
-  const { t, i18n } = useTranslation("homePage");
+  const { t } = useTranslation("homePage");
 
   const [dropzoneState, setDropzoneState] = useState<DropzoneState>({
     visible: false,
