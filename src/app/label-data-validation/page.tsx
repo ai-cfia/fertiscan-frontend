@@ -1,19 +1,22 @@
 "use client";
 import DummyStepComponent from "@/components/DummyStepComponent";
 import ImageViewer from "@/components/ImageViewer";
+import OrganizationsForm from "@/components/OrganizationsForm";
 import {
   HorizontalNonLinearStepper,
   StepperControls,
   StepStatus,
 } from "@/components/stepper";
 import {
+  checkOrganizationStatus,
   DEFAULT_LABEL_DATA,
+  FieldStatus,
   FormComponentProps,
   LabelData,
 } from "@/types/types";
 import useBreakpoints from "@/utils/useBreakpoints";
 import { Box, Button, Container } from "@mui/material";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 
 function LabelDataValidationPage() {
   const [imageFiles, setImageFiles] = useState<File[]>([]);
@@ -23,6 +26,8 @@ function LabelDataValidationPage() {
     isDownXs || isBetweenXsSm || isBetweenSmMd || isBetweenMdLg;
   const [labelData, setLabelData] = useState<LabelData>(DEFAULT_LABEL_DATA);
   const [activeStep, setActiveStep] = useState(0);
+  const [organizationsStepStatus, setOrganizationsStepStatus] =
+    useState<StepStatus>(StepStatus.Incomplete);
   const [dummyStepStatus, setDummyStepStatus] = useState<StepStatus>(
     StepStatus.Incomplete,
   );
@@ -49,13 +54,13 @@ function LabelDataValidationPage() {
 
   const steps = [
     createStep(
-      "Dummy 1",
-      DummyStepComponent,
-      dummyStepStatus,
-      setDummyStepStatus,
+      "Organizations",
+      OrganizationsForm,
+      organizationsStepStatus,
+      setOrganizationsStepStatus,
     ),
     createStep(
-      "Dummy 2",
+      "Dummy Step",
       DummyStepComponent,
       dummyStepStatus,
       setDummyStepStatus,
@@ -71,6 +76,15 @@ function LabelDataValidationPage() {
   const openFileDialog = () => {
     document.getElementById("file-input")?.click();
   };
+
+  useEffect(() => {
+    const verified = labelData.organizations.every((org) =>
+      checkOrganizationStatus(org, FieldStatus.Verified),
+    );
+    setOrganizationsStepStatus(
+      verified ? StepStatus.Completed : StepStatus.Incomplete,
+    );
+  }, [labelData.organizations, setOrganizationsStepStatus]);
 
   return (
     <Container

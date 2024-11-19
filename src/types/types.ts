@@ -48,6 +48,7 @@ interface ParentDimensions {
 
 export type { DropzoneState, ImageLoadEvent, ParentDimensions };
 
+// Alert
 export type AlertSeverity = OverridableStringUnion<
   AlertColor,
   AlertPropsColorOverrides
@@ -58,6 +59,7 @@ export interface Alert {
   type: AlertSeverity;
 }
 
+// Field
 export enum FieldStatus {
   Verified = "verified",
   Unverified = "unverified",
@@ -70,18 +72,84 @@ export type Field = {
   errorMessage: string | null;
 };
 
+// Organizations
+export type Organization = {
+  name: Field;
+  address: Field;
+  website: Field;
+  phoneNumber: Field;
+};
+
+export const DEFAULT_ORGANIZATION: Organization = {
+  name: {
+    value: "",
+    status: FieldStatus.Unverified,
+    errorMessage: null,
+  },
+  address: {
+    value: "",
+    status: FieldStatus.Unverified,
+    errorMessage: null,
+  },
+  website: {
+    value: "",
+    status: FieldStatus.Unverified,
+    errorMessage: null,
+  },
+  phoneNumber: {
+    value: "",
+    status: FieldStatus.Unverified,
+    errorMessage: null,
+  },
+};
+
+export const TEST_ORGANIZATION: Organization = {
+  name: {
+    value: "GreenGrow Inc.",
+    status: FieldStatus.Unverified,
+    errorMessage: null,
+  },
+  address: {
+    value: "123 Green Road, Farmville, State, 12345",
+    status: FieldStatus.Unverified,
+    errorMessage: null,
+  },
+  website: {
+    value: "https://www.greengrow.com",
+    status: FieldStatus.Unverified,
+    errorMessage: null,
+  },
+  phoneNumber: {
+    value: "123-456-7890",
+    status: FieldStatus.Unverified,
+    errorMessage: null,
+  },
+};
+
+export const checkOrganizationStatus = (
+  organization: Organization,
+  status: FieldStatus,
+): boolean => {
+  return (
+    organization &&
+    Object.values(organization).every((field) => field.status === status)
+  );
+};
+
+// LabelData
 export type LabelData = {
-  companyName: string;
+  organizations: Organization[];
 };
 
 export const DEFAULT_LABEL_DATA: LabelData = {
-  companyName: "",
+  organizations: [DEFAULT_ORGANIZATION],
 };
 
 export const TEST_LABEL_DATA: LabelData = {
-  companyName: "Test Company",
+  organizations: [TEST_ORGANIZATION, TEST_ORGANIZATION],
 };
 
+// Form 
 export interface FormComponentProps {
   title: string;
   labelData: LabelData;
