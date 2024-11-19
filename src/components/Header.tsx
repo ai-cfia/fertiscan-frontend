@@ -53,7 +53,7 @@ const Header: React.FC<HeaderProps> = ({ setSideNavOpen }) => {
   // Function to handle language change
   const changeLanguage = (lang: string) => {
     i18next.changeLanguage(lang, (err, t) => {
-      if (err) return console.log('something went wrong loading', err);
+      if (err) return console.log('Something went wrong while loading', err);
       t('key');
       setLanguage(lang);
     });
