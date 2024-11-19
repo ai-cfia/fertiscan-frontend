@@ -7,6 +7,8 @@ import { useState } from "react";
 import "./globals.css";
 import theme from "./theme";
 
+import './i18n';
+
 export default function RootLayout({
   children,
 }: Readonly<{ children: React.ReactNode }>) {
@@ -17,7 +19,7 @@ export default function RootLayout({
   };
 
   return (
-    <html lang="en">
+    <html>
       <body>
         <AppRouterCacheProvider>
           <ThemeProvider theme={theme}>

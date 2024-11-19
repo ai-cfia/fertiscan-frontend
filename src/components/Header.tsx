@@ -16,10 +16,12 @@ import Image from "next/image";
 import Link from "next/link";
 import { useState } from "react";
 import AlertBanner from "./AlertBanner";
+import i18next from "i18next";
 
 interface HeaderProps {
   setSideNavOpen: (open: boolean | ((prevOpen: boolean) => boolean)) => void;
 }
+
 /**
  * Header Component
  *
@@ -35,6 +37,7 @@ const Header: React.FC<HeaderProps> = ({ setSideNavOpen }) => {
   const { isDownXs, isBetweenXsSm, isBetweenSmMd } = useBreakpoints();
   const [anchorElement, setAnchorElement] = useState<null | HTMLElement>(null);
   const [isUserMenuOpen, setIsUserMenuOpen] = useState(false);
+  const [language, setLanguage] = useState('en'); // default language
 
   const handleSideNavToggle = () => {
     setSideNavOpen((prevOpen) => !prevOpen);
@@ -43,6 +46,15 @@ const Header: React.FC<HeaderProps> = ({ setSideNavOpen }) => {
   const handleUserMenuToggle = (event: React.MouseEvent<HTMLElement>) => {
     setIsUserMenuOpen(true);
     setAnchorElement(event.currentTarget);
+  };
+
+  // Function to handle language change
+  const changeLanguage = (lang: string) => {
+    i18next.changeLanguage(lang, (err, t) => {
+      if (err) return console.log('something went wrong loading', err);
+      t('key'); // -> same as i18next.t
+      setLanguage(lang);
+    });
   };
 
   return (
@@ -86,15 +98,14 @@ const Header: React.FC<HeaderProps> = ({ setSideNavOpen }) => {
               {/* Language toggle button */}
               <Button
                 className="align-center"
+                onClick={() => changeLanguage(language === 'en' ? 'fr' : 'en')}
                 data-testid="language-toggle-button"
               >
                 <Typography
                   className="normal-case underline"
                   data-testid="language-text"
                 >
-                  {isDownXs || isBetweenXsSm || isBetweenSmMd
-                    ? "FR"
-                    : "Français"}
+                  {language === 'en' ? (isDownXs || isBetweenXsSm || isBetweenSmMd ? "FR" : "Français") : (isDownXs || isBetweenXsSm || isBetweenSmMd ? "EN" : "English")}
                 </Typography>
               </Button>
 
