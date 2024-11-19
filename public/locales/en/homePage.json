@@ -8,7 +8,7 @@
     "fileElement": {
         "altText": {
             "uploadedFileAlt": "Uploaded file picture",
-            "deleteFileAlt": "Delete file Button icon"
+            "deleteFileAlt": "Delete file button icon"
         }
     },
     "dropzone": {
