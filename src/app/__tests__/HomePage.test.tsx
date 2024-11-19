@@ -1,4 +1,5 @@
 /* eslint-disable react/display-name */
+/* eslint-disable react-hooks/rules-of-hooks */
 import { render, screen, fireEvent } from "@testing-library/react";
 import userEvent from "@testing-library/user-event";
 import { Response } from "whatwg-fetch";
