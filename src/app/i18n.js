@@ -4,8 +4,8 @@ import ChainedBackend from "i18next-chained-backend";
 import HttpBackend from "i18next-http-backend";
 import Backend from "i18next-http-backend";
 import resourcesToBackend from "i18next-resources-to-backend";
-
 import LanguageDetector from "i18next-browser-languagedetector";
+const debugMode = process.env.NEXT_PUBLIC_DEBUG === "true";
 
 i18n
   .use(Backend)
@@ -13,17 +13,15 @@ i18n
   .use(LanguageDetector)
   // pass the i18n instance to react-i18next.
   .use(initReactI18next)
-
   .use(ChainedBackend)
   // init i18next
   .init({
-    debug: false,
+    debug: debugMode,
     fallbackLng: "fr",
     lng: ["en", "fr"],
     interpolation: {
       escapeValue: false,
     },
-
     backend: {
       backends: [
         HttpBackend,
