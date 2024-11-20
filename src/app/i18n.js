@@ -17,7 +17,7 @@ i18n
   .use(ChainedBackend)
   // init i18next
   .init({
-    debug: true,
+    debug: false,
     fallbackLng: "fr",
     lng: ["en", "fr"],
     interpolation: {

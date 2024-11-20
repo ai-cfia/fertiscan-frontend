@@ -79,7 +79,8 @@ const UserMenu = ({
       anchorOrigin={{ horizontal: "right", vertical: "bottom" }}
       slotProps={{
         paper: {
-          className: "!bg-sky-900 !text-white !shadow-2xl !filter !shadow-[rgba(0,0,0,0.5)_0px_2px_8px] ",
+          className:
+            "!bg-sky-900 !text-white !shadow-2xl !filter !shadow-[rgba(0,0,0,0.5)_0px_2px_8px] ",
         },
       }}
     >
@@ -113,7 +114,7 @@ const UserMenu = ({
         className="block"
         data-testid="app-version"
       >
-        {t("userMenu.appVersion", { version: 'alpha 0.1.5' })}
+        {t("userMenu.appVersion", { version: "alpha 0.1.5" })}
       </Typography>
     </Menu>
   );

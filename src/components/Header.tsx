@@ -38,8 +38,8 @@ const Header: React.FC<HeaderProps> = ({ setSideNavOpen }) => {
   const { isDownXs, isBetweenXsSm, isBetweenSmMd } = useBreakpoints();
   const [anchorElement, setAnchorElement] = useState<null | HTMLElement>(null);
   const [isUserMenuOpen, setIsUserMenuOpen] = useState(false);
-  const [language, setLanguage] = useState('en');
-  const { t } = useTranslation('header');
+  const [language, setLanguage] = useState("en");
+  const { t } = useTranslation("header");
 
   const handleSideNavToggle = () => {
     setSideNavOpen((prevOpen) => !prevOpen);
@@ -53,8 +53,8 @@ const Header: React.FC<HeaderProps> = ({ setSideNavOpen }) => {
   // Function to handle language change
   const changeLanguage = (lang: string) => {
     i18next.changeLanguage(lang, (err, t) => {
-      if (err) return console.log('Something went wrong while loading', err);
-      t('key');
+      if (err) return console.log("Something went wrong while loading", err);
+      t("key");
       setLanguage(lang);
     });
   };
@@ -62,14 +62,17 @@ const Header: React.FC<HeaderProps> = ({ setSideNavOpen }) => {
   return (
     <>
       <Box className="grow ">
-        <AppBar className="!static header darkContainer" data-testid="header-appbar">
+        <AppBar
+          className="!static header darkContainer"
+          data-testid="header-appbar"
+        >
           <Toolbar
             className="justify-between h-full"
             data-testid="header-toolbar"
           >
             {/* Navigation menu toggle button on the left */}
             <IconButton
-              aria-label={t('altText.sideMenuToggleAlt')}
+              aria-label={t("altText.sideMenuToggleAlt")}
               edge="start"
               onClick={handleSideNavToggle}
               data-testid="menu-toggle-button"
@@ -88,7 +91,7 @@ const Header: React.FC<HeaderProps> = ({ setSideNavOpen }) => {
                 <Image
                   className="cursor-pointer !relative"
                   src="/img/CFIA_FIP_FR_WHITE_1.png"
-                  alt={t('altText.logoCFIAAlt')}
+                  alt={t("altText.logoCFIAAlt")}
                   fill={true}
                   priority
                   data-testid="logo-image"
@@ -101,22 +104,27 @@ const Header: React.FC<HeaderProps> = ({ setSideNavOpen }) => {
               {/* Language toggle button */}
               <Button
                 className="align-center"
-                onClick={() => changeLanguage(language === 'en' ? 'fr' : 'en')}
+                onClick={() => changeLanguage(language === "en" ? "fr" : "en")}
                 data-testid="language-toggle-button"
               >
                 <Typography
                   className="normal-case underline"
                   data-testid="language-text"
                 >
-                 {language === 'en'
-        ? (isDownXs || isBetweenXsSm || isBetweenSmMd ? t('language.short', { lng: 'fr' }) : t('language.full', { lng: 'fr' }))
-        : (isDownXs || isBetweenXsSm || isBetweenSmMd ? t('language.short', { lng: 'en' }) : t('language.full', { lng: 'en' }))}
+                  {t(
+                    isDownXs || isBetweenXsSm || isBetweenSmMd
+                      ? "language.short"
+                      : "language.full",
+                    {
+                      lng: language === "en" ? "fr" : "en",
+                    },
+                  )}
                 </Typography>
               </Button>
 
               {/* User account icon button */}
               <IconButton
-                aria-label={t('altText.userAccountAlt')}
+                aria-label={t("altText.userAccountAlt")}
                 className="self-center"
                 onClick={handleUserMenuToggle}
                 data-testid="user-account-button"

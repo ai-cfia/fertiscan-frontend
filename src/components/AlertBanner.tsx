@@ -50,7 +50,7 @@ const AlertBanner: React.FC = () => {
             }
           >
             <Typography
-            className="overflow-hidden text-ellipsis"
+              className="overflow-hidden text-ellipsis"
               variant="body2"
               color="inherit"
               style={{

@@ -4,7 +4,6 @@ import { fireEvent, render, screen } from "@testing-library/react";
 import React from "react";
 import UserMenu from "../UserMenu";
 
-
 const theme = createTheme();
 jest.mock("../../classe/User", () => ({
   usePlaceholder: jest.fn(),

@@ -7,7 +7,7 @@ import { useState } from "react";
 import "./globals.css";
 import theme from "./theme";
 
-import './i18n';
+import "./i18n";
 import useAlertStore from "@/stores/alertStore";
 import { useTranslation } from "react-i18next";
 
@@ -16,17 +16,17 @@ export default function RootLayout({
 }: Readonly<{ children: React.ReactNode }>) {
   const [sideNavOpen, setSideNavOpen] = useState(false);
   const { showAlert } = useAlertStore();
-  const {t, i18n} = useTranslation('alertBanner');
+  const { t, i18n } = useTranslation("alertBanner");
 
   const handleDrawerClose = () => {
     setSideNavOpen(false);
   };
 
   const handleLanguageChange = (lng: string) => {
-    showAlert(t('languageChanged', { lng }),'info');
+    showAlert(t("languageChanged", { lng }), "info");
   };
 
-  i18n.on('languageChanged', handleLanguageChange);
+  i18n.on("languageChanged", handleLanguageChange);
 
   return (
     <html>
@@ -34,8 +34,8 @@ export default function RootLayout({
         <AppRouterCacheProvider>
           <ThemeProvider theme={theme}>
             <SideNav open={sideNavOpen} onClose={handleDrawerClose} />
-              <Header setSideNavOpen={setSideNavOpen} />
-              {children}
+            <Header setSideNavOpen={setSideNavOpen} />
+            {children}
           </ThemeProvider>
         </AppRouterCacheProvider>
       </body>
