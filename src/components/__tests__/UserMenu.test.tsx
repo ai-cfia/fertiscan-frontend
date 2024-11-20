@@ -1,10 +1,10 @@
-import theme from "@/app/theme";
 import { usePlaceholder } from "@/classe/User";
-import { ThemeProvider } from "@mui/material/styles";
+import { createTheme, ThemeProvider } from "@mui/material/styles";
 import { fireEvent, render, screen } from "@testing-library/react";
 import React from "react";
 import UserMenu from "../UserMenu";
 
+const theme = createTheme();
 jest.mock("../../classe/User", () => ({
   usePlaceholder: jest.fn(),
 }));
@@ -13,12 +13,12 @@ const dummyUser = {
   getUsername: jest.fn().mockReturnValue("placeholderUser"),
 };
 
-usePlaceholder.mockReturnValue(dummyUser);
+(usePlaceholder as jest.Mock).mockReturnValue(dummyUser);
 
 describe("UserMenu", () => {
   const mocksetIsUserMenuOpen = jest.fn();
   const mockSetAnchorElement = jest.fn();
-  let anchorElement = null;
+  let anchorElement: HTMLElement | null = null;
 
   beforeEach(() => {
     // Reset the mock function calls before each test

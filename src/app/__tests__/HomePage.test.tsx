@@ -1,14 +1,23 @@
 /* eslint-disable react/display-name */
+/* eslint-disable react-hooks/rules-of-hooks */
 import { render, screen, fireEvent } from "@testing-library/react";
 import userEvent from "@testing-library/user-event";
 import { Response } from "whatwg-fetch";
 import HomePage from "../page";
 
+import { useTranslation } from "react-i18next";
+
+jest.mock("react-i18next", () => ({
+  useTranslation: jest.fn().mockReturnValue({
+    t: (key: string) => key,
+  }),
+}));
+const { t } = useTranslation("homePage");
 
 // Mock the FileElement component
 jest.mock(
   "../../components/FileElement",
-  ()  =>
+  () =>
     ({
       fileName,
       fileUrl,
@@ -67,7 +76,7 @@ describe("HomePage Component", () => {
     const file = new File(["hello"], "hello.png", { type: "image/png" });
 
     // Find the file input element and upload the file
-    const input = screen.getByLabelText(/browse file/i);
+    const input = screen.getByLabelText(t("dropzone.browseFile"));
     userEvent.upload(input, file);
 
     // Check that the file was uploaded and appears in the list.
@@ -117,7 +126,7 @@ describe("HomePage Component", () => {
     const file = new File(["hello"], "hello.png", { type: "image/png" });
 
     // Find the file input element and upload the file
-    const input = screen.getByLabelText(/browse file/i);
+    const input = screen.getByLabelText(t("dropzone.browseFile"));
     userEvent.upload(input, file);
 
     // Check that the file was uploaded and appears in the list.
@@ -142,7 +151,7 @@ describe("HomePage Component", () => {
     const file = new File(["hello"], "hello.png", { type: "image/png" });
 
     // Find the file input element and upload the file
-    const input = screen.getByLabelText(/browse file/i);
+    const input = screen.getByLabelText(t("dropzone.browseFile"));
     userEvent.upload(input, file);
 
     // Check that the file was uploaded and appears in the list.
@@ -163,7 +172,7 @@ describe("HomePage Component", () => {
     const file = new File(["hello"], "hello.png", { type: "image/png" });
 
     // Find the file input element and upload the file
-    const input = screen.getByLabelText(/browse file/i);
+    const input = screen.getByLabelText(t("dropzone.browseFile"));
     userEvent.upload(input, file);
 
     // Check that the file was uploaded and appears in the list.
@@ -174,7 +183,9 @@ describe("HomePage Component", () => {
     expect(fileName).toHaveTextContent("hello.png");
 
     // Check that the file count is displayed
-    expect(screen.getByText("Uploaded files (1)")).toBeInTheDocument();
+    expect(
+      screen.getByText(t("fileList.uploadedfiles") + " (1)"),
+    ).toBeInTheDocument();
   });
 
   it("The file count should be updated when multiple files are uploaded", async () => {
@@ -185,7 +196,7 @@ describe("HomePage Component", () => {
     const file2 = new File(["hello2"], "hello2.png", { type: "image/png" });
 
     // Find the file input element and upload the file
-    const input = screen.getByLabelText(/browse file/i);
+    const input = screen.getByLabelText(t("dropzone.browseFile"));
     userEvent.upload(input, [file, file2]);
 
     // Check that the file was uploaded and appears in the list.
@@ -197,13 +208,15 @@ describe("HomePage Component", () => {
     expect(fileElement2).toBeInTheDocument();
 
     // Check that the file count is displayed
-    expect(screen.getByText("Uploaded files (2)")).toBeInTheDocument();
+    expect(
+      screen.getByText(t("fileList.uploadedfiles") + " (2)"),
+    ).toBeInTheDocument();
   });
 
   it("displays 'No files uploaded' when there are no files", () => {
     render(<HomePage />);
 
-    expect(screen.getByText("No uploaded files")).toBeInTheDocument();
+    expect(screen.getByText(t("fileList.noUploadedfiles"))).toBeInTheDocument();
   });
 
   it("The button submit should be deactivated when no file is uploaded", () => {

@@ -6,9 +6,10 @@ import {
   useTheme,
 } from "@mui/material";
 import DeleteIcon from "@mui/icons-material/Delete";
-import { DropzoneState } from "@/types";
+import { DropzoneState } from "@/types/types";
 import Image from "next/image";
 import React, { useState } from "react";
+import { useTranslation } from "react-i18next";
 
 /**
  * FileElementProps interface to define the props for the FileElement component
@@ -33,10 +34,12 @@ const FileElement: React.FC<
   FileElementProps & { handleDelete: (fileUrl: string) => void }
 > = ({ setDropzoneState, fileName, fileUrl, handleDelete }) => {
   const theme = useTheme();
+  const { t } = useTranslation("homePage");
   const [hovered, setHovered] = useState(false);
 
   const isValidObjectURL = (url: string) => {
-    const pattern = /^(blob:+http:\/\/|https:\/\/)[a-zA-Z0-9\-_.]+(?:\.[a-zA-Z0-9\-_.]+)*(?::\d+)?\/[a-zA-Z0-9\-_.]+$/;
+    const pattern =
+      /^(blob:+http:\/\/|https:\/\/)[a-zA-Z0-9\-_.]+(?:\.[a-zA-Z0-9\-_.]+)*(?::\d+)?\/[a-zA-Z0-9\-_.]+$/;
     return pattern.test(url);
   };
 
@@ -54,37 +57,30 @@ const FileElement: React.FC<
         className="relative h-full w-full min-h-[90px] flex items-center
                   justify-center overflow-hidden rounded border-2 border-neutral-600 bg-neutral-200"
       >
-        <Grid2
-          size={20}
-          className="relative flex justify-center items-center"
-        >
+        <Grid2 size={20} className="relative flex justify-center items-center">
           {isValidObjectURL(fileUrl) && (
             <div>
               <Image
                 className="!relative max-h-[90px] max-w-full p-1"
                 src={fileUrl}
-                alt="uploaded file"
+                alt={t("fileElement.altText.uploadedFileAlt")}
                 fill={true}
                 priority
                 data-testid="logo-image"
-                />
+              />
             </div>
-            )}
+          )}
         </Grid2>
         <Divider
           orientation="vertical"
           flexItem
           color={theme.palette.primary.dark}
-          sx={{  borderRightWidth: 3 }} // className="border-r-2" dont work
+          sx={{ borderRightWidth: 3 }} // className="border-r-2" dont work
         />
-        <Grid2
-          size={80}
-          className="relative flex items"
-
-        >
+        <Grid2 size={80} className="relative flex items">
           <Typography
             variant="h6"
-            color= {theme.palette.text.primary}
+            color={theme.palette.text.primary}
             className="overflow-hidden text-ellipsis whitespace-nowrap text-start pl-2"
           >
             {fileName}
@@ -93,8 +89,13 @@ const FileElement: React.FC<
         {hovered && (
           <IconButton
             edge="end"
-            aria-label="delete"
-            style={{ color: "black", position: "absolute", top: "-5px", right: 5 }}
+            aria-label={t("fileElement.altText.deleteFileAlt")}
+            style={{
+              color: "black",
+              position: "absolute",
+              top: "-5px",
+              right: 5,
+            }}
             onClick={() => handleDelete(fileUrl)}
           >
             <DeleteIcon data-testid="delete" style={{ fontSize: "1.7rem" }} />

@@ -16,6 +16,7 @@ import {
   useCallback,
   useEffect,
 } from "react";
+import { useTranslation } from "react-i18next";
 // import useBreakpoints from "@/utils/useBreakpoints";
 
 /**
@@ -51,6 +52,7 @@ const UserMenu = ({
   setAnchorElement,
 }: UserMenuProps): ReactElement => {
   const placeholderUser = usePlaceholder();
+  const { t } = useTranslation("header");
 
   const handleClose = useCallback((): void => {
     setIsUserMenuOpen(false);
@@ -77,7 +79,8 @@ const UserMenu = ({
       anchorOrigin={{ horizontal: "right", vertical: "bottom" }}
       slotProps={{
         paper: {
-          className: "!bg-sky-900 !text-white !shadow-2xl !filter !shadow-[rgba(0,0,0,0.5)_0px_2px_8px] ",
+          className:
+            "!bg-sky-900 !text-white !shadow-2xl !filter !shadow-[rgba(0,0,0,0.5)_0px_2px_8px] ",
         },
       }}
     >
@@ -86,23 +89,23 @@ const UserMenu = ({
         onClick={(event) => event.preventDefault()}
         data-testid="profile-menu-item"
       >
-        <ListItemIcon>
+        <ListItemIcon aria-label={t("userMenu.altText.userIcon")}>
           <AccountCircle />
         </ListItemIcon>
         <Typography>{placeholderUser.getUsername()}</Typography>
       </MenuItem>
       <MenuItem onClick={handleClose} data-testid="dashboard-menu-item">
-        <ListItemIcon>
+        <ListItemIcon aria-label={t("userMenu.altText.dashboardIcon")}>
           <DashboardIcon />
         </ListItemIcon>
-        <Typography>Dashboard</Typography>
+        <Typography>{t("userMenu.dashboard")}</Typography>
       </MenuItem>
       <Divider />
       <MenuItem data-testid="logout-menu-item">
-        <ListItemIcon>
+        <ListItemIcon aria-label={t("userMenu.altText.logoutIcon")}>
           <Logout />
         </ListItemIcon>
-        <Typography>Log out</Typography>
+        <Typography>{t("userMenu.logout")}</Typography>
       </MenuItem>
       <Divider />
       <Typography
@@ -111,7 +114,7 @@ const UserMenu = ({
         className="block"
         data-testid="app-version"
       >
-        App Version: alpha 0.2.1
+        {t("userMenu.appVersion", { version: "alpha 0.1.5" })}
       </Typography>
     </Menu>
   );

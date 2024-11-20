@@ -1,9 +1,10 @@
 "use client";
-import React from 'react';
-import { Box, Button, Typography, useTheme } from '@mui/material';
-import { CloudUpload } from '@mui/icons-material';
-import type { ImageLoadEvent, DropzoneState } from '@/types';
+import React from "react";
+import { Box, Button, Typography, useTheme } from "@mui/material";
+import { CloudUpload } from "@mui/icons-material";
+import type { ImageLoadEvent, DropzoneState } from "@/types/types";
 import FileUploaded from "@/classe/File";
+import { useTranslation } from "react-i18next";
 
 /**
  * Props for the Dropzone component.
@@ -29,9 +30,10 @@ const Dropzone: React.FC<DropzoneProps> = ({
   uploadedFiles,
   setUploadedFiles,
   dropzoneState,
-  setDropzoneState
+  setDropzoneState,
 }) => {
   const theme = useTheme();
+  const { t } = useTranslation("homePage");
 
   function handleDragOver(event: React.DragEvent<HTMLDivElement>) {
     event.preventDefault();
@@ -122,32 +124,31 @@ const Dropzone: React.FC<DropzoneProps> = ({
           data-testid="hovered-image"
           component="img"
           src={dropzoneState.imageUrl}
-          alt="Uploaded file"
+          alt={t("dropzone.altText.hoveredImageAlt")}
           onLoad={handleImageLoad}
-          className={`absolute max-w-full max-h-full object-contain ${ dropzoneState.fillPercentage && dropzoneState.fillPercentage >= 90
-              ? 'w-[80%] h-[80%]'
-              : 'w-auto h-auto'}`}
+          className={`absolute max-w-full max-h-full object-contain ${
+            dropzoneState.fillPercentage && dropzoneState.fillPercentage >= 90
+              ? "w-[80%] h-[80%]"
+              : "w-auto h-auto"
+          }`}
         />
       ) : (
         <Box className="text-center">
           <CloudUpload
+            aria-label={t("dropzone.altText.CloudIconAlt")}
             style={{
               color: theme.palette.secondary.main,
-              fontSize: '7rem',
+              fontSize: "7rem",
             }}
           />
           <Typography variant="h5" color={theme.palette.secondary.main}>
-            <b>Drag & Drop To Upload Files</b>
+            <b>{t("dropzone.dragDrop")}</b>
           </Typography>
           <Typography variant="h5" color={theme.palette.secondary.main}>
-            <b>OR</b>
+            <b>{t("dropzone.or")}</b>
           </Typography>
-          <Button
-            variant="contained"
-            component="label"
-            color="secondary"
-          >
-            <b>Browse File</b>
+          <Button variant="contained" component="label" color="secondary">
+            <b>{t("dropzone.browseFile")}</b>
             <input
               type="file"
               accept=".png,.jpg,.jpeg,"

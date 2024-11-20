@@ -1,0 +1,23 @@
+{
+    "submit_button": "Soumettre",
+    "submit_button_disabled_hint":"Vous devez ajouter au moins 1 fichier pour commencer l'analyse",
+    "fileList":{
+        "uploadedfiles": "Fichiers téléversés",
+        "noUploadedfiles": "Aucun fichier téléversé"
+    },
+    "fileElement": {
+        "altText": {
+            "uploadedFileAlt": "Image du fichier téléchargé",
+            "deleteFileAlt": "Icône du bouton pour supprimer un fichier"
+        }
+    },
+    "dropzone":{
+        "altText":{
+            "hoveredImageAlt": "Image survolée",
+            "CloudIconAlt": "Icône de téléversement de fichier"
+        },
+        "dragDrop": "Téléverser des fichiers",
+        "or": "OU",
+        "browseFile": "Parcourir les fichiers"
+    }
+}
