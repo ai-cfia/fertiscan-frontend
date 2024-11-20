@@ -3,7 +3,7 @@ import Header from "@/components/Header";
 import SideNav from "@/components/Sidenav";
 import { AppRouterCacheProvider } from "@mui/material-nextjs/v14-appRouter";
 import { ThemeProvider } from "@mui/material/styles";
-import { use, useEffect, useState } from "react";
+import { useState } from "react";
 import "./globals.css";
 import theme from "./theme";
 import "dotenv/config";
