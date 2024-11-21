@@ -72,22 +72,27 @@ function QuantityMultiInput({
       className={`w-full flex items-center p-1 border-2 rounded-tr-md rounded-br-md ${
         isFocused ? "border-fertiscan-blue" : ""
       } ${className}`}
-      data-testid={`dual-input-with-status`}
+      data-testid={`quantity-multi-input-${name}`}
     >
       {/* Label Section */}
       <Typography
         className="select-none px-2 !font-bold"
-        data-testid={`input-label`}
+        data-testid={`quantity-multi-input-label-${name}`}
       >
         {label}
       </Typography>
 
       {/* Fields Section */}
-      <Box className="flex flex-1 flex-col">
-        {fields.map((field, index) => (
-          <Box key={field.id}>
+      <Box
+        className="flex flex-1 flex-col"
+        data-testid={`fields-container-${name}`}
+      >
+        {fields.map((fieldItem, index) => (
+          <Box
+            key={fieldItem.id}
+            data-testid={`field-row-${name}-${fieldItem.id}`}
+          >
             <Box className="flex items-center">
-              {/* Dropdown for Units */}
               <Controller
                 name={`${name}.${index}.unit`}
                 control={control}
@@ -96,7 +101,7 @@ function QuantityMultiInput({
                     {...field}
                     className="p-1 text-[15px] border rounded"
                     disabled={statusValue === FieldStatus.Verified}
-                    data-testid={`unit-selector-${name}-${index}`}
+                    data-testid={`unit-selector-${name}-${fieldItem.id}`}
                   >
                     {unitOptions.map((option) => (
                       <option key={option} value={option}>
@@ -106,8 +111,6 @@ function QuantityMultiInput({
                   </select>
                 )}
               />
-
-              {/* Input Field */}
               <Controller
                 name={`${name}.${index}.value`}
                 control={control}
@@ -133,19 +136,21 @@ function QuantityMultiInput({
                         setIsFocused(false);
                         field.onChange(e.target.value.trim());
                       }}
-                      data-testid={`input-field-${name}-${index}`}
+                      data-testid={`input-field-${name}-${fieldItem.id}`}
                       error={!!error}
                     />
                     {error && (
-                      <Typography color="error" variant="caption">
+                      <Typography
+                        color="error"
+                        variant="caption"
+                        data-testid={`error-message-${name}-${fieldItem.id}`}
+                      >
                         {error.message}
                       </Typography>
                     )}
                   </>
                 )}
               />
-
-              {/* Remove Button with Tooltip */}
               <Tooltip
                 enterDelay={1000}
                 title={t("deleteRow")}
@@ -157,6 +162,7 @@ function QuantityMultiInput({
                     className="text-white bg-red-500"
                     onClick={() => remove(index)}
                     disabled={statusValue === FieldStatus.Verified}
+                    data-testid={`delete-button-${name}-${fieldItem.id}`}
                   >
                     <DeleteIcon />
                   </IconButton>
@@ -165,7 +171,7 @@ function QuantityMultiInput({
             </Box>
             <Divider
               className={`!mb-1 ${isFocused ? "!border-fertiscan-blue" : ""}`}
-              data-testid={`divider`}
+              data-testid={`row-divider-${name}-${fieldItem.id}`}
             />
           </Box>
         ))}
@@ -176,6 +182,7 @@ function QuantityMultiInput({
           onClick={() => append({ value: "", unit: unitOptions[0] })}
           startIcon={<AddIcon />}
           disabled={statusValue === FieldStatus.Verified}
+          data-testid={`add-button-${name}`}
         >
           {t("addRow")}
         </Button>
@@ -184,7 +191,7 @@ function QuantityMultiInput({
       {/* Divider */}
       <Divider
         className={`my-2 ${isFocused ? "!border-fertiscan-blue" : ""}`}
-        data-testid={`divider`}
+        data-testid={`vertical-divider-${name}`}
         flexItem
         orientation="vertical"
       />
@@ -221,19 +228,15 @@ function QuantityMultiInput({
 export function DummyComponent() {
   const methods = useForm({
     defaultValues: {
-      inputs: [{ value: "", unit: "kg" }],
+      inputs: [{ value: 0, unit: "kg" }],
       status: FieldStatus.Unverified,
     },
     mode: "onChange",
   });
 
-  const onSubmit = (data: any) => {
-    console.log("Form Data:", data);
-  };
-
   return (
     <FormProvider {...methods}>
-      <form onSubmit={methods.handleSubmit(onSubmit)} className="p-4 space-y-4">
+      <form className="p-4 space-y-4">
         <QuantityMultiInput
           label="Dynamic"
           // placeholder="Enter value"
@@ -253,4 +256,4 @@ export function DummyComponent() {
   );
 }
 
-export default DummyComponent;
+export default QuantityMultiInput;
