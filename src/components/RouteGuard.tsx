@@ -1,4 +1,4 @@
-import LoginModal from "@/components/LoginModal";
+import AuthenticationContainer from "@/components/AuthenticationContainer";
 import { useEffect, useState } from "react";
 
 const RouteGuard = ({ children }: Readonly<{ children: React.ReactNode }>) => {
@@ -57,7 +57,7 @@ const RouteGuard = ({ children }: Readonly<{ children: React.ReactNode }>) => {
 
   return (
     <div>
-      <LoginModal isOpen={!isAuth} login={handleLogin} signup={handleSignup} />
+      <AuthenticationContainer isOpen={!isAuth} login={handleLogin} signup={handleSignup} />
       {children}
     </div>
   );
