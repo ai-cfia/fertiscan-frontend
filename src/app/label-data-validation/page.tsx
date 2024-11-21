@@ -1,4 +1,5 @@
 "use client";
+import { DummyComponent } from "@/components/QuantityMultiInput";
 import DummyStepComponent from "@/components/DummyStepComponent";
 import ImageViewer from "@/components/ImageViewer";
 import OrganizationsForm from "@/components/OrganizationsForm";
@@ -154,6 +155,8 @@ function LabelDataValidationPage() {
           onChange={handleFileChange}
         />
       </Box>
+
+      <DummyComponent></DummyComponent>
     </Container>
   );
 }

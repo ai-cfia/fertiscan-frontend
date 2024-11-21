@@ -1,0 +1,12 @@
+{
+  "deleteRow": "Supprimer cette ligne",
+  "defaultPlaceholder": "Entrez une valeur",
+  "addRow": "Ajouter une ligne",
+  "removeRow": "Supprimer",
+  "verify": "Marquer comme vérifiés",
+  "unverify": "Marquer comme non vérifiés",
+  "errors": {
+    "numbersOnly": "Uniquement des nombres",
+    "minValue": "La valeur minimale est 0"
+  }
+}

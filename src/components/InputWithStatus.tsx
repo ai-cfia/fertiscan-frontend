@@ -67,7 +67,10 @@ function InputWithStatus({
             className="ml-2 flex-1 !text-[15px]"
             placeholder={placeholder}
             onFocus={() => setIsFocused(true)}
-            onBlur={() => setIsFocused(false)}
+            onBlur={(e) => {
+              setIsFocused(false);
+              field.onChange(e.target.value.trim());
+            }}
             disabled={statusValue === FieldStatus.Verified}
             data-testid={`input-field-${name}`}
           />
