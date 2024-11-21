@@ -72,7 +72,8 @@ const IconInput = ({
           }
           onClick={handleClickShowPassword}
           edge="end"
-        >
+          className="!text-white"
+          >
           {showPassword ? (
             <VisibilityOff sx={{ fontSize: "medium" }} />
           ) : (

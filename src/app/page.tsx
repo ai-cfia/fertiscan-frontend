@@ -2,7 +2,7 @@
 import FileUploaded from "@/classe/File";
 import Dropzone from "@/components/Dropzone";
 import FileList from "@/components/FileList";
-import type { DropzoneState } from "@/types";
+import type { DropzoneState } from "@/types/types";
 import { Box, Button, Grid2, Tooltip } from "@mui/material";
 import { useState } from "react";
 
