@@ -10,6 +10,7 @@ import "dotenv/config";
 import "./i18n";
 import useAlertStore from "@/stores/alertStore";
 import { useTranslation } from "react-i18next";
+import DevMenu from "@/components/TestDevMenu";
 
 export default function RootLayout({
   children,
