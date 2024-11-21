@@ -11,40 +11,6 @@ type Log = {
 const Logs: React.FC = () => {
   const [logs, setLogs] = useState<Log[]>([]);
   const [deletedLogs, setDeletedLogs] = useState<{ message: string, type: string }[]>([]);
-  const [height, setHeight] = useState<number>(400);  // Initial height
-  const [isResizing, setIsResizing] = useState<boolean>(false);
-
-  const handleMouseDown = (e: React.MouseEvent) => {
-    setIsResizing(true);
-  };
-
-  const handleMouseMove = (e: MouseEvent) => {
-    if (isResizing) {
-      const newHeight = e.clientY - document.getElementById('resizable-box')!.offsetTop;
-      if (newHeight > 100 && newHeight < window.innerHeight - 100) {  // Constraints for min and max height
-        setHeight(newHeight);
-      }
-    }
-  };
-
-  const handleMouseUp = () => {
-    setIsResizing(false);
-  };
-
-  useEffect(() => {
-    if (isResizing) {
-      document.addEventListener('mousemove', handleMouseMove);
-      document.addEventListener('mouseup', handleMouseUp);
-    } else {
-      document.removeEventListener('mousemove', handleMouseMove);
-      document.removeEventListener('mouseup', handleMouseUp);
-    }
-
-    return () => {
-      document.removeEventListener('mousemove', handleMouseMove);
-      document.removeEventListener('mouseup', handleMouseUp);
-    };
-  }, [isResizing]);
 
   const handleMessage = (event: MessageEvent) => {
     const { type, msg } = event.data;
@@ -56,10 +22,9 @@ const Logs: React.FC = () => {
         );
       }
       if (deletedLogs.some((log) => log.message === msg && log.type === type)) {
-        // If the log was previously deleted, reset the count to 1
         setDeletedLogs((prev) => prev.filter((log) => !(log.message === msg && log.type === type)));
       }
-      return [...prevLogs, { message: msg, count: 1, type }];  // Initial count set to 1
+      return [...prevLogs, { message: msg, count: 1, type }];
     });
   };
 
@@ -69,7 +34,7 @@ const Logs: React.FC = () => {
     return () => {
       channel.close();
     };
-  }, [deletedLogs]);  // Watch deletedLogs so the effect runs when a log is deleted
+  }, [deletedLogs]);
 
   const handleDelete = (message: string, type: string) => {
     setLogs((prevLogs) => prevLogs.filter((log) => !(log.message === message && log.type === type)));
@@ -77,13 +42,13 @@ const Logs: React.FC = () => {
   };
 
   const handleClearAll = () => {
-    setLogs([]);  // Clear all logs
-    setDeletedLogs([]);  // Clear the tracking of deleted logs
+    setLogs([]);
+    setDeletedLogs([]);
   };
 
   return (
-    <Box id="resizable-box" sx={{ height: '100%', resize: 'vertical', overflow: 'hidden', marginTop: 2, padding: 1, border: '1px solid grey', borderRadius: 2, display: 'flex', flexDirection: 'column' }}>
-      <Box sx={{ display: 'flex', flexDirection: 'row', justifyContent: 'space-between' }}>
+    <Box sx={{ height: '300px', overflow: 'hidden', mt: 2, p: 1, border: '1px solid grey', borderRadius: 2, display: 'flex', flexDirection: 'column' }}>
+      <Box sx={{ display: 'flex', justifyContent: 'space-between' }}>
         <Typography variant="h6">Logs</Typography>
         <Button onClick={handleClearAll} variant="outlined" color="secondary" size="small">
           Clear All
@@ -91,9 +56,9 @@ const Logs: React.FC = () => {
       </Box>
       <Box sx={{ overflowY: 'auto', flexGrow: 1 }}>
         {logs.map((log, index) => (
-          <Box key={index} sx={{ display: 'flex', alignItems: 'center', marginY: 1 }}>
+          <Box key={index} sx={{ display: 'flex', alignItems: 'center', my: 1 }}>
             {log.count > 1 && (
-              <Box className="rounded-full" sx={{ display: 'flex', marginRight: 1 }}>
+              <Box sx={{ mr: 1 }}>
                 {log.count}
               </Box>
             )}

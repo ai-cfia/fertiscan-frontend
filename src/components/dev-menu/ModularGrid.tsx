@@ -1,15 +1,10 @@
 import React, { useState } from 'react';
-import { Box, Button, Typography, Select, MenuItem, FormControl, InputLabel } from '@mui/material';
-import { useMediaQuery } from '@mui/material';
+import { Box, Button, Typography, Select, MenuItem, FormControl, InputLabel, Card, CardContent } from '@mui/material';
 import Logs from './Logs';
 import DummyModule from './DummyModule';
-import GridLayout, { WidthProvider, Layout } from 'react-grid-layout';
-import 'react-grid-layout/css/styles.css';
-import 'react-resizable/css/styles.css';
+import ButtonStackModule from './ButtonStackModule';
 
-const ResponsiveGridLayout = WidthProvider(GridLayout);
-
-// Define available modules
+// Define the type for the MODULES object
 const MODULES: { [key: string]: React.FC } = {
   logs: Logs,
   dummy1: DummyModule,
@@ -17,42 +12,28 @@ const MODULES: { [key: string]: React.FC } = {
   dummy3: DummyModule,
   dummy4: DummyModule,
   dummy5: DummyModule,
+  buttonStack: ButtonStackModule
 };
 
-// Component
 const ModularGrid: React.FC = () => {
   const [selectedModules, setSelectedModules] = useState<string[]>([]);
-  const [isEditable, setIsEditable] = useState<boolean>(false);
-  const isLargeScreen = useMediaQuery('(min-width:600px)');
 
-  // Handler for selecting modules
   const handleModuleSelect = (module: string) => {
-    setSelectedModules((prev) => (prev.includes(module) ? prev : [...prev, module]));
+    if (!selectedModules.includes(module)) {
+      setSelectedModules([...selectedModules, module]);
+    }
   };
 
-  // Handler for deselecting modules
   const handleModuleDeselect = (module: string) => {
-    setSelectedModules((prev) => prev.filter((mod) => mod !== module));
+    setSelectedModules(selectedModules.filter((mod) => mod !== module));
   };
-
-  // Generating initial layout
-  const initialLayout: Layout[] = selectedModules.map((module, index) => ({
-    i: module,
-    x: (index % 2) * 6,
-    y: Math.floor(index / 2) * 6,
-    w: 6,
-    h: 6, // Adjust height as necessary
-  }));
 
   return (
-    <Box sx={{ display: 'flex', flexDirection: 'column', p: 2, gap: 2 }}>
-      <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: 2 }}>
-        <Typography variant="h6">Modular Grid</Typography>
-        <Button variant="contained" onClick={() => setIsEditable((prev) => !prev)}>
-          {isEditable ? 'Disable Edit' : 'Enable Edit'}
-        </Button>
-      </Box>
-      <FormControl variant="outlined" sx={{ minWidth: 200, marginBottom: 2 }}>
+    <Box sx={{ p: 2, height: '100vh', overflow: 'hidden', bgcolor: 'background.default' }}>
+      <Typography variant="h6" gutterBottom>
+        Modular Grid
+      </Typography>
+      <FormControl variant="outlined" sx={{ minWidth: 200, mb: 2 }}>
         <InputLabel>Select Module</InputLabel>
         <Select
           label="Select Module"
@@ -66,44 +47,51 @@ const ModularGrid: React.FC = () => {
           ))}
         </Select>
       </FormControl>
-      <ResponsiveGridLayout
-        className="layout"
-        layout={initialLayout}
-        cols={12}
-        rowHeight={30}
-        width={isLargeScreen ? 1200 : 600}
-        margin={[15, 15]}
-        containerPadding={[15, 15]}
-        isDraggable={isEditable} // Draggable only when edit mode is enabled
-        isResizable={isEditable} // Resizable only when edit mode is enabled
+      <Box
+        sx={{
+          display: 'grid',
+          gridTemplateColumns: { xs: '1fr', sm: 'repeat(2, 1fr)', md: 'repeat(3, 1fr)' },
+          gap: 2,
+          flexGrow: 1,
+          overflowY: 'auto',
+          p: 1,
+          borderRadius: 2,
+          border: '1px solid #ddd',
+          bgcolor: 'background.paper',
+        }}
       >
         {selectedModules.map((module) => {
           const ModuleComponent = MODULES[module];
           return (
-            <Box
+            <Card
               key={module}
-              data-grid={{ i: module, x: (module === 'logs' ? 0 : 6), y: 0, w: 6, h: 6 }} // Ensure the data-grid attributes match the initialLayout
               sx={{
-                border: '1px solid grey',
-                padding: 2,
-                borderRadius: 2,
-                backgroundColor: 'white',
                 display: 'flex',
                 flexDirection: 'column',
-                height: '100%',
+                height: 'fit-content',
+                boxShadow: 3,
+                borderRadius: 2,
+                overflow: 'hidden',
+                border: '1px solid #ddd',
+                transition: 'transform 0.3s',
+                '&:hover': {
+                  transform: 'scale(1.02)',
+                },
               }}
             >
-              <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
-                <Typography variant="h6">{module.charAt(0).toUpperCase() + module.slice(1)}</Typography>
-                <Button color="secondary" onClick={() => handleModuleDeselect(module)}>Remove</Button>
-              </Box>
-              <Box sx={{ flexGrow: 1, marginTop: 1 }}>
+              <CardContent>
+                <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', mb: 2 }}>
+                  <Typography variant="h6">{module.charAt(0).toUpperCase() + module.slice(1)}</Typography>
+                  <Button size="small" color="secondary" onClick={() => handleModuleDeselect(module)}>
+                    Remove
+                  </Button>
+                </Box>
                 <ModuleComponent />
-              </Box>
-            </Box>
+              </CardContent>
+            </Card>
           );
         })}
-      </ResponsiveGridLayout>
+      </Box>
     </Box>
   );
 };
