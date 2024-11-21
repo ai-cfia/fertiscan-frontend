@@ -82,7 +82,7 @@ const Logs: React.FC = () => {
   };
 
   return (
-    <Box id="resizable-box" sx={{ height, resize: 'vertical', overflow: 'hidden', marginTop: 2, padding: 1, border: '1px solid grey', borderRadius: 2, display: 'flex', flexDirection: 'column' }}>
+    <Box id="resizable-box" sx={{ height: '100%', resize: 'vertical', overflow: 'hidden', marginTop: 2, padding: 1, border: '1px solid grey', borderRadius: 2, display: 'flex', flexDirection: 'column' }}>
       <Box sx={{ display: 'flex', flexDirection: 'row', justifyContent: 'space-between' }}>
         <Typography variant="h6">Logs</Typography>
         <Button onClick={handleClearAll} variant="outlined" color="secondary" size="small">
@@ -113,7 +113,6 @@ const Logs: React.FC = () => {
           </Box>
         ))}
       </Box>
-
     </Box>
   );
 };
