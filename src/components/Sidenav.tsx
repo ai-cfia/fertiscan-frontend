@@ -90,7 +90,7 @@ const SideNav = ({ open, onClose }: DrawerMenuProps) => {
           <List>
             <Divider />
             <Link
-              href="https://github.com/ai-cfia/fertiscan-frontend/issues/new/choose"
+              href="https://forms.office.com/Pages/ResponsePage.aspx?id=7aW1GIYd00GUoLwn2uMqsn9SKTgKSYtCg4t0B9x4uyJURE5HSkFCTkZHUEQyWkxJVElMODdFQ09HUCQlQCN0PWcu&r5a19e9d47d9f4ac497fb974c192da4b3=%22Fertiscan%22"
               passHref
               data-testid="report-issue-button"
             >
