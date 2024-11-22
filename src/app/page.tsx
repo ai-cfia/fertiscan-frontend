@@ -54,21 +54,20 @@ function HomePage() {
             sx={{ display: { xs: "none", md: "flex" } }}
             size={{ xs: 10, md: 7 }}
           />{" "}
-          {/* Work around since tailwind dont work for none */}
           <Grid2
             className="xs:flex md:flow-root justify-center"
-            size={{ xs: 10, md: 4 }}
+            size={{ xs: 9, md: 4 }}
           >
             <Tooltip
               data-testid="hint-submit-button-disabled"
               title={t("submit_button_disabled_hint")}
               disableHoverListener={uploadedFiles.length !== 0}
               placement="top"
-              className="w-full max-w-full"
+              className="w-[90%] max-w-full"
             >
               <span className="flex justify-center w-full">
                 <Button
-                  className="xs:w-[96%] md:w-[100%] min-w-[133.44px] max-h-[40px]"
+                  className="xs:w-[90%] md:w-[100%] min-w-[133.44px] max-h-[40px]"
                   data-testid="submit-button"
                   variant="contained"
                   color="secondary"
