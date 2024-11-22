@@ -59,97 +59,94 @@ export interface Alert {
   type: AlertSeverity;
 }
 
-// Field
-export enum FieldStatus {
-  Verified = "verified",
-  Unverified = "unverified",
-  Error = "error",
-}
+export type VerifiedField = {
+  verified: boolean;
+};
 
-export type Field = {
+export type VerifiedTextField = VerifiedField & {
   value: string;
-  status: FieldStatus;
-  errorMessage: string | null;
 };
 
 // Organizations
 export type Organization = {
-  name: Field;
-  address: Field;
-  website: Field;
-  phoneNumber: Field;
+  name: VerifiedTextField;
+  address: VerifiedTextField;
+  website: VerifiedTextField;
+  phoneNumber: VerifiedTextField;
+};
+
+const DEFAULT_TEXT_FIELD: VerifiedTextField = {
+  value: "",
+  verified: false,
 };
 
 export const DEFAULT_ORGANIZATION: Organization = {
-  name: {
-    value: "",
-    status: FieldStatus.Unverified,
-    errorMessage: null,
-  },
-  address: {
-    value: "",
-    status: FieldStatus.Unverified,
-    errorMessage: null,
-  },
-  website: {
-    value: "",
-    status: FieldStatus.Unverified,
-    errorMessage: null,
-  },
-  phoneNumber: {
-    value: "",
-    status: FieldStatus.Unverified,
-    errorMessage: null,
-  },
+  name: DEFAULT_TEXT_FIELD,
+  address: DEFAULT_TEXT_FIELD,
+  website: DEFAULT_TEXT_FIELD,
+  phoneNumber: DEFAULT_TEXT_FIELD,
 };
 
-export const TEST_ORGANIZATION: Organization = {
-  name: {
-    value: "GreenGrow Inc.",
-    status: FieldStatus.Unverified,
-    errorMessage: null,
-  },
-  address: {
-    value: "123 Green Road, Farmville, State, 12345",
-    status: FieldStatus.Unverified,
-    errorMessage: null,
-  },
-  website: {
-    value: "https://www.greengrow.com",
-    status: FieldStatus.Unverified,
-    errorMessage: null,
-  },
-  phoneNumber: {
-    value: "123-456-7890",
-    status: FieldStatus.Unverified,
-    errorMessage: null,
-  },
+export const isVerified = <T extends Record<string, VerifiedField>>(
+  fields: T,
+  verified: boolean = true,
+): boolean =>
+  fields && Object.values(fields).every((field) => field.verified === verified);
+
+// Quantity
+export type Quantity = {
+  value: string;
+  unit: string;
 };
 
-export const checkOrganizationStatus = (
-  organization: Organization,
-  status: FieldStatus,
-): boolean => {
-  return (
-    organization &&
-    Object.values(organization).every((field) => field.status === status)
-  );
+export type VerifiedQuantityField = VerifiedField & {
+  quantities: Quantity[];
+};
+
+export const UNITS = {
+  weight: ["kg", "g", "lb", "tonne"],
+  volume: ["L", "mL", "gal", "ft³"],
+  density: ["lb/ft³", "g/cm³", "kg/m³", "lb/gal"],
+};
+
+const DEFAULT_QUANTITY_FIELD = (unit: string): VerifiedQuantityField => ({
+  quantities: [{ value: "", unit }],
+  verified: false,
+});
+
+// Base Information
+export type BaseInformation = {
+  name: VerifiedTextField;
+  registrationNumber: VerifiedTextField;
+  lotNumber: VerifiedTextField;
+  npk: VerifiedTextField;
+  weight: VerifiedQuantityField;
+  density: VerifiedQuantityField;
+  volume: VerifiedQuantityField;
+};
+
+export const DEFAULT_BASE_INFORMATION: BaseInformation = {
+  name: DEFAULT_TEXT_FIELD,
+  registrationNumber: DEFAULT_TEXT_FIELD,
+  lotNumber: DEFAULT_TEXT_FIELD,
+  npk: DEFAULT_TEXT_FIELD,
+  weight: DEFAULT_QUANTITY_FIELD(UNITS.weight[0]),
+  density: DEFAULT_QUANTITY_FIELD(UNITS.density[0]),
+  volume: DEFAULT_QUANTITY_FIELD(UNITS.volume[0]),
 };
 
 // LabelData
 export type LabelData = {
   organizations: Organization[];
+  baseInformation: BaseInformation;
 };
 
 export const DEFAULT_LABEL_DATA: LabelData = {
   organizations: [DEFAULT_ORGANIZATION],
+  baseInformation: DEFAULT_BASE_INFORMATION,
 };
 
-export const TEST_LABEL_DATA: LabelData = {
-  organizations: [TEST_ORGANIZATION, TEST_ORGANIZATION],
-};
-
-// Form 
+// Form
 export interface FormComponentProps {
   title: string;
   labelData: LabelData;
