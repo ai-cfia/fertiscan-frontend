@@ -1,6 +1,5 @@
 "use client";
-import { DummyComponent } from "@/components/QuantityMultiInput";
-import DummyStepComponent from "@/components/DummyStepComponent";
+import BaseInformationForm from "@/components/BaseInformationForm";
 import ImageViewer from "@/components/ImageViewer";
 import OrganizationsForm from "@/components/OrganizationsForm";
 import {
@@ -9,10 +8,9 @@ import {
   StepStatus,
 } from "@/components/stepper";
 import {
-  checkOrganizationStatus,
   DEFAULT_LABEL_DATA,
-  FieldStatus,
   FormComponentProps,
+  isVerified,
   LabelData,
 } from "@/types/types";
 import useBreakpoints from "@/utils/useBreakpoints";
@@ -29,9 +27,8 @@ function LabelDataValidationPage() {
   const [activeStep, setActiveStep] = useState(0);
   const [organizationsStepStatus, setOrganizationsStepStatus] =
     useState<StepStatus>(StepStatus.Incomplete);
-  const [dummyStepStatus, setDummyStepStatus] = useState<StepStatus>(
-    StepStatus.Incomplete,
-  );
+  const [baseInformationStepStatus, setBaseInformationStepStatus] =
+    useState<StepStatus>(StepStatus.Incomplete);
 
   const createStep = (
     title: string,
@@ -55,16 +52,16 @@ function LabelDataValidationPage() {
 
   const steps = [
     createStep(
+      "Base Information",
+      BaseInformationForm,
+      baseInformationStepStatus,
+      setBaseInformationStepStatus,
+    ),
+    createStep(
       "Organizations",
       OrganizationsForm,
       organizationsStepStatus,
       setOrganizationsStepStatus,
-    ),
-    createStep(
-      "Dummy Step",
-      DummyStepComponent,
-      dummyStepStatus,
-      setDummyStepStatus,
     ),
   ];
 
@@ -79,13 +76,18 @@ function LabelDataValidationPage() {
   };
 
   useEffect(() => {
-    const verified = labelData.organizations.every((org) =>
-      checkOrganizationStatus(org, FieldStatus.Verified),
-    );
+    const verified = labelData.organizations.every((org) => isVerified(org));
     setOrganizationsStepStatus(
       verified ? StepStatus.Completed : StepStatus.Incomplete,
     );
   }, [labelData.organizations, setOrganizationsStepStatus]);
+
+  useEffect(() => {
+    const verified = isVerified(labelData.baseInformation);
+    setBaseInformationStepStatus(
+      verified ? StepStatus.Completed : StepStatus.Incomplete,
+    );
+  }, [labelData.baseInformation, setBaseInformationStepStatus]);
 
   return (
     <Container
@@ -155,8 +157,6 @@ function LabelDataValidationPage() {
           onChange={handleFileChange}
         />
       </Box>
-
-      <DummyComponent></DummyComponent>
     </Container>
   );
 }

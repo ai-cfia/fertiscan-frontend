@@ -1,0 +1,30 @@
+{
+    "title": "Base Information",
+    "fields": {
+      "name": {
+        "label": "Name",
+        "placeholder": "Enter name"
+      },
+      "registrationNumber": {
+        "label": "Registration Number",
+        "placeholder": "Enter registration number"
+      },
+      "lotNumber": {
+        "label": "Lot Number",
+        "placeholder": "Enter lot number"
+      },
+      "npk": {
+        "label": "NPK",
+        "placeholder": "Enter NPK"
+      },
+      "weight": {
+        "label": "Weight"
+      },
+      "density": {
+        "label": "Density"
+      },
+      "volume": {
+        "label": "Volume"
+      }
+    }
+  }
