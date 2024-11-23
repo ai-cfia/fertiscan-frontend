@@ -138,6 +138,7 @@ function VerifiedQuantityMultiInput({
                           className="ml-1"
                           color="error"
                           fontSize="small"
+                          data-testid={`unit-error-icon-${quantitiesPath}-${index}`}
                         />
                       </Tooltip>
                     )}
@@ -180,6 +181,7 @@ function VerifiedQuantityMultiInput({
                           className="ml-1"
                           color="error"
                           fontSize="small"
+                          data-testid={`value-error-icon-${quantitiesPath}-${index}`}
                         />
                       </Tooltip>
                     )}

@@ -1,4 +1,4 @@
-import { fireEvent, render, screen } from "@testing-library/react";
+import { act, fireEvent, render, screen } from "@testing-library/react";
 import LabelDataValidationPage from "../page";
 
 jest.mock("@/components/ImageViewer", () => ({
@@ -20,8 +20,8 @@ describe("LabelDataValidationPage Rendering", () => {
   it("renders the correct step component initially", () => {
     render(<LabelDataValidationPage />);
 
-    expect(screen.getByTestId("organizations-form")).toBeInTheDocument();
-    expect(screen.queryByTestId("Dummy Step")).not.toBeInTheDocument();
+    expect(screen.getByTestId("base-information-form")).toBeInTheDocument();
+    expect(screen.queryByTestId("organizations-form")).not.toBeInTheDocument();
   });
 });
 
@@ -32,14 +32,16 @@ describe("LabelDataValidationPage Functionality", () => {
     const nextButton = screen.getByText("Next");
     fireEvent.click(nextButton);
 
-    expect(screen.queryByTestId("organizations-form")).not.toBeInTheDocument();
-    expect(screen.getByTestId("Dummy Step")).toBeInTheDocument();
+    expect(
+      screen.queryByTestId("base-information-form"),
+    ).not.toBeInTheDocument();
+    expect(screen.getByTestId("organizations-form")).toBeInTheDocument();
 
     const backButton = screen.getByText("Back");
     fireEvent.click(backButton);
 
-    expect(screen.getByTestId("organizations-form")).toBeInTheDocument();
-    expect(screen.queryByTestId("Dummy Step")).not.toBeInTheDocument();
+    expect(screen.getByTestId("base-information-form")).toBeInTheDocument();
+    expect(screen.queryByTestId("organizations-form")).not.toBeInTheDocument();
   });
 
   it("does not navigate beyond the first or last step", () => {
@@ -49,11 +51,11 @@ describe("LabelDataValidationPage Functionality", () => {
     const backButton = screen.getByText("Back");
 
     fireEvent.click(backButton);
-    expect(screen.getByTestId("organizations-form")).toBeInTheDocument();
+    expect(screen.getByTestId("base-information-form")).toBeInTheDocument();
 
     fireEvent.click(nextButton);
     fireEvent.click(nextButton);
-    expect(screen.getByTestId("Dummy Step")).toBeInTheDocument();
+    expect(screen.getByTestId("organizations-form")).toBeInTheDocument();
   });
 
   it("renders the mocked Image Viewer", () => {
@@ -65,7 +67,7 @@ describe("LabelDataValidationPage Functionality", () => {
 });
 
 describe("LabelDataValidationPage and OrganizationsForm Integration", () => {
-  it("marks the Organizations step as Completed when all organizations are Verified", () => {
+  it("marks the Organizations step as Completed or Incomplete when fields are Verified", () => {
     render(<LabelDataValidationPage />);
 
     const spans = screen.getAllByText("Organizations", { exact: true });
@@ -79,28 +81,46 @@ describe("LabelDataValidationPage and OrganizationsForm Integration", () => {
     const verifyAllButton = screen.getByTestId("verify-all-btn-0");
     fireEvent.click(verifyAllButton);
     expect(targetSpan).toHaveClass("Mui-completed");
+
+    fireEvent.click(
+      screen.getByTestId("verified-icon-organizations.0.address.verified"),
+    );
+
+    expect(targetSpan).not.toHaveClass("Mui-completed");
   });
+});
 
-  it("keeps the Organizations step as Incomplete when at least one organization is not Verified", () => {
+describe("LabelDataValidationPage and BaseInformationForm Integration", () => {
+  it("marks the Base Information step as Completed or Incomplete when fields are Verified", async () => {
     render(<LabelDataValidationPage />);
 
-    const spans = screen.getAllByText("Organizations", { exact: true });
+    const spans = screen.getAllByText("Base Information", { exact: true });
     const targetSpan = spans.find((span) =>
       span.classList.contains("MuiStepLabel-label"),
     );
     expect(targetSpan).not.toHaveClass("Mui-completed");
 
     const button = targetSpan!.closest("button");
-    fireEvent.click(button!);
+    await act(async () => {
+      fireEvent.click(button!);
+    });
 
-    const verifyAllButton = screen.getByTestId("verify-all-btn-0");
-    fireEvent.click(verifyAllButton);
+    const verifyButtons = screen.getAllByTestId(
+      /verified-icon-baseInformation/,
+    );
+    expect(verifyButtons.length).toBeGreaterThanOrEqual(7);
+
+    for (const button of verifyButtons) {
+      await act(async () => {
+        fireEvent.click(button);
+      });
+    }
+
     expect(targetSpan).toHaveClass("Mui-completed");
 
-    const toggleStatusButton = screen.getByTestId(
-      "toggle-status-btn-organizations.0.name.status",
-    );
-    fireEvent.click(toggleStatusButton);
+    await act(async () => {
+      fireEvent.click(verifyButtons[0]);
+    });
 
     expect(targetSpan).not.toHaveClass("Mui-completed");
   });

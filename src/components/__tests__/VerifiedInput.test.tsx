@@ -1,0 +1,77 @@
+import { VerifiedTextField } from "@/types/types";
+import { fireEvent, render, screen } from "@testing-library/react";
+import { FormProvider, useForm } from "react-hook-form";
+import VerifiedInput from "../VerifiedInput";
+
+const TestWrapper = ({ verified }: { verified: boolean }) => {
+  const methods = useForm<Record<string, VerifiedTextField>>({
+    defaultValues: {
+      fieldName: {
+        value: "",
+        verified: verified,
+      },
+    },
+  });
+
+  return (
+    <FormProvider {...methods}>
+      <form>
+        <VerifiedInput
+          label="Test Field"
+          placeholder="Enter text"
+          path="fieldName"
+          className="test-class"
+        />
+      </form>
+    </FormProvider>
+  );
+};
+
+describe("Rendering", () => {
+  it("should render all elements with correct attributes and content", () => {
+    render(<TestWrapper verified={false} />);
+
+    const label = screen.getByTestId("input-label-fieldName.value");
+    expect(label).toHaveTextContent("Test Field");
+
+    const input = screen.getByPlaceholderText("Enter text");
+    expect(input).toBeInTheDocument();
+    expect(input).toHaveAttribute("name", "fieldName.value");
+    expect(input).toHaveValue("");
+
+    expect(
+      screen.getByTestId("input-field-fieldName.value"),
+    ).toBeInTheDocument();
+
+    expect(
+      screen.getByTestId("toggle-verified-btn-fieldName.verified"),
+    ).toBeInTheDocument();
+  });
+});
+
+describe("Verified Behavior", () => {
+  it("should disable the input field when verifiedValue is true", () => {
+    render(<TestWrapper verified={true} />);
+    const input = screen.getByPlaceholderText("Enter text");
+    expect(input).toBeDisabled();
+  });
+
+  it("should enable the input field when verifiedValue is false", () => {
+    render(<TestWrapper verified={false} />);
+    const input = screen.getByPlaceholderText("Enter text");
+    expect(input).not.toBeDisabled();
+  });
+
+  it("should toggle verified between true and false on IconButton click", () => {
+    render(<TestWrapper verified={false} />);
+    const toggleButton = screen.getByTestId(
+      "toggle-verified-btn-fieldName.verified",
+    );
+    const verifiedIcon = screen.getByTestId("verified-icon-fieldName.verified");
+    expect(verifiedIcon).not.toHaveClass("text-green-500");
+    fireEvent.click(toggleButton);
+    expect(verifiedIcon).toHaveClass("text-green-500");
+    fireEvent.click(toggleButton);
+    expect(verifiedIcon).not.toHaveClass("text-green-500");
+  });
+});
