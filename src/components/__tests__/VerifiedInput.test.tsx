@@ -31,7 +31,7 @@ describe("Rendering", () => {
   it("should render all elements with correct attributes and content", () => {
     render(<TestWrapper verified={false} />);
 
-    const label = screen.getByTestId("input-label-fieldName.value");
+    const label = screen.getByTestId("input-label-fieldName");
     expect(label).toHaveTextContent("Test Field");
 
     const input = screen.getByPlaceholderText("Enter text");

@@ -36,11 +36,11 @@ function VerifiedInput({
       className={`flex items-center p-1 w-full border-2 rounded-tr-md rounded-br-md ${
         isFocused ? "border-fertiscan-blue" : ""
       } ${className}`}
-      data-testid={`verified-input-${valuePath}`}
+      data-testid={`verified-input-${path}`}
     >
       <Typography
         className="px-2 !font-bold select-none"
-        data-testid={`input-label-${valuePath}`}
+        data-testid={`input-label-${path}`}
       >
         {label}
       </Typography>
@@ -66,7 +66,7 @@ function VerifiedInput({
         orientation="vertical"
         flexItem
         className={isFocused ? "!border-fertiscan-blue" : ""}
-        data-testid={`divider-${valuePath}`}
+        data-testid={`divider-${path}`}
       />
       <Controller
         name={verifiedPath}
