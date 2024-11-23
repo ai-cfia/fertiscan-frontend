@@ -6,10 +6,10 @@ import {
   Organization,
 } from "@/types/types";
 import AddIcon from "@mui/icons-material/Add";
+import DeleteIcon from "@mui/icons-material/Delete";
 import DoneAllIcon from "@mui/icons-material/DoneAll";
-import RemoveIcon from "@mui/icons-material/Remove";
 import RemoveDoneIcon from "@mui/icons-material/RemoveDone";
-import { Box, Button, Tooltip, Typography } from "@mui/material";
+import { Box, Button, Tooltip } from "@mui/material";
 import { useCallback, useEffect } from "react";
 import {
   FieldPath,
@@ -25,7 +25,6 @@ const fieldNames = Object.keys(DEFAULT_ORGANIZATION) as Array<
 >;
 
 const OrganizationsForm: React.FC<FormComponentProps> = ({
-  title,
   labelData,
   setLabelData,
 }) => {
@@ -71,13 +70,6 @@ const OrganizationsForm: React.FC<FormComponentProps> = ({
   return (
     <FormProvider {...methods}>
       <div className="p-4" data-testid="organizations-form">
-        <Typography
-          variant="h6"
-          className="text-lg font-bold"
-          data-testid="form-title"
-        >
-          {title}
-        </Typography>
         <Box>
           {fields.map((field, index) => (
             <Box
@@ -138,7 +130,7 @@ const OrganizationsForm: React.FC<FormComponentProps> = ({
                       onClick={() => remove(index)}
                       data-testid={`remove-org-btn-${index}`}
                     >
-                      <RemoveIcon />
+                      <DeleteIcon />
                     </Button>
                   </span>
                 </Tooltip>

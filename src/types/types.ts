@@ -148,7 +148,6 @@ export const DEFAULT_LABEL_DATA: LabelData = {
 
 // Form
 export interface FormComponentProps {
-  title: string;
   labelData: LabelData;
   setLabelData: React.Dispatch<React.SetStateAction<LabelData>>;
 }

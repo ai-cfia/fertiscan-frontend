@@ -30,24 +30,12 @@ const Wrapper = ({
 
   return (
     <FormProvider {...methods}>
-      <OrganizationsForm
-        title="Test Organizations"
-        labelData={labelData}
-        setLabelData={setLabelData}
-      />
+      <OrganizationsForm labelData={labelData} setLabelData={setLabelData} />
     </FormProvider>
   );
 };
 
 describe("OrganizationsForm Rendering", () => {
-  it("should render the form title", () => {
-    render(<Wrapper initialData={DEFAULT_LABEL_DATA} />);
-
-    const title = screen.getByTestId("form-title");
-    expect(title).toBeInTheDocument();
-    expect(title).toHaveTextContent("Test Organizations");
-  });
-
   it("should render the correct number of organizations", () => {
     render(
       <Wrapper

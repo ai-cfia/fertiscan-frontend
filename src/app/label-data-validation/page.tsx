@@ -14,7 +14,7 @@ import {
   LabelData,
 } from "@/types/types";
 import useBreakpoints from "@/utils/useBreakpoints";
-import { Box, Button, Container } from "@mui/material";
+import { Box, Button, Container, Typography } from "@mui/material";
 import { useEffect, useState } from "react";
 
 function LabelDataValidationPage() {
@@ -41,11 +41,7 @@ function LabelDataValidationPage() {
       stepStatus: stepStatus,
       setStepStatus: setStepStatusState,
       render: () => (
-        <StepComponent
-          title={title}
-          labelData={labelData}
-          setLabelData={setLabelData}
-        />
+        <StepComponent labelData={labelData} setLabelData={setLabelData} />
       ),
     };
   };
@@ -133,6 +129,13 @@ function LabelDataValidationPage() {
           data-testid="form-container"
         >
           <Box className="w-full text-center" data-testid="forms">
+            <Typography
+              variant="h6"
+              className="text-lg font-bold"
+              data-testid="form-title"
+            >
+              {steps[activeStep].title}
+            </Typography>
             <Box className="">{steps[activeStep].render()}</Box>
             <StepperControls
               stepTitles={steps.map((step) => step.title)}
