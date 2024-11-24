@@ -70,7 +70,7 @@ describe("LabelDataValidationPage and OrganizationsForm Integration", () => {
   it("marks the Organizations step as Completed or Incomplete when fields are Verified", () => {
     render(<LabelDataValidationPage />);
 
-    const spans = screen.getAllByText("Organizations", { exact: true });
+    const spans = screen.getAllByText("organizationsStepTitle", { exact: true });
     const targetSpan = spans.find((span) =>
       span.classList.contains("MuiStepLabel-label"),
     );
@@ -94,7 +94,7 @@ describe("LabelDataValidationPage and BaseInformationForm Integration", () => {
   it("marks the Base Information step as Completed or Incomplete when fields are Verified", async () => {
     render(<LabelDataValidationPage />);
 
-    const spans = screen.getAllByText("Base Information", { exact: true });
+    const spans = screen.getAllByText("baseInformationStepTitle", { exact: true });
     const targetSpan = spans.find((span) =>
       span.classList.contains("MuiStepLabel-label"),
     );

@@ -16,8 +16,10 @@ import {
 import useBreakpoints from "@/utils/useBreakpoints";
 import { Box, Button, Container, Typography } from "@mui/material";
 import { useEffect, useState } from "react";
+import { useTranslation } from "react-i18next";
 
 function LabelDataValidationPage() {
+  const { t } = useTranslation("labelDataValidationPage");
   const [imageFiles, setImageFiles] = useState<File[]>([]);
   const { isDownXs, isBetweenXsSm, isBetweenSmMd, isBetweenMdLg } =
     useBreakpoints();
@@ -48,13 +50,13 @@ function LabelDataValidationPage() {
 
   const steps = [
     createStep(
-      "Base Information",
+      t("baseInformationStepTitle"),
       BaseInformationForm,
       baseInformationStepStatus,
       setBaseInformationStepStatus,
     ),
     createStep(
-      "Organizations",
+      t("organizationsStepTitle"),
       OrganizationsForm,
       organizationsStepStatus,
       setOrganizationsStepStatus,
