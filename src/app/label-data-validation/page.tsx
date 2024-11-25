@@ -50,13 +50,13 @@ function LabelDataValidationPage() {
 
   const steps = [
     createStep(
-      t("baseInformationStepTitle"),
+      t("baseInformation.stepTitle"),
       BaseInformationForm,
       baseInformationStepStatus,
       setBaseInformationStepStatus,
     ),
     createStep(
-      t("organizationsStepTitle"),
+      t("organizations.stepTitle"),
       OrganizationsForm,
       organizationsStepStatus,
       setOrganizationsStepStatus,

@@ -34,7 +34,7 @@ function VerifiedQuantityMultiInput({
   unitOptions: string[];
   className?: string;
 }) {
-  const { t } = useTranslation("verifiedQuantityMultiInput");
+  const { t } = useTranslation("labelDataValidationPage");
   const { control, trigger } = useFormContext();
   const [isFocused, setIsFocused] = useState(false);
 
@@ -83,7 +83,7 @@ function VerifiedQuantityMultiInput({
     const isDuplicate =
       quantities.filter((item: { unit: string }) => item.unit === value)
         .length > 1;
-    return !isDuplicate || t("errors.duplicateUnit");
+    return !isDuplicate || t("verifiedQuantityMultiInput.errors.duplicateUnit");
   };
 
   return (
@@ -128,7 +128,7 @@ function VerifiedQuantityMultiInput({
                     >
                       {unitOptions.map((option) => (
                         <option key={option} value={option}>
-                          {t(`units.${option}`)}
+                          {t(`verifiedQuantityMultiInput.units.${option}`)}
                         </option>
                       ))}
                     </select>
@@ -153,11 +153,11 @@ function VerifiedQuantityMultiInput({
                 rules={{
                   pattern: {
                     value: /^[0-9]*\.?[0-9]*$/,
-                    message: t("errors.numbersOnly"),
+                    message: t("verifiedQuantityMultiInput.errors.numbersOnly"),
                   },
                   min: {
                     value: 0,
-                    message: t("errors.minValue"),
+                    message: t("verifiedQuantityMultiInput.errors.minValue"),
                   },
                 }}
                 render={({ field, fieldState: { error } }) => (
@@ -165,7 +165,10 @@ function VerifiedQuantityMultiInput({
                     <InputBase
                       {...field}
                       className="flex-1 p-2 !text-[15px]"
-                      placeholder={placeholder || t("defaultPlaceholder")}
+                      placeholder={
+                        placeholder ||
+                        t("verifiedQuantityMultiInput.defaultPlaceholder")
+                      }
                       disabled={verified}
                       onFocus={() => setIsFocused(true)}
                       onBlur={(e) => {
@@ -192,7 +195,7 @@ function VerifiedQuantityMultiInput({
               {/* Delete Row Button */}
               <Tooltip
                 enterDelay={1000}
-                title={t("deleteRow")}
+                title={t("verifiedQuantityMultiInput.deleteRow")}
                 disableHoverListener={verified}
               >
                 <span>
@@ -224,7 +227,7 @@ function VerifiedQuantityMultiInput({
           disabled={verified || fields.length >= unitOptions.length}
           data-testid={`add-button-${path}`}
         >
-          {t("addRow")}
+          {t("verifiedQuantityMultiInput.addRow")}
         </Button>
       </Box>
 
@@ -242,7 +245,11 @@ function VerifiedQuantityMultiInput({
         control={control}
         render={({ field: { value, onChange } }) => (
           <Tooltip
-            title={verified ? t("unverify") : t("verify")}
+            title={
+              verified
+                ? t("verifiedQuantityMultiInput.unverify")
+                : t("verifiedQuantityMultiInput.verify")
+            }
             enterDelay={1000}
           >
             <IconButton
