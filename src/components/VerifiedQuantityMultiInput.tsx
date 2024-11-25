@@ -60,8 +60,20 @@ function VerifiedQuantityMultiInput({
     verified: boolean,
     setVerified: (value: boolean) => void,
   ) => {
-    const isValid = await trigger(quantitiesPath);
-    if (isValid) {
+    const validationResults = await Promise.all(
+      fields.map((_, index) =>
+        Promise.all([
+          trigger(`${quantitiesPath}.${index}.unit`),
+          trigger(`${quantitiesPath}.${index}.value`),
+        ]),
+      ),
+    );
+
+    const allValid = validationResults.every((result) =>
+      result.every((isValid) => isValid),
+    );
+
+    if (allValid) {
       setVerified(!verified);
     }
   };

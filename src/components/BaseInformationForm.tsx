@@ -9,8 +9,6 @@ import VerifiedQuantityMultiInput from "./VerifiedQuantityMultiInput";
 function BaseInformationForm({ labelData, setLabelData }: FormComponentProps) {
   const methods = useForm<LabelData>({
     defaultValues: labelData,
-    // mode: "onChange",
-    // mode: "onTouched",
   });
 
   const { t } = useTranslation("labelDataValidationPage");

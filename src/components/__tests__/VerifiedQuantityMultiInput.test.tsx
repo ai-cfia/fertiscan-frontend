@@ -192,7 +192,7 @@ describe("QuantityMultiInput functionality", () => {
     await userEvent.clear(inputField);
     await userEvent.type(inputField, "-10");
 
-    await userEvent.click(screen.getByTestId("submit-button"));
+    await userEvent.click(screen.getByTestId("verified-icon-"));
 
     expect(
       screen.getByTestId(/value-error-icon-\.quantities-\d+/),
@@ -221,7 +221,7 @@ describe("QuantityMultiInput functionality", () => {
     await userEvent.clear(inputField);
     await userEvent.type(inputField, "abc");
 
-    await userEvent.click(screen.getByTestId("submit-button"));
+    await userEvent.click(screen.getByTestId("verified-icon-"));
 
     expect(
       screen.getByTestId(/value-error-icon-\.quantities-\d+/),
