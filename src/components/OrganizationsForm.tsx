@@ -1,16 +1,15 @@
 import {
-  checkOrganizationStatus,
   DEFAULT_ORGANIZATION,
-  FieldStatus,
   FormComponentProps,
+  isVerified,
   LabelData,
   Organization,
 } from "@/types/types";
 import AddIcon from "@mui/icons-material/Add";
+import DeleteIcon from "@mui/icons-material/Delete";
 import DoneAllIcon from "@mui/icons-material/DoneAll";
-import RemoveIcon from "@mui/icons-material/Remove";
 import RemoveDoneIcon from "@mui/icons-material/RemoveDone";
-import { Box, Button, Tooltip, Typography } from "@mui/material";
+import { Box, Button, Tooltip } from "@mui/material";
 import { useCallback, useEffect } from "react";
 import {
   FieldPath,
@@ -19,14 +18,13 @@ import {
   useForm,
   useWatch,
 } from "react-hook-form";
-import InputWithStatus from "./InputWithStatus";
+import VerifiedInput from "./VerifiedInput";
 
 const fieldNames = Object.keys(DEFAULT_ORGANIZATION) as Array<
   keyof Organization
 >;
 
 const OrganizationsForm: React.FC<FormComponentProps> = ({
-  title,
   labelData,
   setLabelData,
 }) => {
@@ -55,12 +53,12 @@ const OrganizationsForm: React.FC<FormComponentProps> = ({
     }
   }, [watchedOrganizations, setLabelData]);
 
-  const setAllFieldsStatus = useCallback(
-    (orgIndex: number, status: FieldStatus) => {
+  const setAllVerified = useCallback(
+    (orgIndex: number, verified: boolean) => {
       fieldNames.forEach((fieldName) => {
         const fieldPath =
-          `organizations.${orgIndex}.${fieldName}.status` as FieldPath<LabelData>;
-        setValue(fieldPath, status, {
+          `organizations.${orgIndex}.${fieldName}.verified` as FieldPath<LabelData>;
+        setValue(fieldPath, verified, {
           shouldValidate: true,
           shouldDirty: true,
         });
@@ -69,21 +67,9 @@ const OrganizationsForm: React.FC<FormComponentProps> = ({
     [setValue],
   );
 
-  const areAllFieldStatus = (index: number, status: FieldStatus) => {
-    const currentOrg = watchedOrganizations?.[index];
-    return checkOrganizationStatus(currentOrg, status);
-  };
-
   return (
     <FormProvider {...methods}>
-      <div className="p-4" data-testid="organizations-form">
-        <Typography
-          variant="h6"
-          className="text-lg font-bold"
-          data-testid="form-title"
-        >
-          {title}
-        </Typography>
+      <Box className="p-4" data-testid="organizations-form">
         <Box>
           {fields.map((field, index) => (
             <Box
@@ -96,19 +82,17 @@ const OrganizationsForm: React.FC<FormComponentProps> = ({
                 <Tooltip
                   title="Mark all as Verified"
                   enterDelay={1000}
-                  disableHoverListener={areAllFieldStatus(
-                    index,
-                    FieldStatus.Verified,
+                  disableHoverListener={isVerified(
+                    watchedOrganizations?.[index],
+                    true,
                   )}
                 >
                   <span>
                     <Button
                       variant="outlined"
                       color="secondary"
-                      onClick={() =>
-                        setAllFieldsStatus(index, FieldStatus.Verified)
-                      }
-                      disabled={areAllFieldStatus(index, FieldStatus.Verified)}
+                      onClick={() => setAllVerified(index, true)}
+                      disabled={isVerified(watchedOrganizations?.[index], true)}
                       data-testid={`verify-all-btn-${index}`}
                     >
                       <DoneAllIcon />
@@ -118,21 +102,19 @@ const OrganizationsForm: React.FC<FormComponentProps> = ({
                 <Tooltip
                   title="Mark all as Unverified"
                   enterDelay={1000}
-                  disableHoverListener={areAllFieldStatus(
-                    index,
-                    FieldStatus.Unverified,
+                  disableHoverListener={isVerified(
+                    watchedOrganizations?.[index],
+                    false,
                   )}
                 >
                   <span>
                     <Button
                       variant="outlined"
                       color="secondary"
-                      onClick={() =>
-                        setAllFieldsStatus(index, FieldStatus.Unverified)
-                      }
-                      disabled={areAllFieldStatus(
-                        index,
-                        FieldStatus.Unverified,
+                      onClick={() => setAllVerified(index, false)}
+                      disabled={isVerified(
+                        watchedOrganizations?.[index],
+                        false,
                       )}
                       data-testid={`unverify-all-btn-${index}`}
                     >
@@ -148,7 +130,7 @@ const OrganizationsForm: React.FC<FormComponentProps> = ({
                       onClick={() => remove(index)}
                       data-testid={`remove-org-btn-${index}`}
                     >
-                      <RemoveIcon />
+                      <DeleteIcon />
                     </Button>
                   </span>
                 </Tooltip>
@@ -167,7 +149,7 @@ const OrganizationsForm: React.FC<FormComponentProps> = ({
             </Button>
           </Box>
         </Box>
-      </div>
+      </Box>
     </FormProvider>
   );
 };
@@ -178,32 +160,28 @@ function OrganizationInformation({ index }: { index: number }) {
       className="grid grid-cols-1 sm:grid-cols-1 md:grid-cols-2 lg:grid-cols-1 xxl:grid-cols-2 gap-4"
       data-testid={`organization-info-${index}`}
     >
-      <InputWithStatus
+      <VerifiedInput
         label="Name"
         placeholder="Enter organization name"
-        name={`organizations.${index}.name.value`}
-        statusName={`organizations.${index}.name.status`}
+        path={`organizations.${index}.name`}
         data-testid={`org-name-input-${index}`}
       />
-      <InputWithStatus
+      <VerifiedInput
         label="Address"
         placeholder="Enter address"
-        name={`organizations.${index}.address.value`}
-        statusName={`organizations.${index}.address.status`}
+        path={`organizations.${index}.address`}
         data-testid={`org-address-input-${index}`}
       />
-      <InputWithStatus
+      <VerifiedInput
         label="Website"
         placeholder="Enter website"
-        name={`organizations.${index}.website.value`}
-        statusName={`organizations.${index}.website.status`}
+        path={`organizations.${index}.website`}
         data-testid={`org-website-input-${index}`}
       />
-      <InputWithStatus
+      <VerifiedInput
         label="Phone Number"
         placeholder="Enter phone number"
-        name={`organizations.${index}.phoneNumber.value`}
-        statusName={`organizations.${index}.phoneNumber.status`}
+        path={`organizations.${index}.phoneNumber`}
         data-testid={`org-phone-input-${index}`}
       />
     </Box>

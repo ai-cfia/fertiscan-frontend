@@ -1,5 +1,5 @@
 "use client";
-import DummyStepComponent from "@/components/DummyStepComponent";
+import BaseInformationForm from "@/components/BaseInformationForm";
 import ImageViewer from "@/components/ImageViewer";
 import OrganizationsForm from "@/components/OrganizationsForm";
 import {
@@ -8,17 +8,18 @@ import {
   StepStatus,
 } from "@/components/stepper";
 import {
-  checkOrganizationStatus,
   DEFAULT_LABEL_DATA,
-  FieldStatus,
   FormComponentProps,
+  isVerified,
   LabelData,
 } from "@/types/types";
 import useBreakpoints from "@/utils/useBreakpoints";
-import { Box, Button, Container } from "@mui/material";
+import { Box, Button, Container, Typography } from "@mui/material";
 import { useEffect, useState } from "react";
+import { useTranslation } from "react-i18next";
 
 function LabelDataValidationPage() {
+  const { t } = useTranslation("labelDataValidationPage");
   const [imageFiles, setImageFiles] = useState<File[]>([]);
   const { isDownXs, isBetweenXsSm, isBetweenSmMd, isBetweenMdLg } =
     useBreakpoints();
@@ -28,9 +29,8 @@ function LabelDataValidationPage() {
   const [activeStep, setActiveStep] = useState(0);
   const [organizationsStepStatus, setOrganizationsStepStatus] =
     useState<StepStatus>(StepStatus.Incomplete);
-  const [dummyStepStatus, setDummyStepStatus] = useState<StepStatus>(
-    StepStatus.Incomplete,
-  );
+  const [baseInformationStepStatus, setBaseInformationStepStatus] =
+    useState<StepStatus>(StepStatus.Incomplete);
 
   const createStep = (
     title: string,
@@ -43,27 +43,23 @@ function LabelDataValidationPage() {
       stepStatus: stepStatus,
       setStepStatus: setStepStatusState,
       render: () => (
-        <StepComponent
-          title={title}
-          labelData={labelData}
-          setLabelData={setLabelData}
-        />
+        <StepComponent labelData={labelData} setLabelData={setLabelData} />
       ),
     };
   };
 
   const steps = [
     createStep(
-      "Organizations",
+      t("baseInformation.stepTitle"),
+      BaseInformationForm,
+      baseInformationStepStatus,
+      setBaseInformationStepStatus,
+    ),
+    createStep(
+      t("organizations.stepTitle"),
       OrganizationsForm,
       organizationsStepStatus,
       setOrganizationsStepStatus,
-    ),
-    createStep(
-      "Dummy Step",
-      DummyStepComponent,
-      dummyStepStatus,
-      setDummyStepStatus,
     ),
   ];
 
@@ -78,13 +74,18 @@ function LabelDataValidationPage() {
   };
 
   useEffect(() => {
-    const verified = labelData.organizations.every((org) =>
-      checkOrganizationStatus(org, FieldStatus.Verified),
-    );
+    const verified = labelData.organizations.every((org) => isVerified(org));
     setOrganizationsStepStatus(
       verified ? StepStatus.Completed : StepStatus.Incomplete,
     );
   }, [labelData.organizations, setOrganizationsStepStatus]);
+
+  useEffect(() => {
+    const verified = isVerified(labelData.baseInformation);
+    setBaseInformationStepStatus(
+      verified ? StepStatus.Completed : StepStatus.Incomplete,
+    );
+  }, [labelData.baseInformation, setBaseInformationStepStatus]);
 
   return (
     <Container
@@ -130,6 +131,13 @@ function LabelDataValidationPage() {
           data-testid="form-container"
         >
           <Box className="w-full text-center" data-testid="forms">
+            <Typography
+              variant="h6"
+              className="text-lg font-bold"
+              data-testid="form-title"
+            >
+              {steps[activeStep].title}
+            </Typography>
             <Box className="">{steps[activeStep].render()}</Box>
             <StepperControls
               stepTitles={steps.map((step) => step.title)}
