@@ -9,7 +9,7 @@ import { useCallback, useEffect, useRef } from "react";
 import useAlertStore from "../stores/alertStore";
 
 const AUTO_DISMISS_TIME =
-  Number(process.env.NEXT_PUBLIC_AUTO_DISMISS_TIME) || 5000;
+  Number(process.env.NEXT_PUBLIC_ALERT_BANNER_AUTO_DISMISS_TIME) || 5000;
 
 const AlertBanner: React.FC = () => {
   const { alert, hideAlert } = useAlertStore();
@@ -36,15 +36,20 @@ const AlertBanner: React.FC = () => {
   }, [alert, hideAlert, startAutoDismissTimer]);
 
   return (
-    <Box className="w-full">
+    <Box className="w-full" data-testid="alert-banner-container">
       <Collapse in={Boolean(alert)}>
         {alert && (
           <Alert
             severity={alert.type}
             onMouseEnter={clearAutoDismissTimer}
             onMouseLeave={startAutoDismissTimer}
+            data-testid="alert-banner"
             action={
-              <IconButton size="small" onClick={hideAlert}>
+              <IconButton
+                size="small"
+                onClick={hideAlert}
+                data-testid="alert-close-button"
+              >
                 <CloseIcon color={alert.type} />
               </IconButton>
             }
@@ -53,6 +58,7 @@ const AlertBanner: React.FC = () => {
               className="overflow-hidden text-ellipsis"
               variant="body2"
               color="inherit"
+              data-testid="alert-message"
               style={{
                 display: "-webkit-box",
                 WebkitLineClamp: 2,

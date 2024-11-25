@@ -12,12 +12,12 @@ import {
   Typography,
   useTheme,
 } from "@mui/material";
+import i18next from "i18next";
 import Image from "next/image";
 import Link from "next/link";
 import { useState } from "react";
-import AlertBanner from "./AlertBanner";
-import i18next from "i18next";
 import { useTranslation } from "react-i18next";
+import AlertBanner from "./AlertBanner";
 
 interface HeaderProps {
   setSideNavOpen: (open: boolean | ((prevOpen: boolean) => boolean)) => void;
@@ -60,90 +60,85 @@ const Header: React.FC<HeaderProps> = ({ setSideNavOpen }) => {
   };
 
   return (
-    <>
-      <Box className="grow ">
-        <AppBar
-          className="!static header darkContainer"
-          data-testid="header-appbar"
+    <AppBar className="header" data-testid="header-appbar">
+      <Toolbar
+        className="justify-between h-full darkContainer"
+        data-testid="header-toolbar"
+      >
+        {/* Navigation menu toggle button on the left */}
+        <IconButton
+          aria-label={t("altText.sideMenuToggleAlt")}
+          edge="start"
+          onClick={handleSideNavToggle}
+          data-testid="menu-toggle-button"
         >
-          <Toolbar
-            className="justify-between h-full"
-            data-testid="header-toolbar"
+          <MenuIcon fontSize="large" />
+        </IconButton>
+
+        {/* Logo container in the center */}
+        <Box
+          sx={{
+            ...theme.logoSize,
+          }}
+          data-testid="logo-container"
+        >
+          <Link href="https://inspection.canada.ca">
+            <Image
+              className="cursor-pointer !relative"
+              src="/img/CFIA_FIP_FR_WHITE_1.png"
+              alt={t("altText.logoCFIAAlt")}
+              fill={true}
+              priority
+              data-testid="logo-image"
+            />
+          </Link>
+        </Box>
+
+        {/* User interaction components on the right */}
+        <Box className="flex" data-testid="user-interaction-box">
+          {/* Language toggle button */}
+          <Button
+            className="align-center"
+            onClick={() => changeLanguage(language === "en" ? "fr" : "en")}
+            data-testid="language-toggle-button"
           >
-            {/* Navigation menu toggle button on the left */}
-            <IconButton
-              aria-label={t("altText.sideMenuToggleAlt")}
-              edge="start"
-              onClick={handleSideNavToggle}
-              data-testid="menu-toggle-button"
+            <Typography
+              className="normal-case underline"
+              data-testid="language-text"
             >
-              <MenuIcon fontSize="large" />
-            </IconButton>
+              {t(
+                isDownXs || isBetweenXsSm || isBetweenSmMd
+                  ? "language.short"
+                  : "language.full",
+                {
+                  lng: language === "en" ? "fr" : "en",
+                },
+              )}
+            </Typography>
+          </Button>
 
-            {/* Logo container in the center */}
-            <Box
-              sx={{
-                ...theme.logoSize,
-              }}
-              data-testid="logo-container"
-            >
-              <Link href="https://inspection.canada.ca">
-                <Image
-                  className="cursor-pointer !relative"
-                  src="/img/CFIA_FIP_FR_WHITE_1.png"
-                  alt={t("altText.logoCFIAAlt")}
-                  fill={true}
-                  priority
-                  data-testid="logo-image"
-                />
-              </Link>
-            </Box>
+          {/* User account icon button */}
+          <IconButton
+            aria-label={t("altText.userAccountAlt")}
+            className="self-center"
+            onClick={handleUserMenuToggle}
+            data-testid="user-account-button"
+          >
+            <AccountCircleIcon fontSize="large" />
+          </IconButton>
+        </Box>
+      </Toolbar>
 
-            {/* User interaction components on the right */}
-            <Box className="flex" data-testid="user-interaction-box">
-              {/* Language toggle button */}
-              <Button
-                className="align-center"
-                onClick={() => changeLanguage(language === "en" ? "fr" : "en")}
-                data-testid="language-toggle-button"
-              >
-                <Typography
-                  className="normal-case underline"
-                  data-testid="language-text"
-                >
-                  {t(
-                    isDownXs || isBetweenXsSm || isBetweenSmMd
-                      ? "language.short"
-                      : "language.full",
-                    {
-                      lng: language === "en" ? "fr" : "en",
-                    },
-                  )}
-                </Typography>
-              </Button>
+      {/* User menu */}
+      <UserMenu
+        anchorElement={anchorElement}
+        isUserMenuOpen={isUserMenuOpen}
+        setIsUserMenuOpen={setIsUserMenuOpen}
+        setAnchorElement={setAnchorElement}
+      />
 
-              {/* User account icon button */}
-              <IconButton
-                aria-label={t("altText.userAccountAlt")}
-                className="self-center"
-                onClick={handleUserMenuToggle}
-                data-testid="user-account-button"
-              >
-                <AccountCircleIcon fontSize="large" />
-              </IconButton>
-            </Box>
-          </Toolbar>
-        </AppBar>
-
-        <UserMenu
-          anchorElement={anchorElement}
-          isUserMenuOpen={isUserMenuOpen}
-          setIsUserMenuOpen={setIsUserMenuOpen}
-          setAnchorElement={setAnchorElement}
-        />
-      </Box>
-      <AlertBanner></AlertBanner>
-    </>
+      <AlertBanner />
+    </AppBar>
   );
 };
 

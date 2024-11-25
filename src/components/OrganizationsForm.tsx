@@ -74,7 +74,7 @@ const OrganizationsForm: React.FC<FormComponentProps> = ({
           {fields.map((field, index) => (
             <Box
               key={field.id}
-              className="mb-4 py-4"
+              className="mb-4"
               data-testid={`organization-${index}`}
             >
               <OrganizationInformation index={index} />
