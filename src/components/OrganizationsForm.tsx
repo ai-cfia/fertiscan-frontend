@@ -69,7 +69,7 @@ const OrganizationsForm: React.FC<FormComponentProps> = ({
 
   return (
     <FormProvider {...methods}>
-      <div className="p-4" data-testid="organizations-form">
+      <Box className="p-4" data-testid="organizations-form">
         <Box>
           {fields.map((field, index) => (
             <Box
@@ -149,7 +149,7 @@ const OrganizationsForm: React.FC<FormComponentProps> = ({
             </Button>
           </Box>
         </Box>
-      </div>
+      </Box>
     </FormProvider>
   );
 };

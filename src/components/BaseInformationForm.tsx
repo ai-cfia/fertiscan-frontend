@@ -30,7 +30,7 @@ function BaseInformationForm({ labelData, setLabelData }: FormComponentProps) {
 
   return (
     <FormProvider {...methods}>
-      <div className="p-4" data-testid="base-information-form">
+      <Box className="p-4" data-testid="base-information-form">
         <Box className="grid grid-cols-1 items-start sm:grid-cols-1 md:grid-cols-2 lg:grid-cols-1 xxl:grid-cols-2 gap-4 py-4">
           <VerifiedInput
             label={t("baseInformation.fields.name.label")}
@@ -70,7 +70,7 @@ function BaseInformationForm({ labelData, setLabelData }: FormComponentProps) {
             unitOptions={UNITS.volume}
           />
         </Box>
-      </div>
+      </Box>
     </FormProvider>
   );
 }

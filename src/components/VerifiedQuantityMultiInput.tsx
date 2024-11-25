@@ -136,6 +136,9 @@ function VerifiedQuantityMultiInput({
                       {...field}
                       className="p-1 text-[15px] border rounded"
                       disabled={verified}
+                      aria-label={t(
+                        "verifiedQuantityMultiInput.accessibility.unitDropdown",
+                      )}
                       data-testid={`${quantitiesPath}.${index}.unit`}
                     >
                       {unitOptions.map((option) => (
@@ -150,6 +153,9 @@ function VerifiedQuantityMultiInput({
                           className="ml-1"
                           color="error"
                           fontSize="small"
+                          aria-label={t(
+                            "verifiedQuantityMultiInput.accessibility.errorIcon",
+                          )}
                           data-testid={`unit-error-icon-${quantitiesPath}-${index}`}
                         />
                       </Tooltip>
@@ -187,6 +193,9 @@ function VerifiedQuantityMultiInput({
                         setIsFocused(false);
                         field.onChange(e.target.value.trim());
                       }}
+                      aria-label={t(
+                        "verifiedQuantityMultiInput.accessibility.valueInput",
+                      )}
                       data-testid={`${quantitiesPath}.${index}.value`}
                       error={!!error}
                     />
@@ -216,6 +225,9 @@ function VerifiedQuantityMultiInput({
                     className="text-white bg-red-500"
                     onClick={() => remove(index)}
                     disabled={verified}
+                    aria-label={t(
+                      "verifiedQuantityMultiInput.accessibility.deleteRowButton",
+                    )}
                     data-testid={`delete-button-${quantitiesPath}-${index}`}
                   >
                     <DeleteIcon />
@@ -237,6 +249,9 @@ function VerifiedQuantityMultiInput({
           onClick={handleAddRow}
           startIcon={<AddIcon />}
           disabled={verified || fields.length >= unitOptions.length}
+          aria-label={t(
+            "verifiedQuantityMultiInput.accessibility.addRowButton",
+          )}
           data-testid={`add-button-${path}`}
         >
           {t("verifiedQuantityMultiInput.addRow")}
@@ -266,6 +281,9 @@ function VerifiedQuantityMultiInput({
           >
             <IconButton
               onClick={() => toggleVerified(value, onChange)}
+              aria-label={t(
+                "verifiedQuantityMultiInput.accessibility.verifyToggleButton",
+              )}
               data-testid={`toggle-verified-btn-${path}`}
             >
               <CheckIcon

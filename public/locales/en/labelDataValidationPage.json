@@ -57,6 +57,16 @@
       "g/cm³": "g/cm³",
       "kg/m³": "kg/m³",
       "lb/gal": "lb/gal"
+    },
+    "accessibility": {
+      "deleteRowButton": "Button to delete this row",
+      "addRowButton": "Button to add a new row",
+      "valueInput": "Input field for numeric value",
+      "unitDropdown": "Dropdown to select a unit of measurement",
+      "verifyToggleButton": "Button to toggle verification status",
+      "fieldsContainer": "Container for all input fields",
+      "row": "Row containing inputs for unit and value",
+      "errorIcon": "Icon indicating a validation error"
     }
   }
 }
