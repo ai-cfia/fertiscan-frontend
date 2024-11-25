@@ -55,7 +55,8 @@ describe("LabelDataValidationPage Functionality", () => {
 
     fireEvent.click(nextButton);
     fireEvent.click(nextButton);
-    expect(screen.getByTestId("organizations-form")).toBeInTheDocument();
+    fireEvent.click(nextButton);
+    expect(screen.getByTestId("cautions-form")).toBeInTheDocument();
   });
 
   it("renders the mocked Image Viewer", () => {
@@ -70,7 +71,9 @@ describe("LabelDataValidationPage and OrganizationsForm Integration", () => {
   it("marks the Organizations step as Completed or Incomplete when fields are Verified", () => {
     render(<LabelDataValidationPage />);
 
-    const spans = screen.getAllByText("organizations.stepTitle", { exact: true });
+    const spans = screen.getAllByText("organizations.stepTitle", {
+      exact: true,
+    });
     const targetSpan = spans.find((span) =>
       span.classList.contains("MuiStepLabel-label"),
     );
@@ -94,7 +97,9 @@ describe("LabelDataValidationPage and BaseInformationForm Integration", () => {
   it("marks the Base Information step as Completed or Incomplete when fields are Verified", async () => {
     render(<LabelDataValidationPage />);
 
-    const spans = screen.getAllByText("baseInformation.stepTitle", { exact: true });
+    const spans = screen.getAllByText("baseInformation.stepTitle", {
+      exact: true,
+    });
     const targetSpan = spans.find((span) =>
       span.classList.contains("MuiStepLabel-label"),
     );

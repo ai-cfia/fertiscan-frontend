@@ -1,5 +1,6 @@
 "use client";
 import BaseInformationForm from "@/components/BaseInformationForm";
+import CautionsForm from "@/components/CautionsForm";
 import ImageViewer from "@/components/ImageViewer";
 import OrganizationsForm from "@/components/OrganizationsForm";
 import {
@@ -31,6 +32,9 @@ function LabelDataValidationPage() {
     useState<StepStatus>(StepStatus.Incomplete);
   const [baseInformationStepStatus, setBaseInformationStepStatus] =
     useState<StepStatus>(StepStatus.Incomplete);
+  const [cautionsStepStatus, setCautionsStepStatus] = useState<StepStatus>(
+    StepStatus.Incomplete,
+  );
 
   const createStep = (
     title: string,
@@ -60,6 +64,12 @@ function LabelDataValidationPage() {
       OrganizationsForm,
       organizationsStepStatus,
       setOrganizationsStepStatus,
+    ),
+    createStep(
+      t("cautions.stepTitle"),
+      CautionsForm,
+      cautionsStepStatus,
+      setCautionsStepStatus,
     ),
   ];
 

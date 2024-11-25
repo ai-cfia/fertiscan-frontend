@@ -1,7 +1,4 @@
 {
-  "organizations": {
-    "stepTitle": "Organisations"
-  },
   "baseInformation": {
     "stepTitle": "Informations de base sur l'engrais",
     "fields": {
@@ -31,6 +28,12 @@
         "label": "Volume"
       }
     }
+  },
+  "organizations": {
+    "stepTitle": "Organisations"
+  },
+  "cautions": {
+    "stepTitle": "Mises en garde"
   },
   "verifiedQuantityMultiInput": {
     "deleteRow": "Supprimer cette ligne",

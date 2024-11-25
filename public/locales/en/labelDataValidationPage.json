@@ -1,7 +1,4 @@
 {
-  "organizations": {
-    "stepTitle": "Organizations"
-  },
   "baseInformation": {
     "stepTitle": "Base Information",
     "fields": {
@@ -31,6 +28,12 @@
         "label": "Volume"
       }
     }
+  },
+  "organizations": {
+    "stepTitle": "Organizations"
+  },
+  "cautions": {
+    "stepTitle": "Cautions"
   },
   "verifiedQuantityMultiInput": {
     "deleteRow": "Delete this row",
