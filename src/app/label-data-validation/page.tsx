@@ -97,6 +97,13 @@ function LabelDataValidationPage() {
     );
   }, [labelData.baseInformation, setBaseInformationStepStatus]);
 
+  useEffect(() => {
+    const verified = labelData.cautions.every((caution) => caution.verified);
+    setCautionsStepStatus(
+      verified ? StepStatus.Completed : StepStatus.Incomplete,
+    );
+  }, [labelData.cautions, setCautionsStepStatus]);
+
   return (
     <Container
       className="flex flex-col h-screen max-w-[1920px] max-h-[80vh]"
