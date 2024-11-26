@@ -11,7 +11,7 @@ import { useTranslation } from "react-i18next";
 import "./globals.css";
 import "./i18n";
 import theme from "./theme";
-import RouteGuard from "@/components/RouteGuard";
+import RouteGuard from "@/components/AuthComponents/RouteGuard";
 
 export default function RootLayout({
   children,

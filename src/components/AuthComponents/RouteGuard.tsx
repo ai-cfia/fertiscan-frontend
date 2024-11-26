@@ -1,8 +1,10 @@
-import AuthenticationContainer from "@/components/AuthenticationContainer";
 import { useEffect, useState } from "react";
+import SignUpModal from "@/components/AuthComponents/SignUpModal";
+import LoginModal from "@/components/AuthComponents/LoginModal";
 
 const RouteGuard = ({ children }: Readonly<{ children: React.ReactNode }>) => {
   const [isAuth, setAuth] = useState(false);
+  const [isSignup, setIsSignup] = useState(false);
 
   // eslint-disable-next-line @typescript-eslint/no-unused-vars
   const handleLogin = async (username: string, password: string) => {
@@ -43,6 +45,13 @@ const RouteGuard = ({ children }: Readonly<{ children: React.ReactNode }>) => {
     }
   };
 
+
+
+  const toggleMode = () => {
+    setIsSignup(!isSignup);
+  };
+
+
   useEffect(() => {
     const cookieStore = new Map();
     const cookies = document.cookie.split(";");
@@ -57,7 +66,13 @@ const RouteGuard = ({ children }: Readonly<{ children: React.ReactNode }>) => {
 
   return (
     <div>
-      <AuthenticationContainer isOpen={!isAuth} login={handleLogin} signup={handleSignup} />
+      <>
+        {isSignup ? (
+          <SignUpModal isOpen={!isAuth} signup={handleSignup} onChangeMode={toggleMode} />
+        ) : (
+          <LoginModal isOpen={!isAuth} login={handleLogin} onChangeMode={toggleMode} />
+        )}
+      </>
       {children}
     </div>
   );

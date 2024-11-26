@@ -9,7 +9,6 @@ import {
   } from "@mui/material";
   import AccountCircleIcon from "@mui/icons-material/AccountCircle";
   import LockIcon from "@mui/icons-material/Lock";
-  import theme from "@/app/theme";
   import IconInput from "@/components/IconInput";
   import { useState } from "react";
 
@@ -46,9 +45,7 @@ import {
             transform
             -translate-x-1/2
             -translate-y-1/2
-            w-1/2
             max-w-lg
-            min-w-fit
             h-fit
             bg-sky-900
             outline-none
