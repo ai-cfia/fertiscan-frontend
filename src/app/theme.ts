@@ -87,7 +87,6 @@ const theme = createTheme({
         root: {
           "&.header": {
             backgroundColor: "#05486C", // Dark Blue background
-            height: "64px", // Height of the AppBar
           },
         },
       },

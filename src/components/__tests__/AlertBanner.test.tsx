@@ -1,9 +1,33 @@
 import useAlertStore from "@/stores/alertStore";
-import { act, fireEvent, render, screen } from "@testing-library/react";
+import { Button } from "@mui/material";
+import {
+  act,
+  fireEvent,
+  render,
+  screen,
+  waitFor,
+} from "@testing-library/react";
 import AlertBanner from "../AlertBanner";
 
 const AUTO_DISMISS_TIME =
-  Number(process.env.NEXT_PUBLIC_AUTO_DISMISS_TIME) || 5000;
+  Number(process.env.NEXT_PUBLIC_ALERT_BANNER_AUTO_DISMISS_TIME) || 5000;
+
+const AlertWrapper: React.FC = () => {
+  const { showAlert } = useAlertStore();
+
+  const handleClick = () => {
+    showAlert("Test alert message", "success");
+  };
+
+  return (
+    <div>
+      <Button data-testid="trigger-alert-button" onClick={handleClick}>
+        Show Alert
+      </Button>
+      <AlertBanner />
+    </div>
+  );
+};
 
 describe("AlertBanner", () => {
   beforeEach(() => {
@@ -78,5 +102,19 @@ describe("AlertBanner", () => {
     render(<AlertBanner />);
     fireEvent.click(screen.getByRole("button"));
     expect(useAlertStore.getState().alert).toBeNull();
+  });
+
+  it("should display the alert banner when showAlert is used", async () => {
+    render(<AlertWrapper />);
+
+    const button = screen.getByTestId("trigger-alert-button");
+    fireEvent.click(button);
+
+    const alert = await waitFor(() => screen.getByTestId("alert-banner"));
+
+    expect(alert).toBeInTheDocument();
+    expect(screen.getByTestId("alert-message")).toHaveTextContent(
+      "Test alert message",
+    );
   });
 });
