@@ -135,15 +135,30 @@ export const DEFAULT_BASE_INFORMATION: BaseInformation = {
   volume: DEFAULT_QUANTITY_FIELD(UNITS.volume[0]),
 };
 
+export type BilingualField = VerifiedField & {
+  en: string;
+  fr: string;
+};
+
+export const DEFAULT_BILINGUAL_FIELD: BilingualField = {
+  en: "",
+  fr: "",
+  verified: false,
+};
+
 // LabelData
 export type LabelData = {
   organizations: Organization[];
   baseInformation: BaseInformation;
+  cautions: BilingualField[];
+  instructions: BilingualField[];
 };
 
 export const DEFAULT_LABEL_DATA: LabelData = {
   organizations: [DEFAULT_ORGANIZATION],
   baseInformation: DEFAULT_BASE_INFORMATION,
+  cautions: [DEFAULT_BILINGUAL_FIELD],
+  instructions: [DEFAULT_BILINGUAL_FIELD],
 };
 
 // Form

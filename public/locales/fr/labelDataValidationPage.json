@@ -1,7 +1,4 @@
 {
-  "organizations": {
-    "stepTitle": "Organisations"
-  },
   "baseInformation": {
     "stepTitle": "Informations de base sur l'engrais",
     "fields": {
@@ -31,6 +28,15 @@
         "label": "Volume"
       }
     }
+  },
+  "organizations": {
+    "stepTitle": "Organisations"
+  },
+  "cautions": {
+    "stepTitle": "Mises en garde"
+  },
+  "instructions": {
+    "stepTitle": "Instructions"
   },
   "verifiedQuantityMultiInput": {
     "deleteRow": "Supprimer cette ligne",
@@ -67,6 +73,31 @@
       "fieldsContainer": "Conteneur pour tous les champs de saisie",
       "row": "Ligne contenant les champs pour l'unité et la valeur",
       "errorIcon": "Icône indiquant une erreur de validation"
+    }
+  },
+  "verifiedBilingualTable": {
+    "english": "Anglais",
+    "french": "Français",
+    "actions": "Actions",
+    "placeholders": {
+      "english": "Entrez le texte en anglais",
+      "french": "Entrez le texte en français"
+    },
+    "addRow": "Ajouter une ligne",
+    "delete": "Supprimer cette ligne",
+    "verify": "Marquer comme vérifié",
+    "unverify": "Marquer comme non vérifié",
+    "verifyAll": "Tout marquer comme vérifié",
+    "unverifyAll": "Tout marquer comme non vérifié",
+    "accessibility": {
+      "englishInput": "Zone de texte en anglais pour la ligne {{row}}",
+      "frenchInput": "Zone de texte en français pour la ligne {{row}}",
+      "deleteButton": "Bouton pour supprimer cette ligne",
+      "addRowButton": "Bouton pour ajouter une nouvelle ligne",
+      "verifyButton": "Bouton pour marquer cette ligne comme vérifiée",
+      "unverifyButton": "Bouton pour marquer cette ligne comme non vérifiée",
+      "verifyAllButton": "Bouton pour tout marquer comme vérifié",
+      "unverifyAllButton": "Bouton pour tout marquer comme non vérifié"
     }
   }
 }

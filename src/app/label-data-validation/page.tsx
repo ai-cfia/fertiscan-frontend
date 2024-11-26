@@ -1,6 +1,7 @@
 "use client";
 import BaseInformationForm from "@/components/BaseInformationForm";
 import ImageViewer from "@/components/ImageViewer";
+import InstructionsForm from "@/components/InstructionsForm";
 import OrganizationsForm from "@/components/OrganizationsForm";
 import {
   HorizontalNonLinearStepper,
@@ -31,6 +32,8 @@ function LabelDataValidationPage() {
   const [organizationsStepStatus, setOrganizationsStepStatus] =
     useState<StepStatus>(StepStatus.Incomplete);
   const [baseInformationStepStatus, setBaseInformationStepStatus] =
+    useState<StepStatus>(StepStatus.Incomplete);
+  const [instructionsStepStatus, setInstructionsStepStatus] =
     useState<StepStatus>(StepStatus.Incomplete);
   const { showAlert } = useAlertStore();
 
@@ -63,6 +66,12 @@ function LabelDataValidationPage() {
       organizationsStepStatus,
       setOrganizationsStepStatus,
     ),
+    createStep(
+      t("instructions.stepTitle"),
+      InstructionsForm,
+      instructionsStepStatus,
+      setInstructionsStepStatus,
+    ),
   ];
 
   const handleFileChange = (event: React.ChangeEvent<HTMLInputElement>) => {
@@ -88,6 +97,15 @@ function LabelDataValidationPage() {
       verified ? StepStatus.Completed : StepStatus.Incomplete,
     );
   }, [labelData.baseInformation, setBaseInformationStepStatus]);
+
+  useEffect(() => {
+    const verified = labelData.instructions.every(
+      (instruction) => instruction.verified,
+    );
+    setInstructionsStepStatus(
+      verified ? StepStatus.Completed : StepStatus.Incomplete,
+    );
+  }, [labelData.instructions, setInstructionsStepStatus]);
 
   return (
     <Container
