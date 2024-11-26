@@ -51,7 +51,7 @@ const ImageViewer: React.FC<ImageViewerProps> = ({ imageFiles }) => {
 
   return (
     <Box
-      className="flex flex-col items-center justify-center max-w-full border-2 bg-gray-100 border-gray-100"
+      className="flex flex-col items-center justify-center size-full  "
       data-testid="image-viewer"
     >
       <Swiper
@@ -59,7 +59,7 @@ const ImageViewer: React.FC<ImageViewerProps> = ({ imageFiles }) => {
         loop={false}
         speed={0}
         data-testid="swiper"
-        className="w-full h-full"
+        className="size-full"
         onSwiper={(swiper) => setSwiperInstance(swiper)}
         onSlideChange={(swiper) => setActiveIndex(swiper.activeIndex)}
         noSwiping
@@ -69,7 +69,7 @@ const ImageViewer: React.FC<ImageViewerProps> = ({ imageFiles }) => {
       >
         {imageUrls.map((url, index) => (
           <SwiperSlide key={index} data-testid={`slide-${index + 1}`}>
-            <Box className="no-swipe w-full h-full">
+            <Box className="no-swipe size-full">
               <TransformWrapper
                 key={index}
                 onInit={(ref) => handleInit(index, ref)}
@@ -90,7 +90,7 @@ const ImageViewer: React.FC<ImageViewerProps> = ({ imageFiles }) => {
                 >
                   <Image
                     key={index}
-                    className="object-contain w-full h-full"
+                    className="object-contain size-full"
                     src={url}
                     alt={`Slide ${index + 1}`}
                     width={500}

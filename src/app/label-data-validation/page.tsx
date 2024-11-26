@@ -7,6 +7,7 @@ import {
   StepperControls,
   StepStatus,
 } from "@/components/stepper";
+import useAlertStore from "@/stores/alertStore";
 import {
   DEFAULT_LABEL_DATA,
   FormComponentProps,
@@ -31,6 +32,7 @@ function LabelDataValidationPage() {
     useState<StepStatus>(StepStatus.Incomplete);
   const [baseInformationStepStatus, setBaseInformationStepStatus] =
     useState<StepStatus>(StepStatus.Incomplete);
+  const { showAlert } = useAlertStore();
 
   const createStep = (
     title: string,
@@ -89,7 +91,7 @@ function LabelDataValidationPage() {
 
   return (
     <Container
-      className="flex flex-col h-screen max-w-[1920px] max-h-[80vh]"
+      className="flex flex-col max-w-[1920px] bg-gray-100 "
       maxWidth={false}
       data-testid="container"
     >
@@ -105,12 +107,12 @@ function LabelDataValidationPage() {
       )}
 
       <Box
-        className="flex flex-col lg:flex-row gap-4"
+        className="flex flex-col lg:flex-row gap-4 my-4 lg:h-[75vh] lg:min-h-[500px]"
         data-testid="main-content"
       >
         <Box
-          className="flex w-full justify-center min-w-0 h-[720px]"
-          data-testid="swiper-container"
+          className="flex h-[500px] md:h-[720px] lg:size-full justify-center min-w-0 "
+          data-testid="image-viewer-container"
         >
           <ImageViewer imageFiles={imageFiles} />
         </Box>
@@ -127,25 +129,26 @@ function LabelDataValidationPage() {
         )}
 
         <Box
-          className="flex w-full justify-center min-w-0 min-h-[500px] lg:max-h-[80vh] overflow-y-auto"
+          className="flex flex-col size-full min-w-0 p-4 text-center gap-4 content-end bg-white border border-black"
           data-testid="form-container"
         >
-          <Box className="w-full text-center" data-testid="forms">
-            <Typography
-              variant="h6"
-              className="text-lg font-bold"
-              data-testid="form-title"
-            >
-              {steps[activeStep].title}
-            </Typography>
-            <Box className="">{steps[activeStep].render()}</Box>
-            <StepperControls
-              stepTitles={steps.map((step) => step.title)}
-              stepStatuses={steps.map((step) => step.stepStatus)}
-              activeStep={activeStep}
-              setActiveStep={setActiveStep}
-            />
+          <Typography
+            variant="h6"
+            className="text-lg font-bold"
+            data-testid="form-title"
+          >
+            {steps[activeStep].title}
+          </Typography>
+          {/* <Box className="min-h-[500px] lg:max-h-[80vh] overflow-y-auto"> */}
+          <Box className="flex-1 overflow-y-auto sm:px-8">
+            {steps[activeStep].render()}
           </Box>
+          <StepperControls
+            stepTitles={steps.map((step) => step.title)}
+            stepStatuses={steps.map((step) => step.stepStatus)}
+            activeStep={activeStep}
+            setActiveStep={setActiveStep}
+          />
         </Box>
       </Box>
 
@@ -161,6 +164,7 @@ function LabelDataValidationPage() {
           style={{ display: "none" }}
           onChange={handleFileChange}
         />
+        <Button onClick={() => showAlert("Test", "error")}>Show Alert</Button>
       </Box>
     </Container>
   );
