@@ -3,7 +3,7 @@ import React from "react";
 import { Box, Stack, Typography, useTheme } from "@mui/material";
 import FileElement from "@/components/FileElement";
 import FileUploaded from '@/classe/File';
-import { DropzoneState } from '@/types'; // Adjust the import path as necessary
+import { DropzoneState } from '@/types/types'; // Adjust the import path as necessary
 
 /**
  * Props for the FileList component.
@@ -49,12 +49,7 @@ const FileList: React.FC<FileListProps> = ({
       className={`flex relative flex-col justify-center items-center border-2 border-sky-900
                 rounded text-center p-1 bg-transparent bg-contain xs:w-[90%] md:w-[100%] h-[90%]
                 xs:min-h-[350px] md:min-h-[400px] overflow-y-auto overflow-x-hidden min-w-[133.44px]
-                [&::-webkit-scrollbar]:w-[10px]
-                [&::-webkit-scrollbar]:mr-[10px]
-                [&::-webkit-scrollbar-thumb]:bg-sky-900
-                [&::-webkit-scrollbar-thumb]:rounded-full
-                [&::-webkit-scrollbar-thumb]:border-6-solid-transparent
-                [&::-webkit-scrollbar-track]:bg-transparent`}
+               `}
     >
       <Box
         className={`absolute transform w-full h-full flex flex-col

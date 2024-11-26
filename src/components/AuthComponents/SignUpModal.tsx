@@ -56,6 +56,7 @@ import {
             rounded-2xl
             flex
             flex-col
+
           "
         >
           <Typography
@@ -127,11 +128,7 @@ import {
                     By checking this box I understand that the data I have
                     entered will be stored and thus should not be sensitive
                     information.
-                    <br />
-                    <u>
-                    As a reminder, work email, phone number or real name are
-                    considered sensitive information.
-                    </u>
+                    <u> As a reminder, work email, phone number or real name are considered sensitive information.</u>
                   </Typography>
                 }
               />
