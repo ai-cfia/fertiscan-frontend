@@ -86,6 +86,8 @@ const VerifiedBilingualTable = ({ path }: { path: string }) => {
                         multiline
                         fullWidth
                         disabled={getValues(`${path}.${index}.verified`)}
+                        aria-label={`English text for row ${index + 1}`}
+                        aria-disabled={getValues(`${path}.${index}.verified`)}
                         data-testid={`input-english-${path}-${index}`}
                       />
                     )}
@@ -105,6 +107,8 @@ const VerifiedBilingualTable = ({ path }: { path: string }) => {
                         multiline
                         fullWidth
                         disabled={getValues(`${path}.${index}.verified`)}
+                        aria-label={`French text for row ${index + 1}`}
+                        aria-disabled={getValues(`${path}.${index}.verified`)}
                         data-testid={`input-french-${path}-${index}`}
                       />
                     )}
@@ -126,9 +130,10 @@ const VerifiedBilingualTable = ({ path }: { path: string }) => {
                         <IconButton
                           onClick={() => remove(index)}
                           disabled={getValues(`${path}.${index}.verified`)}
+                          aria-label="Delete row"
                           data-testid={`delete-row-btn-${path}-${index}`}
                         >
-                          <DeleteIcon />
+                          <DeleteIcon aria-hidden="true" />
                         </IconButton>
                       </span>
                     </Tooltip>
@@ -151,10 +156,16 @@ const VerifiedBilingualTable = ({ path }: { path: string }) => {
                           <span>
                             <IconButton
                               onClick={() => onChange(!value)}
+                              aria-label={
+                                value
+                                  ? "Mark as Unverified"
+                                  : "Mark as Verified"
+                              }
                               data-testid={`verify-row-btn-${path}-${index}`}
                             >
                               <CheckIcon
                                 className={value ? "text-green-500" : ""}
+                                aria-hidden="true"
                               />
                             </IconButton>
                           </span>
@@ -176,7 +187,8 @@ const VerifiedBilingualTable = ({ path }: { path: string }) => {
           onClick={() => append(DEFAULT_BILINGUAL_FIELD)}
           variant="outlined"
           color="secondary"
-          startIcon={<AddIcon />}
+          startIcon={<AddIcon aria-hidden="true" />}
+          aria-label="Add new row"
           data-testid={`add-row-btn-${path}`}
         >
           Add row
@@ -198,9 +210,10 @@ const VerifiedBilingualTable = ({ path }: { path: string }) => {
               disabled={getValues(path).every(
                 (row: BilingualField) => row.verified,
               )}
+              aria-label="Mark all rows as Verified"
               data-testid={`verify-all-btn-${path}`}
             >
-              <DoneAllIcon />
+              <DoneAllIcon aria-hidden="true" />
             </Button>
           </span>
         </Tooltip>
@@ -221,9 +234,10 @@ const VerifiedBilingualTable = ({ path }: { path: string }) => {
               disabled={getValues(path).every(
                 (row: BilingualField) => !row.verified,
               )}
+              aria-label="Mark all rows as Unverified"
               data-testid={`unverify-all-btn-${path}`}
             >
-              <RemoveDoneIcon />
+              <RemoveDoneIcon aria-hidden="true" />
             </Button>
           </span>
         </Tooltip>
