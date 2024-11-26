@@ -127,7 +127,7 @@ const LoginModal = ({ isOpen, login, onChangeMode }: LoginProps) => {
             text-center
           "
         >
-          Don't have an account?{" "}
+          Don&#39;t have an account?{" "}
           <a
             id={"toggleSignButton"}
             data-testid={"modal-change-button"}

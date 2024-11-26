@@ -6,7 +6,7 @@ import { ThemeProvider } from "@mui/material/styles";
 import { useState } from "react";
 import "./globals.css";
 import theme from "./theme";
-import RouteGuard from "@/components/RouteGuard";
+import RouteGuard from "@/components/AuthComponents/RouteGuard";
 
 export default function RootLayout({
   children,
