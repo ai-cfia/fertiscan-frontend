@@ -48,11 +48,6 @@
     "removeRow": "Supprimer",
     "verify": "Marquer comme vérifiés",
     "unverify": "Marquer comme non vérifiés",
-    "errors": {
-      "numbersOnly": "Uniquement des nombres",
-      "minValue": "La valeur minimale est 0",
-      "duplicateUnit": "Unité dupliquée"
-    },
     "units": {
       "kg": "kg",
       "g": "g",
@@ -81,10 +76,16 @@
   "verifiedBilingualTable": {
     "english": "Anglais",
     "french": "Français",
+    "value": "Valeur",
     "actions": "Actions",
     "placeholders": {
       "english": "Entrez le texte en anglais",
-      "french": "Entrez le texte en français"
+      "french": "Entrez le texte en français",
+      "value": "Entrez une valeur"
+    },
+    "units": {
+      "%": "%",
+      "ppm": "ppm"
     },
     "addRow": "Ajouter une ligne",
     "delete": "Supprimer cette ligne",
@@ -102,5 +103,10 @@
       "verifyAllButton": "Bouton pour tout marquer comme vérifié",
       "unverifyAllButton": "Bouton pour tout marquer comme non vérifié"
     }
+  },
+  "errors": {
+    "numbersOnly": "Uniquement des nombres",
+    "minValue": "La valeur minimale est 0",
+    "duplicateUnit": "Unité dupliquée"
   }
 }

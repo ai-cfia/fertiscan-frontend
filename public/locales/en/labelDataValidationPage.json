@@ -48,11 +48,6 @@
     "removeRow": "Remove",
     "verify": "Mark as Verified",
     "unverify": "Mark as Unverified",
-    "errors": {
-      "numbersOnly": "Numbers only",
-      "minValue": "Minimum value is 0",
-      "duplicateUnit": "Duplicate unit"
-    },
     "units": {
       "kg": "kg",
       "g": "g",
@@ -81,10 +76,16 @@
   "verifiedBilingualTable": {
     "english": "English",
     "french": "French",
+    "value": "Value",
     "actions": "Actions",
     "placeholders": {
       "english": "Enter English text",
-      "french": "Enter French text"
+      "french": "Enter French text",
+      "value": "Enter value"
+    },
+    "units": {
+      "%": "%",
+      "ppm": "ppm"
     },
     "addRow": "Add Row",
     "delete": "Delete Row",
@@ -102,5 +103,10 @@
       "verifyAllButton": "Button to mark all rows as Verified",
       "unverifyAllButton": "Button to mark all rows as Unverified"
     }
+  },
+  "errors": {
+    "numbersOnly": "Numbers only",
+    "minValue": "Minimum value is 0",
+    "duplicateUnit": "Duplicate unit"
   }
 }

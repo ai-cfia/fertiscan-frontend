@@ -118,20 +118,25 @@ function LabelDataValidationPage() {
   }, [labelData.baseInformation, setBaseInformationStepStatus]);
 
   useEffect(() => {
-    const verified = labelData.cautions.every((caution) => caution.verified);
+    const verified = isVerified(labelData.cautions);
     setCautionsStepStatus(
       verified ? StepStatus.Completed : StepStatus.Incomplete,
     );
   }, [labelData.cautions, setCautionsStepStatus]);
 
   useEffect(() => {
-    const verified = labelData.instructions.every(
-      (instruction) => instruction.verified,
-    );
+    const verified = isVerified(labelData.instructions);
     setInstructionsStepStatus(
       verified ? StepStatus.Completed : StepStatus.Incomplete,
     );
   }, [labelData.instructions, setInstructionsStepStatus]);
+
+  useEffect(() => {
+    const verified = isVerified(labelData.guaranteedAnalysis);
+    setGuaranteedAnalysisStepStatus(
+      verified ? StepStatus.Completed : StepStatus.Incomplete,
+    );
+  }, [labelData.guaranteedAnalysis, setGuaranteedAnalysisStepStatus]);
 
   return (
     <Container
@@ -183,7 +188,6 @@ function LabelDataValidationPage() {
           >
             {steps[activeStep].title}
           </Typography>
-          {/* <Box className="min-h-[500px] lg:max-h-[80vh] overflow-y-auto"> */}
           <Box className="flex-1 overflow-y-auto sm:px-8">
             {steps[activeStep].render()}
           </Box>

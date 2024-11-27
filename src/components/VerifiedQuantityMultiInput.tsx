@@ -171,11 +171,11 @@ function VerifiedQuantityMultiInput({
                 rules={{
                   pattern: {
                     value: /^[0-9]*\.?[0-9]*$/,
-                    message: t("verifiedQuantityMultiInput.errors.numbersOnly"),
+                    message: t("errors.numbersOnly"),
                   },
                   min: {
                     value: 0,
-                    message: t("verifiedQuantityMultiInput.errors.minValue"),
+                    message: t("errors.minValue"),
                   },
                 }}
                 render={({ field, fieldState: { error } }) => (
