@@ -1,5 +1,6 @@
 "use client";
 import BaseInformationForm from "@/components/BaseInformationForm";
+import CautionsForm from "@/components/CautionsForm";
 import ImageViewer from "@/components/ImageViewer";
 import InstructionsForm from "@/components/InstructionsForm";
 import OrganizationsForm from "@/components/OrganizationsForm";
@@ -33,6 +34,9 @@ function LabelDataValidationPage() {
     useState<StepStatus>(StepStatus.Incomplete);
   const [baseInformationStepStatus, setBaseInformationStepStatus] =
     useState<StepStatus>(StepStatus.Incomplete);
+  const [cautionsStepStatus, setCautionsStepStatus] = useState<StepStatus>(
+    StepStatus.Incomplete,
+  );
   const [instructionsStepStatus, setInstructionsStepStatus] =
     useState<StepStatus>(StepStatus.Incomplete);
   const { showAlert } = useAlertStore();
@@ -67,6 +71,12 @@ function LabelDataValidationPage() {
       setOrganizationsStepStatus,
     ),
     createStep(
+      t("cautions.stepTitle"),
+      CautionsForm,
+      cautionsStepStatus,
+      setCautionsStepStatus,
+    ),
+    createStep(
       t("instructions.stepTitle"),
       InstructionsForm,
       instructionsStepStatus,
@@ -97,6 +107,13 @@ function LabelDataValidationPage() {
       verified ? StepStatus.Completed : StepStatus.Incomplete,
     );
   }, [labelData.baseInformation, setBaseInformationStepStatus]);
+
+  useEffect(() => {
+    const verified = labelData.cautions.every((caution) => caution.verified);
+    setCautionsStepStatus(
+      verified ? StepStatus.Completed : StepStatus.Incomplete,
+    );
+  }, [labelData.cautions, setCautionsStepStatus]);
 
   useEffect(() => {
     const verified = labelData.instructions.every(
