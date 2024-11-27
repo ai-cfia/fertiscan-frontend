@@ -35,6 +35,9 @@
   "cautions": {
     "stepTitle": "Mises en garde"
   },
+  "instructions": {
+    "stepTitle": "Instructions"
+  },
   "verifiedQuantityMultiInput": {
     "deleteRow": "Supprimer cette ligne",
     "defaultPlaceholder": "Entrez une valeur",
