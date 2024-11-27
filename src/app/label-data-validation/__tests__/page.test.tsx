@@ -55,6 +55,9 @@ describe("LabelDataValidationPage Functionality", () => {
 
     fireEvent.click(nextButton);
     fireEvent.click(nextButton);
+    fireEvent.click(nextButton);
+    fireEvent.click(nextButton);
+    fireEvent.click(nextButton);
     expect(screen.getByTestId("guaranteed-analysis-form")).toBeInTheDocument();
   });
 
@@ -66,11 +69,13 @@ describe("LabelDataValidationPage Functionality", () => {
   });
 });
 
-describe("LabelDataValidationPage and OrganizationsForm Integration", () => {
+describe("LabelDataValidationPage and Forms Integration", () => {
   it("marks the Organizations step as Completed or Incomplete when fields are Verified", () => {
     render(<LabelDataValidationPage />);
 
-    const spans = screen.getAllByText("organizations.stepTitle", { exact: true });
+    const spans = screen.getAllByText("organizations.stepTitle", {
+      exact: true,
+    });
     const targetSpan = spans.find((span) =>
       span.classList.contains("MuiStepLabel-label"),
     );
@@ -88,13 +93,13 @@ describe("LabelDataValidationPage and OrganizationsForm Integration", () => {
 
     expect(targetSpan).not.toHaveClass("Mui-completed");
   });
-});
 
-describe("LabelDataValidationPage and BaseInformationForm Integration", () => {
   it("marks the Base Information step as Completed or Incomplete when fields are Verified", async () => {
     render(<LabelDataValidationPage />);
 
-    const spans = screen.getAllByText("baseInformation.stepTitle", { exact: true });
+    const spans = screen.getAllByText("baseInformation.stepTitle", {
+      exact: true,
+    });
     const targetSpan = spans.find((span) =>
       span.classList.contains("MuiStepLabel-label"),
     );
@@ -109,6 +114,76 @@ describe("LabelDataValidationPage and BaseInformationForm Integration", () => {
       /verified-icon-baseInformation/,
     );
     expect(verifyButtons.length).toBeGreaterThanOrEqual(7);
+
+    for (const button of verifyButtons) {
+      await act(async () => {
+        fireEvent.click(button);
+      });
+    }
+
+    expect(targetSpan).toHaveClass("Mui-completed");
+
+    await act(async () => {
+      fireEvent.click(verifyButtons[0]);
+    });
+
+    expect(targetSpan).not.toHaveClass("Mui-completed");
+  });
+
+  it("marks the Cautions step as Completed or Incomplete when fields are Verified", async () => {
+    render(<LabelDataValidationPage />);
+
+    const spans = screen.getAllByText("cautions.stepTitle", {
+      exact: true,
+    });
+    const targetSpan = spans.find((span) =>
+      span.classList.contains("MuiStepLabel-label"),
+    );
+    expect(targetSpan).not.toHaveClass("Mui-completed");
+
+    const button = targetSpan!.closest("button");
+    await act(async () => {
+      fireEvent.click(button!);
+    });
+
+    const verifyButtons = screen.getAllByTestId(/verify-row-btn-cautions-\d+/);
+    expect(verifyButtons.length).toBeGreaterThanOrEqual(1);
+
+    for (const button of verifyButtons) {
+      await act(async () => {
+        fireEvent.click(button);
+      });
+    }
+
+    expect(targetSpan).toHaveClass("Mui-completed");
+
+    await act(async () => {
+      fireEvent.click(verifyButtons[0]);
+    });
+
+    expect(targetSpan).not.toHaveClass("Mui-completed");
+  });
+
+  it("marks the Instructions step as Completed or Incomplete when fields are Verified", async () => {
+    render(<LabelDataValidationPage />);
+
+    const spans = screen.getAllByText("instructions.stepTitle", {
+      exact: true,
+    });
+    const targetSpan = spans.find((span) =>
+      span.classList.contains("MuiStepLabel-label"),
+    );
+    expect(targetSpan).not.toHaveClass("Mui-completed");
+
+    const button = targetSpan!.closest("button");
+    await act(async () => {
+      fireEvent.click(button!);
+    });
+
+    const verifyButtons = screen.getAllByTestId(
+      /verify-row-btn-instructions-\d+/,
+    );
+    expect(verifyButtons.length).toBeGreaterThanOrEqual(1);
 
     for (const button of verifyButtons) {
       await act(async () => {

@@ -35,6 +35,9 @@
   "cautions": {
     "stepTitle": "Cautions"
   },
+  "instructions": {
+    "stepTitle": "Instructions"
+  },
   "guaranteedAnalysis": {
     "stepTitle": "Guaranteed Analysis"
   },

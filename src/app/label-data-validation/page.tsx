@@ -1,7 +1,9 @@
 "use client";
 import BaseInformationForm from "@/components/BaseInformationForm";
+import CautionsForm from "@/components/CautionsForm";
 import GuaranteedAnalysisForm from "@/components/GuaranteedAnalysisForm";
 import ImageViewer from "@/components/ImageViewer";
+import InstructionsForm from "@/components/InstructionsForm";
 import OrganizationsForm from "@/components/OrganizationsForm";
 import {
   HorizontalNonLinearStepper,
@@ -32,6 +34,11 @@ function LabelDataValidationPage() {
   const [organizationsStepStatus, setOrganizationsStepStatus] =
     useState<StepStatus>(StepStatus.Incomplete);
   const [baseInformationStepStatus, setBaseInformationStepStatus] =
+    useState<StepStatus>(StepStatus.Incomplete);
+  const [cautionsStepStatus, setCautionsStepStatus] = useState<StepStatus>(
+    StepStatus.Incomplete,
+  );
+  const [instructionsStepStatus, setInstructionsStepStatus] =
     useState<StepStatus>(StepStatus.Incomplete);
   const [guaranteedAnalysisStepStatus, setGuaranteedAnalysisStepStatus] =
     useState<StepStatus>(StepStatus.Incomplete);
@@ -67,6 +74,18 @@ function LabelDataValidationPage() {
       setOrganizationsStepStatus,
     ),
     createStep(
+      t("cautions.stepTitle"),
+      CautionsForm,
+      cautionsStepStatus,
+      setCautionsStepStatus,
+    ),
+    createStep(
+      t("instructions.stepTitle"),
+      InstructionsForm,
+      instructionsStepStatus,
+      setInstructionsStepStatus,
+    ),
+    createStep(
       t("guaranteedAnalysis.stepTitle"),
       GuaranteedAnalysisForm,
       guaranteedAnalysisStepStatus,
@@ -97,6 +116,22 @@ function LabelDataValidationPage() {
       verified ? StepStatus.Completed : StepStatus.Incomplete,
     );
   }, [labelData.baseInformation, setBaseInformationStepStatus]);
+
+  useEffect(() => {
+    const verified = labelData.cautions.every((caution) => caution.verified);
+    setCautionsStepStatus(
+      verified ? StepStatus.Completed : StepStatus.Incomplete,
+    );
+  }, [labelData.cautions, setCautionsStepStatus]);
+
+  useEffect(() => {
+    const verified = labelData.instructions.every(
+      (instruction) => instruction.verified,
+    );
+    setInstructionsStepStatus(
+      verified ? StepStatus.Completed : StepStatus.Incomplete,
+    );
+  }, [labelData.instructions, setInstructionsStepStatus]);
 
   return (
     <Container
