@@ -1,5 +1,6 @@
 "use client";
 import BaseInformationForm from "@/components/BaseInformationForm";
+import CautionsForm from "@/components/CautionsForm";
 import ImageViewer from "@/components/ImageViewer";
 import OrganizationsForm from "@/components/OrganizationsForm";
 import {
@@ -32,6 +33,9 @@ function LabelDataValidationPage() {
     useState<StepStatus>(StepStatus.Incomplete);
   const [baseInformationStepStatus, setBaseInformationStepStatus] =
     useState<StepStatus>(StepStatus.Incomplete);
+  const [cautionsStepStatus, setCautionsStepStatus] = useState<StepStatus>(
+    StepStatus.Incomplete,
+  );
   const { showAlert } = useAlertStore();
 
   const createStep = (
@@ -63,6 +67,12 @@ function LabelDataValidationPage() {
       organizationsStepStatus,
       setOrganizationsStepStatus,
     ),
+    createStep(
+      t("cautions.stepTitle"),
+      CautionsForm,
+      cautionsStepStatus,
+      setCautionsStepStatus,
+    ),
   ];
 
   const handleFileChange = (event: React.ChangeEvent<HTMLInputElement>) => {
@@ -88,6 +98,13 @@ function LabelDataValidationPage() {
       verified ? StepStatus.Completed : StepStatus.Incomplete,
     );
   }, [labelData.baseInformation, setBaseInformationStepStatus]);
+
+  useEffect(() => {
+    const verified = labelData.cautions.every((caution) => caution.verified);
+    setCautionsStepStatus(
+      verified ? StepStatus.Completed : StepStatus.Incomplete,
+    );
+  }, [labelData.cautions, setCautionsStepStatus]);
 
   return (
     <Container

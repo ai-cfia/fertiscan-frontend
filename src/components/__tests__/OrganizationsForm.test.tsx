@@ -42,6 +42,7 @@ describe("OrganizationsForm Rendering", () => {
         initialData={{
           organizations: [DEFAULT_ORGANIZATION, DEFAULT_ORGANIZATION],
           baseInformation: DEFAULT_BASE_INFORMATION,
+          cautions: [],
         }}
       />,
     );
@@ -67,8 +68,8 @@ describe("OrganizationsForm Rendering", () => {
     render(
       <Wrapper
         initialData={{
+          ...DEFAULT_LABEL_DATA,
           organizations: [],
-          baseInformation: DEFAULT_BASE_INFORMATION,
         }}
       />,
     );
@@ -84,8 +85,8 @@ describe("OrganizationsForm Functionality", () => {
     render(
       <Wrapper
         initialData={{
+          ...DEFAULT_LABEL_DATA,
           organizations: [],
-          baseInformation: DEFAULT_BASE_INFORMATION,
         }}
       />,
     );
@@ -226,8 +227,8 @@ describe("OrganizationsForm Functionality", () => {
     render(
       <Wrapper
         initialData={{
+          ...DEFAULT_LABEL_DATA,
           organizations: [verifiedOrg],
-          baseInformation: DEFAULT_BASE_INFORMATION,
         }}
       />,
     );
@@ -261,8 +262,8 @@ describe("OrganizationsForm Functionality", () => {
     render(
       <Wrapper
         initialData={{
+          ...DEFAULT_LABEL_DATA,
           organizations: [partiallyVerifiedOrg],
-          baseInformation: DEFAULT_BASE_INFORMATION,
         }}
         onStateChange={mockStateChange}
       />,
@@ -319,8 +320,8 @@ describe("OrganizationsForm Functionality", () => {
     render(
       <Wrapper
         initialData={{
+          ...DEFAULT_LABEL_DATA,
           organizations: [allUnverifiedOrg],
-          baseInformation: DEFAULT_BASE_INFORMATION,
         }}
       />,
     );
@@ -335,8 +336,8 @@ describe("OrganizationsForm Edge Cases", () => {
     render(
       <Wrapper
         initialData={{
+          ...DEFAULT_LABEL_DATA,
           organizations: [],
-          baseInformation: DEFAULT_BASE_INFORMATION,
         }}
       />,
     );
