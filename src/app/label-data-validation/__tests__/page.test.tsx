@@ -55,7 +55,7 @@ describe("LabelDataValidationPage Functionality", () => {
 
     fireEvent.click(nextButton);
     fireEvent.click(nextButton);
-    expect(screen.getByTestId("organizations-form")).toBeInTheDocument();
+    expect(screen.getByTestId("guaranteed-analysis-form")).toBeInTheDocument();
   });
 
   it("renders the mocked Image Viewer", () => {

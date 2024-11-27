@@ -1,5 +1,6 @@
 "use client";
 import BaseInformationForm from "@/components/BaseInformationForm";
+import GuaranteedAnalysisForm from "@/components/GuaranteedAnalysisForm";
 import ImageViewer from "@/components/ImageViewer";
 import OrganizationsForm from "@/components/OrganizationsForm";
 import {
@@ -32,6 +33,8 @@ function LabelDataValidationPage() {
     useState<StepStatus>(StepStatus.Incomplete);
   const [baseInformationStepStatus, setBaseInformationStepStatus] =
     useState<StepStatus>(StepStatus.Incomplete);
+  const [guaranteedAnalysisStepStatus, setGuaranteedAnalysisStepStatus] =
+    useState<StepStatus>(StepStatus.Incomplete);
   const { showAlert } = useAlertStore();
 
   const createStep = (
@@ -62,6 +65,12 @@ function LabelDataValidationPage() {
       OrganizationsForm,
       organizationsStepStatus,
       setOrganizationsStepStatus,
+    ),
+    createStep(
+      t("guaranteedAnalysis.stepTitle"),
+      GuaranteedAnalysisForm,
+      guaranteedAnalysisStepStatus,
+      setGuaranteedAnalysisStepStatus,
     ),
   ];
 

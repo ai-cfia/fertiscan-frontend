@@ -1,7 +1,4 @@
 {
-  "organizations": {
-    "stepTitle": "Organizations"
-  },
   "baseInformation": {
     "stepTitle": "Base Information",
     "fields": {
@@ -31,6 +28,15 @@
         "label": "Volume"
       }
     }
+  },
+  "organizations": {
+    "stepTitle": "Organizations"
+  },
+  "cautions": {
+    "stepTitle": "Cautions"
+  },
+  "guaranteedAnalysis": {
+    "stepTitle": "Guaranteed Analysis"
   },
   "verifiedQuantityMultiInput": {
     "deleteRow": "Delete this row",
@@ -67,6 +73,31 @@
       "fieldsContainer": "Container for all input fields",
       "row": "Row containing inputs for unit and value",
       "errorIcon": "Icon indicating a validation error"
+    }
+  },
+  "verifiedBilingualTable": {
+    "english": "English",
+    "french": "French",
+    "actions": "Actions",
+    "placeholders": {
+      "english": "Enter English text",
+      "french": "Enter French text"
+    },
+    "addRow": "Add Row",
+    "delete": "Delete Row",
+    "verify": "Mark as Verified",
+    "unverify": "Mark as Unverified",
+    "verifyAll": "Mark All as Verified",
+    "unverifyAll": "Mark All as Unverified",
+    "accessibility": {
+      "englishInput": "English text input for row {{row}}",
+      "frenchInput": "French text input for row {{row}}",
+      "deleteButton": "Button to delete this row",
+      "addRowButton": "Button to add a new row",
+      "verifyButton": "Button to mark this row as Verified",
+      "unverifyButton": "Button to mark this row as Unverified",
+      "verifyAllButton": "Button to mark all rows as Verified",
+      "unverifyAllButton": "Button to mark all rows as Unverified"
     }
   }
 }
