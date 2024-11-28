@@ -57,16 +57,18 @@ const Dropzone: React.FC<DropzoneProps> = ({
     }
   }
 
-  async function traverseFileTree(item: any) {
+  async function traverseFileTree(item: FileSystemEntry) {
     if (item.isFile) {
-      item.file((file: File) => {
+      const fileEntry = item as FileSystemFileEntry;
+      fileEntry.file((file: File) => {
         if (allowedImagesExtensions.some((ext) => file.name.endsWith(ext))) {
           processFile(file);
         }
       });
     } else if (item.isDirectory) {
-      const dirReader = item.createReader();
-      dirReader.readEntries((entries: any) => {
+      const dirEntry = item as FileSystemDirectoryEntry;
+      const dirReader = dirEntry.createReader();
+      dirReader.readEntries((entries: FileSystemEntry[]) => {
         for (let i = 0; i < entries.length; i++) {
           traverseFileTree(entries[i]);
         }
