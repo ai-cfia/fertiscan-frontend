@@ -114,7 +114,6 @@ const UploadImagePage: React.FC = () => {
               scaleY={scaleY}
               offsetX={1}
               offsetY={1}
-              isVisible={isTextareaHovered}
             />
           </div>
         )}

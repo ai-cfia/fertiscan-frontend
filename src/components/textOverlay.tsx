@@ -1,6 +1,7 @@
-import React from 'react';
+import React, { useState } from 'react';
 import { TransformWrapper, TransformComponent } from 'react-zoom-pan-pinch';
 import json from '@/app/TestImagePage/test.json';
+import { set } from 'react-hook-form';
 
 interface TextData {
   content: string;
@@ -15,10 +16,11 @@ interface MyZoomPanComponentProps {
   scaleY: number;
   offsetX: number;
   offsetY: number;
-  isVisible: boolean;
 }
 
-const MyZoomPanComponent: React.FC<MyZoomPanComponentProps> = ({ imageUrl, textData, scaleX, scaleY, offsetX, offsetY, isVisible }) => {
+const MyZoomPanComponent: React.FC<MyZoomPanComponentProps> = ({ imageUrl, textData, scaleX, scaleY, offsetX, offsetY }) => {
+  const [hoveredParagraphIndex, setHoveredParagraphIndex] = useState<number | null>(null);
+
   if (!imageUrl) {
     return <div>Error: imageUrl is not provided or is invalid.</div>;
   }
@@ -68,10 +70,12 @@ const MyZoomPanComponent: React.FC<MyZoomPanComponentProps> = ({ imageUrl, textD
                       width: width,
                       height: height,
                       opacity: 0.6,
-                      display: isVisible ? 'block' : 'none',
+                      display: 'block'
                     }}
+                    onMouseEnter={() => setHoveredParagraphIndex(index)}
+                    onMouseLeave={() => setHoveredParagraphIndex(null)}
                   />
-                  {isVisible && (
+                  {hoveredParagraphIndex === index && (
                     <div
                       style={{
                         position: 'absolute',
