@@ -2,6 +2,7 @@ import { FormComponentProps, LabelData, UNITS } from "@/types/types";
 import { Box, Typography } from "@mui/material";
 import { useEffect } from "react";
 import { FormProvider, useForm, useWatch } from "react-hook-form";
+import { useTranslation } from "react-i18next";
 import VerifiedBilingualTable from "./VerifiedBilingualTable";
 import VerifiedInput from "./VerifiedInput";
 
@@ -9,6 +10,7 @@ function GuaranteedAnalysisForm({
   labelData,
   setLabelData,
 }: FormComponentProps) {
+  const { t } = useTranslation("labelDataValidationPage");
   const methods = useForm<LabelData>({
     defaultValues: labelData,
   });
@@ -37,17 +39,17 @@ function GuaranteedAnalysisForm({
           fontWeight="bold"
           data-testid="guaranteed-analysis-title"
         >
-          Title
+          {t("guaranteedAnalysis.title")}
         </Typography>
         <Box className="grid grid-cols-1 items-start sm:grid-cols-1 md:grid-cols-2 lg:grid-cols-1 xxl:grid-cols-2 gap-4 p-4">
           <VerifiedInput
-            label={"English"}
-            placeholder={"Enter value in English"}
+            label={t("guaranteedAnalysis.labelEn")}
+            placeholder={t("guaranteedAnalysis.placeholderEn")}
             path="guaranteedAnalysis.titleEn"
           />
           <VerifiedInput
-            label={"French"}
-            placeholder={"Enter value in French"}
+            label={t("guaranteedAnalysis.labelFr")}
+            placeholder={t("guaranteedAnalysis.placeholderFr")}
             path="guaranteedAnalysis.titleFr"
           />
         </Box>
@@ -58,7 +60,7 @@ function GuaranteedAnalysisForm({
           className="!mt-16"
           data-testid="guaranteed-analysis-nutrients-title"
         >
-          Nutrients
+          {t("guaranteedAnalysis.nutrients")}
         </Typography>
         <Box className="px-4">
           <VerifiedBilingualTable

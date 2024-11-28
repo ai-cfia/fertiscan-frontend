@@ -39,7 +39,13 @@
     "stepTitle": "Instructions"
   },
   "guaranteedAnalysis": {
-    "stepTitle": "Analyse garantie"
+    "stepTitle": "Analyse garantie",
+    "title": "Titre",
+    "labelFr": "Français",
+    "placeholderFr": "Entrez le titre en français",
+    "labelEn": "Anglais",
+    "placeholderEn": "Entrez le titre en anglais",
+    "nutrients": "Nutriments"
   },
   "verifiedQuantityMultiInput": {
     "deleteRow": "Supprimer cette ligne",
