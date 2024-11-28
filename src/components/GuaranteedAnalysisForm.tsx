@@ -32,7 +32,11 @@ function GuaranteedAnalysisForm({
   return (
     <FormProvider {...methods}>
       <Box className="p-4 text-left" data-testid="guaranteed-analysis-form">
-        <Typography variant="subtitle1" fontWeight="bold" className="">
+        <Typography
+          variant="subtitle1"
+          fontWeight="bold"
+          data-testid="guaranteed-analysis-title"
+        >
           Title
         </Typography>
         <Box className="grid grid-cols-1 items-start sm:grid-cols-1 md:grid-cols-2 lg:grid-cols-1 xxl:grid-cols-2 gap-4 p-4">
@@ -48,7 +52,12 @@ function GuaranteedAnalysisForm({
           />
         </Box>
 
-        <Typography variant="subtitle1" fontWeight="bold" className="!mt-16">
+        <Typography
+          variant="subtitle1"
+          fontWeight="bold"
+          className="!mt-16"
+          data-testid="guaranteed-analysis-nutrients-title"
+        >
           Nutrients
         </Typography>
         <Box className="px-4">

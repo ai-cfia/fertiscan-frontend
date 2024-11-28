@@ -20,7 +20,12 @@ import {
   Tooltip,
   Typography,
 } from "@mui/material";
-import { Controller, useFieldArray, useFormContext } from "react-hook-form";
+import {
+  Controller,
+  useFieldArray,
+  useFormContext,
+  useWatch,
+} from "react-hook-form";
 import { useTranslation } from "react-i18next";
 
 const VerifiedBilingualTable = ({
@@ -32,20 +37,25 @@ const VerifiedBilingualTable = ({
   valueColumn?: boolean;
   unitOptions?: string[];
 }) => {
-  const { control, setValue, getValues, trigger } = useFormContext();
+  const { control, setValue, trigger } = useFormContext();
   const { fields, append, remove } = useFieldArray({
     control,
     name: path,
   });
   const { t } = useTranslation("labelDataValidationPage");
 
+  const data = useWatch({ control, name: path });
+  const isVerified = (index: number) => Boolean(data?.[index]?.verified);
+
   const handleVerify = async (index: number, value: boolean) => {
     const isValid = await trigger(`${path}.${index}.value`);
-    if (isValid) setValue(`${path}.${index}.verified`, value);
+    if (isValid) {
+      setValue(`${path}.${index}.verified`, value);
+    }
   };
 
   const toggleVerify = async (index: number) => {
-    await handleVerify(index, !getValues(`${path}.${index}.verified`));
+    await handleVerify(index, Boolean(!data?.[index]?.verified));
   };
 
   const setAllVerified = async (value: boolean) => {
@@ -118,12 +128,12 @@ const VerifiedBilingualTable = ({
                         )}
                         multiline
                         fullWidth
-                        disabled={getValues(`${path}.${index}.verified`)}
+                        disabled={isVerified(index)}
                         aria-label={t(
                           "verifiedBilingualTable.accessibility.englishInput",
                           { row: index + 1 },
                         )}
-                        aria-disabled={getValues(`${path}.${index}.verified`)}
+                        aria-disabled={isVerified(index)}
                         data-testid={`input-english-${path}-${index}`}
                       />
                     )}
@@ -144,12 +154,12 @@ const VerifiedBilingualTable = ({
                         )}
                         multiline
                         fullWidth
-                        disabled={getValues(`${path}.${index}.verified`)}
+                        disabled={isVerified(index)}
                         aria-label={t(
                           "verifiedBilingualTable.accessibility.frenchInput",
                           { row: index + 1 },
                         )}
-                        aria-disabled={getValues(`${path}.${index}.verified`)}
+                        aria-disabled={isVerified(index)}
                         data-testid={`input-french-${path}-${index}`}
                       />
                     )}
@@ -168,7 +178,7 @@ const VerifiedBilingualTable = ({
                           <select
                             {...field}
                             className="p-1 text-[15px] border rounded"
-                            disabled={getValues(`${path}.${index}.verified`)}
+                            disabled={isVerified(index)}
                             aria-label={t(
                               "verifiedBilingualTable.accessibility.unitDropdown",
                             )}
@@ -205,7 +215,7 @@ const VerifiedBilingualTable = ({
                               placeholder={t(
                                 "verifiedBilingualTable.placeholders.value",
                               )}
-                              disabled={getValues(`${path}.${index}.verified`)}
+                              disabled={isVerified(index)}
                               aria-label={t(
                                 "verifiedBilingualTable.accessibility.valueInput",
                               )}
@@ -236,14 +246,12 @@ const VerifiedBilingualTable = ({
                     <Tooltip
                       title={t("verifiedBilingualTable.delete")}
                       enterDelay={1000}
-                      disableHoverListener={getValues(
-                        `${path}.${index}.verified`,
-                      )}
+                      disableHoverListener={isVerified(index)}
                     >
                       <span>
                         <IconButton
                           onClick={() => remove(index)}
-                          disabled={getValues(`${path}.${index}.verified`)}
+                          disabled={isVerified(index)}
                           aria-label={t(
                             "verifiedBilingualTable.accessibility.deleteButton",
                           )}
@@ -314,7 +322,7 @@ const VerifiedBilingualTable = ({
         <Tooltip
           title={t("verifiedBilingualTable.verifyAll")}
           enterDelay={1000}
-          disableHoverListener={getValues(path).every(
+          disableHoverListener={data.every(
             (row: VerifiedField) => row.verified,
           )}
         >
@@ -323,9 +331,7 @@ const VerifiedBilingualTable = ({
               onClick={() => setAllVerified(true)}
               variant="outlined"
               color="secondary"
-              disabled={getValues(path).every(
-                (row: VerifiedField) => row.verified,
-              )}
+              disabled={data.every((row: VerifiedField) => row.verified)}
               aria-label={t(
                 "verifiedBilingualTable.accessibility.verifyAllButton",
               )}
@@ -340,7 +346,7 @@ const VerifiedBilingualTable = ({
         <Tooltip
           title={t("verifiedBilingualTable.unverifyAll")}
           enterDelay={1000}
-          disableHoverListener={getValues(path).every(
+          disableHoverListener={data.every(
             (row: VerifiedField) => !row.verified,
           )}
         >
@@ -349,9 +355,7 @@ const VerifiedBilingualTable = ({
               onClick={() => setAllVerified(false)}
               variant="outlined"
               color="secondary"
-              disabled={getValues(path).every(
-                (row: VerifiedField) => !row.verified,
-              )}
+              disabled={data.every((row: VerifiedField) => !row.verified)}
               aria-label={t(
                 "verifiedBilingualTable.accessibility.unverifyAllButton",
               )}
