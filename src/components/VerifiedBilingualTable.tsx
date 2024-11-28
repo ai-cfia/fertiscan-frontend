@@ -229,6 +229,7 @@ const VerifiedBilingualTable = ({
                                   color="error"
                                   fontSize="small"
                                   data-testid={`value-error-icon-${path}-${index}`}
+                                  aria-label={error.message}
                                 />
                               </Tooltip>
                             )}

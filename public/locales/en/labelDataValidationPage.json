@@ -47,6 +47,13 @@
     "placeholderEn": "Enter English title",
     "nutrients": "Nutrients"
   },
+  "verifiedInput": {
+    "verify": "Mark {{label}} as Verified",
+    "unverify": "Mark {{label}} as Unverified",
+    "accessibility": {
+      "inputField": "Input field for {{label}}"
+    }
+  },
   "verifiedQuantityMultiInput": {
     "deleteRow": "Delete this row",
     "defaultPlaceholder": "Enter value",

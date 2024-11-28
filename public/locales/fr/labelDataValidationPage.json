@@ -47,6 +47,13 @@
     "placeholderEn": "Entrez le titre en anglais",
     "nutrients": "Nutriments"
   },
+  "verifiedInput": {
+    "verify": "Marquer {{label}} comme vérifié",
+    "unverify": "Marquer {{label}} comme non vérifié",
+    "accessibility": {
+      "inputField": "Champ de saisie pour {{label}}"
+    }
+  },
   "verifiedQuantityMultiInput": {
     "deleteRow": "Supprimer cette ligne",
     "defaultPlaceholder": "Entrez une valeur",

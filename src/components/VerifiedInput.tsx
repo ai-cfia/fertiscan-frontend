@@ -9,6 +9,7 @@ import {
 } from "@mui/material";
 import { useState } from "react";
 import { Controller, useFormContext, useWatch } from "react-hook-form";
+import { useTranslation } from "react-i18next";
 
 function VerifiedInput({
   label,
@@ -21,8 +22,10 @@ function VerifiedInput({
   path: string;
   className?: string;
 }) {
+  const { t } = useTranslation("labelDataValidationPage");
   const { control } = useFormContext();
   const [isFocused, setIsFocused] = useState(false);
+
   const valuePath = `${path}.value`;
   const verifiedPath = `${path}.verified`;
 
@@ -59,6 +62,7 @@ function VerifiedInput({
             }}
             disabled={verified}
             data-testid={`input-field-${valuePath}`}
+            aria-label={`${t("verifiedInput.accessibility.inputField", { label })}`}
           />
         )}
       />
@@ -73,16 +77,26 @@ function VerifiedInput({
         control={control}
         render={({ field: { value, onChange } }) => (
           <Tooltip
-            title={verified ? "Mark as Unverified" : "Mark as Verified"}
+            title={
+              verified
+                ? t("verifiedInput.unverify", { label })
+                : t("verifiedInput.verify", { label })
+            }
             enterDelay={1000}
           >
             <IconButton
               onClick={() => onChange(!value)}
               data-testid={`toggle-verified-btn-${verifiedPath}`}
+              aria-label={
+                verified
+                  ? t("verifiedInput.unverify", { label })
+                  : t("verifiedInput.verify", { label })
+              }
             >
               <CheckIcon
                 className={value ? "text-green-500" : ""}
                 data-testid={`verified-icon-${verifiedPath}`}
+                aria-hidden
               />
             </IconButton>
           </Tooltip>
