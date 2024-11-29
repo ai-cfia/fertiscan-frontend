@@ -90,8 +90,9 @@ const SideNav = ({ open, onClose }: DrawerMenuProps) => {
           <List>
             <Divider />
             <Link
-              href="https://github.com/ai-cfia/fertiscan-frontend/issues/new/choose"
+              href={process.env.NEXT_PUBLIC_REPORT_ISSUE_URL?.toString() || "/"}
               passHref
+              target="_blank"
               data-testid="report-issue-button"
             >
               <ListItemButton>

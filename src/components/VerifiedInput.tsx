@@ -1,4 +1,3 @@
-import { FieldStatus } from "@/types/types";
 import CheckIcon from "@mui/icons-material/Check";
 import {
   Box,
@@ -11,55 +10,42 @@ import {
 import { useState } from "react";
 import { Controller, useFormContext, useWatch } from "react-hook-form";
 
-function InputWithStatus({
+function VerifiedInput({
   label,
   placeholder,
-  name,
-  statusName,
+  path,
   className = "",
 }: {
   label: string;
   placeholder: string;
-  name: string;
-  statusName: string;
+  path: string;
   className?: string;
 }) {
   const { control } = useFormContext();
   const [isFocused, setIsFocused] = useState(false);
+  const valuePath = `${path}.value`;
+  const verifiedPath = `${path}.verified`;
 
-  const statusValue = useWatch({
+  const verified: boolean = useWatch({
     control,
-    name: statusName,
+    name: verifiedPath,
   });
-
-  const toggleVerified = (
-    currentStatus: FieldStatus,
-    setStatus: (value: FieldStatus) => void,
-  ) => {
-    if (currentStatus !== FieldStatus.Error) {
-      setStatus(
-        currentStatus === FieldStatus.Verified
-          ? FieldStatus.Unverified
-          : FieldStatus.Verified,
-      );
-    }
-  };
 
   return (
     <Box
       className={`flex items-center p-1 w-full border-2 rounded-tr-md rounded-br-md ${
         isFocused ? "border-fertiscan-blue" : ""
       } ${className}`}
-      data-testid={`input-with-status-${name}`}
+      data-testid={`verified-input-${path}`}
     >
       <Typography
         className="px-2 !font-bold select-none"
-        data-testid={`input-label-${name}`}
+        data-testid={`input-label-${path}`}
       >
         {label}
       </Typography>
       <Controller
-        name={name}
+        name={valuePath}
         control={control}
         render={({ field }) => (
           <InputBase
@@ -67,9 +53,12 @@ function InputWithStatus({
             className="ml-2 flex-1 !text-[15px]"
             placeholder={placeholder}
             onFocus={() => setIsFocused(true)}
-            onBlur={() => setIsFocused(false)}
-            disabled={statusValue === FieldStatus.Verified}
-            data-testid={`input-field-${name}`}
+            onBlur={(e) => {
+              setIsFocused(false);
+              field.onChange(e.target.value.trim());
+            }}
+            disabled={verified}
+            data-testid={`input-field-${valuePath}`}
           />
         )}
       />
@@ -77,29 +66,23 @@ function InputWithStatus({
         orientation="vertical"
         flexItem
         className={isFocused ? "!border-fertiscan-blue" : ""}
-        data-testid={`divider-${name}`}
+        data-testid={`divider-${path}`}
       />
       <Controller
-        name={statusName}
+        name={verifiedPath}
         control={control}
         render={({ field: { value, onChange } }) => (
           <Tooltip
-            title={
-              statusValue === FieldStatus.Verified
-                ? "Mark as Unverified"
-                : "Mark as Verified"
-            }
+            title={verified ? "Mark as Unverified" : "Mark as Verified"}
             enterDelay={1000}
           >
             <IconButton
-              onClick={() => toggleVerified(value, onChange)}
-              data-testid={`toggle-status-btn-${statusName}`}
+              onClick={() => onChange(!value)}
+              data-testid={`toggle-verified-btn-${verifiedPath}`}
             >
               <CheckIcon
-                className={
-                  value === FieldStatus.Verified ? "text-green-500" : ""
-                }
-                data-testid={`status-icon-${statusName}`}
+                className={value ? "text-green-500" : ""}
+                data-testid={`verified-icon-${verifiedPath}`}
               />
             </IconButton>
           </Tooltip>
@@ -109,4 +92,4 @@ function InputWithStatus({
   );
 }
 
-export default InputWithStatus;
+export default VerifiedInput;
