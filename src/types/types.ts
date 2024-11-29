@@ -67,17 +67,26 @@ export type VerifiedTextField = VerifiedField & {
   value: string;
 };
 
+const DEFAULT_TEXT_FIELD: VerifiedTextField = {
+  value: "",
+  verified: false,
+};
+
+export type VerifiedBooleanField = VerifiedField & {
+  value: boolean;
+};
+
+export const DEFAULT_BOOLEAN_FIELD: VerifiedBooleanField = {
+  value: false,
+  verified: false,
+};
+
 // Organizations
 export type Organization = {
   name: VerifiedTextField;
   address: VerifiedTextField;
   website: VerifiedTextField;
   phoneNumber: VerifiedTextField;
-};
-
-const DEFAULT_TEXT_FIELD: VerifiedTextField = {
-  value: "",
-  verified: false,
 };
 
 export const DEFAULT_ORGANIZATION: Organization = {
@@ -175,12 +184,14 @@ export const DEFAULT_GA_NUTRIENT: BilingualField = {
 export type GuaranteedAnalysis = {
   titleEn: VerifiedTextField;
   titleFr: VerifiedTextField;
+  isMinimal: VerifiedBooleanField;
   nutrients: BilingualField[];
 };
 
 export const DEFAULT_GUARANTEED_ANALYSIS: GuaranteedAnalysis = {
   titleEn: DEFAULT_TEXT_FIELD,
   titleFr: DEFAULT_TEXT_FIELD,
+  isMinimal: DEFAULT_BOOLEAN_FIELD,
   nutrients: [DEFAULT_GA_NUTRIENT],
 };
 

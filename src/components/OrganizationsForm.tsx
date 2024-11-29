@@ -18,7 +18,7 @@ import {
   useForm,
   useWatch,
 } from "react-hook-form";
-import VerifiedInput from "./VerifiedInput";
+import { VerifiedInput } from "./VerifiedFieldComponents";
 
 const fieldNames = Object.keys(DEFAULT_ORGANIZATION) as Array<
   keyof Organization

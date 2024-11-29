@@ -4,7 +4,7 @@ import { useEffect } from "react";
 import { FormProvider, useForm, useWatch } from "react-hook-form";
 import { useTranslation } from "react-i18next";
 import VerifiedBilingualTable from "./VerifiedBilingualTable";
-import VerifiedInput from "./VerifiedInput";
+import { VerifiedCheckbox, VerifiedInput } from "./VerifiedFieldComponents";
 
 function GuaranteedAnalysisForm({
   labelData,
@@ -52,6 +52,12 @@ function GuaranteedAnalysisForm({
             placeholder={t("guaranteedAnalysis.placeholderFr")}
             path="guaranteedAnalysis.titleFr"
           />
+          <Box className="flex flex-shrink-0">
+            <VerifiedCheckbox
+              label={t("guaranteedAnalysis.isMinimal")}
+              path="guaranteedAnalysis.isMinimal"
+            />
+          </Box>
         </Box>
 
         <Typography

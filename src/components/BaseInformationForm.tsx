@@ -3,7 +3,7 @@ import { Box } from "@mui/material";
 import { useEffect } from "react";
 import { FormProvider, useForm, useWatch } from "react-hook-form";
 import { useTranslation } from "react-i18next";
-import VerifiedInput from "./VerifiedInput";
+import { VerifiedInput } from "./VerifiedFieldComponents";
 import VerifiedQuantityMultiInput from "./VerifiedQuantityMultiInput";
 
 function BaseInformationForm({ labelData, setLabelData }: FormComponentProps) {

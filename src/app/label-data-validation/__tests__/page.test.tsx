@@ -216,27 +216,29 @@ describe("LabelDataValidationPage and Forms Integration", () => {
       fireEvent.click(button!);
     });
 
-    const verifyTitleEn = screen.getByTestId(
-      "verified-icon-guaranteedAnalysis.titleEn.verified",
-    );
-    const verifyTitleFr = screen.getByTestId(
-      "verified-icon-guaranteedAnalysis.titleFr.verified",
-    );
-    const verifyRowBtns = screen.getAllByTestId(
-      /verify-row-btn-guaranteedAnalysis\.nutrients-\d+/,
-    );
-
     await act(async () => {
-      fireEvent.click(verifyTitleEn);
-      fireEvent.click(verifyTitleFr);
-      verifyRowBtns.forEach((btn) => fireEvent.click(btn));
+      fireEvent.click(
+        screen.getByTestId("verified-icon-guaranteedAnalysis.titleEn.verified"),
+      );
+      fireEvent.click(
+        screen.getByTestId("verified-icon-guaranteedAnalysis.titleFr.verified"),
+      );
+      fireEvent.click(
+        screen.getByTestId(
+          "verified-icon-guaranteedAnalysis.isMinimal.verified",
+        ),
+      );
+      screen
+        .getAllByTestId(/verify-row-btn-guaranteedAnalysis\.nutrients-\d+/)
+        .forEach((btn) => fireEvent.click(btn));
     });
 
-    screen.debug(verifyRowBtns);
     expect(targetSpan).toHaveClass("Mui-completed");
 
     await act(async () => {
-      fireEvent.click(verifyTitleEn);
+      fireEvent.click(
+        screen.getByTestId("verified-icon-guaranteedAnalysis.titleEn.verified"),
+      );
     });
 
     expect(targetSpan).not.toHaveClass("Mui-completed");

@@ -1,6 +1,6 @@
 {
   "baseInformation": {
-    "stepTitle": "Informations de base sur l'engrais",
+    "stepTitle": "Informations de Base sur l'Engrais",
     "fields": {
       "name": {
         "label": "Nom",
@@ -39,19 +39,21 @@
     "stepTitle": "Instructions"
   },
   "guaranteedAnalysis": {
-    "stepTitle": "Analyse garantie",
+    "stepTitle": "Analyse Garantie",
     "title": "Titre",
     "labelFr": "Français",
     "placeholderFr": "Entrez le titre en français",
     "labelEn": "Anglais",
     "placeholderEn": "Entrez le titre en anglais",
+    "isMinimal": "L'analyse est minimale",
     "nutrients": "Nutriments"
   },
   "verifiedInput": {
     "verify": "Marquer {{label}} comme vérifié",
     "unverify": "Marquer {{label}} comme non vérifié",
     "accessibility": {
-      "inputField": "Champ de saisie pour {{label}}"
+      "input": "Champ de saisie pour {{label}}",
+      "checkbox": "Case à cocher pour {{label}}"
     }
   },
   "verifiedQuantityMultiInput": {

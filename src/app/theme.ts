@@ -135,6 +135,11 @@ const theme = createTheme({
         timeout: 0,
       },
     },
+    MuiCheckbox: {
+      defaultProps: {
+        disableRipple: true,
+      },
+    },
   },
 });
 export default theme;

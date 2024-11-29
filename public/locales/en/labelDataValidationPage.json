@@ -1,6 +1,6 @@
 {
   "baseInformation": {
-    "stepTitle": "Base Information",
+    "stepTitle": "Fertilizer Base Information",
     "fields": {
       "name": {
         "label": "Name",
@@ -45,13 +45,15 @@
     "placeholderFr": "Enter French title",
     "labelEn": "English",
     "placeholderEn": "Enter English title",
+    "isMinimal": "The analysis is minimal",
     "nutrients": "Nutrients"
   },
   "verifiedInput": {
     "verify": "Mark {{label}} as Verified",
     "unverify": "Mark {{label}} as Unverified",
     "accessibility": {
-      "inputField": "Input field for {{label}}"
+      "input": "Input field for {{label}}",
+      "checkbox": "Checkbox for {{label}}"
     }
   },
   "verifiedQuantityMultiInput": {

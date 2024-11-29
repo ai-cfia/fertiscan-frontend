@@ -38,7 +38,7 @@ describe("BaseInformationForm Rendering", () => {
 
     verifiedFields.forEach((key) => {
       const verifiedInput = screen.getByTestId(
-        `verified-input-baseInformation.${key}`,
+        `verified-field-baseInformation.${key}`,
       );
       expect(verifiedInput).toBeInTheDocument();
     });

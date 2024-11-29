@@ -37,10 +37,13 @@ describe("GuaranteedAnalysisForm Rendering", () => {
     render(<Wrapper initialData={DEFAULT_LABEL_DATA} />);
 
     expect(
-      screen.getByTestId("verified-input-guaranteedAnalysis.titleEn"),
+      screen.getByTestId("verified-field-guaranteedAnalysis.titleEn"),
     ).toBeInTheDocument();
     expect(
-      screen.getByTestId("verified-input-guaranteedAnalysis.titleFr"),
+      screen.getByTestId("verified-field-guaranteedAnalysis.titleFr"),
+    ).toBeInTheDocument();
+    expect(
+      screen.getByTestId("verified-field-guaranteedAnalysis.isMinimal"),
     ).toBeInTheDocument();
 
     expect(
