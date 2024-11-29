@@ -1,6 +1,7 @@
 import {
+  DEFAULT_BASE_INFORMATION,
+  DEFAULT_LABEL_DATA,
   DEFAULT_ORGANIZATION,
-  FieldStatus,
   LabelData,
   Organization,
 } from "@/types/types";
@@ -29,35 +30,19 @@ const Wrapper = ({
 
   return (
     <FormProvider {...methods}>
-      <OrganizationsForm
-        title="Test Organizations"
-        labelData={labelData}
-        setLabelData={setLabelData}
-      />
+      <OrganizationsForm labelData={labelData} setLabelData={setLabelData} />
     </FormProvider>
   );
 };
 
 describe("OrganizationsForm Rendering", () => {
-  it("should render the form title", () => {
-    render(
-      <Wrapper
-        initialData={{
-          organizations: [DEFAULT_ORGANIZATION],
-        }}
-      />,
-    );
-
-    const title = screen.getByTestId("form-title");
-    expect(title).toBeInTheDocument();
-    expect(title).toHaveTextContent("Test Organizations");
-  });
-
   it("should render the correct number of organizations", () => {
     render(
       <Wrapper
         initialData={{
           organizations: [DEFAULT_ORGANIZATION, DEFAULT_ORGANIZATION],
+          baseInformation: DEFAULT_BASE_INFORMATION,
+          cautions: [],
         }}
       />,
     );
@@ -67,13 +52,7 @@ describe("OrganizationsForm Rendering", () => {
   });
 
   it("should render all inputs for each organization", () => {
-    render(
-      <Wrapper
-        initialData={{
-          organizations: [DEFAULT_ORGANIZATION],
-        }}
-      />,
-    );
+    render(<Wrapper initialData={DEFAULT_LABEL_DATA} />);
 
     expect(
       screen.getByPlaceholderText("Enter organization name"),
@@ -89,6 +68,7 @@ describe("OrganizationsForm Rendering", () => {
     render(
       <Wrapper
         initialData={{
+          ...DEFAULT_LABEL_DATA,
           organizations: [],
         }}
       />,
@@ -105,6 +85,7 @@ describe("OrganizationsForm Functionality", () => {
     render(
       <Wrapper
         initialData={{
+          ...DEFAULT_LABEL_DATA,
           organizations: [],
         }}
       />,
@@ -117,13 +98,7 @@ describe("OrganizationsForm Functionality", () => {
   });
 
   it("should remove an organization when Remove button is clicked", () => {
-    render(
-      <Wrapper
-        initialData={{
-          organizations: [DEFAULT_ORGANIZATION],
-        }}
-      />,
-    );
+    render(<Wrapper initialData={DEFAULT_LABEL_DATA} />);
 
     expect(screen.queryAllByTestId(/organization-\d+/)).toHaveLength(1);
     const removeButton = screen.getByTestId("remove-org-btn-0");
@@ -136,9 +111,7 @@ describe("OrganizationsForm Functionality", () => {
 
     render(
       <Wrapper
-        initialData={{
-          organizations: [DEFAULT_ORGANIZATION],
-        }}
+        initialData={DEFAULT_LABEL_DATA}
         onStateChange={mockStateChange}
       />,
     );
@@ -164,31 +137,29 @@ describe("OrganizationsForm Functionality", () => {
     );
   });
 
-  it("should update the organization field status when the Verified button is clicked", () => {
+  it("should update the organization field verification when the Verified button is clicked", () => {
     const mockStateChange = jest.fn();
 
     render(
       <Wrapper
-        initialData={{
-          organizations: [DEFAULT_ORGANIZATION],
-        }}
+        initialData={DEFAULT_LABEL_DATA}
         onStateChange={mockStateChange}
       />,
     );
 
-    const toggleStatusButton = screen.getByTestId(
-      "toggle-status-btn-organizations.0.address.status",
+    const verifyButton = screen.getByTestId(
+      "toggle-verified-btn-organizations.0.address.verified",
     );
-    expect(toggleStatusButton).toBeInTheDocument();
+    expect(verifyButton).toBeInTheDocument();
 
-    fireEvent.click(toggleStatusButton);
+    fireEvent.click(verifyButton);
 
     expect(mockStateChange).toHaveBeenCalledWith(
       expect.objectContaining({
         organizations: [
           expect.objectContaining({
             address: expect.objectContaining({
-              status: FieldStatus.Verified,
+              verified: true,
             }),
           }),
         ],
@@ -201,9 +172,7 @@ describe("OrganizationsForm Functionality", () => {
 
     render(
       <Wrapper
-        initialData={{
-          organizations: [DEFAULT_ORGANIZATION],
-        }}
+        initialData={DEFAULT_LABEL_DATA}
         onStateChange={mockStateChange}
       />,
     );
@@ -218,16 +187,16 @@ describe("OrganizationsForm Functionality", () => {
         organizations: [
           expect.objectContaining({
             name: expect.objectContaining({
-              status: FieldStatus.Verified,
+              verified: true,
             }),
             address: expect.objectContaining({
-              status: FieldStatus.Verified,
+              verified: true,
             }),
             website: expect.objectContaining({
-              status: FieldStatus.Verified,
+              verified: true,
             }),
             phoneNumber: expect.objectContaining({
-              status: FieldStatus.Verified,
+              verified: true,
             }),
           }),
         ],
@@ -239,29 +208,26 @@ describe("OrganizationsForm Functionality", () => {
     const verifiedOrg: Organization = {
       name: {
         value: "",
-        status: FieldStatus.Verified,
-        errorMessage: null,
+        verified: true,
       },
       address: {
         value: "",
-        status: FieldStatus.Verified,
-        errorMessage: null,
+        verified: true,
       },
       website: {
         value: "",
-        status: FieldStatus.Verified,
-        errorMessage: null,
+        verified: true,
       },
       phoneNumber: {
         value: "",
-        status: FieldStatus.Verified,
-        errorMessage: null,
+        verified: true,
       },
     };
 
     render(
       <Wrapper
         initialData={{
+          ...DEFAULT_LABEL_DATA,
           organizations: [verifiedOrg],
         }}
       />,
@@ -277,29 +243,26 @@ describe("OrganizationsForm Functionality", () => {
     const partiallyVerifiedOrg = {
       name: {
         value: "Test Name",
-        status: FieldStatus.Verified,
-        errorMessage: null,
+        verified: true,
       },
       address: {
         value: "123 Test St",
-        status: FieldStatus.Unverified,
-        errorMessage: null,
+        verified: false,
       },
       website: {
         value: "https://test.com",
-        status: FieldStatus.Unverified,
-        errorMessage: null,
+        verified: false,
       },
       phoneNumber: {
         value: "123-456-7890",
-        status: FieldStatus.Unverified,
-        errorMessage: null,
+        verified: false,
       },
     };
 
     render(
       <Wrapper
         initialData={{
+          ...DEFAULT_LABEL_DATA,
           organizations: [partiallyVerifiedOrg],
         }}
         onStateChange={mockStateChange}
@@ -317,16 +280,16 @@ describe("OrganizationsForm Functionality", () => {
         organizations: [
           expect.objectContaining({
             name: expect.objectContaining({
-              status: FieldStatus.Unverified,
+              verified: false,
             }),
             address: expect.objectContaining({
-              status: FieldStatus.Unverified,
+              verified: false,
             }),
             website: expect.objectContaining({
-              status: FieldStatus.Unverified,
+              verified: false,
             }),
             phoneNumber: expect.objectContaining({
-              status: FieldStatus.Unverified,
+              verified: false,
             }),
           }),
         ],
@@ -338,29 +301,26 @@ describe("OrganizationsForm Functionality", () => {
     const allUnverifiedOrg = {
       name: {
         value: "Test Name",
-        status: FieldStatus.Unverified,
-        errorMessage: null,
+        verified: false,
       },
       address: {
         value: "123 Test St",
-        status: FieldStatus.Unverified,
-        errorMessage: null,
+        verified: false,
       },
       website: {
         value: "https://test.com",
-        status: FieldStatus.Unverified,
-        errorMessage: null,
+        verified: false,
       },
       phoneNumber: {
         value: "123-456-7890",
-        status: FieldStatus.Unverified,
-        errorMessage: null,
+        verified: false,
       },
     };
 
     render(
       <Wrapper
         initialData={{
+          ...DEFAULT_LABEL_DATA,
           organizations: [allUnverifiedOrg],
         }}
       />,
@@ -376,6 +336,7 @@ describe("OrganizationsForm Edge Cases", () => {
     render(
       <Wrapper
         initialData={{
+          ...DEFAULT_LABEL_DATA,
           organizations: [],
         }}
       />,

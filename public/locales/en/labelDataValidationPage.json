@@ -1,0 +1,103 @@
+{
+  "baseInformation": {
+    "stepTitle": "Base Information",
+    "fields": {
+      "name": {
+        "label": "Name",
+        "placeholder": "Enter name"
+      },
+      "registrationNumber": {
+        "label": "Registration Number",
+        "placeholder": "Enter registration number"
+      },
+      "lotNumber": {
+        "label": "Lot Number",
+        "placeholder": "Enter lot number"
+      },
+      "npk": {
+        "label": "NPK",
+        "placeholder": "Enter NPK"
+      },
+      "weight": {
+        "label": "Weight"
+      },
+      "density": {
+        "label": "Density"
+      },
+      "volume": {
+        "label": "Volume"
+      }
+    }
+  },
+  "organizations": {
+    "stepTitle": "Organizations"
+  },
+  "cautions": {
+    "stepTitle": "Cautions"
+  },
+  "instructions": {
+    "stepTitle": "Instructions"
+  },
+  "verifiedQuantityMultiInput": {
+    "deleteRow": "Delete this row",
+    "defaultPlaceholder": "Enter value",
+    "addRow": "Add Row",
+    "removeRow": "Remove",
+    "verify": "Mark as Verified",
+    "unverify": "Mark as Unverified",
+    "errors": {
+      "numbersOnly": "Numbers only",
+      "minValue": "Minimum value is 0",
+      "duplicateUnit": "Duplicate unit"
+    },
+    "units": {
+      "kg": "kg",
+      "g": "g",
+      "lb": "lb",
+      "tonne": "tonne",
+      "L": "L",
+      "mL": "mL",
+      "gal": "gal",
+      "ft³": "ft³",
+      "lb/ft³": "lb/ft³",
+      "g/cm³": "g/cm³",
+      "kg/m³": "kg/m³",
+      "lb/gal": "lb/gal"
+    },
+    "accessibility": {
+      "deleteRowButton": "Button to delete this row",
+      "addRowButton": "Button to add a new row",
+      "valueInput": "Input field for numeric value",
+      "unitDropdown": "Dropdown to select a unit of measurement",
+      "verifyToggleButton": "Button to toggle verification status",
+      "fieldsContainer": "Container for all input fields",
+      "row": "Row containing inputs for unit and value",
+      "errorIcon": "Icon indicating a validation error"
+    }
+  },
+  "verifiedBilingualTable": {
+    "english": "English",
+    "french": "French",
+    "actions": "Actions",
+    "placeholders": {
+      "english": "Enter English text",
+      "french": "Enter French text"
+    },
+    "addRow": "Add Row",
+    "delete": "Delete Row",
+    "verify": "Mark as Verified",
+    "unverify": "Mark as Unverified",
+    "verifyAll": "Mark All as Verified",
+    "unverifyAll": "Mark All as Unverified",
+    "accessibility": {
+      "englishInput": "English text input for row {{row}}",
+      "frenchInput": "French text input for row {{row}}",
+      "deleteButton": "Button to delete this row",
+      "addRowButton": "Button to add a new row",
+      "verifyButton": "Button to mark this row as Verified",
+      "unverifyButton": "Button to mark this row as Unverified",
+      "verifyAllButton": "Button to mark all rows as Verified",
+      "unverifyAllButton": "Button to mark all rows as Unverified"
+    }
+  }
+}
