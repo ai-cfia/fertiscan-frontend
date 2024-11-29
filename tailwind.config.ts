@@ -24,6 +24,5 @@ const config: Config = {
       xxl: "1800px",
     },
   },
-  plugins: [require("tailwind-scrollbar")],
 };
 export default config;

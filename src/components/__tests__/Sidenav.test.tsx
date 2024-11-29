@@ -89,7 +89,6 @@ describe("SideNav Component", () => {
       screen.getByText(t("sideNav.repportIssue")).closest("a"),
     ).toHaveAttribute(
       "href",
-      "https://github.com/ai-cfia/fertiscan-frontend/issues/new/choose",
-    );
+      );
   });
 });

@@ -51,7 +51,7 @@ const ImageViewer: React.FC<ImageViewerProps> = ({ imageFiles }) => {
 
   return (
     <Box
-      className="flex flex-col items-center justify-center max-w-full border-2 bg-gray-100 border-gray-100"
+      className="flex flex-col items-center justify-center size-full  "
       data-testid="image-viewer"
     >
       <Swiper
@@ -59,17 +59,17 @@ const ImageViewer: React.FC<ImageViewerProps> = ({ imageFiles }) => {
         loop={false}
         speed={0}
         data-testid="swiper"
-        className="w-full h-full"
+        className="size-full"
         onSwiper={(swiper) => setSwiperInstance(swiper)}
         onSlideChange={(swiper) => setActiveIndex(swiper.activeIndex)}
         noSwiping
         noSwipingClass="no-swipe"
-        pagination={{ clickable: true }} // Enable pagination
-        modules={[Pagination]} // Register the Pagination module
+        pagination={{ clickable: true }}
+        modules={[Pagination]}
       >
         {imageUrls.map((url, index) => (
           <SwiperSlide key={index} data-testid={`slide-${index + 1}`}>
-            <Box className="no-swipe w-full h-full">
+            <Box className="no-swipe size-full">
               <TransformWrapper
                 key={index}
                 onInit={(ref) => handleInit(index, ref)}
@@ -90,7 +90,7 @@ const ImageViewer: React.FC<ImageViewerProps> = ({ imageFiles }) => {
                 >
                   <Image
                     key={index}
-                    className="object-contain w-full h-full"
+                    className="object-contain size-full"
                     src={url}
                     alt={`Slide ${index + 1}`}
                     width={500}
@@ -131,55 +131,68 @@ const ControlBar: React.FC<ControlBarProps> = ({
       className="flex items-center justify-center gap-4 p-4 flex-wrap"
       data-testid="control-bar"
     >
-      <Tooltip title="Previous">
-        <Button
-          variant="contained"
-          onClick={() => swiper?.slidePrev()}
-          data-testid="prev-button"
-          disabled={activeIndex <= 0}
-        >
-          <ArrowBackIosIcon />
-        </Button>
+      <Tooltip title="Previous" disableHoverListener={activeIndex <= 0}>
+        <span>
+          <Button
+            variant="contained"
+            onClick={() => swiper?.slidePrev()}
+            data-testid="prev-button"
+            disabled={activeIndex <= 0}
+          >
+            <ArrowBackIosIcon />
+          </Button>
+        </span>
       </Tooltip>
-      <Tooltip title="Next">
-        <Button
-          variant="contained"
-          onClick={() => swiper?.slideNext()}
-          data-testid="next-button"
-          disabled={activeIndex >= zoomRefs.length - 1}
-        >
-          <ArrowForwardIosIcon />
-        </Button>
+      <Tooltip
+        title="Next"
+        disableHoverListener={activeIndex >= zoomRefs.length - 1}
+      >
+        <span>
+          <Button
+            variant="contained"
+            onClick={() => swiper?.slideNext()}
+            data-testid="next-button"
+            disabled={activeIndex >= zoomRefs.length - 1}
+          >
+            <ArrowForwardIosIcon />
+          </Button>
+        </span>
       </Tooltip>
-      <Tooltip title="Zoom In">
-        <Button
-          variant="contained"
-          onClick={() => currentZoomRef?.zoomIn()}
-          data-testid="zoom-in-button"
-          disabled={!currentZoomRef}
-        >
-          <ZoomInIcon />
-        </Button>
+      <Tooltip title="Zoom In" disableHoverListener={!currentZoomRef}>
+        <span>
+          <Button
+            variant="contained"
+            onClick={() => currentZoomRef?.zoomIn()}
+            data-testid="zoom-in-button"
+            disabled={!currentZoomRef}
+          >
+            <ZoomInIcon />
+          </Button>
+        </span>
       </Tooltip>
-      <Tooltip title="Zoom Out">
-        <Button
-          variant="contained"
-          onClick={() => currentZoomRef?.zoomOut()}
-          data-testid="zoom-out-button"
-          disabled={!currentZoomRef}
-        >
-          <ZoomOutIcon />
-        </Button>
+      <Tooltip title="Zoom Out" disableHoverListener={!currentZoomRef}>
+        <span>
+          <Button
+            variant="contained"
+            onClick={() => currentZoomRef?.zoomOut()}
+            data-testid="zoom-out-button"
+            disabled={!currentZoomRef}
+          >
+            <ZoomOutIcon />
+          </Button>
+        </span>
       </Tooltip>
-      <Tooltip title="Reset zoom">
-        <Button
-          variant="contained"
-          onClick={() => zoomRefs.forEach((ref) => ref?.resetTransform())}
-          data-testid="reset-button"
-          disabled={!currentZoomRef}
-        >
-          <YoutubeSearchedForIcon />
-        </Button>
+      <Tooltip title="Reset zoom" disableHoverListener={!currentZoomRef}>
+        <span>
+          <Button
+            variant="contained"
+            onClick={() => zoomRefs.forEach((ref) => ref?.resetTransform())}
+            data-testid="reset-button"
+            disabled={!currentZoomRef}
+          >
+            <YoutubeSearchedForIcon />
+          </Button>
+        </span>
       </Tooltip>
     </Box>
   );
