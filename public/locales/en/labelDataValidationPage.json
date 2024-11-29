@@ -38,6 +38,9 @@
   "instructions": {
     "stepTitle": "Instructions"
   },
+  "ingredients": {
+    "stepTitle": "Ingredients"
+  },
   "verifiedQuantityMultiInput": {
     "deleteRow": "Delete this row",
     "defaultPlaceholder": "Enter value",

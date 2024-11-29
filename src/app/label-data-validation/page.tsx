@@ -2,6 +2,7 @@
 import BaseInformationForm from "@/components/BaseInformationForm";
 import CautionsForm from "@/components/CautionsForm";
 import ImageViewer from "@/components/ImageViewer";
+import IngredientsForm from "@/components/IngredientsForm";
 import InstructionsForm from "@/components/InstructionsForm";
 import OrganizationsForm from "@/components/OrganizationsForm";
 import {
@@ -38,6 +39,8 @@ function LabelDataValidationPage() {
     StepStatus.Incomplete,
   );
   const [instructionsStepStatus, setInstructionsStepStatus] =
+    useState<StepStatus>(StepStatus.Incomplete);
+  const [ingredientsStepStatus, setIngredientsStepStatus] =
     useState<StepStatus>(StepStatus.Incomplete);
   const { showAlert } = useAlertStore();
 
@@ -81,6 +84,12 @@ function LabelDataValidationPage() {
       InstructionsForm,
       instructionsStepStatus,
       setInstructionsStepStatus,
+    ),
+    createStep(
+      t("ingredients.stepTitle"),
+      IngredientsForm,
+      ingredientsStepStatus,
+      setIngredientsStepStatus,
     ),
   ];
 
@@ -126,7 +135,7 @@ function LabelDataValidationPage() {
 
   return (
     <Container
-      className="flex flex-col max-w-[1920px] bg-gray-100 "
+      className="flex flex-col max-w-[1920px] bg-gray-100 text-black"
       maxWidth={false}
       data-testid="container"
     >
@@ -169,12 +178,11 @@ function LabelDataValidationPage() {
         >
           <Typography
             variant="h6"
-            className="text-lg font-bold"
+            className="text-lg !font-bold"
             data-testid="form-title"
           >
             {steps[activeStep].title}
           </Typography>
-          {/* <Box className="min-h-[500px] lg:max-h-[80vh] overflow-y-auto"> */}
           <Box className="flex-1 overflow-y-auto sm:px-8">
             {steps[activeStep].render()}
           </Box>
