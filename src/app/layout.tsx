@@ -1,15 +1,16 @@
 "use client";
 import Header from "@/components/Header";
 import SideNav from "@/components/Sidenav";
+import useAlertStore from "@/stores/alertStore";
+import { Box } from "@mui/material";
 import { AppRouterCacheProvider } from "@mui/material-nextjs/v14-appRouter";
 import { ThemeProvider } from "@mui/material/styles";
-import { useState } from "react";
-import "./globals.css";
-import theme from "./theme";
 import "dotenv/config";
-import "./i18n";
-import useAlertStore from "@/stores/alertStore";
+import { useState } from "react";
 import { useTranslation } from "react-i18next";
+import "./globals.css";
+import "./i18n";
+import theme from "./theme";
 
 export default function RootLayout({
   children,
@@ -17,10 +18,10 @@ export default function RootLayout({
   const [sideNavOpen, setSideNavOpen] = useState(false);
   const { showAlert } = useAlertStore();
   const { t, i18n } = useTranslation(["alertBanner", "translation"]);
-  const debugMode = process.env.NEXT_PUBLIC_DEBUG === 'true';
+  const debugMode = process.env.NEXT_PUBLIC_DEBUG === "true";
 
   if (debugMode) {
-   console.log(t("debugMessage"));
+    console.log(t("debugMessage"));
   }
 
   const handleDrawerClose = () => {
@@ -40,7 +41,7 @@ export default function RootLayout({
           <ThemeProvider theme={theme}>
             <SideNav open={sideNavOpen} onClose={handleDrawerClose} />
             <Header setSideNavOpen={setSideNavOpen} />
-            {children}
+            <Box className="mt-16">{children}</Box>
           </ThemeProvider>
         </AppRouterCacheProvider>
       </body>

@@ -49,15 +49,24 @@ const FileList: React.FC<FileListProps> = ({
   return (
     <Suspense fallback="loading">
       <Box
+        sx={{
+          "&::-webkit-scrollbar": {
+            width: "10px",
+            marginRight: "10px",
+          },
+          "&::-webkit-scrollbar-thumb": {
+            backgroundColor: "#075985", // This matches the border-sky-900 color
+            borderRadius: "9999px", // This is 'rounded-full' in Tailwind
+            border: "6px solid transparent", // This is border-6 in Tailwind
+          },
+          "&::-webkit-scrollbar-track": {
+            backgroundColor: "transparent",
+          },
+        }}
         className={`flex relative flex-col justify-center items-center border-2 border-sky-900
                 rounded text-center p-1 bg-transparent bg-contain xs:w-[90%] md:w-[100%] h-[90%]
                 xs:min-h-[350px] md:min-h-[400px] overflow-y-auto overflow-x-hidden min-w-[133.44px]
-                [&::-webkit-scrollbar]:w-[10px]
-                [&::-webkit-scrollbar]:mr-[10px]
-                [&::-webkit-scrollbar-thumb]:bg-sky-900
-                [&::-webkit-scrollbar-thumb]:rounded-full
-                [&::-webkit-scrollbar-thumb]:border-6-solid-transparent
-                [&::-webkit-scrollbar-track]:bg-transparent`}
+               `}
       >
         <Box
           className={`absolute transform w-full h-full flex flex-col
