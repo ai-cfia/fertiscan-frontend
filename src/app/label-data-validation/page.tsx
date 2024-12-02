@@ -104,7 +104,7 @@ function LabelDataValidationPage() {
   };
 
   useEffect(() => {
-    const verified = labelData.organizations.every((org) => isVerified(org));
+    const verified = isVerified(labelData.organizations);
     setOrganizationsStepStatus(
       verified ? StepStatus.Completed : StepStatus.Incomplete,
     );
@@ -118,20 +118,25 @@ function LabelDataValidationPage() {
   }, [labelData.baseInformation, setBaseInformationStepStatus]);
 
   useEffect(() => {
-    const verified = labelData.cautions.every((caution) => caution.verified);
+    const verified = isVerified(labelData.cautions);
     setCautionsStepStatus(
       verified ? StepStatus.Completed : StepStatus.Incomplete,
     );
   }, [labelData.cautions, setCautionsStepStatus]);
 
   useEffect(() => {
-    const verified = labelData.instructions.every(
-      (instruction) => instruction.verified,
-    );
+    const verified = isVerified(labelData.instructions);
     setInstructionsStepStatus(
       verified ? StepStatus.Completed : StepStatus.Incomplete,
     );
   }, [labelData.instructions, setInstructionsStepStatus]);
+
+  useEffect(() => {
+    const verified = isVerified(labelData.ingredients);
+    setIngredientsStepStatus(
+      verified ? StepStatus.Completed : StepStatus.Incomplete,
+    );
+  }, [labelData.ingredients, setIngredientsStepStatus]);
 
   return (
     <Container
