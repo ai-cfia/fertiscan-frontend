@@ -1,13 +1,13 @@
-import { VerifiedTextField } from "@/types/types";
+import { VerifiedBooleanField } from "@/types/types";
 import { fireEvent, render, screen } from "@testing-library/react";
 import { FormProvider, useForm } from "react-hook-form";
-import { VerifiedInput } from "../VerifiedFieldComponents";
+import { VerifiedCheckbox } from "../VerifiedFieldComponents";
 
 const TestWrapper = ({ verified }: { verified: boolean }) => {
-  const methods = useForm<Record<string, VerifiedTextField>>({
+  const methods = useForm<Record<string, VerifiedBooleanField>>({
     defaultValues: {
       fieldName: {
-        value: "",
+        value: false,
         verified: verified,
       },
     },
@@ -16,9 +16,8 @@ const TestWrapper = ({ verified }: { verified: boolean }) => {
   return (
     <FormProvider {...methods}>
       <form>
-        <VerifiedInput
-          label="Test Field"
-          placeholder="Enter text"
+        <VerifiedCheckbox
+          label="Test Checkbox"
           path="fieldName"
           className="test-class"
         />
@@ -32,16 +31,11 @@ describe("Rendering", () => {
     render(<TestWrapper verified={false} />);
 
     const label = screen.getByTestId("field-label-fieldName");
-    expect(label).toHaveTextContent("Test Field");
+    expect(label).toHaveTextContent("Test Checkbox");
 
-    const input = screen.getByPlaceholderText("Enter text");
-    expect(input).toBeInTheDocument();
-    expect(input).toHaveAttribute("name", "fieldName.value");
-    expect(input).toHaveValue("");
-
-    expect(
-      screen.getByTestId("input-field-fieldName.value"),
-    ).toBeInTheDocument();
+    const checkbox = screen.getByTestId("checkbox-field-fieldName.value");
+    expect(checkbox).toBeInTheDocument();
+    expect(checkbox).not.toBeChecked();
 
     expect(
       screen.getByTestId("toggle-verified-btn-fieldName.verified"),
@@ -50,16 +44,17 @@ describe("Rendering", () => {
 });
 
 describe("Verified Behavior", () => {
-  it("should disable the input field when verifiedValue is true", () => {
+  it("should disable the checkbox when verified is true", () => {
     render(<TestWrapper verified={true} />);
-    const input = screen.getByPlaceholderText("Enter text");
-    expect(input).toBeDisabled();
+    const checkboxSpan = screen.getByTestId("checkbox-field-fieldName.value");
+    const checkbox = checkboxSpan.querySelector("input");
+    expect(checkbox).toBeDisabled();
   });
 
-  it("should enable the input field when verifiedValue is false", () => {
+  it("should enable the checkbox when verified is false", () => {
     render(<TestWrapper verified={false} />);
-    const input = screen.getByPlaceholderText("Enter text");
-    expect(input).not.toBeDisabled();
+    const checkbox = screen.getByTestId("checkbox-field-fieldName.value");
+    expect(checkbox).not.toBeDisabled();
   });
 
   it("should toggle verified between true and false on IconButton click", () => {
@@ -73,5 +68,17 @@ describe("Verified Behavior", () => {
     expect(verifiedIcon).toHaveClass("text-green-500");
     fireEvent.click(toggleButton);
     expect(verifiedIcon).not.toHaveClass("text-green-500");
+  });
+
+  it("should toggle checkbox value when not verified", () => {
+    render(<TestWrapper verified={false} />);
+    const checkboxSpan = screen.getByTestId("checkbox-field-fieldName.value");
+    // get the actual input element from the span
+    const checkbox = checkboxSpan.querySelector("input") as HTMLInputElement;
+    expect(checkbox).not.toBeChecked();
+    fireEvent.click(checkbox);
+    expect(checkbox).toBeChecked();
+    fireEvent.click(checkbox);
+    expect(checkbox).not.toBeChecked();
   });
 });

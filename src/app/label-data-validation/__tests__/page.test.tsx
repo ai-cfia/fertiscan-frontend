@@ -198,6 +198,50 @@ describe("LabelDataValidationPage and Forms Integration", () => {
     expect(targetSpan).not.toHaveClass("Mui-completed");
   });
 
+  it("marks the Guaranteed Analysis step as Completed or Incomplete when fields are Verified", async () => {
+    render(<LabelDataValidationPage />);
+
+    const spans = screen.getAllByText("guaranteedAnalysis.stepTitle", {
+      exact: true,
+    });
+    const targetSpan = spans.find((span) =>
+      span.classList.contains("MuiStepLabel-label"),
+    );
+    expect(targetSpan).not.toHaveClass("Mui-completed");
+
+    const button = targetSpan!.closest("button");
+    await act(async () => {
+      fireEvent.click(button!);
+    });
+
+    await act(async () => {
+      fireEvent.click(
+        screen.getByTestId("verified-icon-guaranteedAnalysis.titleEn.verified"),
+      );
+      fireEvent.click(
+        screen.getByTestId("verified-icon-guaranteedAnalysis.titleFr.verified"),
+      );
+      fireEvent.click(
+        screen.getByTestId(
+          "verified-icon-guaranteedAnalysis.isMinimal.verified",
+        ),
+      );
+      screen
+        .getAllByTestId(/verify-row-btn-guaranteedAnalysis\.nutrients-\d+/)
+        .forEach((btn) => fireEvent.click(btn));
+    });
+
+    expect(targetSpan).toHaveClass("Mui-completed");
+
+    await act(async () => {
+      fireEvent.click(
+        screen.getByTestId("verified-icon-guaranteedAnalysis.titleEn.verified"),
+      );
+    });
+
+    expect(targetSpan).not.toHaveClass("Mui-completed");
+  });
+
   it("marks the Ingredients step as Completed or Incomplete when fields are Verified", async () => {
     render(<LabelDataValidationPage />);
 

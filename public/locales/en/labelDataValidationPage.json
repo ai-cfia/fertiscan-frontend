@@ -103,8 +103,7 @@
     },
     "units": {
       "%": "%",
-      "ppm": "ppm",
-      "": ""
+      "ppm": "ppm"
     },
     "addRow": "Add Row",
     "delete": "Delete Row",
