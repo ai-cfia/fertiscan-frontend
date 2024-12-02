@@ -4,15 +4,16 @@ import { useEffect } from "react";
 import { FormProvider, useForm, useWatch } from "react-hook-form";
 import VerifiedBilingualTable from "./VerifiedBilingualTable";
 
-function CautionsForm({ labelData, setLabelData }: FormComponentProps) {
+const CautionsForm: React.FC<FormComponentProps> = ({
+  labelData,
+  setLabelData,
+}) => {
   const methods = useForm<LabelData>({
     defaultValues: labelData,
   });
 
-  const { control } = methods;
-
   const watchedCautions = useWatch({
-    control,
+    control: methods.control,
     name: "cautions",
   });
 
@@ -32,6 +33,6 @@ function CautionsForm({ labelData, setLabelData }: FormComponentProps) {
       </Box>
     </FormProvider>
   );
-}
+};
 
 export default CautionsForm;

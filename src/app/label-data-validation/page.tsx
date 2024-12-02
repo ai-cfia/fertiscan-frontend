@@ -1,6 +1,7 @@
 "use client";
 import BaseInformationForm from "@/components/BaseInformationForm";
 import CautionsForm from "@/components/CautionsForm";
+import GuaranteedAnalysisForm from "@/components/GuaranteedAnalysisForm";
 import ImageViewer from "@/components/ImageViewer";
 import InstructionsForm from "@/components/InstructionsForm";
 import OrganizationsForm from "@/components/OrganizationsForm";
@@ -13,9 +14,9 @@ import useAlertStore from "@/stores/alertStore";
 import {
   DEFAULT_LABEL_DATA,
   FormComponentProps,
-  isVerified,
   LabelData,
 } from "@/types/types";
+import { checkFieldArray, checkFieldRecord } from "@/utils/common";
 import useBreakpoints from "@/utils/useBreakpoints";
 import { Box, Button, Container, Typography } from "@mui/material";
 import { useEffect, useState } from "react";
@@ -38,6 +39,8 @@ function LabelDataValidationPage() {
     StepStatus.Incomplete,
   );
   const [instructionsStepStatus, setInstructionsStepStatus] =
+    useState<StepStatus>(StepStatus.Incomplete);
+  const [guaranteedAnalysisStepStatus, setGuaranteedAnalysisStepStatus] =
     useState<StepStatus>(StepStatus.Incomplete);
   const { showAlert } = useAlertStore();
 
@@ -82,6 +85,12 @@ function LabelDataValidationPage() {
       instructionsStepStatus,
       setInstructionsStepStatus,
     ),
+    createStep(
+      t("guaranteedAnalysis.stepTitle"),
+      GuaranteedAnalysisForm,
+      guaranteedAnalysisStepStatus,
+      setGuaranteedAnalysisStepStatus,
+    ),
   ];
 
   const handleFileChange = (event: React.ChangeEvent<HTMLInputElement>) => {
@@ -95,34 +104,46 @@ function LabelDataValidationPage() {
   };
 
   useEffect(() => {
-    const verified = labelData.organizations.every((org) => isVerified(org));
+    const verified = labelData.organizations.every((org) =>
+      checkFieldRecord(org),
+    );
     setOrganizationsStepStatus(
       verified ? StepStatus.Completed : StepStatus.Incomplete,
     );
   }, [labelData.organizations, setOrganizationsStepStatus]);
 
   useEffect(() => {
-    const verified = isVerified(labelData.baseInformation);
+    const verified = checkFieldRecord(labelData.baseInformation);
     setBaseInformationStepStatus(
       verified ? StepStatus.Completed : StepStatus.Incomplete,
     );
   }, [labelData.baseInformation, setBaseInformationStepStatus]);
 
   useEffect(() => {
-    const verified = labelData.cautions.every((caution) => caution.verified);
+    const verified = checkFieldArray(labelData.cautions);
     setCautionsStepStatus(
       verified ? StepStatus.Completed : StepStatus.Incomplete,
     );
   }, [labelData.cautions, setCautionsStepStatus]);
 
   useEffect(() => {
-    const verified = labelData.instructions.every(
-      (instruction) => instruction.verified,
-    );
+    const verified = checkFieldArray(labelData.instructions);
     setInstructionsStepStatus(
       verified ? StepStatus.Completed : StepStatus.Incomplete,
     );
   }, [labelData.instructions, setInstructionsStepStatus]);
+
+  useEffect(() => {
+    const verified =
+      checkFieldRecord({
+        titleEn: labelData.guaranteedAnalysis.titleEn,
+        titleFr: labelData.guaranteedAnalysis.titleFr,
+        isMinimal: labelData.guaranteedAnalysis.isMinimal,
+      }) && checkFieldArray(labelData.guaranteedAnalysis.nutrients);
+    setGuaranteedAnalysisStepStatus(
+      verified ? StepStatus.Completed : StepStatus.Incomplete,
+    );
+  }, [labelData.guaranteedAnalysis, setGuaranteedAnalysisStepStatus]);
 
   return (
     <Container
@@ -174,7 +195,6 @@ function LabelDataValidationPage() {
           >
             {steps[activeStep].title}
           </Typography>
-          {/* <Box className="min-h-[500px] lg:max-h-[80vh] overflow-y-auto"> */}
           <Box className="flex-1 overflow-y-auto sm:px-8">
             {steps[activeStep].render()}
           </Box>

@@ -1,6 +1,6 @@
 {
   "baseInformation": {
-    "stepTitle": "Informations de base sur l'engrais",
+    "stepTitle": "Informations de Base sur l'Engrais",
     "fields": {
       "name": {
         "label": "Nom",
@@ -38,6 +38,24 @@
   "instructions": {
     "stepTitle": "Instructions"
   },
+  "guaranteedAnalysis": {
+    "stepTitle": "Analyse Garantie",
+    "title": "Titre",
+    "labelFr": "Français",
+    "placeholderFr": "Entrez le titre en français",
+    "labelEn": "Anglais",
+    "placeholderEn": "Entrez le titre en anglais",
+    "isMinimal": "L'analyse est minimale",
+    "nutrients": "Nutriments"
+  },
+  "verifiedInput": {
+    "verify": "Marquer {{label}} comme vérifié",
+    "unverify": "Marquer {{label}} comme non vérifié",
+    "accessibility": {
+      "input": "Champ de saisie pour {{label}}",
+      "checkbox": "Case à cocher pour {{label}}"
+    }
+  },
   "verifiedQuantityMultiInput": {
     "deleteRow": "Supprimer cette ligne",
     "defaultPlaceholder": "Entrez une valeur",
@@ -45,11 +63,6 @@
     "removeRow": "Supprimer",
     "verify": "Marquer comme vérifiés",
     "unverify": "Marquer comme non vérifiés",
-    "errors": {
-      "numbersOnly": "Uniquement des nombres",
-      "minValue": "La valeur minimale est 0",
-      "duplicateUnit": "Unité dupliquée"
-    },
     "units": {
       "kg": "kg",
       "g": "g",
@@ -78,10 +91,16 @@
   "verifiedBilingualTable": {
     "english": "Anglais",
     "french": "Français",
+    "value": "Valeur",
     "actions": "Actions",
     "placeholders": {
       "english": "Entrez le texte en anglais",
-      "french": "Entrez le texte en français"
+      "french": "Entrez le texte en français",
+      "value": "Entrez une valeur"
+    },
+    "units": {
+      "%": "%",
+      "ppm": "ppm"
     },
     "addRow": "Ajouter une ligne",
     "delete": "Supprimer cette ligne",
@@ -99,5 +118,10 @@
       "verifyAllButton": "Bouton pour tout marquer comme vérifié",
       "unverifyAllButton": "Bouton pour tout marquer comme non vérifié"
     }
+  },
+  "errors": {
+    "numbersOnly": "Uniquement des nombres",
+    "minValue": "La valeur minimale est 0",
+    "duplicateUnit": "Unité dupliquée"
   }
 }

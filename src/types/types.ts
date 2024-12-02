@@ -67,17 +67,26 @@ export type VerifiedTextField = VerifiedField & {
   value: string;
 };
 
+const DEFAULT_TEXT_FIELD: VerifiedTextField = {
+  value: "",
+  verified: false,
+};
+
+export type VerifiedBooleanField = VerifiedField & {
+  value: boolean;
+};
+
+export const DEFAULT_BOOLEAN_FIELD: VerifiedBooleanField = {
+  value: false,
+  verified: false,
+};
+
 // Organizations
 export type Organization = {
   name: VerifiedTextField;
   address: VerifiedTextField;
   website: VerifiedTextField;
   phoneNumber: VerifiedTextField;
-};
-
-const DEFAULT_TEXT_FIELD: VerifiedTextField = {
-  value: "",
-  verified: false,
 };
 
 export const DEFAULT_ORGANIZATION: Organization = {
@@ -87,11 +96,6 @@ export const DEFAULT_ORGANIZATION: Organization = {
   phoneNumber: DEFAULT_TEXT_FIELD,
 };
 
-export const isVerified = <T extends Record<string, VerifiedField>>(
-  fields: T,
-  verified: boolean = true,
-): boolean =>
-  fields && Object.values(fields).every((field) => field.verified === verified);
 
 // Quantity
 export type Quantity = {
@@ -107,6 +111,7 @@ export const UNITS = {
   weight: ["kg", "g", "lb", "tonne"],
   volume: ["L", "mL", "gal", "ft³"],
   density: ["lb/ft³", "g/cm³", "kg/m³", "lb/gal"],
+  guaranteedAnalysis: ["%", "ppm"],
 };
 
 const DEFAULT_QUANTITY_FIELD = (unit: string): VerifiedQuantityField => ({
@@ -135,15 +140,39 @@ export const DEFAULT_BASE_INFORMATION: BaseInformation = {
   volume: DEFAULT_QUANTITY_FIELD(UNITS.volume[0]),
 };
 
-export type BilingualField = VerifiedField & {
+export type Translation = {
   en: string;
   fr: string;
 };
+
+export type BilingualField = VerifiedField & Translation & Partial<Quantity>;
 
 export const DEFAULT_BILINGUAL_FIELD: BilingualField = {
   en: "",
   fr: "",
   verified: false,
+};
+
+export const DEFAULT_GA_NUTRIENT: BilingualField = {
+  en: "",
+  fr: "",
+  value: "",
+  unit: UNITS.guaranteedAnalysis[0],
+  verified: false,
+};
+
+export type GuaranteedAnalysis = {
+  titleEn: VerifiedTextField;
+  titleFr: VerifiedTextField;
+  isMinimal: VerifiedBooleanField;
+  nutrients: BilingualField[];
+};
+
+export const DEFAULT_GUARANTEED_ANALYSIS: GuaranteedAnalysis = {
+  titleEn: DEFAULT_TEXT_FIELD,
+  titleFr: DEFAULT_TEXT_FIELD,
+  isMinimal: DEFAULT_BOOLEAN_FIELD,
+  nutrients: [DEFAULT_GA_NUTRIENT],
 };
 
 // LabelData
@@ -152,6 +181,7 @@ export type LabelData = {
   baseInformation: BaseInformation;
   cautions: BilingualField[];
   instructions: BilingualField[];
+  guaranteedAnalysis: GuaranteedAnalysis;
 };
 
 export const DEFAULT_LABEL_DATA: LabelData = {
@@ -159,6 +189,7 @@ export const DEFAULT_LABEL_DATA: LabelData = {
   baseInformation: DEFAULT_BASE_INFORMATION,
   cautions: [DEFAULT_BILINGUAL_FIELD],
   instructions: [DEFAULT_BILINGUAL_FIELD],
+  guaranteedAnalysis: DEFAULT_GUARANTEED_ANALYSIS,
 };
 
 // Form
