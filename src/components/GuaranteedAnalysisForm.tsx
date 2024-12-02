@@ -6,19 +6,17 @@ import { useTranslation } from "react-i18next";
 import VerifiedBilingualTable from "./VerifiedBilingualTable";
 import { VerifiedCheckbox, VerifiedInput } from "./VerifiedFieldComponents";
 
-function GuaranteedAnalysisForm({
+const GuaranteedAnalysisForm: React.FC<FormComponentProps> = ({
   labelData,
   setLabelData,
-}: FormComponentProps) {
+}) => {
   const { t } = useTranslation("labelDataValidationPage");
   const methods = useForm<LabelData>({
     defaultValues: labelData,
   });
 
-  const { control } = methods;
-
   const watchedGuaranteedAnalysis = useWatch({
-    control,
+    control: methods.control,
     name: "guaranteedAnalysis",
   });
 
@@ -78,6 +76,6 @@ function GuaranteedAnalysisForm({
       </Box>
     </FormProvider>
   );
-}
+};
 
 export default GuaranteedAnalysisForm;

@@ -96,26 +96,6 @@ export const DEFAULT_ORGANIZATION: Organization = {
   phoneNumber: DEFAULT_TEXT_FIELD,
 };
 
-export const isVerified = <T>(data: T, verified: boolean = true): boolean => {
-  if (typeof data !== "object" || !data) return false;
-
-  return Object.values(data).every((field) => {
-    if (Array.isArray(field)) {
-      return field.every(
-        (item) => typeof item === "object" && item.verified === verified,
-      );
-    }
-
-    if (typeof field === "object" && field !== null) {
-      if ("verified" in field) {
-        return field.verified === verified;
-      }
-      return isVerified(field, verified);
-    }
-
-    return true;
-  });
-};
 
 // Quantity
 export type Quantity = {

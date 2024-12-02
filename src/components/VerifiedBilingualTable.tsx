@@ -28,15 +28,17 @@ import {
 } from "react-hook-form";
 import { useTranslation } from "react-i18next";
 
+interface VerifiedBilingualTableProps {
+  path: string;
+  valueColumn?: boolean;
+  unitOptions?: string[];
+}
+
 const VerifiedBilingualTable = ({
   path,
   valueColumn = false,
   unitOptions,
-}: {
-  path: string;
-  valueColumn?: boolean;
-  unitOptions?: string[];
-}) => {
+}: VerifiedBilingualTableProps) => {
   const { control, setValue, trigger } = useFormContext();
   const { fields, append, remove } = useFieldArray({
     control,

@@ -4,15 +4,16 @@ import { useEffect } from "react";
 import { FormProvider, useForm, useWatch } from "react-hook-form";
 import VerifiedBilingualTable from "./VerifiedBilingualTable";
 
-function InstructionsForm({ labelData, setLabelData }: FormComponentProps) {
+const InstructionsForm: React.FC<FormComponentProps> = ({
+  labelData,
+  setLabelData,
+}) => {
   const methods = useForm<LabelData>({
     defaultValues: labelData,
   });
 
-  const { control } = methods;
-
   const watchedInstructions = useWatch({
-    control,
+    control: methods.control,
     name: "instructions",
   });
 
@@ -32,6 +33,6 @@ function InstructionsForm({ labelData, setLabelData }: FormComponentProps) {
       </Box>
     </FormProvider>
   );
-}
+};
 
 export default InstructionsForm;

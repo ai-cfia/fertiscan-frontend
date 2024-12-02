@@ -12,12 +12,7 @@ import { ReactNode, useState } from "react";
 import { Control, Controller, useFormContext, useWatch } from "react-hook-form";
 import { useTranslation } from "react-i18next";
 
-function VerifiedFieldWrapper({
-  label,
-  path,
-  className = "",
-  renderField,
-}: {
+interface VerifiedFieldWrapperProps {
   label: string;
   path: string;
   className?: string;
@@ -27,7 +22,14 @@ function VerifiedFieldWrapper({
     valuePath: string;
     verified: boolean;
   }) => ReactNode;
-}) {
+}
+
+const VerifiedFieldWrapper: React.FC<VerifiedFieldWrapperProps> = ({
+  label,
+  path,
+  className = "",
+  renderField,
+}) => {
   const { t } = useTranslation("labelDataValidationPage");
   const { control } = useFormContext();
   const [isFocused, setIsFocused] = useState(false);
@@ -91,17 +93,19 @@ function VerifiedFieldWrapper({
       />
     </Box>
   );
-}
+};
 
-function VerifiedCheckbox({
-  label,
-  path,
-  className = "",
-}: {
+interface VerifiedCheckboxProps {
   label: string;
   path: string;
   className?: string;
-}) {
+}
+
+const VerifiedCheckbox: React.FC<VerifiedCheckboxProps> = ({
+  label,
+  path,
+  className = "",
+}) => {
   const { t } = useTranslation("labelDataValidationPage");
   return (
     <VerifiedFieldWrapper
@@ -127,19 +131,21 @@ function VerifiedCheckbox({
       )}
     />
   );
-}
+};
 
-function VerifiedInput({
-  label,
-  placeholder,
-  path,
-  className = "",
-}: {
+interface VerifiedInputProps {
   label: string;
   placeholder: string;
   path: string;
   className?: string;
-}) {
+}
+
+const VerifiedInput: React.FC<VerifiedInputProps> = ({
+  label,
+  placeholder,
+  path,
+  className = "",
+}) => {
   const { t } = useTranslation("labelDataValidationPage");
   return (
     <VerifiedFieldWrapper
@@ -169,6 +175,6 @@ function VerifiedInput({
       )}
     />
   );
-}
+};
 
 export { VerifiedCheckbox, VerifiedInput };

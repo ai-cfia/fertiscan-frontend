@@ -14,9 +14,9 @@ import useAlertStore from "@/stores/alertStore";
 import {
   DEFAULT_LABEL_DATA,
   FormComponentProps,
-  isVerified,
   LabelData,
 } from "@/types/types";
+import { checkFieldArray, checkFieldRecord } from "@/utils/common";
 import useBreakpoints from "@/utils/useBreakpoints";
 import { Box, Button, Container, Typography } from "@mui/material";
 import { useEffect, useState } from "react";
@@ -104,35 +104,42 @@ function LabelDataValidationPage() {
   };
 
   useEffect(() => {
-    const verified = labelData.organizations.every((org) => isVerified(org));
+    const verified = labelData.organizations.every((org) =>
+      checkFieldRecord(org),
+    );
     setOrganizationsStepStatus(
       verified ? StepStatus.Completed : StepStatus.Incomplete,
     );
   }, [labelData.organizations, setOrganizationsStepStatus]);
 
   useEffect(() => {
-    const verified = isVerified(labelData.baseInformation);
+    const verified = checkFieldRecord(labelData.baseInformation);
     setBaseInformationStepStatus(
       verified ? StepStatus.Completed : StepStatus.Incomplete,
     );
   }, [labelData.baseInformation, setBaseInformationStepStatus]);
 
   useEffect(() => {
-    const verified = isVerified(labelData.cautions);
+    const verified = checkFieldArray(labelData.cautions);
     setCautionsStepStatus(
       verified ? StepStatus.Completed : StepStatus.Incomplete,
     );
   }, [labelData.cautions, setCautionsStepStatus]);
 
   useEffect(() => {
-    const verified = isVerified(labelData.instructions);
+    const verified = checkFieldArray(labelData.instructions);
     setInstructionsStepStatus(
       verified ? StepStatus.Completed : StepStatus.Incomplete,
     );
   }, [labelData.instructions, setInstructionsStepStatus]);
 
   useEffect(() => {
-    const verified = isVerified(labelData.guaranteedAnalysis);
+    const verified =
+      checkFieldRecord({
+        titleEn: labelData.guaranteedAnalysis.titleEn,
+        titleFr: labelData.guaranteedAnalysis.titleFr,
+        isMinimal: labelData.guaranteedAnalysis.isMinimal,
+      }) && checkFieldArray(labelData.guaranteedAnalysis.nutrients);
     setGuaranteedAnalysisStepStatus(
       verified ? StepStatus.Completed : StepStatus.Incomplete,
     );

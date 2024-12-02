@@ -21,19 +21,21 @@ import {
 } from "react-hook-form";
 import { useTranslation } from "react-i18next";
 
-function VerifiedQuantityMultiInput({
-  label,
-  placeholder,
-  path,
-  unitOptions,
-  className = "",
-}: {
+interface VerifiedQuantityMultiInputProps {
   label: string;
   placeholder?: string;
   path: string;
   unitOptions: string[];
   className?: string;
-}) {
+}
+
+const VerifiedQuantityMultiInput: React.FC<VerifiedQuantityMultiInputProps> = ({
+  label,
+  placeholder,
+  path,
+  unitOptions,
+  className = "",
+}) => {
   const { t } = useTranslation("labelDataValidationPage");
   const { control, trigger } = useFormContext();
   const [isFocused, setIsFocused] = useState(false);
@@ -296,6 +298,6 @@ function VerifiedQuantityMultiInput({
       />
     </Box>
   );
-}
+};
 
 export default VerifiedQuantityMultiInput;

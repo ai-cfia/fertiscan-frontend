@@ -1,10 +1,10 @@
 import {
   DEFAULT_ORGANIZATION,
   FormComponentProps,
-  isVerified,
   LabelData,
   Organization,
 } from "@/types/types";
+import { checkFieldRecord } from "@/utils/common";
 import AddIcon from "@mui/icons-material/Add";
 import DeleteIcon from "@mui/icons-material/Delete";
 import DoneAllIcon from "@mui/icons-material/DoneAll";
@@ -82,7 +82,7 @@ const OrganizationsForm: React.FC<FormComponentProps> = ({
                 <Tooltip
                   title="Mark all as Verified"
                   enterDelay={1000}
-                  disableHoverListener={isVerified(
+                  disableHoverListener={checkFieldRecord(
                     watchedOrganizations?.[index],
                     true,
                   )}
@@ -92,7 +92,10 @@ const OrganizationsForm: React.FC<FormComponentProps> = ({
                       variant="outlined"
                       color="secondary"
                       onClick={() => setAllVerified(index, true)}
-                      disabled={isVerified(watchedOrganizations?.[index], true)}
+                      disabled={checkFieldRecord(
+                        watchedOrganizations?.[index],
+                        true,
+                      )}
                       data-testid={`verify-all-btn-${index}`}
                     >
                       <DoneAllIcon />
@@ -102,7 +105,7 @@ const OrganizationsForm: React.FC<FormComponentProps> = ({
                 <Tooltip
                   title="Mark all as Unverified"
                   enterDelay={1000}
-                  disableHoverListener={isVerified(
+                  disableHoverListener={checkFieldRecord(
                     watchedOrganizations?.[index],
                     false,
                   )}
@@ -112,7 +115,7 @@ const OrganizationsForm: React.FC<FormComponentProps> = ({
                       variant="outlined"
                       color="secondary"
                       onClick={() => setAllVerified(index, false)}
-                      disabled={isVerified(
+                      disabled={checkFieldRecord(
                         watchedOrganizations?.[index],
                         false,
                       )}

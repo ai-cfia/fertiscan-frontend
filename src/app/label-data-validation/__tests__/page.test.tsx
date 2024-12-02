@@ -69,7 +69,7 @@ describe("LabelDataValidationPage Functionality", () => {
   });
 });
 
-describe.only("LabelDataValidationPage and Forms Integration", () => {
+describe("LabelDataValidationPage and Forms Integration", () => {
   it("marks the Organizations step as Completed or Incomplete when fields are Verified", () => {
     render(<LabelDataValidationPage />);
 
