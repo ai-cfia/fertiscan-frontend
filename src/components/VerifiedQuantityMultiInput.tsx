@@ -104,7 +104,7 @@ const VerifiedQuantityMultiInput: React.FC<VerifiedQuantityMultiInputProps> = ({
     <Box
       className={`w-full flex items-center p-1 border-2 rounded-tr-md rounded-br-md ${
         isFocused ? "border-fertiscan-blue" : ""
-      } ${className}`}
+      } ${verified ? "bg-green-100" : ""}  ${className}`}
       data-testid={`quantity-multi-input-${path}`}
     >
       {/* Label Section */}

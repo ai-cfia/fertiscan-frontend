@@ -142,6 +142,7 @@ describe("QuantityMultiInput functionality", () => {
         expect(button).toBeDisabled();
       });
     expect(screen.getByTestId("add-button-")).toBeDisabled();
+    expect(screen.getByTestId("quantity-multi-input-")).toHaveClass("bg-green-100");
   });
 
   it("handles Add and Remove row functionality", () => {

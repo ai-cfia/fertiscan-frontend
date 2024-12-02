@@ -113,6 +113,7 @@ const VerifiedBilingualTable = ({
           <TableBody>
             {fields.map((field, index) => (
               <TableRow
+                className={`${isVerified(index) ? "bg-green-100" : ""}`}
                 key={field.id}
                 data-testid={`table-row-${path}-${index}`}
               >

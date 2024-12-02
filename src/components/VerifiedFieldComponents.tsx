@@ -45,7 +45,7 @@ const VerifiedFieldWrapper: React.FC<VerifiedFieldWrapperProps> = ({
     <Box
       className={`flex items-center p-1 border-2 rounded-tr-md rounded-br-md ${
         isFocused ? "border-fertiscan-blue" : ""
-      } ${className}`}
+      } ${verified ? "bg-green-100" : ""} ${className}`}
       data-testid={`verified-field-${path}`}
     >
       <Typography

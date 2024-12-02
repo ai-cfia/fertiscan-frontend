@@ -65,15 +65,20 @@ describe("Verified Behavior", () => {
     const verifiedIcon = screen.getByTestId("verified-icon-fieldName.verified");
     expect(verifiedIcon).not.toHaveClass("text-green-500");
     fireEvent.click(toggleButton);
+    expect(screen.getByTestId("verified-field-fieldName")).toHaveClass(
+      "bg-green-100",
+    );
     expect(verifiedIcon).toHaveClass("text-green-500");
     fireEvent.click(toggleButton);
+    expect(screen.getByTestId("verified-field-fieldName")).not.toHaveClass(
+      "bg-green-100",
+    );
     expect(verifiedIcon).not.toHaveClass("text-green-500");
   });
 
   it("should toggle checkbox value when not verified", () => {
     render(<TestWrapper verified={false} />);
     const checkboxSpan = screen.getByTestId("checkbox-field-fieldName.value");
-    // get the actual input element from the span
     const checkbox = checkboxSpan.querySelector("input") as HTMLInputElement;
     expect(checkbox).not.toBeChecked();
     fireEvent.click(checkbox);
