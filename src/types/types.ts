@@ -96,12 +96,13 @@ export const DEFAULT_ORGANIZATION: Organization = {
   phoneNumber: DEFAULT_TEXT_FIELD,
 };
 
-
 // Quantity
 export type Quantity = {
   value: string;
   unit: string;
 };
+
+export const DEFAULT_QUANTITY = { value: "", unit: "" };
 
 export type VerifiedQuantityField = VerifiedField & {
   quantities: Quantity[];
@@ -114,10 +115,10 @@ export const UNITS = {
   guaranteedAnalysis: ["%", "ppm"],
 };
 
-const DEFAULT_QUANTITY_FIELD = (unit: string): VerifiedQuantityField => ({
-  quantities: [{ value: "", unit }],
+export const DEFAULT_QUANTITY_FIELD = {
   verified: false,
-});
+  quantities: [DEFAULT_QUANTITY],
+};
 
 // Base Information
 export type BaseInformation = {
@@ -135,9 +136,9 @@ export const DEFAULT_BASE_INFORMATION: BaseInformation = {
   registrationNumber: DEFAULT_TEXT_FIELD,
   lotNumber: DEFAULT_TEXT_FIELD,
   npk: DEFAULT_TEXT_FIELD,
-  weight: DEFAULT_QUANTITY_FIELD(UNITS.weight[0]),
-  density: DEFAULT_QUANTITY_FIELD(UNITS.density[0]),
-  volume: DEFAULT_QUANTITY_FIELD(UNITS.volume[0]),
+  weight: DEFAULT_QUANTITY_FIELD,
+  density: DEFAULT_QUANTITY_FIELD,
+  volume: DEFAULT_QUANTITY_FIELD,
 };
 
 export type Translation = {

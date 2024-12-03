@@ -114,11 +114,14 @@ describe("VerifiedBilingualTable rendering and functionality", () => {
     );
 
     const unitSelect = screen.getByTestId("bilingualFields.0.unit");
+    const unitInput = unitSelect.querySelector("input") as HTMLInputElement;
+
     const valueInputBase = screen.getByTestId("bilingualFields.0.value");
     const valueInput = valueInputBase.querySelector(
       "input",
     ) as HTMLInputElement;
-    expect(unitSelect).toHaveValue("%");
+
+    expect(unitInput.value).toBe("%");
     expect(valueInput.value).toBe("10");
   });
 
@@ -248,7 +251,8 @@ describe("VerifiedBilingualTable rendering and functionality", () => {
       /bilingualFields\.\d+\.unit/,
     );
     for (const unitSelect of unitSelectsBefore) {
-      expect(unitSelect).toBeDisabled();
+      const unitInput = unitSelect.querySelector("input") as HTMLInputElement;
+      expect(unitInput).toBeDisabled();
     }
 
     const valueInputBasesBefore = await screen.findAllByTestId(
@@ -294,7 +298,8 @@ describe("VerifiedBilingualTable rendering and functionality", () => {
       /bilingualFields\.\d+\.unit/,
     );
     for (const unitSelect of unitSelectsAfter) {
-      expect(unitSelect).not.toBeDisabled();
+      const unitInput = unitSelect.querySelector("input") as HTMLInputElement;
+      expect(unitInput).not.toBeDisabled();
     }
 
     const valueInputBasesAfter = await screen.findAllByTestId(
@@ -374,6 +379,8 @@ describe("VerifiedBilingualTable rendering and functionality", () => {
       .querySelector("textarea") as HTMLTextAreaElement;
 
     const unitSelect = screen.getByTestId("bilingualFields.0.unit");
+    const unitInput = unitSelect.querySelector("input") as HTMLInputElement;
+
     const valueInput = screen
       .getByTestId("bilingualFields.0.value")
       .querySelector("input") as HTMLInputElement;
@@ -384,7 +391,7 @@ describe("VerifiedBilingualTable rendering and functionality", () => {
     fireEvent.change(frenchTextarea, {
       target: { value: "Updated French Text" },
     });
-    fireEvent.change(unitSelect, { target: { value: "ppm" } });
+    fireEvent.change(unitInput, { target: { value: "ppm" } });
     fireEvent.change(valueInput, { target: { value: "20" } });
 
     fireEvent.click(screen.getByTestId("submit-button"));

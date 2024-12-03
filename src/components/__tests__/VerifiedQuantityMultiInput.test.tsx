@@ -119,7 +119,7 @@ describe("QuantityMultiInput functionality", () => {
       expect(field.querySelector("input")).toBeDisabled();
     });
     screen.getAllByTestId(/quantities\.\d+\.unit/).forEach((dropdown) => {
-      expect(dropdown).toBeDisabled();
+      expect(dropdown.querySelector("input")).toBeDisabled();
     });
     screen
       .getAllByTestId(/delete-button-\.quantities-\d+/)
@@ -134,7 +134,7 @@ describe("QuantityMultiInput functionality", () => {
       expect(field.querySelector("input")).toBeDisabled();
     });
     screen.getAllByTestId(/quantities\.\d+\.unit/).forEach((dropdown) => {
-      expect(dropdown).toBeDisabled();
+      expect(dropdown.querySelector("input")).toBeDisabled();
     });
     screen
       .getAllByTestId(/delete-button-\.quantities-\d+/)
@@ -142,7 +142,9 @@ describe("QuantityMultiInput functionality", () => {
         expect(button).toBeDisabled();
       });
     expect(screen.getByTestId("add-button-")).toBeDisabled();
-    expect(screen.getByTestId("quantity-multi-input-")).toHaveClass("bg-green-100");
+    expect(screen.getByTestId("quantity-multi-input-")).toHaveClass(
+      "bg-green-100",
+    );
   });
 
   it("handles Add and Remove row functionality", () => {
@@ -282,8 +284,12 @@ describe("QuantityMultiInput functionality", () => {
 
     const dropdowns = screen.getAllByTestId(/quantities\.\d+\.unit/);
     expect(dropdowns.length).toBe(1);
-    const dropdown = dropdowns[0] as HTMLSelectElement;
-    await userEvent.selectOptions(dropdown, "lb");
+
+    const dropdownInput = dropdowns[0].querySelector(
+      "input",
+    ) as HTMLInputElement;
+    await userEvent.clear(dropdownInput);
+    await userEvent.type(dropdownInput, "lb");
 
     await userEvent.click(screen.getByTestId("toggle-verified-btn-"));
 
@@ -324,33 +330,5 @@ describe("QuantityMultiInput functionality", () => {
     await userEvent.type(inputField, "10");
     await userEvent.click(toggleButton);
     expect(toggleButton).toHaveClass("text-green-500");
-  });
-
-  it("adds a row with a different unit every time add button is clicked", async () => {
-    const defaultValues = {
-      quantities: [{ value: "0", unit: "kg" }],
-      verified: false,
-    };
-
-    render(<Wrapper defaultValues={defaultValues} />);
-
-    const addButton = screen.getByTestId("add-button-");
-
-    await userEvent.click(addButton);
-    let dropdowns = screen.getAllByTestId(/quantities\.\d+\.unit/);
-    expect(dropdowns.length).toBe(2);
-    expect(dropdowns[1]).toHaveValue("lb");
-
-    await userEvent.click(addButton);
-    dropdowns = screen.getAllByTestId(/quantities\.\d+\.unit/);
-    expect(dropdowns.length).toBe(3);
-    expect(dropdowns[2]).toHaveValue("oz");
-
-    await userEvent.click(addButton);
-    dropdowns = screen.getAllByTestId(/quantities\.\d+\.unit/);
-    expect(dropdowns.length).toBe(4);
-    expect(dropdowns[3]).toHaveValue("ton");
-
-    expect(addButton).toBeDisabled();
   });
 });

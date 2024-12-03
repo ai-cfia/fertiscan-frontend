@@ -1,14 +1,16 @@
-import { Quantity } from "@/types/types";
+import { DEFAULT_QUANTITY } from "@/types/types";
 import AddIcon from "@mui/icons-material/Add";
 import CheckIcon from "@mui/icons-material/Check";
 import DeleteIcon from "@mui/icons-material/Delete";
 import ErrorOutlineIcon from "@mui/icons-material/ErrorOutline";
 import {
+  Autocomplete,
   Box,
   Button,
   Divider,
   IconButton,
   InputBase,
+  TextField,
   Tooltip,
   Typography,
 } from "@mui/material";
@@ -80,24 +82,11 @@ const VerifiedQuantityMultiInput: React.FC<VerifiedQuantityMultiInputProps> = ({
     }
   };
 
-  const handleAddRow = () => {
-    const unusedOption = unitOptions.find(
-      (option) =>
-        !quantities.some((valueItem: Quantity) => valueItem.unit === option),
-    );
-
-    if (unusedOption) {
-      append({ value: "", unit: unusedOption });
-    } else {
-      console.error("All options are already used");
-    }
-  };
-
   const validateDuplicateUnit = (value: string) => {
     const isDuplicate =
       quantities.filter((item: { unit: string }) => item.unit === value)
         .length > 1;
-    return !isDuplicate || t("verifiedQuantityMultiInput.errors.duplicateUnit");
+    return !isDuplicate || "errors.duplicateUnit";
   };
 
   return (
@@ -127,45 +116,6 @@ const VerifiedQuantityMultiInput: React.FC<VerifiedQuantityMultiInputProps> = ({
             data-testid={`field-row-${quantitiesPath}-${index}`}
           >
             <Box className="flex items-center">
-              {/* Unit Selection Field */}
-              <Controller
-                name={`${quantitiesPath}.${index}.unit`}
-                control={control}
-                rules={{ validate: validateDuplicateUnit }}
-                render={({ field, fieldState: { error } }) => (
-                  <>
-                    <select
-                      {...field}
-                      className="p-1 text-[15px] border rounded"
-                      disabled={verified}
-                      aria-label={t(
-                        "verifiedQuantityMultiInput.accessibility.unitDropdown",
-                      )}
-                      data-testid={`${quantitiesPath}.${index}.unit`}
-                    >
-                      {unitOptions.map((option) => (
-                        <option key={option} value={option}>
-                          {t(`verifiedQuantityMultiInput.units.${option}`)}
-                        </option>
-                      ))}
-                    </select>
-                    {error && (
-                      <Tooltip title={error.message || ""}>
-                        <ErrorOutlineIcon
-                          className="ml-1"
-                          color="error"
-                          fontSize="small"
-                          aria-label={t(
-                            "verifiedQuantityMultiInput.accessibility.errorIcon",
-                          )}
-                          data-testid={`unit-error-icon-${quantitiesPath}-${index}`}
-                        />
-                      </Tooltip>
-                    )}
-                  </>
-                )}
-              />
-
               {/* Value Input Field */}
               <Controller
                 name={`${quantitiesPath}.${index}.value`}
@@ -173,11 +123,11 @@ const VerifiedQuantityMultiInput: React.FC<VerifiedQuantityMultiInputProps> = ({
                 rules={{
                   pattern: {
                     value: /^[0-9]*\.?[0-9]*$/,
-                    message: t("errors.numbersOnly"),
+                    message: "errors.numbersOnly",
                   },
                   min: {
                     value: 0,
-                    message: t("errors.minValue"),
+                    message: "errors.minValue",
                   },
                 }}
                 render={({ field, fieldState: { error } }) => (
@@ -202,12 +152,77 @@ const VerifiedQuantityMultiInput: React.FC<VerifiedQuantityMultiInputProps> = ({
                       error={!!error}
                     />
                     {error && (
-                      <Tooltip title={error.message || ""}>
+                      <Tooltip title={error.message ? t(error.message) : ""}>
+                        <ErrorOutlineIcon
+                          className="mx-1"
+                          color="error"
+                          fontSize="small"
+                          data-testid={`value-error-icon-${quantitiesPath}-${index}`}
+                        />
+                      </Tooltip>
+                    )}
+                  </>
+                )}
+              />
+
+              {/* Unit Selection Field */}
+              <Controller
+                name={`${quantitiesPath}.${index}.unit`}
+                control={control}
+                rules={{ validate: validateDuplicateUnit }}
+                render={({ field, fieldState: { error } }) => (
+                  <>
+                    <Autocomplete
+                      {...field}
+                      className="bg-gray-100"
+                      freeSolo
+                      selectOnFocus
+                      options={unitOptions}
+                      onChange={(event, newValue) => {
+                        field.onChange(newValue);
+                      }}
+                      onInputChange={(event, newInputValue) => {
+                        field.onChange(newInputValue);
+                      }}
+                      value={field.value || ""}
+                      disableClearable
+                      slotProps={{
+                        popper: {
+                          className: "!w-fit",
+                        },
+                      }}
+                      disabled={verified}
+                      renderInput={(params) => (
+                        <TextField
+                          {...params}
+                          variant="standard"
+                          aria-label={t(
+                            "verifiedQuantityMultiInput.accessibility.unitDropdown",
+                          )}
+                          data-testid={`${quantitiesPath}.${index}.unit`}
+                          placeholder={t(
+                            "verifiedQuantityMultiInput.unitPlaceholder",
+                          )}
+                          slotProps={{
+                            input: {
+                              ...params.InputProps,
+                              disableUnderline: true,
+                              className: "px-2 !text-[15px] !w-[10ch]",
+                            },
+                          }}
+                        />
+                      )}
+                    />
+                    {error && (
+                      <Tooltip title={error.message ? t(error.message) : ""}>
                         <ErrorOutlineIcon
                           className="ml-1"
                           color="error"
                           fontSize="small"
-                          data-testid={`value-error-icon-${quantitiesPath}-${index}`}
+                          aria-label={t(
+                            "verifiedQuantityMultiInput.accessibility.errorIcon",
+                          )}
+                          data-testid={`unit-error-icon-${quantitiesPath}-${index}`}
                         />
                       </Tooltip>
                     )}
@@ -248,9 +263,9 @@ const VerifiedQuantityMultiInput: React.FC<VerifiedQuantityMultiInputProps> = ({
         <Button
           size="small"
           className="!p-2 text-white bg-green-500"
-          onClick={handleAddRow}
+          onClick={() => append(DEFAULT_QUANTITY)}
           startIcon={<AddIcon />}
-          disabled={verified || fields.length >= unitOptions.length}
+          disabled={verified}
           aria-label={t(
             "verifiedQuantityMultiInput.accessibility.addRowButton",
           )}

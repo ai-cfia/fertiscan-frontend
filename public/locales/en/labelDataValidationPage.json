@@ -59,6 +59,7 @@
   "verifiedQuantityMultiInput": {
     "deleteRow": "Delete this row",
     "defaultPlaceholder": "Enter value",
+    "unitPlaceholder": "Unit",
     "addRow": "Add Row",
     "removeRow": "Remove",
     "verify": "Mark as Verified",
@@ -102,6 +103,7 @@
       "%": "%",
       "ppm": "ppm"
     },
+    "unitPlaceholder": "Unit",
     "addRow": "Add Row",
     "delete": "Delete Row",
     "verify": "Mark as Verified",

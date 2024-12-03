@@ -59,6 +59,7 @@
   "verifiedQuantityMultiInput": {
     "deleteRow": "Supprimer cette ligne",
     "defaultPlaceholder": "Entrez une valeur",
+    "unitPlaceholder": "Unité",
     "addRow": "Ajouter une ligne",
     "removeRow": "Supprimer",
     "verify": "Marquer comme vérifiés",
@@ -102,6 +103,7 @@
       "%": "%",
       "ppm": "ppm"
     },
+    "unitPlaceholder": "Unité",
     "addRow": "Ajouter une ligne",
     "delete": "Supprimer cette ligne",
     "verify": "Marquer comme vérifié",

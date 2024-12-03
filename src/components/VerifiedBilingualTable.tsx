@@ -6,6 +6,7 @@ import DoneAllIcon from "@mui/icons-material/DoneAll";
 import ErrorOutlineIcon from "@mui/icons-material/ErrorOutline";
 import RemoveDoneIcon from "@mui/icons-material/RemoveDone";
 import {
+  Autocomplete,
   Box,
   Button,
   Divider,
@@ -17,6 +18,7 @@ import {
   TableContainer,
   TableHead,
   TableRow,
+  TextField,
   Tooltip,
   Typography,
 } from "@mui/material";
@@ -173,29 +175,6 @@ const VerifiedBilingualTable = ({
                 {valueColumn && (
                   <TableCell>
                     <Box className="flex items-center">
-                      {/* Unit Selection Field */}
-                      <Controller
-                        name={`${path}.${index}.unit`}
-                        control={control}
-                        render={({ field }) => (
-                          <select
-                            {...field}
-                            className="p-1 text-[15px] border rounded"
-                            disabled={isVerified(index)}
-                            aria-label={t(
-                              "verifiedBilingualTable.accessibility.unitDropdown",
-                            )}
-                            data-testid={`${path}.${index}.unit`}
-                          >
-                            {unitOptions?.map((option) => (
-                              <option key={option} value={option}>
-                                {t(`verifiedBilingualTable.units.${option}`)}
-                              </option>
-                            ))}
-                          </select>
-                        )}
-                      />
-
                       {/* Value Input Field */}
                       <Controller
                         name={`${path}.${index}.value`}
@@ -214,7 +193,7 @@ const VerifiedBilingualTable = ({
                           <>
                             <InputBase
                               {...field}
-                              className="flex-1 p-2 !text-[15px]"
+                              className="flex-1 pl-2 pr-1 !text-[15px]"
                               placeholder={t(
                                 "verifiedBilingualTable.placeholders.value",
                               )}
@@ -228,7 +207,7 @@ const VerifiedBilingualTable = ({
                             {error && (
                               <Tooltip title={error.message || ""}>
                                 <ErrorOutlineIcon
-                                  className="ml-1"
+                                  className="mr-1"
                                   color="error"
                                   fontSize="small"
                                   data-testid={`value-error-icon-${path}-${index}`}
@@ -237,6 +216,55 @@ const VerifiedBilingualTable = ({
                               </Tooltip>
                             )}
                           </>
+                        )}
+                      />
+
+                      {/* Unit Selection Field */}
+                      <Controller
+                        name={`${path}.${index}.unit`}
+                        control={control}
+                        render={({ field }) => (
+                          <Autocomplete
+                            {...field}
+                            className="bg-gray-100"
+                            freeSolo
+                            selectOnFocus
+                            options={unitOptions ?? []}
+                            onChange={(event, newValue) => {
+                              field.onChange(newValue);
+                            }}
+                            onInputChange={(event, newInputValue) => {
+                              field.onChange(newInputValue);
+                            }}
+                            value={field.value || ""}
+                            disableClearable
+                            slotProps={{
+                              popper: {
+                                className: "!w-fit",
+                              },
+                            }}
+                            renderInput={(params) => (
+                              <TextField
+                                {...params}
+                                variant="standard"
+                                aria-label={t(
+                                  "verifiedBilingualTable.accessibility.unitDropdown",
+                                )}
+                                data-testid={`${path}.${index}.unit`}
+                                placeholder={t(
+                                  "verifiedBilingualTable.unitPlaceholder",
+                                )}
+                                slotProps={{
+                                  input: {
+                                    ...params.InputProps,
+                                    disableUnderline: true,
+                                    className: "px-2 !text-[15px] !w-[10ch]",
+                                  },
+                                }}
+                              />
+                            )}
+                            disabled={isVerified(index)}
+                          />
                         )}
                       />
                     </Box>
