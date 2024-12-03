@@ -54,6 +54,10 @@
     "accessibility": {
       "input": "Input field for {{label}}",
       "checkbox": "Checkbox for {{label}}"
+    },
+    "options": {
+      "yes": "Yes",
+      "no": "No"
     }
   },
   "verifiedQuantityMultiInput": {

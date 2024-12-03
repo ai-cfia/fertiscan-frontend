@@ -54,6 +54,10 @@
     "accessibility": {
       "input": "Champ de saisie pour {{label}}",
       "checkbox": "Case à cocher pour {{label}}"
+    },
+    "options": {
+      "yes": "Oui",
+      "no": "Non"
     }
   },
   "verifiedQuantityMultiInput": {

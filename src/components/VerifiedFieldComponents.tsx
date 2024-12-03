@@ -1,10 +1,12 @@
 import CheckIcon from "@mui/icons-material/Check";
 import {
   Box,
-  Checkbox,
   Divider,
+  FormControlLabel,
   IconButton,
   InputBase,
+  Radio,
+  RadioGroup,
   Tooltip,
   Typography,
 } from "@mui/material";
@@ -42,66 +44,69 @@ const VerifiedFieldWrapper: React.FC<VerifiedFieldWrapperProps> = ({
   });
 
   return (
-    <Box
-      className={`flex items-center p-1 border-2 rounded-tr-md rounded-br-md ${
-        isFocused ? "border-fertiscan-blue" : ""
-      } ${verified ? "bg-green-100" : ""} ${className}`}
-      data-testid={`verified-field-${path}`}
-    >
+    <Box>
       <Typography
-        className="px-2 !font-bold select-none"
+        className="px-2 !font-bold select-none text-left"
         data-testid={`field-label-${path}`}
       >
         {label}
       </Typography>
-      {renderField({ setIsFocused, control, valuePath, verified })}
-      <Divider
-        orientation="vertical"
-        flexItem
-        className={isFocused ? "!border-fertiscan-blue" : ""}
-        data-testid={`divider-${path}`}
-      />
-      <Controller
-        name={verifiedPath}
-        control={control}
-        render={({ field: { value, onChange } }) => (
-          <Tooltip
-            title={
-              verified
-                ? t("verifiedField.unverify", { label })
-                : t("verifiedField.verify", { label })
-            }
-            enterDelay={1000}
-          >
-            <IconButton
-              onClick={() => onChange(!value)}
-              data-testid={`toggle-verified-btn-${verifiedPath}`}
-              aria-label={
+
+      <Box
+        className={`flex items-center p-1 border-2 rounded-tr-md rounded-br-md ${
+          isFocused ? "border-fertiscan-blue" : ""
+        } ${verified ? "border-green-500" : ""} ${className}`}
+        data-testid={`verified-field-${path}`}
+      >
+        {renderField({ setIsFocused, control, valuePath, verified })}
+        <Divider
+          orientation="vertical"
+          flexItem
+          className={isFocused ? "!border-fertiscan-blue" : ""}
+          data-testid={`divider-${path}`}
+        />
+        <Controller
+          name={verifiedPath}
+          control={control}
+          render={({ field: { value, onChange } }) => (
+            <Tooltip
+              title={
                 verified
                   ? t("verifiedField.unverify", { label })
                   : t("verifiedField.verify", { label })
               }
+              enterDelay={1000}
             >
-              <CheckIcon
-                className={value ? "text-green-500" : ""}
-                data-testid={`verified-icon-${verifiedPath}`}
-                aria-hidden
-              />
-            </IconButton>
-          </Tooltip>
-        )}
-      />
+              <IconButton
+                onClick={() => onChange(!value)}
+                data-testid={`toggle-verified-btn-${verifiedPath}`}
+                aria-label={
+                  verified
+                    ? t("verifiedField.unverify", { label })
+                    : t("verifiedField.verify", { label })
+                }
+              >
+                <CheckIcon
+                  className={value ? "text-green-500" : ""}
+                  data-testid={`verified-icon-${verifiedPath}`}
+                  aria-hidden
+                />
+              </IconButton>
+            </Tooltip>
+          )}
+        />
+      </Box>
     </Box>
   );
 };
 
-interface VerifiedCheckboxProps {
+interface VerifiedRadioProps {
   label: string;
   path: string;
   className?: string;
 }
 
-const VerifiedCheckbox: React.FC<VerifiedCheckboxProps> = ({
+const VerifiedRadio: React.FC<VerifiedRadioProps> = ({
   label,
   path,
   className = "",
@@ -117,15 +122,38 @@ const VerifiedCheckbox: React.FC<VerifiedCheckboxProps> = ({
           name={valuePath}
           control={control}
           render={({ field }) => (
-            <Checkbox
-              {...field}
-              checked={field.value}
-              disabled={verified}
+            <RadioGroup
+              value={field.value ? "yes" : "no"}
+              onChange={(e) => field.onChange(e.target.value === "yes")}
+              className="flex-1 !flex-row px-2 "
               onFocus={() => setIsFocused(true)}
               onBlur={() => setIsFocused(false)}
-              data-testid={`checkbox-field-${valuePath}`}
-              aria-label={`${t("verifiedInput.accessibility.checkbox", { label })}`}
-            />
+              data-testid={`radio-group-field-${valuePath}`}
+              aria-label={`${t("verifiedInput.accessibility.radioGroup", { label })}`}
+            >
+              <FormControlLabel
+                value="yes"
+                control={<Radio size="small" />}
+                label={
+                  <Typography className="!text-[15px]">
+                    {t("verifiedInput.options.yes")}
+                  </Typography>
+                }
+                disabled={verified}
+                data-testid={`radio-yes-field-${valuePath}`}
+              />
+              <FormControlLabel
+                value="no"
+                control={<Radio size="small" />}
+                label={
+                  <Typography className="!text-[15px]">
+                    {t("verifiedInput.options.no")}
+                  </Typography>
+                }
+                disabled={verified}
+                data-testid={`radio-no-field-${valuePath}`}
+              />
+            </RadioGroup>
           )}
         />
       )}
@@ -133,6 +161,7 @@ const VerifiedCheckbox: React.FC<VerifiedCheckboxProps> = ({
   );
 };
 
+export { VerifiedRadio };
 interface VerifiedInputProps {
   label: string;
   placeholder: string;
@@ -177,4 +206,4 @@ const VerifiedInput: React.FC<VerifiedInputProps> = ({
   );
 };
 
-export { VerifiedCheckbox, VerifiedInput };
+export { VerifiedRadio as VerifiedCheckbox, VerifiedInput };
