@@ -156,42 +156,53 @@ const FileElement: React.FC<
           )}
         </Grid2>
         {!isRenaming && hovered && (
-          <>
-           <IconButton
-              edge="end"
-              aria-label={t("fileElement.altText.deleteFileAlt")}
-              size="small"
-              sx={{
-                color: "black",
-                position: "absolute",
-                borderRadius: "5px",
-                right: { xs: 5, sm: 5 }, // Responsive right positions for xs and md and up
-                top: { xs: 5, sm: '0' }, // Top position for xs and auto for md and up
-                bottom: { xs: 'auto', sm: 5 },  // Ensure bottom is auto for xs and specific for md
-              }}
-              onClick={() => handleDelete(fileUrl)}
-            >
-              <DeleteIcon data-testid="delete" style={{ fontSize: "1.7rem" }} />
-            </IconButton>
-            <IconButton
-              edge="end"
-              size="small"
-              aria-label={t("fileElement.altText.renameFileAlt")}
-              sx={{
-                color: "black",
-                position: "absolute",
-                borderRadius: "5px",
-                paddingTop: "10px",
-                right: { xs: 6, sm: 50 }, // Adjust the right position according to your design
-                top: { xs: 50, sm: '0' }, //Top position for xs and auto for md and up
-                bottom: { xs: 'auto', sm: 10 }  //Ensure bottom is auto for xs and specific for md
-              }}
-              onClick={() => startRename(fileUrl)}
-            >
-              <CreateIcon style={{ fontSize: "1.7rem" }} />
-            </IconButton>
-          </>
-        )}
+  <>
+   <IconButton
+      edge="end"
+      aria-label={t("fileElement.altText.deleteFileAlt")}
+      size="small"
+      sx={{
+        alignSelf:"center",
+        display: "flex",
+        maxHeight: "50%",
+        color: "black",
+        position: "absolute",
+        borderRadius: "5px",
+        right: { xs: 5, sm: 5 },
+        top: { xs: 0, sm: '0' },
+        bottom: { xs: 'auto', sm: 10 },
+        '&:hover': {
+          backgroundColor: "#A9A9A9",
+        }
+      }}
+      onClick={() => handleDelete(fileUrl)}
+    >
+      <DeleteIcon data-testid="delete" style={{ fontSize: "1.7rem" }} />
+    </IconButton>
+    <IconButton
+      edge="end"
+      size="small"
+      aria-label={t("fileElement.altText.renameFileAlt")}
+      sx={{
+        alignSelf:"center",
+        display: "flex",
+        maxHeight: "50%",
+        color: "black",
+        position: "absolute",
+        borderRadius: "5px",
+        right: { xs: 6, sm: 45 },
+        top: { xs: 50, sm: '0' },
+        bottom: { xs: 'auto', sm: 10 },
+        '&:hover': {
+          backgroundColor: "#A9A9A9",
+        }
+      }}
+      onClick={() => startRename(fileUrl)}
+    >
+      <CreateIcon style={{ fontSize: "1.7rem" }} />
+    </IconButton>
+  </>
+)}
       </Grid2>
     </>
   );

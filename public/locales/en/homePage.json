@@ -16,6 +16,16 @@
         "altText": {
             "uploadedFileAlt": "Uploaded file picture",
             "deleteFileAlt": "Delete file button icon"
+        },
+        "contextMenu": {
+            "altText": {
+                "contextMenuDeleteIconAlt": "Context menu delete icon",
+                "contextMenuRenameIconAlt": "Context menu rename icon",
+                "contextMenuDeleteALLIconAlt": "Context menu delete all files icon"
+            },
+            "delete": "Remove",
+            "rename": "Rename",
+            "deleteAll": "Remove all files"
         }
     },
     "dropzone": {

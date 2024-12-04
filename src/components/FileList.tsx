@@ -1,6 +1,5 @@
 "use client";
 
-import React, { Suspense, useState } from "react";
 import {
   Box,
   Stack,
@@ -8,6 +7,7 @@ import {
   Button,
   Typography,
 } from "@mui/material";
+import React, { Suspense, useEffect, useState } from "react";
 import FileElement from "@/components/FileElement";
 import FileUploaded from "@/classe/File";
 import { DropzoneState } from "@/types/types";
@@ -33,7 +33,6 @@ const FileList: React.FC<FileListProps> = ({
   const { t } = useTranslation("homePage");
   const [renameFileUrl, setRenameFileUrl] = useState<string | null>(null);
 
-
   const handleDelete = (url: string) => {
     setUploadedFiles(
       uploadedFiles.filter(
@@ -54,11 +53,17 @@ const FileList: React.FC<FileListProps> = ({
             })()
           : file,
       );
-      setUploadedFiles(newUploadedFiles);
+
+      setUploadedFiles(
+        uploadedFiles.map((file) =>
+          file.getInfo().path === renameFileUrl
+            ? (() => { file.setName(newName); return file; })()
+            : file,
+        ),
+      );
       setRenameFileUrl(null);
     }
   };
-
 
   const handleDeleteAll = () => {
     setUploadedFiles([]);
