@@ -38,6 +38,9 @@
   "instructions": {
     "stepTitle": "Instructions"
   },
+  "ingredients": {
+    "stepTitle": "Ingrédients"
+  },
   "guaranteedAnalysis": {
     "stepTitle": "Analyse Garantie",
     "title": "Titre",
