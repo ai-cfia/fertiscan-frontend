@@ -3,22 +3,19 @@
     "submit_button_disabled_hint":"Vous devez ajouter au moins 1 fichier pour commencer l'analyse",
     "fileList":{
         "uploadedfiles": "Fichiers téléversés",
-        "noUploadedfiles": "Aucun fichier téléversé"
+        "noUploadedfiles": "Aucun fichier téléversé",
+        "deleteAll": "Supprimer tout",
+        "snackbar": {
+            "delete": "Fichier supprimé",
+            "deleteAll": "Tous les fichiers ont été supprimés",
+            "rename": "Fichier renommé",
+            "undo": "Annuler"
+        }
     },
     "fileElement": {
         "altText": {
             "uploadedFileAlt": "Image du fichier téléchargé",
             "deleteFileAlt": "Icône du bouton pour supprimer un fichier"
-        },
-        "contextMenu": {
-            "altText": {
-                "contextMenuDeleteIconAlt": "Icône de supression du menu contextuel",
-                "contextMenuRenameIconAlt": "Icône de renommage du menu contextuel",
-                "contextMenuDeleteALLIconAlt": "Icône de suppression de tous les fichiers du menu contextuel"
-            },
-            "delete": "Retirer",
-            "rename": "Renommer",
-            "deleteAll": "Retirer tout les fichiers"
         }
     },
     "dropzone":{
