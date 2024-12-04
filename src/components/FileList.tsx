@@ -1,10 +1,11 @@
 "use client";
-import React, { Suspense } from "react";
+import React, { Suspense, useEffect, useState } from "react";
 import { Box, Stack, Typography, useTheme } from "@mui/material";
 import FileElement from "@/components/FileElement";
 import FileUploaded from "@/classe/File";
 import { DropzoneState } from "@/types/types"; // Adjust the import path as necessary
 import { useTranslation } from "react-i18next";
+import FileContextMenu from "@/components/FileContextMenu";
 
 /**
  * Props for the FileList component.
@@ -36,6 +37,12 @@ const FileList: React.FC<FileListProps> = ({
 }) => {
   const theme = useTheme();
   const { t } = useTranslation("homePage");
+  const [contextMenu, setContextMenu] = useState<{
+    mouseX: number;
+    mouseY: number;
+    fileUrl: string;
+  } | null>(null);
+  const [renameFileUrl, setRenameFileUrl] = useState<string | null>(null);
 
   const handleDelete = (url: string) => {
     setUploadedFiles(
@@ -45,6 +52,60 @@ const FileList: React.FC<FileListProps> = ({
     );
     setDropzoneState({ visible: false, imageUrl: null });
   };
+
+  const handleRename = (newName: string) => {
+    if (renameFileUrl) {
+      setUploadedFiles(
+        uploadedFiles.map((file) =>
+          file.getInfo().path === renameFileUrl
+            ? (() => { file.setName(newName); return file; })()
+            : file,
+        ),
+      );
+      setRenameFileUrl(null);
+    }
+  };
+
+  const handleContextMenu = (event: React.MouseEvent, fileUrl: string) => {
+    event.preventDefault();
+    setContextMenu(
+      contextMenu === null
+        ? {
+            mouseX: event.clientX - 2,
+            mouseY: event.clientY - 4,
+            fileUrl: fileUrl,
+          }
+        : null,
+    );
+  };
+
+  const handleContextMenuClose = () => {
+    setContextMenu(null);
+  };
+
+  useEffect(() => {
+    const handleMouseOut = (event: MouseEvent) => {
+      if (
+        contextMenu &&
+        (event.clientX < contextMenu.mouseX - 50 ||
+          event.clientX > contextMenu.mouseX + 250 ||
+          event.clientY < contextMenu.mouseY - 50 ||
+          event.clientY > contextMenu.mouseY + 250)
+      ) {
+        setContextMenu(null);
+      }
+    };
+
+    if (contextMenu) {
+      window.addEventListener("mousemove", handleMouseOut);
+    } else {
+      window.removeEventListener("mousemove", handleMouseOut);
+    }
+
+    return () => {
+      window.removeEventListener("mousemove", handleMouseOut);
+    };
+  }, [contextMenu]);
 
   return (
     <Suspense fallback="loading">
@@ -103,11 +164,30 @@ const FileList: React.FC<FileListProps> = ({
                 fileName={file.getInfo().name}
                 fileUrl={file.getInfo().path}
                 handleDelete={() => handleDelete(file.getInfo().path)}
+                onContextMenu={handleContextMenu}
+                isRenaming={renameFileUrl === file.getInfo().path}
+                handleRename={handleRename}
               />
             ))}
           </Stack>
         </Box>
       </Box>
+      {contextMenu !== null && (
+        <FileContextMenu
+          mouseX={contextMenu.mouseX}
+          mouseY={contextMenu.mouseY}
+          handleClose={handleContextMenuClose}
+          onDelete={() => handleDelete(contextMenu.fileUrl)}
+          onRename={() => {
+            setRenameFileUrl(contextMenu.fileUrl);
+            handleContextMenuClose();
+          }}
+          onDeleteAll={() => {
+            setUploadedFiles([]);
+            setDropzoneState({ visible: false, imageUrl: null });
+          }}
+        />
+      )}
     </Suspense>
   );
 };

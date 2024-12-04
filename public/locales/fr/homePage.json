@@ -9,6 +9,16 @@
         "altText": {
             "uploadedFileAlt": "Image du fichier téléchargé",
             "deleteFileAlt": "Icône du bouton pour supprimer un fichier"
+        },
+        "contextMenu": {
+            "altText": {
+                "contextMenuDeleteIconAlt": "Icône de supression du menu contextuel",
+                "contextMenuRenameIconAlt": "Icône de renommage du menu contextuel",
+                "contextMenuDeleteALLIconAlt": "Icône de suppression de tous les fichiers du menu contextuel"
+            },
+            "delete": "Retirer",
+            "rename": "Renommer",
+            "deleteAll": "Retirer tout les fichiers"
         }
     },
     "dropzone":{
