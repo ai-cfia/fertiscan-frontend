@@ -7,6 +7,7 @@ import {
   useTheme,
 } from "@mui/material";
 import DeleteIcon from "@mui/icons-material/Delete";
+import CreateIcon from "@mui/icons-material/Create";
 import { DropzoneState } from "@/types/types";
 import Image from "next/image";
 import React, { useState } from "react";
@@ -20,9 +21,9 @@ interface FileElementProps {
   fileName: string;
   fileUrl: string;
   handleDelete: (fileUrl: string) => void;
-  onContextMenu: (event: React.MouseEvent, fileUrl: string) => void;
   isRenaming: boolean;
   handleRename: (newName: string) => void;
+  startRename: (fileUrl: string) => void;
 }
 
 /**
@@ -42,15 +43,15 @@ const FileElement: React.FC<
   fileName,
   fileUrl,
   handleDelete,
-  onContextMenu,
   isRenaming,
   handleRename,
+  startRename,
 }) => {
   const theme = useTheme();
   const { t } = useTranslation("homePage");
   const [hovered, setHovered] = useState(false);
 
-  const extension = fileName.split(".").pop();
+  const extension = fileName.split(".").pop() || "";
   const baseName = fileName.replace(`.${extension}`, "");
   const [newName, setNewName] = useState(baseName);
 
@@ -77,7 +78,6 @@ const FileElement: React.FC<
           setHovered(false);
           setDropzoneState({ visible: false, imageUrl: "" });
         }}
-        onContextMenu={(event) => onContextMenu(event, fileUrl)}
         className="relative h-full w-full min-h-[90px] flex items-center
                   justify-center overflow-hidden rounded border-2 border-neutral-600 bg-neutral-200"
       >
@@ -99,7 +99,7 @@ const FileElement: React.FC<
           orientation="vertical"
           flexItem
           color={theme.palette.primary.dark}
-          sx={{ borderRightWidth: 3 }} // className="border-r-2" dont work
+          sx={{ borderRightWidth: 3 }}
         />
         <Grid2 size={80} className="relative flex items">
           {isRenaming ? (
@@ -109,11 +109,21 @@ const FileElement: React.FC<
                 onChange={(e) => setNewName(e.target.value)}
                 onKeyPress={handleRenameSubmit}
                 autoFocus
-                InputProps={{
-                  endAdornment: `.${extension}`,
-                  autoComplete: "off"
-                }}
+                placeholder="Enter file name"
+                inputProps={{ autoComplete: "off" }}
+                style={{ paddingRight: `${extension.length + 2}ch` }}
               />
+               <Typography
+                variant="body1"
+                color={theme.palette.text.primary}
+                style={{
+                  whiteSpace: 'nowrap',
+                  flexShrink: 0,
+                }}
+                className="ml-1"
+              >
+                .{extension}
+              </Typography>
             </div>
           ) : (
             <Typography
@@ -125,20 +135,35 @@ const FileElement: React.FC<
             </Typography>
           )}
         </Grid2>
-        { !isRenaming && hovered && (
-          <IconButton
-            edge="end"
-            aria-label={t("fileElement.altText.deleteFileAlt")}
-            style={{
-              color: "black",
-              position: "absolute",
-              top: "-5px",
-              right: 5,
-            }}
-            onClick={() => handleDelete(fileUrl)}
-          >
-            <DeleteIcon data-testid="delete" style={{ fontSize: "1.7rem" }} />
-          </IconButton>
+        {!isRenaming && hovered && (
+          <>
+            <IconButton
+              edge="end"
+              aria-label={t("fileElement.altText.deleteFileAlt")}
+              style={{
+                color: "black",
+                position: "absolute",
+                top: "-5px",
+                right: 5,
+              }}
+              onClick={() => handleDelete(fileUrl)}
+            >
+              <DeleteIcon data-testid="delete" style={{ fontSize: "1.7rem" }} />
+            </IconButton>
+            <IconButton
+              edge="end"
+              aria-label={t("fileElement.altText.renameFileAlt")}
+              style={{
+                color: "black",
+                position: "absolute",
+                bottom: "-5px",
+                right: 5,
+              }}
+              onClick={() =>startRename(fileUrl)}
+            >
+              <CreateIcon style={{ fontSize: "1.7rem" }} />
+            </IconButton>
+          </>
         )}
       </Grid2>
     </>
