@@ -140,11 +140,12 @@ const FileElement: React.FC<
             <IconButton
               edge="end"
               aria-label={t("fileElement.altText.deleteFileAlt")}
+              size="small"
               style={{
                 color: "black",
                 position: "absolute",
-                top: "-5px",
                 right: 5,
+                borderRadius: "5px"
               }}
               onClick={() => handleDelete(fileUrl)}
             >
@@ -152,12 +153,13 @@ const FileElement: React.FC<
             </IconButton>
             <IconButton
               edge="end"
+              size="small"
               aria-label={t("fileElement.altText.renameFileAlt")}
               style={{
                 color: "black",
                 position: "absolute",
-                bottom: "-5px",
-                right: 5,
+                right: 50,
+                borderRadius: "5px",
               }}
               onClick={() =>startRename(fileUrl)}
             >
