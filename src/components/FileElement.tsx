@@ -2,6 +2,7 @@ import {
   Divider,
   Grid2,
   IconButton,
+  TextField,
   Typography,
   useTheme,
 } from "@mui/material";
@@ -18,6 +19,10 @@ interface FileElementProps {
   setDropzoneState: React.Dispatch<React.SetStateAction<DropzoneState>>;
   fileName: string;
   fileUrl: string;
+  handleDelete: (fileUrl: string) => void;
+  onContextMenu: (event: React.MouseEvent, fileUrl: string) => void;
+  isRenaming: boolean;
+  handleRename: (newName: string) => void;
 }
 
 /**
@@ -32,15 +37,33 @@ interface FileElementProps {
  */
 const FileElement: React.FC<
   FileElementProps & { handleDelete: (fileUrl: string) => void }
-> = ({ setDropzoneState, fileName, fileUrl, handleDelete }) => {
+> = ({
+  setDropzoneState,
+  fileName,
+  fileUrl,
+  handleDelete,
+  onContextMenu,
+  isRenaming,
+  handleRename,
+}) => {
   const theme = useTheme();
   const { t } = useTranslation("homePage");
   const [hovered, setHovered] = useState(false);
+
+  const extension = fileName.split(".").pop();
+  const baseName = fileName.replace(`.${extension}`, "");
+  const [newName, setNewName] = useState(baseName);
 
   const isValidObjectURL = (url: string) => {
     const pattern =
       /^(blob:+http:\/\/|https:\/\/)[a-zA-Z0-9\-_.]+(?:\.[a-zA-Z0-9\-_.]+)*(?::\d+)?\/[a-zA-Z0-9\-_.]+$/;
     return pattern.test(url);
+  };
+
+  const handleRenameSubmit = (event: React.KeyboardEvent) => {
+    if (event.key === 'Enter' && newName.trim() !== "") {
+      handleRename(`${newName.trim()}.${extension}`);
+    }
   };
 
   return (
@@ -54,6 +77,7 @@ const FileElement: React.FC<
           setHovered(false);
           setDropzoneState({ visible: false, imageUrl: "" });
         }}
+        onContextMenu={(event) => onContextMenu(event, fileUrl)}
         className="relative h-full w-full min-h-[90px] flex items-center
                   justify-center overflow-hidden rounded border-2 border-neutral-600 bg-neutral-200"
       >
@@ -78,15 +102,30 @@ const FileElement: React.FC<
           sx={{ borderRightWidth: 3 }} // className="border-r-2" dont work
         />
         <Grid2 size={80} className="relative flex items">
-          <Typography
-            variant="h6"
-            color={theme.palette.text.primary}
-            className="overflow-hidden text-ellipsis whitespace-nowrap text-start pl-2"
-          >
-            {fileName}
-          </Typography>
+          {isRenaming ? (
+            <div className="flex items-center">
+              <TextField
+                value={newName}
+                onChange={(e) => setNewName(e.target.value)}
+                onKeyPress={handleRenameSubmit}
+                autoFocus
+                InputProps={{
+                  endAdornment: `.${extension}`,
+                  autoComplete: "off"
+                }}
+              />
+            </div>
+          ) : (
+            <Typography
+              variant="h6"
+              color={theme.palette.text.primary}
+              className="overflow-hidden text-ellipsis whitespace-nowrap text-start pl-2"
+            >
+              {fileName}
+            </Typography>
+          )}
         </Grid2>
-        {hovered && (
+        { !isRenaming && hovered && (
           <IconButton
             edge="end"
             aria-label={t("fileElement.altText.deleteFileAlt")}
