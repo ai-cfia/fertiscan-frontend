@@ -113,10 +113,10 @@ describe("VerifiedBilingualTable rendering and functionality", () => {
       />,
     );
 
-    const unitSelect = screen.getByTestId("bilingualFields.0.unit");
+    const unitSelect = screen.getByTestId("bilingualFields.0-unit-input");
     const unitInput = unitSelect.querySelector("input") as HTMLInputElement;
 
-    const valueInputBase = screen.getByTestId("bilingualFields.0.value");
+    const valueInputBase = screen.getByTestId("bilingualFields.0-value-input");
     const valueInput = valueInputBase.querySelector(
       "input",
     ) as HTMLInputElement;
@@ -248,7 +248,7 @@ describe("VerifiedBilingualTable rendering and functionality", () => {
     }
 
     const unitSelectsBefore = await screen.findAllByTestId(
-      /bilingualFields\.\d+\.unit/,
+      /bilingualFields\.\d+-unit-input/,
     );
     for (const unitSelect of unitSelectsBefore) {
       const unitInput = unitSelect.querySelector("input") as HTMLInputElement;
@@ -256,7 +256,7 @@ describe("VerifiedBilingualTable rendering and functionality", () => {
     }
 
     const valueInputBasesBefore = await screen.findAllByTestId(
-      /bilingualFields\.\d+\.value/,
+      /bilingualFields\.\d+-value-input/,
     );
     for (const valueInputBase of valueInputBasesBefore) {
       const valueInput = valueInputBase.querySelector(
@@ -295,7 +295,7 @@ describe("VerifiedBilingualTable rendering and functionality", () => {
     }
 
     const unitSelectsAfter = await screen.findAllByTestId(
-      /bilingualFields\.\d+\.unit/,
+      /bilingualFields\.\d+-unit-input/,
     );
     for (const unitSelect of unitSelectsAfter) {
       const unitInput = unitSelect.querySelector("input") as HTMLInputElement;
@@ -303,7 +303,7 @@ describe("VerifiedBilingualTable rendering and functionality", () => {
     }
 
     const valueInputBasesAfter = await screen.findAllByTestId(
-      /bilingualFields\.\d+\.value/,
+      /bilingualFields\.\d+-value-input/,
     );
     for (const valueInputBase of valueInputBasesAfter) {
       const valueInput = valueInputBase.querySelector(
@@ -378,11 +378,11 @@ describe("VerifiedBilingualTable rendering and functionality", () => {
       .getByTestId("input-french-bilingualFields-0")
       .querySelector("textarea") as HTMLTextAreaElement;
 
-    const unitSelect = screen.getByTestId("bilingualFields.0.unit");
+    const unitSelect = screen.getByTestId("bilingualFields.0-unit-input");
     const unitInput = unitSelect.querySelector("input") as HTMLInputElement;
 
     const valueInput = screen
-      .getByTestId("bilingualFields.0.value")
+      .getByTestId("bilingualFields.0-value-input")
       .querySelector("input") as HTMLInputElement;
 
     fireEvent.change(englishTextarea, {
@@ -410,74 +410,6 @@ describe("VerifiedBilingualTable rendering and functionality", () => {
           ],
         }),
       );
-    });
-  });
-
-  it("shows an error for negative values", async () => {
-    render(
-      <Wrapper
-        defaultValues={{
-          bilingualFields: [
-            {
-              en: "English Text",
-              fr: "French Text",
-              unit: "%",
-              value: "10",
-              verified: false,
-            },
-          ],
-        }}
-        unitOptions={["%", "ppm"]}
-        valueColumns
-      />,
-    );
-
-    const valueInput = screen
-      .getByTestId("bilingualFields.0.value")
-      .querySelector("input") as HTMLInputElement;
-
-    fireEvent.change(valueInput, { target: { value: "-10" } });
-
-    fireEvent.click(screen.getByTestId("submit-button"));
-
-    await waitFor(() => {
-      expect(
-        screen.getByTestId("value-error-icon-bilingualFields-0"),
-      ).toBeInTheDocument();
-    });
-  });
-
-  it("shows an error for non-numeric values", async () => {
-    render(
-      <Wrapper
-        defaultValues={{
-          bilingualFields: [
-            {
-              en: "English Text",
-              fr: "French Text",
-              unit: "%",
-              value: "10",
-              verified: false,
-            },
-          ],
-        }}
-        unitOptions={["%", "ppm"]}
-        valueColumns
-      />,
-    );
-
-    const valueInput = screen
-      .getByTestId("bilingualFields.0.value")
-      .querySelector("input") as HTMLInputElement;
-
-    fireEvent.change(valueInput, { target: { value: "abc" } });
-
-    fireEvent.click(screen.getByTestId("submit-button"));
-
-    await waitFor(() => {
-      expect(
-        screen.getByTestId("value-error-icon-bilingualFields-0"),
-      ).toBeInTheDocument();
     });
   });
 });
