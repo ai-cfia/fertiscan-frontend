@@ -3,6 +3,7 @@ import BaseInformationForm from "@/components/BaseInformationForm";
 import CautionsForm from "@/components/CautionsForm";
 import GuaranteedAnalysisForm from "@/components/GuaranteedAnalysisForm";
 import ImageViewer from "@/components/ImageViewer";
+import IngredientsForm from "@/components/IngredientsForm";
 import InstructionsForm from "@/components/InstructionsForm";
 import OrganizationsForm from "@/components/OrganizationsForm";
 import {
@@ -41,6 +42,8 @@ function LabelDataValidationPage() {
   const [instructionsStepStatus, setInstructionsStepStatus] =
     useState<StepStatus>(StepStatus.Incomplete);
   const [guaranteedAnalysisStepStatus, setGuaranteedAnalysisStepStatus] =
+    useState<StepStatus>(StepStatus.Incomplete);
+  const [ingredientsStepStatus, setIngredientsStepStatus] =
     useState<StepStatus>(StepStatus.Incomplete);
   const { showAlert } = useAlertStore();
 
@@ -90,6 +93,12 @@ function LabelDataValidationPage() {
       GuaranteedAnalysisForm,
       guaranteedAnalysisStepStatus,
       setGuaranteedAnalysisStepStatus,
+    ),
+    createStep(
+      t("ingredients.stepTitle"),
+      IngredientsForm,
+      ingredientsStepStatus,
+      setIngredientsStepStatus,
     ),
   ];
 
@@ -145,9 +154,16 @@ function LabelDataValidationPage() {
     );
   }, [labelData.guaranteedAnalysis, setGuaranteedAnalysisStepStatus]);
 
+  useEffect(() => {
+    const verified = checkFieldArray(labelData.ingredients);
+    setIngredientsStepStatus(
+      verified ? StepStatus.Completed : StepStatus.Incomplete,
+    );
+  }, [labelData.ingredients, setIngredientsStepStatus]);
+
   return (
     <Container
-      className="flex flex-col max-w-[1920px] bg-gray-100 "
+      className="flex flex-col max-w-[1920px] bg-gray-100 text-black"
       maxWidth={false}
       data-testid="container"
     >
@@ -190,7 +206,7 @@ function LabelDataValidationPage() {
         >
           <Typography
             variant="h6"
-            className="text-lg font-bold"
+            className="text-lg !font-bold"
             data-testid="form-title"
           >
             {steps[activeStep].title}

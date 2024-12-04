@@ -96,7 +96,6 @@ export const DEFAULT_ORGANIZATION: Organization = {
   phoneNumber: DEFAULT_TEXT_FIELD,
 };
 
-
 // Quantity
 export type Quantity = {
   value: string;
@@ -112,6 +111,7 @@ export const UNITS = {
   volume: ["L", "mL", "gal", "ft³"],
   density: ["lb/ft³", "g/cm³", "kg/m³", "lb/gal"],
   guaranteedAnalysis: ["%", "ppm"],
+  ingredients: ["%", "ppm"],
 };
 
 const DEFAULT_QUANTITY_FIELD = (unit: string): VerifiedQuantityField => ({
@@ -153,7 +153,7 @@ export const DEFAULT_BILINGUAL_FIELD: BilingualField = {
   verified: false,
 };
 
-export const DEFAULT_GA_NUTRIENT: BilingualField = {
+export const FULL_BILINGUAL_FIELD: BilingualField = {
   en: "",
   fr: "",
   value: "",
@@ -172,7 +172,7 @@ export const DEFAULT_GUARANTEED_ANALYSIS: GuaranteedAnalysis = {
   titleEn: DEFAULT_TEXT_FIELD,
   titleFr: DEFAULT_TEXT_FIELD,
   isMinimal: DEFAULT_BOOLEAN_FIELD,
-  nutrients: [DEFAULT_GA_NUTRIENT],
+  nutrients: [FULL_BILINGUAL_FIELD],
 };
 
 // LabelData
@@ -182,6 +182,7 @@ export type LabelData = {
   cautions: BilingualField[];
   instructions: BilingualField[];
   guaranteedAnalysis: GuaranteedAnalysis;
+  ingredients: BilingualField[];
 };
 
 export const DEFAULT_LABEL_DATA: LabelData = {
@@ -190,6 +191,7 @@ export const DEFAULT_LABEL_DATA: LabelData = {
   cautions: [DEFAULT_BILINGUAL_FIELD],
   instructions: [DEFAULT_BILINGUAL_FIELD],
   guaranteedAnalysis: DEFAULT_GUARANTEED_ANALYSIS,
+  ingredients: [FULL_BILINGUAL_FIELD],
 };
 
 // Form
