@@ -158,7 +158,7 @@ export const DEFAULT_GA_NUTRIENT: BilingualField = {
   en: "",
   fr: "",
   value: "",
-  unit: UNITS.guaranteedAnalysis[0],
+  unit: "",
   verified: false,
 };
 

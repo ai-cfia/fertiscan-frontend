@@ -4,7 +4,6 @@ import {
   Divider,
   FormControlLabel,
   IconButton,
-  InputBase,
   Radio,
   RadioGroup,
   Tooltip,
@@ -13,6 +12,7 @@ import {
 import { ReactNode, useState } from "react";
 import { Control, Controller, useFormContext, useWatch } from "react-hook-form";
 import { useTranslation } from "react-i18next";
+import StyledTextField from "./StyledTextField";
 
 interface VerifiedFieldWrapperProps {
   label: string;
@@ -26,7 +26,7 @@ interface VerifiedFieldWrapperProps {
   }) => ReactNode;
 }
 
-const VerifiedFieldWrapper: React.FC<VerifiedFieldWrapperProps> = ({
+export const VerifiedFieldWrapper: React.FC<VerifiedFieldWrapperProps> = ({
   label,
   path,
   className = "",
@@ -106,7 +106,7 @@ interface VerifiedRadioProps {
   className?: string;
 }
 
-const VerifiedRadio: React.FC<VerifiedRadioProps> = ({
+export const VerifiedRadio: React.FC<VerifiedRadioProps> = ({
   label,
   path,
   className = "",
@@ -161,7 +161,6 @@ const VerifiedRadio: React.FC<VerifiedRadioProps> = ({
   );
 };
 
-export { VerifiedRadio };
 interface VerifiedInputProps {
   label: string;
   placeholder: string;
@@ -169,7 +168,7 @@ interface VerifiedInputProps {
   className?: string;
 }
 
-const VerifiedInput: React.FC<VerifiedInputProps> = ({
+export const VerifiedInput: React.FC<VerifiedInputProps> = ({
   label,
   placeholder,
   path,
@@ -186,10 +185,10 @@ const VerifiedInput: React.FC<VerifiedInputProps> = ({
           name={valuePath}
           control={control}
           render={({ field }) => (
-            <InputBase
+            <StyledTextField
               {...field}
               placeholder={placeholder}
-              className="ml-2 flex-1 !text-[15px]"
+              className="!ml-2 !text-[15px]"
               disabled={verified}
               onFocus={() => setIsFocused(true)}
               onBlur={(e) => {
@@ -205,5 +204,3 @@ const VerifiedInput: React.FC<VerifiedInputProps> = ({
     />
   );
 };
-
-export { VerifiedRadio as VerifiedCheckbox, VerifiedInput };

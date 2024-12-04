@@ -3,22 +3,18 @@ import AddIcon from "@mui/icons-material/Add";
 import CheckIcon from "@mui/icons-material/Check";
 import DeleteIcon from "@mui/icons-material/Delete";
 import DoneAllIcon from "@mui/icons-material/DoneAll";
-import ErrorOutlineIcon from "@mui/icons-material/ErrorOutline";
 import RemoveDoneIcon from "@mui/icons-material/RemoveDone";
 import {
-  Autocomplete,
   Box,
   Button,
   Divider,
   IconButton,
-  InputBase,
   Table,
   TableBody,
   TableCell,
   TableContainer,
   TableHead,
   TableRow,
-  TextField,
   Tooltip,
   Typography,
 } from "@mui/material";
@@ -29,6 +25,8 @@ import {
   useWatch,
 } from "react-hook-form";
 import { useTranslation } from "react-i18next";
+import QuantityInput from "./QuantityInput";
+import StyledTextField from "./StyledTextField";
 
 interface VerifiedBilingualTableProps {
   path: string;
@@ -125,14 +123,11 @@ const VerifiedBilingualTable = ({
                     name={`${path}.${index}.en`}
                     control={control}
                     render={({ field }) => (
-                      <InputBase
+                      <StyledTextField
                         {...field}
-                        className="!text-[15px]"
                         placeholder={t(
                           "verifiedBilingualTable.placeholders.english",
                         )}
-                        multiline
-                        fullWidth
                         disabled={isVerified(index)}
                         aria-label={t(
                           "verifiedBilingualTable.accessibility.englishInput",
@@ -140,6 +135,7 @@ const VerifiedBilingualTable = ({
                         )}
                         aria-disabled={isVerified(index)}
                         data-testid={`input-english-${path}-${index}`}
+                        multiline
                       />
                     )}
                   />
@@ -151,14 +147,11 @@ const VerifiedBilingualTable = ({
                     name={`${path}.${index}.fr`}
                     control={control}
                     render={({ field }) => (
-                      <InputBase
+                      <StyledTextField
                         {...field}
-                        className="!text-[15px]"
                         placeholder={t(
                           "verifiedBilingualTable.placeholders.french",
                         )}
-                        multiline
-                        fullWidth
                         disabled={isVerified(index)}
                         aria-label={t(
                           "verifiedBilingualTable.accessibility.frenchInput",
@@ -166,6 +159,7 @@ const VerifiedBilingualTable = ({
                         )}
                         aria-disabled={isVerified(index)}
                         data-testid={`input-french-${path}-${index}`}
+                        multiline
                       />
                     )}
                   />
@@ -174,100 +168,12 @@ const VerifiedBilingualTable = ({
                 {/* Value column */}
                 {valueColumn && (
                   <TableCell>
-                    <Box className="flex items-center">
-                      {/* Value Input Field */}
-                      <Controller
-                        name={`${path}.${index}.value`}
-                        control={control}
-                        rules={{
-                          pattern: {
-                            value: /^[0-9]*\.?[0-9]*$/,
-                            message: t("errors.numbersOnly"),
-                          },
-                          min: {
-                            value: 0,
-                            message: t("errors.minValue"),
-                          },
-                        }}
-                        render={({ field, fieldState: { error } }) => (
-                          <>
-                            <InputBase
-                              {...field}
-                              className="flex-1 pl-2 pr-1 !text-[15px]"
-                              placeholder={t(
-                                "verifiedBilingualTable.placeholders.value",
-                              )}
-                              disabled={isVerified(index)}
-                              aria-label={t(
-                                "verifiedBilingualTable.accessibility.valueInput",
-                              )}
-                              data-testid={`${path}.${index}.value`}
-                              error={!!error}
-                            />
-                            {error && (
-                              <Tooltip title={error.message || ""}>
-                                <ErrorOutlineIcon
-                                  className="mr-1"
-                                  color="error"
-                                  fontSize="small"
-                                  data-testid={`value-error-icon-${path}-${index}`}
-                                  aria-label={error.message}
-                                />
-                              </Tooltip>
-                            )}
-                          </>
-                        )}
-                      />
-
-                      {/* Unit Selection Field */}
-                      <Controller
-                        name={`${path}.${index}.unit`}
-                        control={control}
-                        render={({ field }) => (
-                          <Autocomplete
-                            {...field}
-                            className="bg-gray-100"
-                            freeSolo
-                            selectOnFocus
-                            options={unitOptions ?? []}
-                            onChange={(event, newValue) => {
-                              field.onChange(newValue);
-                            }}
-                            onInputChange={(event, newInputValue) => {
-                              field.onChange(newInputValue);
-                            }}
-                            value={field.value || ""}
-                            disableClearable
-                            slotProps={{
-                              popper: {
-                                className: "!w-fit",
-                              },
-                            }}
-                            renderInput={(params) => (
-                              <TextField
-                                {...params}
-                                variant="standard"
-                                aria-label={t(
-                                  "verifiedBilingualTable.accessibility.unitDropdown",
-                                )}
-                                data-testid={`${path}.${index}.unit`}
-                                placeholder={t(
-                                  "verifiedBilingualTable.unitPlaceholder",
-                                )}
-                                slotProps={{
-                                  input: {
-                                    ...params.InputProps,
-                                    disableUnderline: true,
-                                    className: "px-2 !text-[15px] !w-[10ch]",
-                                  },
-                                }}
-                              />
-                            )}
-                            disabled={isVerified(index)}
-                          />
-                        )}
-                      />
-                    </Box>
+                    <QuantityInput
+                      name={`${path}.${index}`}
+                      control={control}
+                      unitOptions={unitOptions ?? []}
+                      disabled={isVerified(index)}
+                    />
                   </TableCell>
                 )}
 

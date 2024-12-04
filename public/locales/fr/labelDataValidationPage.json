@@ -60,10 +60,18 @@
       "no": "Non"
     }
   },
+  "quantityInput": {
+    "placeholder": {
+      "value": "Entrez une valeur",
+      "unit": "Unité"
+    },
+    "accessibility": {
+      "valueInput": "Champ de saisie pour une valeur numérique",
+      "unitDropdown": "Champ de saisie pour une unité de mesure"
+    }
+  },
   "verifiedQuantityMultiInput": {
     "deleteRow": "Supprimer cette ligne",
-    "defaultPlaceholder": "Entrez une valeur",
-    "unitPlaceholder": "Unité",
     "addRow": "Ajouter une ligne",
     "removeRow": "Supprimer",
     "verify": "Marquer comme vérifiés",
@@ -100,14 +108,12 @@
     "actions": "Actions",
     "placeholders": {
       "english": "Entrez le texte en anglais",
-      "french": "Entrez le texte en français",
-      "value": "Entrez une valeur"
+      "french": "Entrez le texte en français"
     },
     "units": {
       "%": "%",
       "ppm": "ppm"
     },
-    "unitPlaceholder": "Unité",
     "addRow": "Ajouter une ligne",
     "delete": "Supprimer cette ligne",
     "verify": "Marquer comme vérifié",

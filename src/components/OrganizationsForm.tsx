@@ -142,7 +142,7 @@ const OrganizationsForm: React.FC<FormComponentProps> = ({
           ))}
           <Box className="mt-6 text-center">
             <Button
-              variant="contained"
+              variant="outlined"
               color="secondary"
               onClick={() => append(DEFAULT_ORGANIZATION)}
               startIcon={<AddIcon />}

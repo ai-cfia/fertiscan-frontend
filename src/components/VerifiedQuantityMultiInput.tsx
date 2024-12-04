@@ -3,12 +3,10 @@ import AddIcon from "@mui/icons-material/Add";
 import CheckIcon from "@mui/icons-material/Check";
 import DeleteIcon from "@mui/icons-material/Delete";
 import {
-  Autocomplete,
   Box,
   Button,
   Divider,
   IconButton,
-  TextField,
   Tooltip,
   Typography,
 } from "@mui/material";
@@ -20,10 +18,10 @@ import {
   useWatch,
 } from "react-hook-form";
 import { useTranslation } from "react-i18next";
+import QuantityInput from "./QuantityInput";
 
 interface VerifiedQuantityMultiInputProps {
   label: string;
-  placeholder?: string;
   path: string;
   unitOptions: string[];
   className?: string;
@@ -31,7 +29,6 @@ interface VerifiedQuantityMultiInputProps {
 
 const VerifiedQuantityMultiInput: React.FC<VerifiedQuantityMultiInputProps> = ({
   label,
-  placeholder,
   path,
   unitOptions,
   className = "",
@@ -115,110 +112,17 @@ const VerifiedQuantityMultiInput: React.FC<VerifiedQuantityMultiInputProps> = ({
               data-testid={`field-row-${quantitiesPath}-${index}`}
             >
               <Box className="flex items-center">
-                {/* Value Input Field */}
-                <Controller
-                  name={`${quantitiesPath}.${index}.value`}
+                {/* Value & Unit Input */}
+                <QuantityInput
+                  name={`${quantitiesPath}.${index}`}
                   control={control}
-                  rules={{
-                    pattern: {
-                      value: /^[0-9]*\.?[0-9]*$/,
-                      message: "errors.numbersOnly",
-                    },
-                    min: {
-                      value: 0,
-                      message: "errors.minValue",
-                    },
+                  unitOptions={unitOptions}
+                  disabled={verified}
+                  unitRules={{
+                    validate: validateDuplicateUnit,
                   }}
-                  render={({ field, fieldState: { error } }) => (
-                    <>
-                      <TextField
-                        {...field}
-                        variant="standard"
-                        slotProps={{
-                          input: {
-                            disableUnderline: true,
-                            className: "flex-1 !text-[15px]",
-                          },
-                        }}
-                        className="flex-1 "
-                        placeholder={
-                          placeholder ||
-                          t("verifiedQuantityMultiInput.defaultPlaceholder")
-                        }
-                        disabled={verified}
-                        onFocus={() => setIsFocused(true)}
-                        onBlur={(e) => {
-                          setIsFocused(false);
-                          field.onChange(e.target.value.trim());
-                        }}
-                        aria-label={t(
-                          "verifiedQuantityMultiInput.accessibility.valueInput",
-                        )}
-                        data-testid={`${quantitiesPath}.${index}.value`}
-                        error={!!error}
-                        helperText={error?.message ? t(error.message) : ""}
-                      />
-                    </>
-                  )}
-                />
-
-                {/* Unit Selection Field */}
-                <Controller
-                  name={`${quantitiesPath}.${index}.unit`}
-                  control={control}
-                  rules={{ validate: validateDuplicateUnit }}
-                  render={({ field, fieldState: { error } }) => (
-                    <>
-                      <Autocomplete
-                        {...field}
-                        freeSolo
-                        selectOnFocus
-                        options={unitOptions}
-                        onChange={(event, newValue) => {
-                          field.onChange(newValue);
-                        }}
-                        onInputChange={(event, newInputValue) => {
-                          field.onChange(newInputValue);
-                        }}
-                        value={field.value || ""}
-                        disableClearable
-                        slotProps={{
-                          popper: {
-                            className: "!w-fit",
-                          },
-                        }}
-                        disabled={verified}
-                        renderInput={(params) => (
-                          <TextField
-                            {...params}
-                            variant="standard"
-                            aria-label={t(
-                              "verifiedQuantityMultiInput.accessibility.unitDropdown",
-                            )}
-                            data-testid={`${quantitiesPath}.${index}.unit`}
-                            placeholder={t(
-                              "verifiedQuantityMultiInput.unitPlaceholder",
-                            )}
-                            slotProps={{
-                              input: {
-                                ...params.InputProps,
-                                disableUnderline: true,
-                                className:
-                                  "px-2 !text-[15px] !w-[10ch] bg-gray-100",
-                              },
-                            }}
-                            onFocus={() => setIsFocused(true)}
-                            onBlur={(e) => {
-                              setIsFocused(false);
-                              field.onChange(e.target.value.trim());
-                            }}
-                            error={!!error}
-                            helperText={error?.message ? t(error.message) : ""}
-                          />
-                        )}
-                      />
-                    </>
-                  )}
+                  onFocus={() => setIsFocused(true)}
+                  onblur={() => setIsFocused(false)}
                 />
 
                 {/* Delete Row Button */}
@@ -230,7 +134,7 @@ const VerifiedQuantityMultiInput: React.FC<VerifiedQuantityMultiInputProps> = ({
                   <span>
                     <IconButton
                       size="small"
-                      className="text-white bg-red-500"
+                      className="text-white"
                       onClick={() => remove(index)}
                       disabled={verified}
                       aria-label={t(
