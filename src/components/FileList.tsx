@@ -32,6 +32,13 @@ const FileList: React.FC<FileListProps> = ({
   const theme = useTheme();
   const { t } = useTranslation("homePage");
   const [renameFileUrl, setRenameFileUrl] = useState<string | null>(null);
+  const [snackbar, setSnackbar] = useState<{
+    open: boolean;
+    message: string;
+    severity: "success" | "error" | "warning" | "info";
+    action: (() => void) | null;
+  }>({ open: false, message: "", severity: "info", action: null });
+
 
   const handleDelete = (url: string) => {
     setUploadedFiles(
@@ -40,6 +47,7 @@ const FileList: React.FC<FileListProps> = ({
       ),
     );
     setDropzoneState({ visible: false, imageUrl: null });
+
   };
 
   const handleRename = (newName: string) => {
@@ -61,6 +69,7 @@ const FileList: React.FC<FileListProps> = ({
             : file,
         ),
       );
+      setUploadedFiles(newUploadedFiles);
       setRenameFileUrl(null);
     }
   };
