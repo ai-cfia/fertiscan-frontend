@@ -2,14 +2,16 @@
 import FileUploaded from "@/classe/File";
 import Dropzone from "@/components/Dropzone";
 import FileList from "@/components/FileList";
+import useAlertStore from "@/stores/alertStore";
 import type { DropzoneState } from "@/types/types";
 import { Box, Button, Grid2, Tooltip } from "@mui/material";
-import { useState } from "react";
-import React, { Suspense } from "react";
+import axios from "axios";
+import { Suspense, useState } from "react";
 import { useTranslation } from "react-i18next";
 
 function HomePage() {
   const { t } = useTranslation("homePage");
+  const { showAlert } = useAlertStore();
 
   const [dropzoneState, setDropzoneState] = useState<DropzoneState>({
     visible: false,
@@ -17,6 +19,39 @@ function HomePage() {
     fillPercentage: 0,
   });
   const [uploadedFiles, setUploadedFiles] = useState<FileUploaded[]>([]);
+
+  const sendFiles = async () => {
+    const formData = new FormData();
+
+    uploadedFiles.forEach((fileUploaded) => {
+      const file = fileUploaded.getFile();
+      formData.append("files", file);
+    });
+
+    const username = "";
+    const password = "";
+    const authHeader = "Basic " + btoa(`${username}:${password}`);
+
+    axios
+      .post("/api/extract-label-data", formData, {
+        headers: { Authorization: authHeader },
+      })
+      .then((response) => {
+        console.log("Server Response:", response.data);
+      })
+      .catch((error) => {
+        if (error.response) {
+          console.error("Error response:", error.response.data);
+          showAlert(error.response.data.error, "error");
+        } else if (error.request) {
+          console.error("Error request:", error.request);
+          showAlert(error.request, "error");
+        } else {
+          console.error("Error message:", error.message);
+          showAlert(error.message, "error");
+        }
+      });
+  };
 
   return (
     <Suspense fallback="loading">
@@ -73,6 +108,7 @@ function HomePage() {
                   color="secondary"
                   disabled={uploadedFiles.length === 0}
                   fullWidth
+                  onClick={sendFiles}
                 >
                   {t("submit_button")}
                 </Button>
