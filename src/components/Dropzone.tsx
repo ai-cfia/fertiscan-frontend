@@ -5,6 +5,7 @@ import { CloudUpload } from "@mui/icons-material";
 import type { ImageLoadEvent, DropzoneState } from "@/types/types";
 import FileUploaded from "@/classe/File";
 import { useTranslation } from "react-i18next";
+import useAlertStore from "@/stores/alertStore";
 
 /**
  * Props for the Dropzone component.
@@ -33,7 +34,11 @@ const Dropzone: React.FC<DropzoneProps> = ({
   setDropzoneState,
 }) => {
   const theme = useTheme();
-  const { t } = useTranslation("homePage");
+  const { t: tHomePage } = useTranslation("homePage");
+  const { t: tAlertBanner } = useTranslation("alertBanner");
+    const { showAlert } = useAlertStore();
+
+  const allowedImagesExtensions = [".png", ".jpg", ".jpeg"];
 
   function handleDragOver(event: React.DragEvent<HTMLDivElement>) {
     event.preventDefault();
@@ -41,11 +46,33 @@ const Dropzone: React.FC<DropzoneProps> = ({
 
   async function handleDrop(event: React.DragEvent<HTMLDivElement>) {
     event.preventDefault();
-    const files = event.dataTransfer.files;
-    if (files && files.length > 0) {
-      for (let i = 0; i < files.length; i++) {
-        processFile(files[i]);
+    const items = event.dataTransfer.items;
+    if (items && items.length > 0) {
+      for (let i = 0; i < items.length; i++) {
+        const item = items[i].webkitGetAsEntry();
+        if (item) {
+          traverseFileTree(item);
+        }
       }
+    }
+  }
+
+  async function traverseFileTree(item: FileSystemEntry) {
+    if (item.isFile) {
+      const fileEntry = item as FileSystemFileEntry;
+      fileEntry.file((file: File) => {
+        if (allowedImagesExtensions.some((ext) => file.name.endsWith(ext))) {
+          processFile(file);
+        }
+      });
+    } else if (item.isDirectory) {
+      const dirEntry = item as FileSystemDirectoryEntry;
+      const dirReader = dirEntry.createReader();
+      dirReader.readEntries((entries: FileSystemEntry[]) => {
+        for (let i = 0; i < entries.length; i++) {
+          traverseFileTree(entries[i]);
+        }
+      });
     }
   }
 
@@ -59,12 +86,13 @@ const Dropzone: React.FC<DropzoneProps> = ({
   }
 
   async function processFile(file: File) {
+
     const alreadyExists = uploadedFiles.some(
-      (uploadedFile) => uploadedFile.getInfo().name === file.name,
+      (uploadedFile) => uploadedFile.getInfo().name === file.name
     );
 
     if (alreadyExists) {
-      // TODO: Implement error message
+      showAlert(tAlertBanner("fileExists"), "error");
       return;
     }
 
@@ -76,7 +104,7 @@ const Dropzone: React.FC<DropzoneProps> = ({
 
     const detectedType = await FileUploaded.detectType(newFile.getInfo().path);
     if (typeof detectedType === "object" && detectedType.type === "pdf") {
-      // TODO: Handle PDF files
+      showAlert(tAlertBanner("pdfNotSupported"), "info");
     } else {
       setUploadedFiles((prevFiles) => [...prevFiles, newFile]);
     }
@@ -124,7 +152,7 @@ const Dropzone: React.FC<DropzoneProps> = ({
           data-testid="hovered-image"
           component="img"
           src={dropzoneState.imageUrl}
-          alt={t("dropzone.altText.hoveredImageAlt")}
+          alt={tHomePage("altText.hoveredImageAlt")}
           onLoad={handleImageLoad}
           className={`absolute max-w-full max-h-full object-contain ${
             dropzoneState.fillPercentage && dropzoneState.fillPercentage >= 90
@@ -135,24 +163,23 @@ const Dropzone: React.FC<DropzoneProps> = ({
       ) : (
         <Box className="text-center">
           <CloudUpload
-            aria-label={t("dropzone.altText.CloudIconAlt")}
+            aria-label={tHomePage("dropzone.altText.CloudIconAlt")}
             style={{
               color: theme.palette.secondary.main,
               fontSize: "7rem",
             }}
           />
           <Typography variant="h5" color={theme.palette.secondary.main}>
-            <b>{t("dropzone.dragDrop")}</b>
+            <b>{tHomePage("dropzone.dragDrop")}</b>
           </Typography>
           <Typography variant="h5" color={theme.palette.secondary.main}>
-            <b>{t("dropzone.or")}</b>
+            <b>{tHomePage("dropzone.or")}</b>
           </Typography>
           <Button variant="contained" component="label" color="secondary">
-            <b>{t("dropzone.browseFile")}</b>
+            <b>{tHomePage("dropzone.browseFile")}</b>
             <input
               type="file"
-              accept=".png,.jpg,.jpeg,"
-              /*.pdf*/
+              accept=".png,.jpg,.jpeg,.pdf"
               multiple
               hidden
               onChange={handleFileUpload}
