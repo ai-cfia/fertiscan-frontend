@@ -1,8 +1,8 @@
-import { BACKEND_URL } from "@/utils/server/constants";
-import axios from "axios";
+import { inspectionsApi, pipelineApi } from "@/utils/server/backend";
 
 export async function POST(request: Request) {
   const formData = await request.formData();
+  const files = formData.getAll("files") as File[];
 
   const authHeader = request.headers.get("Authorization");
   if (!authHeader) {
@@ -14,16 +14,20 @@ export async function POST(request: Request) {
     );
   }
 
-  return axios
-    .post(`${BACKEND_URL}/analyze`, formData, {
-      headers: { Authorization: authHeader },
-    })
+  return pipelineApi
+    .analyzeDocumentAnalyzePost(files)
     .then((analyzeResponse) => {
-      formData.set("label_data", JSON.stringify(analyzeResponse.data));
-
-      return axios.post(`${BACKEND_URL}/inspections`, formData, {
-        headers: { Authorization: authHeader },
-      });
+      console.log(
+        "Analyze response:",
+        JSON.stringify(analyzeResponse.data, null, 2),
+      );
+      return inspectionsApi.postInspectionInspectionsPost(
+        analyzeResponse.data,
+        files,
+        {
+          headers: { Authorization: authHeader },
+        },
+      );
     })
     .then((inspectionsResponse) => {
       return Response.json(inspectionsResponse.data);
