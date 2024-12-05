@@ -100,9 +100,45 @@ describe("HomePage Component", () => {
     // Mock file
     const file = new File(["hello"], "hello.png", { type: "image/png" });
 
+    // Create a dataTransfer object
+    interface DataTransferItem {
+      kind: string;
+      type: string;
+      getAsFile: () => File;
+      webkitGetAsEntry: () => {
+        isFile: boolean;
+        file: (callback: (file: File) => void) => void;
+      };
+    }
+
+    interface DataTransfer {
+      items: DataTransferItem[];
+      files: File[];
+    }
+
+    const dataTransfer: DataTransfer = {
+      items: [
+        {
+          kind: 'file',
+          type: file.type,
+          getAsFile: () => file,
+          webkitGetAsEntry: () => ({
+            isFile: true,
+            file: (callback) => {
+              callback(file);
+            },
+          }),
+        },
+      ],
+      files: [file],
+    };
+
     // Find the dropzone and simulate the drop event
     const dropzone = await screen.getByTestId("dropzone");
-    fireEvent.drop(dropzone, { dataTransfer: { files: [file] } });
+
+    fireEvent.drop(dropzone, {
+      dataTransfer: dataTransfer,
+    });
 
     // Check that the file was uploaded and appears in the list.
     const fileElement = await screen.findByTestId("file-element");
