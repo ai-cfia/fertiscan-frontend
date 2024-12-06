@@ -11,7 +11,7 @@ import {
   StepperControls,
   StepStatus,
 } from "@/components/stepper";
-import useAlertStore from "@/stores/alertStore";
+import useUploadedFilesStore from "@/stores/fileStore";
 import {
   DEFAULT_LABEL_DATA,
   FormComponentProps,
@@ -19,13 +19,14 @@ import {
 } from "@/types/types";
 import { checkFieldArray, checkFieldRecord } from "@/utils/common";
 import useBreakpoints from "@/utils/useBreakpoints";
-import { Box, Button, Container, Typography } from "@mui/material";
+import { Box, Container, Typography } from "@mui/material";
 import { useEffect, useState } from "react";
 import { useTranslation } from "react-i18next";
 
 function LabelDataValidationPage() {
   const { t } = useTranslation("labelDataValidationPage");
-  const [imageFiles, setImageFiles] = useState<File[]>([]);
+  const { uploadedFiles } = useUploadedFilesStore();
+  const imageFiles = uploadedFiles.map((file) => file.getFile());
   const { isDownXs, isBetweenXsSm, isBetweenSmMd, isBetweenMdLg } =
     useBreakpoints();
   const isLgOrBelow =
@@ -45,7 +46,6 @@ function LabelDataValidationPage() {
     useState<StepStatus>(StepStatus.Incomplete);
   const [ingredientsStepStatus, setIngredientsStepStatus] =
     useState<StepStatus>(StepStatus.Incomplete);
-  const { showAlert } = useAlertStore();
 
   const createStep = (
     title: string,
@@ -101,16 +101,6 @@ function LabelDataValidationPage() {
       setIngredientsStepStatus,
     ),
   ];
-
-  const handleFileChange = (event: React.ChangeEvent<HTMLInputElement>) => {
-    if (event.target.files) {
-      setImageFiles(Array.from(event.target.files));
-    }
-  };
-
-  const openFileDialog = () => {
-    document.getElementById("file-input")?.click();
-  };
 
   useEffect(() => {
     const verified = labelData.organizations.every((org) =>
@@ -221,21 +211,6 @@ function LabelDataValidationPage() {
             setActiveStep={setActiveStep}
           />
         </Box>
-      </Box>
-
-      <Box className="flex justify-center mt-4">
-        <Button variant="contained" onClick={openFileDialog}>
-          Upload Images
-        </Button>
-        <input
-          id="file-input"
-          type="file"
-          accept="image/*"
-          multiple
-          style={{ display: "none" }}
-          onChange={handleFileChange}
-        />
-        <Button onClick={() => showAlert("Test", "error")}>Show Alert</Button>
       </Box>
     </Container>
   );
