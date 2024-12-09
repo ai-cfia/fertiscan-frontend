@@ -3,7 +3,14 @@
     "submit_button_disabled_hint": "You need to add a minimum of 1 file to start the analysis",
     "fileList":{
         "uploadedfiles": "Uploaded Files",
-        "noUploadedfiles": "No uploaded files"
+        "noUploadedfiles": "No uploaded files",
+        "deleteAll": "Delete all",
+        "snackbar": {
+            "fileDeleted": "File deleted",
+            "deleteAll": "All files deleted",
+            "fileRenamed": "File renamed",
+            "undo": "Undo"
+        }
     },
     "fileElement": {
         "altText": {

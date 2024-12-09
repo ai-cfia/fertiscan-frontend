@@ -1,10 +1,21 @@
 "use client";
-import React, { Suspense } from "react";
-import { Box, Stack, Typography, useTheme } from "@mui/material";
+import React, { Suspense, useState, useEffect } from "react";
+import {
+  Box,
+  Stack,
+  Snackbar,
+  Alert,
+  useTheme,
+  Button,
+  IconButton,
+  Typography,
+} from "@mui/material";
+import CloseIcon from "@mui/icons-material/Close";
 import FileElement from "@/components/FileElement";
 import FileUploaded from "@/classe/File";
 import { DropzoneState } from "@/types/types"; // Adjust the import path as necessary
 import { useTranslation } from "react-i18next";
+import DeleteSweepIcon from "@mui/icons-material/DeleteSweep";
 
 /**
  * Props for the FileList component.
@@ -17,18 +28,6 @@ interface FileListProps {
   setDropzoneState: React.Dispatch<React.SetStateAction<DropzoneState>>;
 }
 
-/**
- * FileList component displays a list of uploaded files with options to delete them.
- * It also handles the state of the dropzone.
- *
- * @component
- * @param {FileListProps} props - The properties for the FileList component.
- * @param {Array} props.uploadedFiles - An array of uploaded file objects.
- * @param {Function} props.setUploadedFiles - Function to update the uploaded files state.
- * @param {Function} props.handleSetDropzoneState - Function to set the state of the dropzone.
- *
- * @returns {JSX.Element} The rendered FileList component.
- */
 const FileList: React.FC<FileListProps> = ({
   uploadedFiles,
   setUploadedFiles,
@@ -36,14 +35,68 @@ const FileList: React.FC<FileListProps> = ({
 }) => {
   const theme = useTheme();
   const { t } = useTranslation("homePage");
+  const [renameFileUrl, setRenameFileUrl] = useState<string | null>(null);
+  const [snackbar, setSnackbar] = useState<{
+    open: boolean;
+    message: string;
+    severity: "success" | "error" | "warning" | "info";
+    action: (() => void) | null;
+  }>({ open: false, message: "", severity: "info", action: null });
+  const [previousState, setPreviousState] = useState<FileUploaded[]>([]);
+
+  useEffect(() => {
+    setPreviousState([...uploadedFiles]); // Ensure the previous state copies the array whenever uploadedFiles change
+  }, [uploadedFiles]);
 
   const handleDelete = (url: string) => {
+    setPreviousState([...uploadedFiles]); // Make a copy of current state
     setUploadedFiles(
       uploadedFiles.filter(
         (file) => file instanceof FileUploaded && file.getInfo().path !== url,
       ),
     );
     setDropzoneState({ visible: false, imageUrl: null });
+    setSnackbar({
+      open: true,
+      message: t("fileList.snackbar.delete"),
+      severity: "success",
+      action: handleUndo,
+    });
+  };
+
+  const handleRename = (newName: string) => {
+    if (renameFileUrl) {
+      const newUploadedFiles = uploadedFiles.map((file) =>
+        file.getInfo().path === renameFileUrl
+          ? (() => {
+              const newFile = new FileUploaded(file.getInfo(), file.getInfo().path, file.getFile());
+              newFile.setName(newName);
+              return newFile;
+            })()
+          : file,
+      );
+      setPreviousState([...uploadedFiles]); // Ensure the previous state copies the array before renaming
+      setUploadedFiles(newUploadedFiles);
+      setRenameFileUrl(null);
+    }
+  };
+
+  const handleDeleteAll = () => {
+    setPreviousState([...uploadedFiles]); // Make a copy of current state
+    setUploadedFiles([]);
+    setDropzoneState({ visible: false, imageUrl: null });
+    setSnackbar({
+      open: true,
+      message: t("fileList.snackbar.deleteAll"),
+      severity: "success",
+      action: handleUndo,
+    });
+  };
+
+  const handleUndo = () => {
+    setUploadedFiles(previousState);
+    setDropzoneState({ visible: false, imageUrl: null });
+    setSnackbar({ ...snackbar, open: false });
   };
 
   return (
@@ -69,28 +122,44 @@ const FileList: React.FC<FileListProps> = ({
                `}
       >
         <Box
-          className={`absolute transform w-full h-full flex flex-col
-                    ${
-                      uploadedFiles.length === 0
-                        ? "justify-center items-center p-0 left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2"
-                        : "justify-start items-start p-2 left-0 top-0 translate-x-none translate-y-none"
-                    }
-                    text-center max-w-full max-h-full object-contain `}
+          className={`absolute transform w-full h-full flex flex-col justify-start items-start p-2 left-0 top-0 text-center max-w-full max-h-full object-contain `}
         >
-          <Typography
-            variant="h5"
-            color={theme.palette.text.primary}
-            gutterBottom
+          <Box
+            className={`w-full flex flex-row items-center ${
+              uploadedFiles.length === 0 ? "justify-start" : "justify-center"
+            }`}
           >
-            <b>
-              {uploadedFiles.length > 0
-                ? t("fileList.uploadedfiles") +
-                  " (" +
-                  uploadedFiles.length +
-                  ")"
-                : t("fileList.noUploadedfiles")}
-            </b>
-          </Typography>
+            <Typography
+              variant="h6"
+              color={theme.palette.text.primary}
+              gutterBottom
+            >
+              <b>
+                {uploadedFiles.length > 0
+                  ? t("fileList.uploadedfiles") +
+                    " (" +
+                    uploadedFiles.length +
+                    ")"
+                  : t("fileList.noUploadedfiles")}
+              </b>
+            </Typography>
+            {uploadedFiles.length > 1 && (
+              <Button
+                variant="contained"
+                color="secondary"
+                onClick={handleDeleteAll}
+                className="mb-4"
+                sx={{
+                  fontSize: "0.6rem",
+                  paddingLeft: "0.5rem",
+                  paddingRight: "0.5rem",
+                  marginLeft: "auto",
+                }}
+              >
+                {t("fileList.deleteAll")}
+              </Button>
+            )}
+          </Box>
           <Stack
             className="w-full flex flex-col items-center"
             direction="column"
@@ -103,11 +172,30 @@ const FileList: React.FC<FileListProps> = ({
                 fileName={file.getInfo().name}
                 fileUrl={file.getInfo().path}
                 handleDelete={() => handleDelete(file.getInfo().path)}
+                isRenaming={renameFileUrl === file.getInfo().path}
+                handleRename={handleRename}
+                startRename={() => setRenameFileUrl(file.getInfo().path)}
               />
             ))}
           </Stack>
         </Box>
       </Box>
+      <Snackbar
+        open={snackbar.open}
+        autoHideDuration={6000}
+        onClose={() => setSnackbar({ ...snackbar, open: false })}
+      >
+        <Alert
+          onClose={() => setSnackbar({ ...snackbar, open: false })}
+          severity={snackbar.severity}
+          sx={{ width: "100%" }}
+        >
+          {snackbar.message}
+          <Button color="primary" size="small" onClick={snackbar.action || (() => {})}>
+            {t("fileList.snackbar.undo")}
+          </Button>
+        </Alert>
+      </Snackbar>
     </Suspense>
   );
 };
