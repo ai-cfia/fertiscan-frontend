@@ -28,16 +28,12 @@ const RouteGuard = ({ children }: Readonly<{ children: React.ReactNode }>) => {
       }
     } catch (err) {
       if (err instanceof AxiosError) {
+        if (err.status == 401) {
+          return t("errors.unauthorized");
+        }
         if (err.status == 404) {
           showAlert(t("errors.notFound"), "error");
           return t("errors.notFound");
-        }
-        if (err.status == 500) {
-          showAlert(err.response?.data.error, "error");
-          return err.response?.data.error;
-        }
-        if (err.status == 401) {
-          return t("errors.unauthorized");
         }
       }
     }
@@ -68,8 +64,6 @@ const RouteGuard = ({ children }: Readonly<{ children: React.ReactNode }>) => {
       }
     } catch (err) {
       if (err instanceof AxiosError) {
-        console.log(err.response?.status);
-        console.log(t("errors.usernameTaken"));
         if (err.response) {
           if (err.response.status == 404) {
             showAlert(t("errors.notFound"), "error");
@@ -78,10 +72,10 @@ const RouteGuard = ({ children }: Readonly<{ children: React.ReactNode }>) => {
           if (err.response.status == 409) {
             return t("errors.usernameTaken");
           }
-          return err.response.data.error;
         }
       }
     }
+    return t("errors.unknown");
   };
 
   const toggleMode = () => {
