@@ -9,6 +9,7 @@ import LockIcon from "@mui/icons-material/Lock";
 import theme from "@/app/theme";
 import IconInput from "@/components/IconInput";
 import { useState } from "react";
+import { useTranslation } from "react-i18next";
 
 interface LoginProps {
   isOpen: boolean;
@@ -20,9 +21,11 @@ const LoginModal = ({ isOpen, login, onChangeMode }: LoginProps) => {
   const [username, setUsername] = useState("");
   const [password, setPassword] = useState("");
   const [errorMessage, setErrorMessage] = useState("");
+  const { t } = useTranslation("authentication");
 
   const handleSubmit = () => {
     login(username, password).then((message) => {
+      console.log(message)
       setErrorMessage(message);
     });
   };
@@ -64,7 +67,7 @@ const LoginModal = ({ isOpen, login, onChangeMode }: LoginProps) => {
           variant="h3"
           component="h2"
         >
-          Login
+          {t("Login.title")}
         </Typography>
         <form
           className={`
@@ -80,7 +83,7 @@ const LoginModal = ({ isOpen, login, onChangeMode }: LoginProps) => {
             id={"username"}
             dataTestId={"modal-username"}
             icon={<AccountCircleIcon sx={{ color: "white", marginBottom: 1 }} />}
-            placeholder={"USERNAME"}
+            placeholder={t("Login.username")}
             type={"text"}
             value={username}
             setValue={setUsername}
@@ -89,7 +92,7 @@ const LoginModal = ({ isOpen, login, onChangeMode }: LoginProps) => {
             id={"password"}
             dataTestId={"modal-password"}
             icon={<LockIcon sx={{ color: "white", marginBottom: 1 }} />}
-            placeholder={"PASSWORD"}
+            placeholder={t("Login.password")}
             type={"password"}
             value={password}
             setValue={setPassword}
@@ -114,7 +117,7 @@ const LoginModal = ({ isOpen, login, onChangeMode }: LoginProps) => {
             `}
             onClick={handleSubmit}
           >
-            Login
+            {t("Login.title")}
           </Button>
         </form>
         <Typography
@@ -127,14 +130,14 @@ const LoginModal = ({ isOpen, login, onChangeMode }: LoginProps) => {
             text-center
           "
         >
-          Don&#39;t have an account?{" "}
+          {t("Login.switchText")}
           <a
             id={"toggleSignButton"}
             data-testid={"modal-change-button"}
             className={"underline text-white cursor-pointer"}
             onClick={onChangeMode}
           >
-            Sign Up
+            {t("Login.switchLink")}
           </a>
         </Typography>
       </Box>

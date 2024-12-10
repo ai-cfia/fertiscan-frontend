@@ -11,6 +11,7 @@ import {
   import LockIcon from "@mui/icons-material/Lock";
   import IconInput from "@/components/IconInput";
   import { useState } from "react";
+import { useTranslation } from "react-i18next";
 
   interface SignUpProps {
     isOpen: boolean;
@@ -28,6 +29,7 @@ import {
     const [confirmPassword, setConfirmPassword] = useState("");
     const [checkedReminder, setReminderChecked] = useState(false);
     const [errorMessage, setErrorMessage] = useState("");
+    const { t } = useTranslation("authentication");
 
     const handleSubmit = () => {
       signup(username, password, confirmPassword).then((message) => {
@@ -70,7 +72,7 @@ import {
             variant="h3"
             component="h2"
           >
-            Sign Up
+            {t("Signup.title")}
           </Typography>
           <form
             className={`
@@ -87,7 +89,7 @@ import {
               id={"username"}
               dataTestId={"modal-username"}
               icon={<AccountCircleIcon sx={{ color: "white", marginBottom: 1 }} />}
-              placeholder={"USERNAME"}
+              placeholder={t("Signup.username")}
               type={"text"}
               value={username}
               setValue={setUsername}
@@ -96,7 +98,7 @@ import {
               id={"password"}
               dataTestId={"modal-password"}
               icon={<LockIcon sx={{ color: "white", marginBottom: 1 }} />}
-              placeholder={"PASSWORD"}
+              placeholder={t("Signup.password")}
               type={"password"}
               value={password}
               setValue={setPassword}
@@ -105,7 +107,7 @@ import {
               id={"confirm-password"}
               dataTestId={"modal-confirm-password"}
               icon={<LockIcon sx={{ color: "white", marginBottom: 1 }} />}
-              placeholder={"CONFIRM PASSWORD"}
+              placeholder={t("Signup.confirmPassword")}
               type={"password"}
               value={confirmPassword}
               setValue={setConfirmPassword}
@@ -124,13 +126,10 @@ import {
                 }
                 label={
                   <Typography className={"!text-xs text-justify"}>
-                    By checking this box I understand that the data I have
-                    entered will be stored and thus should not be sensitive
-                    information.
+                    {t("Signup.dataPolicy")}
                     <br />
                     <u>
-                    As a reminder, work email, phone number or real name are
-                    considered sensitive information.
+                      {t("Signup.dataReminder")}
                     </u>
                   </Typography>
                 }
@@ -160,7 +159,7 @@ import {
               `}
               onClick={handleSubmit}
             >
-              Sign Up
+              {t("Signup.title")}
             </Button>
           </form>
           <Typography
@@ -173,14 +172,14 @@ import {
               text-center
             "
           >
-            Already have an account?{" "}
+            {t("Signup.switchText")}
             <a
               id={"toggleSignButton"}
               data-testid={"modal-change-button"}
               className={"underline text-white cursor-pointer"}
               onClick={onChangeMode}
             >
-              Login
+              {t("Signup.switchLink")}
             </a>
           </Typography>
         </Box>

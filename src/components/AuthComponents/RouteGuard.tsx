@@ -1,28 +1,40 @@
 import { useEffect, useState } from "react";
 import SignUpModal from "@/components/AuthComponents/SignUpModal";
 import LoginModal from "@/components/AuthComponents/LoginModal";
+import axios, { AxiosError } from "axios";
+import { useTranslation } from "react-i18next";
+import useAlertStore from "@/stores/alertStore";
 
 const RouteGuard = ({ children }: Readonly<{ children: React.ReactNode }>) => {
   const [isAuth, setAuth] = useState(false);
   const [isSignup, setIsSignup] = useState(false);
+  const { showAlert } = useAlertStore();
+  const { t } = useTranslation("authentification");
 
-  // eslint-disable-next-line @typescript-eslint/no-unused-vars
   const handleLogin = async (username: string, password: string) => {
-    const headers = new Headers();
-    headers.append("Authorization", "Basic " + btoa(username + ":" + password));
-    const res = await fetch(process.env.API_URL + "/login", {
-      method: "POST",
-      headers: headers,
-    });
-    if (res.status != 200) {
-      if (res.status == 404) {
-        return "Couldnt find resource, backend might be off";
+    try {
+      const res = await axios.post("/api/login", { username: username }, {
+        headers: { Authorization: "Basic " + btoa(username + ":" + password) }
+      })
+      if (res.status >= 200 && res.status < 300) {
+        document.cookie = "token=" + btoa(username) + "; SameSite=Strict;";
+        setAuth(true);
+        return "";
       }
-      return "Invalid username or password";
-    } else {
-      document.cookie = "token=" + btoa(username) + ";";
-      return "";
+    } catch(err){
+      if(err instanceof AxiosError){
+        if(err.status==404){
+          showAlert(t("Errors.notFound"), "error");
+          return t("Errors.notFound");
+        }if(err.status==500){
+          showAlert(err.response?.data.error, "error");
+          return err.response?.data.error;
+        }if(err.status==401){
+          return t("Errors.unauthorized");
+        }
+      }
     }
+    return t("Errors.unknown");
   };
 
   const handleSignup = async (
@@ -31,18 +43,29 @@ const RouteGuard = ({ children }: Readonly<{ children: React.ReactNode }>) => {
     // eslint-disable-next-line @typescript-eslint/no-unused-vars
     confirm: string,
   ) => {
-    const headers = new Headers();
-    headers.append("Authorization", "Basic " + btoa(username + ":" + password));
-    const res = await fetch(process.env.API_URL + "/login", {
-      method: "POST",
-      headers: headers,
-    });
-    if (res.status != 200) {
-      return "Error during creation of user";
-    } else {
-      document.cookie = "token=" + btoa(username) + ";";
-      return "";
+    if(password!=confirm){
+      return t("Errors.passwordMatch")
     }
+    axios.post("/api/signup",{username:username}, {
+      headers:{ Authorization:  "Basic " + btoa(username + ":" + password)}
+    }).then(res=>{
+      if(res.status>=200 && res.status<300){
+        document.cookie = "token=" + btoa(username) + "; SameSite=Strict;";
+        setAuth(true);
+        return "";
+      }
+    }).catch(err=>{
+      if(err.response){
+        if(err.response.status==404){
+          showAlert(t("Errors.notFound"), "error");
+          return t("Errors.notFound");
+        }if(err.response.status==409){
+          return t("Errors.usernameTaken");
+        }
+        return err.response.data.error;
+      }
+    })
+    return"";
   };
 
 
