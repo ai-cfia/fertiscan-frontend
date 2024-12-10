@@ -11,15 +11,22 @@ import {
   StepperControls,
   StepStatus,
 } from "@/components/stepper";
+import useAlertStore from "@/stores/alertStore";
 import useUploadedFilesStore from "@/stores/fileStore";
 import {
   DEFAULT_LABEL_DATA,
   FormComponentProps,
   LabelData,
 } from "@/types/types";
-import { checkFieldArray, checkFieldRecord } from "@/utils/common";
+import {
+  checkFieldArray,
+  checkFieldRecord,
+  processAxiosError,
+} from "@/utils/common";
+import { Inspection } from "@/utils/server/backend";
 import useBreakpoints from "@/utils/useBreakpoints";
 import { Box, Container, Typography } from "@mui/material";
+import axios from "axios";
 import { useEffect, useState } from "react";
 import { useTranslation } from "react-i18next";
 
@@ -46,6 +53,7 @@ function LabelDataValidationPage() {
     useState<StepStatus>(StepStatus.Incomplete);
   const [ingredientsStepStatus, setIngredientsStepStatus] =
     useState<StepStatus>(StepStatus.Incomplete);
+  const { showAlert } = useAlertStore();
 
   const createStep = (
     title: string,
@@ -150,6 +158,45 @@ function LabelDataValidationPage() {
       verified ? StepStatus.Completed : StepStatus.Incomplete,
     );
   }, [labelData.ingredients, setIngredientsStepStatus]);
+
+  useEffect(() => {
+    const extractAndSave = async () => {
+      const formData = new FormData();
+
+      uploadedFiles.forEach((fileUploaded) => {
+        const file = fileUploaded.getFile();
+        formData.append("files", file);
+      });
+
+      const username = "";
+      const password = "";
+      const authHeader = "Basic " + btoa(`${username}:${password}`);
+
+      axios
+        .post("/api/extract-label-data", formData, {
+          headers: { Authorization: authHeader },
+        })
+        .then((response) => {
+          formData.append("labelData", JSON.stringify(response.data));
+          axios
+            .post("/api/inspections", formData, {
+              headers: { Authorization: authHeader },
+            })
+            .then((response) => {
+              const inspection: Inspection = response.data;
+              console.log("Inspections response:", inspection.inspection_id);
+            })
+            .catch((error) => {
+              showAlert(processAxiosError(error), "error");
+            });
+        })
+        .catch((error) => {
+          showAlert(processAxiosError(error), "error");
+        });
+    };
+
+    extractAndSave();
+  }, [showAlert, uploadedFiles]);
 
   return (
     <Container

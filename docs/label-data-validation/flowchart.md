@@ -23,7 +23,7 @@ flowchart TD
     Start([Start]) --> LabelDataValidationID["/label-data-validation/id"]
     LabelDataValidationID --> ImagesUploaded{Images Uploaded?}
     ImagesUploaded -->|No| HomePage["/home"]
-    ImagesUploaded -->|Yes| DataInStore{labelData in store?}
+    ImagesUploaded -->|Yes| DataInStore{Data in store?}
     DataInStore -->|No| GetInspections[GET /inspections/id]
     DataInStore -->|Yes| DisplayData["Display Data"]
     GetInspections --> FetchSuccess{Success?}
