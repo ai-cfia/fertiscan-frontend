@@ -25,7 +25,9 @@ const RouteGuard = ({ children }: Readonly<{ children: React.ReactNode }>) => {
       if (res.status >= 200 && res.status < 300) {
         document.cookie = "token=" + btoa(username) + "; SameSite=Strict;";
         setAuth(true);
+        return "";
       }
+      return t("errors.unknown");
     } catch (err) {
       if (err instanceof AxiosError) {
         if (err.status == 401) {
@@ -36,8 +38,8 @@ const RouteGuard = ({ children }: Readonly<{ children: React.ReactNode }>) => {
           return t("errors.notFound");
         }
       }
+      return t("errors.unknown");
     }
-    return t("errors.unknown");
   };
 
   const handleSignup = async (
@@ -61,7 +63,9 @@ const RouteGuard = ({ children }: Readonly<{ children: React.ReactNode }>) => {
       if (res.status >= 200 && res.status < 300) {
         document.cookie = "token=" + btoa(username) + "; SameSite=Strict;";
         setAuth(true);
+        return "";
       }
+      return t("errors.unknown");
     } catch (err) {
       if (err instanceof AxiosError) {
         if (err.response) {
@@ -74,8 +78,8 @@ const RouteGuard = ({ children }: Readonly<{ children: React.ReactNode }>) => {
           }
         }
       }
+      return t("errors.unknown");
     }
-    return t("errors.unknown");
   };
 
   const toggleMode = () => {
