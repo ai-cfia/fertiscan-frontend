@@ -4,17 +4,12 @@ import { ThemeProvider } from "@mui/material/styles";
 import LoginModal from "@/components/AuthComponents/LoginModal";
 import { act } from "react";
 
-
-
 describe("LoginModal", () => {
-  const mockErrorLogin = jest.fn(
-    async(username:string, password:string)=> {
-      console.log(username.slice(0,0))
-      console.log(password.slice(0,0))
-      return "Error"
-    }
-  );
-
+  const mockErrorLogin = jest.fn(async (username: string, password: string) => {
+    console.log(username.slice(0, 0));
+    console.log(password.slice(0, 0));
+    return "Error";
+  });
 
   const mockChangeMode = jest.fn();
 
@@ -23,14 +18,14 @@ describe("LoginModal", () => {
       <ThemeProvider theme={theme}>
         <LoginModal
           isOpen={true}
-          login={()=>new Promise(()=>"")}
-          onChangeMode={()=>{}}
+          login={() => new Promise(() => "")}
+          onChangeMode={() => {}}
         />
       </ThemeProvider>,
     );
     // The title should be present and be Login
     expect(screen.getByTestId("modal-title")).toBeInTheDocument();
-    expect(screen.getByTestId("modal-title")).toHaveTextContent("Login.title");
+    expect(screen.getByTestId("modal-title")).toHaveTextContent("login.title");
     // The username input should be present
     expect(screen.getByTestId("modal-username")).toBeInTheDocument();
     // The password input should be present
@@ -44,13 +39,15 @@ describe("LoginModal", () => {
     // The submit button should be present
     expect(screen.getByTestId("modal-submit")).toBeInTheDocument();
     // The submit button should have the text "Login"
-    expect(screen.getByTestId("modal-submit")).toHaveTextContent("Login.title");
+    expect(screen.getByTestId("modal-submit")).toHaveTextContent("login.title");
     // The submit button should be disabled
     expect(screen.getByTestId("modal-submit")).toBeDisabled();
     // The signup text should be present
     expect(screen.getByTestId("modal-change")).toBeInTheDocument();
     // The signup text should have the text "Sign Up"
-    expect(screen.getByTestId("modal-change")).toHaveTextContent("Login.switchTextLogin.switchLink");
+    expect(screen.getByTestId("modal-change")).toHaveTextContent(
+      "login.switchTextlogin.switchLink",
+    );
   });
 
   it("renders a LoginModal component, clicks on the Sign Up text then check that the change function has been called", () => {
@@ -58,7 +55,7 @@ describe("LoginModal", () => {
       <ThemeProvider theme={theme}>
         <LoginModal
           isOpen={true}
-          login={()=>new Promise(()=>"")}
+          login={() => new Promise(() => "")}
           onChangeMode={mockChangeMode}
         />
       </ThemeProvider>,
@@ -74,8 +71,8 @@ describe("LoginModal", () => {
       <ThemeProvider theme={theme}>
         <LoginModal
           isOpen={true}
-          login={()=>new Promise(()=>"")}
-          onChangeMode={()=>{}}
+          login={() => new Promise(() => "")}
+          onChangeMode={() => {}}
         />
       </ThemeProvider>,
     );
@@ -93,13 +90,13 @@ describe("LoginModal", () => {
     expect(screen.getByTestId("modal-submit")).not.toBeDisabled();
   });
 
-  it("renders a LoginModal component, fills the username and password inputs then click on the submit button", async() => {
+  it("renders a LoginModal component, fills the username and password inputs then click on the submit button", async () => {
     render(
       <ThemeProvider theme={theme}>
         <LoginModal
           isOpen={true}
           login={mockErrorLogin}
-          onChangeMode={()=>{}}
+          onChangeMode={() => {}}
         />
       </ThemeProvider>,
     );
@@ -124,4 +121,4 @@ describe("LoginModal", () => {
     // Check that the text of the error message is present
     expect(screen.getByTestId("modal-error-message")).toBeInTheDocument();
   });
-})
+});

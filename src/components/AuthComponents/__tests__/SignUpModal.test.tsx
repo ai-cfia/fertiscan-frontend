@@ -27,7 +27,7 @@ describe("SignUpModal", () => {
     );
     // The title should be present and be Sign Up
     expect(screen.getByTestId("modal-title")).toBeInTheDocument();
-    expect(screen.getByTestId("modal-title")).toHaveTextContent("Signup.title");
+    expect(screen.getByTestId("modal-title")).toHaveTextContent("signup.title");
     // The username input should be present
     expect(screen.getByTestId("modal-username")).toBeInTheDocument();
     // The password input should be present
@@ -40,7 +40,7 @@ describe("SignUpModal", () => {
     expect(screen.getByTestId("modal-submit")).toBeInTheDocument();
     // The submit button should have the text "Sign Up"
     expect(screen.getByTestId("modal-submit")).toHaveTextContent(
-      "Signup.title",
+      "signup.title",
     );
     // The submit button should be disabled
     expect(screen.getByTestId("modal-submit")).toBeDisabled();
@@ -48,7 +48,7 @@ describe("SignUpModal", () => {
     expect(screen.getByTestId("modal-change")).toBeInTheDocument();
     // The signup text should have the text "Login"
     expect(screen.getByTestId("modal-change")).toHaveTextContent(
-      "Signup.switchTextSignup.switchLink",
+      "signup.switchTextsignup.switchLink",
     );
   });
 
