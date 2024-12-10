@@ -40,7 +40,6 @@ const RouteGuard = ({ children }: Readonly<{ children: React.ReactNode }>) => {
   const handleSignup = async (
     username: string,
     password: string,
-    // eslint-disable-next-line @typescript-eslint/no-unused-vars
     confirm: string,
   ) => {
     if(password!=confirm){
