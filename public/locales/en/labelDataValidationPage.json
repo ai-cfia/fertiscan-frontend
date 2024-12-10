@@ -57,11 +57,24 @@
     "accessibility": {
       "input": "Input field for {{label}}",
       "checkbox": "Checkbox for {{label}}"
+    },
+    "options": {
+      "yes": "Yes",
+      "no": "No"
+    }
+  },
+  "quantityInput": {
+    "placeholder": {
+      "value": "Enter value",
+      "unit": "Unit"
+    },
+    "accessibility": {
+      "value": "Input field for numeric value",
+      "unit": "Dropdown to select a unit of measurement"
     }
   },
   "verifiedQuantityMultiInput": {
     "deleteRow": "Delete this row",
-    "defaultPlaceholder": "Enter value",
     "addRow": "Add Row",
     "removeRow": "Remove",
     "verify": "Mark as Verified",
@@ -98,8 +111,7 @@
     "actions": "Actions",
     "placeholders": {
       "english": "Enter English text",
-      "french": "Enter French text",
-      "value": "Enter value"
+      "french": "Enter French text"
     },
     "units": {
       "%": "%",
