@@ -1,9 +1,4 @@
-import {
-  Box,
-  Button,
-  Modal,
-  Typography,
-} from "@mui/material";
+import { Box, Button, Modal, Typography } from "@mui/material";
 import AccountCircleIcon from "@mui/icons-material/AccountCircle";
 import LockIcon from "@mui/icons-material/Lock";
 import theme from "@/app/theme";
@@ -25,13 +20,13 @@ const LoginModal = ({ isOpen, login, onChangeMode }: LoginProps) => {
 
   const handleSubmit = () => {
     login(username, password).then((message) => {
-      console.log(message)
+      console.log(message);
       setErrorMessage(message);
     });
   };
 
   return (
-    <Modal open={isOpen}>
+    <Modal open={isOpen} data-testid={"modal"}>
       <Box
         className="
           absolute
@@ -67,7 +62,7 @@ const LoginModal = ({ isOpen, login, onChangeMode }: LoginProps) => {
           variant="h3"
           component="h2"
         >
-          {t("Login.title")}
+          {t("login.title")}
         </Typography>
         <form
           className={`
@@ -82,8 +77,10 @@ const LoginModal = ({ isOpen, login, onChangeMode }: LoginProps) => {
           <IconInput
             id={"username"}
             dataTestId={"modal-username"}
-            icon={<AccountCircleIcon sx={{ color: "white", marginBottom: 1 }} />}
-            placeholder={t("Login.username")}
+            icon={
+              <AccountCircleIcon sx={{ color: "white", marginBottom: 1 }} />
+            }
+            placeholder={t("login.username")}
             type={"text"}
             value={username}
             setValue={setUsername}
@@ -92,7 +89,7 @@ const LoginModal = ({ isOpen, login, onChangeMode }: LoginProps) => {
             id={"password"}
             dataTestId={"modal-password"}
             icon={<LockIcon sx={{ color: "white", marginBottom: 1 }} />}
-            placeholder={t("Login.password")}
+            placeholder={t("login.password")}
             type={"password"}
             value={password}
             setValue={setPassword}
@@ -104,7 +101,7 @@ const LoginModal = ({ isOpen, login, onChangeMode }: LoginProps) => {
               display: errorMessage === "" ? "none" : "block",
               color: theme.palette.error.main,
             }}
-            >
+          >
             {errorMessage}
           </Typography>
           <Button
@@ -117,7 +114,7 @@ const LoginModal = ({ isOpen, login, onChangeMode }: LoginProps) => {
             `}
             onClick={handleSubmit}
           >
-            {t("Login.title")}
+            {t("login.title")}
           </Button>
         </form>
         <Typography
@@ -130,14 +127,14 @@ const LoginModal = ({ isOpen, login, onChangeMode }: LoginProps) => {
             text-center
           "
         >
-          {t("Login.switchText")}
+          {t("login.switchText")}
           <a
             id={"toggleSignButton"}
             data-testid={"modal-change-button"}
             className={"underline text-white cursor-pointer"}
             onClick={onChangeMode}
           >
-            {t("Login.switchLink")}
+            {t("login.switchLink")}
           </a>
         </Typography>
       </Box>

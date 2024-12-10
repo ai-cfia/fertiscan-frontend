@@ -1,12 +1,12 @@
 {
-    "Login": {
+    "login": {
         "username": "Username",
         "password": "Password",
         "title": "Login",
         "switchText": "Don't have an account? ",
         "switchLink": "Sign up"
     },
-    "Signup": {
+    "signup": {
         "username": "Username",
         "password": "Password",
         "confirmPassword": "Confirm Password",
@@ -16,7 +16,7 @@
         "dataPolicy": "By checking this box I understand that the data I have entered will be stored and thus should not be sensitive information.",
         "dataReminder": "As a reminder, work email, phone number or real name are considered sensitive information."
     },
-    "Errors": {
+    "errors": {
         "username": "Username is required",
         "password": "Password is required",
         "confirmPassword": "Confirm Password is required",
@@ -26,6 +26,5 @@
         "unknown": "An unknown error occurred",
         "server": "Server error",
         "unauthorized": "Invalid username or password"
-
     }
 }
