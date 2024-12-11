@@ -4,7 +4,11 @@ import { useEffect } from "react";
 import { FormProvider, useForm, useWatch } from "react-hook-form";
 import VerifiedBilingualTable from "./VerifiedBilingualTable";
 
-function IngredientsForm({ labelData, setLabelData }: FormComponentProps) {
+function IngredientsForm({
+  labelData,
+  setLabelData,
+  loading = false,
+}: FormComponentProps) {
   const methods = useForm<LabelData>({
     defaultValues: labelData,
   });
@@ -32,6 +36,7 @@ function IngredientsForm({ labelData, setLabelData }: FormComponentProps) {
           path={"ingredients"}
           unitOptions={UNITS.ingredients}
           valueColumn
+          loading={loading}
         />
       </Box>
     </FormProvider>

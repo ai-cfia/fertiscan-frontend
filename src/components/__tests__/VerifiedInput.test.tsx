@@ -3,7 +3,13 @@ import { fireEvent, render, screen } from "@testing-library/react";
 import { FormProvider, useForm } from "react-hook-form";
 import { VerifiedInput } from "../VerifiedFieldComponents";
 
-const TestWrapper = ({ verified }: { verified: boolean }) => {
+const TestWrapper = ({
+  verified,
+  loading = false,
+}: {
+  verified: boolean;
+  loading?: boolean;
+}) => {
   const methods = useForm<Record<string, VerifiedTextField>>({
     defaultValues: {
       fieldName: {
@@ -21,13 +27,14 @@ const TestWrapper = ({ verified }: { verified: boolean }) => {
           placeholder="Enter text"
           path="fieldName"
           className="test-class"
+          loading={loading}
         />
       </form>
     </FormProvider>
   );
 };
 
-describe("Rendering", () => {
+describe("VerifiedInput Behavior", () => {
   it("should render all elements with correct attributes and content", () => {
     render(<TestWrapper verified={false} />);
 
@@ -47,9 +54,7 @@ describe("Rendering", () => {
       screen.getByTestId("toggle-verified-btn-fieldName.verified"),
     ).toBeInTheDocument();
   });
-});
 
-describe("Verified Behavior", () => {
   it("should disable the input field when verifiedValue is true", () => {
     render(<TestWrapper verified={true} />);
     const input = screen.getByPlaceholderText("Enter text");
@@ -79,5 +84,15 @@ describe("Verified Behavior", () => {
     expect(screen.getByTestId("verified-field-fieldName")).not.toHaveClass(
       "border-green-500",
     );
+  });
+
+  it("should display a skeleton when loading is true", () => {
+    render(<TestWrapper verified={false} loading={true} />);
+
+    const skeleton = screen.getByTestId("styled-skeleton");
+    expect(skeleton).toBeInTheDocument();
+
+    const input = screen.queryByPlaceholderText("Enter text");
+    expect(input).not.toBeInTheDocument();
   });
 });

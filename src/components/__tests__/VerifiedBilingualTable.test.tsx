@@ -18,6 +18,7 @@ const Wrapper = ({
   },
   valueColumns = false,
   unitOptions,
+  loading = false,
   onSubmit = jest.fn(),
 }: {
   path?: string;
@@ -32,6 +33,7 @@ const Wrapper = ({
   };
   valueColumns?: boolean;
   unitOptions?: string[];
+  loading?: boolean;
   onSubmit?: (data: { bilingualFields: BilingualField[] }) => void;
 }) => {
   const methods = useForm({
@@ -51,6 +53,7 @@ const Wrapper = ({
           path={path}
           unitOptions={unitOptions}
           valueColumn={valueColumns}
+          loading={loading}
         />
         <button type="submit" data-testid="submit-button">
           Submit
@@ -123,6 +126,31 @@ describe("VerifiedBilingualTable rendering and functionality", () => {
 
     expect(unitInput.value).toBe("%");
     expect(valueInput.value).toBe("10");
+  });
+
+  it("displays skeleton rows when loading is true", () => {
+    render(
+      <Wrapper
+        defaultValues={{
+          bilingualFields: [
+            { en: "English Text", fr: "French Text", verified: false },
+          ],
+        }}
+        loading={true}
+      />,
+    );
+
+    const skeletonRows = screen.getAllByTestId(
+      /skeleton-row-bilingualFields-\d+/,
+    );
+    expect(skeletonRows.length).toBe(1);
+
+    const skeletonCells = screen.getAllByTestId("styled-skeleton");
+    expect(skeletonCells.length).toBeGreaterThan(0);
+
+    expect(
+      screen.queryByTestId("input-english-bilingualFields-0"),
+    ).not.toBeInTheDocument();
   });
 
   it("adds a new row when Add button is clicked", () => {

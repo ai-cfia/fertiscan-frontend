@@ -27,6 +27,7 @@ const fieldNames = Object.keys(DEFAULT_ORGANIZATION) as Array<
 const OrganizationsForm: React.FC<FormComponentProps> = ({
   labelData,
   setLabelData,
+  loading = false,
 }) => {
   const methods = useForm<LabelData>({
     defaultValues: labelData,
@@ -77,7 +78,7 @@ const OrganizationsForm: React.FC<FormComponentProps> = ({
               className="mb-4"
               data-testid={`organization-${index}`}
             >
-              <OrganizationInformation index={index} />
+              <OrganizationInformation index={index} loading={loading} />
               <Box className="flex flex-wrap mt-4 justify-end gap-2">
                 <Tooltip
                   title="Mark all as Verified"
@@ -157,7 +158,15 @@ const OrganizationsForm: React.FC<FormComponentProps> = ({
   );
 };
 
-function OrganizationInformation({ index }: { index: number }) {
+interface OrganizationInformationProps {
+  index: number;
+  loading?: boolean;
+}
+
+const OrganizationInformation: React.FC<OrganizationInformationProps> = ({
+  index,
+  loading = false,
+}) => {
   return (
     <Box
       className="grid grid-cols-1 sm:grid-cols-1 md:grid-cols-2 lg:grid-cols-1 xxl:grid-cols-2 gap-4"
@@ -167,28 +176,32 @@ function OrganizationInformation({ index }: { index: number }) {
         label="Name"
         placeholder="Enter organization name"
         path={`organizations.${index}.name`}
+        loading={loading}
         data-testid={`org-name-input-${index}`}
       />
       <VerifiedInput
         label="Address"
         placeholder="Enter address"
         path={`organizations.${index}.address`}
+        loading={loading}
         data-testid={`org-address-input-${index}`}
       />
       <VerifiedInput
         label="Website"
         placeholder="Enter website"
         path={`organizations.${index}.website`}
+        loading={loading}
         data-testid={`org-website-input-${index}`}
       />
       <VerifiedInput
         label="Phone Number"
         placeholder="Enter phone number"
         path={`organizations.${index}.phoneNumber`}
+        loading={loading}
         data-testid={`org-phone-input-${index}`}
       />
     </Box>
   );
-}
+};
 
 export default OrganizationsForm;

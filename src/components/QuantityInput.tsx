@@ -23,7 +23,7 @@ const QuantityInput = ({
   onFocus,
   onblur,
 }: QuantityInputProps) => {
-  const { t } = useTranslation("labelDataValidationPage");
+  const { t } = useTranslation("labelDataValidator");
 
   return (
     <Box className="flex w-full" data-testid={`${name}-container`}>

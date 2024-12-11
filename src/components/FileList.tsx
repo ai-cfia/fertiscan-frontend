@@ -1,9 +1,9 @@
 "use client";
-import React, { Suspense } from "react";
-import { Box, Stack, Typography, useTheme } from "@mui/material";
 import FileElement from "@/components/FileElement";
-import FileUploaded from "@/classe/File";
+import useUploadedFilesStore from "@/stores/fileStore";
 import { DropzoneState } from "@/types/types"; // Adjust the import path as necessary
+import { Box, Stack, Typography, useTheme } from "@mui/material";
+import React, { Suspense } from "react";
 import { useTranslation } from "react-i18next";
 
 /**
@@ -12,8 +12,6 @@ import { useTranslation } from "react-i18next";
  * @interface FileListProps
  */
 interface FileListProps {
-  uploadedFiles: FileUploaded[];
-  setUploadedFiles: React.Dispatch<React.SetStateAction<FileUploaded[]>>;
   setDropzoneState: React.Dispatch<React.SetStateAction<DropzoneState>>;
 }
 
@@ -29,20 +27,13 @@ interface FileListProps {
  *
  * @returns {JSX.Element} The rendered FileList component.
  */
-const FileList: React.FC<FileListProps> = ({
-  uploadedFiles,
-  setUploadedFiles,
-  setDropzoneState,
-}) => {
+const FileList: React.FC<FileListProps> = ({ setDropzoneState }) => {
   const theme = useTheme();
   const { t } = useTranslation("homePage");
+  const { uploadedFiles, removeUploadedFile } = useUploadedFilesStore();
 
   const handleDelete = (url: string) => {
-    setUploadedFiles(
-      uploadedFiles.filter(
-        (file) => file instanceof FileUploaded && file.getInfo().path !== url,
-      ),
-    );
+    removeUploadedFile(url);
     setDropzoneState({ visible: false, imageUrl: null });
   };
 
