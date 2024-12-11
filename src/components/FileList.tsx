@@ -115,15 +115,15 @@ const FileList: React.FC<FileListProps> = ({
         }}
         className={`flex relative flex-col justify-center items-center border-2 border-sky-900
                 rounded text-center p-1 bg-transparent bg-contain xs:w-[90%] md:w-[100%] h-[90%]
-                xs:min-h-[350px] md:min-h-[400px] overflow-y-auto overflow-x-hidden min-w-[133.44px]
-               `}
+                xs:min-h-[350px] md:min-h-[400px] overflow-y-auto overflow-x-hidden min-w-[133.44px] md:max-w-[470px]
+               `}  // do not modify md:max-w-[470px]
       >
         <Box
           className={`absolute transform w-full h-full flex flex-col justify-start items-start p-2 left-0 top-0 text-center max-w-full max-h-full object-contain `}
         >
           <Box
             className={`w-full flex flex-row items-center ${
-              uploadedFiles.length === 0 ? "justify-start" : "justify-center"
+              uploadedFiles.length == 0 ? "justify-center mt-[50%]" : "justify-start"
             }`}
           >
             <Typography
