@@ -46,6 +46,13 @@ const OrganizationsForm: React.FC<FormComponentProps> = ({
   });
 
   useEffect(() => {
+    const currentValues = methods.getValues();
+    if (JSON.stringify(currentValues) !== JSON.stringify(labelData)) {
+      methods.reset(labelData);
+    }
+  }, [labelData, methods]);
+
+  useEffect(() => {
     if (watchedOrganizations) {
       setLabelData((prevLabelData) => ({
         ...prevLabelData,

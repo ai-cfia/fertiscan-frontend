@@ -21,6 +21,13 @@ function IngredientsForm({
   });
 
   useEffect(() => {
+    const currentValues = methods.getValues();
+    if (JSON.stringify(currentValues) !== JSON.stringify(labelData)) {
+      methods.reset(labelData);
+    }
+  }, [labelData, methods]);
+
+  useEffect(() => {
     if (watchedIngredients) {
       setLabelData((prevLabelData) => ({
         ...prevLabelData,

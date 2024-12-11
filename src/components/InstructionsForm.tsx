@@ -19,6 +19,13 @@ const InstructionsForm: React.FC<FormComponentProps> = ({
   });
 
   useEffect(() => {
+    const currentValues = methods.getValues();
+    if (JSON.stringify(currentValues) !== JSON.stringify(labelData)) {
+      methods.reset(labelData);
+    }
+  }, [labelData, methods]);
+
+  useEffect(() => {
     if (watchedInstructions) {
       setLabelData((prevLabelData) => ({
         ...prevLabelData,

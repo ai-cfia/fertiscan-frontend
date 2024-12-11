@@ -3,8 +3,11 @@ import LabelDataValidator from "@/components/LabelDataValidator";
 import useAlertStore from "@/stores/alertStore";
 import useUploadedFilesStore from "@/stores/fileStore";
 import { DEFAULT_LABEL_DATA } from "@/types/types";
-import { processAxiosError } from "@/utils/common";
-import { Inspection } from "@/utils/server/backend";
+import {
+  mapLabelDataOutputToLabelData,
+  processAxiosError,
+} from "@/utils/common";
+import { Inspection, LabelDataOutput } from "@/utils/server/backend";
 import axios from "axios";
 import { useRouter } from "next/navigation";
 import { useEffect, useState } from "react";
@@ -40,21 +43,37 @@ function LabelDataValidationPage() {
         .post("/api/extract-label-data", formData, {
           headers: { Authorization: authHeader },
         })
-        .then((response) => {
-          const extractedLabelData = response.data;
-          setLabelData(extractedLabelData);
-
-          formData.append("labelData", JSON.stringify(extractedLabelData));
-          return axios.post("/api/inspections", formData, {
-            headers: { Authorization: authHeader },
-          });
+        .then(async (response) => {
+          const labelDataOutput: LabelDataOutput = response.data;
+          const labelData = mapLabelDataOutputToLabelData(labelDataOutput);
+          console.log("Label data:", labelData);
+          setLabelData(labelData);
+          
+          formData.append("labelData", JSON.stringify(labelDataOutput));
+          return axios
+            .post("/api/inspections", formData, {
+              headers: { Authorization: authHeader },
+            })
+            .catch((error) => {
+              showAlert(
+                `Label data initial save failed: ${processAxiosError(error)}`,
+                "error",
+              );
+              return null;
+            });
         })
         .then((response) => {
+          if (!response) {
+            return;
+          }
           const inspection: Inspection = response.data;
           console.log("Inspection ID:", inspection.inspection_id);
         })
         .catch((error) => {
-          showAlert(processAxiosError(error), "error");
+          showAlert(
+            `Label data extraction failed: ${processAxiosError(error)}`,
+            "error",
+          );
         })
         .finally(() => {
           setLoading(false);
@@ -67,7 +86,8 @@ function LabelDataValidationPage() {
   return (
     <LabelDataValidator
       files={uploadedFiles.map((file) => file.getFile())}
-      initialLabelData={labelData}
+      labelData={labelData}
+      setLabelData={setLabelData}
       loading={loading}
     />
   );

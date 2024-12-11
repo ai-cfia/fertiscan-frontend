@@ -11,11 +11,7 @@ import {
   StepperControls,
   StepStatus,
 } from "@/components/stepper";
-import {
-  DEFAULT_LABEL_DATA,
-  FormComponentProps,
-  LabelData,
-} from "@/types/types";
+import { FormComponentProps, LabelData } from "@/types/types";
 import { checkFieldArray, checkFieldRecord } from "@/utils/common";
 import useBreakpoints from "@/utils/useBreakpoints";
 import { Box, Container, Typography } from "@mui/material";
@@ -25,13 +21,15 @@ import { useTranslation } from "react-i18next";
 interface LabelDataValidatorProps {
   loading?: boolean;
   files: File[];
-  initialLabelData?: LabelData;
+  labelData: LabelData;
+  setLabelData: React.Dispatch<React.SetStateAction<LabelData>>;
 }
 
 function LabelDataValidator({
   loading = false,
   files,
-  initialLabelData = DEFAULT_LABEL_DATA,
+  labelData,
+  setLabelData,
 }: LabelDataValidatorProps) {
   const { t } = useTranslation("labelDataValidator");
   const imageFiles = files;
@@ -39,7 +37,6 @@ function LabelDataValidator({
     useBreakpoints();
   const isLgOrBelow =
     isDownXs || isBetweenXsSm || isBetweenSmMd || isBetweenMdLg;
-  const [labelData, setLabelData] = useState<LabelData>(initialLabelData);
   const [activeStep, setActiveStep] = useState(0);
   const [organizationsStepStatus, setOrganizationsStepStatus] =
     useState<StepStatus>(StepStatus.Incomplete);
