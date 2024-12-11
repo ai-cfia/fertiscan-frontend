@@ -3,14 +3,12 @@ import AddIcon from "@mui/icons-material/Add";
 import CheckIcon from "@mui/icons-material/Check";
 import DeleteIcon from "@mui/icons-material/Delete";
 import DoneAllIcon from "@mui/icons-material/DoneAll";
-import ErrorOutlineIcon from "@mui/icons-material/ErrorOutline";
 import RemoveDoneIcon from "@mui/icons-material/RemoveDone";
 import {
   Box,
   Button,
   Divider,
   IconButton,
-  InputBase,
   Table,
   TableBody,
   TableCell,
@@ -27,6 +25,8 @@ import {
   useWatch,
 } from "react-hook-form";
 import { useTranslation } from "react-i18next";
+import QuantityInput from "./QuantityInput";
+import StyledTextField from "./StyledTextField";
 
 interface VerifiedBilingualTableProps {
   path: string;
@@ -113,6 +113,7 @@ const VerifiedBilingualTable = ({
           <TableBody>
             {fields.map((field, index) => (
               <TableRow
+                className={`${isVerified(index) ? "bg-green-100" : ""}`}
                 key={field.id}
                 data-testid={`table-row-${path}-${index}`}
               >
@@ -122,14 +123,11 @@ const VerifiedBilingualTable = ({
                     name={`${path}.${index}.en`}
                     control={control}
                     render={({ field }) => (
-                      <InputBase
+                      <StyledTextField
                         {...field}
-                        className="!text-[15px]"
                         placeholder={t(
                           "verifiedBilingualTable.placeholders.english",
                         )}
-                        multiline
-                        fullWidth
                         disabled={isVerified(index)}
                         aria-label={t(
                           "verifiedBilingualTable.accessibility.englishInput",
@@ -137,6 +135,7 @@ const VerifiedBilingualTable = ({
                         )}
                         aria-disabled={isVerified(index)}
                         data-testid={`input-english-${path}-${index}`}
+                        multiline
                       />
                     )}
                   />
@@ -148,14 +147,11 @@ const VerifiedBilingualTable = ({
                     name={`${path}.${index}.fr`}
                     control={control}
                     render={({ field }) => (
-                      <InputBase
+                      <StyledTextField
                         {...field}
-                        className="!text-[15px]"
                         placeholder={t(
                           "verifiedBilingualTable.placeholders.french",
                         )}
-                        multiline
-                        fullWidth
                         disabled={isVerified(index)}
                         aria-label={t(
                           "verifiedBilingualTable.accessibility.frenchInput",
@@ -163,6 +159,7 @@ const VerifiedBilingualTable = ({
                         )}
                         aria-disabled={isVerified(index)}
                         data-testid={`input-french-${path}-${index}`}
+                        multiline
                       />
                     )}
                   />
@@ -171,74 +168,12 @@ const VerifiedBilingualTable = ({
                 {/* Value column */}
                 {valueColumn && (
                   <TableCell>
-                    <Box className="flex items-center">
-                      {/* Unit Selection Field */}
-                      <Controller
-                        name={`${path}.${index}.unit`}
-                        control={control}
-                        render={({ field }) => (
-                          <select
-                            {...field}
-                            className="p-1 text-[15px] border rounded"
-                            disabled={isVerified(index)}
-                            aria-label={t(
-                              "verifiedBilingualTable.accessibility.unitDropdown",
-                            )}
-                            data-testid={`${path}.${index}.unit`}
-                          >
-                            {unitOptions?.map((option) => (
-                              <option key={option} value={option}>
-                                {t(`verifiedBilingualTable.units.${option}`)}
-                              </option>
-                            ))}
-                          </select>
-                        )}
-                      />
-
-                      {/* Value Input Field */}
-                      <Controller
-                        name={`${path}.${index}.value`}
-                        control={control}
-                        rules={{
-                          pattern: {
-                            value: /^[0-9]*\.?[0-9]*$/,
-                            message: t("errors.numbersOnly"),
-                          },
-                          min: {
-                            value: 0,
-                            message: t("errors.minValue"),
-                          },
-                        }}
-                        render={({ field, fieldState: { error } }) => (
-                          <>
-                            <InputBase
-                              {...field}
-                              className="flex-1 p-2 !text-[15px]"
-                              placeholder={t(
-                                "verifiedBilingualTable.placeholders.value",
-                              )}
-                              disabled={isVerified(index)}
-                              aria-label={t(
-                                "verifiedBilingualTable.accessibility.valueInput",
-                              )}
-                              data-testid={`${path}.${index}.value`}
-                              error={!!error}
-                            />
-                            {error && (
-                              <Tooltip title={error.message || ""}>
-                                <ErrorOutlineIcon
-                                  className="ml-1"
-                                  color="error"
-                                  fontSize="small"
-                                  data-testid={`value-error-icon-${path}-${index}`}
-                                  aria-label={error.message}
-                                />
-                              </Tooltip>
-                            )}
-                          </>
-                        )}
-                      />
-                    </Box>
+                    <QuantityInput
+                      name={`${path}.${index}`}
+                      control={control}
+                      unitOptions={unitOptions ?? []}
+                      disabled={isVerified(index)}
+                    />
                   </TableCell>
                 )}
 

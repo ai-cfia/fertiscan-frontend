@@ -1,3 +1,6 @@
 {
-    "languageChanged": "La langue a été changée pour {{lng}}!"
+    "languageChanged": "La langue a été changée pour {{lng}}!",
+    "fileExists": "Le fichier a déjà été ajouté!",
+    "PdfNotSupported": "Le fichier PDF n'est pas encore pris en charge!",
+    "maxFilesExceeded": "Le nombre maximum de 10 fichiers a été atteint!"
 }

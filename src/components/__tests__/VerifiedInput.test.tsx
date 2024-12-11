@@ -71,7 +71,13 @@ describe("Verified Behavior", () => {
     expect(verifiedIcon).not.toHaveClass("text-green-500");
     fireEvent.click(toggleButton);
     expect(verifiedIcon).toHaveClass("text-green-500");
+    expect(screen.getByTestId("verified-field-fieldName")).toHaveClass(
+      "border-green-500",
+    );
     fireEvent.click(toggleButton);
     expect(verifiedIcon).not.toHaveClass("text-green-500");
+    expect(screen.getByTestId("verified-field-fieldName")).not.toHaveClass(
+      "border-green-500",
+    );
   });
 });

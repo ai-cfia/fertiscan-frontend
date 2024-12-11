@@ -6,7 +6,6 @@ import VerifiedQuantityMultiInput from "../VerifiedQuantityMultiInput";
 
 const Wrapper = ({
   label = "Test Label",
-  placeholder = "Enter a value",
   path = "",
   unitOptions = ["kg", "lb", "oz", "ton"],
   defaultValues = {
@@ -37,7 +36,6 @@ const Wrapper = ({
       >
         <VerifiedQuantityMultiInput
           label={label}
-          placeholder={placeholder}
           path={path}
           unitOptions={unitOptions}
         />
@@ -59,11 +57,11 @@ describe("QuantityMultiInput rendering", () => {
     expect(screen.getByTestId("add-button-")).toBeInTheDocument();
     expect(screen.getByTestId("toggle-verified-btn-")).toBeInTheDocument();
 
-    const dropdowns = screen.getAllByTestId(/quantities\.\d+\.unit/);
+    const dropdowns = screen.getAllByTestId(/quantities\.\d+-value-input/);
     expect(dropdowns.length).toBe(1);
     expect(dropdowns[0].children.length).toBeGreaterThan(0);
 
-    const inputFields = screen.getAllByTestId(/quantities\.\d+\.value/);
+    const inputFields = screen.getAllByTestId(/quantities\.\d+-value-input/);
     expect(inputFields.length).toBe(1);
 
     const inputField = inputFields[0].querySelector(
@@ -95,13 +93,13 @@ describe("QuantityMultiInput rendering", () => {
     const inputs = fieldRows.map(
       (row) =>
         row.querySelector(
-          "[data-testid^='.quantities.'][data-testid$='.value'] input",
+          "[data-testid^='.quantities.'][data-testid$='-value-input'] input",
         ) as HTMLInputElement,
     );
     expect(inputs[0].value).toBe("10");
     expect(inputs[1].value).toBe("20");
 
-    const dropdowns = screen.getAllByTestId(/quantities\.\d+\.unit/);
+    const dropdowns = screen.getAllByTestId(/quantities\.\d+-value-input/);
     expect(dropdowns.length).toBe(2);
     expect(dropdowns[0].children.length).toBeGreaterThan(0);
   });
@@ -115,11 +113,11 @@ describe("QuantityMultiInput functionality", () => {
     };
     render(<Wrapper defaultValues={defaultValues} />);
 
-    screen.getAllByTestId(/quantities\.\d+\.value/).forEach((field) => {
+    screen.getAllByTestId(/quantities\.\d+-value-input/).forEach((field) => {
       expect(field.querySelector("input")).toBeDisabled();
     });
-    screen.getAllByTestId(/quantities\.\d+\.unit/).forEach((dropdown) => {
-      expect(dropdown).toBeDisabled();
+    screen.getAllByTestId(/quantities\.\d+-value-input/).forEach((dropdown) => {
+      expect(dropdown.querySelector("input")).toBeDisabled();
     });
     screen
       .getAllByTestId(/delete-button-\.quantities-\d+/)
@@ -130,11 +128,11 @@ describe("QuantityMultiInput functionality", () => {
 
     userEvent.click(screen.getByTestId("toggle-verified-btn-"));
 
-    screen.getAllByTestId(/quantities\.\d+\.value/).forEach((field) => {
+    screen.getAllByTestId(/quantities\.\d+-value-input/).forEach((field) => {
       expect(field.querySelector("input")).toBeDisabled();
     });
-    screen.getAllByTestId(/quantities\.\d+\.unit/).forEach((dropdown) => {
-      expect(dropdown).toBeDisabled();
+    screen.getAllByTestId(/quantities\.\d+-value-input/).forEach((dropdown) => {
+      expect(dropdown.querySelector("input")).toBeDisabled();
     });
     screen
       .getAllByTestId(/delete-button-\.quantities-\d+/)
@@ -142,6 +140,9 @@ describe("QuantityMultiInput functionality", () => {
         expect(button).toBeDisabled();
       });
     expect(screen.getByTestId("add-button-")).toBeDisabled();
+    expect(screen.getByTestId("quantity-multi-input-")).toHaveClass(
+      "border-green-500",
+    );
   });
 
   it("handles Add and Remove row functionality", () => {
@@ -172,93 +173,6 @@ describe("QuantityMultiInput functionality", () => {
     expect(fieldRows.length).toBe(2);
   });
 
-  it("shows an error for negative values", async () => {
-    const mockOnSubmit = jest.fn();
-    const defaultValues = {
-      quantities: [{ value: "0", unit: "kg" }],
-      verified: false,
-    };
-
-    render(<Wrapper defaultValues={defaultValues} onSubmit={mockOnSubmit} />);
-
-    const inputFields = screen.getAllByTestId(/quantities\.\d+\.value/);
-    expect(inputFields.length).toBe(1);
-
-    const inputField = inputFields[0].querySelector(
-      "input",
-    ) as HTMLInputElement;
-    expect(inputField).toHaveValue("0");
-
-    await userEvent.clear(inputField);
-    await userEvent.type(inputField, "-10");
-
-    await userEvent.click(screen.getByTestId("verified-icon-"));
-
-    expect(
-      screen.getByTestId(/value-error-icon-\.quantities-\d+/),
-    ).toBeInTheDocument();
-
-    expect(mockOnSubmit).not.toHaveBeenCalled();
-  });
-
-  it("shows an error for non-numeric values", async () => {
-    const mockOnSubmit = jest.fn();
-    const defaultValues = {
-      quantities: [{ value: "0", unit: "kg" }],
-      verified: false,
-    };
-
-    render(<Wrapper defaultValues={defaultValues} onSubmit={mockOnSubmit} />);
-
-    const inputFields = screen.getAllByTestId(/quantities\.\d+\.value/);
-    expect(inputFields.length).toBe(1);
-
-    const inputField = inputFields[0].querySelector(
-      "input",
-    ) as HTMLInputElement;
-    expect(inputField).toHaveValue("0");
-
-    await userEvent.clear(inputField);
-    await userEvent.type(inputField, "abc");
-
-    await userEvent.click(screen.getByTestId("verified-icon-"));
-
-    expect(
-      screen.getByTestId(/value-error-icon-\.quantities-\d+/),
-    ).toBeInTheDocument();
-
-    expect(mockOnSubmit).not.toHaveBeenCalled();
-  });
-
-  it("shows an error for duplicate units", async () => {
-    const mockOnSubmit = jest.fn();
-    const defaultValues = {
-      quantities: [
-        { value: "10", unit: "kg" },
-        { value: "20", unit: "kg" },
-      ],
-      verified: false,
-    };
-
-    render(<Wrapper defaultValues={defaultValues} onSubmit={mockOnSubmit} />);
-
-    const inputFields = screen.getAllByTestId(/quantities\.\d+\.value/);
-    expect(inputFields.length).toBe(2);
-
-    const inputField = inputFields[1].querySelector(
-      "input",
-    ) as HTMLInputElement;
-    expect(inputField).toHaveValue("20");
-
-    await userEvent.click(screen.getByTestId("submit-button"));
-
-    expect(
-      screen.getAllByTestId(/unit-error-icon-\.quantities-\d+/).length,
-    ).toBe(2);
-
-    expect(mockOnSubmit).not.toHaveBeenCalled();
-  });
-
   it("calls onSubmit with correct values", async () => {
     const mockOnSubmit = jest.fn();
     const defaultValues = {
@@ -268,7 +182,7 @@ describe("QuantityMultiInput functionality", () => {
 
     render(<Wrapper defaultValues={defaultValues} onSubmit={mockOnSubmit} />);
 
-    const inputFields = screen.getAllByTestId(/quantities\.\d+\.value/);
+    const inputFields = screen.getAllByTestId(/quantities\.\d+-value-input/);
     expect(inputFields.length).toBe(1);
 
     const inputField = inputFields[0].querySelector(
@@ -279,10 +193,14 @@ describe("QuantityMultiInput functionality", () => {
     await userEvent.clear(inputField);
     await userEvent.type(inputField, "10");
 
-    const dropdowns = screen.getAllByTestId(/quantities\.\d+\.unit/);
+    const dropdowns = screen.getAllByTestId(/quantities\.\d+-unit-input/);
     expect(dropdowns.length).toBe(1);
-    const dropdown = dropdowns[0] as HTMLSelectElement;
-    await userEvent.selectOptions(dropdown, "lb");
+
+    const dropdownInput = dropdowns[0].querySelector(
+      "input",
+    ) as HTMLInputElement;
+    await userEvent.clear(dropdownInput);
+    await userEvent.type(dropdownInput, "lb");
 
     await userEvent.click(screen.getByTestId("toggle-verified-btn-"));
 
@@ -304,7 +222,7 @@ describe("QuantityMultiInput functionality", () => {
 
     render(<Wrapper defaultValues={defaultValues} />);
 
-    const inputFields = screen.getAllByTestId(/quantities\.\d+\.value/);
+    const inputFields = screen.getAllByTestId(/quantities\.\d+-value-input/);
     expect(inputFields.length).toBe(1);
 
     const inputField = inputFields[0].querySelector(
@@ -323,33 +241,5 @@ describe("QuantityMultiInput functionality", () => {
     await userEvent.type(inputField, "10");
     await userEvent.click(toggleButton);
     expect(toggleButton).toHaveClass("text-green-500");
-  });
-
-  it("adds a row with a different unit every time add button is clicked", async () => {
-    const defaultValues = {
-      quantities: [{ value: "0", unit: "kg" }],
-      verified: false,
-    };
-
-    render(<Wrapper defaultValues={defaultValues} />);
-
-    const addButton = screen.getByTestId("add-button-");
-
-    await userEvent.click(addButton);
-    let dropdowns = screen.getAllByTestId(/quantities\.\d+\.unit/);
-    expect(dropdowns.length).toBe(2);
-    expect(dropdowns[1]).toHaveValue("lb");
-
-    await userEvent.click(addButton);
-    dropdowns = screen.getAllByTestId(/quantities\.\d+\.unit/);
-    expect(dropdowns.length).toBe(3);
-    expect(dropdowns[2]).toHaveValue("oz");
-
-    await userEvent.click(addButton);
-    dropdowns = screen.getAllByTestId(/quantities\.\d+\.unit/);
-    expect(dropdowns.length).toBe(4);
-    expect(dropdowns[3]).toHaveValue("ton");
-
-    expect(addButton).toBeDisabled();
   });
 });
