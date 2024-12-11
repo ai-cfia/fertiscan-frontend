@@ -7,15 +7,12 @@ import {
   Alert,
   useTheme,
   Button,
-  IconButton,
   Typography,
 } from "@mui/material";
-import CloseIcon from "@mui/icons-material/Close";
 import FileElement from "@/components/FileElement";
 import FileUploaded from "@/classe/File";
 import { DropzoneState } from "@/types/types"; // Adjust the import path as necessary
 import { useTranslation } from "react-i18next";
-import DeleteSweepIcon from "@mui/icons-material/DeleteSweep";
 
 /**
  * Props for the FileList component.
