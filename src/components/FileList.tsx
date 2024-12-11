@@ -1,17 +1,16 @@
 "use client";
-import React, { Suspense, useState, useEffect } from "react";
+
+import React, { Suspense, useState } from "react";
 import {
   Box,
   Stack,
-  Snackbar,
-  Alert,
   useTheme,
   Button,
   Typography,
 } from "@mui/material";
 import FileElement from "@/components/FileElement";
 import FileUploaded from "@/classe/File";
-import { DropzoneState } from "@/types/types"; // Adjust the import path as necessary
+import { DropzoneState } from "@/types/types";
 import { useTranslation } from "react-i18next";
 
 /**
@@ -33,32 +32,15 @@ const FileList: React.FC<FileListProps> = ({
   const theme = useTheme();
   const { t } = useTranslation("homePage");
   const [renameFileUrl, setRenameFileUrl] = useState<string | null>(null);
-  const [snackbar, setSnackbar] = useState<{
-    open: boolean;
-    message: string;
-    severity: "success" | "error" | "warning" | "info";
-    action: (() => void) | null;
-  }>({ open: false, message: "", severity: "info", action: null });
-  const [previousState, setPreviousState] = useState<FileUploaded[]>([]);
 
-  useEffect(() => {
-    setPreviousState([...uploadedFiles]); // Ensure the previous state copies the array whenever uploadedFiles change
-  }, [uploadedFiles]);
 
   const handleDelete = (url: string) => {
-    setPreviousState([...uploadedFiles]); // Make a copy of current state
     setUploadedFiles(
       uploadedFiles.filter(
         (file) => file instanceof FileUploaded && file.getInfo().path !== url,
       ),
     );
     setDropzoneState({ visible: false, imageUrl: null });
-    setSnackbar({
-      open: true,
-      message: t("fileList.snackbar.delete"),
-      severity: "success",
-      action: handleUndo,
-    });
   };
 
   const handleRename = (newName: string) => {
@@ -72,28 +54,14 @@ const FileList: React.FC<FileListProps> = ({
             })()
           : file,
       );
-      setPreviousState([...uploadedFiles]); // Ensure the previous state copies the array before renaming
       setUploadedFiles(newUploadedFiles);
       setRenameFileUrl(null);
     }
   };
 
   const handleDeleteAll = () => {
-    setPreviousState([...uploadedFiles]); // Make a copy of current state
     setUploadedFiles([]);
     setDropzoneState({ visible: false, imageUrl: null });
-    setSnackbar({
-      open: true,
-      message: t("fileList.snackbar.deleteAll"),
-      severity: "success",
-      action: handleUndo,
-    });
-  };
-
-  const handleUndo = () => {
-    setUploadedFiles(previousState);
-    setDropzoneState({ visible: false, imageUrl: null });
-    setSnackbar({ ...snackbar, open: false });
   };
 
   return (
@@ -177,22 +145,6 @@ const FileList: React.FC<FileListProps> = ({
           </Stack>
         </Box>
       </Box>
-      <Snackbar
-        open={snackbar.open}
-        autoHideDuration={6000}
-        onClose={() => setSnackbar({ ...snackbar, open: false })}
-      >
-        <Alert
-          onClose={() => setSnackbar({ ...snackbar, open: false })}
-          severity={snackbar.severity}
-          sx={{ width: "100%" }}
-        >
-          {snackbar.message}
-          <Button color="primary" size="small" onClick={snackbar.action || (() => {})}>
-            {t("fileList.snackbar.undo")}
-          </Button>
-        </Alert>
-      </Snackbar>
     </Suspense>
   );
 };
