@@ -33,7 +33,7 @@ const VerifiedQuantityMultiInput: React.FC<VerifiedQuantityMultiInputProps> = ({
   unitOptions,
   className = "",
 }) => {
-  const { t } = useTranslation("labelDataValidationPage");
+  const { t } = useTranslation("labelDataValidator");
   const { control, trigger } = useFormContext();
   const [isFocused, setIsFocused] = useState(false);
 

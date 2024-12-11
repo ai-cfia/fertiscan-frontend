@@ -32,7 +32,7 @@ export const VerifiedFieldWrapper: React.FC<VerifiedFieldWrapperProps> = ({
   className = "",
   renderField,
 }) => {
-  const { t } = useTranslation("labelDataValidationPage");
+  const { t } = useTranslation("labelDataValidator");
   const { control } = useFormContext();
   const [isFocused, setIsFocused] = useState(false);
 
@@ -111,7 +111,7 @@ export const VerifiedRadio: React.FC<VerifiedRadioProps> = ({
   path,
   className = "",
 }) => {
-  const { t } = useTranslation("labelDataValidationPage");
+  const { t } = useTranslation("labelDataValidator");
   return (
     <VerifiedFieldWrapper
       label={label}
@@ -174,7 +174,7 @@ export const VerifiedInput: React.FC<VerifiedInputProps> = ({
   path,
   className = "",
 }) => {
-  const { t } = useTranslation("labelDataValidationPage");
+  const { t } = useTranslation("labelDataValidator");
   return (
     <VerifiedFieldWrapper
       label={label}

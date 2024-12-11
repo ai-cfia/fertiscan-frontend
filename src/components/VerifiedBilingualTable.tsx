@@ -44,7 +44,7 @@ const VerifiedBilingualTable = ({
     control,
     name: path,
   });
-  const { t } = useTranslation("labelDataValidationPage");
+  const { t } = useTranslation("labelDataValidator");
 
   const data = useWatch({ control, name: path });
   const isVerified = (index: number) => Boolean(data?.[index]?.verified);

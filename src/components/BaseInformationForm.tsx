@@ -10,7 +10,7 @@ const BaseInformationForm: React.FC<FormComponentProps> = ({
   labelData,
   setLabelData,
 }) => {
-  const { t } = useTranslation("labelDataValidationPage");
+  const { t } = useTranslation("labelDataValidator");
   const methods = useForm<LabelData>({
     defaultValues: labelData,
   });
