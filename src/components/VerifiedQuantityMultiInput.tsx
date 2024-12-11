@@ -19,12 +19,14 @@ import {
 } from "react-hook-form";
 import { useTranslation } from "react-i18next";
 import QuantityInput from "./QuantityInput";
+import StyledSkeleton from "./StyledSkeleton";
 
 interface VerifiedQuantityMultiInputProps {
   label: string;
   path: string;
   unitOptions: string[];
   className?: string;
+  loading?: boolean;
 }
 
 const VerifiedQuantityMultiInput: React.FC<VerifiedQuantityMultiInputProps> = ({
@@ -32,6 +34,7 @@ const VerifiedQuantityMultiInput: React.FC<VerifiedQuantityMultiInputProps> = ({
   path,
   unitOptions,
   className = "",
+  loading = false,
 }) => {
   const { t } = useTranslation("labelDataValidator");
   const { control, trigger } = useFormContext();
@@ -94,119 +97,123 @@ const VerifiedQuantityMultiInput: React.FC<VerifiedQuantityMultiInputProps> = ({
         {label}
       </Typography>
 
-      <Box
-        className={`w-full flex items-center p-1 border-2 rounded-tr-md rounded-br-md ${
-          isFocused ? "border-fertiscan-blue" : ""
-        } ${verified ? "border-green-500" : ""}  ${className}`}
-        data-testid={`quantity-multi-input-${path}`}
-      >
-        {/* Fields */}
+      {loading ? (
+        <StyledSkeleton className="!h-24" />
+      ) : (
         <Box
-          className="flex flex-1 flex-col"
-          data-testid={`fields-container-${path}`}
+          className={`w-full flex items-center p-1 border-2 rounded-tr-md rounded-br-md ${
+            isFocused ? "border-fertiscan-blue" : ""
+          } ${verified ? "border-green-500" : ""}  ${className}`}
+          data-testid={`quantity-multi-input-${path}`}
         >
-          {fields.map((fieldItem, index) => (
-            <Box
-              className="ml-2"
-              key={fieldItem.id}
-              data-testid={`field-row-${quantitiesPath}-${index}`}
-            >
-              <Box className="flex items-center">
-                {/* Value & Unit Input */}
-                <QuantityInput
-                  name={`${quantitiesPath}.${index}`}
-                  control={control}
-                  unitOptions={unitOptions}
-                  disabled={verified}
-                  unitRules={{
-                    validate: validateDuplicateUnit,
-                  }}
-                  onFocus={() => setIsFocused(true)}
-                  onblur={() => setIsFocused(false)}
-                />
-
-                {/* Delete Row Button */}
-                <Tooltip
-                  enterDelay={1000}
-                  title={t("verifiedQuantityMultiInput.deleteRow")}
-                  disableHoverListener={verified}
-                >
-                  <span>
-                    <IconButton
-                      size="small"
-                      className="text-white"
-                      onClick={() => remove(index)}
-                      disabled={verified}
-                      aria-label={t(
-                        "verifiedQuantityMultiInput.accessibility.deleteRowButton",
-                      )}
-                      data-testid={`delete-button-${quantitiesPath}-${index}`}
-                    >
-                      <DeleteIcon />
-                    </IconButton>
-                  </span>
-                </Tooltip>
-              </Box>
-              <Divider
-                className={`!my-1 ${isFocused ? "!border-fertiscan-blue" : ""}`}
-                data-testid={`row-divider-${quantitiesPath}-${index}`}
-              />
-            </Box>
-          ))}
-
-          {/* Add Row Button */}
-          <Button
-            size="small"
-            className="!p-2 text-white bg-green-500"
-            onClick={() => append(DEFAULT_QUANTITY)}
-            startIcon={<AddIcon />}
-            disabled={verified}
-            aria-label={t(
-              "verifiedQuantityMultiInput.accessibility.addRowButton",
-            )}
-            data-testid={`add-button-${path}`}
+          {/* Fields */}
+          <Box
+            className="flex flex-1 flex-col"
+            data-testid={`fields-container-${path}`}
           >
-            {t("verifiedQuantityMultiInput.addRow")}
-          </Button>
-        </Box>
-
-        {/* Vertical Divider */}
-        <Divider
-          className={`my-2 ${isFocused ? "!border-fertiscan-blue" : ""}`}
-          data-testid={`vertical-divider-${quantitiesPath}`}
-          flexItem
-          orientation="vertical"
-        />
-
-        {/* Verified Toggle Button */}
-        <Controller
-          name={verifiedPath}
-          control={control}
-          render={({ field: { value, onChange } }) => (
-            <Tooltip
-              title={
-                verified
-                  ? t("verifiedQuantityMultiInput.unverify")
-                  : t("verifiedQuantityMultiInput.verify")
-              }
-              enterDelay={1000}
-            >
-              <IconButton
-                onClick={() => toggleVerified(value, onChange)}
-                aria-label={t(
-                  "verifiedQuantityMultiInput.accessibility.verifyToggleButton",
-                )}
-                data-testid={`toggle-verified-btn-${path}`}
+            {fields.map((fieldItem, index) => (
+              <Box
+                className="ml-2"
+                key={fieldItem.id}
+                data-testid={`field-row-${quantitiesPath}-${index}`}
               >
-                <CheckIcon
-                  className={value ? "text-green-500" : ""}
-                  data-testid={`verified-icon-${path}`}
+                <Box className="flex items-center">
+                  {/* Value & Unit Input */}
+                  <QuantityInput
+                    name={`${quantitiesPath}.${index}`}
+                    control={control}
+                    unitOptions={unitOptions}
+                    disabled={verified}
+                    unitRules={{
+                      validate: validateDuplicateUnit,
+                    }}
+                    onFocus={() => setIsFocused(true)}
+                    onblur={() => setIsFocused(false)}
+                  />
+
+                  {/* Delete Row Button */}
+                  <Tooltip
+                    enterDelay={1000}
+                    title={t("verifiedQuantityMultiInput.deleteRow")}
+                    disableHoverListener={verified}
+                  >
+                    <span>
+                      <IconButton
+                        size="small"
+                        className="text-white"
+                        onClick={() => remove(index)}
+                        disabled={verified}
+                        aria-label={t(
+                          "verifiedQuantityMultiInput.accessibility.deleteRowButton",
+                        )}
+                        data-testid={`delete-button-${quantitiesPath}-${index}`}
+                      >
+                        <DeleteIcon />
+                      </IconButton>
+                    </span>
+                  </Tooltip>
+                </Box>
+                <Divider
+                  className={`!my-1 ${isFocused ? "!border-fertiscan-blue" : ""}`}
+                  data-testid={`row-divider-${quantitiesPath}-${index}`}
                 />
-              </IconButton>
-            </Tooltip>
-          )}
-        />
-      </Box>
+              </Box>
+            ))}
+
+            {/* Add Row Button */}
+            <Button
+              size="small"
+              className="!p-2 text-white bg-green-500"
+              onClick={() => append(DEFAULT_QUANTITY)}
+              startIcon={<AddIcon />}
+              disabled={verified}
+              aria-label={t(
+                "verifiedQuantityMultiInput.accessibility.addRowButton",
+              )}
+              data-testid={`add-button-${path}`}
+            >
+              {t("verifiedQuantityMultiInput.addRow")}
+            </Button>
+          </Box>
+
+          {/* Vertical Divider */}
+          <Divider
+            className={`my-2 ${isFocused ? "!border-fertiscan-blue" : ""}`}
+            data-testid={`vertical-divider-${quantitiesPath}`}
+            flexItem
+            orientation="vertical"
+          />
+
+          {/* Verified Toggle Button */}
+          <Controller
+            name={verifiedPath}
+            control={control}
+            render={({ field: { value, onChange } }) => (
+              <Tooltip
+                title={
+                  verified
+                    ? t("verifiedQuantityMultiInput.unverify")
+                    : t("verifiedQuantityMultiInput.verify")
+                }
+                enterDelay={1000}
+              >
+                <IconButton
+                  onClick={() => toggleVerified(value, onChange)}
+                  aria-label={t(
+                    "verifiedQuantityMultiInput.accessibility.verifyToggleButton",
+                  )}
+                  data-testid={`toggle-verified-btn-${path}`}
+                >
+                  <CheckIcon
+                    className={value ? "text-green-500" : ""}
+                    data-testid={`verified-icon-${path}`}
+                  />
+                </IconButton>
+              </Tooltip>
+            )}
+          />
+        </Box>
+      )}
     </Box>
   );
 };

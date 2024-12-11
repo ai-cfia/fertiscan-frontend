@@ -11,10 +11,12 @@ import { useEffect, useState } from "react";
 function LabelDataValidationPage() {
   const { uploadedFiles } = useUploadedFilesStore();
   const [labelData, setLabelData] = useState(DEFAULT_LABEL_DATA);
+  const [loading, setLoading] = useState(false);
   const { showAlert } = useAlertStore();
 
   useEffect(() => {
     const extractAndSave = () => {
+      setLoading(true);
       const formData = new FormData();
 
       uploadedFiles.forEach((fileUploaded) => {
@@ -45,6 +47,9 @@ function LabelDataValidationPage() {
         })
         .catch((error) => {
           showAlert(processAxiosError(error), "error");
+        })
+        .finally(() => {
+          setLoading(false);
         });
     };
 
@@ -55,7 +60,7 @@ function LabelDataValidationPage() {
     <LabelDataValidator
       files={uploadedFiles.map((file) => file.getFile())}
       initialLabelData={labelData}
-      data-testid="label-data-validator"
+      loading={loading}
     />
   );
 }

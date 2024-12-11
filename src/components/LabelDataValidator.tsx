@@ -23,11 +23,13 @@ import { useEffect, useState } from "react";
 import { useTranslation } from "react-i18next";
 
 interface LabelDataValidatorProps {
+  loading?: boolean;
   files: File[];
   initialLabelData?: LabelData;
 }
 
 function LabelDataValidator({
+  loading = false,
   files,
   initialLabelData = DEFAULT_LABEL_DATA,
 }: LabelDataValidatorProps) {
@@ -64,7 +66,11 @@ function LabelDataValidator({
       stepStatus: stepStatus,
       setStepStatus: setStepStatusState,
       render: () => (
-        <StepComponent labelData={labelData} setLabelData={setLabelData} />
+        <StepComponent
+          labelData={labelData}
+          setLabelData={setLabelData}
+          loading={loading}
+        />
       ),
     };
   };

@@ -7,6 +7,7 @@ import VerifiedBilingualTable from "./VerifiedBilingualTable";
 const CautionsForm: React.FC<FormComponentProps> = ({
   labelData,
   setLabelData,
+  loading = false,
 }) => {
   const methods = useForm<LabelData>({
     defaultValues: labelData,
@@ -29,7 +30,7 @@ const CautionsForm: React.FC<FormComponentProps> = ({
   return (
     <FormProvider {...methods}>
       <Box className="p-4" data-testid="cautions-form">
-        <VerifiedBilingualTable path={"cautions"} />
+        <VerifiedBilingualTable path={"cautions"} loading={loading} />
       </Box>
     </FormProvider>
   );

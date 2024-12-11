@@ -7,6 +7,7 @@ import VerifiedBilingualTable from "./VerifiedBilingualTable";
 import { VerifiedInput, VerifiedRadio } from "./VerifiedFieldComponents";
 
 const GuaranteedAnalysisForm: React.FC<FormComponentProps> = ({
+  loading = false,
   labelData,
   setLabelData,
 }) => {
@@ -44,16 +45,19 @@ const GuaranteedAnalysisForm: React.FC<FormComponentProps> = ({
             label={t("guaranteedAnalysis.labelEn")}
             placeholder={t("guaranteedAnalysis.placeholderEn")}
             path="guaranteedAnalysis.titleEn"
+            loading={loading}
           />
           <VerifiedInput
             label={t("guaranteedAnalysis.labelFr")}
             placeholder={t("guaranteedAnalysis.placeholderFr")}
             path="guaranteedAnalysis.titleFr"
+            loading={loading}
           />
           <Box className="flex flex-shrink-0">
             <VerifiedRadio
               label={t("guaranteedAnalysis.isMinimal")}
               path="guaranteedAnalysis.isMinimal"
+              loading={loading}
             />
           </Box>
         </Box>
@@ -71,6 +75,7 @@ const GuaranteedAnalysisForm: React.FC<FormComponentProps> = ({
             path={"guaranteedAnalysis.nutrients"}
             valueColumn
             unitOptions={UNITS.guaranteedAnalysis}
+            loading={loading}
           />
         </Box>
       </Box>
