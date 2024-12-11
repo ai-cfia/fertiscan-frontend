@@ -26,7 +26,10 @@ function LabelDataValidationPage() {
       return;
     }
 
-    const extractAndSave = () => {
+    const controller = new AbortController();
+    const signal = controller.signal;
+
+    const extractAndSave = async () => {
       setLoading(true);
       const formData = new FormData();
 
@@ -42,45 +45,57 @@ function LabelDataValidationPage() {
       axios
         .post("/api/extract-label-data", formData, {
           headers: { Authorization: authHeader },
+          signal,
         })
         .then(async (response) => {
           const labelDataOutput: LabelDataOutput = response.data;
           const labelData = mapLabelDataOutputToLabelData(labelDataOutput);
-          console.log("Label data:", labelData);
-          setLabelData(labelData);
-          
+
           formData.append("labelData", JSON.stringify(labelDataOutput));
-          return axios
+          axios
             .post("/api/inspections", formData, {
               headers: { Authorization: authHeader },
+              signal,
+            })
+            .then((response) => {
+              const inspection: Inspection = response.data;
+              router.push(`/label-data-validation/${inspection.inspection_id}`);
+              return null;
             })
             .catch((error) => {
-              showAlert(
-                `Label data initial save failed: ${processAxiosError(error)}`,
-                "error",
-              );
-              return null;
+              if (axios.isCancel(error)) {
+                console.log("Request canceled");
+              } else {
+                showAlert(
+                  `Label data initial save failed: ${processAxiosError(error)}`,
+                  "error",
+                );
+                setLoading(false);
+              }
+            })
+            .finally(() => {
+              setLabelData(labelData);
+              // not disabling loading here in case of strict mode abort
             });
         })
-        .then((response) => {
-          if (!response) {
-            return;
-          }
-          const inspection: Inspection = response.data;
-          console.log("Inspection ID:", inspection.inspection_id);
-        })
         .catch((error) => {
-          showAlert(
-            `Label data extraction failed: ${processAxiosError(error)}`,
-            "error",
-          );
-        })
-        .finally(() => {
-          setLoading(false);
+          if (axios.isCancel(error)) {
+            console.log("Request canceled");
+          } else {
+            showAlert(
+              `Label data extraction failed: ${processAxiosError(error)}`,
+              "error",
+            );
+            setLoading(false);
+          }
         });
     };
 
     extractAndSave();
+
+    return () => {
+      controller.abort(); // avoids react strict mode double fetch
+    };
   }, [uploadedFiles, showAlert, router]);
 
   return (

@@ -1,13 +1,11 @@
 import { inspectionsApi } from "@/utils/server/backend";
 import { handleApiError } from "@/utils/server/common";
+import { validate } from "uuid";
 
-export async function POST(request: Request) {
-  const formData = await request.formData();
-  const files = formData.getAll("files") as File[];
-  const labelDataString = formData.get("labelData") as string;
-  const labelData = JSON.parse(labelDataString);
-  
-
+export async function GET(
+  request: Request,
+  { params }: { params: Promise<{ id: string }> },
+) {
   const authHeader = request.headers.get("Authorization");
   if (!authHeader) {
     return new Response(
@@ -18,12 +16,19 @@ export async function POST(request: Request) {
     );
   }
 
+  const id = (await params).id;
+  if (!validate(id)) {
+    return new Response(JSON.stringify({ error: "Invalid id" }), {
+      status: 400,
+    });
+  }
+
   return inspectionsApi
-    .postInspectionInspectionsPost(labelData, files, {
+    .getInspectionInspectionsIdGet(id, {
       headers: { Authorization: authHeader },
     })
-    .then((inspectionsResponse) => {
-      return Response.json(inspectionsResponse.data);
+    .then((inspectionResponse) => {
+      return Response.json(inspectionResponse.data);
     })
     .catch((error) => {
       return handleApiError(error);

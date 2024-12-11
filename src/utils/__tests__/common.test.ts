@@ -1,32 +1,18 @@
 import {
+  mapInspectionToLabelData,
   mapLabelDataOutputToLabelData,
   quantity,
-  verifiedField,
-  verifiedItemPair,
+  verifiedItemPairInspectionValue,
+  verifiedItemPairNutrientValue,
   verifiedTranslations,
 } from "../common";
 import {
+  FertiscanDbMetadataInspectionValue,
+  Inspection,
   LabelDataOutput,
   NutrientValue,
   PipelineInspectionValue,
 } from "../server/backend";
-
-describe("verifiedField", () => {
-  it("should return a verified field object with the given value", () => {
-    const result = verifiedField("Some Value");
-    expect(result).toEqual({ value: "Some Value", verified: false });
-  });
-
-  it("should return an empty string if value is undefined", () => {
-    const result = verifiedField(undefined);
-    expect(result).toEqual({ value: "", verified: false });
-  });
-
-  it("should return an empty string if value is null", () => {
-    const result = verifiedField(null);
-    expect(result).toEqual({ value: "", verified: false });
-  });
-});
 
 describe("quantity", () => {
   it("should handle a valid PipelineInspectionValue", () => {
@@ -91,7 +77,7 @@ describe("verifiedTranslations", () => {
   });
 });
 
-describe("verifiedItemPair", () => {
+describe("verifiedItemPairNutrientValue", () => {
   it("should pair up nutrient items correctly", () => {
     const enList: NutrientValue[] = [
       { nutrient: "Nitrogen", value: 10, unit: "%" },
@@ -101,7 +87,7 @@ describe("verifiedItemPair", () => {
       { nutrient: "Azote", value: 10, unit: "%" },
       { nutrient: "Phosphore", value: 5, unit: "%" },
     ];
-    const result = verifiedItemPair(enList, frList);
+    const result = verifiedItemPairNutrientValue(enList, frList);
     expect(result).toEqual([
       { en: "Nitrogen", fr: "Azote", value: "10", unit: "%", verified: false },
       {
@@ -115,27 +101,82 @@ describe("verifiedItemPair", () => {
   });
 
   it("should handle null or undefined lists", () => {
-    const result = verifiedItemPair(undefined, undefined);
+    const result = verifiedItemPairNutrientValue(undefined, undefined);
     expect(result).toEqual([]);
   });
 
   it("should handle items where frList is shorter", () => {
     const enList: NutrientValue[] = [{ nutrient: "Nitrogen", value: 10 }];
     const frList: NutrientValue[] = [];
-    const result = verifiedItemPair(enList, frList);
+    const result = verifiedItemPairNutrientValue(enList, frList);
     expect(result).toEqual([
       { en: "Nitrogen", fr: "", value: "10", unit: "", verified: false },
     ]);
   });
 
   it("should handle null items", () => {
-    const enList: NutrientValue[] = [
-      { nutrient: "", value: null, unit: null },
+    const enList: NutrientValue[] = [{ nutrient: "", value: null, unit: null }];
+    const frList: NutrientValue[] = [{ nutrient: "", value: null, unit: null }];
+    const result = verifiedItemPairNutrientValue(enList, frList);
+    expect(result).toEqual([
+      { en: "", fr: "", value: "", unit: "", verified: false },
+    ]);
+  });
+});
+
+describe("verifiedItemPairInspectionValue", () => {
+  it("should pair up inspection items correctly", () => {
+    const enList: FertiscanDbMetadataInspectionValue[] = [
+      { name: "Fish meal", value: 50, unit: "g" },
+      { name: "Bone meal", value: 50, unit: "g" },
     ];
-    const frList: NutrientValue[] = [
-      { nutrient: "", value: null, unit: null },
+    const frList: FertiscanDbMetadataInspectionValue[] = [
+      { name: "Farine de poisson", value: 50, unit: "g" },
+      { name: "Farine d'os", value: 50, unit: "g" },
     ];
-    const result = verifiedItemPair(enList, frList);
+    const result = verifiedItemPairInspectionValue(enList, frList);
+    expect(result).toEqual([
+      {
+        en: "Fish meal",
+        fr: "Farine de poisson",
+        value: "50",
+        unit: "g",
+        verified: false,
+      },
+      {
+        en: "Bone meal",
+        fr: "Farine d'os",
+        value: "50",
+        unit: "g",
+        verified: false,
+      },
+    ]);
+  });
+
+  it("should handle null or undefined lists", () => {
+    const result = verifiedItemPairInspectionValue(undefined, undefined);
+    expect(result).toEqual([]);
+  });
+
+  it("should handle items where frList is shorter", () => {
+    const enList: FertiscanDbMetadataInspectionValue[] = [
+      { name: "Fish meal", value: 50 },
+    ];
+    const frList: FertiscanDbMetadataInspectionValue[] = [];
+    const result = verifiedItemPairInspectionValue(enList, frList);
+    expect(result).toEqual([
+      { en: "Fish meal", fr: "", value: "50", unit: "", verified: false },
+    ]);
+  });
+
+  it("should handle null items", () => {
+    const enList: FertiscanDbMetadataInspectionValue[] = [
+      { name: "", value: null, unit: null },
+    ];
+    const frList: FertiscanDbMetadataInspectionValue[] = [
+      { name: "", value: null, unit: null },
+    ];
+    const result = verifiedItemPairInspectionValue(enList, frList);
     expect(result).toEqual([
       { en: "", fr: "", value: "", unit: "", verified: false },
     ]);
@@ -304,5 +345,262 @@ describe("mapLabelDataOutputToLabelData", () => {
 
     // Ingredients
     expect(result.ingredients).toEqual([]);
+  });
+});
+
+describe("mapInspectionToLabelData", () => {
+  it("should map all data correctly", () => {
+    const input: Inspection = {
+      inspection_id: "INS123",
+      company: {
+        name: "Company Inc.",
+        address: "123 Street",
+        website: "http://example.com",
+        phone_number: "123-456-7890",
+      },
+      manufacturer: {
+        name: "Mfg Corp.",
+        address: "456 Road",
+        website: "http://mfg.com",
+        phone_number: "987-654-3210",
+      },
+      product: {
+        name: "SuperGrow",
+        registration_number: "REG123",
+        lot_number: "LOT42",
+        npk: "10-5-5",
+        metrics: {
+          weight: [{ value: 20, unit: "kg" }],
+          density: { value: 1.2, unit: "g/cm³" },
+          volume: { value: 5, unit: "L" },
+        },
+      },
+      cautions: {
+        en: ["Keep away from children"],
+        fr: ["Tenir loin des enfants"],
+      },
+      instructions: {
+        en: ["Apply generously", "Water thoroughly"],
+        fr: ["Appliquer généreusement", "Arroser abondamment"],
+      },
+      guaranteed_analysis: {
+        title: { en: "Guaranteed Analysis", fr: "Analyse Garantie" },
+        is_minimal: true,
+        en: [
+          { name: "Nitrogen", value: 10, unit: "%" },
+          { name: "Phosphorus", value: 5, unit: "%" },
+        ],
+        fr: [
+          { name: "Azote", value: 10, unit: "%" },
+          { name: "Phosphore", value: 5, unit: "%" },
+        ],
+      },
+    };
+
+    const result = mapInspectionToLabelData(input);
+
+    expect(result.organizations[0].name.value).toBe("Company Inc.");
+    expect(result.organizations[0].address.value).toBe("123 Street");
+    expect(result.organizations[0].website.value).toBe("http://example.com");
+    expect(result.organizations[0].phoneNumber.value).toBe("123-456-7890");
+
+    expect(result.organizations[1].name.value).toBe("Mfg Corp.");
+    expect(result.organizations[1].address.value).toBe("456 Road");
+    expect(result.organizations[1].website.value).toBe("http://mfg.com");
+    expect(result.organizations[1].phoneNumber.value).toBe("987-654-3210");
+
+    expect(result.baseInformation.name.value).toBe("SuperGrow");
+    expect(result.baseInformation.registrationNumber.value).toBe("REG123");
+    expect(result.baseInformation.lotNumber.value).toBe("LOT42");
+    expect(result.baseInformation.npk.value).toBe("10-5-5");
+    expect(result.baseInformation.weight.quantities).toEqual([
+      { value: "20", unit: "kg" },
+    ]);
+    expect(result.baseInformation.density.quantities).toEqual([
+      { value: "1.2", unit: "g/cm³" },
+    ]);
+    expect(result.baseInformation.volume.quantities).toEqual([
+      { value: "5", unit: "L" },
+    ]);
+
+    expect(result.cautions).toEqual([
+      {
+        en: "Keep away from children",
+        fr: "Tenir loin des enfants",
+        verified: false,
+      },
+    ]);
+    expect(result.instructions).toEqual([
+      {
+        en: "Apply generously",
+        fr: "Appliquer généreusement",
+        verified: false,
+      },
+      { en: "Water thoroughly", fr: "Arroser abondamment", verified: false },
+    ]);
+
+    expect(result.guaranteedAnalysis.titleEn.value).toBe("Guaranteed Analysis");
+    expect(result.guaranteedAnalysis.titleFr.value).toBe("Analyse Garantie");
+    expect(result.guaranteedAnalysis.isMinimal.value).toBe(true);
+    expect(result.guaranteedAnalysis.nutrients).toEqual([
+      { en: "Nitrogen", fr: "Azote", value: "10", unit: "%", verified: false },
+      {
+        en: "Phosphorus",
+        fr: "Phosphore",
+        value: "5",
+        unit: "%",
+        verified: false,
+      },
+    ]);
+
+    expect(result.ingredients).toEqual([
+      { en: "Nitrogen", fr: "Azote", value: "10", unit: "%", verified: false },
+      {
+        en: "Phosphorus",
+        fr: "Phosphore",
+        value: "5",
+        unit: "%",
+        verified: false,
+      },
+    ]);
+  });
+
+  it("should handle missing fields gracefully", () => {
+    const input: Inspection = {
+      inspection_id: "",
+      company: {
+        name: "",
+        address: "",
+        website: "",
+        phone_number: "",
+      },
+      manufacturer: {
+        name: "",
+        address: "",
+        website: "",
+        phone_number: "",
+      },
+      product: {
+        name: "",
+        registration_number: "",
+        lot_number: "",
+        npk: "",
+        metrics: {
+          weight: [],
+          density: null,
+          volume: null,
+        },
+      },
+      cautions: { en: [], fr: [] },
+      instructions: { en: [], fr: [] },
+      guaranteed_analysis: {
+        title: { en: "", fr: "" },
+        is_minimal: false,
+        en: [],
+        fr: [],
+      },
+    };
+    const result = mapInspectionToLabelData(input);
+
+    // Organizations
+    expect(result.organizations[0].name.value).toBe("");
+    expect(result.organizations[0].address.value).toBe("");
+    expect(result.organizations[0].website.value).toBe("");
+    expect(result.organizations[0].phoneNumber.value).toBe("");
+
+    expect(result.organizations[1].name.value).toBe("");
+    expect(result.organizations[1].address.value).toBe("");
+    expect(result.organizations[1].website.value).toBe("");
+    expect(result.organizations[1].phoneNumber.value).toBe("");
+
+    // Base Information
+    expect(result.baseInformation.name.value).toBe("");
+    expect(result.baseInformation.registrationNumber.value).toBe("");
+    expect(result.baseInformation.lotNumber.value).toBe("");
+    expect(result.baseInformation.npk.value).toBe("");
+    expect(result.baseInformation.weight.quantities).toEqual([]);
+    expect(result.baseInformation.density.quantities).toEqual([
+      { value: "", unit: "" },
+    ]);
+    expect(result.baseInformation.volume.quantities).toEqual([
+      { value: "", unit: "" },
+    ]);
+
+    // Cautions, instructions
+    expect(result.cautions).toEqual([]);
+    expect(result.instructions).toEqual([]);
+
+    // Guaranteed Analysis
+    expect(result.guaranteedAnalysis.titleEn.value).toBe("");
+    expect(result.guaranteedAnalysis.titleFr.value).toBe("");
+    expect(result.guaranteedAnalysis.isMinimal.value).toBe(false);
+    expect(result.guaranteedAnalysis.nutrients).toEqual([]);
+
+    // Ingredients
+    expect(result.ingredients).toEqual([]);
+  });
+
+  it("sets all fields as verified if inspection is verified", () => {
+    const input: Inspection = {
+      inspection_id: "",
+      company: {
+        name: "",
+        address: "",
+        website: "",
+        phone_number: "",
+      },
+      manufacturer: {
+        name: "",
+        address: "",
+        website: "",
+        phone_number: "",
+      },
+      product: {
+        name: "",
+        registration_number: "",
+        lot_number: "",
+        npk: "",
+        metrics: {
+          weight: [],
+          density: null,
+          volume: null,
+        },
+      },
+      cautions: { en: [], fr: [] },
+      instructions: { en: [], fr: [] },
+      guaranteed_analysis: {
+        title: { en: "", fr: "" },
+        is_minimal: false,
+        en: [],
+        fr: [],
+      },
+      verified: true,
+    };
+    const result = mapInspectionToLabelData(input);
+
+    // Organizations
+    expect(result.organizations[0].name.verified).toBe(true);
+    expect(result.organizations[0].address.verified).toBe(true);
+    expect(result.organizations[0].website.verified).toBe(true);
+    expect(result.organizations[0].phoneNumber.verified).toBe(true);
+
+    expect(result.organizations[1].name.verified).toBe(true);
+    expect(result.organizations[1].address.verified).toBe(true);
+    expect(result.organizations[1].website.verified).toBe(true);
+    expect(result.organizations[1].phoneNumber.verified).toBe(true);
+
+    // Base Information
+    expect(result.baseInformation.name.verified).toBe(true);
+    expect(result.baseInformation.registrationNumber.verified).toBe(true);
+    expect(result.baseInformation.lotNumber.verified).toBe(true);
+    expect(result.baseInformation.npk.verified).toBe(true);
+    expect(result.baseInformation.weight.verified).toBe(true);
+    expect(result.baseInformation.density.verified).toBe(true);
+    expect(result.baseInformation.volume.verified).toBe(true);
+
+    // Guaranteed Analysis
+    expect(result.guaranteedAnalysis.titleEn.verified).toBe(true);
+    expect(result.guaranteedAnalysis.titleFr.verified).toBe(true);
+    expect(result.guaranteedAnalysis.isMinimal.verified).toBe(true);
   });
 });
