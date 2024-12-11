@@ -1,5 +1,6 @@
 "use client";
 
+import React, { Suspense, useState } from "react";
 import {
   Box,
   Stack,
@@ -7,7 +8,6 @@ import {
   Button,
   Typography,
 } from "@mui/material";
-import React, { Suspense, useState } from "react";
 import FileElement from "@/components/FileElement";
 import FileUploaded from "@/classe/File";
 import { DropzoneState } from "@/types/types";
@@ -47,7 +47,6 @@ const FileList: React.FC<FileListProps> = ({
       ),
     );
     setDropzoneState({ visible: false, imageUrl: null });
-
   };
 
   const handleRename = (newName: string) => {
