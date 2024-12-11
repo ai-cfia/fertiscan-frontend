@@ -102,7 +102,7 @@ function HomePage() {
             >
               <span className="flex justify-center w-full">
                 <Button
-                  className="xs:w-[90%] md:w-[100%] min-w-[133.44px] max-h-[40px]"
+                  className={`xs:w-[90%] md:w-[100%] min-w-[133.44px] max-h-[40px] md:max-w-[470px]`} // do not modify md:max-w-[470px]
                   data-testid="submit-button"
                   variant="contained"
                   color="secondary"

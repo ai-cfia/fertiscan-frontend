@@ -12,6 +12,7 @@ import { DropzoneState } from "@/types/types";
 import Image from "next/image";
 import React, { useState } from "react";
 import { useTranslation } from "react-i18next";
+import CheckIcon from '@mui/icons-material/Check';
 
 /**
  * FileElementProps interface to define the props for the FileElement component
@@ -70,104 +71,122 @@ const FileElement: React.FC<
   return (
     <>
       <Grid2
-        onMouseEnter={() => {
-          setHovered(true);
-          setDropzoneState({ visible: true, imageUrl: fileUrl });
-        }}
-        onMouseLeave={() => {
-          setHovered(false);
-          setDropzoneState({ visible: false, imageUrl: "" });
-        }}
-        className="relative h-full w-full min-h-[90px] flex items-center
-                  justify-center overflow-hidden rounded border-2 border-neutral-600 bg-neutral-200"
-      >
-        <Grid2 size={20} className="relative flex justify-center items-center">
-          {isValidObjectURL(fileUrl) && (
-            <div>
-              <Image
-                className="!relative max-h-[90px] max-w-full p-1"
-                src={fileUrl}
-                alt={t("fileElement.altText.uploadedFileAlt")}
-                fill={true}
-                priority
-                data-testid="logo-image"
-              />
-            </div>
-          )}
-        </Grid2>
-        <Divider
-          orientation="vertical"
-          flexItem
-          color={theme.palette.primary.dark}
-          sx={{ borderRightWidth: 3 }}
+  onMouseEnter={() => {
+    setHovered(true);
+    setDropzoneState({ visible: true, imageUrl: fileUrl });
+  }}
+  onMouseLeave={() => {
+    setHovered(false);
+    setDropzoneState({ visible: false, imageUrl: "" });
+  }}
+  className="relative h-full w-full min-h-[90px] flex items-center
+            justify-center overflow-hidden rounded border-2 border-neutral-600 bg-neutral-200"
+>
+  <Grid2 size={20} className="relative flex justify-center items-center">
+    {isValidObjectURL(fileUrl) && (
+      <div>
+        <Image
+          className="!relative max-h-[90px] max-w-full p-1"
+          src={fileUrl}
+          alt={t("fileElement.altText.uploadedFileAlt")}
+          fill={true}
+          priority
+          data-testid="logo-image"
         />
-        <Grid2 size={80} className="relative flex items">
-          {isRenaming ? (
-            <div className="flex items-center">
-              <TextField
-                value={newName}
-                onChange={(e) => setNewName(e.target.value)}
-                onKeyPress={handleRenameSubmit}
-                autoFocus
-                placeholder="Enter file name"
-                inputProps={{ autoComplete: "off" }}
-                style={{ paddingRight: `${extension.length + 2}ch` }}
-              />
-               <Typography
-                variant="body1"
-                color={theme.palette.text.primary}
-                style={{
-                  whiteSpace: 'nowrap',
-                  flexShrink: 0,
-                }}
-                className="ml-1"
-              >
-                .{extension}
-              </Typography>
-            </div>
-          ) : (
-            <Typography
-              variant="h6"
-              color={theme.palette.text.primary}
-              className="overflow-hidden text-ellipsis whitespace-nowrap text-start pl-2"
-            >
-              {fileName}
-            </Typography>
-          )}
-        </Grid2>
-        {!isRenaming && hovered && (
-          <>
-            <IconButton
-              edge="end"
-              aria-label={t("fileElement.altText.deleteFileAlt")}
-              size="small"
-              style={{
-                color: "black",
-                position: "absolute",
-                right: 5,
-                borderRadius: "5px"
-              }}
-              onClick={() => handleDelete(fileUrl)}
-            >
-              <DeleteIcon data-testid="delete" style={{ fontSize: "1.7rem" }} />
-            </IconButton>
-            <IconButton
-              edge="end"
-              size="small"
-              aria-label={t("fileElement.altText.renameFileAlt")}
-              style={{
-                color: "black",
-                position: "absolute",
-                right: 50,
-                borderRadius: "5px",
-              }}
-              onClick={() =>startRename(fileUrl)}
-            >
-              <CreateIcon style={{ fontSize: "1.7rem" }} />
-            </IconButton>
-          </>
-        )}
-      </Grid2>
+      </div>
+    )}
+  </Grid2>
+  <Divider
+    orientation="vertical"
+    flexItem
+    color={theme.palette.primary.dark}
+    sx={{ borderRightWidth: 3 }}
+  />
+  <Grid2 size={80} className="relative flex items-center justify-between">
+    {isRenaming ? (
+      <div className="flex items-center w-full">
+        <TextField
+          value={newName}
+          onChange={(e) => setNewName(e.target.value)}
+          onKeyPress={handleRenameSubmit}
+          autoFocus
+          placeholder="Enter file name"
+          inputProps={{ autoComplete: "off" }}
+          style={{ marginLeft: "5px", marginRight:"5px", width: "calc(100% - 45px)" }}
+        />
+        <Typography
+          variant="body1"
+          color={theme.palette.text.primary}
+          style={{
+            whiteSpace: 'nowrap',
+            marginRight: "5px",
+            flexShrink: 0,
+            width: "auto",
+          }}
+        >
+          .{extension}
+        </Typography>
+        <IconButton
+          edge="end"
+          size="small"
+          aria-label={t("fileElement.altText.renameFileAlt")}
+          sx={{
+            color: "black",
+            backgroundColor: "#D3D3D3",
+            borderRadius: "5px",
+            marginRight: "0.5rem",
+            "&:hover": {
+              backgroundColor: "#A9A9A9",
+            },
+          }}
+          onClick={() => handleRename(`${newName.trim()}.${extension}`)}
+        >
+          <CheckIcon style={{ fontSize: "1.7rem" }} />
+        </IconButton>
+      </div>
+    ) : (
+      <Typography
+        variant="h6"
+        color={theme.palette.text.primary}
+        className="overflow-hidden text-ellipsis whitespace-nowrap text-start pl-2"
+      >
+        {fileName}
+      </Typography>
+    )}
+  </Grid2>
+  {!isRenaming && hovered && (
+    <>
+      <IconButton
+        edge="end"
+        aria-label={t("fileElement.altText.deleteFileAlt")}
+        size="small"
+        style={{
+          color: "black",
+          position: "absolute",
+          right: 5,
+          borderRadius: "5px"
+        }}
+        onClick={() => handleDelete(fileUrl)}
+      >
+        <DeleteIcon data-testid="delete" style={{ fontSize: "1.7rem" }} />
+      </IconButton>
+      <IconButton
+        edge="end"
+        size="small"
+        aria-label={t("fileElement.altText.renameFileAlt")}
+        style={{
+          color: "black",
+          position: "absolute",
+          right: 50,
+          borderRadius: "5px",
+        }}
+        onClick={() =>startRename(fileUrl)}
+      >
+        <CreateIcon style={{ fontSize: "1.7rem" }} />
+      </IconButton>
+    </>
+  )}
+</Grid2>
     </>
   );
 };
