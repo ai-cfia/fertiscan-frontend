@@ -151,3 +151,20 @@ export interface FormComponentProps {
   labelData: LabelData;
   setLabelData: React.Dispatch<React.SetStateAction<LabelData>>;
 }
+
+export interface Point {
+  x: number;
+  y: number;
+}
+
+export interface TextData {
+  content: string;
+  polygon: Point[];
+  confidence: number;
+  span: { offset: number; length: number };
+}
+
+export interface ImageSize {
+  width: number;
+  height: number;
+}
