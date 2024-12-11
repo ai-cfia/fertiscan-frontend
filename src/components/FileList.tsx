@@ -7,7 +7,7 @@ import {
   Button,
   Typography,
 } from "@mui/material";
-import React, { Suspense, useEffect, useState } from "react";
+import React, { Suspense, useState } from "react";
 import FileElement from "@/components/FileElement";
 import FileUploaded from "@/classe/File";
 import { DropzoneState } from "@/types/types";
