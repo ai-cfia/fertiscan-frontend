@@ -84,6 +84,16 @@ const SideNav = ({ open, onClose }: DrawerMenuProps) => {
               </ListItemButton>
             </Link>
             <Divider />
+            <Link href="/TestImagePage" passHref data-testid="search-page-button">
+              <ListItemButton>
+                <ListItemIcon
+                  aria-label={t("sideNav.altText.searchPageButtonIcon")}
+                >
+                  <SearchIcon />
+                </ListItemIcon>
+                <ListItemText primary={t("sideNav.searchPage")} />
+              </ListItemButton>
+            </Link>
           </List>
         </div>
         <div>
