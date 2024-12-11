@@ -6,6 +6,7 @@ import { DEFAULT_LABEL_DATA } from "@/types/types";
 import { processAxiosError } from "@/utils/common";
 import { Inspection } from "@/utils/server/backend";
 import axios from "axios";
+import { useRouter } from "next/navigation";
 import { useEffect, useState } from "react";
 
 function LabelDataValidationPage() {
@@ -13,8 +14,15 @@ function LabelDataValidationPage() {
   const [labelData, setLabelData] = useState(DEFAULT_LABEL_DATA);
   const [loading, setLoading] = useState(false);
   const { showAlert } = useAlertStore();
+  const router = useRouter();
 
   useEffect(() => {
+    if (uploadedFiles.length === 0) {
+      showAlert("No files uploaded.", "error");
+      router.push("/");
+      return;
+    }
+
     const extractAndSave = () => {
       setLoading(true);
       const formData = new FormData();
@@ -54,7 +62,7 @@ function LabelDataValidationPage() {
     };
 
     extractAndSave();
-  }, [uploadedFiles, showAlert]);
+  }, [uploadedFiles, showAlert, router]);
 
   return (
     <LabelDataValidator
