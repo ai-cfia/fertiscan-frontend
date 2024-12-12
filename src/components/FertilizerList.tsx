@@ -9,10 +9,14 @@ const FertilizerList = ()=>{
   const [fertiList, setFertiList] = useState([] as fertilizerPreview[])
 
   useEffect(() => {
-    setFertiList([...fertiList, {id: 1, finished: false, name: "Fertilizer 1", image: null}])
-  }, []);
+    setFertiList([...fertiList,
+      {id: 1, finished: false, name: "Fertilizer 1", image: null},
+      {id: 2, finished: true, name: "Fertilizer 2", image: null},
+      {id: 3, finished: true, name: "Fertilizer 3", image: null},
+    ])
+  }, [fertiList]);
 
-  return <Stack>
+  return <Stack spacing={2} className={""}>
     {fertiList.map((fertilizer, index) => {
       return <Card key={index} className={"p-2"}>
         <Stack direction={"row"}>
