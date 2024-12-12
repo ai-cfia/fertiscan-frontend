@@ -1,4 +1,11 @@
 import {
+  FertiscanDbMetadataInspectionValue,
+  Inspection,
+  LabelDataOutput,
+  NutrientValue,
+  PipelineInspectionValue,
+} from "../../server/backend";
+import {
   mapInspectionToLabelData,
   mapLabelDataOutputToLabelData,
   quantity,
@@ -6,13 +13,6 @@ import {
   verifiedItemPairNutrientValue,
   verifiedTranslations,
 } from "../common";
-import {
-  FertiscanDbMetadataInspectionValue,
-  Inspection,
-  LabelDataOutput,
-  NutrientValue,
-  PipelineInspectionValue,
-} from "../server/backend";
 
 describe("quantity", () => {
   it("should handle a valid PipelineInspectionValue", () => {

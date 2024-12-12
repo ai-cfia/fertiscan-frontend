@@ -3,7 +3,7 @@ import LabelDataValidator from "@/components/LabelDataValidator";
 import useAlertStore from "@/stores/alertStore";
 import useUploadedFilesStore from "@/stores/fileStore";
 import { DEFAULT_LABEL_DATA } from "@/types/types";
-import { mapInspectionToLabelData } from "@/utils/common";
+import { mapInspectionToLabelData } from "@/utils/client/common";
 import { Inspection } from "@/utils/server/backend";
 import axios from "axios";
 import { useRouter } from "next/navigation";
@@ -16,17 +16,11 @@ export default function Page({ params }: { params: { id: string } }) {
   const { uploadedFiles } = useUploadedFilesStore();
   const { showAlert } = useAlertStore();
   const router = useRouter();
-  const [loading, setLoading] = useState(false);
+  const [loading, setLoading] = useState(true);
   const [labelData, setLabelData] = useState(DEFAULT_LABEL_DATA);
   const [inspection, setInspection] = useState<Inspection | null>(null);
 
   useEffect(() => {
-    // if (uploadedFiles.length === 0) {
-    //   showAlert("No files uploaded.", "error");
-    //   router.push("/");
-    //   return;
-    // }
-
     if (!validate(id)) {
       showAlert("Invalid id.", "error");
       router.push("/");
@@ -38,8 +32,6 @@ export default function Page({ params }: { params: { id: string } }) {
     const authHeader = "Basic " + btoa(`${username}:${password}`);
     const controller = new AbortController();
     const signal = controller.signal;
-
-    setLoading(true);
 
     axios
       .get(`/api/inspections/${id}`, {
@@ -59,6 +51,8 @@ export default function Page({ params }: { params: { id: string } }) {
         } else {
           console.error(error);
           setLoading(false);
+          showAlert("Failed to fetch inspection.", "error");
+          router.push("/");
         }
       });
     // not disabling loading in finally() in case of strict mode abort
@@ -78,6 +72,7 @@ export default function Page({ params }: { params: { id: string } }) {
       labelData={labelData}
       setLabelData={setLabelData}
       loading={loading}
+      inspectionId={id}
     />
   );
 }

@@ -24,6 +24,8 @@ const TestStepperWrapper: React.FC<TestStepperWrapperProps> = ({
 }) => {
   const [activeStep, setActiveStep] = useState<number>(initialActiveStep);
   const [stepStatuses] = useState<StepStatus[]>(initialStepStatuses);
+  // create a mock submit function
+  const submit = jest.fn();
 
   return (
     <>
@@ -32,12 +34,14 @@ const TestStepperWrapper: React.FC<TestStepperWrapperProps> = ({
         activeStep={activeStep}
         setActiveStep={setActiveStep}
         stepStatuses={stepStatuses}
+        submit={submit}
       />
       <StepperControls
         stepTitles={steps}
         activeStep={activeStep}
         setActiveStep={setActiveStep}
         stepStatuses={stepStatuses}
+        submit={submit}
       />
     </>
   );
@@ -87,7 +91,7 @@ describe("HorizontalNonLinearStepper with StepperControls", () => {
 
   it("navigates to the next step when 'Next' button is clicked", () => {
     const { container } = render(<TestStepperWrapper />);
-    const nextButton = screen.getByText("Next");
+    const nextButton = screen.getByText("stepper.next");
     fireEvent.click(nextButton);
 
     const activeStepButton = container.querySelectorAll(
@@ -98,7 +102,7 @@ describe("HorizontalNonLinearStepper with StepperControls", () => {
 
   it("navigates to the previous step when 'Back' button is clicked", () => {
     const { container } = render(<TestStepperWrapper initialActiveStep={1} />);
-    const backButton = screen.getByText("Back");
+    const backButton = screen.getByText("stepper.back");
     fireEvent.click(backButton);
 
     const activeStepButton = container.querySelectorAll(
@@ -109,8 +113,8 @@ describe("HorizontalNonLinearStepper with StepperControls", () => {
 
   it("disables 'Back' button on the first step", () => {
     render(<TestStepperWrapper />);
-    const backButton = screen.getByText("Back");
-    const nextButton = screen.getByText("Next");
+    const backButton = screen.getByText("stepper.back");
+    const nextButton = screen.getByText("stepper.next");
 
     expect(backButton).toBeDisabled();
     expect(nextButton).not.toBeDisabled();
@@ -118,7 +122,7 @@ describe("HorizontalNonLinearStepper with StepperControls", () => {
 
   it("disables 'Next' button on the last step", () => {
     render(<TestStepperWrapper initialActiveStep={3} />);
-    const nextButton = screen.getByText("Next");
+    const nextButton = screen.getByText("stepper.next");
 
     expect(nextButton).toBeDisabled();
   });
@@ -141,5 +145,35 @@ describe("HorizontalNonLinearStepper with StepperControls", () => {
     );
     const renderedSteps = container.querySelectorAll(".MuiStepButton-root");
     expect(renderedSteps).toHaveLength(2);
+  });
+
+  it("disables 'Submit' button when there are incomplete steps", () => {
+    render(
+      <TestStepperWrapper
+        initialStepStatuses={[
+          StepStatus.Completed,
+          StepStatus.Incomplete,
+          StepStatus.Error,
+          StepStatus.Incomplete,
+        ]}
+      />,
+    );
+    const submitButton = screen.getByText("stepper.submit");
+    expect(submitButton).toBeDisabled();
+  });
+
+  it("enables 'Submit' button when all steps are completed", () => {
+    render(
+      <TestStepperWrapper
+        initialStepStatuses={[
+          StepStatus.Completed,
+          StepStatus.Completed,
+          StepStatus.Completed,
+          StepStatus.Completed,
+        ]}
+      />,
+    );
+    const submitButton = screen.getByText("stepper.submit");
+    expect(submitButton).not.toBeDisabled();
   });
 });

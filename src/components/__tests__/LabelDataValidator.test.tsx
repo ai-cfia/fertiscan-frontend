@@ -77,7 +77,7 @@ describe("LabelDataValidator Functionality", () => {
       </Wrapper>,
     );
 
-    const nextButton = screen.getByText("Next");
+    const nextButton = screen.getByText("stepper.next");
     fireEvent.click(nextButton);
 
     expect(
@@ -85,7 +85,7 @@ describe("LabelDataValidator Functionality", () => {
     ).not.toBeInTheDocument();
     expect(screen.getByTestId("organizations-form")).toBeInTheDocument();
 
-    const backButton = screen.getByText("Back");
+    const backButton = screen.getByText("stepper.back");
     fireEvent.click(backButton);
 
     expect(screen.getByTestId("base-information-form")).toBeInTheDocument();
@@ -105,8 +105,8 @@ describe("LabelDataValidator Functionality", () => {
       </Wrapper>,
     );
 
-    const nextButton = screen.getByText("Next");
-    const backButton = screen.getByText("Back");
+    const nextButton = screen.getByText("stepper.next");
+    const backButton = screen.getByText("stepper.back");
 
     fireEvent.click(backButton);
     expect(screen.getByTestId("base-information-form")).toBeInTheDocument();

@@ -12,8 +12,8 @@ import {
   StepStatus,
 } from "@/components/stepper";
 import { FormComponentProps, LabelData } from "@/types/types";
-import { checkFieldArray, checkFieldRecord } from "@/utils/common";
-import useBreakpoints from "@/utils/useBreakpoints";
+import { checkFieldArray, checkFieldRecord } from "@/utils/client/common";
+import useBreakpoints from "@/utils/client/useBreakpoints";
 import { Box, Container, Typography } from "@mui/material";
 import { useEffect, useState } from "react";
 import { useTranslation } from "react-i18next";
@@ -23,6 +23,7 @@ interface LabelDataValidatorProps {
   files: File[];
   labelData: LabelData;
   setLabelData: React.Dispatch<React.SetStateAction<LabelData>>;
+  inspectionId?: string;
 }
 
 function LabelDataValidator({
@@ -30,6 +31,7 @@ function LabelDataValidator({
   files,
   labelData,
   setLabelData,
+  inspectionId,
 }: LabelDataValidatorProps) {
   const { t } = useTranslation("labelDataValidator");
   const imageFiles = files;
@@ -111,6 +113,10 @@ function LabelDataValidator({
     ),
   ];
 
+  const submit = () => {
+    console.log("inspectionId:", inspectionId, "labelData", labelData);
+  };
+
   useEffect(() => {
     const verified = labelData.organizations.every((org) =>
       checkFieldRecord(org),
@@ -173,6 +179,7 @@ function LabelDataValidator({
             stepStatuses={steps.map((step) => step.stepStatus)}
             activeStep={activeStep}
             setActiveStep={setActiveStep}
+            submit={submit}
           />
         </Box>
       )}
@@ -195,6 +202,7 @@ function LabelDataValidator({
               stepStatuses={steps.map((step) => step.stepStatus)}
               activeStep={activeStep}
               setActiveStep={setActiveStep}
+              submit={submit}
             />
           </Box>
         )}
@@ -218,6 +226,7 @@ function LabelDataValidator({
             stepStatuses={steps.map((step) => step.stepStatus)}
             activeStep={activeStep}
             setActiveStep={setActiveStep}
+            submit={submit}
           />
         </Box>
       </Box>

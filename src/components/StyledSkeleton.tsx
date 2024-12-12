@@ -13,7 +13,7 @@ const StyledSkeleton: React.FC<StyledSkeletonProps> = ({
   return (
     <Skeleton
       variant="rectangular"
-      className={`rounded-tr-md rounded-br-md !h-12 ${className}`}
+      className={`rounded-md !h-12 ${className}`}
       animation="wave"
       sx={{
         "&::after": {

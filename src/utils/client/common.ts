@@ -11,7 +11,7 @@ import {
   LabelDataOutput,
   NutrientValue,
   PipelineInspectionValue,
-} from "./server/backend";
+} from "../server/backend";
 
 export const checkFieldRecord = (
   record: Record<string, VerifiedField>,
@@ -233,6 +233,7 @@ export function mapInspectionToLabelData(inspection: Inspection): LabelData {
       ),
     },
     ingredients: verifiedItemPairInspectionValue(
+      // TODO: use ingredients once the backend is updated
       inspection.guaranteed_analysis?.en,
       inspection.guaranteed_analysis?.fr,
       v,
