@@ -26,7 +26,7 @@ const Dashboard = () => {
         </Grid>
       </Grid>
     </Grid>
-    <Grid size={{xs:12, sm:8, md:9}} className={"border-gray-200 border-2 rounded-md p-2"}>
+    <Grid size={{xs:12, sm:8, md:9}} className={"border-gray-200 border-2 rounded-md p-2 lg:h-300"}>
       <Grid container spacing={2} className={"h-full"}>
         <Grid size={{xs:12, sm:6, md:4}} >
           <Typography component={"h2"} className={"!font-black"}>My inspections</Typography>
@@ -37,10 +37,13 @@ const Dashboard = () => {
             variant={"filled"}
             fullWidth
             slotProps={{
+              htmlInput: {
+                className: "!p-0 after:!transition-none "
+              },
               input: {
-                className: "after:!transition-none",
+                className:"p-2",
                 startAdornment:(
-                  <InputAdornment position={"start"}>
+                  <InputAdornment position={"start"} className={"!m-0"}>
                     <Search/>
                   </InputAdornment>
                 )
