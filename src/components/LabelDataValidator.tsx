@@ -12,7 +12,10 @@ import {
   StepStatus,
 } from "@/components/stepper";
 import { FormComponentProps, LabelData } from "@/types/types";
-import { checkFieldArray, checkFieldRecord } from "@/utils/client/common";
+import {
+  checkFieldArray,
+  checkFieldRecord,
+} from "@/utils/client/fieldValidation";
 import useBreakpoints from "@/utils/client/useBreakpoints";
 import { Box, Container, Typography } from "@mui/material";
 import { useEffect, useState } from "react";

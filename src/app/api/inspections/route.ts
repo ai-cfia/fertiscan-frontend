@@ -1,12 +1,11 @@
+import { handleApiError } from "@/utils/server/apiErrors";
 import { inspectionsApi } from "@/utils/server/backend";
-import { handleApiError } from "@/utils/server/common";
 
 export async function POST(request: Request) {
   const formData = await request.formData();
   const files = formData.getAll("files") as File[];
   const labelDataString = formData.get("labelData") as string;
   const labelData = JSON.parse(labelDataString);
-  
 
   const authHeader = request.headers.get("Authorization");
   if (!authHeader) {

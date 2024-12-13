@@ -12,7 +12,7 @@ import {
   verifiedItemPairInspectionValue,
   verifiedItemPairNutrientValue,
   verifiedTranslations,
-} from "../common";
+} from "../modelTransformation";
 
 describe("quantity", () => {
   it("should handle a valid PipelineInspectionValue", () => {

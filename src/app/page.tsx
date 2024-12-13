@@ -55,7 +55,7 @@ function HomePage() {
           >
             <Tooltip
               data-testid="hint-submit-button-disabled"
-              title={t("submit_button_disabled_hint")}
+              title={t("submitButtonDisabledHint")}
               disableHoverListener={uploadedFiles.length !== 0}
               placement="top"
               className="w-[90%] max-w-full"
@@ -70,7 +70,7 @@ function HomePage() {
                   fullWidth
                   onClick={() => router.push("/label-data-validation")}
                 >
-                  {t("submit_button")}
+                  {t("submitButton")}
                 </Button>
               </span>
             </Tooltip>

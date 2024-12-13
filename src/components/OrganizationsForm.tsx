@@ -4,7 +4,7 @@ import {
   LabelData,
   Organization,
 } from "@/types/types";
-import { checkFieldRecord } from "@/utils/client/common";
+import { checkFieldRecord } from "@/utils/client/fieldValidation";
 import AddIcon from "@mui/icons-material/Add";
 import DeleteIcon from "@mui/icons-material/Delete";
 import DoneAllIcon from "@mui/icons-material/DoneAll";

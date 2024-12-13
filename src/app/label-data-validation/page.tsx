@@ -3,12 +3,11 @@ import LabelDataValidator from "@/components/LabelDataValidator";
 import useAlertStore from "@/stores/alertStore";
 import useUploadedFilesStore from "@/stores/fileStore";
 import { DEFAULT_LABEL_DATA } from "@/types/types";
-import {
-  mapLabelDataOutputToLabelData,
-  processAxiosError,
-} from "@/utils/client/common";
+import { processAxiosError } from "@/utils/client/apiErrors";
+import { mapLabelDataOutputToLabelData } from "@/utils/client/modelTransformation";
 import { Inspection, LabelDataOutput } from "@/utils/server/backend";
 import axios from "axios";
+import Cookies from "js-cookie";
 import { useRouter } from "next/navigation";
 import { useEffect, useState } from "react";
 
@@ -37,7 +36,7 @@ function LabelDataValidationPage() {
       formData.append("files", file);
     });
 
-    const username = "";
+    const username = atob(Cookies.get("token") ?? "");
     const password = "";
     const authHeader = "Basic " + btoa(`${username}:${password}`);
     axios

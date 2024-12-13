@@ -1,5 +1,5 @@
+import { handleApiError } from "@/utils/server/apiErrors";
 import { inspectionsApi } from "@/utils/server/backend";
-import { handleApiError } from "@/utils/server/common";
 import { validate } from "uuid";
 
 export async function GET(
