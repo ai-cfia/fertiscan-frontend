@@ -94,6 +94,7 @@ const UserMenu = ({
         className="min-w-[36px]"
         onClick={(event) => event.preventDefault()}
         data-testid="profile-menu-item"
+        style={{ pointerEvents: "none", backgroundColor: "inherit" }}
       >
         <ListItemIcon aria-label={t("userMenu.altText.userIcon")}>
           <AccountCircle />
@@ -106,14 +107,12 @@ const UserMenu = ({
         </ListItemIcon>
         <Typography>{t("userMenu.dashboard")}</Typography>
       </MenuItem>
-      <Divider />
       <MenuItem data-testid="logout-menu-item" onClick={handleLogout}>
         <ListItemIcon aria-label={t("userMenu.altText.logoutIcon")}>
           <Logout />
         </ListItemIcon>
         <Typography>{t("userMenu.logout")}</Typography>
       </MenuItem>
-      <Divider />
       <Typography
         variant="caption"
         textAlign="center"
