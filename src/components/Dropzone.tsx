@@ -124,7 +124,7 @@ const Dropzone: React.FC<DropzoneProps> = ({
           component="img"
           src={dropzoneState.imageUrl}
           alt={tHomePage("altText.hoveredImageAlt")}
-          className="absolute max-w-full max-h-full object-contain w-auto h-auto"
+          className="absolute max-w-full max-h-full object-contain w-auto h-auto "
         />
       ) : (
         <Box className="text-center">
@@ -135,13 +135,13 @@ const Dropzone: React.FC<DropzoneProps> = ({
               fontSize: "7rem",
             }}
           />
-          <Typography variant="h5" color={theme.palette.secondary.main}>
+          <Typography  className="select-none" variant="h5" color={theme.palette.secondary.main}>
             <b>{tHomePage("dropzone.dragDrop")}</b>
           </Typography>
-          <Typography variant="h5" color={theme.palette.secondary.main}>
+          <Typography className="select-none" variant="h5" color={theme.palette.secondary.main}>
             <b>{tHomePage("dropzone.or")}</b>
           </Typography>
-          <Button variant="contained" component="label" color="secondary">
+          <Button className="select-none" variant="contained" component="label" color="secondary">
             <b>{tHomePage("dropzone.browseFile")}</b>
             <input
               type="file"

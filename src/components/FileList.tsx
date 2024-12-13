@@ -78,6 +78,7 @@ const FileList: React.FC<FileListProps> = ({
                     text-center max-w-full max-h-full object-contain `}
         >
           <Typography
+            className="select-none"
             variant="h5"
             color={theme.palette.text.primary}
             gutterBottom
