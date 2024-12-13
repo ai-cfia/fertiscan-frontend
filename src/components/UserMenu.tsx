@@ -3,7 +3,6 @@ import { usePlaceholder } from "@/classe/User";
 import { AccountCircle, Logout } from "@mui/icons-material";
 import DashboardIcon from "@mui/icons-material/Dashboard";
 import {
-  Divider,
   ListItemIcon,
   Menu,
   MenuItem,

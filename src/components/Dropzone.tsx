@@ -2,7 +2,7 @@
 import React from "react";
 import { Box, Button, Typography, useTheme } from "@mui/material";
 import { CloudUpload } from "@mui/icons-material";
-import type { ImageLoadEvent, DropzoneState } from "@/types/types";
+import type { DropzoneState } from "@/types/types";
 import FileUploaded from "@/classe/File";
 import { useTranslation } from "react-i18next";
 import useAlertStore from "@/stores/alertStore";
@@ -31,7 +31,6 @@ const Dropzone: React.FC<DropzoneProps> = ({
   uploadedFiles,
   setUploadedFiles,
   dropzoneState,
-  setDropzoneState,
 }) => {
   const theme = useTheme();
   const { t: tHomePage } = useTranslation("homePage");
