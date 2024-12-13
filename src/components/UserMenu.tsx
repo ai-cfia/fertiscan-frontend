@@ -59,6 +59,12 @@ const UserMenu = ({
     setAnchorElement(null);
   }, [setIsUserMenuOpen, setAnchorElement]);
 
+  const handleLogout = (): void => {
+    document.cookie="token=; expires=Thu, 01 Jan 1970 00:00:00 UTC; path=/; SameSite=Strict";
+    location.reload()
+    handleClose();
+  };
+
   useEffect(() => {
     window.addEventListener("resize", handleClose);
     return () => window.removeEventListener("resize", handleClose);
@@ -101,7 +107,7 @@ const UserMenu = ({
         <Typography>{t("userMenu.dashboard")}</Typography>
       </MenuItem>
       <Divider />
-      <MenuItem data-testid="logout-menu-item">
+      <MenuItem data-testid="logout-menu-item" onClick={handleLogout}>
         <ListItemIcon aria-label={t("userMenu.altText.logoutIcon")}>
           <Logout />
         </ListItemIcon>
