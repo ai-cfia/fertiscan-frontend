@@ -36,7 +36,7 @@ const Dropzone: React.FC<DropzoneProps> = ({
   const theme = useTheme();
   const { t: tHomePage } = useTranslation("homePage");
   const { t: tAlertBanner } = useTranslation("alertBanner");
-    const { showAlert } = useAlertStore();
+  const { showAlert } = useAlertStore();
 
   const allowedImagesExtensions = [".png", ".jpg", ".jpeg"];
 
@@ -86,7 +86,6 @@ const Dropzone: React.FC<DropzoneProps> = ({
   }
 
   async function processFile(file: File) {
-
     const alreadyExists = uploadedFiles.some(
       (uploadedFile) => uploadedFile.getInfo().name === file.name
     );
@@ -99,7 +98,7 @@ const Dropzone: React.FC<DropzoneProps> = ({
     const newFile = FileUploaded.newFile(
       { username: "user" },
       URL.createObjectURL(file),
-      file,
+      file
     );
 
     const detectedType = await FileUploaded.detectType(newFile.getInfo().path);
@@ -107,34 +106,6 @@ const Dropzone: React.FC<DropzoneProps> = ({
       showAlert(tAlertBanner("pdfNotSupported"), "info");
     } else {
       setUploadedFiles((prevFiles) => [...prevFiles, newFile]);
-    }
-  }
-
-  /**
-   * Handles the image load event and updates the dropzone state based on the image width.
-   */
-  function handleImageLoad(event: ImageLoadEvent) {
-    const { width } = event.target;
-
-    const dropzoneElement = document.getElementById("dropzone");
-    if (!dropzoneElement) {
-      console.error("Dropzone element not found");
-      return;
-    }
-
-    const { width: parentWidth } = dropzoneElement.getBoundingClientRect();
-    const widthPercentage = (width / parentWidth) * 100;
-
-    if (widthPercentage >= 70) {
-      setDropzoneState((prevState) => ({
-        ...prevState,
-        fillPercentage: Math.max(widthPercentage, 100),
-      }));
-    } else {
-      setDropzoneState((prevState) => ({
-        ...prevState,
-        fillPercentage: 0,
-      }));
     }
   }
 
@@ -153,12 +124,7 @@ const Dropzone: React.FC<DropzoneProps> = ({
           component="img"
           src={dropzoneState.imageUrl}
           alt={tHomePage("altText.hoveredImageAlt")}
-          onLoad={handleImageLoad}
-          className={`absolute max-w-full max-h-full object-contain ${
-            dropzoneState.fillPercentage && dropzoneState.fillPercentage >= 90
-              ? "w-[80%] h-[80%]"
-              : "w-auto h-auto"
-          }`}
+          className="absolute max-w-full max-h-full object-contain w-auto h-auto"
         />
       ) : (
         <Box className="text-center">
