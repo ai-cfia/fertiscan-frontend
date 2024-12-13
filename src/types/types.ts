@@ -67,17 +67,26 @@ export type VerifiedTextField = VerifiedField & {
   value: string;
 };
 
+const DEFAULT_TEXT_FIELD: VerifiedTextField = {
+  value: "",
+  verified: false,
+};
+
+export type VerifiedBooleanField = VerifiedField & {
+  value: boolean;
+};
+
+export const DEFAULT_BOOLEAN_FIELD: VerifiedBooleanField = {
+  value: false,
+  verified: false,
+};
+
 // Organizations
 export type Organization = {
   name: VerifiedTextField;
   address: VerifiedTextField;
   website: VerifiedTextField;
   phoneNumber: VerifiedTextField;
-};
-
-const DEFAULT_TEXT_FIELD: VerifiedTextField = {
-  value: "",
-  verified: false,
 };
 
 export const DEFAULT_ORGANIZATION: Organization = {
@@ -87,17 +96,13 @@ export const DEFAULT_ORGANIZATION: Organization = {
   phoneNumber: DEFAULT_TEXT_FIELD,
 };
 
-export const isVerified = <T extends Record<string, VerifiedField>>(
-  fields: T,
-  verified: boolean = true,
-): boolean =>
-  fields && Object.values(fields).every((field) => field.verified === verified);
-
 // Quantity
 export type Quantity = {
   value: string;
   unit: string;
 };
+
+export const DEFAULT_QUANTITY = { value: "", unit: "" };
 
 export type VerifiedQuantityField = VerifiedField & {
   quantities: Quantity[];
@@ -107,12 +112,14 @@ export const UNITS = {
   weight: ["kg", "g", "lb", "tonne"],
   volume: ["L", "mL", "gal", "ft³"],
   density: ["lb/ft³", "g/cm³", "kg/m³", "lb/gal"],
+  guaranteedAnalysis: ["%", "ppm"],
+  ingredients: ["%", "ppm"],
 };
 
-const DEFAULT_QUANTITY_FIELD = (unit: string): VerifiedQuantityField => ({
-  quantities: [{ value: "", unit }],
+export const DEFAULT_QUANTITY_FIELD = {
   verified: false,
-});
+  quantities: [DEFAULT_QUANTITY],
+};
 
 // Base Information
 export type BaseInformation = {
@@ -130,20 +137,63 @@ export const DEFAULT_BASE_INFORMATION: BaseInformation = {
   registrationNumber: DEFAULT_TEXT_FIELD,
   lotNumber: DEFAULT_TEXT_FIELD,
   npk: DEFAULT_TEXT_FIELD,
-  weight: DEFAULT_QUANTITY_FIELD(UNITS.weight[0]),
-  density: DEFAULT_QUANTITY_FIELD(UNITS.density[0]),
-  volume: DEFAULT_QUANTITY_FIELD(UNITS.volume[0]),
+  weight: DEFAULT_QUANTITY_FIELD,
+  density: DEFAULT_QUANTITY_FIELD,
+  volume: DEFAULT_QUANTITY_FIELD,
+};
+
+export type Translation = {
+  en: string;
+  fr: string;
+};
+
+export type BilingualField = VerifiedField & Translation & Partial<Quantity>;
+
+export const DEFAULT_BILINGUAL_FIELD: BilingualField = {
+  en: "",
+  fr: "",
+  verified: false,
+};
+
+export const FULL_BILINGUAL_FIELD: BilingualField = {
+  en: "",
+  fr: "",
+  value: "",
+  unit: "",
+  verified: false,
+};
+
+export type GuaranteedAnalysis = {
+  titleEn: VerifiedTextField;
+  titleFr: VerifiedTextField;
+  isMinimal: VerifiedBooleanField;
+  nutrients: BilingualField[];
+};
+
+export const DEFAULT_GUARANTEED_ANALYSIS: GuaranteedAnalysis = {
+  titleEn: DEFAULT_TEXT_FIELD,
+  titleFr: DEFAULT_TEXT_FIELD,
+  isMinimal: DEFAULT_BOOLEAN_FIELD,
+  nutrients: [FULL_BILINGUAL_FIELD],
 };
 
 // LabelData
 export type LabelData = {
   organizations: Organization[];
   baseInformation: BaseInformation;
+  cautions: BilingualField[];
+  instructions: BilingualField[];
+  guaranteedAnalysis: GuaranteedAnalysis;
+  ingredients: BilingualField[];
 };
 
 export const DEFAULT_LABEL_DATA: LabelData = {
   organizations: [DEFAULT_ORGANIZATION],
   baseInformation: DEFAULT_BASE_INFORMATION,
+  cautions: [DEFAULT_BILINGUAL_FIELD],
+  instructions: [DEFAULT_BILINGUAL_FIELD],
+  guaranteedAnalysis: DEFAULT_GUARANTEED_ANALYSIS,
+  ingredients: [FULL_BILINGUAL_FIELD],
 };
 
 // Form

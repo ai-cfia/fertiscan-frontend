@@ -1,4 +1,4 @@
-import { DEFAULT_BASE_INFORMATION, LabelData } from "@/types/types";
+import { DEFAULT_LABEL_DATA, LabelData } from "@/types/types";
 import { render, screen } from "@testing-library/react";
 import { useEffect, useState } from "react";
 import { FormProvider, useForm } from "react-hook-form";
@@ -31,21 +31,14 @@ const Wrapper = ({
 
 describe("BaseInformationForm Rendering", () => {
   it("should render all fields with correct components", () => {
-    render(
-      <Wrapper
-        initialData={{
-          organizations: [],
-          baseInformation: DEFAULT_BASE_INFORMATION,
-        }}
-      />,
-    );
+    render(<Wrapper initialData={DEFAULT_LABEL_DATA} />);
 
     const verifiedFields = ["name", "registrationNumber", "lotNumber", "npk"];
     const quantityFields = ["weight", "density", "volume"];
 
     verifiedFields.forEach((key) => {
       const verifiedInput = screen.getByTestId(
-        `verified-input-baseInformation.${key}`,
+        `verified-field-baseInformation.${key}`,
       );
       expect(verifiedInput).toBeInTheDocument();
     });

@@ -1,7 +1,7 @@
 import { VerifiedTextField } from "@/types/types";
 import { fireEvent, render, screen } from "@testing-library/react";
 import { FormProvider, useForm } from "react-hook-form";
-import VerifiedInput from "../VerifiedInput";
+import { VerifiedInput } from "../VerifiedFieldComponents";
 
 const TestWrapper = ({ verified }: { verified: boolean }) => {
   const methods = useForm<Record<string, VerifiedTextField>>({
@@ -31,7 +31,7 @@ describe("Rendering", () => {
   it("should render all elements with correct attributes and content", () => {
     render(<TestWrapper verified={false} />);
 
-    const label = screen.getByTestId("input-label-fieldName");
+    const label = screen.getByTestId("field-label-fieldName");
     expect(label).toHaveTextContent("Test Field");
 
     const input = screen.getByPlaceholderText("Enter text");
@@ -71,7 +71,13 @@ describe("Verified Behavior", () => {
     expect(verifiedIcon).not.toHaveClass("text-green-500");
     fireEvent.click(toggleButton);
     expect(verifiedIcon).toHaveClass("text-green-500");
+    expect(screen.getByTestId("verified-field-fieldName")).toHaveClass(
+      "border-green-500",
+    );
     fireEvent.click(toggleButton);
     expect(verifiedIcon).not.toHaveClass("text-green-500");
+    expect(screen.getByTestId("verified-field-fieldName")).not.toHaveClass(
+      "border-green-500",
+    );
   });
 });

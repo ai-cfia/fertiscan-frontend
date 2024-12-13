@@ -1,18 +1,23 @@
 "use client";
 import BaseInformationForm from "@/components/BaseInformationForm";
+import CautionsForm from "@/components/CautionsForm";
+import GuaranteedAnalysisForm from "@/components/GuaranteedAnalysisForm";
 import ImageViewer from "@/components/ImageViewer";
+import IngredientsForm from "@/components/IngredientsForm";
+import InstructionsForm from "@/components/InstructionsForm";
 import OrganizationsForm from "@/components/OrganizationsForm";
 import {
   HorizontalNonLinearStepper,
   StepperControls,
   StepStatus,
 } from "@/components/stepper";
+import useAlertStore from "@/stores/alertStore";
 import {
   DEFAULT_LABEL_DATA,
   FormComponentProps,
-  isVerified,
   LabelData,
 } from "@/types/types";
+import { checkFieldArray, checkFieldRecord } from "@/utils/common";
 import useBreakpoints from "@/utils/useBreakpoints";
 import { Box, Button, Container, Typography } from "@mui/material";
 import { useEffect, useState } from "react";
@@ -31,6 +36,16 @@ function LabelDataValidationPage() {
     useState<StepStatus>(StepStatus.Incomplete);
   const [baseInformationStepStatus, setBaseInformationStepStatus] =
     useState<StepStatus>(StepStatus.Incomplete);
+  const [cautionsStepStatus, setCautionsStepStatus] = useState<StepStatus>(
+    StepStatus.Incomplete,
+  );
+  const [instructionsStepStatus, setInstructionsStepStatus] =
+    useState<StepStatus>(StepStatus.Incomplete);
+  const [guaranteedAnalysisStepStatus, setGuaranteedAnalysisStepStatus] =
+    useState<StepStatus>(StepStatus.Incomplete);
+  const [ingredientsStepStatus, setIngredientsStepStatus] =
+    useState<StepStatus>(StepStatus.Incomplete);
+  const { showAlert } = useAlertStore();
 
   const createStep = (
     title: string,
@@ -61,6 +76,30 @@ function LabelDataValidationPage() {
       organizationsStepStatus,
       setOrganizationsStepStatus,
     ),
+    createStep(
+      t("cautions.stepTitle"),
+      CautionsForm,
+      cautionsStepStatus,
+      setCautionsStepStatus,
+    ),
+    createStep(
+      t("instructions.stepTitle"),
+      InstructionsForm,
+      instructionsStepStatus,
+      setInstructionsStepStatus,
+    ),
+    createStep(
+      t("guaranteedAnalysis.stepTitle"),
+      GuaranteedAnalysisForm,
+      guaranteedAnalysisStepStatus,
+      setGuaranteedAnalysisStepStatus,
+    ),
+    createStep(
+      t("ingredients.stepTitle"),
+      IngredientsForm,
+      ingredientsStepStatus,
+      setIngredientsStepStatus,
+    ),
   ];
 
   const handleFileChange = (event: React.ChangeEvent<HTMLInputElement>) => {
@@ -74,22 +113,57 @@ function LabelDataValidationPage() {
   };
 
   useEffect(() => {
-    const verified = labelData.organizations.every((org) => isVerified(org));
+    const verified = labelData.organizations.every((org) =>
+      checkFieldRecord(org),
+    );
     setOrganizationsStepStatus(
       verified ? StepStatus.Completed : StepStatus.Incomplete,
     );
   }, [labelData.organizations, setOrganizationsStepStatus]);
 
   useEffect(() => {
-    const verified = isVerified(labelData.baseInformation);
+    const verified = checkFieldRecord(labelData.baseInformation);
     setBaseInformationStepStatus(
       verified ? StepStatus.Completed : StepStatus.Incomplete,
     );
   }, [labelData.baseInformation, setBaseInformationStepStatus]);
 
+  useEffect(() => {
+    const verified = checkFieldArray(labelData.cautions);
+    setCautionsStepStatus(
+      verified ? StepStatus.Completed : StepStatus.Incomplete,
+    );
+  }, [labelData.cautions, setCautionsStepStatus]);
+
+  useEffect(() => {
+    const verified = checkFieldArray(labelData.instructions);
+    setInstructionsStepStatus(
+      verified ? StepStatus.Completed : StepStatus.Incomplete,
+    );
+  }, [labelData.instructions, setInstructionsStepStatus]);
+
+  useEffect(() => {
+    const verified =
+      checkFieldRecord({
+        titleEn: labelData.guaranteedAnalysis.titleEn,
+        titleFr: labelData.guaranteedAnalysis.titleFr,
+        isMinimal: labelData.guaranteedAnalysis.isMinimal,
+      }) && checkFieldArray(labelData.guaranteedAnalysis.nutrients);
+    setGuaranteedAnalysisStepStatus(
+      verified ? StepStatus.Completed : StepStatus.Incomplete,
+    );
+  }, [labelData.guaranteedAnalysis, setGuaranteedAnalysisStepStatus]);
+
+  useEffect(() => {
+    const verified = checkFieldArray(labelData.ingredients);
+    setIngredientsStepStatus(
+      verified ? StepStatus.Completed : StepStatus.Incomplete,
+    );
+  }, [labelData.ingredients, setIngredientsStepStatus]);
+
   return (
     <Container
-      className="flex flex-col h-screen max-w-[1920px] max-h-[80vh]"
+      className="flex flex-col max-w-[1920px] bg-gray-100 text-black"
       maxWidth={false}
       data-testid="container"
     >
@@ -105,12 +179,12 @@ function LabelDataValidationPage() {
       )}
 
       <Box
-        className="flex flex-col lg:flex-row gap-4"
+        className="flex flex-col lg:flex-row gap-4 my-4 lg:h-[75vh] lg:min-h-[500px]"
         data-testid="main-content"
       >
         <Box
-          className="flex w-full justify-center min-w-0 h-[720px]"
-          data-testid="swiper-container"
+          className="flex h-[500px] md:h-[720px] lg:size-full justify-center min-w-0 "
+          data-testid="image-viewer-container"
         >
           <ImageViewer imageFiles={imageFiles} />
         </Box>
@@ -127,25 +201,25 @@ function LabelDataValidationPage() {
         )}
 
         <Box
-          className="flex w-full justify-center min-w-0 min-h-[500px] lg:max-h-[80vh] overflow-y-auto"
+          className="flex flex-col size-full min-w-0 p-4 text-center gap-4 content-end bg-white border border-black"
           data-testid="form-container"
         >
-          <Box className="w-full text-center" data-testid="forms">
-            <Typography
-              variant="h6"
-              className="text-lg font-bold"
-              data-testid="form-title"
-            >
-              {steps[activeStep].title}
-            </Typography>
-            <Box className="">{steps[activeStep].render()}</Box>
-            <StepperControls
-              stepTitles={steps.map((step) => step.title)}
-              stepStatuses={steps.map((step) => step.stepStatus)}
-              activeStep={activeStep}
-              setActiveStep={setActiveStep}
-            />
+          <Typography
+            variant="h6"
+            className="text-lg !font-bold"
+            data-testid="form-title"
+          >
+            {steps[activeStep].title}
+          </Typography>
+          <Box className="flex-1 overflow-y-auto sm:px-8">
+            {steps[activeStep].render()}
           </Box>
+          <StepperControls
+            stepTitles={steps.map((step) => step.title)}
+            stepStatuses={steps.map((step) => step.stepStatus)}
+            activeStep={activeStep}
+            setActiveStep={setActiveStep}
+          />
         </Box>
       </Box>
 
@@ -161,6 +235,7 @@ function LabelDataValidationPage() {
           style={{ display: "none" }}
           onChange={handleFileChange}
         />
+        <Button onClick={() => showAlert("Test", "error")}>Show Alert</Button>
       </Box>
     </Container>
   );

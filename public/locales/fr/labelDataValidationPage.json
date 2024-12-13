@@ -1,9 +1,6 @@
 {
-  "organizations": {
-    "stepTitle": "Organisations"
-  },
   "baseInformation": {
-    "stepTitle": "Informations de base sur l'engrais",
+    "stepTitle": "Informations de Base sur l'Engrais",
     "fields": {
       "name": {
         "label": "Nom",
@@ -32,18 +29,56 @@
       }
     }
   },
+  "organizations": {
+    "stepTitle": "Organisations"
+  },
+  "cautions": {
+    "stepTitle": "Mises en garde"
+  },
+  "instructions": {
+    "stepTitle": "Instructions"
+  },
+  "ingredients": {
+    "stepTitle": "Ingrédients"
+  },
+  "guaranteedAnalysis": {
+    "stepTitle": "Analyse Garantie",
+    "title": "Titre",
+    "labelFr": "Français",
+    "placeholderFr": "Entrez le titre en français",
+    "labelEn": "Anglais",
+    "placeholderEn": "Entrez le titre en anglais",
+    "isMinimal": "L'analyse est minimale",
+    "nutrients": "Nutriments"
+  },
+  "verifiedInput": {
+    "verify": "Marquer {{label}} comme vérifié",
+    "unverify": "Marquer {{label}} comme non vérifié",
+    "accessibility": {
+      "input": "Champ de saisie pour {{label}}",
+      "checkbox": "Case à cocher pour {{label}}"
+    },
+    "options": {
+      "yes": "Oui",
+      "no": "Non"
+    }
+  },
+  "quantityInput": {
+    "placeholder": {
+      "value": "Entrez une valeur",
+      "unit": "Unité"
+    },
+    "accessibility": {
+      "valueInput": "Champ de saisie pour une valeur numérique",
+      "unitDropdown": "Champ de saisie pour une unité de mesure"
+    }
+  },
   "verifiedQuantityMultiInput": {
     "deleteRow": "Supprimer cette ligne",
-    "defaultPlaceholder": "Entrez une valeur",
     "addRow": "Ajouter une ligne",
     "removeRow": "Supprimer",
     "verify": "Marquer comme vérifiés",
     "unverify": "Marquer comme non vérifiés",
-    "errors": {
-      "numbersOnly": "Uniquement des nombres",
-      "minValue": "La valeur minimale est 0",
-      "duplicateUnit": "Unité dupliquée"
-    },
     "units": {
       "kg": "kg",
       "g": "g",
@@ -68,5 +103,40 @@
       "row": "Ligne contenant les champs pour l'unité et la valeur",
       "errorIcon": "Icône indiquant une erreur de validation"
     }
+  },
+  "verifiedBilingualTable": {
+    "english": "Anglais",
+    "french": "Français",
+    "value": "Valeur",
+    "actions": "Actions",
+    "placeholders": {
+      "english": "Entrez le texte en anglais",
+      "french": "Entrez le texte en français"
+    },
+    "units": {
+      "%": "%",
+      "ppm": "ppm"
+    },
+    "addRow": "Ajouter une ligne",
+    "delete": "Supprimer cette ligne",
+    "verify": "Marquer comme vérifié",
+    "unverify": "Marquer comme non vérifié",
+    "verifyAll": "Tout marquer comme vérifié",
+    "unverifyAll": "Tout marquer comme non vérifié",
+    "accessibility": {
+      "englishInput": "Zone de texte en anglais pour la ligne {{row}}",
+      "frenchInput": "Zone de texte en français pour la ligne {{row}}",
+      "deleteButton": "Bouton pour supprimer cette ligne",
+      "addRowButton": "Bouton pour ajouter une nouvelle ligne",
+      "verifyButton": "Bouton pour marquer cette ligne comme vérifiée",
+      "unverifyButton": "Bouton pour marquer cette ligne comme non vérifiée",
+      "verifyAllButton": "Bouton pour tout marquer comme vérifié",
+      "unverifyAllButton": "Bouton pour tout marquer comme non vérifié"
+    }
+  },
+  "errors": {
+    "numbersOnly": "Uniquement des nombres",
+    "minValue": "La valeur minimale est 0",
+    "duplicateUnit": "Unité dupliquée"
   }
 }

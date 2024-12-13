@@ -1,9 +1,6 @@
 {
-  "organizations": {
-    "stepTitle": "Organizations"
-  },
   "baseInformation": {
-    "stepTitle": "Base Information",
+    "stepTitle": "Fertilizer Base Information",
     "fields": {
       "name": {
         "label": "Name",
@@ -32,18 +29,56 @@
       }
     }
   },
+  "organizations": {
+    "stepTitle": "Organizations"
+  },
+  "cautions": {
+    "stepTitle": "Cautions"
+  },
+  "instructions": {
+    "stepTitle": "Instructions"
+  },
+  "ingredients": {
+    "stepTitle": "Ingredients"
+  },
+  "guaranteedAnalysis": {
+    "stepTitle": "Guaranteed Analysis",
+    "title": "Title",
+    "labelFr": "French",
+    "placeholderFr": "Enter French title",
+    "labelEn": "English",
+    "placeholderEn": "Enter English title",
+    "isMinimal": "The analysis is minimal",
+    "nutrients": "Nutrients"
+  },
+  "verifiedInput": {
+    "verify": "Mark {{label}} as Verified",
+    "unverify": "Mark {{label}} as Unverified",
+    "accessibility": {
+      "input": "Input field for {{label}}",
+      "checkbox": "Checkbox for {{label}}"
+    },
+    "options": {
+      "yes": "Yes",
+      "no": "No"
+    }
+  },
+  "quantityInput": {
+    "placeholder": {
+      "value": "Enter value",
+      "unit": "Unit"
+    },
+    "accessibility": {
+      "value": "Input field for numeric value",
+      "unit": "Dropdown to select a unit of measurement"
+    }
+  },
   "verifiedQuantityMultiInput": {
     "deleteRow": "Delete this row",
-    "defaultPlaceholder": "Enter value",
     "addRow": "Add Row",
     "removeRow": "Remove",
     "verify": "Mark as Verified",
     "unverify": "Mark as Unverified",
-    "errors": {
-      "numbersOnly": "Numbers only",
-      "minValue": "Minimum value is 0",
-      "duplicateUnit": "Duplicate unit"
-    },
     "units": {
       "kg": "kg",
       "g": "g",
@@ -68,5 +103,40 @@
       "row": "Row containing inputs for unit and value",
       "errorIcon": "Icon indicating a validation error"
     }
+  },
+  "verifiedBilingualTable": {
+    "english": "English",
+    "french": "French",
+    "value": "Value",
+    "actions": "Actions",
+    "placeholders": {
+      "english": "Enter English text",
+      "french": "Enter French text"
+    },
+    "units": {
+      "%": "%",
+      "ppm": "ppm"
+    },
+    "addRow": "Add Row",
+    "delete": "Delete Row",
+    "verify": "Mark as Verified",
+    "unverify": "Mark as Unverified",
+    "verifyAll": "Mark All as Verified",
+    "unverifyAll": "Mark All as Unverified",
+    "accessibility": {
+      "englishInput": "English text input for row {{row}}",
+      "frenchInput": "French text input for row {{row}}",
+      "deleteButton": "Button to delete this row",
+      "addRowButton": "Button to add a new row",
+      "verifyButton": "Button to mark this row as Verified",
+      "unverifyButton": "Button to mark this row as Unverified",
+      "verifyAllButton": "Button to mark all rows as Verified",
+      "unverifyAllButton": "Button to mark all rows as Unverified"
+    }
+  },
+  "errors": {
+    "numbersOnly": "Numbers only",
+    "minValue": "Minimum value is 0",
+    "duplicateUnit": "Duplicate unit"
   }
 }

@@ -3,19 +3,20 @@ import { Box } from "@mui/material";
 import { useEffect } from "react";
 import { FormProvider, useForm, useWatch } from "react-hook-form";
 import { useTranslation } from "react-i18next";
-import VerifiedInput from "./VerifiedInput";
+import { VerifiedInput } from "./VerifiedFieldComponents";
 import VerifiedQuantityMultiInput from "./VerifiedQuantityMultiInput";
 
-function BaseInformationForm({ labelData, setLabelData }: FormComponentProps) {
+const BaseInformationForm: React.FC<FormComponentProps> = ({
+  labelData,
+  setLabelData,
+}) => {
+  const { t } = useTranslation("labelDataValidationPage");
   const methods = useForm<LabelData>({
     defaultValues: labelData,
   });
 
-  const { t } = useTranslation("labelDataValidationPage");
-  const { control } = methods;
-
   const watchedBaseInformation = useWatch({
-    control,
+    control: methods.control,
     name: "baseInformation",
   });
 
@@ -73,6 +74,6 @@ function BaseInformationForm({ labelData, setLabelData }: FormComponentProps) {
       </Box>
     </FormProvider>
   );
-}
+};
 
 export default BaseInformationForm;
