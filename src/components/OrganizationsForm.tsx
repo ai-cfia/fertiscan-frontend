@@ -19,6 +19,7 @@ import {
   useWatch,
 } from "react-hook-form";
 import { VerifiedInput } from "./VerifiedFieldComponents";
+import useHoverStore from "@/stores/hoverStore";
 
 const fieldNames = Object.keys(DEFAULT_ORGANIZATION) as Array<
   keyof Organization
@@ -158,6 +159,8 @@ const OrganizationsForm: React.FC<FormComponentProps> = ({
 };
 
 function OrganizationInformation({ index }: { index: number }) {
+  const { setHoveredText } = useHoverStore();
+
   return (
     <Box
       className="grid grid-cols-1 sm:grid-cols-1 md:grid-cols-2 lg:grid-cols-1 xxl:grid-cols-2 gap-4"
@@ -168,24 +171,28 @@ function OrganizationInformation({ index }: { index: number }) {
         placeholder="Enter organization name"
         path={`organizations.${index}.name`}
         data-testid={`org-name-input-${index}`}
+        handleHoveredTextChange={setHoveredText}
       />
       <VerifiedInput
         label="Address"
         placeholder="Enter address"
         path={`organizations.${index}.address`}
         data-testid={`org-address-input-${index}`}
+        handleHoveredTextChange={setHoveredText}
       />
       <VerifiedInput
         label="Website"
         placeholder="Enter website"
         path={`organizations.${index}.website`}
         data-testid={`org-website-input-${index}`}
+        handleHoveredTextChange={setHoveredText}
       />
       <VerifiedInput
         label="Phone Number"
         placeholder="Enter phone number"
         path={`organizations.${index}.phoneNumber`}
         data-testid={`org-phone-input-${index}`}
+        handleHoveredTextChange={setHoveredText}
       />
     </Box>
   );

@@ -12,6 +12,7 @@ import {
   StepStatus,
 } from "@/components/stepper";
 import useAlertStore from "@/stores/alertStore";
+import useHoverStore from "@/stores/hoverStore";
 import {
   DEFAULT_LABEL_DATA,
   FormComponentProps,
@@ -46,6 +47,9 @@ function LabelDataValidationPage() {
   const [ingredientsStepStatus, setIngredientsStepStatus] =
     useState<StepStatus>(StepStatus.Incomplete);
   const { showAlert } = useAlertStore();
+
+  const { hoveredText, setHoveredText } = useHoverStore();
+
 
   const createStep = (
     title: string,
@@ -186,7 +190,7 @@ function LabelDataValidationPage() {
           className="flex h-[500px] md:h-[720px] lg:size-full justify-center min-w-0 "
           data-testid="image-viewer-container"
         >
-          <ImageViewer imageFiles={imageFiles} />
+          <ImageViewer imageFiles={imageFiles} textData={null} />
         </Box>
 
         {isLgOrBelow && (

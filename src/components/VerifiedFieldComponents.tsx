@@ -1,6 +1,7 @@
 import CheckIcon from "@mui/icons-material/Check";
 import {
   Box,
+  colors,
   Divider,
   FormControlLabel,
   IconButton,
@@ -9,10 +10,11 @@ import {
   Tooltip,
   Typography,
 } from "@mui/material";
-import { ReactNode, useState } from "react";
+import { ReactNode, SetStateAction, useState } from "react";
 import { Control, Controller, useFormContext, useWatch } from "react-hook-form";
 import { useTranslation } from "react-i18next";
 import StyledTextField from "./StyledTextField";
+import json from '@/app/TestImagePage/test.json'; //testing purposes
 
 interface VerifiedFieldWrapperProps {
   label: string;
@@ -72,8 +74,8 @@ export const VerifiedFieldWrapper: React.FC<VerifiedFieldWrapperProps> = ({
             <Tooltip
               title={
                 verified
-                  ? t("verifiedField.unverify", { label })
-                  : t("verifiedField.verify", { label })
+                  ? t("verifiedInput.unverify", { label })
+                  : t("verifiedInput.verify", { label })
               }
               enterDelay={1000}
             >
@@ -82,8 +84,8 @@ export const VerifiedFieldWrapper: React.FC<VerifiedFieldWrapperProps> = ({
                 data-testid={`toggle-verified-btn-${verifiedPath}`}
                 aria-label={
                   verified
-                    ? t("verifiedField.unverify", { label })
-                    : t("verifiedField.verify", { label })
+                    ? t("verifiedInput.unverify", { label })
+                    : t("verifiedInput.verify", { label })
                 }
               >
                 <CheckIcon
@@ -165,16 +167,52 @@ interface VerifiedInputProps {
   label: string;
   placeholder: string;
   path: string;
+  handleHoveredTextChange: (text: string | null) => void; // Ajouté
   className?: string;
 }
+
+const searchSuggestions = (input: string, data: any[]) => {
+  if (input.length < 4) return []; // Must wait for at least 4 characters
+  const lowerInput = input.toLowerCase();
+
+  return data
+    .filter(paragraph => paragraph.content.toLowerCase().includes(lowerInput))
+    .slice(0, 5)
+    .map(paragraph => paragraph.content);
+};
 
 export const VerifiedInput: React.FC<VerifiedInputProps> = ({
   label,
   placeholder,
   path,
+  handleHoveredTextChange,
   className = "",
 }) => {
   const { t } = useTranslation("labelDataValidationPage");
+  const [suggestions, setSuggestions] = useState<string[]>([]);
+  const [inputValue, setInputValue] = useState("");
+  const [isInputFocused, setIsInputFocused] = useState(false);
+
+  const handleInputChange = (input: string) => {
+    setInputValue(input);
+    setSuggestions(searchSuggestions(input, json.analyzeResult.paragraphs)); //testing purposes
+  };
+
+  const handleSuggestionClick = (suggestion: string) => {
+    setInputValue(suggestion);
+    setSuggestions([]);
+  };
+
+  const handleMouseEnter = (value: string) => {
+    console.log(`Hovered text: ${value}`);
+    handleHoveredTextChange(value);
+  };
+
+  const handleMouseLeave = () => {
+    console.log("Mouse left text");
+    handleHoveredTextChange(null);
+  };
+
   return (
     <VerifiedFieldWrapper
       label={label}
@@ -185,19 +223,64 @@ export const VerifiedInput: React.FC<VerifiedInputProps> = ({
           name={valuePath}
           control={control}
           render={({ field }) => (
-            <StyledTextField
-              {...field}
-              placeholder={placeholder}
-              className="!ml-2 !text-[15px]"
-              disabled={verified}
-              onFocus={() => setIsFocused(true)}
-              onBlur={(e) => {
-                setIsFocused(false);
-                field.onChange(e.target.value.trim());
-              }}
-              data-testid={`input-field-${valuePath}`}
-              aria-label={`${t("verifiedInput.accessibility.input", { label })}`}
-            />
+            <div style={{ width: '100%', position: 'relative' }}>
+              <StyledTextField
+                {...field}
+                placeholder={placeholder}
+                className="!ml-2 !text-[15px]"
+                value={inputValue}
+                autoComplete="off"
+                onFocus={() => {
+                  setIsFocused(true);
+                  setIsInputFocused(true);
+                }}
+                onBlur={() => {
+                  // setIsFocused(false);
+                  // setIsInputFocused(false);
+                  setTimeout(() => {
+                    setIsFocused(false);
+                    setIsInputFocused(false);
+                    setSuggestions([]);
+                  }, 100); // Delay to allow selecting suggestions
+                }}
+                onChange={(e) => {
+                  field.onChange(e.target.value.trim());
+                  handleInputChange(e.target.value);
+                }}
+                onMouseEnter={() => handleMouseEnter(inputValue)}
+                onMouseLeave={handleMouseLeave}
+                inputProps={{ maxLength: 256 }} // Optionally limit input length
+                data-testid={`input-field-${valuePath}`}
+              />
+              {isInputFocused && suggestions.length > 0 && (
+                <Box
+                  className="autocomplete-suggestions"
+                  display="block"
+                  position="absolute"
+                  width="100%"
+                  border="1px solid black"
+                  zIndex="1"
+                  mt="4px"
+                  bgcolor="white"
+                >
+                  {suggestions.map((suggestion, index) => (
+                    <Typography
+                      key={index}
+                      className="suggestion-item"
+                      onMouseDown={(e) => {
+                        e.preventDefault(); // Prevent the input from losing focus
+                        handleSuggestionClick(suggestion);
+                      }}
+                      onMouseEnter={(event) => event.currentTarget.style.backgroundColor = colors.grey[400]}
+                      onMouseLeave={(event) => event.currentTarget.style.backgroundColor = 'white'}
+                      style={{ cursor: "pointer", padding: "8px" }}
+                    >
+                      {suggestion}
+                    </Typography>
+                  ))}
+                </Box>
+              )}
+            </div>
           )}
         />
       )}
