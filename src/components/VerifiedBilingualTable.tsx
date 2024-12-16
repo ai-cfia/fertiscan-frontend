@@ -26,25 +26,28 @@ import {
 } from "react-hook-form";
 import { useTranslation } from "react-i18next";
 import QuantityInput from "./QuantityInput";
+import StyledSkeleton from "./StyledSkeleton";
 import StyledTextField from "./StyledTextField";
 
 interface VerifiedBilingualTableProps {
   path: string;
   valueColumn?: boolean;
   unitOptions?: string[];
+  loading?: boolean;
 }
 
 const VerifiedBilingualTable = ({
   path,
   valueColumn = false,
   unitOptions,
+  loading = false,
 }: VerifiedBilingualTableProps) => {
   const { control, setValue, trigger } = useFormContext();
   const { fields, append, remove } = useFieldArray({
     control,
     name: path,
   });
-  const { t } = useTranslation("labelDataValidationPage");
+  const { t } = useTranslation("labelDataValidator");
 
   const data = useWatch({ control, name: path });
   const isVerified = (index: number) => Boolean(data?.[index]?.verified);
@@ -111,133 +114,146 @@ const VerifiedBilingualTable = ({
 
           {/* Table Body */}
           <TableBody>
-            {fields.map((field, index) => (
-              <TableRow
-                className={`${isVerified(index) ? "bg-green-100" : ""}`}
-                key={field.id}
-                data-testid={`table-row-${path}-${index}`}
-              >
-                {/* English input field */}
-                <TableCell data-testid={`input-english-cell-${path}-${index}`}>
-                  <Controller
-                    name={`${path}.${index}.en`}
-                    control={control}
-                    render={({ field }) => (
-                      <StyledTextField
-                        {...field}
-                        placeholder={t(
-                          "verifiedBilingualTable.placeholders.english",
-                        )}
-                        disabled={isVerified(index)}
-                        aria-label={t(
-                          "verifiedBilingualTable.accessibility.englishInput",
-                          { row: index + 1 },
-                        )}
-                        aria-disabled={isVerified(index)}
-                        data-testid={`input-english-${path}-${index}`}
-                        multiline
-                      />
-                    )}
-                  />
-                </TableCell>
-
-                {/* French input field */}
-                <TableCell data-testid={`input-french-cell-${path}-${index}`}>
-                  <Controller
-                    name={`${path}.${index}.fr`}
-                    control={control}
-                    render={({ field }) => (
-                      <StyledTextField
-                        {...field}
-                        placeholder={t(
-                          "verifiedBilingualTable.placeholders.french",
-                        )}
-                        disabled={isVerified(index)}
-                        aria-label={t(
-                          "verifiedBilingualTable.accessibility.frenchInput",
-                          { row: index + 1 },
-                        )}
-                        aria-disabled={isVerified(index)}
-                        data-testid={`input-french-${path}-${index}`}
-                        multiline
-                      />
-                    )}
-                  />
-                </TableCell>
-
-                {/* Value column */}
-                {valueColumn && (
+            {fields.map((field, index) =>
+              loading ? (
+                <TableRow
+                  key={`skeleton-${index}`}
+                  data-testid={`skeleton-row-${path}-${index}`}
+                >
                   <TableCell>
-                    <QuantityInput
-                      name={`${path}.${index}`}
-                      control={control}
-                      unitOptions={unitOptions ?? []}
-                      disabled={isVerified(index)}
-                    />
+                    <StyledSkeleton  />
                   </TableCell>
-                )}
-
-                {/* Action buttons */}
-                <TableCell>
-                  <Box className="flex justify-center gap-2">
-                    {/* Delete Button */}
-                    <Tooltip
-                      title={t("verifiedBilingualTable.delete")}
-                      enterDelay={1000}
-                      disableHoverListener={isVerified(index)}
-                    >
-                      <span>
-                        <IconButton
-                          onClick={() => remove(index)}
+                  <TableCell>
+                    <StyledSkeleton />
+                  </TableCell>
+                  {valueColumn && (
+                    <TableCell>
+                      <StyledSkeleton  />
+                    </TableCell>
+                  )}
+                  <TableCell>
+                    <StyledSkeleton  />
+                  </TableCell>
+                </TableRow>
+              ) : (
+                <TableRow
+                  className={`${isVerified(index) ? "bg-green-100" : ""}`}
+                  key={field.id}
+                  data-testid={`table-row-${path}-${index}`}
+                >
+                  <TableCell
+                    data-testid={`input-english-cell-${path}-${index}`}
+                  >
+                    <Controller
+                      name={`${path}.${index}.en`}
+                      control={control}
+                      render={({ field }) => (
+                        <StyledTextField
+                          {...field}
+                          placeholder={t(
+                            "verifiedBilingualTable.placeholders.english",
+                          )}
                           disabled={isVerified(index)}
                           aria-label={t(
-                            "verifiedBilingualTable.accessibility.deleteButton",
+                            "verifiedBilingualTable.accessibility.englishInput",
+                            { row: index + 1 },
                           )}
-                          data-testid={`delete-row-btn-${path}-${index}`}
-                        >
-                          <DeleteIcon aria-hidden="true" />
-                        </IconButton>
-                      </span>
-                    </Tooltip>
-
-                    <Divider orientation="vertical" flexItem />
-
-                    {/* Verify Button */}
-                    <Controller
-                      name={`${path}.${index}.verified`}
-                      control={control}
-                      render={({ field: { value } }) => (
-                        <Tooltip
-                          title={t(
-                            value
-                              ? "verifiedBilingualTable.unverify"
-                              : "verifiedBilingualTable.verify",
-                          )}
-                          enterDelay={1000}
-                        >
-                          <span>
-                            <IconButton
-                              onClick={() => toggleVerify(index)}
-                              aria-label={t(
-                                value
-                                  ? "verifiedBilingualTable.accessibility.unverifyButton"
-                                  : "verifiedBilingualTable.accessibility.verifyButton",
-                              )}
-                              data-testid={`verify-row-btn-${path}-${index}`}
-                            >
-                              <CheckIcon
-                                className={value ? "text-green-500" : ""}
-                                aria-hidden="true"
-                              />
-                            </IconButton>
-                          </span>
-                        </Tooltip>
+                          aria-disabled={isVerified(index)}
+                          data-testid={`input-english-${path}-${index}`}
+                          multiline
+                        />
                       )}
                     />
-                  </Box>
-                </TableCell>
-              </TableRow>
-            ))}
+                  </TableCell>
+                  <TableCell data-testid={`input-french-cell-${path}-${index}`}>
+                    <Controller
+                      name={`${path}.${index}.fr`}
+                      control={control}
+                      render={({ field }) => (
+                        <StyledTextField
+                          {...field}
+                          placeholder={t(
+                            "verifiedBilingualTable.placeholders.french",
+                          )}
+                          disabled={isVerified(index)}
+                          aria-label={t(
+                            "verifiedBilingualTable.accessibility.frenchInput",
+                            { row: index + 1 },
+                          )}
+                          aria-disabled={isVerified(index)}
+                          data-testid={`input-french-${path}-${index}`}
+                          multiline
+                        />
+                      )}
+                    />
+                  </TableCell>
+                  {valueColumn && (
+                    <TableCell>
+                      <QuantityInput
+                        name={`${path}.${index}`}
+                        control={control}
+                        unitOptions={unitOptions ?? []}
+                        disabled={isVerified(index)}
+                      />
+                    </TableCell>
+                  )}
+                  <TableCell>
+                    <Box className="flex justify-center gap-2">
+                      <Tooltip
+                        title={t("verifiedBilingualTable.delete")}
+                        enterDelay={1000}
+                        disableHoverListener={isVerified(index)}
+                      >
+                        <span>
+                          <IconButton
+                            onClick={() => remove(index)}
+                            disabled={isVerified(index)}
+                            aria-label={t(
+                              "verifiedBilingualTable.accessibility.deleteButton",
+                            )}
+                            data-testid={`delete-row-btn-${path}-${index}`}
+                          >
+                            <DeleteIcon aria-hidden="true" />
+                          </IconButton>
+                        </span>
+                      </Tooltip>
+                      <Divider orientation="vertical" flexItem />
+                      <Controller
+                        name={`${path}.${index}.verified`}
+                        control={control}
+                        render={({ field: { value } }) => (
+                          <Tooltip
+                            title={t(
+                              value
+                                ? "verifiedBilingualTable.unverify"
+                                : "verifiedBilingualTable.verify",
+                            )}
+                            enterDelay={1000}
+                          >
+                            <span>
+                              <IconButton
+                                onClick={() => toggleVerify(index)}
+                                aria-label={t(
+                                  value
+                                    ? "verifiedBilingualTable.accessibility.unverifyButton"
+                                    : "verifiedBilingualTable.accessibility.verifyButton",
+                                )}
+                                data-testid={`verify-row-btn-${path}-${index}`}
+                              >
+                                <CheckIcon
+                                  className={value ? "text-green-500" : ""}
+                                  aria-hidden="true"
+                                />
+                              </IconButton>
+                            </span>
+                          </Tooltip>
+                        )}
+                      />
+                    </Box>
+                  </TableCell>
+                </TableRow>
+              ),
+            )}
           </TableBody>
         </Table>
       </TableContainer>

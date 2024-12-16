@@ -6,6 +6,7 @@ import SideNav from "../Sidenav";
 import { ThemeProvider, createTheme } from "@mui/material/styles";
 import { useRouter } from "next/router";
 import { useTranslation } from "react-i18next";
+import useUploadedFilesStore from "@/stores/fileStore";
 jest.mock("next/router", () => ({
   useRouter: jest.fn(),
 }));
@@ -91,4 +92,21 @@ describe("SideNav Component", () => {
       "href",
       );
   });
+  
+  it("should call clearUploadedFiles when 'new inspection' is clicked", () => {
+    const store = useUploadedFilesStore;
+    const clearUploadedFilesSpy = jest.spyOn(store.getState(), "clearUploadedFiles");
+
+    render(
+      <ThemeProvider theme={theme}>
+        <SideNav open={true} onClose={onClose} />
+      </ThemeProvider>,
+    );
+
+    const newInspectionButton = screen.getByTestId("new-inspection-button");
+    fireEvent.click(newInspectionButton);
+
+    expect(clearUploadedFilesSpy).toHaveBeenCalled();
+  });
+
 });

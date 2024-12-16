@@ -5,6 +5,7 @@ import StepButton from "@mui/material/StepButton";
 import StepLabel from "@mui/material/StepLabel";
 import Stepper from "@mui/material/Stepper";
 import { useEffect, useRef } from "react";
+import { useTranslation } from "react-i18next";
 
 export enum StepStatus {
   Incomplete = "incomplete",
@@ -17,6 +18,7 @@ export interface StepperProps {
   stepStatuses: StepStatus[];
   activeStep: number;
   setActiveStep: React.Dispatch<React.SetStateAction<number>>;
+  submit: () => void;
 }
 
 export const HorizontalNonLinearStepper: React.FC<StepperProps> = ({
@@ -39,7 +41,7 @@ export const HorizontalNonLinearStepper: React.FC<StepperProps> = ({
       });
     }
   }, [activeStep, stepRefs]);
-  
+
   return (
     <Box className="w-full overflow-x-auto overflow-y-hidden">
       <Stepper nonLinear activeStep={activeStep} className="mx-2">
@@ -68,36 +70,43 @@ export const HorizontalNonLinearStepper: React.FC<StepperProps> = ({
 export const StepperControls: React.FC<StepperProps> = ({
   stepTitles,
   activeStep,
+  stepStatuses,
   setActiveStep,
+  submit,
 }) => {
+  const { t } = useTranslation("labelDataValidator");
   const stepsTotal = stepTitles.length;
-
-  const handleNext = () => {
-    setActiveStep((prev) => Math.min(prev + 1, stepsTotal - 1));
-  };
-
-  const handleBack = () => {
-    setActiveStep((prev) => Math.max(prev - 1, 0));
-  };
 
   return (
     <Box className="flex flex-col gap-2 content-center">
       <Box className="flex justify-between pt-2 w-full">
         <Button
           disabled={activeStep === 0}
-          onClick={handleBack}
+          onClick={() => setActiveStep((prev) => Math.max(prev - 1, 0))}
           variant="contained"
           color="secondary"
         >
-          Back
+          {t("stepper.back")}
         </Button>
         <Button
-          onClick={handleNext}
+          onClick={submit}
+          disabled={stepStatuses.some(
+            (value) => value !== StepStatus.Completed,
+          )}
+          variant="contained"
+          color="secondary"
+        >
+          {t("stepper.submit")}
+        </Button>
+        <Button
+          onClick={() =>
+            setActiveStep((prev) => Math.min(prev + 1, stepsTotal - 1))
+          }
           disabled={activeStep >= stepsTotal - 1}
           variant="contained"
           color="secondary"
         >
-          Next
+          {t("stepper.next")}
         </Button>
       </Box>
     </Box>
