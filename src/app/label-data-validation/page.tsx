@@ -1,243 +1,104 @@
 "use client";
-import BaseInformationForm from "@/components/BaseInformationForm";
-import CautionsForm from "@/components/CautionsForm";
-import GuaranteedAnalysisForm from "@/components/GuaranteedAnalysisForm";
-import ImageViewer from "@/components/ImageViewer";
-import IngredientsForm from "@/components/IngredientsForm";
-import InstructionsForm from "@/components/InstructionsForm";
-import OrganizationsForm from "@/components/OrganizationsForm";
-import {
-  HorizontalNonLinearStepper,
-  StepperControls,
-  StepStatus,
-} from "@/components/stepper";
+import LabelDataValidator from "@/components/LabelDataValidator";
 import useAlertStore from "@/stores/alertStore";
-import {
-  DEFAULT_LABEL_DATA,
-  FormComponentProps,
-  LabelData,
-} from "@/types/types";
-import { checkFieldArray, checkFieldRecord } from "@/utils/common";
-import useBreakpoints from "@/utils/useBreakpoints";
-import { Box, Button, Container, Typography } from "@mui/material";
+import useUploadedFilesStore from "@/stores/fileStore";
+import { DEFAULT_LABEL_DATA } from "@/types/types";
+import { processAxiosError } from "@/utils/client/apiErrors";
+import { mapLabelDataOutputToLabelData } from "@/utils/client/modelTransformation";
+import { Inspection, LabelDataOutput } from "@/utils/server/backend";
+import axios from "axios";
+import Cookies from "js-cookie";
+import { useRouter } from "next/navigation";
 import { useEffect, useState } from "react";
-import { useTranslation } from "react-i18next";
 
 function LabelDataValidationPage() {
-  const { t } = useTranslation("labelDataValidationPage");
-  const [imageFiles, setImageFiles] = useState<File[]>([]);
-  const { isDownXs, isBetweenXsSm, isBetweenSmMd, isBetweenMdLg } =
-    useBreakpoints();
-  const isLgOrBelow =
-    isDownXs || isBetweenXsSm || isBetweenSmMd || isBetweenMdLg;
-  const [labelData, setLabelData] = useState<LabelData>(DEFAULT_LABEL_DATA);
-  const [activeStep, setActiveStep] = useState(0);
-  const [organizationsStepStatus, setOrganizationsStepStatus] =
-    useState<StepStatus>(StepStatus.Incomplete);
-  const [baseInformationStepStatus, setBaseInformationStepStatus] =
-    useState<StepStatus>(StepStatus.Incomplete);
-  const [cautionsStepStatus, setCautionsStepStatus] = useState<StepStatus>(
-    StepStatus.Incomplete,
-  );
-  const [instructionsStepStatus, setInstructionsStepStatus] =
-    useState<StepStatus>(StepStatus.Incomplete);
-  const [guaranteedAnalysisStepStatus, setGuaranteedAnalysisStepStatus] =
-    useState<StepStatus>(StepStatus.Incomplete);
-  const [ingredientsStepStatus, setIngredientsStepStatus] =
-    useState<StepStatus>(StepStatus.Incomplete);
+  const { uploadedFiles } = useUploadedFilesStore();
+  const [labelData, setLabelData] = useState(DEFAULT_LABEL_DATA);
+  const [loading, setLoading] = useState(true);
   const { showAlert } = useAlertStore();
+  const router = useRouter();
 
-  const createStep = (
-    title: string,
-    StepComponent: React.FC<FormComponentProps>,
-    stepStatus: StepStatus,
-    setStepStatusState: React.Dispatch<React.SetStateAction<StepStatus>>,
-  ) => {
-    return {
-      title: title,
-      stepStatus: stepStatus,
-      setStepStatus: setStepStatusState,
-      render: () => (
-        <StepComponent labelData={labelData} setLabelData={setLabelData} />
-      ),
-    };
-  };
-
-  const steps = [
-    createStep(
-      t("baseInformation.stepTitle"),
-      BaseInformationForm,
-      baseInformationStepStatus,
-      setBaseInformationStepStatus,
-    ),
-    createStep(
-      t("organizations.stepTitle"),
-      OrganizationsForm,
-      organizationsStepStatus,
-      setOrganizationsStepStatus,
-    ),
-    createStep(
-      t("cautions.stepTitle"),
-      CautionsForm,
-      cautionsStepStatus,
-      setCautionsStepStatus,
-    ),
-    createStep(
-      t("instructions.stepTitle"),
-      InstructionsForm,
-      instructionsStepStatus,
-      setInstructionsStepStatus,
-    ),
-    createStep(
-      t("guaranteedAnalysis.stepTitle"),
-      GuaranteedAnalysisForm,
-      guaranteedAnalysisStepStatus,
-      setGuaranteedAnalysisStepStatus,
-    ),
-    createStep(
-      t("ingredients.stepTitle"),
-      IngredientsForm,
-      ingredientsStepStatus,
-      setIngredientsStepStatus,
-    ),
-  ];
-
-  const handleFileChange = (event: React.ChangeEvent<HTMLInputElement>) => {
-    if (event.target.files) {
-      setImageFiles(Array.from(event.target.files));
+  useEffect(() => {
+    if (uploadedFiles.length === 0) {
+      showAlert("No files uploaded.", "error");
+      router.push("/");
+      return;
     }
-  };
 
-  const openFileDialog = () => {
-    document.getElementById("file-input")?.click();
-  };
+    const controller = new AbortController();
+    const signal = controller.signal;
 
-  useEffect(() => {
-    const verified = labelData.organizations.every((org) =>
-      checkFieldRecord(org),
-    );
-    setOrganizationsStepStatus(
-      verified ? StepStatus.Completed : StepStatus.Incomplete,
-    );
-  }, [labelData.organizations, setOrganizationsStepStatus]);
+    setLoading(true);
+    const formData = new FormData();
 
-  useEffect(() => {
-    const verified = checkFieldRecord(labelData.baseInformation);
-    setBaseInformationStepStatus(
-      verified ? StepStatus.Completed : StepStatus.Incomplete,
-    );
-  }, [labelData.baseInformation, setBaseInformationStepStatus]);
+    uploadedFiles.forEach((fileUploaded) => {
+      const file = fileUploaded.getFile();
+      formData.append("files", file);
+    });
 
-  useEffect(() => {
-    const verified = checkFieldArray(labelData.cautions);
-    setCautionsStepStatus(
-      verified ? StepStatus.Completed : StepStatus.Incomplete,
-    );
-  }, [labelData.cautions, setCautionsStepStatus]);
+    const username = atob(Cookies.get("token") ?? "");
+    const password = "";
+    const authHeader = "Basic " + btoa(`${username}:${password}`);
+    axios
+      .post("/api/extract-label-data", formData, {
+        headers: { Authorization: authHeader },
+        signal,
+      })
+      .then(async (response) => {
+        const labelDataOutput: LabelDataOutput = response.data;
+        const labelData = mapLabelDataOutputToLabelData(labelDataOutput);
 
-  useEffect(() => {
-    const verified = checkFieldArray(labelData.instructions);
-    setInstructionsStepStatus(
-      verified ? StepStatus.Completed : StepStatus.Incomplete,
-    );
-  }, [labelData.instructions, setInstructionsStepStatus]);
+        formData.append("labelData", JSON.stringify(labelDataOutput));
+        axios
+          .post("/api/inspections", formData, {
+            headers: { Authorization: authHeader },
+            signal,
+          })
+          .then((response) => {
+            const inspection: Inspection = response.data;
+            router.push(`/label-data-validation/${inspection.inspection_id}`);
+            return null;
+          })
+          .catch((error) => {
+            if (axios.isCancel(error)) {
+              console.log("Request canceled");
+            } else {
+              showAlert(
+                `Label data initial save failed: ${processAxiosError(error)}`,
+                "error",
+              );
+              setLoading(false);
+            }
+          })
+          .finally(() => {
+            setLabelData(labelData);
+            // not disabling loading here in case of strict mode abort
+          });
+      })
+      .catch((error) => {
+        if (axios.isCancel(error)) {
+          console.log("Request canceled");
+        } else {
+          showAlert(
+            `Label data extraction failed: ${processAxiosError(error)}`,
+            "error",
+          );
+          setLoading(false);
+        }
+      });
 
-  useEffect(() => {
-    const verified =
-      checkFieldRecord({
-        titleEn: labelData.guaranteedAnalysis.titleEn,
-        titleFr: labelData.guaranteedAnalysis.titleFr,
-        isMinimal: labelData.guaranteedAnalysis.isMinimal,
-      }) && checkFieldArray(labelData.guaranteedAnalysis.nutrients);
-    setGuaranteedAnalysisStepStatus(
-      verified ? StepStatus.Completed : StepStatus.Incomplete,
-    );
-  }, [labelData.guaranteedAnalysis, setGuaranteedAnalysisStepStatus]);
-
-  useEffect(() => {
-    const verified = checkFieldArray(labelData.ingredients);
-    setIngredientsStepStatus(
-      verified ? StepStatus.Completed : StepStatus.Incomplete,
-    );
-  }, [labelData.ingredients, setIngredientsStepStatus]);
+    return () => {
+      controller.abort(); // avoids react strict mode double fetch
+    };
+  }, [uploadedFiles, showAlert, router]);
 
   return (
-    <Container
-      className="flex flex-col max-w-[1920px] bg-gray-100 text-black"
-      maxWidth={false}
-      data-testid="container"
-    >
-      {!isLgOrBelow && (
-        <Box className="p-4 mt-4" data-testid="stepper">
-          <HorizontalNonLinearStepper
-            stepTitles={steps.map((step) => step.title)}
-            stepStatuses={steps.map((step) => step.stepStatus)}
-            activeStep={activeStep}
-            setActiveStep={setActiveStep}
-          />
-        </Box>
-      )}
-
-      <Box
-        className="flex flex-col lg:flex-row gap-4 my-4 lg:h-[75vh] lg:min-h-[500px]"
-        data-testid="main-content"
-      >
-        <Box
-          className="flex h-[500px] md:h-[720px] lg:size-full justify-center min-w-0 "
-          data-testid="image-viewer-container"
-        >
-          <ImageViewer imageFiles={imageFiles} />
-        </Box>
-
-        {isLgOrBelow && (
-          <Box className="p-4 mt-4" data-testid="stepper-md">
-            <HorizontalNonLinearStepper
-              stepTitles={steps.map((step) => step.title)}
-              stepStatuses={steps.map((step) => step.stepStatus)}
-              activeStep={activeStep}
-              setActiveStep={setActiveStep}
-            />
-          </Box>
-        )}
-
-        <Box
-          className="flex flex-col size-full min-w-0 p-4 text-center gap-4 content-end bg-white border border-black"
-          data-testid="form-container"
-        >
-          <Typography
-            variant="h6"
-            className="text-lg !font-bold"
-            data-testid="form-title"
-          >
-            {steps[activeStep].title}
-          </Typography>
-          <Box className="flex-1 overflow-y-auto sm:px-8">
-            {steps[activeStep].render()}
-          </Box>
-          <StepperControls
-            stepTitles={steps.map((step) => step.title)}
-            stepStatuses={steps.map((step) => step.stepStatus)}
-            activeStep={activeStep}
-            setActiveStep={setActiveStep}
-          />
-        </Box>
-      </Box>
-
-      <Box className="flex justify-center mt-4">
-        <Button variant="contained" onClick={openFileDialog}>
-          Upload Images
-        </Button>
-        <input
-          id="file-input"
-          type="file"
-          accept="image/*"
-          multiple
-          style={{ display: "none" }}
-          onChange={handleFileChange}
-        />
-        <Button onClick={() => showAlert("Test", "error")}>Show Alert</Button>
-      </Box>
-    </Container>
+    <LabelDataValidator
+      files={uploadedFiles.map((file) => file.getFile())}
+      labelData={labelData}
+      setLabelData={setLabelData}
+      loading={loading}
+    />
   );
 }
 
