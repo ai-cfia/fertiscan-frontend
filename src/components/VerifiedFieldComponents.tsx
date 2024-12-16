@@ -3,9 +3,11 @@ import {
   Box,
   Divider,
   FormControlLabel,
+  Icon,
   IconButton,
   Radio,
   RadioGroup,
+  SvgIcon,
   Tooltip,
   Typography,
 } from "@mui/material";
@@ -38,6 +40,7 @@ export const VerifiedFieldWrapper: React.FC<VerifiedFieldWrapperProps> = ({
   const { t } = useTranslation("labelDataValidator");
   const { control } = useFormContext();
   const [isFocused, setIsFocused] = useState(false);
+  const [hover, setHover] = useState(false);
 
   const valuePath = `${path}.value`;
   const verifiedPath = `${path}.verified`;
@@ -61,7 +64,7 @@ export const VerifiedFieldWrapper: React.FC<VerifiedFieldWrapperProps> = ({
         <Box
           className={`flex items-center p-1 border-2 rounded-tr-md rounded-br-md ${
             isFocused ? "border-fertiscan-blue" : ""
-          } ${verified ? "border-green-500 bg-gray-300 border-2" : "border-2"} ${className}`}
+          } ${verified ? "border-green-500 bg-gray-300" : ""} ${className}`}
           data-testid={`verified-field-${path}`}
         >
           {renderField({ setIsFocused, control, valuePath, verified })}
@@ -69,9 +72,7 @@ export const VerifiedFieldWrapper: React.FC<VerifiedFieldWrapperProps> = ({
             orientation="vertical"
             flexItem
             className={isFocused ? "!border-fertiscan-blue" : ""}
-            sx={{
-              bgcolor: verified ? "#00C55E" : "inherit",
-            }}
+            sx={{ bgcolor: verified ? "#00C55E" : "inherit"}}
             data-testid={`divider-${path}`}
           />
           <Controller
@@ -94,12 +95,20 @@ export const VerifiedFieldWrapper: React.FC<VerifiedFieldWrapperProps> = ({
                     ? t("verifiedInput.unverify", { label })
                     : t("verifiedInput.verify", { label })
                   }
+                  onMouseEnter={() => setHover(true)}
+                  onMouseLeave={() => setHover(false)}
                 >
+                                   {hover && verified ? (
+                    <SvgIcon aria-hidden>
+                    <image href="/img/unverifyIcon.svg" height="24" width="24" />
+                    </SvgIcon>
+                ) : (
                   <CheckIcon
                     className={value ? "text-green-500" : ""}
                     data-testid={`verified-icon-${verifiedPath}`}
                     aria-hidden
                   />
+                )}
                 </IconButton>
               </Tooltip>
             )}

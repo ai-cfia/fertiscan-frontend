@@ -9,6 +9,7 @@ import {
   Button,
   Divider,
   IconButton,
+  SvgIcon,
   Table,
   TableBody,
   TableCell,
@@ -28,6 +29,8 @@ import { useTranslation } from "react-i18next";
 import QuantityInput from "./QuantityInput";
 import StyledSkeleton from "./StyledSkeleton";
 import StyledTextField from "./StyledTextField";
+import { useState } from "react";
+
 
 interface VerifiedBilingualTableProps {
   path: string;
@@ -47,6 +50,7 @@ const VerifiedBilingualTable = ({
     control,
     name: path,
   });
+  const [hover, setHover] = useState(false);
   const { t } = useTranslation("labelDataValidator");
 
   const data = useWatch({ control, name: path });
@@ -269,11 +273,23 @@ const VerifiedBilingualTable = ({
                                     : "verifiedBilingualTable.accessibility.verifyButton",
                                 )}
                                 data-testid={`verify-row-btn-${path}-${index}`}
+                                onMouseEnter={() => setHover(true)}
+                                onMouseLeave={() => setHover(false)}
                               >
+                                 {hover && isVerified(index) ? (
+                                <SvgIcon aria-hidden>
+                                  <image
+                                    href="/img/unverifyIcon.svg"
+                                    height="24"
+                                    width="24"
+                                  />
+                                </SvgIcon>
+                              ) : (
                                 <CheckIcon
                                   className={value ? "text-green-500" : ""}
-                                  aria-hidden="true"
+                                  aria-hidden
                                 />
+                              )}
                               </IconButton>
                             </span>
                           </Tooltip>
