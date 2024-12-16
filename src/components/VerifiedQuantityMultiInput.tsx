@@ -7,12 +7,14 @@ import { useState } from "react";
 import { Controller, useFieldArray, useFormContext, useWatch } from "react-hook-form";
 import { useTranslation } from "react-i18next";
 import QuantityInput from "./QuantityInput";
+import StyledSkeleton from "./StyledSkeleton";
 
 interface VerifiedQuantityMultiInputProps {
   label: string;
   path: string;
   unitOptions: string[];
   className?: string;
+  loading?: boolean;
 }
 
 const VerifiedQuantityMultiInput: React.FC<VerifiedQuantityMultiInputProps> = ({
@@ -20,8 +22,9 @@ const VerifiedQuantityMultiInput: React.FC<VerifiedQuantityMultiInputProps> = ({
   path,
   unitOptions,
   className = "",
+  loading = false,
 }) => {
-  const { t } = useTranslation("labelDataValidationPage");
+  const { t } = useTranslation("labelDataValidator");
   const { control, trigger } = useFormContext();
   const [isFocused, setIsFocused] = useState(false);
   const [hover, setHover] = useState(false);
@@ -82,7 +85,9 @@ const VerifiedQuantityMultiInput: React.FC<VerifiedQuantityMultiInputProps> = ({
       >
         {label}
       </Typography>
-
+            {loading ? (
+        <StyledSkeleton className="!h-24" />
+      ) : (
       <Box
         className={`w-full flex items-center p-1 border-2 rounded-tr-md rounded-br-md ${
           isFocused ? "border-fertiscan-blue" : ""
@@ -91,8 +96,10 @@ const VerifiedQuantityMultiInput: React.FC<VerifiedQuantityMultiInputProps> = ({
       >
         {/* Fields */}
         <Box
-          className="flex flex-1 flex-col"
-          data-testid={`fields-container-${path}`}
+          className={`w-full flex items-center p-1 border-2 rounded-tr-md rounded-br-md ${
+            isFocused ? "border-fertiscan-blue" : ""
+          } ${verified ? "border-green-500" : ""}  ${className}`}
+          data-testid={`quantity-multi-input-${path}`}
         >
           {fields.map((fieldItem, index) => {
             const isLastItem = index === fields.length - 1;

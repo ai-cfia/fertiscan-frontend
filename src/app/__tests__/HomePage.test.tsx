@@ -1,11 +1,24 @@
 /* eslint-disable react/display-name */
 /* eslint-disable react-hooks/rules-of-hooks */
-import { render, screen, fireEvent } from "@testing-library/react";
+import useUploadedFilesStore from "@/stores/fileStore";
+import { fireEvent, render, screen } from "@testing-library/react";
 import userEvent from "@testing-library/user-event";
+import { useTranslation } from "react-i18next";
 import { Response } from "whatwg-fetch";
 import HomePage from "../page";
 
-import { useTranslation } from "react-i18next";
+const mockedRouterPush = jest.fn();
+jest.mock("next/navigation", () => ({
+  useRouter() {
+    return {
+      route: "/",
+      pathname: "",
+      query: "",
+      asPath: "",
+      push: mockedRouterPush,
+    };
+  },
+}));
 
 jest.mock("react-i18next", () => ({
   useTranslation: jest.fn().mockReturnValue({
@@ -69,6 +82,11 @@ global.fetch = jest.fn((path: string | URL | Request) => {
 });
 
 describe("HomePage Component", () => {
+  afterEach(() => {
+    const store = useUploadedFilesStore;
+    store.getState().clearUploadedFiles();
+  });
+
   it("should allow file uploads and display the uploaded files", async () => {
     render(<HomePage />);
 
@@ -119,7 +137,7 @@ describe("HomePage Component", () => {
     const dataTransfer: DataTransfer = {
       items: [
         {
-          kind: 'file',
+          kind: "file",
           type: file.type,
           getAsFile: () => file,
           webkitGetAsEntry: () => ({
@@ -273,5 +291,22 @@ describe("HomePage Component", () => {
     // Check that the tooltip is visible
     const tooltip = screen.getByTestId("hint-submit-button-disabled");
     expect(tooltip).toBeInTheDocument();
+  });
+
+  it("navigates to label data validation page when the submit button is clicked", async () => {
+    render(<HomePage />);
+
+    const file = new File(["hello"], "hello.png", { type: "image/png" });
+
+    const input = screen.getByLabelText(t("dropzone.browseFile"));
+    userEvent.upload(input, file);
+
+    const fileElement = await screen.findByTestId("file-element");
+    expect(fileElement).toBeInTheDocument();
+
+    const submitButton = screen.getByTestId("submit-button");
+    fireEvent.click(submitButton);
+
+    expect(mockedRouterPush).toHaveBeenCalledWith("/label-data-validation");
   });
 });

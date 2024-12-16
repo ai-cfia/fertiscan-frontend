@@ -7,10 +7,11 @@ import { VerifiedInput } from "./VerifiedFieldComponents";
 import VerifiedQuantityMultiInput from "./VerifiedQuantityMultiInput";
 
 const BaseInformationForm: React.FC<FormComponentProps> = ({
+  loading = false,
   labelData,
   setLabelData,
 }) => {
-  const { t } = useTranslation("labelDataValidationPage");
+  const { t } = useTranslation("labelDataValidator");
   const methods = useForm<LabelData>({
     defaultValues: labelData,
   });
@@ -20,6 +21,13 @@ const BaseInformationForm: React.FC<FormComponentProps> = ({
     name: "baseInformation",
   });
 
+  useEffect(() => {
+    const currentValues = methods.getValues();
+    if (JSON.stringify(currentValues) !== JSON.stringify(labelData)) {
+      methods.reset(labelData);
+    }
+  }, [labelData, methods]);
+  
   useEffect(() => {
     if (watchedBaseInformation) {
       setLabelData((prevLabelData) => ({
@@ -37,6 +45,7 @@ const BaseInformationForm: React.FC<FormComponentProps> = ({
             label={t("baseInformation.fields.name.label")}
             placeholder={t("baseInformation.fields.name.placeholder")}
             path="baseInformation.name"
+            loading={loading}
           />
           <VerifiedInput
             label={t("baseInformation.fields.registrationNumber.label")}
@@ -44,31 +53,37 @@ const BaseInformationForm: React.FC<FormComponentProps> = ({
               "baseInformation.fields.registrationNumber.placeholder",
             )}
             path="baseInformation.registrationNumber"
+            loading={loading}
           />
           <VerifiedInput
             label={t("baseInformation.fields.lotNumber.label")}
             placeholder={t("baseInformation.fields.lotNumber.placeholder")}
             path="baseInformation.lotNumber"
+            loading={loading}
           />
           <VerifiedInput
             label={t("baseInformation.fields.npk.label")}
             placeholder={t("baseInformation.fields.npk.placeholder")}
             path="baseInformation.npk"
+            loading={loading}
           />
           <VerifiedQuantityMultiInput
             label={t("baseInformation.fields.weight.label")}
             path="baseInformation.weight"
             unitOptions={UNITS.weight}
+            loading={loading}
           />
           <VerifiedQuantityMultiInput
             label={t("baseInformation.fields.density.label")}
             path="baseInformation.density"
             unitOptions={UNITS.density}
+            loading={loading}
           />
           <VerifiedQuantityMultiInput
             label={t("baseInformation.fields.volume.label")}
             path="baseInformation.volume"
             unitOptions={UNITS.volume}
+            loading={loading}
           />
         </Box>
       </Box>

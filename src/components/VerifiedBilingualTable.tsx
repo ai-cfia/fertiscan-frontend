@@ -27,6 +27,7 @@ import {
 } from "react-hook-form";
 import { useTranslation } from "react-i18next";
 import QuantityInput from "./QuantityInput";
+import StyledSkeleton from "./StyledSkeleton";
 import StyledTextField from "./StyledTextField";
 import { useState } from "react";
 
@@ -34,12 +35,14 @@ interface VerifiedBilingualTableProps {
   path: string;
   valueColumn?: boolean;
   unitOptions?: string[];
+  loading?: boolean;
 }
 
 const VerifiedBilingualTable = ({
   path,
   valueColumn = false,
   unitOptions,
+  loading = false,
 }: VerifiedBilingualTableProps) => {
   const { control, setValue, trigger } = useFormContext();
   const { fields, append, remove } = useFieldArray({
@@ -118,6 +121,28 @@ const VerifiedBilingualTable = ({
           {/* Table Body */}
           <TableBody>
             {fields.map((field, index) => (
+                            {fields.map((field, index) =>
+              loading ? (
+                <TableRow
+                  key={`skeleton-${index}`}
+                  data-testid={`skeleton-row-${path}-${index}`}
+                >
+                  <TableCell>
+                    <StyledSkeleton  />
+                  </TableCell>
+                  <TableCell>
+                    <StyledSkeleton />
+                  </TableCell>
+                  {valueColumn && (
+                    <TableCell>
+                      <StyledSkeleton  />
+                    </TableCell>
+                  )}
+                  <TableCell>
+                    <StyledSkeleton  />
+                  </TableCell>
+                </TableRow>
+              ) : (
               <TableRow
                 className={`${isVerified(index) ? "!border-green-500 !border-2" : ""}`}
                 key={field.id}
@@ -222,7 +247,8 @@ const VerifiedBilingualTable = ({
                           onClick={() => remove(index)}
                           disabled={fields.length <= 1}
                           aria-label={t(
-                            "verifiedBilingualTable.accessibility.deleteButton",
+                            "verifiedBilingualTable.accessibility.englishInput",
+                            { row: index + 1 },
                           )}
                           data-testid={`delete-row-btn-${path}-${index}`}
                         >
@@ -239,17 +265,19 @@ const VerifiedBilingualTable = ({
                         width: isVerified(index) ? "2px" : "1px",
                       }}
                     />
-
-                    {/* Verify Button */}
                     <Controller
-                      name={`${path}.${index}.verified`}
+                      name={`${path}.${index}.fr`}
                       control={control}
-                      render={({ field: { value } }) => (
-                        <Tooltip
-                          title={t(
-                            value
-                              ? "verifiedBilingualTable.unverify"
-                              : "verifiedBilingualTable.verify",
+                      render={({ field }) => (
+                        <StyledTextField
+                          {...field}
+                          placeholder={t(
+                            "verifiedBilingualTable.placeholders.french",
+                          )}
+                          disabled={isVerified(index)}
+                          aria-label={t(
+                            "verifiedBilingualTable.accessibility.frenchInput",
+                            { row: index + 1 },
                           )}
                           enterDelay={1000}
                         >
@@ -284,10 +312,74 @@ const VerifiedBilingualTable = ({
                         </Tooltip>
                       )}
                     />
-                  </Box>
-                </TableCell>
-              </TableRow>
-            ))}
+                  </TableCell>
+                  {valueColumn && (
+                    <TableCell>
+                      <QuantityInput
+                        name={`${path}.${index}`}
+                        control={control}
+                        unitOptions={unitOptions ?? []}
+                        disabled={isVerified(index)}
+                      />
+                    </TableCell>
+                  )}
+                  <TableCell>
+                    <Box className="flex justify-center gap-2">
+                      <Tooltip
+                        title={t("verifiedBilingualTable.delete")}
+                        enterDelay={1000}
+                        disableHoverListener={isVerified(index)}
+                      >
+                        <span>
+                          <IconButton
+                            onClick={() => remove(index)}
+                            disabled={isVerified(index)}
+                            aria-label={t(
+                              "verifiedBilingualTable.accessibility.deleteButton",
+                            )}
+                            data-testid={`delete-row-btn-${path}-${index}`}
+                          >
+                            <DeleteIcon aria-hidden="true" />
+                          </IconButton>
+                        </span>
+                      </Tooltip>
+                      <Divider orientation="vertical" flexItem />
+                      <Controller
+                        name={`${path}.${index}.verified`}
+                        control={control}
+                        render={({ field: { value } }) => (
+                          <Tooltip
+                            title={t(
+                              value
+                                ? "verifiedBilingualTable.unverify"
+                                : "verifiedBilingualTable.verify",
+                            )}
+                            enterDelay={1000}
+                          >
+                            <span>
+                              <IconButton
+                                onClick={() => toggleVerify(index)}
+                                aria-label={t(
+                                  value
+                                    ? "verifiedBilingualTable.accessibility.unverifyButton"
+                                    : "verifiedBilingualTable.accessibility.verifyButton",
+                                )}
+                                data-testid={`verify-row-btn-${path}-${index}`}
+                              >
+                                <CheckIcon
+                                  className={value ? "text-green-500" : ""}
+                                  aria-hidden="true"
+                                />
+                              </IconButton>
+                            </span>
+                          </Tooltip>
+                        )}
+                      />
+                    </Box>
+                  </TableCell>
+                </TableRow>
+              ),
+            )}
           </TableBody>
         </Table>
       </TableContainer>

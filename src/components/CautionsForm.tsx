@@ -7,6 +7,7 @@ import VerifiedBilingualTable from "./VerifiedBilingualTable";
 const CautionsForm: React.FC<FormComponentProps> = ({
   labelData,
   setLabelData,
+  loading = false,
 }) => {
   const methods = useForm<LabelData>({
     defaultValues: labelData,
@@ -16,6 +17,13 @@ const CautionsForm: React.FC<FormComponentProps> = ({
     control: methods.control,
     name: "cautions",
   });
+
+  useEffect(() => {
+    const currentValues = methods.getValues();
+    if (JSON.stringify(currentValues) !== JSON.stringify(labelData)) {
+      methods.reset(labelData);
+    }
+  }, [labelData, methods]);
 
   useEffect(() => {
     if (watchedCautions) {
@@ -29,7 +37,7 @@ const CautionsForm: React.FC<FormComponentProps> = ({
   return (
     <FormProvider {...methods}>
       <Box className="p-4" data-testid="cautions-form">
-        <VerifiedBilingualTable path={"cautions"} />
+        <VerifiedBilingualTable path={"cautions"} loading={loading} />
       </Box>
     </FormProvider>
   );

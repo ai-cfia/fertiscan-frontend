@@ -1,5 +1,7 @@
-import React from "react";
-import Link from "next/link";
+import useUploadedFilesStore from "@/stores/fileStore";
+import BugReportIcon from "@mui/icons-material/BugReport";
+import HomeIcon from "@mui/icons-material/Home";
+import SearchIcon from "@mui/icons-material/Search";
 import {
   Box,
   Divider,
@@ -13,9 +15,7 @@ import {
   Typography,
 } from "@mui/material";
 import Image from "next/image";
-import SearchIcon from "@mui/icons-material/Search";
-import HomeIcon from "@mui/icons-material/Home";
-import BugReportIcon from "@mui/icons-material/BugReport";
+import Link from "next/link";
 import { useTranslation } from "react-i18next";
 
 interface DrawerMenuProps {
@@ -25,6 +25,7 @@ interface DrawerMenuProps {
 
 const SideNav = ({ open, onClose }: DrawerMenuProps) => {
   const { t } = useTranslation("header");
+  const { clearUploadedFiles } = useUploadedFilesStore();
   return (
     <Drawer
       className="darkContainer w-[240px] flex-shrink-0"
@@ -63,7 +64,12 @@ const SideNav = ({ open, onClose }: DrawerMenuProps) => {
 
           <List>
             <Divider />
-            <Link href="/" passHref data-testid="new-inspection-button">
+            <Link
+              href="/"
+              passHref
+              data-testid="new-inspection-button"
+              onClick={clearUploadedFiles}
+            >
               <ListItemButton>
                 <ListItemIcon
                   aria-label={t("sideNav.altText.newInspectionButtonIcon")}
