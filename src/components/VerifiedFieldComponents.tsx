@@ -75,8 +75,8 @@ export const VerifiedFieldWrapper: React.FC<VerifiedFieldWrapperProps> = ({
             <Tooltip
               title={
                 verified
-                  ? t("verifiedField.unverify", { label })
-                  : t("verifiedField.verify", { label })
+                  ? t("verifiedInput.unverify", { label })
+                  : t("verifiedInput.verify", { label })
               }
               enterDelay={1000}
             >
@@ -85,8 +85,8 @@ export const VerifiedFieldWrapper: React.FC<VerifiedFieldWrapperProps> = ({
                 data-testid={`toggle-verified-btn-${verifiedPath}`}
                 aria-label={
                   verified
-                    ? t("verifiedField.unverify", { label })
-                    : t("verifiedField.verify", { label })
+                    ? t("verifiedInput.unverify", { label })
+                    : t("verifiedInput.verify", { label })
                 }
               >
                 <CheckIcon
