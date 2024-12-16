@@ -32,6 +32,7 @@ const SideNav = ({ open, onClose }: DrawerMenuProps) => {
       anchor="left"
       open={open}
       onClose={onClose}
+      transitionDuration={0}
       ModalProps={{
         keepMounted: true,
       }}
