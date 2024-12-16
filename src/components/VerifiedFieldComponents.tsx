@@ -61,7 +61,7 @@ export const VerifiedFieldWrapper: React.FC<VerifiedFieldWrapperProps> = ({
         <Box
           className={`flex items-center p-1 border-2 rounded-tr-md rounded-br-md ${
             isFocused ? "border-fertiscan-blue" : ""
-          } ${verified ? "border-green-500" : ""} ${className}`}
+          } ${verified ? "border-green-500 bg-gray-300 border-2" : "border-2"} ${className}`}
           data-testid={`verified-field-${path}`}
         >
           {renderField({ setIsFocused, control, valuePath, verified })}
@@ -69,6 +69,9 @@ export const VerifiedFieldWrapper: React.FC<VerifiedFieldWrapperProps> = ({
             orientation="vertical"
             flexItem
             className={isFocused ? "!border-fertiscan-blue" : ""}
+            sx={{
+              bgcolor: verified ? "#00C55E" : "inherit",
+            }}
             data-testid={`divider-${path}`}
           />
           <Controller

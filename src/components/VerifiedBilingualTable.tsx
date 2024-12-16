@@ -75,7 +75,7 @@ const VerifiedBilingualTable = ({
           <TableHead>
             <TableRow>
               <TableCell
-                className="min-w-48"
+                className={`${isVerified(0) ? "!border-b-green-500 !border-b-2" : ""} min-w-48`}
                 data-testid={`table-header-english-${path}`}
               >
                 <Typography variant="subtitle1" fontWeight="bold">
@@ -83,7 +83,7 @@ const VerifiedBilingualTable = ({
                 </Typography>
               </TableCell>
               <TableCell
-                className="min-w-48"
+                className={`${isVerified(0) ? "!border-b-green-500 !border-b-2" : ""} min-w-48`}
                 data-testid={`table-header-french-${path}`}
               >
                 <Typography variant="subtitle1" fontWeight="bold">
@@ -92,15 +92,18 @@ const VerifiedBilingualTable = ({
               </TableCell>
               {valueColumn && (
                 <TableCell
-                  className="min-w-48"
-                  data-testid={`table-header-value-${path}`}
+                className={`${isVerified(0) ? "!border-b-green-500 !border-b-2" : ""} min-w-48`}
+                data-testid={`table-header-value-${path}`}
                 >
                   <Typography variant="subtitle1" fontWeight="bold">
                     {t("verifiedBilingualTable.value")}
                   </Typography>
                 </TableCell>
               )}
-              <TableCell data-testid={`table-header-actions-${path}`}>
+               <TableCell
+                data-testid={`table-header-actions-${path}`}
+                className={`${isVerified(0) ? "!border-b-green-500 !border-b-2" : ""}`}
+              >
                 <Typography
                   className="text-center"
                   variant="subtitle1"
@@ -137,13 +140,17 @@ const VerifiedBilingualTable = ({
                 </TableRow>
               ) : (
                 <TableRow
-                  className={`${isVerified(index) ? "bg-green-100" : ""}`}
+                  className={`${isVerified(index) ? "!border-green-500 !border-2" : ""}`}
                   key={field.id}
                   data-testid={`table-row-${path}-${index}`}
                 >
                   <TableCell
-                    data-testid={`input-english-cell-${path}-${index}`}
-                  >
+                  data-testid={`input-english-cell-${path}-${index}`}
+                  className={`${isVerified(index) ? "!border-y-green-500  bg-gray-300" : ""}
+                  ${isVerified(index + 1) && isVerified(index) ? "!border-b-gray-400" : ""}
+                  ${isVerified(index - 1) && isVerified(index) ? "!border-t-gray-400" : ""}
+                  ${isVerified(index + 1) && !isVerified(index) ? "!border-b-green-500" : ""}`}
+                >
                     <Controller
                       name={`${path}.${index}.en`}
                       control={control}
@@ -165,7 +172,13 @@ const VerifiedBilingualTable = ({
                       )}
                     />
                   </TableCell>
-                  <TableCell data-testid={`input-french-cell-${path}-${index}`}>
+                  <TableCell
+                  data-testid={`input-french-cell-${path}-${index}`}
+                  className={`${isVerified(index) ? "!border-y-green-500 bg-gray-300" : ""}
+                  ${isVerified(index + 1) && isVerified(index) ? "!border-b-gray-400" : ""}
+                  ${isVerified(index - 1) && isVerified(index) ? "!border-t-gray-400" : ""}
+                  ${isVerified(index + 1) && !isVerified(index) ? "!border-b-green-500" : ""}`}
+                >
                     <Controller
                       name={`${path}.${index}.fr`}
                       control={control}
@@ -188,26 +201,37 @@ const VerifiedBilingualTable = ({
                     />
                   </TableCell>
                   {valueColumn && (
-                    <TableCell>
+                     <TableCell
+                     className={`${isVerified(index) ? "!border-y-green-500 bg-gray-300" : ""}
+                   ${isVerified(index + 1) && isVerified(index) ? "!border-b-gray-400" : ""}
+                   ${isVerified(index - 1) && isVerified(index) ? "!border-t-gray-400" : ""}
+                   ${isVerified(index + 1) && !isVerified(index) ? "!border-b-green-500" : ""}`}
+                   >
                       <QuantityInput
                         name={`${path}.${index}`}
                         control={control}
                         unitOptions={unitOptions ?? []}
                         disabled={isVerified(index)}
+                        verified={isVerified(index)}
                       />
                     </TableCell>
                   )}
-                  <TableCell>
+                   <TableCell
+                  className={`${isVerified(index) ? "!border-y-green-500 bg-gray-300" : ""}
+                                    ${isVerified(index + 1) && isVerified(index) ? "!border-b-gray-400" : ""}
+                                    ${isVerified(index - 1) && isVerified(index) ? "!border-t-gray-400" : ""}
+                                    ${isVerified(index + 1) && !isVerified(index) ? "!border-b-green-500" : ""}`}
+                >
                     <Box className="flex justify-center gap-2">
                       <Tooltip
                         title={t("verifiedBilingualTable.delete")}
                         enterDelay={1000}
-                        disableHoverListener={isVerified(index)}
+                        disableHoverListener={isVerified(index) || fields.length <= 1}
                       >
                         <span>
                           <IconButton
                             onClick={() => remove(index)}
-                            disabled={isVerified(index)}
+                            disabled={isVerified(index) || fields.length <= 1}
                             aria-label={t(
                               "verifiedBilingualTable.accessibility.deleteButton",
                             )}
@@ -217,7 +241,13 @@ const VerifiedBilingualTable = ({
                           </IconButton>
                         </span>
                       </Tooltip>
-                      <Divider orientation="vertical" flexItem />
+                      <Divider
+                      orientation="vertical"
+                      flexItem
+                      sx={{
+                        bgcolor: isVerified(index) ? "#00C55E" : "inherit"
+                      }}
+                    />
                       <Controller
                         name={`${path}.${index}.verified`}
                         control={control}

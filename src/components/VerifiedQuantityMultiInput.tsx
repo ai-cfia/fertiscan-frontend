@@ -2,21 +2,9 @@ import { DEFAULT_QUANTITY } from "@/types/types";
 import AddIcon from "@mui/icons-material/Add";
 import CheckIcon from "@mui/icons-material/Check";
 import DeleteIcon from "@mui/icons-material/Delete";
-import {
-  Box,
-  Button,
-  Divider,
-  IconButton,
-  Tooltip,
-  Typography,
-} from "@mui/material";
+import { Box, Button, Divider, IconButton, Tooltip, Typography } from "@mui/material";
 import { useState } from "react";
-import {
-  Controller,
-  useFieldArray,
-  useFormContext,
-  useWatch,
-} from "react-hook-form";
+import { Controller, useFieldArray, useFormContext, useWatch } from "react-hook-form";
 import { useTranslation } from "react-i18next";
 import QuantityInput from "./QuantityInput";
 import StyledSkeleton from "./StyledSkeleton";
@@ -87,6 +75,7 @@ const VerifiedQuantityMultiInput: React.FC<VerifiedQuantityMultiInputProps> = ({
     return !isDuplicate || "errors.duplicateUnit";
   };
 
+
   return (
     <Box>
       {/* Label Section */}
@@ -103,7 +92,7 @@ const VerifiedQuantityMultiInput: React.FC<VerifiedQuantityMultiInputProps> = ({
         <Box
           className={`w-full flex items-center p-1 border-2 rounded-tr-md rounded-br-md ${
             isFocused ? "border-fertiscan-blue" : ""
-          } ${verified ? "border-green-500" : ""}  ${className}`}
+          } ${verified ? "border-green-500 bg-gray-300" : ""}  ${className}`}
           data-testid={`quantity-multi-input-${path}`}
         >
           {/* Fields */}
@@ -111,36 +100,41 @@ const VerifiedQuantityMultiInput: React.FC<VerifiedQuantityMultiInputProps> = ({
             className="flex flex-1 flex-col"
             data-testid={`fields-container-${path}`}
           >
-            {fields.map((fieldItem, index) => (
-              <Box
-                className="ml-2"
-                key={fieldItem.id}
-                data-testid={`field-row-${quantitiesPath}-${index}`}
-              >
-                <Box className="flex items-center">
-                  {/* Value & Unit Input */}
-                  <QuantityInput
-                    name={`${quantitiesPath}.${index}`}
-                    control={control}
-                    unitOptions={unitOptions}
-                    disabled={verified}
-                    unitRules={{
-                      validate: validateDuplicateUnit,
-                    }}
-                    onFocus={() => setIsFocused(true)}
-                    onblur={() => setIsFocused(false)}
-                  />
+            {fields.map((fieldItem, index) => {
+              const isLastItem = index === fields.length - 1;
 
-                  {/* Delete Row Button */}
-                  <Tooltip
-                    enterDelay={1000}
-                    title={t("verifiedQuantityMultiInput.deleteRow")}
-                    disableHoverListener={verified}
-                  >
-                    <span>
+              return (
+                <Box
+                  className="ml-2"
+                  key={fieldItem.id}
+                  data-testid={`field-row-${quantitiesPath}-${index}`}
+                >
+                  <Box className="flex items-center">
+                    {/* Value & Unit Input */}
+                    <QuantityInput
+                      name={`${quantitiesPath}.${index}`}
+                      control={control}
+                      unitOptions={unitOptions}
+                      disabled={verified}
+                      unitRules={{
+                        validate: validateDuplicateUnit,
+                      }}
+                      onFocus={() => setIsFocused(true)}
+                      onblur={() => setIsFocused(false)}
+                      verified={verified}
+                    />
+
+                    {/* Delete Row Button */}
+                    <Tooltip
+                      enterDelay={1000}
+                      title={t("verifiedQuantityMultiInput.deleteRow")}
+                      disableHoverListener={verified}
+                    >
+                      <span>
                       <IconButton
                         size="small"
                         className="text-white"
+                        sx={{display: verified ? "none" : (fields.length === 1 ? "none" : "flex")}}
                         onClick={() => remove(index)}
                         disabled={verified}
                         aria-label={t(
@@ -148,17 +142,22 @@ const VerifiedQuantityMultiInput: React.FC<VerifiedQuantityMultiInputProps> = ({
                         )}
                         data-testid={`delete-button-${quantitiesPath}-${index}`}
                       >
-                        <DeleteIcon />
-                      </IconButton>
-                    </span>
-                  </Tooltip>
-                </Box>
-                <Divider
+                          <DeleteIcon />
+                        </IconButton>
+                      </span>
+                    </Tooltip>
+                  </Box>
+                  <Divider
                   className={`!my-1 ${isFocused ? "!border-fertiscan-blue" : ""}`}
-                  data-testid={`row-divider-${quantitiesPath}-${index}`}
-                />
-              </Box>
-            ))}
+                  sx={{
+                    bgcolor: verified ? "#00C55E" : "inherit",
+                    display: isLastItem && verified? "none" : "block",
+                  }}
+                    data-testid={`row-divider-${quantitiesPath}-${index}`}
+                  />
+                </Box>
+              );
+            })}
 
             {/* Add Row Button */}
             <Button
@@ -179,6 +178,7 @@ const VerifiedQuantityMultiInput: React.FC<VerifiedQuantityMultiInputProps> = ({
           {/* Vertical Divider */}
           <Divider
             className={`my-2 ${isFocused ? "!border-fertiscan-blue" : ""}`}
+            sx={{ bgcolor: verified ? "#00C55E" : "inherit" }}
             data-testid={`vertical-divider-${quantitiesPath}`}
             flexItem
             orientation="vertical"
