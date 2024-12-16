@@ -5,6 +5,7 @@ import { FormProvider, useForm, useWatch } from "react-hook-form";
 import { useTranslation } from "react-i18next";
 import { VerifiedInput } from "./VerifiedFieldComponents";
 import VerifiedQuantityMultiInput from "./VerifiedQuantityMultiInput";
+import useHoverStore from "@/stores/hoverStore";
 
 const BaseInformationForm: React.FC<FormComponentProps> = ({
   labelData,
@@ -14,6 +15,8 @@ const BaseInformationForm: React.FC<FormComponentProps> = ({
   const methods = useForm<LabelData>({
     defaultValues: labelData,
   });
+
+  const { setHoveredText } = useHoverStore();
 
   const watchedBaseInformation = useWatch({
     control: methods.control,
@@ -37,6 +40,7 @@ const BaseInformationForm: React.FC<FormComponentProps> = ({
             label={t("baseInformation.fields.name.label")}
             placeholder={t("baseInformation.fields.name.placeholder")}
             path="baseInformation.name"
+            handleHoveredTextChange={setHoveredText} // Passe cette prop
           />
           <VerifiedInput
             label={t("baseInformation.fields.registrationNumber.label")}
@@ -44,16 +48,19 @@ const BaseInformationForm: React.FC<FormComponentProps> = ({
               "baseInformation.fields.registrationNumber.placeholder",
             )}
             path="baseInformation.registrationNumber"
+            handleHoveredTextChange={setHoveredText} // Passe cette prop
           />
           <VerifiedInput
             label={t("baseInformation.fields.lotNumber.label")}
             placeholder={t("baseInformation.fields.lotNumber.placeholder")}
             path="baseInformation.lotNumber"
+            handleHoveredTextChange={setHoveredText} // Passe cette prop
           />
           <VerifiedInput
             label={t("baseInformation.fields.npk.label")}
             placeholder={t("baseInformation.fields.npk.placeholder")}
             path="baseInformation.npk"
+            handleHoveredTextChange={setHoveredText} // Passe cette prop
           />
           <VerifiedQuantityMultiInput
             label={t("baseInformation.fields.weight.label")}
