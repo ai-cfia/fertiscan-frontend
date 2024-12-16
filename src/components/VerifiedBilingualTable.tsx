@@ -9,6 +9,7 @@ import {
   Button,
   Divider,
   IconButton,
+  SvgIcon,
   Table,
   TableBody,
   TableCell,
@@ -27,6 +28,7 @@ import {
 import { useTranslation } from "react-i18next";
 import QuantityInput from "./QuantityInput";
 import StyledTextField from "./StyledTextField";
+import { useState } from "react";
 
 interface VerifiedBilingualTableProps {
   path: string;
@@ -44,6 +46,7 @@ const VerifiedBilingualTable = ({
     control,
     name: path,
   });
+  const [hover, setHover] = useState(false);
   const { t } = useTranslation("labelDataValidationPage");
 
   const data = useWatch({ control, name: path });
@@ -116,7 +119,7 @@ const VerifiedBilingualTable = ({
           <TableBody>
             {fields.map((field, index) => (
               <TableRow
-                className={`${isVerified(index) ? "!border-green-500 !border-4" : ""}`}
+                className={`${isVerified(index) ? "!border-green-500 !border-2" : ""}`}
                 key={field.id}
                 data-testid={`table-row-${path}-${index}`}
               >
@@ -210,8 +213,9 @@ const VerifiedBilingualTable = ({
                     <Tooltip
                       title={t("verifiedBilingualTable.delete")}
                       enterDelay={1000}
-                      disableHoverListener={isVerified(index) || fields.length <= 1}
-
+                      disableHoverListener={
+                        isVerified(index) || fields.length <= 1
+                      }
                     >
                       <span>
                         <IconButton
@@ -220,7 +224,6 @@ const VerifiedBilingualTable = ({
                           aria-label={t(
                             "verifiedBilingualTable.accessibility.deleteButton",
                           )}
-
                           data-testid={`delete-row-btn-${path}-${index}`}
                         >
                           <DeleteIcon aria-hidden="true" />
@@ -259,11 +262,23 @@ const VerifiedBilingualTable = ({
                                   : "verifiedBilingualTable.accessibility.verifyButton",
                               )}
                               data-testid={`verify-row-btn-${path}-${index}`}
+                              onMouseEnter={() => setHover(true)}
+                              onMouseLeave={() => setHover(false)}
                             >
-                              <CheckIcon
-                                className={value ? "text-green-500" : ""}
-                                aria-hidden="true"
-                              />
+                              {hover && isVerified(index) ? (
+                                <SvgIcon aria-hidden>
+                                  <image
+                                    href="/img/unverifyIcon.svg"
+                                    height="24"
+                                    width="24"
+                                  />
+                                </SvgIcon>
+                              ) : (
+                                <CheckIcon
+                                  className={value ? "text-green-500" : ""}
+                                  aria-hidden
+                                />
+                              )}
                             </IconButton>
                           </span>
                         </Tooltip>

@@ -2,7 +2,7 @@ import { DEFAULT_QUANTITY } from "@/types/types";
 import AddIcon from "@mui/icons-material/Add";
 import CheckIcon from "@mui/icons-material/Check";
 import DeleteIcon from "@mui/icons-material/Delete";
-import { Box, Button, Divider, IconButton, Tooltip, Typography } from "@mui/material";
+import { Box, Button, Divider, IconButton, SvgIcon, Tooltip, Typography } from "@mui/material";
 import { useState } from "react";
 import { Controller, useFieldArray, useFormContext, useWatch } from "react-hook-form";
 import { useTranslation } from "react-i18next";
@@ -24,6 +24,7 @@ const VerifiedQuantityMultiInput: React.FC<VerifiedQuantityMultiInputProps> = ({
   const { t } = useTranslation("labelDataValidationPage");
   const { control, trigger } = useFormContext();
   const [isFocused, setIsFocused] = useState(false);
+  const [hover, setHover] = useState(false);
 
   const quantitiesPath = `${path}.quantities`;
   const verifiedPath = `${path}.verified`;
@@ -197,11 +198,20 @@ const VerifiedQuantityMultiInput: React.FC<VerifiedQuantityMultiInputProps> = ({
                   "verifiedQuantityMultiInput.accessibility.verifyToggleButton",
                 )}
                 data-testid={`toggle-verified-btn-${path}`}
+                onMouseEnter={() => setHover(true)}
+                onMouseLeave={() => setHover(false)}
               >
-                <CheckIcon
-                  className={value ? "text-green-500" : ""}
-                  data-testid={`verified-icon-${path}`}
-                />
+                 {hover && verified ? (
+                    <SvgIcon aria-hidden>
+                    <image href="/img/unverifyIcon.svg" height="24" width="24" />
+                    </SvgIcon>
+                ) : (
+                  <CheckIcon
+                    className={value ? "text-green-500" : ""}
+                    data-testid={`verified-icon-${verifiedPath}`}
+                    aria-hidden
+                  />
+                )}
               </IconButton>
             </Tooltip>
           )}
