@@ -75,7 +75,7 @@ const VerifiedBilingualTable = ({
           <TableHead>
             <TableRow>
               <TableCell
-                className={`${isVerified(0) ? "!border-b-green-500 !border-b-2" : ""} min-w-48`}
+                className={` select-none ${isVerified(0) ? "!border-b-green-500 !border-b-2" : ""} min-w-48`}
                 data-testid={`table-header-english-${path}`}
               >
                 <Typography variant="subtitle1" fontWeight="bold">
@@ -83,7 +83,7 @@ const VerifiedBilingualTable = ({
                 </Typography>
               </TableCell>
               <TableCell
-                className={`${isVerified(0) ? "!border-b-green-500 !border-b-2" : ""} min-w-48`}
+                className={`select-none ${isVerified(0) ? "!border-b-green-500 !border-b-2" : ""} min-w-48`}
                 data-testid={`table-header-french-${path}`}
               >
                 <Typography variant="subtitle1" fontWeight="bold">
@@ -92,7 +92,7 @@ const VerifiedBilingualTable = ({
               </TableCell>
               {valueColumn && (
                 <TableCell
-                  className={`${isVerified(0) ? "!border-b-green-500 !border-b-2" : ""} min-w-48`}
+                  className={`select-none ${isVerified(0) ? "!border-b-green-500 !border-b-2" : ""} min-w-48`}
                   data-testid={`table-header-value-${path}`}
                 >
                   <Typography variant="subtitle1" fontWeight="bold">
@@ -102,7 +102,7 @@ const VerifiedBilingualTable = ({
               )}
               <TableCell
                 data-testid={`table-header-actions-${path}`}
-                className={`${isVerified(0) ? "!border-b-green-500 !border-b-2" : ""}`}
+                className={`select-none ${isVerified(0) ? "!border-b-green-500 !border-b-2" : ""}`}
               >
                 <Typography
                   className="text-center"

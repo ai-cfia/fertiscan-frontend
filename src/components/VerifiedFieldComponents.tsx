@@ -145,9 +145,10 @@ export const VerifiedRadio: React.FC<VerifiedRadioProps> = ({
             >
               <FormControlLabel
                 value="yes"
+
                 control={<Radio size="small" />}
                 label={
-                  <Typography className="!text-[15px]">
+                  <Typography className="!text-[15px] select-none">
                     {t("verifiedInput.options.yes")}
                   </Typography>
                 }
@@ -158,7 +159,7 @@ export const VerifiedRadio: React.FC<VerifiedRadioProps> = ({
                 value="no"
                 control={<Radio size="small" />}
                 label={
-                  <Typography className="!text-[15px]">
+                  <Typography className="!text-[15px] select-none">
                     {t("verifiedInput.options.no")}
                   </Typography>
                 }
