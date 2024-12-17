@@ -50,7 +50,7 @@ const VerifiedBilingualTable = ({
     control,
     name: path,
   });
-  const [hover, setHover] = useState(false);
+  const [hoverIndex, setHoverIndex] = useState<number | null>(null);
   const { t } = useTranslation("labelDataValidator");
 
   const data = useWatch({ control, name: path });
@@ -64,7 +64,7 @@ const VerifiedBilingualTable = ({
   };
 
   const toggleVerify = async (index: number) => {
-    await handleVerify(index, Boolean(!data?.[index]?.verified));
+    await handleVerify(index, !data?.[index]?.verified);
   };
 
   const setAllVerified = async (value: boolean) => {
@@ -75,7 +75,6 @@ const VerifiedBilingualTable = ({
     <Box>
       <TableContainer data-testid={`table-container-${path}`}>
         <Table>
-          {/* Table Head */}
           <TableHead>
             <TableRow>
               <TableCell
@@ -128,18 +127,18 @@ const VerifiedBilingualTable = ({
                   data-testid={`skeleton-row-${path}-${index}`}
                 >
                   <TableCell>
-                    <StyledSkeleton  />
+                    <StyledSkeleton />
                   </TableCell>
                   <TableCell>
                     <StyledSkeleton />
                   </TableCell>
                   {valueColumn && (
                     <TableCell>
-                      <StyledSkeleton  />
+                      <StyledSkeleton />
                     </TableCell>
                   )}
                   <TableCell>
-                    <StyledSkeleton  />
+                    <StyledSkeleton />
                   </TableCell>
                 </TableRow>
               ) : (
@@ -149,26 +148,23 @@ const VerifiedBilingualTable = ({
                   data-testid={`table-row-${path}-${index}`}
                 >
                   <TableCell
-                  data-testid={`input-english-cell-${path}-${index}`}
-                  className={`${isVerified(index) ? "!border-y-green-500  bg-gray-300" : ""}
-                  ${isVerified(index + 1) && isVerified(index) ? "!border-b-gray-400" : ""}
-                  ${isVerified(index - 1) && isVerified(index) ? "!border-t-gray-400" : ""}
-                  ${isVerified(index + 1) && !isVerified(index) ? "!border-b-green-500" : ""}`}
-                >
+                    data-testid={`input-english-cell-${path}-${index}`}
+                    className={`
+                      ${isVerified(index) ? "!border-y-green-500  bg-gray-300" : ""}
+                      ${isVerified(index + 1) && isVerified(index) ? "!border-b-gray-400" : ""}
+                      ${isVerified(index - 1) && isVerified(index) ? "!border-t-gray-400" : ""}
+                      ${isVerified(index + 1) && !isVerified(index) ? "!border-b-green-500" : ""}
+                    `}
+                  >
                     <Controller
                       name={`${path}.${index}.en`}
                       control={control}
                       render={({ field }) => (
                         <StyledTextField
                           {...field}
-                          placeholder={t(
-                            "verifiedBilingualTable.placeholders.english",
-                          )}
+                          placeholder={t("verifiedBilingualTable.placeholders.english")}
                           disabled={isVerified(index)}
-                          aria-label={t(
-                            "verifiedBilingualTable.accessibility.englishInput",
-                            { row: index + 1 },
-                          )}
+                          aria-label={t("verifiedBilingualTable.accessibility.englishInput", { row: index + 1 })}
                           aria-disabled={isVerified(index)}
                           data-testid={`input-english-${path}-${index}`}
                           multiline
@@ -177,26 +173,23 @@ const VerifiedBilingualTable = ({
                     />
                   </TableCell>
                   <TableCell
-                  data-testid={`input-french-cell-${path}-${index}`}
-                  className={`${isVerified(index) ? "!border-y-green-500 bg-gray-300" : ""}
-                  ${isVerified(index + 1) && isVerified(index) ? "!border-b-gray-400" : ""}
-                  ${isVerified(index - 1) && isVerified(index) ? "!border-t-gray-400" : ""}
-                  ${isVerified(index + 1) && !isVerified(index) ? "!border-b-green-500" : ""}`}
-                >
+                    data-testid={`input-french-cell-${path}-${index}`}
+                    className={`
+                      ${isVerified(index) ? "!border-y-green-500 bg-gray-300" : ""}
+                      ${isVerified(index + 1) && isVerified(index) ? "!border-b-gray-400" : ""}
+                      ${isVerified(index - 1) && isVerified(index) ? "!border-t-gray-400" : ""}
+                      ${isVerified(index + 1) && !isVerified(index) ? "!border-b-green-500" : ""}
+                    `}
+                  >
                     <Controller
                       name={`${path}.${index}.fr`}
                       control={control}
                       render={({ field }) => (
                         <StyledTextField
                           {...field}
-                          placeholder={t(
-                            "verifiedBilingualTable.placeholders.french",
-                          )}
+                          placeholder={t("verifiedBilingualTable.placeholders.french")}
                           disabled={isVerified(index)}
-                          aria-label={t(
-                            "verifiedBilingualTable.accessibility.frenchInput",
-                            { row: index + 1 },
-                          )}
+                          aria-label={t("verifiedBilingualTable.accessibility.frenchInput", { row: index + 1 })}
                           aria-disabled={isVerified(index)}
                           data-testid={`input-french-${path}-${index}`}
                           multiline
@@ -205,12 +198,14 @@ const VerifiedBilingualTable = ({
                     />
                   </TableCell>
                   {valueColumn && (
-                     <TableCell
-                     className={`${isVerified(index) ? "!border-y-green-500 bg-gray-300" : ""}
-                   ${isVerified(index + 1) && isVerified(index) ? "!border-b-gray-400" : ""}
-                   ${isVerified(index - 1) && isVerified(index) ? "!border-t-gray-400" : ""}
-                   ${isVerified(index + 1) && !isVerified(index) ? "!border-b-green-500" : ""}`}
-                   >
+                    <TableCell
+                      className={`
+                        ${isVerified(index) ? "!border-y-green-500 bg-gray-300" : ""}
+                        ${isVerified(index + 1) && isVerified(index) ? "!border-b-gray-400" : ""}
+                        ${isVerified(index - 1) && isVerified(index) ? "!border-t-gray-400" : ""}
+                        ${isVerified(index + 1) && !isVerified(index) ? "!border-b-green-500" : ""}
+                      `}
+                    >
                       <QuantityInput
                         name={`${path}.${index}`}
                         control={control}
@@ -220,12 +215,14 @@ const VerifiedBilingualTable = ({
                       />
                     </TableCell>
                   )}
-                   <TableCell
-                  className={`${isVerified(index) ? "!border-y-green-500 bg-gray-300" : ""}
-                                    ${isVerified(index + 1) && isVerified(index) ? "!border-b-gray-400" : ""}
-                                    ${isVerified(index - 1) && isVerified(index) ? "!border-t-gray-400" : ""}
-                                    ${isVerified(index + 1) && !isVerified(index) ? "!border-b-green-500" : ""}`}
-                >
+                  <TableCell
+                    className={`
+                      ${isVerified(index) ? "!border-y-green-500 bg-gray-300" : ""}
+                      ${isVerified(index + 1) && isVerified(index) ? "!border-b-gray-400" : ""}
+                      ${isVerified(index - 1) && isVerified(index) ? "!border-t-gray-400" : ""}
+                      ${isVerified(index + 1) && !isVerified(index) ? "!border-b-green-500" : ""}
+                    `}
+                  >
                     <Box className="flex justify-center gap-2">
                       <Tooltip
                         title={t("verifiedBilingualTable.delete")}
@@ -236,9 +233,7 @@ const VerifiedBilingualTable = ({
                           <IconButton
                             onClick={() => remove(index)}
                             disabled={isVerified(index) || fields.length <= 1}
-                            aria-label={t(
-                              "verifiedBilingualTable.accessibility.deleteButton",
-                            )}
+                            aria-label={t("verifiedBilingualTable.accessibility.deleteButton")}
                             data-testid={`delete-row-btn-${path}-${index}`}
                           >
                             <DeleteIcon aria-hidden="true" />
@@ -246,12 +241,10 @@ const VerifiedBilingualTable = ({
                         </span>
                       </Tooltip>
                       <Divider
-                      orientation="vertical"
-                      flexItem
-                      sx={{
-                        bgcolor: isVerified(index) ? "#00C55E" : "inherit"
-                      }}
-                    />
+                        orientation="vertical"
+                        flexItem
+                        sx={{ bgcolor: isVerified(index) ? "#00C55E" : "inherit" }}
+                      />
                       <Controller
                         name={`${path}.${index}.verified`}
                         control={control}
@@ -273,23 +266,23 @@ const VerifiedBilingualTable = ({
                                     : "verifiedBilingualTable.accessibility.verifyButton",
                                 )}
                                 data-testid={`verify-row-btn-${path}-${index}`}
-                                onMouseEnter={() => setHover(true)}
-                                onMouseLeave={() => setHover(false)}
+                                onMouseEnter={() => setHoverIndex(index)}
+                                onMouseLeave={() => setHoverIndex(null)}
                               >
-                                 {hover && isVerified(index) ? (
-                                <SvgIcon aria-hidden>
-                                  <image
-                                    href="/img/unverifyIcon.svg"
-                                    height="24"
-                                    width="24"
+                                {hoverIndex === index && isVerified(index) ? (
+                                  <SvgIcon aria-hidden>
+                                    <image
+                                      href="/img/unverifyIcon.svg"
+                                      height="24"
+                                      width="24"
+                                    />
+                                  </SvgIcon>
+                                ) : (
+                                  <CheckIcon
+                                    className={value ? "text-green-500" : ""}
+                                    aria-hidden
                                   />
-                                </SvgIcon>
-                              ) : (
-                                <CheckIcon
-                                  className={value ? "text-green-500" : ""}
-                                  aria-hidden
-                                />
-                              )}
+                                )}
                               </IconButton>
                             </span>
                           </Tooltip>
@@ -322,9 +315,7 @@ const VerifiedBilingualTable = ({
         <Tooltip
           title={t("verifiedBilingualTable.verifyAll")}
           enterDelay={1000}
-          disableHoverListener={data.every(
-            (row: VerifiedField) => row.verified,
-          )}
+          disableHoverListener={data.every((row: VerifiedField) => row.verified)}
         >
           <span>
             <Button
@@ -332,9 +323,7 @@ const VerifiedBilingualTable = ({
               variant="outlined"
               color="secondary"
               disabled={data.every((row: VerifiedField) => row.verified)}
-              aria-label={t(
-                "verifiedBilingualTable.accessibility.verifyAllButton",
-              )}
+              aria-label={t("verifiedBilingualTable.accessibility.verifyAllButton")}
               data-testid={`verify-all-btn-${path}`}
             >
               <DoneAllIcon aria-hidden="true" />
@@ -346,9 +335,7 @@ const VerifiedBilingualTable = ({
         <Tooltip
           title={t("verifiedBilingualTable.unverifyAll")}
           enterDelay={1000}
-          disableHoverListener={data.every(
-            (row: VerifiedField) => !row.verified,
-          )}
+          disableHoverListener={data.every((row: VerifiedField) => !row.verified)}
         >
           <span>
             <Button
@@ -356,9 +343,7 @@ const VerifiedBilingualTable = ({
               variant="outlined"
               color="secondary"
               disabled={data.every((row: VerifiedField) => !row.verified)}
-              aria-label={t(
-                "verifiedBilingualTable.accessibility.unverifyAllButton",
-              )}
+              aria-label={t("verifiedBilingualTable.accessibility.unverifyAllButton")}
               data-testid={`unverify-all-btn-${path}`}
             >
               <RemoveDoneIcon aria-hidden="true" />

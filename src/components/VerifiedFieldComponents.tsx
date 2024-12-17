@@ -3,7 +3,6 @@ import {
   Box,
   Divider,
   FormControlLabel,
-  Icon,
   IconButton,
   Radio,
   RadioGroup,

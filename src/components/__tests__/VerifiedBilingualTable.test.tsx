@@ -178,13 +178,21 @@ describe("VerifiedBilingualTable rendering and functionality", () => {
     expect(frenchInput.value).toBe("");
   });
 
-  it("deletes a row when Delete button is clicked", () => {
-    render(<Wrapper />);
+  it("deletes a row when there are multiple rows and a Delete button is clicked", () => {
+    render(<Wrapper defaultValues={{
+      bilingualFields: [
+        { en: "Row 1 English", fr: "Row 1 French", verified: false },
+        { en: "Row 2 English", fr: "Row 2 French", verified: false },
+      ],
+    }} />);
+
+    let rows = screen.getAllByTestId(/table-row-bilingualFields-\d+/);
+    expect(rows.length).toBe(2);
 
     fireEvent.click(screen.getByTestId("delete-row-btn-bilingualFields-0"));
 
-    const rows = screen.queryAllByTestId(/table-row-bilingualFields-\d+/);
-    expect(rows.length).toBe(0);
+    rows = screen.queryAllByTestId(/table-row-bilingualFields-\d+/);
+    expect(rows.length).toBe(1);
   });
 
   it("marks all rows as verified when Verify All button is clicked", async () => {
