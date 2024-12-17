@@ -1,9 +1,11 @@
 import { handleApiError } from "@/utils/server/apiErrors";
-import { pipelineApi } from "@/utils/server/backend";
+import { inspectionsApi } from "@/utils/server/backend";
 
 export async function POST(request: Request) {
   const formData = await request.formData();
   const files = formData.getAll("files") as File[];
+  const labelDataString = formData.get("labelData") as string;
+  const labelData = JSON.parse(labelDataString);
 
   const authHeader = request.headers.get("Authorization");
   if (!authHeader) {
@@ -15,10 +17,12 @@ export async function POST(request: Request) {
     );
   }
 
-  return pipelineApi
-    .analyzeDocumentAnalyzePost(files)
-    .then((analyzeResponse) => {
-      return Response.json(analyzeResponse.data);
+  return inspectionsApi
+    .postInspectionInspectionsPost(labelData, files, {
+      headers: { Authorization: authHeader },
+    })
+    .then((inspectionsResponse) => {
+      return Response.json(inspectionsResponse.data);
     })
     .catch((error) => {
       return handleApiError(error);

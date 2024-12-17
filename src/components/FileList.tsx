@@ -32,6 +32,12 @@ const FileList: React.FC<FileListProps> = ({
   const theme = useTheme();
   const { t } = useTranslation("homePage");
   const [renameFileUrl, setRenameFileUrl] = useState<string | null>(null);
+  const [snackbar, setSnackbar] = useState<{
+    open: boolean;
+    message: string;
+    severity: "success" | "error" | "warning" | "info";
+    action: (() => void) | null;
+  }>({ open: false, message: "", severity: "info", action: null });
 
 
   const handleDelete = (url: string) => {
@@ -53,6 +59,14 @@ const FileList: React.FC<FileListProps> = ({
               return newFile;
             })()
           : file,
+      );
+
+      setUploadedFiles(
+        uploadedFiles.map((file) =>
+          file.getInfo().path === renameFileUrl
+            ? (() => { file.setName(newName); return file; })()
+            : file,
+        ),
       );
       setUploadedFiles(newUploadedFiles);
       setRenameFileUrl(null);

@@ -12,12 +12,14 @@ import {
 import { ReactNode, useState } from "react";
 import { Control, Controller, useFormContext, useWatch } from "react-hook-form";
 import { useTranslation } from "react-i18next";
+import StyledSkeleton from "./StyledSkeleton";
 import StyledTextField from "./StyledTextField";
 
 interface VerifiedFieldWrapperProps {
   label: string;
   path: string;
   className?: string;
+  loading?: boolean;
   renderField: (props: {
     setIsFocused: (value: boolean) => void;
     control: Control;
@@ -30,9 +32,10 @@ export const VerifiedFieldWrapper: React.FC<VerifiedFieldWrapperProps> = ({
   label,
   path,
   className = "",
+  loading = false,
   renderField,
 }) => {
-  const { t } = useTranslation("labelDataValidationPage");
+  const { t } = useTranslation("labelDataValidator");
   const { control } = useFormContext();
   const [isFocused, setIsFocused] = useState(false);
 
@@ -52,50 +55,54 @@ export const VerifiedFieldWrapper: React.FC<VerifiedFieldWrapperProps> = ({
         {label}
       </Typography>
 
-      <Box
-        className={`flex items-center p-1 border-2 rounded-tr-md rounded-br-md ${
-          isFocused ? "border-fertiscan-blue" : ""
-        } ${verified ? "border-green-500" : ""} ${className}`}
-        data-testid={`verified-field-${path}`}
-      >
-        {renderField({ setIsFocused, control, valuePath, verified })}
-        <Divider
-          orientation="vertical"
-          flexItem
-          className={isFocused ? "!border-fertiscan-blue" : ""}
-          data-testid={`divider-${path}`}
-        />
-        <Controller
-          name={verifiedPath}
-          control={control}
-          render={({ field: { value, onChange } }) => (
-            <Tooltip
-              title={
-                verified
-                  ? t("verifiedField.unverify", { label })
-                  : t("verifiedField.verify", { label })
-              }
-              enterDelay={1000}
-            >
-              <IconButton
-                onClick={() => onChange(!value)}
-                data-testid={`toggle-verified-btn-${verifiedPath}`}
-                aria-label={
+      {loading ? (
+        <StyledSkeleton />
+      ) : (
+        <Box
+          className={`flex items-center p-1 border-2 rounded-tr-md rounded-br-md ${
+            isFocused ? "border-fertiscan-blue" : ""
+          } ${verified ? "border-green-500" : ""} ${className}`}
+          data-testid={`verified-field-${path}`}
+        >
+          {renderField({ setIsFocused, control, valuePath, verified })}
+          <Divider
+            orientation="vertical"
+            flexItem
+            className={isFocused ? "!border-fertiscan-blue" : ""}
+            data-testid={`divider-${path}`}
+          />
+          <Controller
+            name={verifiedPath}
+            control={control}
+            render={({ field: { value, onChange } }) => (
+              <Tooltip
+                title={
                   verified
                     ? t("verifiedField.unverify", { label })
                     : t("verifiedField.verify", { label })
                 }
+                enterDelay={1000}
               >
-                <CheckIcon
-                  className={value ? "text-green-500" : ""}
-                  data-testid={`verified-icon-${verifiedPath}`}
-                  aria-hidden
-                />
-              </IconButton>
-            </Tooltip>
-          )}
-        />
-      </Box>
+                <IconButton
+                  onClick={() => onChange(!value)}
+                  data-testid={`toggle-verified-btn-${verifiedPath}`}
+                  aria-label={
+                    verified
+                      ? t("verifiedField.unverify", { label })
+                      : t("verifiedField.verify", { label })
+                  }
+                >
+                  <CheckIcon
+                    className={value ? "text-green-500" : ""}
+                    data-testid={`verified-icon-${verifiedPath}`}
+                    aria-hidden
+                  />
+                </IconButton>
+              </Tooltip>
+            )}
+          />
+        </Box>
+      )}
     </Box>
   );
 };
@@ -104,19 +111,22 @@ interface VerifiedRadioProps {
   label: string;
   path: string;
   className?: string;
+  loading?: boolean;
 }
 
 export const VerifiedRadio: React.FC<VerifiedRadioProps> = ({
   label,
   path,
   className = "",
+  loading = false,
 }) => {
-  const { t } = useTranslation("labelDataValidationPage");
+  const { t } = useTranslation("labelDataValidator");
   return (
     <VerifiedFieldWrapper
       label={label}
       path={path}
       className={className}
+      loading={loading}
       renderField={({ setIsFocused, control, valuePath, verified }) => (
         <Controller
           name={valuePath}
@@ -166,6 +176,7 @@ interface VerifiedInputProps {
   placeholder: string;
   path: string;
   className?: string;
+  loading?: boolean;
 }
 
 export const VerifiedInput: React.FC<VerifiedInputProps> = ({
@@ -173,13 +184,15 @@ export const VerifiedInput: React.FC<VerifiedInputProps> = ({
   placeholder,
   path,
   className = "",
+  loading = false,
 }) => {
-  const { t } = useTranslation("labelDataValidationPage");
+  const { t } = useTranslation("labelDataValidator");
   return (
     <VerifiedFieldWrapper
       label={label}
       path={path}
       className={className}
+      loading={loading}
       renderField={({ setIsFocused, control, valuePath, verified }) => (
         <Controller
           name={valuePath}
