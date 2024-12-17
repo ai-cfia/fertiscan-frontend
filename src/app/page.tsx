@@ -1,23 +1,57 @@
 "use client";
+import FileUploaded from "@/classe/File";
 import Dropzone from "@/components/Dropzone";
 import FileList from "@/components/FileList";
-import useUploadedFilesStore from "@/stores/fileStore";
+import useAlertStore from "@/stores/alertStore";
 import type { DropzoneState } from "@/types/types";
 import { Box, Button, Grid2, Tooltip } from "@mui/material";
-import { useRouter } from "next/navigation";
+import axios from "axios";
 import { Suspense, useState } from "react";
 import { useTranslation } from "react-i18next";
 
 function HomePage() {
   const { t } = useTranslation("homePage");
-  const router = useRouter();
+  const { showAlert } = useAlertStore();
 
   const [dropzoneState, setDropzoneState] = useState<DropzoneState>({
     visible: false,
     imageUrl: null,
     fillPercentage: 0,
   });
-  const { uploadedFiles } = useUploadedFilesStore();
+  const [uploadedFiles, setUploadedFiles] = useState<FileUploaded[]>([]);
+
+  const sendFiles = async () => {
+    const formData = new FormData();
+
+    uploadedFiles.forEach((fileUploaded) => {
+      const file = fileUploaded.getFile();
+      formData.append("files", file);
+    });
+
+    const username = "";
+    const password = "";
+    const authHeader = "Basic " + btoa(`${username}:${password}`);
+
+    axios
+      .post("/api/extract-label-data", formData, {
+        headers: { Authorization: authHeader },
+      })
+      .then((response) => {
+        console.log("Server Response:", response.data);
+      })
+      .catch((error) => {
+        if (error.response) {
+          console.error("Error response:", error.response.data);
+          showAlert(error.response.data.error, "error");
+        } else if (error.request) {
+          console.error("Error request:", error.request);
+          showAlert(error.request, "error");
+        } else {
+          console.error("Error message:", error.message);
+          showAlert(error.message, "error");
+        }
+      });
+  };
 
   return (
     <Suspense fallback="loading">
@@ -34,6 +68,8 @@ function HomePage() {
             size={{ xs: 10, md: 7 }}
           >
             <Dropzone
+              uploadedFiles={uploadedFiles}
+              setUploadedFiles={setUploadedFiles}
               dropzoneState={dropzoneState}
               setDropzoneState={setDropzoneState}
             />
@@ -43,19 +79,23 @@ function HomePage() {
             container
             size={{ xs: 10, md: 4 }}
           >
-            <FileList setDropzoneState={setDropzoneState} />
+            <FileList
+              uploadedFiles={uploadedFiles}
+              setUploadedFiles={setUploadedFiles}
+              setDropzoneState={setDropzoneState}
+            />
           </Grid2>
           <Grid2
             sx={{ display: { xs: "none", md: "flex" } }}
             size={{ xs: 10, md: 7 }}
-          />
+          />{" "}
           <Grid2
             className="xs:flex md:flow-root justify-center"
             size={{ xs: 9, md: 4 }}
           >
             <Tooltip
               data-testid="hint-submit-button-disabled"
-              title={t("submitButtonDisabledHint")}
+              title={t("submit_button_disabled_hint")}
               disableHoverListener={uploadedFiles.length !== 0}
               placement="top"
               className="w-[90%] max-w-full"
@@ -68,9 +108,9 @@ function HomePage() {
                   color="secondary"
                   disabled={uploadedFiles.length === 0}
                   fullWidth
-                  onClick={() => router.push("/label-data-validation")}
+                  onClick={sendFiles}
                 >
-                  {t("submitButton")}
+                  {t("submit_button")}
                 </Button>
               </span>
             </Tooltip>
