@@ -138,5 +138,6 @@
     "numbersOnly": "Numbers only",
     "minValue": "Minimum value is 0",
     "duplicateUnit": "Duplicate unit"
-  }
+  },
+  "stepper": { "next": "Next", "back": "Back", "submit": "Submit" }
 }

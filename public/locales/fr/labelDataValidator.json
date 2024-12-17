@@ -138,5 +138,10 @@
     "numbersOnly": "Uniquement des nombres",
     "minValue": "La valeur minimale est 0",
     "duplicateUnit": "Unité dupliquée"
+  },
+  "stepper": {
+    "next": "Suivant",
+    "back": "Retour",
+    "submit": "Soumettre"
   }
 }

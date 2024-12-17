@@ -1,9 +1,10 @@
-import { useEffect, useState } from "react";
-import SignUpModal from "@/components/AuthComponents/SignUpModal";
 import LoginModal from "@/components/AuthComponents/LoginModal";
-import axios, { AxiosError } from "axios";
-import { useTranslation } from "react-i18next";
+import SignUpModal from "@/components/AuthComponents/SignUpModal";
 import useAlertStore from "@/stores/alertStore";
+import axios, { AxiosError } from "axios";
+import Cookies from "js-cookie";
+import { useEffect, useState } from "react";
+import { useTranslation } from "react-i18next";
 
 const RouteGuard = ({ children }: Readonly<{ children: React.ReactNode }>) => {
   const [isAuth, setAuth] = useState(false);
@@ -23,7 +24,7 @@ const RouteGuard = ({ children }: Readonly<{ children: React.ReactNode }>) => {
         },
       );
       if (res.status >= 200 && res.status < 300) {
-        document.cookie = "token=" + btoa(username) + "; SameSite=Strict;";
+        Cookies.set("token", btoa(username), { sameSite: "Strict" });
         setAuth(true);
         return "";
       }
@@ -61,7 +62,7 @@ const RouteGuard = ({ children }: Readonly<{ children: React.ReactNode }>) => {
         },
       );
       if (res.status >= 200 && res.status < 300) {
-        document.cookie = "token=" + btoa(username) + "; SameSite=Strict;";
+        Cookies.set("token", btoa(username), { sameSite: "Strict" });
         setAuth(true);
         return "";
       }
@@ -87,15 +88,7 @@ const RouteGuard = ({ children }: Readonly<{ children: React.ReactNode }>) => {
   };
 
   useEffect(() => {
-    const cookieStore = new Map();
-    const cookies = document.cookie.split(";");
-    cookies.forEach((cookie) => {
-      const [key, value] = cookie.split("=");
-      if (key && value) {
-        cookieStore.set(key.trim(), value.trim());
-      }
-    });
-    setAuth(!!cookieStore.get("token"));
+    setAuth(!!Cookies.get("token"));
   }, []);
 
   return (
