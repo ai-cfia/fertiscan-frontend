@@ -1,15 +1,16 @@
-// default page
-import React from 'react';
-import FertilizerList from "@/components/FertilizerList";
+"use client"
+import FertilizerList from "@/components/InspectionList/InspectionList";
 import { Grid2 as Grid, InputAdornment, TextField, Typography } from "@mui/material";
 import { Search, LocationOn } from "@mui/icons-material";
-
-
+import { useState } from "react";
 
 const Dashboard = () => {
+
+  const [search, setSearch] = useState("");
+
   return <Grid container
                spacing={2}
-               className={"p-10 h-full"}
+               className={"p-5 h-full"}
         >
     <Grid size={{xs:12, sm:4, md:3}} >
       <Grid container className={"p-2 border-gray-200 border-2 rounded-md h-fit"} >
@@ -35,6 +36,8 @@ const Dashboard = () => {
           <TextField
             placeholder={"Search"}
             variant={"filled"}
+            value={search}
+            onChange={(e)=>setSearch(e.target.value)}
             fullWidth
             slotProps={{
               htmlInput: {
@@ -53,7 +56,7 @@ const Dashboard = () => {
         </Grid>
         <hr className={"w-full"}/>
         <Grid size={{xs:12}}>
-          <FertilizerList/>
+          <FertilizerList search={search}/>
         </Grid>
       </Grid>
     </Grid>
