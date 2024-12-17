@@ -32,7 +32,6 @@ const FileList: React.FC<FileListProps> = ({
   const theme = useTheme();
   const { t } = useTranslation("homePage");
   const [renameFileUrl, setRenameFileUrl] = useState<string | null>(null);
-  const [snackbar, setSnackbar] = useState<{
 
   const handleDelete = (url: string) => {
     setUploadedFiles(
