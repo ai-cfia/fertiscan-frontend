@@ -1,11 +1,12 @@
 "use client";
-import React from "react";
-import { Box, Button, Typography, useTheme } from "@mui/material";
-import { CloudUpload } from "@mui/icons-material";
-import type { DropzoneState } from "@/types/types";
 import FileUploaded from "@/classe/File";
-import { useTranslation } from "react-i18next";
 import useAlertStore from "@/stores/alertStore";
+import useUploadedFilesStore from "@/stores/fileStore";
+import type { DropzoneState, ImageLoadEvent } from "@/types/types";
+import { CloudUpload } from "@mui/icons-material";
+import { Box, Button, Typography, useTheme } from "@mui/material";
+import React from "react";
+import { useTranslation } from "react-i18next";
 
 /**
  * Props for the Dropzone component.
@@ -13,8 +14,6 @@ import useAlertStore from "@/stores/alertStore";
  * @interface DropzoneProps
  */
 interface DropzoneProps {
-  uploadedFiles: FileUploaded[];
-  setUploadedFiles: React.Dispatch<React.SetStateAction<FileUploaded[]>>;
   dropzoneState: DropzoneState;
   setDropzoneState: React.Dispatch<React.SetStateAction<DropzoneState>>;
 }
@@ -28,8 +27,6 @@ interface DropzoneProps {
  * @property {React.Dispatch<React.SetStateAction<DropzoneState>>} setDropzoneState - Function to update the dropzone state.
  */
 const Dropzone: React.FC<DropzoneProps> = ({
-  uploadedFiles,
-  setUploadedFiles,
   dropzoneState,
 }) => {
   const theme = useTheme();
@@ -38,6 +35,8 @@ const Dropzone: React.FC<DropzoneProps> = ({
   const { showAlert } = useAlertStore();
 
   const allowedImagesExtensions = [".png", ".jpg", ".jpeg"];
+
+  const { uploadedFiles, addUploadedFile } = useUploadedFilesStore();
 
   function handleDragOver(event: React.DragEvent<HTMLDivElement>) {
     event.preventDefault();
@@ -86,7 +85,7 @@ const Dropzone: React.FC<DropzoneProps> = ({
 
   async function processFile(file: File) {
     const alreadyExists = uploadedFiles.some(
-      (uploadedFile) => uploadedFile.getInfo().name === file.name
+      (uploadedFile) => uploadedFile.getInfo().name === file.name,
     );
 
     if (alreadyExists) {
@@ -104,7 +103,7 @@ const Dropzone: React.FC<DropzoneProps> = ({
     if (typeof detectedType === "object" && detectedType.type === "pdf") {
       showAlert(tAlertBanner("pdfNotSupported"), "info");
     } else {
-      setUploadedFiles((prevFiles) => [...prevFiles, newFile]);
+      addUploadedFile(newFile);
     }
   }
 

@@ -12,6 +12,7 @@ const Wrapper = ({
     quantities: [{ value: "0", unit: "kg" }],
     verified: false,
   },
+  loading = false,
   onSubmit = jest.fn(),
 }: {
   label?: string;
@@ -19,6 +20,7 @@ const Wrapper = ({
   path?: string;
   unitOptions?: string[];
   defaultValues?: VerifiedQuantityField;
+  loading?: boolean;
   onSubmit?: (data: VerifiedQuantityField) => void;
 }) => {
   const methods = useForm<VerifiedQuantityField>({
@@ -38,6 +40,7 @@ const Wrapper = ({
           label={label}
           path={path}
           unitOptions={unitOptions}
+          loading={loading}
         />
         <button type="submit" data-testid="submit-button">
           Submit
@@ -102,6 +105,28 @@ describe("QuantityMultiInput rendering", () => {
     const dropdowns = screen.getAllByTestId(/quantities\.\d+-value-input/);
     expect(dropdowns.length).toBe(2);
     expect(dropdowns[0].children.length).toBeGreaterThan(0);
+  });
+
+  it("handles loading state correctly", () => {
+    const { rerender } = render(<Wrapper loading={true} />);
+
+    const skeleton = screen.getByTestId("styled-skeleton");
+    expect(skeleton).toBeInTheDocument();
+
+    expect(screen.queryByTestId("add-button-")).not.toBeInTheDocument();
+    expect(
+      screen.queryByTestId("toggle-verified-btn-"),
+    ).not.toBeInTheDocument();
+    expect(
+      screen.queryByTestId(/quantities\.\d+-value-input/),
+    ).not.toBeInTheDocument();
+
+    rerender(<Wrapper loading={false} />);
+
+    expect(screen.queryByTestId("styled-skeleton")).not.toBeInTheDocument();
+    expect(screen.getByTestId("add-button-")).toBeInTheDocument();
+    expect(screen.getByTestId("toggle-verified-btn-")).toBeInTheDocument();
+    expect(screen.getAllByTestId(/quantities\.\d+-value-input/).length).toBe(1);
   });
 });
 

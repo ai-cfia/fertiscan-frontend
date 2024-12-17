@@ -2,7 +2,13 @@ import { fireEvent, render, screen } from "@testing-library/react";
 import { FormProvider, useForm } from "react-hook-form";
 import { VerifiedRadio } from "../VerifiedFieldComponents";
 
-const TestWrapper = ({ verified }: { verified: boolean }) => {
+const TestWrapper = ({
+  verified,
+  loading = false,
+}: {
+  verified: boolean;
+  loading?: boolean;
+}) => {
   const methods = useForm({
     defaultValues: {
       fieldName: {
@@ -19,13 +25,14 @@ const TestWrapper = ({ verified }: { verified: boolean }) => {
           label="Test Radio"
           path="fieldName"
           className="test-class"
+          loading={loading}
         />
       </form>
     </FormProvider>
   );
 };
 
-describe("Rendering", () => {
+describe("VerifiedRadio Behavior", () => {
   it("should render all elements with correct attributes and content", () => {
     render(<TestWrapper verified={false} />);
 
@@ -54,6 +61,22 @@ describe("Rendering", () => {
     expect(
       screen.getByTestId("toggle-verified-btn-fieldName.verified"),
     ).toBeInTheDocument();
+  });
+
+  it("handles loading state correctly", () => {
+    const { rerender } = render(<TestWrapper verified={false} loading={true} />);
+
+    const skeleton = screen.getByTestId("styled-skeleton");
+    expect(skeleton).toBeInTheDocument();
+
+    expect(screen.queryByTestId("radio-group-field-fieldName.value")).not.toBeInTheDocument();
+    expect(screen.queryByTestId("toggle-verified-btn-fieldName.verified")).not.toBeInTheDocument();
+
+    rerender(<TestWrapper verified={false} loading={false} />);
+
+    expect(screen.queryByTestId("styled-skeleton")).not.toBeInTheDocument();
+    expect(screen.getByTestId("radio-group-field-fieldName.value")).toBeInTheDocument();
+    expect(screen.getByTestId("toggle-verified-btn-fieldName.verified")).toBeInTheDocument();
   });
 });
 
