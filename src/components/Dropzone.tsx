@@ -2,7 +2,7 @@
 import FileUploaded from "@/classe/File";
 import useAlertStore from "@/stores/alertStore";
 import useUploadedFilesStore from "@/stores/fileStore";
-import type { DropzoneState, ImageLoadEvent } from "@/types/types";
+import type { DropzoneState } from "@/types/types";
 import { CloudUpload } from "@mui/icons-material";
 import { Box, Button, Typography, useTheme } from "@mui/material";
 import React from "react";
