@@ -59,6 +59,7 @@ const FileList: React.FC<FileListProps> = ({
     }
   };
 
+
   const handleDeleteAll = () => {
     setUploadedFiles([]);
     setDropzoneState({ visible: false, imageUrl: null });
