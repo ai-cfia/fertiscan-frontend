@@ -1,5 +1,5 @@
-describe('InspectionList', () => {
-  it('TODO', () => {
-    expect(false).toBe(true)
-  })
-})
+describe("InspectionList", () => {
+  it("TODO", () => {
+    expect(false).toBe(true);
+  });
+});

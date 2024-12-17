@@ -36,12 +36,12 @@ type InspectionPreview = {
   id: string;
   upload_date: string;
   updated_at: string;
-  sample_id: string|null;
-  picture_set_id: string|null;
+  sample_id: string | null;
+  picture_set_id: string | null;
   label_info_id: string;
-  product_name: string|null;
-  manufacturer_info_id: string|null;
+  product_name: string | null;
+  manufacturer_info_id: string | null;
   company_info_id: string;
-  company_name: string|null;
-}
+  company_name: string | null;
+};
 export default InspectionPreview;
