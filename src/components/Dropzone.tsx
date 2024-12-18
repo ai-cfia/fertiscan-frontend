@@ -2,7 +2,7 @@
 import FileUploaded from "@/classe/File";
 import useAlertStore from "@/stores/alertStore";
 import useUploadedFilesStore from "@/stores/fileStore";
-import type { DropzoneState, ImageLoadEvent } from "@/types/types";
+import type { DropzoneState } from "@/types/types";
 import { CloudUpload } from "@mui/icons-material";
 import { Box, Button, Typography, useTheme } from "@mui/material";
 import React from "react";
@@ -28,7 +28,6 @@ interface DropzoneProps {
  */
 const Dropzone: React.FC<DropzoneProps> = ({
   dropzoneState,
-  setDropzoneState,
 }) => {
   const theme = useTheme();
   const { t: tHomePage } = useTranslation("homePage");
@@ -97,7 +96,7 @@ const Dropzone: React.FC<DropzoneProps> = ({
     const newFile = FileUploaded.newFile(
       { username: "user" },
       URL.createObjectURL(file),
-      file,
+      file
     );
 
     const detectedType = await FileUploaded.detectType(newFile.getInfo().path);
@@ -105,34 +104,6 @@ const Dropzone: React.FC<DropzoneProps> = ({
       showAlert(tAlertBanner("pdfNotSupported"), "info");
     } else {
       addUploadedFile(newFile);
-    }
-  }
-
-  /**
-   * Handles the image load event and updates the dropzone state based on the image width.
-   */
-  function handleImageLoad(event: ImageLoadEvent) {
-    const { width } = event.target;
-
-    const dropzoneElement = document.getElementById("dropzone");
-    if (!dropzoneElement) {
-      console.error("Dropzone element not found");
-      return;
-    }
-
-    const { width: parentWidth } = dropzoneElement.getBoundingClientRect();
-    const widthPercentage = (width / parentWidth) * 100;
-
-    if (widthPercentage >= 70) {
-      setDropzoneState((prevState) => ({
-        ...prevState,
-        fillPercentage: Math.max(widthPercentage, 100),
-      }));
-    } else {
-      setDropzoneState((prevState) => ({
-        ...prevState,
-        fillPercentage: 0,
-      }));
     }
   }
 
@@ -151,12 +122,7 @@ const Dropzone: React.FC<DropzoneProps> = ({
           component="img"
           src={dropzoneState.imageUrl}
           alt={tHomePage("altText.hoveredImageAlt")}
-          onLoad={handleImageLoad}
-          className={`absolute max-w-full max-h-full object-contain ${
-            dropzoneState.fillPercentage && dropzoneState.fillPercentage >= 90
-              ? "w-[80%] h-[80%]"
-              : "w-auto h-auto"
-          }`}
+          className="absolute max-w-full max-h-full object-contain w-auto h-auto "
         />
       ) : (
         <Box className="text-center">
@@ -167,13 +133,13 @@ const Dropzone: React.FC<DropzoneProps> = ({
               fontSize: "7rem",
             }}
           />
-          <Typography variant="h5" color={theme.palette.secondary.main}>
+          <Typography  className="select-none" variant="h5" color={theme.palette.secondary.main}>
             <b>{tHomePage("dropzone.dragDrop")}</b>
           </Typography>
-          <Typography variant="h5" color={theme.palette.secondary.main}>
+          <Typography className="select-none" variant="h5" color={theme.palette.secondary.main}>
             <b>{tHomePage("dropzone.or")}</b>
           </Typography>
-          <Button variant="contained" component="label" color="secondary">
+          <Button className="select-none" variant="contained" component="label" color="secondary">
             <b>{tHomePage("dropzone.browseFile")}</b>
             <input
               type="file"
