@@ -1,13 +1,28 @@
 import LabelDataValidator from "@/components/LabelDataValidator";
 import { DEFAULT_LABEL_DATA } from "@/types/types";
+import { VERIFIED_LABEL_DATA } from "@/utils/client/constants";
 import { act, fireEvent, render, screen } from "@testing-library/react";
 import { useState } from "react";
+import useLabelDataStore from "@/stores/labelDataStore";
 
 jest.mock("@/components/ImageViewer", () => ({
   __esModule: true,
   default: jest.fn(() => (
     <div data-testid="mock-image-viewer">Mock Image Viewer</div>
   )),
+}));
+
+const mockedRouterPush = jest.fn();
+jest.mock("next/navigation", () => ({
+  useRouter() {
+    return {
+      route: "/",
+      pathname: "",
+      query: "",
+      asPath: "",
+      push: mockedRouterPush,
+    };
+  },
 }));
 
 const mockFiles = [new File(["mock-content"], "file1.png")];
@@ -19,8 +34,9 @@ const Wrapper: React.FC<{
       React.SetStateAction<typeof DEFAULT_LABEL_DATA>
     >;
   }) => JSX.Element;
-}> = ({ children }) => {
-  const [labelData, setLabelData] = useState(DEFAULT_LABEL_DATA);
+  defaultLabelData?: typeof DEFAULT_LABEL_DATA;
+}> = ({ children, defaultLabelData = DEFAULT_LABEL_DATA }) => {
+  const [labelData, setLabelData] = useState(defaultLabelData);
   return children({ labelData, setLabelData });
 };
 
@@ -400,5 +416,28 @@ describe("LabelDataValidator and Forms Integration", () => {
     });
 
     expect(targetSpan).not.toHaveClass("Mui-completed");
+  });
+
+  it("stores the label data and navigates to the next page when the 'Submit' button is clicked", async () => {
+    render(
+      <Wrapper defaultLabelData={VERIFIED_LABEL_DATA}>
+        {({ labelData, setLabelData }) => (
+          <LabelDataValidator
+            files={mockFiles}
+            labelData={labelData}
+            setLabelData={setLabelData}
+          />
+        )}
+      </Wrapper>,
+    );
+
+    const submitButton = screen.getByText("stepper.submit");
+    await act(async () => {
+      fireEvent.click(submitButton);
+    });
+
+    expect(mockedRouterPush).toHaveBeenCalledTimes(1);
+    expect(useLabelDataStore.getState().labelData).toStrictEqual(VERIFIED_LABEL_DATA);
+    expect(mockedRouterPush).toHaveBeenCalledWith("/label-data-confirmation");
   });
 });
