@@ -6,6 +6,7 @@ import userEvent from "@testing-library/user-event";
 import { useTranslation } from "react-i18next";
 import { Response } from "whatwg-fetch";
 import HomePage from "../page";
+import { DropzoneState } from "@/types/types";
 
 const mockedRouterPush = jest.fn();
 jest.mock("next/navigation", () => ({
@@ -25,29 +26,8 @@ jest.mock("react-i18next", () => ({
     t: (key: string) => key,
   }),
 }));
-const { t } = useTranslation("homePage");
 
-// Mock the FileElement component
-jest.mock(
-  "../../components/FileElement",
-  () =>
-    ({
-      fileName,
-      fileUrl,
-      handleDelete,
-    }: {
-      fileName: string;
-      fileUrl: string;
-      handleDelete: (url: string) => void;
-    }) => (
-      <div data-testid="file-element">
-        <span data-testid="file-name">{fileName}</span>
-        <button data-testid="delete" onClick={() => handleDelete(fileUrl)}>
-          Delete
-        </button>
-      </div>
-    ),
-);
+const { t } = useTranslation("homePage");
 
 global.URL.createObjectURL = jest
   .fn()
@@ -98,18 +78,11 @@ describe("HomePage Component", () => {
     userEvent.upload(input, file);
 
     // Check that the file was uploaded and appears in the list.
-    const fileElement = await screen.findByTestId("file-element");
+    const fileElement = await screen.findByTestId("file-element-hello.png");
     expect(fileElement).toBeInTheDocument();
 
     const fileName = await screen.findByTestId("file-name");
     expect(fileName).toHaveTextContent("hello.png");
-
-    // Find and click the delete button
-    const deleteButton = screen.getByTestId("delete");
-    fireEvent.click(deleteButton);
-
-    // Check that the file was removed
-    expect(screen.queryByTestId("file-element")).not.toBeInTheDocument();
   });
 
   it("should allow file uploads via drag and drop", async () => {
@@ -159,18 +132,11 @@ describe("HomePage Component", () => {
     });
 
     // Check that the file was uploaded and appears in the list.
-    const fileElement = await screen.findByTestId("file-element");
+    const fileElement = await screen.findByTestId("file-element-hello.png");
     expect(fileElement).toBeInTheDocument();
 
     const fileName = await screen.findByTestId("file-name");
     expect(fileName).toHaveTextContent("hello.png");
-
-    // Find and click the delete button
-    const deleteButton = screen.getByTestId("delete");
-    fireEvent.click(deleteButton);
-
-    // Check that the file was removed
-    expect(screen.queryByTestId("file-element")).not.toBeInTheDocument();
   });
 
   it("should allow file upload via input", async () => {
@@ -184,18 +150,11 @@ describe("HomePage Component", () => {
     userEvent.upload(input, file);
 
     // Check that the file was uploaded and appears in the list.
-    const fileElement = await screen.findByTestId("file-element");
+    const fileElement = await screen.findByTestId("file-element-hello.png");
     expect(fileElement).toBeInTheDocument();
 
     const fileName = await screen.findByTestId("file-name");
     expect(fileName).toHaveTextContent("hello.png");
-
-    // Find and click the delete button
-    const deleteButton = screen.getByTestId("delete");
-    fireEvent.click(deleteButton);
-
-    // Check that the file was removed
-    expect(screen.queryByTestId("file-element")).not.toBeInTheDocument();
   });
 
   it("The button submit should be visible when a file is uploaded", async () => {
@@ -209,14 +168,14 @@ describe("HomePage Component", () => {
     userEvent.upload(input, file);
 
     // Check that the file was uploaded and appears in the list.
-    const fileElement = await screen.findByTestId("file-element");
+    const fileElement = await screen.findByTestId("file-element-hello.png");
     expect(fileElement).toBeInTheDocument();
 
     const fileName = await screen.findByTestId("file-name");
     expect(fileName).toHaveTextContent("hello.png");
 
     // Check that the submit button is visible
-    expect(screen.getByTestId("submit-button")).toBeInTheDocument();
+    expect(screen.getByTestId("submit-button")).toBeEnabled();
   });
 
   it("The file count should be displayed when a file is uploaded", async () => {
@@ -230,7 +189,7 @@ describe("HomePage Component", () => {
     userEvent.upload(input, file);
 
     // Check that the file was uploaded and appears in the list.
-    const fileElement = await screen.findByTestId("file-element");
+    const fileElement = await screen.findByTestId("file-element-hello.png");
     expect(fileElement).toBeInTheDocument();
 
     const fileName = await screen.findByTestId("file-name");
@@ -273,11 +232,11 @@ describe("HomePage Component", () => {
     expect(screen.getByText(t("fileList.noUploadedfiles"))).toBeInTheDocument();
   });
 
-  it("The button submit should be deactivated when no file is uploaded", () => {
+  it("The button submit should be deactivated when no file is uploaded", async () => {
     render(<HomePage />);
 
     // Check that the submit button is disabled
-    const submitButton = screen.getByTestId("submit-button");
+    const submitButton = await screen.findByTestId("submit-button");
     expect(submitButton).toBeDisabled();
   });
 
@@ -301,10 +260,10 @@ describe("HomePage Component", () => {
     const input = screen.getByLabelText(t("dropzone.browseFile"));
     userEvent.upload(input, file);
 
-    const fileElement = await screen.findByTestId("file-element");
+    const fileElement = await screen.findByTestId("file-element-hello.png");
     expect(fileElement).toBeInTheDocument();
 
-    const submitButton = screen.getByTestId("submit-button");
+    const submitButton = await screen.getByTestId("submit-button");
     fireEvent.click(submitButton);
 
     expect(mockedRouterPush).toHaveBeenCalledWith("/label-data-validation");

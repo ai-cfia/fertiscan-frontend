@@ -6,6 +6,7 @@ interface UploadedFilesState {
   addUploadedFile: (file: FileUploaded) => void;
   removeUploadedFile: (path: string) => void;
   clearUploadedFiles: () => void;
+  renameUploadedFile: (path: string, newName: string) => void;
 }
 
 const useUploadedFilesStore = create<UploadedFilesState>((set) => ({
@@ -19,6 +20,23 @@ const useUploadedFilesStore = create<UploadedFilesState>((set) => ({
       ),
     })),
   clearUploadedFiles: () => set({ uploadedFiles: [] }),
+
+  renameUploadedFile: (path, newName) =>
+    set((state) => ({
+      uploadedFiles: state.uploadedFiles.map((file) =>
+        file.getInfo().path === path
+          ? (() => {
+              const newFile = new FileUploaded(
+                file.getInfo(),
+                file.getInfo().path,
+                file.getFile(),
+              );
+              newFile.setName(newName);
+              return newFile;
+            })()
+          : file,
+      ),
+    })),
 }));
 
 export default useUploadedFilesStore;
