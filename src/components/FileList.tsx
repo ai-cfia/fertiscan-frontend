@@ -3,7 +3,6 @@
 import React, { Suspense, useState } from "react";
 import { Box, Stack, useTheme, Button, Typography } from "@mui/material";
 import FileElement from "@/components/FileElement";
-import FileUploaded from "@/classe/File";
 import { DropzoneState } from "@/types/types";
 import { useTranslation } from "react-i18next";
 import useUploadedFilesStore from "@/stores/fileStore";
@@ -20,7 +19,6 @@ interface FileListProps {
 const FileList: React.FC<FileListProps> = ({ setDropzoneState }) => {
   const theme = useTheme();
   const { t } = useTranslation("homePage");
-  const [renameFileUrl, setRenameFileUrl] = useState<string | null>(null);
   const { uploadedFiles, clearUploadedFiles } = useUploadedFilesStore();
 
   return (
@@ -40,19 +38,20 @@ const FileList: React.FC<FileListProps> = ({ setDropzoneState }) => {
             backgroundColor: "transparent",
           },
         }}
-        className={`flex relative flex-col justify-center items-center border-2 border-sky-900
+        className={`flex relative flex-col items-center border-2 border-sky-900
                 rounded text-center p-1 bg-transparent bg-contain xs:w-[90%] md:w-[100%] h-[90%]
                 xs:min-h-[350px] md:min-h-[400px] overflow-y-auto overflow-x-hidden min-w-[133.44px] md:max-w-[470px]
                `} // do not modify md:max-w-[470px]
       >
         <Box
           className={`absolute transform w-full h-full flex flex-col
-  ${
-    uploadedFiles.length === 0
-      ? "justify-center items-center p-0 left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2"
-      : "justify-start items-start p-2 left-0 top-0 translate-x-none translate-y-none"
-  }
-  text-center max-w-full max-h-full object-contain `}
+                      ${
+                        uploadedFiles.length === 0
+                          ? "justify-center p-0 left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2"
+                          : "justify-start items-start p-2 left-0 top-0 translate-x-none translate-y-none"
+                      }
+                      text-center max-w-full max-h-full object-contain `
+                    }
         >
           <Typography
             className="select-none"
@@ -85,9 +84,8 @@ const FileList: React.FC<FileListProps> = ({ setDropzoneState }) => {
               {t("fileList.deleteAll")}
             </Button>
           )}
-        </Box>
         <Stack
-          className="w-full flex flex-col items-center"
+          className="w-full flex flex-col"
           direction="column"
           spacing={2}
         >
@@ -100,6 +98,7 @@ const FileList: React.FC<FileListProps> = ({ setDropzoneState }) => {
             />
           ))}
         </Stack>
+      </Box>
       </Box>
     </Suspense>
   );
