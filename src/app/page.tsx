@@ -8,6 +8,7 @@ import { Box, Button, Grid2, Tooltip } from "@mui/material";
 import axios from "axios";
 import { Suspense, useState } from "react";
 import { useTranslation } from "react-i18next";
+import useUploadedFilesStore from "@/stores/fileStore";
 
 function HomePage() {
   const { t } = useTranslation("homePage");
@@ -18,15 +19,11 @@ function HomePage() {
     imageUrl: null,
     fillPercentage: 0,
   });
-  const [uploadedFiles, setUploadedFiles] = useState<FileUploaded[]>([]);
+
+  const { uploadedFiles } = useUploadedFilesStore();
 
   const sendFiles = async () => {
     const formData = new FormData();
-
-    uploadedFiles.forEach((fileUploaded) => {
-      const file = fileUploaded.getFile();
-      formData.append("files", file);
-    });
 
     const username = "";
     const password = "";
@@ -68,8 +65,6 @@ function HomePage() {
             size={{ xs: 10, md: 7 }}
           >
             <Dropzone
-              uploadedFiles={uploadedFiles}
-              setUploadedFiles={setUploadedFiles}
               dropzoneState={dropzoneState}
               setDropzoneState={setDropzoneState}
             />
@@ -80,8 +75,6 @@ function HomePage() {
             size={{ xs: 10, md: 4 }}
           >
             <FileList
-              uploadedFiles={uploadedFiles}
-              setUploadedFiles={setUploadedFiles}
               setDropzoneState={setDropzoneState}
             />
           </Grid2>
