@@ -36,7 +36,8 @@ const AlertBanner: React.FC = () => {
   }, [alert, hideAlert, startAutoDismissTimer]);
 
   return (
-    <Box className="w-full" data-testid="alert-banner-container">
+    <Box className="fixed top-0 left-1/2 transform -translate-x-1/2 w-full max-w-lg"
+      data-testid="alert-banner-container">
       <Collapse in={Boolean(alert)}>
         {alert && (
           <Alert
