@@ -97,10 +97,11 @@ const FileList: React.FC<FileListProps> = ({
         <Box
           className={`absolute transform w-full h-full flex flex-col justify-start items-start p-2 left-0 top-0 text-center max-w-full max-h-full object-contain `}
         >
-          <Box
-            className={`w-full flex flex-row items-center ${
-              uploadedFiles.length == 0 ? "justify-center mt-[50%]" : "justify-start"
-            }`}
+          <Typography
+            className="select-none"
+            variant="h5"
+            color={theme.palette.text.primary}
+            gutterBottom
           >
             <Typography
               variant="h6"
