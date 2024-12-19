@@ -1,7 +1,7 @@
 /* eslint-disable react/display-name */
 /* eslint-disable react-hooks/rules-of-hooks */
 import useUploadedFilesStore from "@/stores/fileStore";
-import { fireEvent, render, screen } from "@testing-library/react";
+import { fireEvent, render, screen, waitFor } from "@testing-library/react";
 import userEvent from "@testing-library/user-event";
 import { useTranslation } from "react-i18next";
 import { Response } from "whatwg-fetch";
@@ -26,28 +26,6 @@ jest.mock("react-i18next", () => ({
   }),
 }));
 const { t } = useTranslation("homePage");
-
-// Mock the FileElement component
-jest.mock(
-  "../../components/FileElement",
-  () =>
-    ({
-      fileName,
-      fileUrl,
-      handleDelete,
-    }: {
-      fileName: string;
-      fileUrl: string;
-      handleDelete: (url: string) => void;
-    }) => (
-      <div data-testid="file-element">
-        <span data-testid="file-name">{fileName}</span>
-        <button data-testid="delete" onClick={() => handleDelete(fileUrl)}>
-          Delete
-        </button>
-      </div>
-    ),
-);
 
 global.URL.createObjectURL = jest
   .fn()
@@ -98,18 +76,24 @@ describe("HomePage Component", () => {
     userEvent.upload(input, file);
 
     // Check that the file was uploaded and appears in the list.
-    const fileElement = await screen.findByTestId("file-element");
+    const fileElement = await screen.findByTestId("file-element-hello.png");
     expect(fileElement).toBeInTheDocument();
 
     const fileName = await screen.findByTestId("file-name");
     expect(fileName).toHaveTextContent("hello.png");
 
+    fireEvent.mouseEnter(fileElement);
+
+    await waitFor(() => {
+
     // Find and click the delete button
-    const deleteButton = screen.getByTestId("delete");
+    const deleteButton = screen.getByTestId("delete-hello.png");
     fireEvent.click(deleteButton);
+    });
+
 
     // Check that the file was removed
-    expect(screen.queryByTestId("file-element")).not.toBeInTheDocument();
+    expect(screen.queryByTestId("file-element-hello.png")).not.toBeInTheDocument();
   });
 
   it("should allow file uploads via drag and drop", async () => {
@@ -159,21 +143,26 @@ describe("HomePage Component", () => {
     });
 
     // Check that the file was uploaded and appears in the list.
-    const fileElement = await screen.findByTestId("file-element");
+    const fileElement = await screen.findByTestId("file-element-hello.png");
     expect(fileElement).toBeInTheDocument();
 
     const fileName = await screen.findByTestId("file-name");
     expect(fileName).toHaveTextContent("hello.png");
 
+    fireEvent.mouseEnter(fileElement);
+
+    await waitFor(() => {
+
     // Find and click the delete button
-    const deleteButton = screen.getByTestId("delete");
+    const deleteButton = screen.getByTestId("delete-hello.png");
     fireEvent.click(deleteButton);
+    });
 
     // Check that the file was removed
-    expect(screen.queryByTestId("file-element")).not.toBeInTheDocument();
+    expect(screen.queryByTestId("file-element-hello.png")).not.toBeInTheDocument();
   });
 
-  it("should allow file upload via input", async () => {
+  it("should allow file upload via input and keep hover effect until delete button is clicked", async () => {
     render(<HomePage />);
 
     // Mock file
@@ -184,18 +173,23 @@ describe("HomePage Component", () => {
     userEvent.upload(input, file);
 
     // Check that the file was uploaded and appears in the list.
-    const fileElement = await screen.findByTestId("file-element");
+    const fileElement = await screen.findByTestId("file-element-hello.png");
     expect(fileElement).toBeInTheDocument();
 
     const fileName = await screen.findByTestId("file-name");
     expect(fileName).toHaveTextContent("hello.png");
 
+    fireEvent.mouseEnter(fileElement);
+
+    await waitFor(() => {
+
     // Find and click the delete button
-    const deleteButton = screen.getByTestId("delete");
+    const deleteButton = screen.getByTestId("delete-hello.png");
     fireEvent.click(deleteButton);
+    });
 
     // Check that the file was removed
-    expect(screen.queryByTestId("file-element")).not.toBeInTheDocument();
+    expect(screen.queryByTestId("file-element-hello.png")).not.toBeInTheDocument();
   });
 
   it("The button submit should be visible when a file is uploaded", async () => {
@@ -209,7 +203,7 @@ describe("HomePage Component", () => {
     userEvent.upload(input, file);
 
     // Check that the file was uploaded and appears in the list.
-    const fileElement = await screen.findByTestId("file-element");
+    const fileElement = await screen.findByTestId("file-element-hello.png");
     expect(fileElement).toBeInTheDocument();
 
     const fileName = await screen.findByTestId("file-name");
@@ -230,7 +224,7 @@ describe("HomePage Component", () => {
     userEvent.upload(input, file);
 
     // Check that the file was uploaded and appears in the list.
-    const fileElement = await screen.findByTestId("file-element");
+    const fileElement = await screen.findByTestId("file-element-hello.png");
     expect(fileElement).toBeInTheDocument();
 
     const fileName = await screen.findByTestId("file-name");
@@ -254,11 +248,11 @@ describe("HomePage Component", () => {
     userEvent.upload(input, [file, file2]);
 
     // Check that the file was uploaded and appears in the list.
-    const fileElement = await screen.findByText("hello.png");
+    const fileElement =  await screen.findByTestId("file-element-hello.png");
     expect(fileElement).toBeInTheDocument();
 
     // Check that the file was uploaded and appears in the list.
-    const fileElement2 = await screen.findByText("hello2.png");
+    const fileElement2 = await screen.findByTestId("file-element-hello2.png");
     expect(fileElement2).toBeInTheDocument();
 
     // Check that the file count is displayed
@@ -301,7 +295,7 @@ describe("HomePage Component", () => {
     const input = screen.getByLabelText(t("dropzone.browseFile"));
     userEvent.upload(input, file);
 
-    const fileElement = await screen.findByTestId("file-element");
+    const fileElement = await screen.findByTestId("file-element-hello.png");
     expect(fileElement).toBeInTheDocument();
 
     const submitButton = screen.getByTestId("submit-button");
