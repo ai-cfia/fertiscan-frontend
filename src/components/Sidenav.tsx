@@ -33,6 +33,7 @@ const SideNav = ({ open, onClose }: DrawerMenuProps) => {
       anchor="left"
       open={open}
       onClose={onClose}
+      transitionDuration={0}
       ModalProps={{
         keepMounted: true,
       }}
@@ -56,7 +57,7 @@ const SideNav = ({ open, onClose }: DrawerMenuProps) => {
                 height="40"
               />
             </Icon>
-            <Typography className="pl-2 self-center" variant="h6">
+            <Typography className="pl-2 self-center select-none" variant="h6">
               <b>{t("sideNav.FertiScan")}</b>
             </Typography>
           </Toolbar>

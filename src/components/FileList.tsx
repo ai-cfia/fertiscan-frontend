@@ -66,6 +66,7 @@ const FileList: React.FC<FileListProps> = ({ setDropzoneState }) => {
                     }
         >
           <Typography
+            className="select-none"
             variant="h5"
             color={theme.palette.text.primary}
             gutterBottom

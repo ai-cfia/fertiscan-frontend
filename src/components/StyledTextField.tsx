@@ -9,6 +9,7 @@ const StyledTextField = React.forwardRef<HTMLInputElement, TextFieldProps>(
         ref={ref}
         variant="standard"
         fullWidth
+        autoComplete="off"
         slotProps={{
           ...props.slotProps,
           input: {
