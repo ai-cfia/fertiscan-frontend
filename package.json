@@ -24,7 +24,7 @@
   "dependencies": {
     "@mui/icons-material": "^6.1.4",
     "@mui/material": "^6.1.8",
-    "@mui/material-nextjs": "^6.1.4",
+    "@mui/material-nextjs": "^6.2.1",
     "axios": "^1.7.9",
     "dotenv": "^16.4.7",
     "i18next": "^24.0.5",
