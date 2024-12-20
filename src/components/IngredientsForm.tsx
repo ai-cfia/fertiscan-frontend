@@ -1,14 +1,17 @@
 import { FormComponentProps, LabelData, UNITS } from "@/types/types";
-import { Box } from "@mui/material";
+import { Box, Typography } from "@mui/material";
 import { useEffect } from "react";
 import { FormProvider, useForm, useWatch } from "react-hook-form";
 import VerifiedBilingualTable from "./VerifiedBilingualTable";
+import { VerifiedRadio } from "./VerifiedFieldComponents";
+import { useTranslation } from "react-i18next";
 
 function IngredientsForm({
   labelData,
   setLabelData,
   loading = false,
 }: FormComponentProps) {
+  const { t } = useTranslation("labelDataValidator");
   const methods = useForm<LabelData>({
     defaultValues: labelData,
   });
@@ -38,7 +41,24 @@ function IngredientsForm({
 
   return (
     <FormProvider {...methods}>
-      <Box className="p-4" data-testid="ingredients-form">
+      <Box className="p-4 text-left" data-testid="ingredients-form">
+      <Typography
+          variant="subtitle1"
+          fontWeight="bold"
+          data-testid="guaranteed-analysis-title"
+        >
+          {t("guaranteedAnalysis.labellingOptions")}
+        </Typography>
+          <Box className="flex flex-shrink-0 mb-4">
+            <VerifiedRadio
+              label={t("guaranteedAnalysis.recordKeeping")}
+              path="ingredients.recordKeeping"
+              loading={loading}
+              isHelpActive={true}
+              helpText={t("guaranteedAnalysis.helpMessage.recordKeeping")}
+              data-testid="guaranteed-analysis-record-keeping"
+            />
+          </Box>
         <VerifiedBilingualTable
           path={"ingredients"}
           unitOptions={UNITS.ingredients}
