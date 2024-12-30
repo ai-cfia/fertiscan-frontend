@@ -42,7 +42,6 @@ function LabelDataValidationPage() {
         setLabelData(labelData);
         setLoading(false);
       } else {
-
         uploadedFiles.forEach((fileUploaded) => {
           const file = fileUploaded.getFile();
           formData.append("files", file);
