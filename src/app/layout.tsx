@@ -12,6 +12,7 @@ import "./globals.css";
 import "./i18n";
 import theme from "./theme";
 import RouteGuard from "@/components/AuthComponents/RouteGuard";
+import DevMenu from "@/components/devMenu/DevMenu";
 
 export default function RootLayout({
   children,
@@ -43,7 +44,10 @@ export default function RootLayout({
             <RouteGuard>
               <SideNav open={sideNavOpen} onClose={handleDrawerClose} />
               <Header setSideNavOpen={setSideNavOpen} />
-              <Box className="mt-16">{children}</Box>
+              <Box className="mt-16">
+                {children}
+                <DevMenu />
+              </Box>
             </RouteGuard>
           </ThemeProvider>
         </AppRouterCacheProvider>

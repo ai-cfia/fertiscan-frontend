@@ -20,6 +20,7 @@ import useBreakpoints from "@/utils/client/useBreakpoints";
 import { Box, Container, Typography } from "@mui/material";
 import { useEffect, useState } from "react";
 import { useTranslation } from "react-i18next";
+import useDevStore from "@/stores/devStore";
 
 interface LabelDataValidatorProps {
   loading?: boolean;
@@ -56,6 +57,45 @@ function LabelDataValidator({
     useState<StepStatus>(StepStatus.Incomplete);
   const [ingredientsStepStatus, setIngredientsStepStatus] =
     useState<StepStatus>(StepStatus.Incomplete);
+
+  // Dev command to confirm all fields
+  const confirmAll = () => {
+    setOrganizationsStepStatus(StepStatus.Completed);
+    setBaseInformationStepStatus(StepStatus.Completed);
+    setCautionsStepStatus(StepStatus.Completed);
+    setInstructionsStepStatus(StepStatus.Completed);
+    setGuaranteedAnalysisStepStatus(StepStatus.Completed);
+    setIngredientsStepStatus(StepStatus.Completed);
+
+    labelData.organizations.forEach((org) => {
+      Object.keys(org).forEach((key) => {
+        org[key as keyof typeof org].verified = true;
+      });
+    });
+
+    Object.keys(labelData.baseInformation).forEach((key) => {
+      labelData.baseInformation[key as keyof typeof labelData.baseInformation].verified = true;
+    });
+
+    (["cautions", "instructions", "ingredients"] as const).forEach((field) => {
+      labelData[field].forEach((item) => {
+        item.verified = true;
+      });
+    });
+
+    (["titleEn", "titleFr", "isMinimal"] as const).forEach((key) => {
+      const field = labelData.guaranteedAnalysis[key as keyof typeof labelData.guaranteedAnalysis];
+      if (typeof field === "object" && "verified" in field) {
+        field.verified = true;
+      }
+    });
+
+    labelData.guaranteedAnalysis.nutrients.forEach((nutrient) => {
+      nutrient.verified = true;
+    });
+
+    setLabelData({ ...labelData });
+  };
 
   const createStep = (
     title: string,
@@ -168,6 +208,14 @@ function LabelDataValidator({
       verified ? StepStatus.Completed : StepStatus.Incomplete,
     );
   }, [labelData.ingredients, setIngredientsStepStatus]);
+
+  const { triggerConfirmAll } = useDevStore();
+
+  useEffect(() => {
+    if (triggerConfirmAll) {
+      confirmAll();
+    }
+  }, [triggerConfirmAll]);
 
   return (
     <Container
