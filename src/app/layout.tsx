@@ -12,6 +12,8 @@ import "./globals.css";
 import "./i18n";
 import theme from "./theme";
 import RouteGuard from "@/components/AuthComponents/RouteGuard";
+import DevMenu from "@/components/DevMenu";
+import useDevStore from "@/stores/devStore";
 
 export default function RootLayout({
   children,
@@ -20,6 +22,7 @@ export default function RootLayout({
   const { showAlert } = useAlertStore();
   const { t, i18n } = useTranslation(["alertBanner", "translation"]);
   const debugMode = process.env.NEXT_PUBLIC_DEBUG === "true";
+  const { isDemoUser } = useDevStore();
 
   if (debugMode) {
     console.log(t("debugMessage"));
@@ -43,8 +46,13 @@ export default function RootLayout({
             <RouteGuard>
               <SideNav open={sideNavOpen} onClose={handleDrawerClose} />
               <Header setSideNavOpen={setSideNavOpen} />
-              <Box className="mt-16">{children}</Box>
-            </RouteGuard>
+              <Box className="mt-16">
+                {children}
+                { isDemoUser &&
+                  <DevMenu />
+                }
+              </Box>
+              </RouteGuard>
           </ThemeProvider>
         </AppRouterCacheProvider>
       </body>

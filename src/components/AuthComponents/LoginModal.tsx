@@ -5,6 +5,7 @@ import theme from "@/app/theme";
 import IconInput from "@/components/IconInput";
 import { useState } from "react";
 import { useTranslation } from "react-i18next";
+import useDevStore from "@/stores/devStore";
 
 interface LoginProps {
   isOpen: boolean;
@@ -19,10 +20,15 @@ const LoginModal = ({ isOpen, login, onChangeMode }: LoginProps) => {
   const { t } = useTranslation("authentication");
 
   const handleSubmit = () => {
-    login(username, password).then((message) => {
-      console.log(message);
-      setErrorMessage(message);
-    });
+      login(username, password).then((message) => {
+        if (message === "" && username === "demoFertiscan"){
+          useDevStore.getState().setIsDemoUser(true);
+          console.log("Dev mod enabled");
+        }else{
+          console.log(message);
+          setErrorMessage(message);
+        }
+        });
   };
 
   return (
