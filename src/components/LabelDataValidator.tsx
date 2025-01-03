@@ -18,8 +18,9 @@ import {
 } from "@/utils/client/fieldValidation";
 import useBreakpoints from "@/utils/client/useBreakpoints";
 import { Box, Container, Typography } from "@mui/material";
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { useTranslation } from "react-i18next";
+import useDevStore from "@/stores/devStore";
 
 interface LabelDataValidatorProps {
   loading?: boolean;
@@ -56,6 +57,44 @@ function LabelDataValidator({
     useState<StepStatus>(StepStatus.Incomplete);
   const [ingredientsStepStatus, setIngredientsStepStatus] =
     useState<StepStatus>(StepStatus.Incomplete);
+
+  const confirmAll = (value: boolean) => {
+    const stepStatus = value ? StepStatus.Completed : StepStatus.Incomplete;
+    setOrganizationsStepStatus(stepStatus);
+    setBaseInformationStepStatus(stepStatus);
+    setCautionsStepStatus(stepStatus);
+    setInstructionsStepStatus(stepStatus);
+    setGuaranteedAnalysisStepStatus(stepStatus);
+    setIngredientsStepStatus(stepStatus);
+    labelData.organizations.forEach((org) => {
+      Object.keys(org).forEach((key) => {
+        org[key as keyof typeof org].verified = value;
+      });
+    });
+    Object.keys(labelData.baseInformation).forEach((key) => {
+      labelData.baseInformation[
+        key as keyof typeof labelData.baseInformation
+      ].verified = value;
+    });
+    (["cautions", "instructions", "ingredients"] as const).forEach((field) => {
+      labelData[field].forEach((item) => {
+        item.verified = value;
+      });
+    });
+    (["titleEn", "titleFr", "isMinimal"] as const).forEach((key) => {
+      const field =
+        labelData.guaranteedAnalysis[
+          key as keyof typeof labelData.guaranteedAnalysis
+        ];
+      if (typeof field === "object" && "verified" in field) {
+        field.verified = value;
+      }
+    });
+    labelData.guaranteedAnalysis.nutrients.forEach((nutrient) => {
+      nutrient.verified = value;
+    });
+    setLabelData({ ...labelData });
+  };
 
   const createStep = (
     title: string,
@@ -168,6 +207,17 @@ function LabelDataValidator({
       verified ? StepStatus.Completed : StepStatus.Incomplete,
     );
   }, [labelData.ingredients, setIngredientsStepStatus]);
+
+  const { triggerConfirmAll } = useDevStore();
+  const [counter, setCounter] = useState(0);
+  useEffect(() => {
+    if(counter > 0) {
+      confirmAll(!triggerConfirmAll);
+      return;
+    }
+    setCounter(counter + 1);
+    console.log(counter);
+  }, [triggerConfirmAll]);
 
   return (
     <Container
