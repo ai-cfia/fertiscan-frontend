@@ -24,10 +24,6 @@ export default function RootLayout({
   const debugMode = process.env.NEXT_PUBLIC_DEBUG === "true";
   const { isDemoUser } = useDevStore();
 
-  if (debugMode) {
-    console.log(t("debugMessage"));
-  }
-
   const handleDrawerClose = () => {
     setSideNavOpen(false);
   };
@@ -48,7 +44,7 @@ export default function RootLayout({
               <Header setSideNavOpen={setSideNavOpen} />
               <Box className="mt-16">
                 {children}
-                { isDemoUser &&
+                { isDemoUser || process.env.NODE_ENV === "development" &&
                   <DevMenu />
                 }
               </Box>
