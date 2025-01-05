@@ -213,7 +213,7 @@ const DevMenu = () => {
                     backgroundColor: "#05486c",
                     gap: "15px",
                     height: "300px",
-                    width: "300px",
+                    width: "400px",
                     alignItems: "start",
                     boxShadow: "0 0 5px rgba(0, 0, 0, 0.3)",
                     display: "flex",
@@ -221,6 +221,7 @@ const DevMenu = () => {
                     overflowY: "auto",
                     flexDirection: "column",
                     paddingTop: "20px",
+                    paddingLeft: "20px",
                   }}
                 >
                   {errorMessages.map(([fullErrorKey, text], i) => (
