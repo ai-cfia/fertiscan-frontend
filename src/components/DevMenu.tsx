@@ -60,7 +60,7 @@ const DevMenu = () => {
       } else if (typeof obj[key] === "object" && obj[key] !== null) {
         // Continue traversing if it's a nested object
         const nestedErrors = extractErrorKeys(obj[key], currentKey);
-        errors = errors.concat(nestedErrors); // Add errors from inner structures
+        errors = errors.concat(nestedErrors);
       }
     }
 
@@ -96,7 +96,6 @@ const DevMenu = () => {
   };
 
   const downloadJson = () => {
-    // First, check if a JSON file has been uploaded
     if (!jsonUploaded) {
       showAlert("No file to download", "error");
       return;
@@ -105,12 +104,10 @@ const DevMenu = () => {
     const url = URL.createObjectURL(jsonUploaded);
     const element = document.createElement("a");
     element.href = url;
-    element.download = jsonUploaded.name; // Use the uploaded file's name
-    document.body.appendChild(element); // Required for this to work in FireFox
+    element.download = jsonUploaded.name;
+    document.body.appendChild(element);
     element.click();
-    document.body.removeChild(element); // Clean up the added element
-
-    // Optional: Revoke the object URL after the download has been triggered to release memory
+    document.body.removeChild(element);
     URL.revokeObjectURL(url);
   };
 
