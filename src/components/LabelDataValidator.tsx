@@ -18,7 +18,7 @@ import {
 } from "@/utils/client/fieldValidation";
 import useBreakpoints from "@/utils/client/useBreakpoints";
 import { Box, Container, Typography } from "@mui/material";
-import { useEffect, useRef, useState } from "react";
+import { useEffect, useState } from "react";
 import { useTranslation } from "react-i18next";
 import useDevStore from "@/stores/devStore";
 

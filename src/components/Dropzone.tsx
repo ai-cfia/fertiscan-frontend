@@ -89,7 +89,7 @@ const Dropzone: React.FC<DropzoneProps> = ({
     );
 
     if (alreadyExists) {
-      showAlert(tAlertBanner("fileExists"), "error");
+      showAlert(tAlertBanner("errors.fileExists"), "error");
       return;
     }
 
@@ -101,7 +101,7 @@ const Dropzone: React.FC<DropzoneProps> = ({
 
     const detectedType = await FileUploaded.detectType(newFile.getInfo().path);
     if (typeof detectedType === "object" && detectedType.type === "pdf") {
-      showAlert(tAlertBanner("pdfNotSupported"), "info");
+      showAlert(tAlertBanner("errors.pdfNotSupported"), "info");
     } else {
       addUploadedFile(newFile);
     }

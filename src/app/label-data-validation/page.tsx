@@ -18,7 +18,7 @@ function LabelDataValidationPage() {
   const [loading, setLoading] = useState(true);
   const { showAlert } = useAlertStore();
   const router = useRouter();
-  const { triggerLabelDataLoad, getJsonFile } = useDevStore();
+  const { triggerLabelDataLoad, getJsonFile, setUploadedJsonFile } = useDevStore();
 
   useEffect(() => {
     const fetchData = async () => {
@@ -59,6 +59,7 @@ function LabelDataValidationPage() {
             const labelData = mapLabelDataOutputToLabelData(labelDataOutput);
 
             formData.append("labelData", JSON.stringify(labelDataOutput));
+            setUploadedJsonFile(new File([JSON.stringify(labelDataOutput)], "labelData.json"));
             axios
               .post("/api/inspections", formData, {
                 headers: { Authorization: authHeader },

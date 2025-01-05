@@ -8,6 +8,8 @@ interface DevStoreProps {
   triggerConfirmAll: boolean;
   setTriggerConfirmAll: (value: boolean) => void;
   getJsonFile: () => Promise<Response>;
+  uploadedJsonFile: File | null;
+  setUploadedJsonFile: (file: File) => void;
 }
 
 const useDevStore = create<DevStoreProps>((set) => ({
@@ -22,6 +24,8 @@ const useDevStore = create<DevStoreProps>((set) => ({
     const response = await fetch("/labelData.json");
     return response;
   },
+  uploadedJsonFile: null,
+  setUploadedJsonFile: (file: File) => set({ uploadedJsonFile: file }),
 }));
 
 export default useDevStore;

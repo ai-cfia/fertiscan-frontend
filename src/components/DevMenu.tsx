@@ -14,9 +14,9 @@ import CheckIcon from "@mui/icons-material/Check";
 import DoneAllIcon from "@mui/icons-material/DoneAll";
 import RemoveDoneIcon from "@mui/icons-material/RemoveDone";
 import SaveIcon from "@mui/icons-material/Save";
+import DownloadIcon from "@mui/icons-material/Download";
 import useAlertStore from "@/stores/alertStore";
-import { useTranslation } from 'react-i18next';
-
+import { useTranslation } from "react-i18next";
 
 const DevMenu = () => {
   const triggerLabelDataLoad = useDevStore(
@@ -34,22 +34,30 @@ const DevMenu = () => {
   const [alertListOpen, setAlertListOpen] = useState(false);
   const showAlert = useAlertStore((state) => state.showAlert);
   const { i18n, t } = useTranslation();
+  const jsonUploaded = useDevStore((state) => state.uploadedJsonFile);
 
   const [errorMessages, setErrorMessages] = useState<[string, string][]>([]);
 
-  const extractErrorKeys = (obj: { [key: string]: any; }, prefix = ''): [string, string][] => {
+  const extractErrorKeys = (
+    obj: { [key: string]: any },
+    prefix = "",
+  ): [string, string][] => {
     let errors: [string, string][] = [];
 
     for (const key of Object.keys(obj)) {
       const currentKey = prefix ? `${prefix}.${key}` : key;
 
-      if (key === 'errors' && typeof obj[key] === 'object' && obj[key] !== null) {
+      if (
+        key === "errors" &&
+        typeof obj[key] === "object" &&
+        obj[key] !== null
+      ) {
         for (const errorKey of Object.keys(obj[key])) {
           const errorDescription = `${obj[key][errorKey]}`;
           const errorPath = `${currentKey}.${errorKey}`;
           errors.push([errorDescription, errorPath]);
         }
-      } else if (typeof obj[key] === 'object' && obj[key] !== null) {
+      } else if (typeof obj[key] === "object" && obj[key] !== null) {
         // Continue traversing if it's a nested object
         const nestedErrors = extractErrorKeys(obj[key], currentKey);
         errors = errors.concat(nestedErrors); // Add errors from inner structures
@@ -72,7 +80,6 @@ const DevMenu = () => {
     console.log("errorMessages: ", allErrors);
   }, [i18n, i18n.language]);
 
-
   const handleAlertActionHover = (value: boolean) => {
     setAlertListOpen(value);
   };
@@ -86,6 +93,25 @@ const DevMenu = () => {
       setSpeedDialOpen(false);
       setAlertListOpen(false);
     }
+  };
+
+  const downloadJson = () => {
+    // First, check if a JSON file has been uploaded
+    if (!jsonUploaded) {
+      showAlert("No file to download", "error");
+      return;
+    }
+
+    const url = URL.createObjectURL(jsonUploaded);
+    const element = document.createElement("a");
+    element.href = url;
+    element.download = jsonUploaded.name; // Use the uploaded file's name
+    document.body.appendChild(element); // Required for this to work in FireFox
+    element.click();
+    document.body.removeChild(element); // Clean up the added element
+
+    // Optional: Revoke the object URL after the download has been triggered to release memory
+    URL.revokeObjectURL(url);
   };
 
   return (
@@ -163,6 +189,17 @@ const DevMenu = () => {
             }}
           />
         )}
+        {window.location.pathname === "/label-data-validation" && (
+          <SpeedDialAction
+            icon={<DownloadIcon />}
+            tooltipTitle="Download JSON"
+            sx={{
+              backgroundColor: "#05486c",
+              color: "#fff",
+            }}
+            onClick={() => downloadJson()}
+          />
+        )}
         <SpeedDialAction
           icon={
             <Box position="relative">
@@ -176,30 +213,30 @@ const DevMenu = () => {
                     backgroundColor: "#05486c",
                     gap: "15px",
                     height: "300px",
-                    width:"300px",
+                    width: "300px",
                     alignItems: "start",
                     boxShadow: "0 0 5px rgba(0, 0, 0, 0.3)",
                     display: "flex",
                     maxHeight: "100px",
                     overflowY: "auto",
                     flexDirection: "column",
-                    paddingTop: "0px",
+                    paddingTop: "20px",
                   }}
                 >
                   {errorMessages.map(([fullErrorKey, text], i) => (
-  <ListItemButton
-    key={i}
-    sx={{
-      height: "10px",
-      padding: "0px",
-      marginTop: "-5px",
-      marginBottom: "5px",
-    }}
-    onClick={() => showAlert(t(fullErrorKey), "error")}
-  >
-    {text}
-  </ListItemButton>
-))}
+                    <ListItemButton
+                      key={i}
+                      sx={{
+                        height: "10px",
+                        padding: "0px",
+                        marginTop: "-5px",
+                        marginBottom: "5px",
+                      }}
+                      onClick={() => showAlert(t(fullErrorKey), "error")}
+                    >
+                      {text}
+                    </ListItemButton>
+                  ))}
                 </List>
               )}
             </Box>
