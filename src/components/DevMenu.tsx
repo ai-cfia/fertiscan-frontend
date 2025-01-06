@@ -19,6 +19,7 @@ import useAlertStore from "@/stores/alertStore";
 import { useTranslation } from "react-i18next";
 
 const DevMenu = () => {
+  const { t } = useTranslation("devMenu");
   const triggerLabelDataLoad = useDevStore(
     (state) => state.triggerLabelDataLoad,
   );
@@ -29,13 +30,11 @@ const DevMenu = () => {
     (state) => state.setTriggerConfirmAll,
   );
   const triggerConfirmAll = useDevStore((state) => state.triggerConfirmAll);
-  const [popOverOpen, setPopOverOpen] = useState(false);
   const [speedDialOpen, setSpeedDialOpen] = useState(false);
   const [alertListOpen, setAlertListOpen] = useState(false);
   const showAlert = useAlertStore((state) => state.showAlert);
-  const { i18n, t } = useTranslation();
+  const { i18n } = useTranslation();
   const jsonUploaded = useDevStore((state) => state.uploadedJsonFile);
-
   const [errorMessages, setErrorMessages] = useState<[string, string][]>([]);
 
   const extractErrorKeys = (
@@ -58,7 +57,6 @@ const DevMenu = () => {
           errors.push([errorDescription, errorPath]);
         }
       } else if (typeof obj[key] === "object" && obj[key] !== null) {
-        // Continue traversing if it's a nested object
         const nestedErrors = extractErrorKeys(obj[key], currentKey);
         errors = errors.concat(nestedErrors);
       }
@@ -78,7 +76,7 @@ const DevMenu = () => {
 
     setErrorMessages(allErrors);
     console.log("errorMessages: ", allErrors);
-  }, [i18n, i18n.language]);
+  }, [i18n, i18n.language, i18n.getDataByLanguage]);
 
   const handleAlertActionHover = (value: boolean) => {
     setAlertListOpen(value);
@@ -87,20 +85,15 @@ const DevMenu = () => {
   const handleOpen = () => setSpeedDialOpen(true);
 
   const handleCloseSpeedDial = () => {
-    if (popOverOpen) {
-      return;
-    } else {
-      setSpeedDialOpen(false);
-      setAlertListOpen(false);
-    }
+    setSpeedDialOpen(false);
+    setAlertListOpen(false);
   };
 
   const downloadJson = () => {
     if (!jsonUploaded) {
-      showAlert("No file to download", "error");
+      showAlert(t("noJsonFile"), "error");
       return;
     }
-
     const url = URL.createObjectURL(jsonUploaded);
     const element = document.createElement("a");
     element.href = url;
@@ -114,7 +107,7 @@ const DevMenu = () => {
   return (
     <>
       <SpeedDial
-        ariaLabel="Dev Menu"
+        ariaLabel={t("devMenu")}
         icon={<SpeedDialIcon />}
         sx={{
           position: "fixed",
@@ -128,6 +121,15 @@ const DevMenu = () => {
       >
         {window.location.pathname !== "/label-data-validation" && (
           <SpeedDialAction
+            tooltipTitle={t("loadData")}
+            onClick={() =>
+              setTriggerLabelDataLoad(triggerLabelDataLoad ? false : true)
+            }
+            sx={{
+              backgroundColor: "#05486c",
+              color: "#fff",
+              position: "relative",
+            }}
             icon={
               <Box position="relative">
                 <FileCopyIcon />
@@ -150,27 +152,13 @@ const DevMenu = () => {
                 )}
               </Box>
             }
-            tooltipTitle="Load Data"
-            onClick={() =>
-              setTriggerLabelDataLoad(triggerLabelDataLoad ? false : true)
-            }
-            sx={{
-              backgroundColor: "#05486c",
-              color: "#fff",
-              position: "relative",
-            }}
           />
         )}
         {window.location.pathname === "/label-data-validation" && (
           <SpeedDialAction
-            icon={
-              triggerConfirmAll ? (
-                <DoneAllIcon />
-              ) : (
-                <RemoveDoneIcon aria-hidden="true" />
-              )
+            tooltipTitle={
+              triggerConfirmAll ? t("confirmAll") : t("unconfirmAll")
             }
-            tooltipTitle={triggerConfirmAll ? "Confirm All" : "Unconfirm All"}
             sx={{
               backgroundColor: "#05486c",
               color: "#fff",
@@ -181,15 +169,21 @@ const DevMenu = () => {
               },
             }}
             onClick={() => {
-              setTriggerConfirmAll(!triggerConfirmAll),
-                console.log("triggerConfirmAll: ", triggerConfirmAll);
+              setTriggerConfirmAll(!triggerConfirmAll);
             }}
+            icon={
+              triggerConfirmAll ? (
+                <DoneAllIcon />
+              ) : (
+                <RemoveDoneIcon aria-hidden="true" />
+              )
+            }
           />
         )}
         {window.location.pathname === "/label-data-validation" && (
           <SpeedDialAction
             icon={<DownloadIcon />}
-            tooltipTitle="Download JSON"
+            tooltipTitle={t("downloadJsonFile")}
             sx={{
               backgroundColor: "#05486c",
               color: "#fff",
@@ -198,6 +192,12 @@ const DevMenu = () => {
           />
         )}
         <SpeedDialAction
+          tooltipTitle={t("showAlert")}
+          sx={{
+            backgroundColor: "#05486c",
+            color: "#fff",
+          }}
+          onMouseEnter={() => handleAlertActionHover(true)}
           icon={
             <Box position="relative">
               <SaveIcon />
@@ -206,6 +206,7 @@ const DevMenu = () => {
                   sx={{
                     position: "absolute",
                     right: "35px",
+                    top: "-10px",
                     zIndex: 10,
                     backgroundColor: "#05486c",
                     gap: "15px",
@@ -239,12 +240,6 @@ const DevMenu = () => {
               )}
             </Box>
           }
-          tooltipTitle="Test show alert list"
-          sx={{
-            backgroundColor: "#05486c",
-            color: "#fff",
-          }}
-          onMouseEnter={() => handleAlertActionHover(true)}
         />
       </SpeedDial>
     </>
