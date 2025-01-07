@@ -70,7 +70,7 @@ function HomePage() {
                   color="secondary"
                   disabled={uploadedFiles.length === 0}
                   fullWidth
-                  onClick={() =>{ router.push("/label-data-validation"), setTriggerConfirmAll(true);}}
+                  onClick={() =>{ router.push("/label-data-validation"); setTriggerConfirmAll(true);}}
                 >
                   {t("submitButton")}
                 </Button>

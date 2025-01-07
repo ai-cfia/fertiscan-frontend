@@ -21,7 +21,6 @@ export default function RootLayout({
   const [sideNavOpen, setSideNavOpen] = useState(false);
   const { showAlert } = useAlertStore();
   const { t, i18n } = useTranslation(["alertBanner", "translation"]);
-  const debugMode = process.env.NEXT_PUBLIC_DEBUG === "true";
   const { isDemoUser } = useDevStore();
 
   const handleDrawerClose = () => {

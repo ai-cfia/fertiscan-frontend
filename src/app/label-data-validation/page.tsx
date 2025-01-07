@@ -101,11 +101,12 @@ function LabelDataValidationPage() {
           });
 
         return () => {
-          controller.abort(); // avoids react strict mode double fetch
+          controller.abort();
         };
       }
     };
     fetchData();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [uploadedFiles, showAlert, router]);
 
   return (

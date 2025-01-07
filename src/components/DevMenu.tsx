@@ -3,7 +3,6 @@ import {
   Box,
   List,
   ListItemButton,
-  ListItemText,
   SpeedDial,
   SpeedDialAction,
   SpeedDialIcon,
@@ -38,7 +37,7 @@ const DevMenu = () => {
   const [errorMessages, setErrorMessages] = useState<[string, string][]>([]);
 
   const extractErrorKeys = (
-    obj: { [key: string]: any },
+    obj: Record<string, unknown>,
     prefix = "",
   ): [string, string][] => {
     let errors: [string, string][] = [];
@@ -51,13 +50,13 @@ const DevMenu = () => {
         typeof obj[key] === "object" &&
         obj[key] !== null
       ) {
-        for (const errorKey of Object.keys(obj[key])) {
-          const errorDescription = `${obj[key][errorKey]}`;
+        for (const errorKey of Object.keys(obj[key] as Record<string, unknown>)) {
+          const errorDescription = `${(obj[key] as Record<string, unknown>)[errorKey]}`;
           const errorPath = `${currentKey}.${errorKey}`;
           errors.push([errorDescription, errorPath]);
         }
       } else if (typeof obj[key] === "object" && obj[key] !== null) {
-        const nestedErrors = extractErrorKeys(obj[key], currentKey);
+        const nestedErrors = extractErrorKeys(obj[key] as Record<string, unknown>, currentKey);
         errors = errors.concat(nestedErrors);
       }
     }
@@ -67,15 +66,12 @@ const DevMenu = () => {
 
   useEffect(() => {
     const translation = i18n.getDataByLanguage(i18n.language) || {};
-    console.log("translation: ", translation);
-
     const allErrors: [string, string][] = [];
     Object.keys(translation).forEach((key: string) => {
       allErrors.push(...extractErrorKeys(translation[key] || {}, key));
     });
-
     setErrorMessages(allErrors);
-    console.log("errorMessages: ", allErrors);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [i18n, i18n.language, i18n.getDataByLanguage]);
 
   const handleAlertActionHover = (value: boolean) => {
