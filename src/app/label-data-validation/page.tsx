@@ -10,8 +10,9 @@ import axios from "axios";
 import Cookies from "js-cookie";
 import { useRouter } from "next/navigation";
 import { useEffect, useState } from "react";
+import { processLoadingData, processUploadJsonFile,isTriggerLabelDataLoad } from "@/utils/client/devMenu";
 
-function LabelDataValidationPage() {
+const LabelDataValidationPage = () => {
   const { uploadedFiles } = useUploadedFilesStore();
   const [labelData, setLabelData] = useState(DEFAULT_LABEL_DATA);
   const [loading, setLoading] = useState(true);
@@ -19,77 +20,91 @@ function LabelDataValidationPage() {
   const router = useRouter();
 
   useEffect(() => {
-    if (uploadedFiles.length === 0) {
-      showAlert("No files uploaded.", "error");
-      router.push("/");
-      return;
-    }
+    const fetchData = async () => {
+      if (uploadedFiles.length === 0 && !isTriggerLabelDataLoad()) {
+        showAlert("No files uploaded.", "error");
+        router.push("/");
+        return;
+      }
 
-    const controller = new AbortController();
-    const signal = controller.signal;
+      const controller = new AbortController();
+      const signal = controller.signal;
+      const formData = new FormData();
+      let labelDataOutput : LabelDataOutput;
 
-    setLoading(true);
-    const formData = new FormData();
 
-    uploadedFiles.forEach((fileUploaded) => {
-      const file = fileUploaded.getFile();
-      formData.append("files", file);
-    });
+      setLoading(true);
+      /* DevMenu code start */
+      if (isTriggerLabelDataLoad()) {
+        setLabelData( await processLoadingData() );
+        setLoading(false);
+      /* DevMenu code finish */
+      } else {
+        uploadedFiles.forEach((fileUploaded) => {
+          const file = fileUploaded.getFile();
+          formData.append("files", file);
+        });
 
-    const username = atob(Cookies.get("token") ?? "");
-    const password = "";
-    const authHeader = "Basic " + btoa(`${username}:${password}`);
-    axios
-      .post("/api/extract-label-data", formData, {
-        headers: { Authorization: authHeader },
-        signal,
-      })
-      .then(async (response) => {
-        const labelDataOutput: LabelDataOutput = response.data;
-        const labelData = mapLabelDataOutputToLabelData(labelDataOutput);
-
-        formData.append("labelData", JSON.stringify(labelDataOutput));
+        const username = atob(Cookies.get("token") ?? "");
+        const password = "";
+        const authHeader = "Basic " + btoa(`${username}:${password}`);
         axios
-          .post("/api/inspections", formData, {
+          .post("/api/extract-label-data", formData, {
             headers: { Authorization: authHeader },
             signal,
           })
-          .then((response) => {
-            const inspection: Inspection = response.data;
-            router.push(`/label-data-validation/${inspection.inspection_id}`);
-            return null;
+          .then(async (response) => {
+            labelDataOutput = response.data;
+            const labelData = mapLabelDataOutputToLabelData(labelDataOutput);
+            formData.append("labelData", JSON.stringify(labelDataOutput));
+            axios
+              .post("/api/inspections", formData, {
+                headers: { Authorization: authHeader },
+                signal,
+              })
+              .then((response) => {
+                const inspection: Inspection = response.data;
+                router.push(
+                  `/label-data-validation/${inspection.inspection_id}`,
+                );
+                return null;
+              })
+              .catch((error) => {
+                if (axios.isCancel(error)) {
+                  console.log("Request canceled");
+                } else {
+                  showAlert(
+                    `Label data initial save failed: ${processAxiosError(error)}`,
+                    "error",
+                  );
+                  setLoading(false);
+                }
+              })
+              .finally(() => {
+                setLabelData(labelData);
+                // not disabling loading here in case of strict mode abort
+              });
+
+            processUploadJsonFile(labelDataOutput); // Dev menu code
           })
           .catch((error) => {
             if (axios.isCancel(error)) {
               console.log("Request canceled");
             } else {
               showAlert(
-                `Label data initial save failed: ${processAxiosError(error)}`,
+                `Label data extraction failed: ${processAxiosError(error)}`,
                 "error",
               );
               setLoading(false);
             }
-          })
-          .finally(() => {
-            setLabelData(labelData);
-            // not disabling loading here in case of strict mode abort
           });
-      })
-      .catch((error) => {
-        if (axios.isCancel(error)) {
-          console.log("Request canceled");
-        } else {
-          showAlert(
-            `Label data extraction failed: ${processAxiosError(error)}`,
-            "error",
-          );
-          setLoading(false);
-        }
-      });
 
-    return () => {
-      controller.abort(); // avoids react strict mode double fetch
+        return () => {
+          controller.abort();
+        };
+      }
     };
+    fetchData();
   }, [uploadedFiles, showAlert, router]);
 
   return (

@@ -1,0 +1,9 @@
+{
+    "noJsonFile":"Aucun fichier à télécharger",
+    "downloadJsonFile":"Télécharger le fichier JSON",
+    "showAlert":"Afficher la liste des alertes",
+    "confirmAll":"Confirmer tout",
+    "unconfirmAll":"Déconfirmer tout",
+    "loadData":"Charger les données dans le formulaire",
+    "devMenu":"Menu de développement"
+}

@@ -8,6 +8,7 @@ import {
   MenuItem,
   Typography,
 } from "@mui/material";
+import Cookies from "js-cookie";
 import {
   Dispatch,
   ReactElement,
@@ -60,6 +61,7 @@ const UserMenu = ({
 
   const handleLogout = (): void => {
     document.cookie="token=; expires=Thu, 01 Jan 1970 00:00:00 UTC; path=/; SameSite=Strict";
+    Cookies.remove("showDevMenu");
     location.reload()
     handleClose();
   };

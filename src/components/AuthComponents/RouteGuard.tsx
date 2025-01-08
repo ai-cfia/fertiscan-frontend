@@ -14,6 +14,13 @@ const RouteGuard = ({ children }: Readonly<{ children: React.ReactNode }>) => {
 
   const handleLogin = async (username: string, password: string) => {
     try {
+      if (process.env.NODE_ENV === "development") {
+        // Simulate successful login in development
+        Cookies.set("token", btoa(username), { sameSite: "Strict" });
+        setAuth(true);
+        return "";
+      }
+
       const res = await axios.post(
         "/api/login",
         { username: username },
@@ -31,10 +38,10 @@ const RouteGuard = ({ children }: Readonly<{ children: React.ReactNode }>) => {
       return t("errors.unknown");
     } catch (err) {
       if (err instanceof AxiosError) {
-        if (err.status == 401) {
+        if (err.status === 401) {
           return t("errors.unauthorized");
         }
-        if (err.status == 404) {
+        if (err.status === 404) {
           showAlert(t("errors.notFound"), "error");
           return t("errors.notFound");
         }
@@ -48,10 +55,17 @@ const RouteGuard = ({ children }: Readonly<{ children: React.ReactNode }>) => {
     password: string,
     confirm: string,
   ) => {
-    if (password != confirm) {
+    if (password !== confirm) {
       return t("errors.passwordMatch");
     }
     try {
+      if (process.env.NODE_ENV === "development") {
+        // Simulate successful signup in development
+        Cookies.set("token", btoa(username), { sameSite: "Strict" });
+        setAuth(true);
+        return "";
+      }
+
       const res = await axios.post(
         "/api/signup",
         { username: username },
@@ -70,11 +84,11 @@ const RouteGuard = ({ children }: Readonly<{ children: React.ReactNode }>) => {
     } catch (err) {
       if (err instanceof AxiosError) {
         if (err.response) {
-          if (err.response.status == 404) {
+          if (err.response.status === 404) {
             showAlert(t("errors.notFound"), "error");
             return t("errors.notFound");
           }
-          if (err.response.status == 409) {
+          if (err.response.status === 409) {
             return t("errors.usernameTaken");
           }
         }

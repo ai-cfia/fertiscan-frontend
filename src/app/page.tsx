@@ -1,6 +1,7 @@
 "use client";
 import Dropzone from "@/components/Dropzone";
 import FileList from "@/components/FileList";
+import useDevStore from "@/stores/devStore";
 import useUploadedFilesStore from "@/stores/fileStore";
 import type { DropzoneState } from "@/types/types";
 import { Box, Button, Grid2, Tooltip } from "@mui/material";
@@ -8,9 +9,10 @@ import { useRouter } from "next/navigation";
 import { Suspense, useState } from "react";
 import { useTranslation } from "react-i18next";
 
-function HomePage() {
+const HomePage = () =>{
   const { t } = useTranslation("homePage");
   const router = useRouter();
+  const setTriggerConfirmAll = useDevStore((state) => state.setTriggerConfirmAll);
 
   const [dropzoneState, setDropzoneState] = useState<DropzoneState>({
     visible: false,
@@ -68,7 +70,7 @@ function HomePage() {
                   color="secondary"
                   disabled={uploadedFiles.length === 0}
                   fullWidth
-                  onClick={() => router.push("/label-data-validation")}
+                  onClick={() =>{ router.push("/label-data-validation"); setTriggerConfirmAll(true);}}
                 >
                   {t("submitButton")}
                 </Button>
