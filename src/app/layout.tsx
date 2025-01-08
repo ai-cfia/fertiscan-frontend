@@ -39,23 +39,27 @@ export default function RootLayout({
         const decodedUsername = atob(encodedToken);
         console.log("Decoded Username:", decodedUsername);
         setIsDemoUser(decodedUsername === "demoFertiscan");
-        setShowDevMenu(decodedUsername === "demoFertiscan" || Cookies.get("showDevMenu") === "true");
+
+        const isDemoMode = process.env.NEXT_PUBLIC_DEMO_MODE === "true";
+        setShowDevMenu(
+          decodedUsername === "demoFertiscan" ||
+          Cookies.get("showDevMenu") === "true" ||
+          isDemoMode
+        );
       }
     };
 
-    checkUserToken(); // Initial check
+    checkUserToken();
 
     const intervalId = setInterval(() => {
       checkUserToken();
-    }, 5000); // Check every 5 seconds
+    }, 5000);
 
-    // Clean up interval on component unmount
     return () => clearInterval(intervalId);
-  }, []); // Empty dependency array ensures this effect runs once on mount
+  }, []);
 
   i18n.on("languageChanged", handleLanguageChange);
 
-  // Log to track showDevMenu's effect
   useEffect(() => {
     console.log("showDevMenu", showDevMenu);
   }, [showDevMenu]);
