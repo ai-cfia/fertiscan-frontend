@@ -1,8 +1,7 @@
+import { LabelDataOutput } from "@/utils/server/backend";
 import { create } from "zustand";
 
 interface DevStoreProps {
-  isDemoUser: boolean;
-  setIsDemoUser: (isDemoUser: boolean) => void;
   triggerLabelDataLoad: boolean;
   setTriggerLabelDataLoad: (triggerLabelDataLoad: boolean) => void;
   triggerConfirmAll: boolean;
@@ -10,11 +9,11 @@ interface DevStoreProps {
   getJsonFile: () => Promise<Response>;
   uploadedJsonFile: File | null;
   setUploadedJsonFile: (file: File) => void;
+  labelDataOutput: LabelDataOutput | null;
+  setLabelDataOutput: (labelDataOutput: LabelDataOutput) => void;
 }
 
 const useDevStore = create<DevStoreProps>((set) => ({
-  isDemoUser: false,
-  setIsDemoUser: (isDemoUser: boolean) => set({ isDemoUser }),
   triggerLabelDataLoad: false,
   setTriggerLabelDataLoad: (triggerLabelDataLoad: boolean) =>
     set({ triggerLabelDataLoad }),
@@ -26,6 +25,9 @@ const useDevStore = create<DevStoreProps>((set) => ({
   },
   uploadedJsonFile: null,
   setUploadedJsonFile: (file: File) => set({ uploadedJsonFile: file }),
+  labelDataOutput: null,
+  setLabelDataOutput: (labelDataOutput: LabelDataOutput) =>
+    set({ labelDataOutput }),
 }));
 
 export default useDevStore;

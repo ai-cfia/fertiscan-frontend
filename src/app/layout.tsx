@@ -6,14 +6,14 @@ import { Box } from "@mui/material";
 import { AppRouterCacheProvider } from "@mui/material-nextjs/v14-appRouter";
 import { ThemeProvider } from "@mui/material/styles";
 import "dotenv/config";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { useTranslation } from "react-i18next";
 import "./globals.css";
 import "./i18n";
 import theme from "./theme";
 import RouteGuard from "@/components/AuthComponents/RouteGuard";
 import DevMenu from "@/components/DevMenu";
-import useDevStore from "@/stores/devStore";
+import Cookies from "js-cookie"
 
 export default function RootLayout({
   children,
@@ -21,7 +21,7 @@ export default function RootLayout({
   const [sideNavOpen, setSideNavOpen] = useState(false);
   const { showAlert } = useAlertStore();
   const { t, i18n } = useTranslation(["alertBanner", "translation"]);
-  const { isDemoUser } = useDevStore();
+  const [showDevMenu, setShowDevMenu] = useState(false);
 
   const handleDrawerClose = () => {
     setSideNavOpen(false);
@@ -30,6 +30,11 @@ export default function RootLayout({
   const handleLanguageChange = (lng: string) => {
     showAlert(t("languageChanged", { lng }), "info");
   };
+
+  useEffect(() => { // not working as now gonna look with jules
+    setShowDevMenu(Cookies.get("showDevMenu") === "true");
+    console.log("showDevMenu", showDevMenu);
+  }, [Cookies.attributes]);
 
   i18n.on("languageChanged", handleLanguageChange);
 
@@ -43,7 +48,7 @@ export default function RootLayout({
               <Header setSideNavOpen={setSideNavOpen} />
               <Box className="mt-16">
                 {children}
-                { isDemoUser || process.env.NODE_ENV === "development" &&
+                { /*process.env.NODE_ENV === "development" ||*/ showDevMenu &&
                   <DevMenu />
                 }
               </Box>

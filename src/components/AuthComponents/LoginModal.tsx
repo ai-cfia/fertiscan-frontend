@@ -21,13 +21,8 @@ const LoginModal = ({ isOpen, login, onChangeMode }: LoginProps) => {
 
   const handleSubmit = () => {
       login(username, password).then((message) => {
-        if (message === "" && username === "demoFertiscan"){
-          useDevStore.getState().setIsDemoUser(true);
-          console.log("Dev mod enabled");
-        }else{
           console.log(message);
           setErrorMessage(message);
-        }
         });
   };
 

@@ -47,15 +47,15 @@ const DevMenu = () => {
 
       if (
         key === "errors" &&
-        typeof obj[key] === "object" &&
-        obj[key] !== null
+        obj[key] != null &&
+        typeof obj[key] === "object"
       ) {
         for (const errorKey of Object.keys(obj[key] as Record<string, unknown>)) {
           const errorDescription = `${(obj[key] as Record<string, unknown>)[errorKey]}`;
           const errorPath = `${currentKey}.${errorKey}`;
           errors.push([errorDescription, errorPath]);
         }
-      } else if (typeof obj[key] === "object" && obj[key] !== null) {
+      } else if (obj[key] !== null && typeof obj[key] === "object") {
         const nestedErrors = extractErrorKeys(obj[key] as Record<string, unknown>, currentKey);
         errors = errors.concat(nestedErrors);
       }

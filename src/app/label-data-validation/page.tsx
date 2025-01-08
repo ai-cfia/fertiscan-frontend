@@ -10,19 +10,18 @@ import axios from "axios";
 import Cookies from "js-cookie";
 import { useRouter } from "next/navigation";
 import { useEffect, useState } from "react";
-import useDevStore from "@/stores/devStore";
+import { processLoadingData, processUploadJsonFile,isTriggerLabelDataLoad } from "@/utils/client/devMenu";
 
-function LabelDataValidationPage() {
+const LabelDataValidationPage = () => {
   const { uploadedFiles } = useUploadedFilesStore();
   const [labelData, setLabelData] = useState(DEFAULT_LABEL_DATA);
   const [loading, setLoading] = useState(true);
   const { showAlert } = useAlertStore();
   const router = useRouter();
-  const { triggerLabelDataLoad, getJsonFile, setUploadedJsonFile } = useDevStore();
 
   useEffect(() => {
     const fetchData = async () => {
-      if (uploadedFiles.length === 0 && !triggerLabelDataLoad) {
+      if (uploadedFiles.length === 0 && !isTriggerLabelDataLoad()) {
         showAlert("No files uploaded.", "error");
         router.push("/");
         return;
@@ -31,15 +30,15 @@ function LabelDataValidationPage() {
       const controller = new AbortController();
       const signal = controller.signal;
       const formData = new FormData();
+      let labelDataOutput : LabelDataOutput;
+
 
       setLoading(true);
-      if (triggerLabelDataLoad) {
-        const response = await getJsonFile();
-        const labelDataOutput = await response.json();
-        const labelData = mapLabelDataOutputToLabelData(labelDataOutput);
-        formData.append("labelData", JSON.stringify(labelDataOutput));
-        setLabelData(labelData);
+      /* DevMenu code start */
+      if (isTriggerLabelDataLoad()) {
+        setLabelData( await processLoadingData() );
         setLoading(false);
+      /* DevMenu code finish */
       } else {
         uploadedFiles.forEach((fileUploaded) => {
           const file = fileUploaded.getFile();
@@ -55,11 +54,9 @@ function LabelDataValidationPage() {
             signal,
           })
           .then(async (response) => {
-            const labelDataOutput: LabelDataOutput = response.data;
+            labelDataOutput = response.data;
             const labelData = mapLabelDataOutputToLabelData(labelDataOutput);
-
             formData.append("labelData", JSON.stringify(labelDataOutput));
-            setUploadedJsonFile(new File([JSON.stringify(labelDataOutput)], "labelData.json"));
             axios
               .post("/api/inspections", formData, {
                 headers: { Authorization: authHeader },
@@ -87,6 +84,8 @@ function LabelDataValidationPage() {
                 setLabelData(labelData);
                 // not disabling loading here in case of strict mode abort
               });
+
+            processUploadJsonFile(labelDataOutput); // Dev menu code
           })
           .catch((error) => {
             if (axios.isCancel(error)) {
@@ -106,7 +105,6 @@ function LabelDataValidationPage() {
       }
     };
     fetchData();
-    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [uploadedFiles, showAlert, router]);
 
   return (

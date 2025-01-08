@@ -9,7 +9,7 @@ import { useRouter } from "next/navigation";
 import { Suspense, useState } from "react";
 import { useTranslation } from "react-i18next";
 
-function HomePage() {
+const HomePage = () =>{
   const { t } = useTranslation("homePage");
   const router = useRouter();
   const setTriggerConfirmAll = useDevStore((state) => state.setTriggerConfirmAll);
