@@ -13,12 +13,13 @@ import "./i18n";
 import theme from "./theme";
 import RouteGuard from "@/components/AuthComponents/RouteGuard";
 import DevMenu from "@/components/DevMenu";
-import Cookies from "js-cookie"
+import Cookies from "js-cookie";
 
 export default function RootLayout({
   children,
 }: Readonly<{ children: React.ReactNode }>) {
   const [sideNavOpen, setSideNavOpen] = useState(false);
+  const [isDemoUser, setIsDemoUser] = useState(false);
   const { showAlert } = useAlertStore();
   const { t, i18n } = useTranslation(["alertBanner", "translation"]);
   const [showDevMenu, setShowDevMenu] = useState(false);
@@ -31,12 +32,33 @@ export default function RootLayout({
     showAlert(t("languageChanged", { lng }), "info");
   };
 
-  useEffect(() => { // not working as now gonna look with jules
-    setShowDevMenu(Cookies.get("showDevMenu") === "true");
-    console.log("showDevMenu", showDevMenu);
-  }, [Cookies.attributes]);
+  useEffect(() => {
+    const checkUserToken = () => {
+      const encodedToken = Cookies.get("token");
+      if (encodedToken) {
+        const decodedUsername = atob(encodedToken);
+        console.log("Decoded Username:", decodedUsername);
+        setIsDemoUser(decodedUsername === "demoFertiscan");
+        setShowDevMenu(decodedUsername === "demoFertiscan" || Cookies.get("showDevMenu") === "true");
+      }
+    };
+
+    checkUserToken(); // Initial check
+
+    const intervalId = setInterval(() => {
+      checkUserToken();
+    }, 5000); // Check every 5 seconds
+
+    // Clean up interval on component unmount
+    return () => clearInterval(intervalId);
+  }, []); // Empty dependency array ensures this effect runs once on mount
 
   i18n.on("languageChanged", handleLanguageChange);
+
+  // Log to track showDevMenu's effect
+  useEffect(() => {
+    console.log("showDevMenu", showDevMenu);
+  }, [showDevMenu]);
 
   return (
     <html>
@@ -48,11 +70,10 @@ export default function RootLayout({
               <Header setSideNavOpen={setSideNavOpen} />
               <Box className="mt-16">
                 {children}
-                { /*process.env.NODE_ENV === "development" ||*/ showDevMenu &&
-                  <DevMenu />
-                }
+                {(showDevMenu) && <DevMenu />}
+                {isDemoUser && <div>This user is a demo user.</div>}
               </Box>
-              </RouteGuard>
+            </RouteGuard>
           </ThemeProvider>
         </AppRouterCacheProvider>
       </body>
