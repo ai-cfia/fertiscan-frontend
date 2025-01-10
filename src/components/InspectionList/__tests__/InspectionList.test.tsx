@@ -49,6 +49,7 @@ describe("InspectionList", () => {
         inspectionList={[mockFinishedInspection, mockUnfinishedInspection]}
       />,
     );
+    await new Promise((r) => setTimeout(r, 1000));
     expect(screen.getByText("Fertilizer 1")).toBeInTheDocument();
     expect(screen.getByText("Fertilizer 2")).toBeInTheDocument();
   });
@@ -60,6 +61,7 @@ describe("InspectionList", () => {
         inspectionList={[mockFinishedInspection, mockUnfinishedInspection]}
       />,
     );
+    await new Promise((r) => setTimeout(r, 1000));
     expect(screen.getByText("Fertilizer 1")).toBeInTheDocument();
     expect(screen.queryByText("Fertilizer 2")).not.toBeInTheDocument();
   });
