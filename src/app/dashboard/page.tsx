@@ -35,6 +35,7 @@ const Dashboard = () => {
     <Grid container spacing={2} className={"p-5 h-[calc(100vh-65px)]"}>
       <Grid size={{ xs: 12, sm: 4, md: 3 }}>
         <Grid
+          data-testid={"user-info"}
           container
           className={"p-2 border-gray-200 border-2 rounded-md h-fit"}
         >

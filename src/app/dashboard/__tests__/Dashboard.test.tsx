@@ -1,4 +1,4 @@
-import { render } from "@testing-library/react";
+import { screen, render } from "@testing-library/react";
 import Dashboard from "@/app/dashboard/page";
 import { Response } from "whatwg-fetch";
 import axios from "axios";
@@ -60,6 +60,6 @@ axios.get = jest.fn((path: string | URL | Request) => {
 describe("Dashboard", () => {
   it("renders the dashboard", async () => {
     render(<Dashboard />);
-    expect(true).toBe(true);
+    expect(screen.getByTestId("user-info")).toBeInTheDocument();
   });
 });
