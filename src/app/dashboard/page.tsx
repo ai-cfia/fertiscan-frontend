@@ -69,7 +69,7 @@ const Dashboard = () => {
         >
           <Grid size={12}>
             <Typography component={"h4"} className={"!font-semiboldl "}>
-              {t("user-info.inspectionNumber")}
+              {t("user-info.inspectionNumber")}: {inspectList.length}
             </Typography>
           </Grid>
         </Grid>
