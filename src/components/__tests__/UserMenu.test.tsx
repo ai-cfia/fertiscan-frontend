@@ -9,6 +9,21 @@ jest.mock("../../classe/User", () => ({
   usePlaceholder: jest.fn(),
 }));
 
+const mockedRouterPush = jest.fn();
+jest.mock("next/navigation", () => ({
+  useRouter() {
+    return {
+      route: "/",
+      pathname: "",
+      query: "",
+      asPath: "",
+      push: mockedRouterPush,
+    };
+  },
+}));
+
+
+
 const dummyUser = {
   getUsername: jest.fn().mockReturnValue("placeholderUser"),
 };
