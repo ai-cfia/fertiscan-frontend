@@ -1,0 +1,12 @@
+{
+  "user-info": {
+    "username": "Username",
+    "mail": "Email",
+    "role": "Role",
+    "inspectionNumber": "Number of inspections"
+  },
+  "list": {
+    "my-inspections": "My inspections",
+    "search": "Search"
+  }
+}

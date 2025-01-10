@@ -11,8 +11,10 @@ import { useEffect, useState } from "react";
 import Cookies from "js-cookie";
 import axios from "axios";
 import theme from "@/app/theme";
+import { useTranslation } from "react-i18next";
 
 const Dashboard = () => {
+  const { t } = useTranslation("dashboard");
   const [search, setSearch] = useState("");
   const [inspectList, setInspectList] = useState([]);
 
@@ -41,15 +43,15 @@ const Dashboard = () => {
         >
           <Grid size={12}>
             <Typography component={"h2"} className={"!font-black "}>
-              Username
+              {t("user-info.username")}
             </Typography>
           </Grid>
           <Grid size={4}>
-            <b>Mail:</b>
+            <b>{t("user-info.mail")}:</b>
           </Grid>
           <Grid size={8}>User email</Grid>
           <Grid size={4}>
-            <b>Role:</b>
+            <b>{t("user-info.role")}:</b>
           </Grid>
           <Grid size={8}>User role</Grid>
           <Grid size={4}>
@@ -67,7 +69,7 @@ const Dashboard = () => {
         >
           <Grid size={12}>
             <Typography component={"h4"} className={"!font-semiboldl "}>
-              Number of inspections
+              {t("user-info.inspectionNumber")}
             </Typography>
           </Grid>
         </Grid>
@@ -81,12 +83,12 @@ const Dashboard = () => {
         <Grid container spacing={2} className={"h-full"}>
           <Grid size={{ xs: 12, sm: 6, md: 4 }}>
             <Typography component={"h2"} className={"!font-black"}>
-              My inspections
+              {t("list.my-inspections")}
             </Typography>
           </Grid>
           <Grid size={{ xs: 12, sm: 6, md: 8 }}>
             <TextField
-              placeholder={"Search"}
+              placeholder={t("list.search")}
               variant={"filled"}
               className={"rounded-md"}
               sx={{
