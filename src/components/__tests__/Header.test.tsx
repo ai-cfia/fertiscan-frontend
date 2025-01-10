@@ -17,7 +17,6 @@ jest.mock("next/navigation", () => ({
   },
 }));
 
-
 describe("Header Component", () => {
   const mockSetSideNavOpen = jest.fn();
 

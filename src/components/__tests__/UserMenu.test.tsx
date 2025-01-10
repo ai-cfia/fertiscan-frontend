@@ -22,8 +22,6 @@ jest.mock("next/navigation", () => ({
   },
 }));
 
-
-
 const dummyUser = {
   getUsername: jest.fn().mockReturnValue("placeholderUser"),
 };
