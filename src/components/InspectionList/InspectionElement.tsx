@@ -1,7 +1,8 @@
-import { Box, Card, Stack, Typography } from "@mui/material";
+import { Box, Card, Stack, Tooltip, Typography } from "@mui/material";
 import ErrorIcon from "@mui/icons-material/Error";
 import React from "react";
 import InspectionPreview from "@/types/InspectionPreview";
+import { useTranslation } from "react-i18next";
 
 interface InspectionElementProps {
   inspection: InspectionPreview;
@@ -13,6 +14,9 @@ const InspectionElement = ({
   inspection,
   handleClick,
 }: InspectionElementProps) => {
+
+  const { t } = useTranslation("dashboard");
+
   return (
     <Card
       className={
@@ -32,7 +36,9 @@ const InspectionElement = ({
           {inspection.product_name}
         </Typography>
         {inspection.updated_at === inspection.upload_date && (
-          <ErrorIcon data-testid={"error-icon"} color="error"></ErrorIcon>
+          <Tooltip title={t("inspection.unverified")}>
+            <ErrorIcon data-testid={"error-icon"} color="error"></ErrorIcon>
+          </Tooltip>
         )}
       </Stack>
     </Card>

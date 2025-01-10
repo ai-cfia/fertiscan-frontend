@@ -8,5 +8,8 @@
   "list": {
     "my-inspections": "Mes inspections",
     "search": "Rechercher"
+  },
+  "inspection": {
+    "unverified": "Inspection non vérifié"
   }
 }
