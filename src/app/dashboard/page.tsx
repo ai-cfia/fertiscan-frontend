@@ -7,13 +7,32 @@ import {
   Typography,
 } from "@mui/material";
 import { Search, LocationOn } from "@mui/icons-material";
-import { useState } from "react";
+import { useEffect, useState } from "react";
+import Cookies from "js-cookie";
+import axios from "axios";
+import theme from "@/app/theme";
 
 const Dashboard = () => {
   const [search, setSearch] = useState("");
+  const [inspectList, setInspectList] = useState([]);
+
+  useEffect(() => {
+    const username = atob(Cookies.get("token") ?? "");
+    const password = "";
+    const authHeader = "Basic " + btoa(`${username}:${password}`);
+    axios
+      .get("/api/inspections", {
+        headers: {
+          Authorization: authHeader,
+        },
+      })
+      .then((response) => {
+        setInspectList(response.data);
+      });
+  }, []);
 
   return (
-    <Grid container spacing={2} className={"p-5 h-full"}>
+    <Grid container spacing={2} className={"p-5 h-[calc(100vh-65px)]"} >
       <Grid size={{ xs: 12, sm: 4, md: 3 }}>
         <Grid
           container
@@ -54,7 +73,7 @@ const Dashboard = () => {
       </Grid>
       <Grid
         size={{ xs: 12, sm: 8, md: 9 }}
-        className={"border-gray-200 border-2 rounded-md p-2 lg:h-300"}
+        className={"border-gray-200 border-2 rounded-md p-2 xs:pb-1 sm:pb-0 xs:h-[calc(100%-10.75rem)] sm:h-full min-h-60"}
       >
         <Grid container spacing={2} className={"h-full"}>
           <Grid size={{ xs: 12, sm: 6, md: 4 }}>
@@ -66,6 +85,10 @@ const Dashboard = () => {
             <TextField
               placeholder={"Search"}
               variant={"filled"}
+              className={"rounded-md"}
+              sx={{
+                backgroundColor: theme.palette.background.paper,
+              }}
               value={search}
               onChange={(e) => setSearch(e.target.value)}
               fullWidth
@@ -76,8 +99,8 @@ const Dashboard = () => {
                 input: {
                   className: "p-2",
                   startAdornment: (
-                    <InputAdornment position={"start"} className={"!m-0"}>
-                      <Search />
+                    <InputAdornment position={"start"} className={"!m-0"}  >
+                      <Search color="primary"/>
                     </InputAdornment>
                   ),
                 },
@@ -85,8 +108,8 @@ const Dashboard = () => {
             />
           </Grid>
           <hr className={"w-full"} />
-          <Grid size={{ xs: 12 }}>
-            <FertilizerList search={search} />
+          <Grid size={{ xs: 12 }} className={"xs:h-[calc(100%-8rem)] sm:h-[85%]"}>
+            <FertilizerList search={search} inspectionList={inspectList} />
           </Grid>
         </Grid>
       </Grid>

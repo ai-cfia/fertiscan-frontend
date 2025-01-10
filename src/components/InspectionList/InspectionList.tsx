@@ -3,16 +3,14 @@ import { Stack } from "@mui/material";
 import InspectionPreview from "@/types/InspectionPreview";
 import InspectionElement from "@/components/InspectionList/InspectionElement";
 import { useEffect, useState } from "react";
-import axios from "axios";
-import Cookies from "js-cookie";
 import { useRouter } from "next/navigation";
 
 interface InspectionListProps {
   search: string;
+  inspectionList: InspectionPreview[];
 }
 
-const InspectionList = ({ search }: InspectionListProps) => {
-  const [inspectList, setInspectList] = useState([] as InspectionPreview[]);
+const InspectionList = ({ search, inspectionList }: InspectionListProps) => {
   const [shownList, setShownList] = useState([] as InspectionPreview[]);
 
   const router = useRouter();
@@ -22,31 +20,16 @@ const InspectionList = ({ search }: InspectionListProps) => {
   };
 
   useEffect(() => {
-    const username = atob(Cookies.get("token") ?? "");
-    const password = "";
-    const authHeader = "Basic " + btoa(`${username}:${password}`);
-    axios
-      .get("/api/inspections", {
-        headers: {
-          Authorization: authHeader,
-        },
-      })
-      .then((response) => {
-        setInspectList(response.data);
-        setShownList(response.data);
-      });
-  }, []);
-  useEffect(() => {
     setShownList(
-      inspectList.filter((inspection) => {
+      inspectionList.filter((inspection) => {
         return inspection
           .product_name!.toLowerCase()
           .includes(search.toLowerCase());
       }),
     );
-  }, [inspectList, search]);
+  }, [inspectionList, search]);
   return (
-    <Stack spacing={2} className={"h-[80vh] overflow-y-scroll p-5 pl-0"}>
+    <Stack spacing={2} className={"overflow-y-auto pl-0 pb-4 h-full"}>
       {shownList.map((inspection) => {
         return (
           <InspectionElement
