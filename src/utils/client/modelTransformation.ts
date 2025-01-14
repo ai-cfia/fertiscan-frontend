@@ -117,6 +117,7 @@ export function mapLabelDataOutputToLabelData(
       data.ingredients_en,
       data.ingredients_fr,
     ),
+    confirmed: false,
   };
 }
 
@@ -199,5 +200,7 @@ export function mapInspectionToLabelData(inspection: Inspection): LabelData {
       inspection.guaranteed_analysis?.fr,
       v,
     ),
+    confirmed: inspection.verified ?? false,
+    inspection_id: inspection.inspection_id,
   };
 }

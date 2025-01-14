@@ -83,16 +83,6 @@ const LabelDataConfirmationPage = () => {
             >
               Review and Confirm The Label Data
             </Typography>
-
-            {/* Instructional Text */}
-            <Typography
-              variant="body1"
-              className="text-center"
-              data-testid="page-instructions"
-            >
-              Review the information below. Click <strong>Confirm</strong> to
-              proceed, or return to the previous page to make changes.
-            </Typography>
           </Box>
 
           <Box
