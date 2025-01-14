@@ -46,7 +46,8 @@ const QuantityChips = React.forwardRef<HTMLDivElement, QuantityChipsProps>(
 QuantityChips.displayName = "QuantityChips";
 
 const LabelDataConfirmationPage = () => {
-  const { labelData } = useLabelDataStore();
+  const labelData = useLabelDataStore((state) => state.labelData);
+  const updateConfirmed = useLabelDataStore((state) => state.updateConfirmed);
   const { uploadedFiles } = useUploadedFilesStore();
   const imageFiles = uploadedFiles.map((file) => file.getFile());
   const { t } = useTranslation("labelDataValidator");
@@ -447,7 +448,12 @@ const LabelDataConfirmationPage = () => {
             {/* Acknowledgment Checkbox */}
             <FormGroup className="flex items-center justify-center gap-2">
               <FormControlLabel
-                control={<Checkbox />}
+                control={
+                  <Checkbox
+                    checked={labelData?.confirmed}
+                    onChange={(event) => updateConfirmed(event.target.checked)}
+                  />
+                }
                 label={
                   <Typography variant="body2" className="!font-bold">
                     I acknowledge that the data is accurate.
