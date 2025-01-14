@@ -57,7 +57,7 @@ function LabelDataValidator({
     useState<StepStatus>(StepStatus.Incomplete);
   const [ingredientsStepStatus, setIngredientsStepStatus] =
     useState<StepStatus>(StepStatus.Incomplete);
-  const { setLabelData: storeLabelData } = useLabelDataStore();
+  const storeLabelData = useLabelDataStore((state) => state.setLabelData);
   const router = useRouter();
 
   const createStep = (

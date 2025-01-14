@@ -2,6 +2,7 @@
 import LabelDataValidator from "@/components/LabelDataValidator";
 import useAlertStore from "@/stores/alertStore";
 import useUploadedFilesStore from "@/stores/fileStore";
+import useLabelDataStore from "@/stores/labelDataStore";
 import { DEFAULT_LABEL_DATA } from "@/types/types";
 import { processAxiosError } from "@/utils/client/apiErrors";
 import { mapLabelDataOutputToLabelData } from "@/utils/client/modelTransformation";
@@ -12,16 +13,23 @@ import { useRouter } from "next/navigation";
 import { useEffect, useState } from "react";
 
 function LabelDataValidationPage() {
-  const { uploadedFiles } = useUploadedFilesStore();
+  const uploadedFiles = useUploadedFilesStore((state) => state.uploadedFiles);
+  const storedLabelData = useLabelDataStore((state) => state.labelData);
   const [labelData, setLabelData] = useState(DEFAULT_LABEL_DATA);
   const [loading, setLoading] = useState(true);
-  const { showAlert } = useAlertStore();
+  const showAlert = useAlertStore((state) => state.showAlert);
   const router = useRouter();
 
   useEffect(() => {
     if (uploadedFiles.length === 0) {
       showAlert("No files uploaded.", "error");
       router.push("/");
+      return;
+    }
+
+    if (storedLabelData) {
+      setLabelData(storedLabelData);
+      setLoading(false);
       return;
     }
 
@@ -90,7 +98,7 @@ function LabelDataValidationPage() {
     return () => {
       controller.abort(); // avoids react strict mode double fetch
     };
-  }, [uploadedFiles, showAlert, router]);
+  }, [uploadedFiles, showAlert, router, storedLabelData, setLabelData]);
 
   return (
     <LabelDataValidator

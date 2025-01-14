@@ -5,9 +5,9 @@
 ```mermaid
 flowchart TD
     Start([Start]) --> LabelDataConfirmation["/label-data-confirmation"]
-    LabelDataConfirmation --> ImagesCheck{"Images?"}
+    LabelDataConfirmation --> ImagesCheck{"Images in store?"}
     ImagesCheck -->|No| HomePage[Home]
-    ImagesCheck -->|Yes| LabelDataCheck{"Label Data?"}
+    ImagesCheck -->|Yes| LabelDataCheck{"Label Data in store?"}
     LabelDataCheck -->|No| HomePage
     LabelDataCheck -->|Yes| DisplayImages["Display Images"] --> DisplayLabelData["Display Label Data"] --> End([End])
     HomePage --> End
