@@ -20,6 +20,7 @@ import {
   TableRow,
   Typography,
 } from "@mui/material";
+import { useRouter } from "next/navigation";
 import React, { useEffect } from "react";
 import { useTranslation } from "react-i18next";
 
@@ -51,10 +52,19 @@ const LabelDataConfirmationPage = () => {
   const { uploadedFiles } = useUploadedFilesStore();
   const imageFiles = uploadedFiles.map((file) => file.getFile());
   const { t } = useTranslation("labelDataValidator");
+  const router = useRouter();
 
   useEffect(() => {
     console.log(labelData);
   }, [labelData]);
+
+  const handleEditClick = () => {
+    if (labelData?.inspection_id) {
+      router.push(`/label-data-validation/${labelData.inspection_id}`);
+    } else {
+      router.push("/label-data-validation");
+    }
+  };
 
   return (
     <Container
@@ -464,9 +474,7 @@ const LabelDataConfirmationPage = () => {
               <Button
                 variant="contained"
                 className="px-4 py-2 bg-gray-300 text-black font-bold hover:bg-gray-400"
-                onClick={() => {
-                  // Navigation logic to go back to the form page
-                }}
+                onClick={handleEditClick}
                 data-testid="edit-button"
               >
                 Edit Details
