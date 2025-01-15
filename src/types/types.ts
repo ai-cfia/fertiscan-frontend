@@ -186,6 +186,7 @@ export type LabelData = {
   guaranteedAnalysis: GuaranteedAnalysis;
   ingredients: BilingualField[];
   confirmed: boolean;
+  comment?: string;
   inspection_id?: string;
 };
 
