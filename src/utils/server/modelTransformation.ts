@@ -7,7 +7,7 @@ import {
   LabelDataOutput,
   NutrientValue,
   PipelineInspectionValue,
-} from "../server/backend";
+} from "./backend";
 
 export function quantity(
   val?: PipelineInspectionValue | FertiscanDbMetadataInspectionValue | null,

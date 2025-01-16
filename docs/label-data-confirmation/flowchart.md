@@ -26,7 +26,7 @@ flowchart TD
     StartLoadingAnimationNoID --> PostRequest["POST api/inspections with LabelDataInput"]
     PostRequest --> PostRequestSuccess{"Request Success?"}
     PostRequestSuccess -->|No| StopLoadingFailure["Stop Loading Animation"] --> DisplayFailureAlert["Display Failure Alert"] --> End
-    PostRequestSuccess -->|Yes| TransformLabelData["Transform Label Data into InspectionUpdate"] --> StartLoadingAnimationWithID["Start Loading Animation"] --> PutRequest["PUT api/inspections/<inspection_id> with InspectionUpdate"]
+    PostRequestSuccess -->|Yes| TransformLabelData["Transform Label Data into InspectionUpdate"] --> StartLoadingAnimationWithID["Start Loading Animation"] --> PutRequest["PUT api/inspections/inspection_id with InspectionUpdate"]
     
     CheckInspectionID -->|Yes| TransformLabelData
     PutRequest --> PutRequestSuccess{"Request Success?"}

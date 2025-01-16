@@ -1,5 +1,7 @@
 import { handleApiError } from "@/utils/server/apiErrors";
+import { MISSING_AUTH_RESPONSE } from "@/utils/server/apiResponses";
 import { pipelineApi } from "@/utils/server/backend";
+import { mapLabelDataOutputToLabelData } from "@/utils/server/modelTransformation";
 
 export async function POST(request: Request) {
   const formData = await request.formData();
@@ -7,18 +9,14 @@ export async function POST(request: Request) {
 
   const authHeader = request.headers.get("Authorization");
   if (!authHeader) {
-    return new Response(
-      JSON.stringify({ error: "Missing Authorization header" }),
-      {
-        status: 401,
-      },
-    );
+    return MISSING_AUTH_RESPONSE;
   }
 
   return pipelineApi
     .analyzeDocumentAnalyzePost(files)
     .then((analyzeResponse) => {
-      return Response.json(analyzeResponse.data);
+      const labelData = mapLabelDataOutputToLabelData(analyzeResponse.data);
+      return Response.json(labelData);
     })
     .catch((error) => {
       return handleApiError(error);

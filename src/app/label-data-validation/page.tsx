@@ -3,10 +3,8 @@ import LabelDataValidator from "@/components/LabelDataValidator";
 import useAlertStore from "@/stores/alertStore";
 import useUploadedFilesStore from "@/stores/fileStore";
 import useLabelDataStore from "@/stores/labelDataStore";
-import { DEFAULT_LABEL_DATA } from "@/types/types";
+import { DEFAULT_LABEL_DATA, LabelData } from "@/types/types";
 import { processAxiosError } from "@/utils/client/apiErrors";
-import { mapLabelDataOutputToLabelData } from "@/utils/client/modelTransformation";
-import { Inspection, LabelDataOutput } from "@/utils/server/backend";
 import axios from "axios";
 import Cookies from "js-cookie";
 import { useRouter } from "next/navigation";
@@ -53,18 +51,16 @@ function LabelDataValidationPage() {
         signal,
       })
       .then(async (response) => {
-        const labelDataOutput: LabelDataOutput = response.data;
-        const labelData = mapLabelDataOutputToLabelData(labelDataOutput);
-
-        formData.append("labelData", JSON.stringify(labelDataOutput));
+        const labelData: LabelData = response.data;
+        formData.append("labelData", JSON.stringify(labelData));
         axios
           .post("/api/inspections", formData, {
             headers: { Authorization: authHeader },
             signal,
           })
           .then((response) => {
-            const inspection: Inspection = response.data;
-            router.push(`/label-data-validation/${inspection.inspection_id}`);
+            const labelData: LabelData = response.data;
+            router.push(`/label-data-validation/${labelData.inspection_id}`);
             return null;
           })
           .catch((error) => {

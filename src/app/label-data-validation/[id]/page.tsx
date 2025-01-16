@@ -2,9 +2,7 @@
 import LabelDataValidator from "@/components/LabelDataValidator";
 import useAlertStore from "@/stores/alertStore";
 import useUploadedFilesStore from "@/stores/fileStore";
-import { DEFAULT_LABEL_DATA } from "@/types/types";
-import { mapInspectionToLabelData } from "@/utils/client/modelTransformation";
-import { Inspection } from "@/utils/server/backend";
+import { DEFAULT_LABEL_DATA, LabelData } from "@/types/types";
 import axios from "axios";
 import Cookies from "js-cookie";
 import { useRouter } from "next/navigation";
@@ -39,8 +37,7 @@ export default function Page({ params }: { params: { id: string } }) {
         signal,
       })
       .then((response) => {
-        const inspection: Inspection = response.data;
-        const labelData = mapInspectionToLabelData(inspection);
+        const labelData: LabelData = response.data;
         setLabelData(labelData);
         setLoading(false);
       })
@@ -60,7 +57,6 @@ export default function Page({ params }: { params: { id: string } }) {
       controller.abort(); // avoids react strict mode double fetch
     };
   }, [router, showAlert, id, uploadedFiles.length]);
-
 
   return (
     <LabelDataValidator

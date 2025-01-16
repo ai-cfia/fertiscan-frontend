@@ -5,7 +5,7 @@ import {
   LabelDataOutput,
   NutrientValue,
   PipelineInspectionValue,
-} from "../../server/backend";
+} from "../backend";
 import {
   mapInspectionToLabelData,
   mapLabelDataOutputToLabelData,
@@ -666,8 +666,6 @@ const emptyLabelData: LabelData = {
   ingredients: [],
   confirmed: false,
 };
-
-
 
 describe("mapLabelDataToLabelDataInput", () => {
   it("should map all fields correctly", () => {
