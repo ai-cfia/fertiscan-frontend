@@ -198,7 +198,7 @@ describe("mapLabelDataOutputToLabelData", () => {
       manufacturer_website: "http://mfg.com",
       manufacturer_phone_number: "987-654-3210",
       fertiliser_name: "SuperGrow",
-      registration_number: "REG123",
+      registration_number: "1234567A",
       lot_number: "LOT42",
       npk: "10-5-5",
       weight: [{ value: 20, unit: "kg" }],
@@ -247,7 +247,7 @@ describe("mapLabelDataOutputToLabelData", () => {
     expect(result.organizations[1].phoneNumber.value).toBe("987-654-3210");
 
     expect(result.baseInformation.name.value).toBe("SuperGrow");
-    expect(result.baseInformation.registrationNumber.value).toBe("REG123");
+    expect(result.baseInformation.registrationNumber.value).toBe("1234567A");
     expect(result.baseInformation.lotNumber.value).toBe("LOT42");
     expect(result.baseInformation.npk.value).toBe("10-5-5");
     expect(result.baseInformation.weight.quantities).toEqual([
@@ -406,7 +406,7 @@ describe("mapInspectionToLabelData", () => {
       },
       product: {
         name: "SuperGrow",
-        registration_number: "REG123",
+        registration_number: "1234567A",
         lot_number: "LOT42",
         npk: "10-5-5",
         metrics: {
@@ -451,7 +451,7 @@ describe("mapInspectionToLabelData", () => {
     expect(result.organizations[1].phoneNumber.value).toBe("987-654-3210");
 
     expect(result.baseInformation.name.value).toBe("SuperGrow");
-    expect(result.baseInformation.registrationNumber.value).toBe("REG123");
+    expect(result.baseInformation.registrationNumber.value).toBe("1234567A");
     expect(result.baseInformation.lotNumber.value).toBe("LOT42");
     expect(result.baseInformation.npk.value).toBe("10-5-5");
     expect(result.baseInformation.weight.quantities).toEqual([
@@ -578,7 +578,7 @@ const labelData: LabelData = {
   ],
   baseInformation: {
     name: { value: "SuperGrow", verified: false },
-    registrationNumber: { value: "REG123", verified: false },
+    registrationNumber: { value: "1234567A", verified: false },
     lotNumber: { value: "LOT42", verified: false },
     npk: { value: "10-5-5", verified: false },
     weight: { quantities: [{ value: "20", unit: "kg" }], verified: false },
@@ -648,7 +648,7 @@ const emptyLabelData: LabelData = {
   organizations: [],
   baseInformation: {
     name: { value: "SuperGrow", verified: false },
-    registrationNumber: { value: "REG123", verified: false },
+    registrationNumber: { value: "1234567A", verified: false },
     lotNumber: { value: "LOT42", verified: false },
     npk: { value: "10-5-5", verified: false },
     weight: { quantities: [], verified: false },
@@ -665,6 +665,7 @@ const emptyLabelData: LabelData = {
   instructions: [],
   ingredients: [],
   confirmed: false,
+  comment: "",
 };
 
 describe("mapLabelDataToLabelDataInput", () => {
@@ -679,7 +680,7 @@ describe("mapLabelDataToLabelDataInput", () => {
     expect(result.manufacturer_website).toBe("http://mfg.com");
     expect(result.manufacturer_phone_number).toBe("987-654-3210");
     expect(result.fertiliser_name).toBe("SuperGrow");
-    expect(result.registration_number).toBe("REG123");
+    expect(result.registration_number).toBe("1234567A");
     expect(result.lot_number).toBe("LOT42");
     expect(result.npk).toBe("10-5-5");
     expect(result.weight).toEqual([{ value: 20, unit: "kg" }]);
@@ -767,7 +768,7 @@ describe("mapLabelDataToInspectionUpdate", () => {
     });
     expect(result.product).toEqual({
       name: "SuperGrow",
-      registration_number: "REG123",
+      registration_number: "1234567A",
       lot_number: "LOT42",
       npk: "10-5-5",
       metrics: {
@@ -802,31 +803,7 @@ describe("mapLabelDataToInspectionUpdate", () => {
   });
 
   it("should handle empty arrays gracefully", () => {
-    const input: LabelData = {
-      organizations: [],
-      baseInformation: {
-        name: { value: "SuperGrow", verified: false },
-        registrationNumber: { value: "REG123", verified: false },
-        lotNumber: { value: "LOT42", verified: false },
-        npk: { value: "10-5-5", verified: false },
-        weight: { quantities: [], verified: false },
-        density: { quantities: [], verified: false },
-        volume: { quantities: [], verified: false },
-      },
-      guaranteedAnalysis: {
-        titleEn: { value: "Guaranteed Analysis", verified: false },
-        titleFr: { value: "Analyse Garantie", verified: false },
-        isMinimal: { value: true, verified: false },
-        nutrients: [],
-      },
-      cautions: [],
-      instructions: [],
-      ingredients: [],
-      comment: "",
-      confirmed: false,
-    };
-
-    const result = mapLabelDataToInspectionUpdate(input);
+    const result = mapLabelDataToInspectionUpdate(emptyLabelData);
 
     expect(result.inspection_comment).toBe("");
     expect(result.verified).toBe(false);
@@ -844,7 +821,7 @@ describe("mapLabelDataToInspectionUpdate", () => {
     });
     expect(result.product).toEqual({
       name: "SuperGrow",
-      registration_number: "REG123",
+      registration_number: "1234567A",
       lot_number: "LOT42",
       npk: "10-5-5",
       metrics: {

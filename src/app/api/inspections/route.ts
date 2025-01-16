@@ -8,6 +8,7 @@ import {
 
 export async function POST(request: Request) {
   const formData = await request.formData();
+  console.debug("request body (formdata):", formData);
   const files = formData.getAll("files") as File[];
   const labelDataString = formData.get("labelData") as string;
   const labelData = JSON.parse(labelDataString);
@@ -24,6 +25,7 @@ export async function POST(request: Request) {
     })
     .then((inspectionsResponse) => {
       const labelData = mapInspectionToLabelData(inspectionsResponse.data);
+      console.debug("response:", labelData);
       return Response.json(labelData);
     })
     .catch((error) => {

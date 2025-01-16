@@ -1,8 +1,10 @@
 "use client";
 import ImageViewer from "@/components/ImageViewer";
+import useAlertStore from "@/stores/alertStore";
 import useUploadedFilesStore from "@/stores/fileStore";
 import useLabelDataStore from "@/stores/labelDataStore";
-import { Quantity } from "@/types/types";
+import { LabelData, Quantity } from "@/types/types";
+import { processAxiosError } from "@/utils/client/apiErrors";
 import {
   Box,
   Button,
@@ -20,9 +22,10 @@ import {
   TableRow,
   Typography,
 } from "@mui/material";
+import axios from "axios";
+import Cookies from "js-cookie";
 import { useRouter } from "next/navigation";
-import React, { useEffect } from "react";
-import { useTranslation } from "react-i18next";
+import React, { useEffect, useState } from "react";
 
 interface QuantityChipsProps extends React.ComponentProps<typeof Box> {
   quantities: Quantity[] | undefined;
@@ -48,23 +51,111 @@ QuantityChips.displayName = "QuantityChips";
 
 const LabelDataConfirmationPage = () => {
   const labelData = useLabelDataStore((state) => state.labelData);
-  const updateConfirmed = useLabelDataStore((state) => state.updateConfirmed);
+  const setLabelData = useLabelDataStore((state) => state.setLabelData);
   const { uploadedFiles } = useUploadedFilesStore();
   const imageFiles = uploadedFiles.map((file) => file.getFile());
-  const { t } = useTranslation("labelDataValidator");
   const router = useRouter();
+  const [loading, setLoading] = useState(false);
+  const showAlert = useAlertStore((state) => state.showAlert);
+  const [confirmed, setConfirmed] = useState(false);
 
-  useEffect(() => {
-    console.log(labelData);
-  }, [labelData]);
+  const getAuthHeader = () => {
+    return "Basic " + btoa(`${atob(Cookies.get("token") ?? "")}:`);
+  };
+
+  const updateLabelData = (labelData: LabelData, signal: AbortSignal) => {
+    if (!labelData.confirmed) {
+      showAlert("Internal error: Label data not confirmed.", "error");
+      return;
+    }
+    setLoading(true);
+    axios
+      .put(`/api/inspections/${labelData.inspectionId}`, labelData, {
+        headers: { Authorization: getAuthHeader() },
+        signal,
+      })
+      .then((response) => {
+        showAlert("Label data saved successfully.", "success");
+        const updatedLabelData: LabelData = response.data;
+        setLabelData(updatedLabelData);
+        router.push("/");
+      })
+      .catch((error) => {
+        showAlert(
+          `Label data saving failed: ${processAxiosError(error)}`,
+          "error",
+        );
+      })
+      .finally(() => {
+        setLoading(false);
+      });
+  };
+
+  const saveLabelData = (labelData: LabelData, signal: AbortSignal) => {
+    const formData = new FormData();
+    uploadedFiles.forEach((fileUploaded) => {
+      const file = fileUploaded.getFile();
+      formData.append("files", file);
+    });
+    formData.append("labelData", JSON.stringify(labelData));
+    setLoading(true);
+    axios
+      .post("/api/inspections", formData, {
+        headers: { Authorization: getAuthHeader() },
+        signal,
+      })
+      .then((response) => {
+        const initiallySavedLabelData: LabelData = {
+          ...response.data,
+          confirmed: confirmed,
+        };
+        if (!initiallySavedLabelData.inspectionId) {
+          throw new Error("ID missing in initial label data saving response.");
+        }
+        setLabelData(initiallySavedLabelData);
+        updateLabelData(initiallySavedLabelData, signal);
+      })
+      .catch((error) => {
+        showAlert(
+          `Label data initial saving failed: ${processAxiosError(error)}`,
+          "error",
+        );
+      })
+      .finally(() => {
+        setLoading(false);
+      });
+  };
 
   const handleEditClick = () => {
-    if (labelData?.inspection_id) {
-      router.push(`/label-data-validation/${labelData.inspection_id}`);
+    if (labelData?.inspectionId) {
+      router.push(`/label-data-validation/${labelData.inspectionId}`);
     } else {
       router.push("/label-data-validation");
     }
   };
+
+  const handleConfirmClick = () => {
+    if (!labelData) {
+      showAlert("Internal error: Label data not found.", "error");
+      return;
+    }
+    if (!confirmed) {
+      showAlert("Internal error: Label data not confirmed.", "error");
+      return;
+    }
+
+    const controller = new AbortController();
+    const signal = controller.signal;
+    if (labelData?.inspectionId) {
+      const updatedLabelData = { ...labelData, confirmed: confirmed };
+      return updateLabelData(updatedLabelData, signal);
+    }
+    return saveLabelData(labelData, signal);
+  };
+
+  useEffect(() => {
+    console.debug("labelData", labelData);
+  }, [labelData]);
 
   return (
     <Container
@@ -96,7 +187,6 @@ const LabelDataConfirmationPage = () => {
           </Box>
 
           <Box
-            // className="flex flex-col p-4 text-center gap-4 content-end bg-white border  overflow-y-auto"
             className="flex flex-col gap-4 flex-1 border overflow-y-auto sm:px-8 py-4"
             data-testid="form-container"
           >
@@ -450,8 +540,8 @@ const LabelDataConfirmationPage = () => {
               <FormControlLabel
                 control={
                   <Checkbox
-                    checked={labelData?.confirmed}
-                    onChange={(event) => updateConfirmed(event.target.checked)}
+                    checked={confirmed}
+                    onChange={(event) => setConfirmed(event.target.checked)}
                   />
                 }
                 label={
@@ -467,6 +557,8 @@ const LabelDataConfirmationPage = () => {
                 variant="contained"
                 color="success"
                 className="px-4 py-2 font-bold hover:bg-green-700"
+                disabled={!confirmed || loading}
+                onClick={handleConfirmClick}
                 data-testid="confirm-button"
               >
                 Confirm
@@ -474,6 +566,7 @@ const LabelDataConfirmationPage = () => {
               <Button
                 variant="contained"
                 className="px-4 py-2 bg-gray-300 text-black font-bold hover:bg-gray-400"
+                disabled={loading}
                 onClick={handleEditClick}
                 data-testid="edit-button"
               >

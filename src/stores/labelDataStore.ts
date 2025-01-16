@@ -6,23 +6,12 @@ interface LabelDataState {
   labelData: LabelData | null;
   setLabelData: (newData: LabelData) => void;
   resetLabelData: () => void;
-  updateConfirmed: (isConfirmed: boolean) => void;
 }
 
 const useLabelDataStore = create<LabelDataState>((set) => ({
-  labelData: VERIFIED_LABEL_DATA,
+  labelData: null,
   setLabelData: (newData) => set({ labelData: newData }),
   resetLabelData: () => set({ labelData: null }),
-  updateConfirmed: (isConfirmed) =>
-    set((state) => {
-      if (!state.labelData) return state;
-      return {
-        labelData: {
-          ...state.labelData,
-          confirmed: isConfirmed,
-        },
-      };
-    }),
 }));
 
 export default useLabelDataStore;

@@ -203,7 +203,7 @@ export function mapInspectionToLabelData(inspection: Inspection): LabelData {
       v,
     ),
     confirmed: inspection.verified ?? false,
-    inspection_id: inspection.inspection_id,
+    inspectionId: inspection.inspection_id,
     comment: inspection.inspection_comment ?? "",
   };
 }

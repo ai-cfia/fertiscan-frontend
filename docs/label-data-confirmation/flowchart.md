@@ -17,21 +17,20 @@ flowchart TD
 
 ```mermaid
 flowchart TD
-    Start([Confirm Button Clicked]) --> CheckLabelDataConfirmed{"labelData.confirmed?"}
-    CheckLabelDataConfirmed -->|No| End([End])
-    CheckLabelDataConfirmed -->|Yes| CheckInspectionID{"labelData.inspection_id?"}
+    Start([Confirm Button Clicked]) --> CheckConfirmationCheckbox{"Confirmation Checkbox Checked?"}
+    CheckConfirmationCheckbox -->|No| End([End])
+    CheckConfirmationCheckbox -->|Yes| CopyLabelData["Copy Label Data and Set confirmed = true"] --> CheckInspectionID{"labelData.inspection_id?"}
     
-    CheckInspectionID -->|No| TransformToLabelDataInput["Transform Label Data into LabelDataInput"]
-    TransformToLabelDataInput --> StartLoadingAnimationNoID["Start Loading Animation"]
-    StartLoadingAnimationNoID --> PostRequest["POST api/inspections with LabelDataInput"]
+    CheckInspectionID -->|No| StartLoadingAnimationNoID["Start Loading Animation"]
+    StartLoadingAnimationNoID --> PostRequest["POST api/inspections with LabelData"]
     PostRequest --> PostRequestSuccess{"Request Success?"}
     PostRequestSuccess -->|No| StopLoadingFailure["Stop Loading Animation"] --> DisplayFailureAlert["Display Failure Alert"] --> End
-    PostRequestSuccess -->|Yes| TransformLabelData["Transform Label Data into InspectionUpdate"] --> StartLoadingAnimationWithID["Start Loading Animation"] --> PutRequest["PUT api/inspections/inspection_id with InspectionUpdate"]
+    PostRequestSuccess -->|Yes| StoreLabelDataAfterPost["Store Label Data"] --> StartLoadingAnimationWithID["Start Loading Animation"] --> PutRequest["PUT api/inspections/inspection_id with LabelData"]
     
-    CheckInspectionID -->|Yes| TransformLabelData
+    CheckInspectionID -->|Yes| StartLoadingAnimationWithID
     PutRequest --> PutRequestSuccess{"Request Success?"}
     PutRequestSuccess -->|No| StopLoadingFailure
-    PutRequestSuccess -->|Yes| StopLoadingSuccess["Stop Loading Animation"] --> DisplaySuccessAlert["Display Success Alert"] --> HomePage[Home] --> End
+    PutRequestSuccess -->|Yes| StopLoadingSuccess["Stop Loading Animation"] --> DisplaySuccessAlert["Display Success Alert"] --> StoreLabelData["Store Label Data"] --> HomePage[Home] --> End
 ```
 
 ## Click on Edit button

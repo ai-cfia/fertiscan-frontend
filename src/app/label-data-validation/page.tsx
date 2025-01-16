@@ -60,7 +60,7 @@ function LabelDataValidationPage() {
           })
           .then((response) => {
             const labelData: LabelData = response.data;
-            router.push(`/label-data-validation/${labelData.inspection_id}`);
+            router.push(`/label-data-validation/${labelData.inspectionId}`);
             return null;
           })
           .catch((error) => {

@@ -187,7 +187,7 @@ export type LabelData = {
   ingredients: BilingualField[];
   confirmed: boolean;
   comment?: string;
-  inspection_id?: string;
+  inspectionId?: string;
 };
 
 export const DEFAULT_LABEL_DATA: LabelData = {

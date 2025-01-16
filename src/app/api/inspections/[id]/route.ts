@@ -30,6 +30,7 @@ export async function GET(
     })
     .then((inspectionResponse) => {
       const labelData = mapInspectionToLabelData(inspectionResponse.data);
+      console.debug("response:", labelData);
       return Response.json(labelData);
     })
     .catch((error) => {
@@ -51,6 +52,7 @@ export async function PUT(
     return INVALID_ID_RESPONSE;
   }
   const body = await request.json();
+  console.debug("request body:", body);
   const inspectionUpdate = mapLabelDataToInspectionUpdate(body);
   return inspectionsApi
     .putInspectionInspectionsIdPut(id, inspectionUpdate, {
@@ -58,6 +60,7 @@ export async function PUT(
     })
     .then((inspectionResponse) => {
       const labelData = mapInspectionToLabelData(inspectionResponse.data);
+      console.debug("response:", labelData);
       return Response.json(labelData);
     })
     .catch((error) => {
