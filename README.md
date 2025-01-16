@@ -246,12 +246,11 @@ for details.
 
 ---
 
-# FertiScan Frontend (FR)
+## FertiScan Frontend (FR)
 
 Ce projet est une application **Next.js v14.2.15** utilisant **TypeScript**,
 **Material UI**, **Zustand** pour la gestion d'état, ainsi que **Jest** et
 **React Testing Library** pour les tests unitaires.
-
 
 ## Table des matières
 
@@ -272,7 +271,7 @@ Assurez-vous que les éléments suivants sont installés sur votre machine :
 - Node.js (v14 ou plus)
 - npm (ou yarn)
 
-### Installation
+### Faire l'installation
 
 1. Clonez le dépôt :
 
@@ -495,4 +494,3 @@ notre document
 
 Ce projet est sous licence MIT. Voir le fichier [LICENSE](LICENSE) pour plus de
 détails.
-
