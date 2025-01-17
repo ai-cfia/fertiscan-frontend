@@ -5,6 +5,7 @@ import useUploadedFilesStore from "@/stores/fileStore";
 import useLabelDataStore from "@/stores/labelDataStore";
 import { BilingualField, LabelData, Quantity } from "@/types/types";
 import { processAxiosError } from "@/utils/client/apiErrors";
+import { isAllVerified } from "@/utils/client/fieldValidation";
 import {
   Box,
   Button,
@@ -41,21 +42,20 @@ const LabelDataConfirmationPage = () => {
     return "Basic " + btoa(`${atob(Cookies.get("token") ?? "")}:`);
   };
 
-  const updateLabelData = (labelData: LabelData, signal: AbortSignal) => {
-    if (!labelData.confirmed) {
-      showAlert("Internal error: Label data not confirmed.", "error");
-      return;
-    }
+  const putLabelData = (labelData: LabelData, signal: AbortSignal) => {
+    const confirmedLabelData = { ...labelData, confirmed: true };
     setLoading(true);
     axios
-      .put(`/api/inspections/${labelData.inspectionId}`, labelData, {
-        headers: { Authorization: getAuthHeader() },
-        signal,
-      })
-      .then((response) => {
+      .put(
+        `/api/inspections/${confirmedLabelData.inspectionId}`,
+        confirmedLabelData,
+        {
+          headers: { Authorization: getAuthHeader() },
+          signal,
+        },
+      )
+      .then(() => {
         showAlert("Label data saved successfully.", "success");
-        const updatedLabelData: LabelData = response.data;
-        setLabelData(updatedLabelData);
         router.push("/");
       })
       .catch((error) => {
@@ -69,7 +69,7 @@ const LabelDataConfirmationPage = () => {
       });
   };
 
-  const saveLabelData = (labelData: LabelData, signal: AbortSignal) => {
+  const postLabelData = (labelData: LabelData, signal: AbortSignal) => {
     const formData = new FormData();
     uploadedFiles.forEach((fileUploaded) => {
       const file = fileUploaded.getFile();
@@ -83,15 +83,11 @@ const LabelDataConfirmationPage = () => {
         signal,
       })
       .then((response) => {
-        const initiallySavedLabelData: LabelData = {
-          ...response.data,
-          confirmed: confirmed,
-        };
-        if (!initiallySavedLabelData.inspectionId) {
+        if (!response.data.inspectionId) {
           throw new Error("ID missing in initial label data saving response.");
         }
-        setLabelData(initiallySavedLabelData);
-        updateLabelData(initiallySavedLabelData, signal);
+        setLabelData(response.data);
+        putLabelData(response.data, signal);
       })
       .catch((error) => {
         showAlert(
@@ -126,14 +122,32 @@ const LabelDataConfirmationPage = () => {
     const signal = controller.signal;
     if (labelData?.inspectionId) {
       const updatedLabelData = { ...labelData, confirmed: confirmed };
-      return updateLabelData(updatedLabelData, signal);
+      return putLabelData(updatedLabelData, signal);
     }
-    return saveLabelData(labelData, signal);
+    return postLabelData(labelData, signal);
   };
 
   useEffect(() => {
-    console.debug("labelData", labelData);
-  }, [labelData]);
+    if (imageFiles.length === 0) {
+      showAlert("No files uploaded.", "error");
+      return router.push("/");
+    }
+
+    if (!labelData) {
+      showAlert("Label data not found.", "error");
+      return router.push("/");
+    }
+
+    if (labelData.confirmed) {
+      showAlert("Label data already confirmed.", "error");
+      return router.push("/");
+    }
+
+    if (!isAllVerified(labelData)) {
+      showAlert("Label data not fully verified.", "error");
+      return router.push("/");
+    }
+  }, [imageFiles, labelData, router, showAlert]);
 
   return (
     <Container
@@ -560,7 +574,7 @@ const BilingualTable: React.FC<BilingualTableProps> = ({ data }) => {
               )}
             </TableRow>
           ))}
-        </TableBody>{" "}
+        </TableBody>
       </Table>
     </TableContainer>
   );
