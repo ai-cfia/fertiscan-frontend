@@ -3,7 +3,7 @@ import ImageViewer from "@/components/ImageViewer";
 import useAlertStore from "@/stores/alertStore";
 import useUploadedFilesStore from "@/stores/fileStore";
 import useLabelDataStore from "@/stores/labelDataStore";
-import { LabelData, Quantity } from "@/types/types";
+import { BilingualField, LabelData, Quantity } from "@/types/types";
 import { processAxiosError } from "@/utils/client/apiErrors";
 import {
   Box,
@@ -26,28 +26,6 @@ import axios from "axios";
 import Cookies from "js-cookie";
 import { useRouter } from "next/navigation";
 import React, { useEffect, useState } from "react";
-
-interface QuantityChipsProps extends React.ComponentProps<typeof Box> {
-  quantities: Quantity[] | undefined;
-}
-
-const QuantityChips = React.forwardRef<HTMLDivElement, QuantityChipsProps>(
-  ({ quantities, ...rest }, ref) => {
-    return (
-      <Box
-        {...rest}
-        ref={ref}
-        className={`flex flex-wrap gap-1 ${rest.className || ""}`}
-      >
-        {quantities?.map((q, i) => (
-          <Chip key={i} label={`${q.value} ${q.unit}`} variant="outlined" />
-        ))}
-      </Box>
-    );
-  },
-);
-
-QuantityChips.displayName = "QuantityChips";
 
 const LabelDataConfirmationPage = () => {
   const labelData = useLabelDataStore((state) => state.labelData);
@@ -351,32 +329,7 @@ const LabelDataConfirmationPage = () => {
               >
                 Cautions
               </Typography>
-              <TableContainer>
-                <Table size="small">
-                  <TableHead>
-                    <TableRow className="bg-gray-100">
-                      <TableCell className="min-w-60">
-                        <Typography className="!font-bold">English</Typography>
-                      </TableCell>
-                      <TableCell className="min-w-60">
-                        <Typography className="!font-bold">French</Typography>
-                      </TableCell>
-                    </TableRow>
-                  </TableHead>
-                  <TableBody>
-                    {labelData?.cautions?.map((caution, index) => (
-                      <TableRow key={index}>
-                        <TableCell>
-                          <Typography>{caution.en}</Typography>
-                        </TableCell>
-                        <TableCell>
-                          <Typography>{caution.fr}</Typography>
-                        </TableCell>
-                      </TableRow>
-                    ))}
-                  </TableBody>
-                </Table>
-              </TableContainer>
+              <BilingualTable data={labelData?.cautions ?? []} />
             </Box>
 
             {/* Instructions */}
@@ -388,32 +341,7 @@ const LabelDataConfirmationPage = () => {
               >
                 Instructions
               </Typography>
-              <TableContainer>
-                <Table size="small">
-                  <TableHead>
-                    <TableRow className="bg-gray-100">
-                      <TableCell className="min-w-60">
-                        <Typography className="!font-bold">English</Typography>
-                      </TableCell>
-                      <TableCell className="min-w-60">
-                        <Typography className="!font-bold">French</Typography>
-                      </TableCell>
-                    </TableRow>
-                  </TableHead>
-                  <TableBody>
-                    {labelData?.instructions?.map((instruction, index) => (
-                      <TableRow key={index}>
-                        <TableCell>
-                          <Typography>{instruction.en}</Typography>
-                        </TableCell>
-                        <TableCell>
-                          <Typography>{instruction.fr}</Typography>
-                        </TableCell>
-                      </TableRow>
-                    ))}
-                  </TableBody>
-                </Table>
-              </TableContainer>
+              <BilingualTable data={labelData?.instructions ?? []} />
             </Box>
 
             {/* Guaranteed Analysis */}
@@ -479,48 +407,27 @@ const LabelDataConfirmationPage = () => {
                 <Typography className="!font-bold mb-2 text-left">
                   Nutrients
                 </Typography>
-                <TableContainer>
-                  <Table size="small">
-                    <TableHead>
-                      <TableRow className="bg-gray-100">
-                        <TableCell>
-                          <Typography className="!font-bold">
-                            English
-                          </Typography>
-                        </TableCell>
-                        <TableCell>
-                          <Typography className="!font-bold">French</Typography>
-                        </TableCell>
-                        <TableCell>
-                          <Typography className="!font-bold">Value</Typography>
-                        </TableCell>
-                        <TableCell>
-                          <Typography className="!font-bold">Unit</Typography>
-                        </TableCell>
-                      </TableRow>
-                    </TableHead>
-                    <TableBody>
-                      {labelData?.guaranteedAnalysis.nutrients.map(
-                        (nutrient, index) => (
-                          <TableRow key={index}>
-                            <TableCell>
-                              <Typography>{nutrient.en}</Typography>
-                            </TableCell>
-                            <TableCell>
-                              <Typography>{nutrient.fr}</Typography>
-                            </TableCell>
-                            <TableCell>
-                              <Typography>{nutrient.value}</Typography>
-                            </TableCell>
-                            <TableCell>
-                              <Typography>{nutrient.unit}</Typography>
-                            </TableCell>
-                          </TableRow>
-                        ),
-                      )}
-                    </TableBody>
-                  </Table>
-                </TableContainer>
+                <BilingualTable
+                  data={labelData?.guaranteedAnalysis.nutrients ?? []}
+                />
+              </Box>
+            </Box>
+
+            {/* Ingredients */}
+            <Box>
+              <Typography
+                variant="h5"
+                className="text-left !font-bold"
+                gutterBottom
+              >
+                Ingredients
+              </Typography>
+              {/* Ingredients Section */}
+              <Box>
+                <Typography className="!font-bold mb-2 text-left">
+                  Nutrients
+                </Typography>
+                <BilingualTable data={labelData?.ingredients ?? []} />
               </Box>
             </Box>
           </Box>
@@ -581,3 +488,80 @@ const LabelDataConfirmationPage = () => {
 };
 
 export default LabelDataConfirmationPage;
+
+interface QuantityChipsProps extends React.ComponentProps<typeof Box> {
+  quantities: Quantity[] | undefined;
+}
+
+const QuantityChips = React.forwardRef<HTMLDivElement, QuantityChipsProps>(
+  ({ quantities, ...rest }, ref) => {
+    return (
+      <Box
+        {...rest}
+        ref={ref}
+        className={`flex flex-wrap gap-1 ${rest.className || ""}`}
+      >
+        {quantities?.map((q, i) => (
+          <Chip key={i} label={`${q.value} ${q.unit}`} variant="outlined" />
+        ))}
+      </Box>
+    );
+  },
+);
+
+QuantityChips.displayName = "QuantityChips";
+
+interface BilingualTableProps {
+  data: BilingualField[];
+}
+
+const BilingualTable: React.FC<BilingualTableProps> = ({ data }) => {
+  return (
+    <TableContainer>
+      <Table size="small">
+        <TableHead>
+          <TableRow className="bg-gray-100">
+            <TableCell className="min-w-60">
+              <Typography className="!font-bold">English</Typography>
+            </TableCell>
+            <TableCell className="min-w-60">
+              <Typography className="!font-bold">French</Typography>
+            </TableCell>
+            {data?.[0]?.value !== undefined && (
+              <TableCell>
+                <Typography className="!font-bold">Value</Typography>
+              </TableCell>
+            )}
+            {data?.[0]?.unit !== undefined && (
+              <TableCell>
+                <Typography className="!font-bold">Unit</Typography>
+              </TableCell>
+            )}
+          </TableRow>
+        </TableHead>
+        <TableBody>
+          {data.map((item, index) => (
+            <TableRow key={index}>
+              <TableCell>
+                <Typography>{item.en}</Typography>
+              </TableCell>
+              <TableCell>
+                <Typography>{item.fr}</Typography>
+              </TableCell>
+              {item.value !== undefined && (
+                <TableCell>
+                  <Typography>{item.value}</Typography>
+                </TableCell>
+              )}
+              {item.unit !== undefined && (
+                <TableCell>
+                  <Typography>{item.unit}</Typography>
+                </TableCell>
+              )}
+            </TableRow>
+          ))}
+        </TableBody>{" "}
+      </Table>
+    </TableContainer>
+  );
+};
