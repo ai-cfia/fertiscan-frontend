@@ -9,7 +9,7 @@ interface LabelDataState {
 }
 
 const useLabelDataStore = create<LabelDataState>((set) => ({
-  labelData: null,
+  labelData: VERIFIED_LABEL_DATA,
   setLabelData: (newData) => set({ labelData: newData }),
   resetLabelData: () => set({ labelData: null }),
 }));

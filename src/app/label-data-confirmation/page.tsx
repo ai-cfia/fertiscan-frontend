@@ -11,6 +11,7 @@ import {
   Button,
   Checkbox,
   Chip,
+  CircularProgress,
   Container,
   FormControlLabel,
   FormGroup,
@@ -455,7 +456,6 @@ const LabelDataConfirmationPage = () => {
               Please confirm the data is accurate. If changes are needed, return
               to edit.
             </Typography>
-
             {/* Acknowledgment Checkbox */}
             <FormGroup className="flex items-center justify-center gap-2">
               <FormControlLabel
@@ -463,6 +463,7 @@ const LabelDataConfirmationPage = () => {
                   <Checkbox
                     checked={confirmed}
                     onChange={(event) => setConfirmed(event.target.checked)}
+                    disabled={loading}
                   />
                 }
                 label={
@@ -473,6 +474,7 @@ const LabelDataConfirmationPage = () => {
               />
             </FormGroup>
 
+            {/* Confirm and Edit Buttons */}
             <Box className="flex justify-center gap-4 pt-2">
               <Button
                 variant="contained"
@@ -482,7 +484,14 @@ const LabelDataConfirmationPage = () => {
                 onClick={handleConfirmClick}
                 data-testid="confirm-button"
               >
-                Confirm
+                {loading ? (
+                  <>
+                    <CircularProgress size={16} color="inherit" />
+                    <span className="ml-2">Confirming</span>
+                  </>
+                ) : (
+                  "Confirm"
+                )}
               </Button>
               <Button
                 variant="contained"
@@ -563,12 +572,12 @@ const BilingualTable: React.FC<BilingualTableProps> = ({ data }) => {
                 <Typography>{item.fr}</Typography>
               </TableCell>
               {item.value !== undefined && (
-                <TableCell>
+                <TableCell align="right">
                   <Typography>{item.value}</Typography>
                 </TableCell>
               )}
               {item.unit !== undefined && (
-                <TableCell>
+                <TableCell align="right">
                   <Typography>{item.unit}</Typography>
                 </TableCell>
               )}
