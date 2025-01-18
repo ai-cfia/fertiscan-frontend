@@ -32,7 +32,11 @@ import React, { useEffect, useState } from "react";
 const LabelDataConfirmationPage = () => {
   const labelData = useLabelDataStore((state) => state.labelData);
   const setLabelData = useLabelDataStore((state) => state.setLabelData);
-  const { uploadedFiles } = useUploadedFilesStore();
+  const resetLabelData = useLabelDataStore((state) => state.resetLabelData);
+  const uploadedFiles = useUploadedFilesStore((state) => state.uploadedFiles);
+  const clearUploadedFiles = useUploadedFilesStore(
+    (state) => state.clearUploadedFiles,
+  );
   const imageFiles = uploadedFiles.map((file) => file.getFile());
   const router = useRouter();
   const [loading, setLoading] = useState(false);
@@ -57,6 +61,8 @@ const LabelDataConfirmationPage = () => {
       )
       .then(() => {
         showAlert("Label data saved successfully.", "success");
+        resetLabelData();
+        clearUploadedFiles();
         router.push("/");
       })
       .catch((error) => {
@@ -122,30 +128,29 @@ const LabelDataConfirmationPage = () => {
     const controller = new AbortController();
     const signal = controller.signal;
     if (labelData?.inspectionId) {
-      const updatedLabelData = { ...labelData, confirmed: confirmed };
-      return putLabelData(updatedLabelData, signal);
+      return putLabelData(labelData, signal);
     }
     return postLabelData(labelData, signal);
   };
 
   useEffect(() => {
     if (imageFiles.length === 0) {
-      showAlert("No files uploaded.", "error");
+      console.warn("No files uploaded.");
       return router.push("/");
     }
 
     if (!labelData) {
-      showAlert("Label data not found.", "error");
+      console.warn("Label data not found.");
       return router.push("/");
     }
 
     if (labelData.confirmed) {
-      showAlert("Label data already confirmed.", "error");
+      console.warn("Label data already confirmed.");
       return router.push("/");
     }
 
     if (!isAllVerified(labelData)) {
-      showAlert("Label data not fully verified.", "error");
+      console.warn("Label data not fully verified.");
       return router.push("/");
     }
   }, [imageFiles, labelData, router, showAlert]);

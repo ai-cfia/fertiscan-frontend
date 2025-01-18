@@ -34,7 +34,7 @@ flowchart TD
     CheckInspectionID -->|Yes| CopyLabelData
     PutRequest --> PutRequestSuccess{"Request Success?"}
     PutRequestSuccess -->|No| StopLoadingFailure
-    PutRequestSuccess -->|Yes| StopLoadingSuccess["Stop Loading Animation"] --> DisplaySuccessAlert["Display Success Alert"] --> HomePage[Home] --> End
+    PutRequestSuccess -->|Yes| StopLoadingSuccess["Stop Loading Animation"] --> DisplaySuccessAlert["Display Success Alert"] --> ResetStores["Reset Image Store and Label Data Store"] --> HomePage[Home] --> End
 ```
 
 ## Click on Edit button
