@@ -1,7 +1,7 @@
 "use client";
 import { Stack } from "@mui/material";
 import InspectionPreview from "@/types/InspectionPreview";
-import InspectionElement from "@/components/InspectionList/InspectionElement";
+import { InspectionElement,LoadingInspectionElement } from "@/components/InspectionList/InspectionElement";
 import { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
 
@@ -19,6 +19,12 @@ const InspectionList = ({ search, inspectionList }: InspectionListProps) => {
     router.push(`/label-data-validation/${id}`);
   };
 
+  const LoadingList = [
+    <LoadingInspectionElement key={0}/>,
+    <LoadingInspectionElement key={1}/>,
+    <LoadingInspectionElement key={2}/>,
+  ]
+
   useEffect(() => {
     setShownList(
       inspectionList.filter((inspection) => {
@@ -30,7 +36,7 @@ const InspectionList = ({ search, inspectionList }: InspectionListProps) => {
   }, [inspectionList, search]);
   return (
     <Stack spacing={2} className={"overflow-y-auto pl-0 pb-4 h-full"}>
-      {shownList.map((inspection) => {
+      {inspectionList.length == 0 ? LoadingList : shownList.map((inspection) => {
         return (
           <InspectionElement
             inspection={inspection}

@@ -20,7 +20,7 @@ const InspectionElement = ({
   return (
     <Card
       className={
-        "p-2 xs:h-[75px] s:h-[100px] cursor-pointer hover:shadow-xl flex-shrink-0"
+        "p-2 xs:h-[75px] s:h-[100px] cursor-pointer flex-shrink-0"
       }
       onClick={handleClick}
     >
@@ -45,4 +45,17 @@ const InspectionElement = ({
   );
 };
 
+const LoadingInspectionElement = () => {
+  return (
+    <Card className={"p-2 xs:h-[75px] s:h-[100px] flex-shrink-0"}>
+      <Stack direction={"row"} className={"h-full items-center"}>
+        <Typography component={"h2"} className={`!ml-2 w-full`}>
+          {"Loading..."}
+        </Typography>
+      </Stack>
+    </Card>
+  );
+}
+
 export default InspectionElement;
+export { LoadingInspectionElement, InspectionElement };

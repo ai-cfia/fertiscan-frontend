@@ -1,5 +1,6 @@
 {
   "user-info": {
+    "title": "User information",
     "username": "Username",
     "mail": "Email",
     "role": "Role",

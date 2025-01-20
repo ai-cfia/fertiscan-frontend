@@ -1,5 +1,6 @@
 {
   "user-info": {
+    "title" : "Informations de l'utilisateur",
     "username": "Nom d'utilisateur",
     "mail": "Email",
     "role": "Rôle",

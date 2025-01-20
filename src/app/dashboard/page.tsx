@@ -6,7 +6,7 @@ import {
   TextField,
   Typography,
 } from "@mui/material";
-import { Search, LocationOn } from "@mui/icons-material";
+import { Search } from "@mui/icons-material";
 import { useEffect, useState } from "react";
 import Cookies from "js-cookie";
 import axios from "axios";
@@ -17,9 +17,11 @@ const Dashboard = () => {
   const { t } = useTranslation("dashboard");
   const [search, setSearch] = useState("");
   const [inspectList, setInspectList] = useState([]);
+  const [user, setUser] = useState("");
 
   useEffect(() => {
-    const username = atob(Cookies.get("token") ?? "");
+    setUser(atob(Cookies.get("token") ?? ""));
+    const username = atob(Cookies.get("token") ?? "")
     const password = "";
     const authHeader = "Basic " + btoa(`${username}:${password}`);
     axios
@@ -30,11 +32,15 @@ const Dashboard = () => {
       })
       .then((response) => {
         setInspectList(response.data);
+      }).catch((error) => {
+        if(error.response.status === 401){
+          Cookies.remove("token");
+        }
       });
   }, []);
 
   return (
-    <Grid container spacing={2} className={"p-5 h-[calc(100vh-65px)]"}>
+    <Grid container spacing={2} className={"p-5 h-[calc(100vh-65px)]"} sx={{backgroundColor:theme.palette.background.paper}}>
       <Grid size={{ xs: 12, sm: 4, md: 3 }}>
         <Grid
           data-testid={"user-info"}
@@ -42,24 +48,14 @@ const Dashboard = () => {
           className={"p-2 border-gray-200 border-2 rounded-md h-fit"}
         >
           <Grid size={12}>
-            <Typography component={"h2"} className={"!font-black "}>
-              {t("user-info.username")}
+            <Typography component={"h2"} className={"!font-black text-black"}>
+              {t("user-info.title")}
             </Typography>
           </Grid>
-          <Grid size={4}>
-            <b>{t("user-info.mail")}:</b>
+          <Grid size={6}>
+            <b className={"text-black"}>{t("user-info.username")}:</b>
           </Grid>
-          <Grid size={8}>User email</Grid>
-          <Grid size={4}>
-            <b>{t("user-info.role")}:</b>
-          </Grid>
-          <Grid size={8}>User role</Grid>
-          <Grid size={4}>
-            <b>
-              <LocationOn />:
-            </b>
-          </Grid>
-          <Grid size={8}>User location</Grid>
+          <Grid className={"text-black"} size={6}>{user}</Grid>
         </Grid>
         <Grid
           container
@@ -68,7 +64,7 @@ const Dashboard = () => {
           }
         >
           <Grid size={12}>
-            <Typography component={"h4"} className={"!font-semiboldl "}>
+            <Typography component={"h4"} className={"!font-semiboldl text-black"}>
               {t("user-info.inspectionNumber")}: {inspectList.length}
             </Typography>
           </Grid>
@@ -82,7 +78,7 @@ const Dashboard = () => {
       >
         <Grid container spacing={2} className={"h-full"}>
           <Grid size={{ xs: 12, sm: 6, md: 4 }}>
-            <Typography component={"h2"} className={"!font-black"}>
+            <Typography component={"h2"} className={"!font-black text-black"}>
               {t("list.my-inspections")}
             </Typography>
           </Grid>
@@ -99,10 +95,10 @@ const Dashboard = () => {
               fullWidth
               slotProps={{
                 htmlInput: {
-                  className: "!p-0 after:!transition-none ",
+                  className: "!p-0 ",
                 },
                 input: {
-                  className: "p-2",
+                  className: "p-2 after:!transition-none ",
                   startAdornment: (
                     <InputAdornment position={"start"} className={"!m-0"}>
                       <Search color="primary" />
