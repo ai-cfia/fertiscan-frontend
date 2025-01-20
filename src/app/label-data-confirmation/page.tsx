@@ -28,6 +28,7 @@ import axios from "axios";
 import Cookies from "js-cookie";
 import { useRouter } from "next/navigation";
 import React, { useEffect, useState } from "react";
+import { useTranslation } from "react-i18next";
 
 const LabelDataConfirmationPage = () => {
   const labelData = useLabelDataStore((state) => state.labelData);
@@ -42,6 +43,7 @@ const LabelDataConfirmationPage = () => {
   const [loading, setLoading] = useState(false);
   const showAlert = useAlertStore((state) => state.showAlert);
   const [confirmed, setConfirmed] = useState(false);
+  const { t } = useTranslation("confirmationPage");
 
   const getAuthHeader = () => {
     return "Basic " + btoa(`${atob(Cookies.get("token") ?? "")}:`);
@@ -180,7 +182,7 @@ const LabelDataConfirmationPage = () => {
               className="text-center !font-bold"
               data-testid="page-title"
             >
-              Review and Confirm The Label Data
+              {t("pageTitle")}
             </Typography>
           </Box>
 
@@ -195,36 +197,46 @@ const LabelDataConfirmationPage = () => {
                 className="text-left !font-bold"
                 gutterBottom
               >
-                Fertilizer Base Information
+                {t("baseInformation.sectionTitle")}
               </Typography>
               <TableContainer>
                 <Table size="small">
                   <TableHead>
                     <TableRow className="bg-gray-100">
                       <TableCell className="min-w-60">
-                        <Typography className="!font-bold">Name</Typography>
+                        <Typography className="!font-bold">
+                          {t("baseInformation.tableHeaders.name")}
+                        </Typography>
                       </TableCell>
                       <TableCell className="min-w-48">
                         <Typography className="!font-bold">
-                          Registration Number
+                          {t("baseInformation.tableHeaders.registrationNumber")}
                         </Typography>
                       </TableCell>
                       <TableCell className="min-w-32">
                         <Typography className="!font-bold">
-                          Lot Number
+                          {t("baseInformation.tableHeaders.lotNumber")}
                         </Typography>
                       </TableCell>
                       <TableCell className="min-w-32">
-                        <Typography className="!font-bold">NPK</Typography>
+                        <Typography className="!font-bold">
+                          {t("baseInformation.tableHeaders.npk")}
+                        </Typography>
                       </TableCell>
                       <TableCell className="min-w-32">
-                        <Typography className="!font-bold">Weight</Typography>
+                        <Typography className="!font-bold">
+                          {t("baseInformation.tableHeaders.weight")}
+                        </Typography>
                       </TableCell>
                       <TableCell className="min-w-32">
-                        <Typography className="!font-bold">Density</Typography>
+                        <Typography className="!font-bold">
+                          {t("baseInformation.tableHeaders.density")}
+                        </Typography>
                       </TableCell>
                       <TableCell className="min-w-32">
-                        <Typography className="!font-bold">Volume</Typography>
+                        <Typography className="!font-bold">
+                          {t("baseInformation.tableHeaders.volume")}
+                        </Typography>
                       </TableCell>
                     </TableRow>
                   </TableHead>
@@ -284,24 +296,30 @@ const LabelDataConfirmationPage = () => {
                 className="text-left !font-bold"
                 gutterBottom
               >
-                Organizations
+                {t("organizations.sectionTitle")}
               </Typography>
               <TableContainer>
                 <Table size="small">
                   <TableHead>
                     <TableRow className="bg-gray-100">
                       <TableCell className="min-w-60">
-                        <Typography className="!font-bold">Name</Typography>
+                        <Typography className="!font-bold">
+                          {t("organizations.tableHeaders.name")}
+                        </Typography>
                       </TableCell>
                       <TableCell className="min-w-60">
-                        <Typography className="!font-bold">Address</Typography>
+                        <Typography className="!font-bold">
+                          {t("organizations.tableHeaders.address")}
+                        </Typography>
                       </TableCell>
                       <TableCell>
-                        <Typography className="!font-bold">Website</Typography>
+                        <Typography className="!font-bold">
+                          {t("organizations.tableHeaders.website")}
+                        </Typography>
                       </TableCell>
                       <TableCell className="min-w-44">
                         <Typography className="!font-bold">
-                          Phone Number
+                          {t("organizations.tableHeaders.phoneNumber")}
                         </Typography>
                       </TableCell>
                     </TableRow>
@@ -347,7 +365,7 @@ const LabelDataConfirmationPage = () => {
                 className="text-left !font-bold"
                 gutterBottom
               >
-                Cautions
+                {t("cautions.sectionTitle")}
               </Typography>
               <BilingualTable data={labelData?.cautions ?? []} />
             </Box>
@@ -359,7 +377,7 @@ const LabelDataConfirmationPage = () => {
                 className="text-left !font-bold"
                 gutterBottom
               >
-                Instructions
+                {t("instructions.sectionTitle")}
               </Typography>
               <BilingualTable data={labelData?.instructions ?? []} />
             </Box>
@@ -371,12 +389,12 @@ const LabelDataConfirmationPage = () => {
                 className="text-left !font-bold"
                 gutterBottom
               >
-                Guaranteed Analysis
+                {t("guaranteedAnalysis.sectionTitle")}
               </Typography>
               {/* Title Section */}
               <Box className="mb-4">
                 <Typography className="!font-bold mb-2 text-left">
-                  Title
+                  {t("guaranteedAnalysis.title")}
                 </Typography>
                 <TableContainer>
                   <Table size="small">
@@ -384,15 +402,17 @@ const LabelDataConfirmationPage = () => {
                       <TableRow className="bg-gray-100">
                         <TableCell>
                           <Typography className="!font-bold">
-                            English
+                            {t("guaranteedAnalysis.tableHeaders.english")}
                           </Typography>
                         </TableCell>
                         <TableCell>
-                          <Typography className="!font-bold">French</Typography>
+                          <Typography className="!font-bold">
+                            {t("guaranteedAnalysis.tableHeaders.french")}
+                          </Typography>
                         </TableCell>
                         <TableCell>
                           <Typography className="!font-bold">
-                            Is Minimal
+                            {t("guaranteedAnalysis.tableHeaders.isMinimal")}
                           </Typography>
                         </TableCell>
                       </TableRow>
@@ -412,8 +432,8 @@ const LabelDataConfirmationPage = () => {
                         <TableCell>
                           <Typography>
                             {labelData?.guaranteedAnalysis.isMinimal.value
-                              ? "Yes"
-                              : "No"}
+                              ? t("yes")
+                              : t("no")}
                           </Typography>
                         </TableCell>
                       </TableRow>
@@ -425,7 +445,7 @@ const LabelDataConfirmationPage = () => {
               {/* Nutrients Section */}
               <Box>
                 <Typography className="!font-bold mb-2 text-left">
-                  Nutrients
+                  {t("guaranteedAnalysis.nutrients")}
                 </Typography>
                 <BilingualTable
                   data={labelData?.guaranteedAnalysis.nutrients ?? []}
@@ -440,12 +460,12 @@ const LabelDataConfirmationPage = () => {
                 className="text-left !font-bold"
                 gutterBottom
               >
-                Ingredients
+                {t("ingredients.sectionTitle")}
               </Typography>
               {/* Ingredients Section */}
               <Box>
                 <Typography className="!font-bold mb-2 text-left">
-                  Nutrients
+                  {t("ingredients.nutrients")}
                 </Typography>
                 <BilingualTable data={labelData?.ingredients ?? []} />
               </Box>
@@ -457,10 +477,7 @@ const LabelDataConfirmationPage = () => {
             className="p-4 flex flex-col gap-1 text-center"
             data-testid="confirmation-section"
           >
-            <Typography>
-              Please confirm the data is accurate. If changes are needed, return
-              to edit.
-            </Typography>
+            <Typography>{t("confirmationSection.prompt")}</Typography>
             {/* Acknowledgment Checkbox */}
             <FormGroup className="flex items-center justify-center gap-2">
               <FormControlLabel
@@ -473,7 +490,7 @@ const LabelDataConfirmationPage = () => {
                 }
                 label={
                   <Typography variant="body2" className="!font-bold">
-                    I acknowledge that the data is accurate.
+                    {t("confirmationSection.acknowledgment")}
                   </Typography>
                 }
               />
@@ -492,10 +509,12 @@ const LabelDataConfirmationPage = () => {
                 {loading ? (
                   <>
                     <CircularProgress size={16} color="inherit" />
-                    <span className="ml-2">Confirming</span>
+                    <span className="ml-2">
+                      {t("confirmationSection.confirmingButton")}
+                    </span>
                   </>
                 ) : (
-                  "Confirm"
+                  t("confirmationSection.confirmButton")
                 )}
               </Button>
               <Button
@@ -505,7 +524,7 @@ const LabelDataConfirmationPage = () => {
                 onClick={handleEditClick}
                 data-testid="edit-button"
               >
-                Edit Details
+                {t("confirmationSection.editButton")}
               </Button>
             </Box>
           </Box>
@@ -544,25 +563,35 @@ interface BilingualTableProps {
 }
 
 const BilingualTable: React.FC<BilingualTableProps> = ({ data }) => {
+  const { t } = useTranslation("confirmationPage");
+
   return (
     <TableContainer>
       <Table size="small">
         <TableHead>
           <TableRow className="bg-gray-100">
             <TableCell className="min-w-60">
-              <Typography className="!font-bold">English</Typography>
+              <Typography className="!font-bold">
+                {t("bilingualTable.tableHeaders.english")}
+              </Typography>
             </TableCell>
             <TableCell className="min-w-60">
-              <Typography className="!font-bold">French</Typography>
+              <Typography className="!font-bold">
+                {t("bilingualTable.tableHeaders.french")}
+              </Typography>
             </TableCell>
             {data?.[0]?.value !== undefined && (
               <TableCell>
-                <Typography className="!font-bold">Value</Typography>
+                <Typography className="!font-bold">
+                  {t("bilingualTable.tableHeaders.value")}
+                </Typography>
               </TableCell>
             )}
             {data?.[0]?.unit !== undefined && (
               <TableCell>
-                <Typography className="!font-bold">Unit</Typography>
+                <Typography className="!font-bold">
+                  {t("bilingualTable.tableHeaders.unit")}
+                </Typography>
               </TableCell>
             )}
           </TableRow>

@@ -96,9 +96,14 @@ function LabelDataValidationPage() {
     };
   }, [uploadedFiles, showAlert, router, storedLabelData, setLabelData]);
 
+  const getFiles = () => {
+    console.log("log uploadedFiles:", uploadedFiles);
+    return uploadedFiles.map((file) => file.getFile());
+  };
+
   return (
     <LabelDataValidator
-      files={uploadedFiles.map((file) => file.getFile())}
+      files={getFiles()}
       labelData={labelData}
       setLabelData={setLabelData}
       loading={loading}
