@@ -191,7 +191,7 @@ const LabelDataConfirmationPage = () => {
             data-testid="form-container"
           >
             {/* Base Information */}
-            <Box>
+            <Box data-testid="base-information-section">
               <Typography
                 variant="h5"
                 className="text-left !font-bold"
@@ -199,8 +199,8 @@ const LabelDataConfirmationPage = () => {
               >
                 {t("baseInformation.sectionTitle")}
               </Typography>
-              <TableContainer>
-                <Table size="small">
+              <TableContainer data-testid="base-information-table-container">
+                <Table size="small" data-testid="base-information-table">
                   <TableHead>
                     <TableRow className="bg-gray-100">
                       <TableCell className="min-w-60">
@@ -241,42 +241,42 @@ const LabelDataConfirmationPage = () => {
                     </TableRow>
                   </TableHead>
                   <TableBody>
-                    <TableRow>
-                      <TableCell>
+                    <TableRow data-testid="base-information-data-row">
+                      <TableCell data-testid="base-information-name">
                         <Typography>
                           {labelData?.baseInformation.name.value}
                         </Typography>
                       </TableCell>
-                      <TableCell>
+                      <TableCell data-testid="base-information-registration-number">
                         <Typography>
                           {labelData?.baseInformation.registrationNumber.value}
                         </Typography>
                       </TableCell>
-                      <TableCell>
+                      <TableCell data-testid="base-information-lot-number">
                         <Typography>
                           {labelData?.baseInformation.lotNumber.value}
                         </Typography>
                       </TableCell>
-                      <TableCell>
+                      <TableCell data-testid="base-information-npk">
                         <Typography>
                           {labelData?.baseInformation.npk.value}
                         </Typography>
                       </TableCell>
-                      <TableCell>
+                      <TableCell data-testid="base-information-weight">
                         <QuantityChips
                           quantities={
                             labelData?.baseInformation.weight.quantities
                           }
                         />
                       </TableCell>
-                      <TableCell>
+                      <TableCell data-testid="base-information-density">
                         <QuantityChips
                           quantities={
                             labelData?.baseInformation.density.quantities
                           }
                         />
                       </TableCell>
-                      <TableCell>
+                      <TableCell data-testid="base-information-volume">
                         <QuantityChips
                           quantities={
                             labelData?.baseInformation.volume.quantities
@@ -290,7 +290,7 @@ const LabelDataConfirmationPage = () => {
             </Box>
 
             {/* Organizations Table */}
-            <Box>
+            <Box data-testid="organizations-section">
               <Typography
                 variant="h5"
                 className="text-left !font-bold"
@@ -298,8 +298,8 @@ const LabelDataConfirmationPage = () => {
               >
                 {t("organizations.sectionTitle")}
               </Typography>
-              <TableContainer>
-                <Table size="small">
+              <TableContainer data-testid="organizations-table-container">
+                <Table size="small" data-testid="organizations-table">
                   <TableHead>
                     <TableRow className="bg-gray-100">
                       <TableCell className="min-w-60">
@@ -326,14 +326,23 @@ const LabelDataConfirmationPage = () => {
                   </TableHead>
                   <TableBody>
                     {labelData?.organizations?.map((org, index) => (
-                      <TableRow key={index}>
-                        <TableCell>
+                      <TableRow
+                        key={index}
+                        data-testid={`organizations-row-${index}`}
+                      >
+                        <TableCell
+                          data-testid={`organizations-row-${index}-name`}
+                        >
                           <Typography>{org.name.value}</Typography>
                         </TableCell>
-                        <TableCell>
+                        <TableCell
+                          data-testid={`organizations-row-${index}-address`}
+                        >
                           <Typography>{org.address.value}</Typography>
                         </TableCell>
-                        <TableCell>
+                        <TableCell
+                          data-testid={`organizations-row-${index}-website`}
+                        >
                           <Typography>
                             <Link
                               href={`http://${org.website.value}`}
@@ -344,7 +353,9 @@ const LabelDataConfirmationPage = () => {
                             </Link>
                           </Typography>
                         </TableCell>
-                        <TableCell>
+                        <TableCell
+                          data-testid={`organizations-row-${index}-phone-number`}
+                        >
                           <Typography>
                             <Link href={`tel:${org.phoneNumber.value}`}>
                               {org.phoneNumber.value}
@@ -359,7 +370,7 @@ const LabelDataConfirmationPage = () => {
             </Box>
 
             {/* Cautions */}
-            <Box>
+            <Box data-testid="cautions-section">
               <Typography
                 variant="h5"
                 className="text-left !font-bold"
@@ -367,11 +378,14 @@ const LabelDataConfirmationPage = () => {
               >
                 {t("cautions.sectionTitle")}
               </Typography>
-              <BilingualTable data={labelData?.cautions ?? []} />
+              <BilingualTable
+                data={labelData?.cautions ?? []}
+                data-testid="cautions-bilingual-table"
+              />
             </Box>
 
             {/* Instructions */}
-            <Box>
+            <Box data-testid="instructions-section">
               <Typography
                 variant="h5"
                 className="text-left !font-bold"
@@ -379,11 +393,14 @@ const LabelDataConfirmationPage = () => {
               >
                 {t("instructions.sectionTitle")}
               </Typography>
-              <BilingualTable data={labelData?.instructions ?? []} />
+              <BilingualTable
+                data={labelData?.instructions ?? []}
+                data-testid="instructions-bilingual-table"
+              />
             </Box>
 
             {/* Guaranteed Analysis */}
-            <Box>
+            <Box data-testid="guaranteed-analysis-section">
               <Typography
                 variant="h5"
                 className="text-left !font-bold"
@@ -391,13 +408,20 @@ const LabelDataConfirmationPage = () => {
               >
                 {t("guaranteedAnalysis.sectionTitle")}
               </Typography>
+
               {/* Title Section */}
-              <Box className="mb-4">
+              <Box
+                className="mb-4"
+                data-testid="guaranteed-analysis-title-section"
+              >
                 <Typography className="!font-bold mb-2 text-left">
                   {t("guaranteedAnalysis.title")}
                 </Typography>
-                <TableContainer>
-                  <Table size="small">
+                <TableContainer data-testid="guaranteed-analysis-title-table-container">
+                  <Table
+                    size="small"
+                    data-testid="guaranteed-analysis-title-table"
+                  >
                     <TableHead>
                       <TableRow className="bg-gray-100">
                         <TableCell>
@@ -418,18 +442,18 @@ const LabelDataConfirmationPage = () => {
                       </TableRow>
                     </TableHead>
                     <TableBody>
-                      <TableRow>
-                        <TableCell>
+                      <TableRow data-testid="guaranteed-analysis-title-row">
+                        <TableCell data-testid="guaranteed-analysis-title-english">
                           <Typography>
                             {labelData?.guaranteedAnalysis.titleEn.value}
                           </Typography>
                         </TableCell>
-                        <TableCell>
+                        <TableCell data-testid="guaranteed-analysis-title-french">
                           <Typography>
                             {labelData?.guaranteedAnalysis.titleFr.value}
                           </Typography>
                         </TableCell>
-                        <TableCell>
+                        <TableCell data-testid="guaranteed-analysis-is-minimal">
                           <Typography>
                             {labelData?.guaranteedAnalysis.isMinimal.value
                               ? t("yes")
@@ -443,18 +467,19 @@ const LabelDataConfirmationPage = () => {
               </Box>
 
               {/* Nutrients Section */}
-              <Box>
+              <Box data-testid="guaranteed-analysis-nutrients-section">
                 <Typography className="!font-bold mb-2 text-left">
                   {t("guaranteedAnalysis.nutrients")}
                 </Typography>
                 <BilingualTable
                   data={labelData?.guaranteedAnalysis.nutrients ?? []}
+                  data-testid="guaranteed-analysis-nutrients-table"
                 />
               </Box>
             </Box>
 
             {/* Ingredients */}
-            <Box>
+            <Box data-testid="ingredients-section">
               <Typography
                 variant="h5"
                 className="text-left !font-bold"
@@ -462,12 +487,14 @@ const LabelDataConfirmationPage = () => {
               >
                 {t("ingredients.sectionTitle")}
               </Typography>
-              {/* Ingredients Section */}
               <Box>
                 <Typography className="!font-bold mb-2 text-left">
                   {t("ingredients.nutrients")}
                 </Typography>
-                <BilingualTable data={labelData?.ingredients ?? []} />
+                <BilingualTable
+                  data={labelData?.ingredients ?? []}
+                  data-testid="ingredients-nutrients-table"
+                />
               </Box>
             </Box>
           </Box>
@@ -486,6 +513,7 @@ const LabelDataConfirmationPage = () => {
                     checked={confirmed}
                     onChange={(event) => setConfirmed(event.target.checked)}
                     disabled={loading}
+                    data-testid="confirmation-checkbox"
                   />
                 }
                 label={
@@ -508,13 +536,17 @@ const LabelDataConfirmationPage = () => {
               >
                 {loading ? (
                   <>
-                    <CircularProgress size={16} color="inherit" />
+                    <CircularProgress
+                      size={16}
+                      color="inherit"
+                      data-testid="loading-spinner"
+                    />
                     <span className="ml-2">
                       {t("confirmationSection.confirmingButton")}
                     </span>
                   </>
                 ) : (
-                  t("confirmationSection.confirmButton")
+                  <span>{t("confirmationSection.confirmButton")}</span>
                 )}
               </Button>
               <Button
@@ -524,7 +556,7 @@ const LabelDataConfirmationPage = () => {
                 onClick={handleEditClick}
                 data-testid="edit-button"
               >
-                {t("confirmationSection.editButton")}
+                <span>{t("confirmationSection.editButton")}</span>
               </Button>
             </Box>
           </Box>
@@ -566,8 +598,8 @@ const BilingualTable: React.FC<BilingualTableProps> = ({ data }) => {
   const { t } = useTranslation("confirmationPage");
 
   return (
-    <TableContainer>
-      <Table size="small">
+    <TableContainer data-testid="bilingual-table-container">
+      <Table size="small" data-testid="bilingual-table">
         <TableHead>
           <TableRow className="bg-gray-100">
             <TableCell className="min-w-60">
@@ -581,14 +613,14 @@ const BilingualTable: React.FC<BilingualTableProps> = ({ data }) => {
               </Typography>
             </TableCell>
             {data?.[0]?.value !== undefined && (
-              <TableCell>
+              <TableCell data-testid="bilingual-table-header-value">
                 <Typography className="!font-bold">
                   {t("bilingualTable.tableHeaders.value")}
                 </Typography>
               </TableCell>
             )}
             {data?.[0]?.unit !== undefined && (
-              <TableCell>
+              <TableCell data-testid="bilingual-table-header-unit">
                 <Typography className="!font-bold">
                   {t("bilingualTable.tableHeaders.unit")}
                 </Typography>
@@ -598,20 +630,26 @@ const BilingualTable: React.FC<BilingualTableProps> = ({ data }) => {
         </TableHead>
         <TableBody>
           {data.map((item, index) => (
-            <TableRow key={index}>
-              <TableCell>
+            <TableRow key={index} data-testid={`bilingual-table-row-${index}`}>
+              <TableCell data-testid={`bilingual-table-row-${index}-english`}>
                 <Typography>{item.en}</Typography>
               </TableCell>
-              <TableCell>
+              <TableCell data-testid={`bilingual-table-row-${index}-french`}>
                 <Typography>{item.fr}</Typography>
               </TableCell>
               {item.value !== undefined && (
-                <TableCell align="right">
+                <TableCell
+                  align="right"
+                  data-testid={`bilingual-table-row-${index}-value`}
+                >
                   <Typography>{item.value}</Typography>
                 </TableCell>
               )}
               {item.unit !== undefined && (
-                <TableCell align="right">
+                <TableCell
+                  align="right"
+                  data-testid={`bilingual-table-row-${index}-unit`}
+                >
                   <Typography>{item.unit}</Typography>
                 </TableCell>
               )}

@@ -3,37 +3,108 @@ import { LabelData } from "@/types/types";
 export const VERIFIED_LABEL_DATA: LabelData = {
   organizations: [
     {
-      name: { value: "", verified: true },
-      address: { value: "", verified: true },
-      website: { value: "", verified: true },
-      phoneNumber: { value: "", verified: true },
+      name: { value: "AgriGrow Fertilizers Inc.", verified: true },
+      address: { value: "123 Greenfield Ave, Springfield", verified: true },
+      website: { value: "www.agrigrow.com", verified: true },
+      phoneNumber: { value: "+1-800-555-0199", verified: true },
+    },
+    {
+      name: { value: "AgriGrow Fertilizers Inc.", verified: true },
+      address: { value: "123 Greenfield Ave, Springfield", verified: true },
+      website: { value: "www.agrigrow.com", verified: true },
+      phoneNumber: { value: "+1-800-555-0199", verified: true },
     },
   ],
   baseInformation: {
-    name: { value: "", verified: true },
-    registrationNumber: { value: "", verified: true },
-    lotNumber: { value: "", verified: true },
-    npk: { value: "", verified: true },
+    name: { value: "SuperGrow 20-20-20", verified: true },
+    registrationNumber: { value: "1234567A", verified: true },
+    lotNumber: { value: "LOT-4567", verified: true },
+    npk: { value: "20-20-20", verified: true },
     weight: {
       verified: true,
-      quantities: [{ value: "", unit: "" }],
+      quantities: [
+        { value: "25", unit: "kg" },
+        { value: "25", unit: "kg" },
+      ],
     },
     density: {
       verified: true,
-      quantities: [{ value: "", unit: "" }],
+      quantities: [{ value: "1.2", unit: "g/cm³" }],
     },
     volume: {
       verified: true,
-      quantities: [{ value: "", unit: "" }],
+      quantities: [{ value: "20", unit: "L" }],
     },
   },
-  cautions: [{ en: "", fr: "", value: "", unit: "", verified: true }],
-  instructions: [{ en: "", fr: "", value: "", unit: "", verified: true }],
+  cautions: [
+    {
+      en: "Keep out of reach of children.",
+      fr: "Garder hors de portée des enfants.",
+      verified: true,
+    },
+  ],
+  instructions: [
+    {
+      en: "Dilute 20g in 1L of water before use.",
+      fr: "Diluer 20g dans 1L d'eau avant utilisation.",
+      verified: true,
+    },
+  ],
   guaranteedAnalysis: {
-    titleEn: { value: "", verified: true },
-    titleFr: { value: "", verified: true },
-    isMinimal: { value: false, verified: true },
-    nutrients: [{ en: "", fr: "", value: "", unit: "", verified: true }],
+    titleEn: { value: "Guaranteed Analysis", verified: true },
+    titleFr: { value: "Analyse Garantie", verified: true },
+    isMinimal: { value: true, verified: true },
+    nutrients: [
+      {
+        en: "Nitrogen (N)",
+        fr: "Azote (N)",
+        value: "20",
+        unit: "%",
+        verified: true,
+      },
+      {
+        en: "Phosphorus (P)",
+        fr: "Phosphore (P)",
+        value: "20",
+        unit: "%",
+        verified: true,
+      },
+      {
+        en: "Potassium (K)",
+        fr: "Potassium (K)",
+        value: "20",
+        unit: "%",
+        verified: true,
+      },
+    ],
   },
-  ingredients: [{ en: "", fr: "", value: "", unit: "", verified: true }],
+  ingredients: [
+    { en: "Urea", fr: "Urée", value: "10", unit: "%", verified: true },
+    {
+      en: "Ammonium phosphate",
+      fr: "Phosphate d'ammonium",
+      value: "30",
+      unit: "%",
+      verified: true,
+    },
+    {
+      en: "Potassium chloride",
+      fr: "Chlorure de potassium",
+      value: "60",
+      unit: "%",
+      verified: true,
+    },
+  ],
+  confirmed: false,
+  comment: "",
+};
+
+export const VERIFIED_LABEL_DATA_WITH_ID = {
+  ...VERIFIED_LABEL_DATA,
+  inspectionId: "1234",
+};
+
+export const CONFIRMED_LABEL_DATA = {
+  ...VERIFIED_LABEL_DATA_WITH_ID,
+  confirmed: true,
 };

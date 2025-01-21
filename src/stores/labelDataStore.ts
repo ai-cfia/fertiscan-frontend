@@ -1,5 +1,4 @@
 import { LabelData } from "@/types/types";
-import { VERIFIED_LABEL_DATA } from "@/utils/client/constants";
 import { create } from "zustand";
 
 interface LabelDataState {
