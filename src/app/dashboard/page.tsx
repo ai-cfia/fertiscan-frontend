@@ -12,11 +12,13 @@ import Cookies from "js-cookie";
 import axios from "axios";
 import theme from "@/app/theme";
 import { useTranslation } from "react-i18next";
+import useAlertStore from "@/stores/alertStore";
 
 const Dashboard = () => {
   const { t } = useTranslation("dashboard");
   const [search, setSearch] = useState("");
   const [inspectList, setInspectList] = useState([]);
+  const { showAlert } = useAlertStore();
   const [user, setUser] = useState("");
 
   useEffect(() => {
@@ -35,9 +37,14 @@ const Dashboard = () => {
       }).catch((error) => {
         if(error.response.status === 401){
           Cookies.remove("token");
+          showAlert("Unauthorized access", "error");
+        }if(error.response.status === 404){
+          showAlert("No inspections found", "error");
+        }else{
+          showAlert("An error occurred", "error");
         }
       });
-  }, []);
+  }, [showAlert]);
 
   return (
     <Grid container spacing={2} className={"p-5 h-[calc(100vh-65px)]"} sx={{backgroundColor:theme.palette.background.paper}}>
