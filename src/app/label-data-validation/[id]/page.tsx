@@ -2,9 +2,7 @@
 import LabelDataValidator from "@/components/LabelDataValidator";
 import useAlertStore from "@/stores/alertStore";
 import useUploadedFilesStore from "@/stores/fileStore";
-import { DEFAULT_LABEL_DATA } from "@/types/types";
-import { mapInspectionToLabelData } from "@/utils/client/modelTransformation";
-import { Inspection } from "@/utils/server/backend";
+import { DEFAULT_LABEL_DATA, LabelData } from "@/types/types";
 import axios from "axios";
 import Cookies from "js-cookie";
 import { useRouter } from "next/navigation";
@@ -14,12 +12,11 @@ import { validate } from "uuid";
 export default function Page({ params }: { params: { id: string } }) {
   const { id } = params;
   // uses the uploaded files from store because fetching images is not yet implemented
-  const { uploadedFiles } = useUploadedFilesStore();
-  const { showAlert } = useAlertStore();
+  const uploadedFiles = useUploadedFilesStore((state) => state.uploadedFiles);
+  const showAlert = useAlertStore((state) => state.showAlert);
   const router = useRouter();
   const [loading, setLoading] = useState(true);
   const [labelData, setLabelData] = useState(DEFAULT_LABEL_DATA);
-  const [inspection, setInspection] = useState<Inspection | null>(null);
 
   useEffect(() => {
     if (!validate(id)) {
@@ -40,9 +37,7 @@ export default function Page({ params }: { params: { id: string } }) {
         signal,
       })
       .then((response) => {
-        const inspection: Inspection = response.data;
-        setInspection(inspection);
-        const labelData = mapInspectionToLabelData(inspection);
+        const labelData: LabelData = response.data;
         setLabelData(labelData);
         setLoading(false);
       })
@@ -62,10 +57,6 @@ export default function Page({ params }: { params: { id: string } }) {
       controller.abort(); // avoids react strict mode double fetch
     };
   }, [router, showAlert, id, uploadedFiles.length]);
-
-  useEffect(() => {
-    console.log("inspection", inspection);
-  }, [inspection]);
 
   return (
     <LabelDataValidator
