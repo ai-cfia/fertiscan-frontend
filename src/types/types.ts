@@ -185,6 +185,9 @@ export type LabelData = {
   instructions: BilingualField[];
   guaranteedAnalysis: GuaranteedAnalysis;
   ingredients: BilingualField[];
+  confirmed: boolean;
+  comment?: string;
+  inspectionId?: string;
 };
 
 export const DEFAULT_LABEL_DATA: LabelData = {
@@ -194,6 +197,7 @@ export const DEFAULT_LABEL_DATA: LabelData = {
   instructions: [DEFAULT_BILINGUAL_FIELD],
   guaranteedAnalysis: DEFAULT_GUARANTEED_ANALYSIS,
   ingredients: [FULL_BILINGUAL_FIELD],
+  confirmed: false,
 };
 
 // Form

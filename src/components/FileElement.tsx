@@ -2,14 +2,18 @@ import {
   Divider,
   Grid2,
   IconButton,
+  TextField,
   Typography,
   useTheme,
 } from "@mui/material";
 import DeleteIcon from "@mui/icons-material/Delete";
+import CreateIcon from "@mui/icons-material/Create";
+import CheckIcon from "@mui/icons-material/Check";
 import { DropzoneState } from "@/types/types";
 import Image from "next/image";
 import React, { useState } from "react";
 import { useTranslation } from "react-i18next";
+import useUploadedFilesStore from "@/stores/fileStore";
 
 /**
  * FileElementProps interface to define the props for the FileElement component
@@ -30,17 +34,26 @@ interface FileElementProps {
  *
  * @returns
  */
-const FileElement: React.FC<
-  FileElementProps & { handleDelete: (fileUrl: string) => void }
-> = ({ setDropzoneState, fileName, fileUrl, handleDelete }) => {
+const FileElement: React.FC<FileElementProps> = ({ setDropzoneState, fileName, fileUrl }) => {
   const theme = useTheme();
   const { t } = useTranslation("homePage");
   const [hovered, setHovered] = useState(false);
+  const { removeUploadedFile, renameUploadedFile } = useUploadedFilesStore();
+  const [isRenaming, setIsRenaming] = useState(false);
+  const extension = fileName.split(".").pop() || "";
+  const baseName = fileName.replace(`.${extension}`, "");
+  const [newName, setNewName] = useState(baseName);
 
   const isValidObjectURL = (url: string) => {
     const pattern =
       /^(blob:+http:\/\/|https:\/\/)[a-zA-Z0-9\-_.]+(?:\.[a-zA-Z0-9\-_.]+)*(?::\d+)?\/[a-zA-Z0-9\-_.]+$/;
     return pattern.test(url);
+  };
+
+  const handleRenameSubmit = (event: React.KeyboardEvent) => {
+    if (event.key === "Enter" && newName.trim() !== "") {
+      renameUploadedFile(fileUrl, `${newName.trim()}.${extension}`);
+    }
   };
 
   return (
@@ -55,7 +68,8 @@ const FileElement: React.FC<
           setDropzoneState({ visible: false, imageUrl: "" });
         }}
         className="relative h-full w-full min-h-[90px] flex items-center
-                  justify-center overflow-hidden rounded border-2 border-neutral-600 bg-neutral-200"
+        justify-center overflow-hidden rounded border-2 border-neutral-600 bg-neutral-200"
+        data-testid={`file-element-${fileName}`}
       >
         <Grid2 size={20} className="relative flex justify-center items-center">
           {isValidObjectURL(fileUrl) && (
@@ -77,31 +91,120 @@ const FileElement: React.FC<
           color={theme.palette.primary.dark}
           sx={{ borderRightWidth: 3 }} // className="border-r-2" dont work
         />
-        <Grid2 size={80} className="relative flex items">
+        <Grid2 size={80} className="relative flex items-center justify-between">
+        {isRenaming ? (
+          <div className="flex items-center w-full">
+            <TextField
+              value={newName}
+              onChange={(e) => setNewName(e.target.value)}
+              onKeyPress={handleRenameSubmit}
+              autoFocus
+              placeholder="Enter file name"
+              inputProps={{ autoComplete: "off" }}
+              style={{
+                marginLeft: "5px",
+                marginRight: "5px",
+                width: "calc(100% - 45px)",
+              }}
+              data-testid="rename-input"
+            />
+            <Typography
+              variant="body1"
+              color={theme.palette.text.primary}
+              style={{
+                whiteSpace: "nowrap",
+                marginRight: "5px",
+                flexShrink: 0,
+                width: "auto",
+              }}
+            >
+              .{extension}
+            </Typography>
+            <IconButton
+              edge="end"
+              size="small"
+              aria-label={t("fileElement.altText.renameFileAlt")}
+              sx={{
+                color: "black",
+                backgroundColor: "#D3D3D3",
+                borderRadius: "5px",
+                marginRight: "0.5rem",
+                "&:hover": {
+                  backgroundColor: "#A9A9A9",
+                },
+              }}
+              onClick={() =>{
+                setIsRenaming(false);
+                renameUploadedFile(fileUrl, `${newName.trim()}.${extension}`)
+              }}
+              data-testid={`rename-submit`}
+              >
+              <CheckIcon style={{ fontSize: "1.7rem" }} />
+            </IconButton>
+          </div>
+        ) : (
           <Typography
             variant="h6"
             color={theme.palette.text.primary}
             className="overflow-hidden text-ellipsis whitespace-nowrap text-start pl-2"
+            sx={{ maxWidth: { xs: "80%", md: "calc(100% - 75px)" } }}
+            data-testid="file-name"
           >
             {fileName}
           </Typography>
-        </Grid2>
-        {hovered && (
+        )}
+      </Grid2>
+      {!isRenaming && hovered && (
+        <>
           <IconButton
             edge="end"
             aria-label={t("fileElement.altText.deleteFileAlt")}
-            style={{
+            size="small"
+            sx={{
+              alignSelf: "center",
+              display: "flex",
+              maxHeight: "50%",
               color: "black",
               position: "absolute",
-              top: "-5px",
-              right: 5,
+              borderRadius: "5px",
+              right: { xs: 5, sm: 5 },
+              top: { xs: 0, sm: "0" },
+              bottom: { xs: "auto", sm: 10 },
+              "&:hover": {
+                backgroundColor: "#A9A9A9",
+              },
             }}
-            onClick={() => handleDelete(fileUrl)}
+            onClick={() => {removeUploadedFile(fileUrl); setDropzoneState({ visible: false, imageUrl: "" });}}
+            data-testid={`delete-${fileName}`}
           >
-            <DeleteIcon data-testid="delete" style={{ fontSize: "1.7rem" }} />
+            <DeleteIcon data-testid="delete-icon" style={{ fontSize: "1.7rem" }} />
           </IconButton>
-        )}
-      </Grid2>
+          <IconButton
+            edge="end"
+            size="small"
+            aria-label={t("fileElement.altText.renameFileAlt")}
+            sx={{
+              alignSelf: "center",
+              display: "flex",
+              maxHeight: "50%",
+              color: "black",
+              position: "absolute",
+              borderRadius: "5px",
+              right: { xs: 6, sm: 45 },
+              top: { xs: 50, sm: "0" },
+              bottom: { xs: "auto", sm: 10 },
+              "&:hover": {
+                backgroundColor: "#A9A9A9",
+              },
+            }}
+            onClick={() => setIsRenaming(true)}
+            data-testid={`rename-${fileName}`}
+          >
+            <CreateIcon data-testid={`rename-icon`} style={{ fontSize: "1.7rem" }} />
+          </IconButton>
+        </>
+      )}
+    </Grid2>
     </>
   );
 };

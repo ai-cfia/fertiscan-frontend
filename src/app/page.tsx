@@ -58,11 +58,11 @@ function HomePage() {
               title={t("submitButtonDisabledHint")}
               disableHoverListener={uploadedFiles.length !== 0}
               placement="top"
-              className="w-[90%] max-w-full"
+              className="w-[90%] max-w-full min-w-[133.44px]"
             >
               <span className="flex justify-center w-full">
                 <Button
-                  className="xs:w-[90%] md:w-[100%] min-w-[133.44px] max-h-[40px]"
+                  className={`xs:w-[90%] md:w-[100%] min-w-[133.44px] max-h-[40px] md:max-w-[470px]`} // do not modify md:max-w-[470px] so that the button keeps the same width as the FileList
                   data-testid="submit-button"
                   variant="contained"
                   color="secondary"
