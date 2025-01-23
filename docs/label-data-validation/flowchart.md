@@ -4,16 +4,17 @@
 
 ```mermaid
 flowchart TD
-    Start([Start]) --> LabelDataValidation["/label-data-validation"]
-    LabelDataValidation --> ImagesUploaded{Images Uploaded?}
-    ImagesUploaded -->|No| HomePage[Home] --> End([End])
-    ImagesUploaded -->|Yes| DisplayUploadedImages["Display Uploaded Images"] --> GetExtract[GET /extract]
+    LabelDataValidation(["/label-data-validation"]) --> ImagesInStore{Images in store?}
+    ImagesInStore -->|No| HomePage[Home] --> End([End])
+    ImagesInStore -->|Yes| DisplayStoredImages["Display stored images"] --> LabelDataInStore{Label Data in store?}
+    LabelDataInStore -->|No| GetExtract[GET /extract]
+    LabelDataInStore -->|Yes| DisplayData[Display Data]
     GetExtract --> Success{Success?}
     Success -->|No| End
     Success -->|Yes| PostInspections[POST /inspections]
     PostInspections --> SaveSuccess{Success?}
-    SaveSuccess -->|No| DisplayData[Display Data] --> End
     SaveSuccess -->|Yes| LabelDataWithID["go /label-data-validation/id"] --> End
+    SaveSuccess -->|No| DisplayData --> End
 ```
 
 ## /label-data-validation/id
