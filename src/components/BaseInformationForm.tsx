@@ -1,4 +1,5 @@
 import { FormComponentProps, LabelData, UNITS } from "@/types/types";
+import useDebouncedSave from "@/utils/client/useDebouncedSave";
 import { Box } from "@mui/material";
 import { useEffect } from "react";
 import { FormProvider, useForm, useWatch } from "react-hook-form";
@@ -12,14 +13,17 @@ const BaseInformationForm: React.FC<FormComponentProps> = ({
   setLabelData,
 }) => {
   const { t } = useTranslation("labelDataValidator");
+  const sectionName = "baseInformation";
   const methods = useForm<LabelData>({
     defaultValues: labelData,
   });
 
   const watchedBaseInformation = useWatch({
     control: methods.control,
-    name: "baseInformation",
+    name: sectionName,
   });
+
+  const save = useDebouncedSave(setLabelData);
 
   useEffect(() => {
     const currentValues = methods.getValues();
@@ -27,15 +31,10 @@ const BaseInformationForm: React.FC<FormComponentProps> = ({
       methods.reset(labelData);
     }
   }, [labelData, methods]);
-  
+
   useEffect(() => {
-    if (watchedBaseInformation) {
-      setLabelData((prevLabelData) => ({
-        ...prevLabelData,
-        baseInformation: watchedBaseInformation,
-      }));
-    }
-  }, [watchedBaseInformation, setLabelData]);
+    save(sectionName, watchedBaseInformation);
+  }, [watchedBaseInformation, save]);
 
   return (
     <FormProvider {...methods}>

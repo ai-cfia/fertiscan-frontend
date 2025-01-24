@@ -1,9 +1,10 @@
+import FileUploaded from "@/classe/File";
 import LabelDataValidator from "@/components/LabelDataValidator";
+import useLabelDataStore from "@/stores/labelDataStore";
 import { DEFAULT_LABEL_DATA } from "@/types/types";
 import { VERIFIED_LABEL_DATA } from "@/utils/client/constants";
 import { act, fireEvent, render, screen } from "@testing-library/react";
-import { useState } from "react";
-import useLabelDataStore from "@/stores/labelDataStore";
+import { JSX, useState } from "react";
 
 jest.mock("@/components/ImageViewer", () => ({
   __esModule: true,
@@ -25,7 +26,11 @@ jest.mock("next/navigation", () => ({
   },
 }));
 
-const mockFiles = [new File(["mock-content"], "file1.png")];
+const mockUser = { username: "testUser" };
+const mockFile = new File(["mock-content"], "file1.png", { type: "image/png" });
+const mockPath = "/mock/path/file1.png";
+const mockFileUploaded = FileUploaded.newFile(mockUser, mockPath, mockFile);
+const mockFiles = [mockFileUploaded];
 
 const Wrapper: React.FC<{
   children: (props: {
@@ -46,7 +51,7 @@ describe("LabelDataValidator Rendering", () => {
       <Wrapper>
         {({ labelData, setLabelData }) => (
           <LabelDataValidator
-            files={mockFiles}
+            fileUploads={mockFiles}
             labelData={labelData}
             setLabelData={setLabelData}
           />
@@ -66,7 +71,7 @@ describe("LabelDataValidator Rendering", () => {
       <Wrapper>
         {({ labelData, setLabelData }) => (
           <LabelDataValidator
-            files={mockFiles}
+            fileUploads={mockFiles}
             labelData={labelData}
             setLabelData={setLabelData}
           />
@@ -85,7 +90,7 @@ describe("LabelDataValidator Functionality", () => {
       <Wrapper>
         {({ labelData, setLabelData }) => (
           <LabelDataValidator
-            files={mockFiles}
+            fileUploads={mockFiles}
             labelData={labelData}
             setLabelData={setLabelData}
           />
@@ -113,7 +118,7 @@ describe("LabelDataValidator Functionality", () => {
       <Wrapper>
         {({ labelData, setLabelData }) => (
           <LabelDataValidator
-            files={mockFiles}
+            fileUploads={mockFiles}
             labelData={labelData}
             setLabelData={setLabelData}
           />
@@ -136,7 +141,7 @@ describe("LabelDataValidator Functionality", () => {
   it("renders the mocked Image Viewer", () => {
     render(
       <LabelDataValidator
-        files={mockFiles}
+        fileUploads={mockFiles}
         labelData={DEFAULT_LABEL_DATA}
         setLabelData={jest.fn()}
       />,
@@ -148,12 +153,12 @@ describe("LabelDataValidator Functionality", () => {
 });
 
 describe("LabelDataValidator and Forms Integration", () => {
-  it("marks the Organizations step as Completed or Incomplete when fields are Verified", () => {
+  it("marks the Organizations step as Completed or Incomplete when fields are Verified", async () => {
     render(
       <Wrapper>
         {({ labelData, setLabelData }) => (
           <LabelDataValidator
-            files={mockFiles}
+            fileUploads={mockFiles}
             labelData={labelData}
             setLabelData={setLabelData}
           />
@@ -173,12 +178,17 @@ describe("LabelDataValidator and Forms Integration", () => {
 
     const verifyAllButton = screen.getByTestId("verify-all-btn-0");
     fireEvent.click(verifyAllButton);
+    await act(async () => {
+      await new Promise((resolve) => setTimeout(resolve, 350));
+    });
     expect(targetSpan).toHaveClass("Mui-completed");
 
     fireEvent.click(
       screen.getByTestId("verified-icon-organizations.0.address.verified"),
     );
-
+    await act(async () => {
+      await new Promise((resolve) => setTimeout(resolve, 350));
+    });
     expect(targetSpan).not.toHaveClass("Mui-completed");
   });
 
@@ -187,7 +197,7 @@ describe("LabelDataValidator and Forms Integration", () => {
       <Wrapper>
         {({ labelData, setLabelData }) => (
           <LabelDataValidator
-            files={mockFiles}
+            fileUploads={mockFiles}
             labelData={labelData}
             setLabelData={setLabelData}
           />
@@ -219,12 +229,17 @@ describe("LabelDataValidator and Forms Integration", () => {
       });
     }
 
+    await act(async () => {
+      await new Promise((resolve) => setTimeout(resolve, 350));
+    });
     expect(targetSpan).toHaveClass("Mui-completed");
 
     await act(async () => {
       fireEvent.click(verifyButtons[0]);
     });
-
+    await act(async () => {
+      await new Promise((resolve) => setTimeout(resolve, 350));
+    });
     expect(targetSpan).not.toHaveClass("Mui-completed");
   });
 
@@ -233,7 +248,7 @@ describe("LabelDataValidator and Forms Integration", () => {
       <Wrapper>
         {({ labelData, setLabelData }) => (
           <LabelDataValidator
-            files={mockFiles}
+            fileUploads={mockFiles}
             labelData={labelData}
             setLabelData={setLabelData}
           />
@@ -263,12 +278,19 @@ describe("LabelDataValidator and Forms Integration", () => {
       });
     }
 
+    await act(async () => {
+      await new Promise((resolve) => setTimeout(resolve, 350));
+    });
+
     expect(targetSpan).toHaveClass("Mui-completed");
 
     await act(async () => {
       fireEvent.click(verifyButtons[0]);
     });
 
+    await act(async () => {
+      await new Promise((resolve) => setTimeout(resolve, 350));
+    });
     expect(targetSpan).not.toHaveClass("Mui-completed");
   });
 
@@ -277,7 +299,7 @@ describe("LabelDataValidator and Forms Integration", () => {
       <Wrapper>
         {({ labelData, setLabelData }) => (
           <LabelDataValidator
-            files={mockFiles}
+            fileUploads={mockFiles}
             labelData={labelData}
             setLabelData={setLabelData}
           />
@@ -309,12 +331,18 @@ describe("LabelDataValidator and Forms Integration", () => {
       });
     }
 
+    await act(async () => {
+      await new Promise((resolve) => setTimeout(resolve, 350));
+    });
     expect(targetSpan).toHaveClass("Mui-completed");
 
     await act(async () => {
       fireEvent.click(verifyButtons[0]);
     });
 
+    await act(async () => {
+      await new Promise((resolve) => setTimeout(resolve, 350));
+    });
     expect(targetSpan).not.toHaveClass("Mui-completed");
   });
 
@@ -323,7 +351,7 @@ describe("LabelDataValidator and Forms Integration", () => {
       <Wrapper>
         {({ labelData, setLabelData }) => (
           <LabelDataValidator
-            files={mockFiles}
+            fileUploads={mockFiles}
             labelData={labelData}
             setLabelData={setLabelData}
           />
@@ -361,6 +389,9 @@ describe("LabelDataValidator and Forms Integration", () => {
         .forEach((btn) => fireEvent.click(btn));
     });
 
+    await act(async () => {
+      await new Promise((resolve) => setTimeout(resolve, 350));
+    });
     expect(targetSpan).toHaveClass("Mui-completed");
 
     await act(async () => {
@@ -369,6 +400,9 @@ describe("LabelDataValidator and Forms Integration", () => {
       );
     });
 
+    await act(async () => {
+      await new Promise((resolve) => setTimeout(resolve, 350));
+    });
     expect(targetSpan).not.toHaveClass("Mui-completed");
   });
 
@@ -377,7 +411,7 @@ describe("LabelDataValidator and Forms Integration", () => {
       <Wrapper>
         {({ labelData, setLabelData }) => (
           <LabelDataValidator
-            files={mockFiles}
+            fileUploads={mockFiles}
             labelData={labelData}
             setLabelData={setLabelData}
           />
@@ -409,12 +443,18 @@ describe("LabelDataValidator and Forms Integration", () => {
       });
     }
 
+    await act(async () => {
+      await new Promise((resolve) => setTimeout(resolve, 350));
+    });
     expect(targetSpan).toHaveClass("Mui-completed");
 
     await act(async () => {
       fireEvent.click(verifyButtons[0]);
     });
 
+    await act(async () => {
+      await new Promise((resolve) => setTimeout(resolve, 350));
+    });
     expect(targetSpan).not.toHaveClass("Mui-completed");
   });
 
@@ -423,7 +463,7 @@ describe("LabelDataValidator and Forms Integration", () => {
       <Wrapper defaultLabelData={VERIFIED_LABEL_DATA}>
         {({ labelData, setLabelData }) => (
           <LabelDataValidator
-            files={mockFiles}
+            fileUploads={mockFiles}
             labelData={labelData}
             setLabelData={setLabelData}
           />
@@ -437,7 +477,9 @@ describe("LabelDataValidator and Forms Integration", () => {
     });
 
     expect(mockedRouterPush).toHaveBeenCalledTimes(1);
-    expect(useLabelDataStore.getState().labelData).toStrictEqual(VERIFIED_LABEL_DATA);
+    expect(useLabelDataStore.getState().labelData).toStrictEqual(
+      VERIFIED_LABEL_DATA,
+    );
     expect(mockedRouterPush).toHaveBeenCalledWith("/label-data-confirmation");
   });
 });

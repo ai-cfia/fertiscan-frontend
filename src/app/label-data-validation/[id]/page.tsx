@@ -61,7 +61,7 @@ export default function Page() {
 
   return (
     <LabelDataValidator
-      files={uploadedFiles.map((file) => file.getFile())}
+      fileUploads={uploadedFiles}
       labelData={labelData}
       setLabelData={setLabelData}
       loading={loading}

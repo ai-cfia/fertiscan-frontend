@@ -5,6 +5,7 @@ import {
   Organization,
 } from "@/types/types";
 import { checkFieldRecord } from "@/utils/client/fieldValidation";
+import useDebouncedSave from "@/utils/client/useDebouncedSave";
 import AddIcon from "@mui/icons-material/Add";
 import DeleteIcon from "@mui/icons-material/Delete";
 import DoneAllIcon from "@mui/icons-material/DoneAll";
@@ -34,16 +35,19 @@ const OrganizationsForm: React.FC<FormComponentProps> = ({
   });
 
   const { control, setValue } = methods;
+  const sectionName = "organizations";
 
   const { fields, append, remove } = useFieldArray({
     control,
-    name: "organizations",
+    name: sectionName,
   });
 
   const watchedOrganizations = useWatch({
     control,
-    name: "organizations",
+    name: sectionName,
   });
+
+  const save = useDebouncedSave(setLabelData);
 
   useEffect(() => {
     const currentValues = methods.getValues();
@@ -53,19 +57,14 @@ const OrganizationsForm: React.FC<FormComponentProps> = ({
   }, [labelData, methods]);
 
   useEffect(() => {
-    if (watchedOrganizations) {
-      setLabelData((prevLabelData) => ({
-        ...prevLabelData,
-        organizations: watchedOrganizations,
-      }));
-    }
-  }, [watchedOrganizations, setLabelData]);
+    save(sectionName, watchedOrganizations);
+  }, [watchedOrganizations, save]);
 
   const setAllVerified = useCallback(
     (orgIndex: number, verified: boolean) => {
       fieldNames.forEach((fieldName) => {
         const fieldPath =
-          `organizations.${orgIndex}.${fieldName}.verified` as FieldPath<LabelData>;
+          `${sectionName}.${orgIndex}.${fieldName}.verified` as FieldPath<LabelData>;
         setValue(fieldPath, verified, {
           shouldValidate: true,
           shouldDirty: true,

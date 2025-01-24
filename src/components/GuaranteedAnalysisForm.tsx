@@ -1,4 +1,5 @@
 import { FormComponentProps, LabelData, UNITS } from "@/types/types";
+import useDebouncedSave from "@/utils/client/useDebouncedSave";
 import { Box, Typography } from "@mui/material";
 import { useEffect } from "react";
 import { FormProvider, useForm, useWatch } from "react-hook-form";
@@ -15,11 +16,14 @@ const GuaranteedAnalysisForm: React.FC<FormComponentProps> = ({
   const methods = useForm<LabelData>({
     defaultValues: labelData,
   });
+  const sectionName = "guaranteedAnalysis";
 
   const watchedGuaranteedAnalysis = useWatch({
     control: methods.control,
-    name: "guaranteedAnalysis",
+    name: sectionName,
   });
+
+  const save = useDebouncedSave(setLabelData);
 
   useEffect(() => {
     const currentValues = methods.getValues();
@@ -29,13 +33,8 @@ const GuaranteedAnalysisForm: React.FC<FormComponentProps> = ({
   }, [labelData, methods]);
 
   useEffect(() => {
-    if (watchedGuaranteedAnalysis) {
-      setLabelData((prevLabelData) => ({
-        ...prevLabelData,
-        guaranteedAnalysis: watchedGuaranteedAnalysis,
-      }));
-    }
-  }, [watchedGuaranteedAnalysis, setLabelData]);
+    save(sectionName, watchedGuaranteedAnalysis);
+  }, [watchedGuaranteedAnalysis, save]);
 
   return (
     <FormProvider {...methods}>
