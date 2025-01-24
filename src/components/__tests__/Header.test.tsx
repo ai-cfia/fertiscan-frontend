@@ -4,6 +4,19 @@ import "@testing-library/jest-dom";
 import { fireEvent, render, screen } from "@testing-library/react";
 import Header from "../Header";
 
+const mockedRouterPush = jest.fn();
+jest.mock("next/navigation", () => ({
+  useRouter() {
+    return {
+      route: "/",
+      pathname: "",
+      query: "",
+      asPath: "",
+      push: mockedRouterPush,
+    };
+  },
+}));
+
 describe("Header Component", () => {
   const mockSetSideNavOpen = jest.fn();
 

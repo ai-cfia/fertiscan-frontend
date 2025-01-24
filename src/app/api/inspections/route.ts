@@ -32,3 +32,26 @@ export async function POST(request: Request) {
       return handleApiError(error);
     });
 }
+
+export async function GET(request: Request) {
+  const authHeader = request.headers.get("Authorization");
+  if (!authHeader) {
+    return new Response(
+      JSON.stringify({ error: "Missing Authorization header" }),
+      {
+        status: 401,
+      },
+    );
+  }
+
+  return inspectionsApi
+    .getInspectionsInspectionsGet({
+      headers: { Authorization: authHeader },
+    })
+    .then((inspectionsResponse) => {
+      return Response.json(inspectionsResponse.data);
+    })
+    .catch((error) => {
+      return handleApiError(error);
+    });
+}
