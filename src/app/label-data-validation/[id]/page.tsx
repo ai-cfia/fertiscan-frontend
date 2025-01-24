@@ -5,22 +5,24 @@ import useUploadedFilesStore from "@/stores/fileStore";
 import { DEFAULT_LABEL_DATA, LabelData } from "@/types/types";
 import axios from "axios";
 import Cookies from "js-cookie";
-import { useRouter } from "next/navigation";
+import { useParams, useRouter } from "next/navigation";
 import { useEffect, useState } from "react";
 import { validate } from "uuid";
 
-export default function Page({ params }: { params: { id: string } }) {
-  const { id } = params;
-  // uses the uploaded files from store because fetching images is not yet implemented
+export default function Page() {
   const uploadedFiles = useUploadedFilesStore((state) => state.uploadedFiles);
   const showAlert = useAlertStore((state) => state.showAlert);
   const router = useRouter();
+  const { id } = useParams();
+  const inspectionId = Array.isArray(id) ? id[0] : id;
   const [loading, setLoading] = useState(true);
   const [labelData, setLabelData] = useState(DEFAULT_LABEL_DATA);
 
   useEffect(() => {
-    if (!validate(id)) {
-      showAlert("Invalid id.", "error");
+    if (!inspectionId) return;
+
+    if (!validate(inspectionId)) {
+      showAlert(`Invalid id: ${inspectionId}.`, "error");
       router.push("/");
       return;
     }
@@ -32,7 +34,7 @@ export default function Page({ params }: { params: { id: string } }) {
     const signal = controller.signal;
 
     axios
-      .get(`/api/inspections/${id}`, {
+      .get(`/api/inspections/${inspectionId}`, {
         headers: { Authorization: authHeader },
         signal,
       })
@@ -51,12 +53,11 @@ export default function Page({ params }: { params: { id: string } }) {
           router.push("/");
         }
       });
-    // not disabling loading in finally() in case of strict mode abort
 
     return () => {
-      controller.abort(); // avoids react strict mode double fetch
+      controller.abort();
     };
-  }, [router, showAlert, id, uploadedFiles.length]);
+  }, [inspectionId, router, showAlert, uploadedFiles.length]);
 
   return (
     <LabelDataValidator
@@ -64,7 +65,7 @@ export default function Page({ params }: { params: { id: string } }) {
       labelData={labelData}
       setLabelData={setLabelData}
       loading={loading}
-      inspectionId={id}
+      inspectionId={inspectionId}
     />
   );
 }
