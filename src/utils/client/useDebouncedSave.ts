@@ -1,20 +1,21 @@
 import { LabelData } from "@/types/types";
-import { debounce } from "lodash";
+import { debounce } from "@mui/material";
 import { useRef } from "react";
 
-function useDebouncedSave(
+const useDebouncedSave = (
   setLabelData: React.Dispatch<React.SetStateAction<LabelData>>,
   delay: number = 300,
-) {
+) => {
   return useRef(
     debounce((key: keyof LabelData, value: LabelData[keyof LabelData]) => {
-      if (value)
+      if (value) {
         setLabelData((prevData) => ({
           ...prevData,
           [key]: value,
         }));
+      }
     }, delay),
   ).current;
-}
+};
 
 export default useDebouncedSave;
