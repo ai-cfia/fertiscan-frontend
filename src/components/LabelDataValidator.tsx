@@ -11,6 +11,7 @@ import {
   StepperControls,
   StepStatus,
 } from "@/components/stepper";
+import useLabelDataStore from "@/stores/labelDataStore";
 import { FormComponentProps, LabelData } from "@/types/types";
 import {
   checkFieldArray,
@@ -18,6 +19,7 @@ import {
 } from "@/utils/client/fieldValidation";
 import useBreakpoints from "@/utils/client/useBreakpoints";
 import { Box, Container, Typography } from "@mui/material";
+import { useRouter } from "next/navigation";
 import { useEffect, useState } from "react";
 import { useTranslation } from "react-i18next";
 
@@ -34,7 +36,6 @@ function LabelDataValidator({
   files,
   labelData,
   setLabelData,
-  inspectionId,
 }: LabelDataValidatorProps) {
   const { t } = useTranslation("labelDataValidator");
   const imageFiles = files;
@@ -56,6 +57,8 @@ function LabelDataValidator({
     useState<StepStatus>(StepStatus.Incomplete);
   const [ingredientsStepStatus, setIngredientsStepStatus] =
     useState<StepStatus>(StepStatus.Incomplete);
+  const storeLabelData = useLabelDataStore((state) => state.setLabelData);
+  const router = useRouter();
 
   const createStep = (
     title: string,
@@ -117,7 +120,8 @@ function LabelDataValidator({
   ];
 
   const submit = () => {
-    console.log("inspectionId:", inspectionId, "labelData", labelData);
+    storeLabelData(labelData);
+    router.push("/label-data-confirmation");
   };
 
   useEffect(() => {

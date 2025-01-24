@@ -1,4 +1,4 @@
-import { render, screen } from "@testing-library/react";
+import { act, render, screen } from "@testing-library/react";
 import LabelDataValidationPage from "../page";
 
 const mockedRouterPush = jest.fn();
@@ -21,16 +21,11 @@ jest.mock("@/components/ImageViewer", () => ({
   )),
 }));
 
-jest.mock("@/stores/fileStore", () => ({
-  __esModule: true,
-  default: () => ({
-    uploadedFiles: [{ getFile: () => new File(["content"], "test.txt") }],
-  }),
-}));
-
 describe("LabelDataValidationPage Rendering", () => {
   it("renders the LabelDataValidator component", () => {
-    render(<LabelDataValidationPage />);
+    act(() => {
+      render(<LabelDataValidationPage />);
+    });
     expect(
       screen.getByTestId("label-data-validator-container"),
     ).toBeInTheDocument();
