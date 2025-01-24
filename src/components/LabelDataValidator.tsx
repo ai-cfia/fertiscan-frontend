@@ -38,7 +38,6 @@ function LabelDataValidator({
   setLabelData,
 }: LabelDataValidatorProps) {
   const { t } = useTranslation("labelDataValidator");
-  const imageFiles = files;
   const { isDownXs, isBetweenXsSm, isBetweenSmMd, isBetweenMdLg } =
     useBreakpoints();
   const isLgOrBelow =
@@ -199,7 +198,7 @@ function LabelDataValidator({
           className="flex h-[500px] md:h-[720px] lg:size-full justify-center min-w-0 "
           data-testid="image-viewer-container"
         >
-          <ImageViewer imageFiles={imageFiles} />
+          <ImageViewer imageFiles={files} />
         </Box>
 
         {isLgOrBelow && (
