@@ -1,4 +1,5 @@
 "use client";
+import FileUploaded from "@/classe/File";
 import BaseInformationForm from "@/components/BaseInformationForm";
 import CautionsForm from "@/components/CautionsForm";
 import GuaranteedAnalysisForm from "@/components/GuaranteedAnalysisForm";
@@ -25,7 +26,7 @@ import { useTranslation } from "react-i18next";
 
 interface LabelDataValidatorProps {
   loading?: boolean;
-  files: File[];
+  fileUploads: FileUploaded[];
   labelData: LabelData;
   setLabelData: React.Dispatch<React.SetStateAction<LabelData>>;
   inspectionId?: string;
@@ -33,7 +34,7 @@ interface LabelDataValidatorProps {
 
 function LabelDataValidator({
   loading = false,
-  files,
+  fileUploads,
   labelData,
   setLabelData,
 }: LabelDataValidatorProps) {
@@ -58,6 +59,7 @@ function LabelDataValidator({
     useState<StepStatus>(StepStatus.Incomplete);
   const storeLabelData = useLabelDataStore((state) => state.setLabelData);
   const router = useRouter();
+  const imageFiles = fileUploads.map((file) => file.getFile());
 
   const createStep = (
     title: string,
@@ -198,7 +200,7 @@ function LabelDataValidator({
           className="flex h-[500px] md:h-[720px] lg:size-full justify-center min-w-0 "
           data-testid="image-viewer-container"
         >
-          <ImageViewer imageFiles={files} />
+          <ImageViewer imageFiles={imageFiles} />
         </Box>
 
         {isLgOrBelow && (

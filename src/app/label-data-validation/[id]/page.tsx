@@ -60,7 +60,7 @@ export default function Page({ params }: { params: { id: string } }) {
 
   return (
     <LabelDataValidator
-      files={uploadedFiles.map((file) => file.getFile())}
+      fileUploads={uploadedFiles}
       labelData={labelData}
       setLabelData={setLabelData}
       loading={loading}
