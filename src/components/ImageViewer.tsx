@@ -80,7 +80,7 @@ const ImageViewer: React.FC<ImageViewerProps> = ({ imageFiles }) => {
                     alt={`Slide ${index + 1}`}
                     width={500}
                     height={500}
-                    data-testid="image-slide"
+                    data-testid={`image-slide-${index + 1}`}
                   />
                 </TransformComponent>
               </TransformWrapper>
