@@ -10,6 +10,8 @@ const customJestConfig = {
   preset: "ts-jest",
   testEnvironment: "jsdom",
   moduleNameMapper: {
+    "swiper": "identity-obj-proxy",
+    "swiper/css": "swiper/swiper.min.css",
     "\\.(css|less|scss|sss|styl)$": "identity-obj-proxy",
     "^@/(.*)$": "<rootDir>/src/$1",
   },
