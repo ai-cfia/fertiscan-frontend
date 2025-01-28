@@ -19,7 +19,7 @@ const RouteGuard = ({ children, ...divProps }: RouteGuardProps) => {
   const handleLogin = async (username: string, password: string) => {
     try {
       const res = await axios.post(
-        "/api/login",
+        "/api-next/login",
         { username: username },
         {
           headers: {
@@ -57,7 +57,7 @@ const RouteGuard = ({ children, ...divProps }: RouteGuardProps) => {
     }
     try {
       const res = await axios.post(
-        "/api/signup",
+        "/api-next/signup",
         { username: username },
         {
           headers: {
