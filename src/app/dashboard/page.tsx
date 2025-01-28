@@ -1,18 +1,18 @@
 "use client";
+import theme from "@/app/theme";
 import FertilizerList from "@/components/InspectionList/InspectionList";
+import useAlertStore from "@/stores/alertStore";
+import { Search } from "@mui/icons-material";
 import {
   Grid2 as Grid,
   InputAdornment,
   TextField,
   Typography,
 } from "@mui/material";
-import { Search } from "@mui/icons-material";
-import { useEffect, useState } from "react";
-import Cookies from "js-cookie";
 import axios from "axios";
-import theme from "@/app/theme";
+import Cookies from "js-cookie";
+import { useEffect, useState } from "react";
 import { useTranslation } from "react-i18next";
-import useAlertStore from "@/stores/alertStore";
 
 const Dashboard = () => {
   const { t } = useTranslation("dashboard");
@@ -23,31 +23,38 @@ const Dashboard = () => {
 
   useEffect(() => {
     setUser(atob(Cookies.get("token") ?? ""));
-    const username = atob(Cookies.get("token") ?? "")
+    const username = atob(Cookies.get("token") ?? "");
     const password = "";
     const authHeader = "Basic " + btoa(`${username}:${password}`);
     axios
-      .get("/api/inspections", {
+      .get("/api-next/inspections", {
         headers: {
           Authorization: authHeader,
         },
       })
       .then((response) => {
         setInspectList(response.data);
-      }).catch((error) => {
-        if(error.response.status === 401){
+      })
+      .catch((error) => {
+        if (error.response.status === 401) {
           Cookies.remove("token");
           showAlert("Unauthorized access", "error");
-        }if(error.response.status === 404){
+        }
+        if (error.response.status === 404) {
           showAlert("No inspections found", "error");
-        }else{
+        } else {
           showAlert("An error occurred", "error");
         }
       });
   }, [showAlert]);
 
   return (
-    <Grid container spacing={2} className={"p-5 h-[calc(100vh-65px)]"} sx={{backgroundColor:theme.palette.background.paper}}>
+    <Grid
+      container
+      spacing={2}
+      className={"p-5 h-[calc(100vh-65px)]"}
+      sx={{ backgroundColor: theme.palette.background.paper }}
+    >
       <Grid size={{ xs: 12, sm: 4, md: 3 }}>
         <Grid
           data-testid={"user-info"}
@@ -62,7 +69,9 @@ const Dashboard = () => {
           <Grid size={6}>
             <b className={"text-black"}>{t("user-info.username")}:</b>
           </Grid>
-          <Grid className={"text-black"} size={6}>{user}</Grid>
+          <Grid className={"text-black"} size={6}>
+            {user}
+          </Grid>
         </Grid>
         <Grid
           container
@@ -71,7 +80,10 @@ const Dashboard = () => {
           }
         >
           <Grid size={12}>
-            <Typography component={"h4"} className={"!font-semiboldl text-black"}>
+            <Typography
+              component={"h4"}
+              className={"!font-semiboldl text-black"}
+            >
               {t("user-info.inspectionNumber")}: {inspectList.length}
             </Typography>
           </Grid>

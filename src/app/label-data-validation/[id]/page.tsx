@@ -34,7 +34,7 @@ export default function Page() {
     const signal = controller.signal;
 
     axios
-      .get(`/api/inspections/${inspectionId}`, {
+      .get(`/api-next/inspections/${inspectionId}`, {
         headers: { Authorization: authHeader },
         signal,
       })

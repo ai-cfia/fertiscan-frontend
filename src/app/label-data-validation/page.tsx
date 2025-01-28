@@ -46,7 +46,7 @@ function LabelDataValidationPage() {
     const password = "";
     const authHeader = "Basic " + btoa(`${username}:${password}`);
     axios
-      .post("/api/extract-label-data", formData, {
+      .post("/api-next/extract-label-data", formData, {
         headers: { Authorization: authHeader },
         signal,
       })
@@ -54,7 +54,7 @@ function LabelDataValidationPage() {
         const labelData: LabelData = response.data;
         formData.append("labelData", JSON.stringify(labelData));
         axios
-          .post("/api/inspections", formData, {
+          .post("/api-next/inspections", formData, {
             headers: { Authorization: authHeader },
             signal,
           })

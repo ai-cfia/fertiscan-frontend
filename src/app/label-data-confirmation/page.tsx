@@ -54,7 +54,7 @@ const LabelDataConfirmationPage = () => {
     setLoading(true);
     axios
       .put(
-        `/api/inspections/${confirmedLabelData.inspectionId}`,
+        `/api-next/inspections/${confirmedLabelData.inspectionId}`,
         confirmedLabelData,
         {
           headers: { Authorization: getAuthHeader() },
@@ -87,7 +87,7 @@ const LabelDataConfirmationPage = () => {
     formData.append("labelData", JSON.stringify(labelData));
     setLoading(true);
     axios
-      .post("/api/inspections", formData, {
+      .post("/api-next/inspections", formData, {
         headers: { Authorization: getAuthHeader() },
         signal,
       })
