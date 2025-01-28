@@ -80,7 +80,7 @@ const SideNav = ({ open, onClose }: DrawerMenuProps) => {
               </ListItemButton>
             </Link>
             <Divider />
-            <Link href="/SearchPage" passHref data-testid="search-page-button">
+            <Link href="/searchpage" passHref data-testid="search-page-button">
               <ListItemButton>
                 <ListItemIcon
                   aria-label={t("sideNav.altText.searchPageButtonIcon")}
