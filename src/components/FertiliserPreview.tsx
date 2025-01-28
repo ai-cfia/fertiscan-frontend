@@ -1,5 +1,6 @@
 import React from 'react';
 import { Box, Grid, Typography, Button } from '@mui/material';
+import { useTranslation } from "react-i18next";
 
 interface FertiliserPreviewProps {
     fertiliserName: string;
@@ -29,6 +30,7 @@ const FertiliserPreview: React.FC<FertiliserPreviewProps> = ({
     organisationAddress,
     organisationPhoneNumber,
 }) => {
+    const { t } = useTranslation("searchPage");
     return (
         <Box
         sx={{
@@ -41,7 +43,7 @@ const FertiliserPreview: React.FC<FertiliserPreviewProps> = ({
             display: 'flex',
             flexDirection: 'column',
             wordWrap: 'break-word',
-            minHeight: '260px',  // Set a consistent height for all boxes
+            minHeight: '260px',
         }}
     >
         <Grid container spacing={2} sx={{ flexGrow: 1 }}>
@@ -68,16 +70,16 @@ const FertiliserPreview: React.FC<FertiliserPreviewProps> = ({
                 <Box
                     sx={{
                         display: 'flex',
-                        justifyContent: 'space-between', // Adjusts items to edges of container
+                        justifyContent: 'space-between',
                         alignItems: 'center',
                     }}
                 >
                     <Box sx={{ display: 'flex', gap: '8px' }}>
                         <Button variant="contained" color="primary" sx={{ backgroundColor: '#7b7b7b' }}>
-                            Download
+                            {t('download')}
                         </Button>
                         <Button variant="contained" color="primary" sx={{ backgroundColor: '#7b7b7b' }}>
-                            Inspect
+                            {t('inspect')}
                         </Button>
                         <Typography variant="body2" alignSelf={"center"} paddingLeft={1}>
                             {inspectorName}

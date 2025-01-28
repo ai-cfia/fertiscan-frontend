@@ -17,7 +17,7 @@ interface FilterOverlayProps {
 
 const FilterOverlay: React.FC<FilterOverlayProps> = ({ setFilterOverlayOpen }) => {
   const theme = useTheme();
-  const { t } = useTranslation("header");
+  const { t } = useTranslation("searchPage");
   const [iconHover, setIconHover] = useState(false);
 
   return (
@@ -40,7 +40,7 @@ const FilterOverlay: React.FC<FilterOverlayProps> = ({ setFilterOverlayOpen }) =
       }}
     >
       <Typography variant="h5" sx={{ mb: 3 }}>
-        {t("Filter options")}
+        {t("searchOption")}
       </Typography>
 
       <IconButton
@@ -66,7 +66,7 @@ const FilterOverlay: React.FC<FilterOverlayProps> = ({ setFilterOverlayOpen }) =
           <TextField
             id="fertiliser-name"
             variant="filled"
-            label={t("Name")}
+            label={t("fertiliserName")}
             sx={{
               width: "70%",
               marginLeft: "10px",
@@ -77,7 +77,7 @@ const FilterOverlay: React.FC<FilterOverlayProps> = ({ setFilterOverlayOpen }) =
           <TextField
             id="registration-number"
             variant="filled"
-            label={t("Registration number")}
+            label={t("registrationNumber")}
             sx={{
               width: "70%",
               marginLeft: "10px",
@@ -88,7 +88,7 @@ const FilterOverlay: React.FC<FilterOverlayProps> = ({ setFilterOverlayOpen }) =
           <TextField
             id="date-of-inspection"
             variant="filled"
-            label={t("Date of inspection")}
+            label={t("dateOfInspection")}
             sx={{
               width: "70%",
               marginLeft: "10px",
@@ -105,7 +105,7 @@ const FilterOverlay: React.FC<FilterOverlayProps> = ({ setFilterOverlayOpen }) =
           <TextField
             id="organisation-name"
             variant="filled"
-            label={t("Organisation name")}
+            label={t("organisationName")}
             sx={{
               width: "70%",
               marginLeft: "10px",
@@ -116,7 +116,7 @@ const FilterOverlay: React.FC<FilterOverlayProps> = ({ setFilterOverlayOpen }) =
           <TextField
             id="organisation-address"
             variant="filled"
-            label={t("Organisation address")}
+            label={t("organisationAddress")}
             sx={{
               width: "70%",
               marginLeft: "10px",
@@ -131,7 +131,7 @@ const FilterOverlay: React.FC<FilterOverlayProps> = ({ setFilterOverlayOpen }) =
         color="secondary"
         sx={{ mt: 3, alignSelf: "flex-end" }}
       >
-        {t("Search with Filter")}
+        {t("searchButton")}
       </Button>
     </Box>
   );

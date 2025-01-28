@@ -1,11 +1,11 @@
 "use client";
-import React, { useEffect, useRef } from 'react';
-import { Box, Button, FormControl, Grid, InputLabel, MenuItem, Popover, Select, SelectChangeEvent, Typography } from "@mui/material";
+import React from 'react';
+import { Box, Button, FormControl, Grid, InputLabel, MenuItem, Popover, Select, SelectChangeEvent } from "@mui/material";
 import { useState } from "react";
 import { useTranslation } from "react-i18next";
 import FilterListIcon from '@mui/icons-material/FilterList';
 import SortIcon from '@mui/icons-material/Sort';
-import FertiliserPreview from "@/components/FertiliserPreview"; // Ensure this path is correct
+import FertiliserPreview from "@/components/FertiliserPreview";
 import FilterOverlay from '@/components/FilterOverlay';
 import ViewListOutlinedIcon from '@mui/icons-material/ViewListOutlined';
 import GridViewOutlinedIcon from '@mui/icons-material/GridViewOutlined';
@@ -125,16 +125,6 @@ const mockFertiliserData = [
   }
 ];
 
-const fieldOptions = [
-  { value: 'fertiliserName', label: 'Fertiliser Name' },
-  { value: 'organisationName', label: 'Organisation Name' },
-  { value: 'dateOfInspection', label: 'Date of Inspection' },
-  { value: 'registrationNumber', label: 'Registration Number' },
-  { value: 'lotNumber', label: 'Lot Number' },
-  { value: 'location', label: 'Location' },
-  { value: 'inspectorName', label: 'Inspector Name' },
-  { value: 'organisationAddress', label: 'Organisation Address' },
-];
 
 type SortOrder = 'asc' | 'desc';
 
@@ -154,6 +144,17 @@ function SearchPage() {
   const handlePopoverClose = () => {
     setAnchorEl(null);
   };
+  const fieldOptions = [
+  { value: 'fertiliserName', label: t("fertiliserName") },
+  { value: 'organisationName', label: t("organisationName") },
+  { value: 'dateOfInspection', label: t("dateOfInspection") },
+  { value: 'registrationNumber', label: t("registrationNumber") },
+  { value: 'lotNumber', label: t("lotNumber") },
+  { value: 'location', label: t("location") },
+  { value: 'inspectorName', label: t('inspectorName') },
+  { value: 'organisationAddress', label: t("organisationAddress") },
+  { value: 'organisationPhoneNumber', label: t("organisationPhoneNumber") },
+];
 
   const open = Boolean(anchorEl);
 
@@ -209,7 +210,7 @@ function SearchPage() {
           startIcon={isListView ? <GridViewOutlinedIcon /> : <ViewListOutlinedIcon />}
           onClick={toggleViewType}
         >
-          {isListView ? "Grid View" : "List View"}
+          {isListView ? t('gridView') : t('listView')}
         </Button>
 
         {!isListView && (
@@ -219,7 +220,7 @@ function SearchPage() {
             startIcon={<SortIcon />}
             onClick={handleSortClick}
           >
-            Sort
+            {t('sort')}
           </Button>
         )}
 
@@ -255,7 +256,7 @@ function SearchPage() {
           startIcon={<FilterListIcon />}
           onClick={() => setFilterOverlayOpen(!filterOverlayOpen)}
         >
-          Search filter
+          {t("searchFilter")}
         </Button>
       </Box>
 

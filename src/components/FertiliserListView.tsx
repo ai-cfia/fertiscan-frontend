@@ -1,7 +1,6 @@
-// FertiliserListView.tsx
-
 import React from "react";
-import { DataGrid, GridColDef } from '@mui/x-data-grid';
+import { DataGrid, GridColDef, GridLocaleText } from '@mui/x-data-grid';
+import { useTranslation } from "react-i18next";
 
 interface Fertiliser {
   fertiliserName: string;
@@ -19,30 +18,53 @@ interface FertiliserListViewProps {
   fertilisers: Fertiliser[];
 }
 
-const columns: GridColDef[] = [
-  { field: 'fertiliserName', headerName: 'Fertiliser Name', width: 150 },
-  { field: 'registrationNumber', headerName: 'Registration Number', width: 180 },
-  { field: 'lotNumber', headerName: 'Lot Number', width: 120 },
-  { field: 'organisationName', headerName: 'Organisation Name', width: 200 },
-  { field: 'organisationAddress', headerName: 'Organisation Address', width: 250 },
-  { field: 'organisationPhoneNumber', headerName: 'Organisation Phone Number', width: 200 },
-  { field: 'location', headerName: 'Location', width: 150 },
-  { field: 'inspectorName', headerName: 'Inspector Name', width: 150 },
-  { field: 'dateOfInspection', headerName: 'Date of Inspection', width: 150 }
-];
-
 const FertiliserListView: React.FC<FertiliserListViewProps> = ({ fertilisers }) => {
-  return (
-    <div className=" p-5 h-[calc(100vh-100px)]" style={{ width: '100%' }}>
-      <DataGrid
-        rows={fertilisers}
-        columns={columns}
-        getRowId={(row) => row.registrationNumber}
-        pagination
-        pageSizeOptions={[5]}
-      />
+    const { t } = useTranslation("searchPage");
+
+    const columns: GridColDef[] = [
+        { field: 'fertiliserName', headerName: t("fertiliserName"), width: 150 },
+        { field: 'registrationNumber', headerName: t("registrationNumber"), width: 180 },
+        { field: 'lotNumber', headerName: t("lotNumber"), width: 120 },
+        { field: 'organisationName', headerName: t("organisationName"), width: 200 },
+        { field: 'organisationAddress', headerName: t("organisationAddress"), width: 250 },
+        { field: 'organisationPhoneNumber', headerName: t("organisationPhoneNumber"), width: 200 },
+        { field: 'location', headerName: t("location"), width: 150 },
+        { field: 'inspectorName', headerName: t('inspectorName'), width: 150 },
+        { field: 'dateOfInspection', headerName: t("dateOfInspection"), width: 150 }
+      ];
+
+return (
+    <div className="p-5 h-[calc(100vh-100px)]" style={{ width: '100%' }}>
+        <DataGrid
+            rows={fertilisers}
+            columns={columns}
+            getRowId={(row) => row.registrationNumber}
+            pageSizeOptions={[5, 10, 20, 25, 50, 100]}
+            localeText={{
+                columnMenuSortAsc: t("ascending"),
+                columnMenuSortDesc: t("descending"),
+                columnMenuHideColumn: t("hideColumns"),
+                columnMenuManageColumns: t("manageColumns"),
+                columnMenuUnsort: t("unsort"),
+                columnHeaderSortIconLabel:t("sort"),
+                columnsManagementReset: t("reset"),
+                columnsManagementSearchTitle: t("search"),
+                columnsManagementShowHideAllText: t("showHideAll"),
+                MuiTablePagination: {
+                    labelRowsPerPage: t("rowPerPages"),
+                    labelDisplayedRows: ({ from, to, count }) => `${from}-${to} ${t("of")} ${count !== -1 ? count : `${t("moreThan")} ${to}`}`,
+                    nextIconButtonProps: {
+                        title: t("nextPage"),
+                    },
+                    backIconButtonProps: {
+                        title: t("previousPage"),
+                    },
+                },
+            }}
+            disableColumnFilter
+        />
     </div>
-  );
+);
 };
 
 export default FertiliserListView;
