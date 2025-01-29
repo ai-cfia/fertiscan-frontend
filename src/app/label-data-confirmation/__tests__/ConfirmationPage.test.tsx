@@ -93,7 +93,7 @@ describe("LabelDataConfirmationPage", () => {
       fireEvent.click(confirmButton);
 
       expect(mockPut).toHaveBeenCalledWith(
-        `/api/inspections/${VERIFIED_LABEL_DATA_WITH_ID.inspectionId}`,
+        `/api-next/inspections/${VERIFIED_LABEL_DATA_WITH_ID.inspectionId}`,
         { ...VERIFIED_LABEL_DATA_WITH_ID, confirmed: true },
         expect.objectContaining({
           headers: expect.any(Object),
@@ -143,7 +143,7 @@ describe("LabelDataConfirmationPage", () => {
       fireEvent.click(confirmButton);
 
       expect(mockPost).toHaveBeenCalledWith(
-        "/api/inspections",
+        "/api-next/inspections",
         expect.any(FormData),
         expect.objectContaining({
           headers: expect.any(Object),
