@@ -13,7 +13,7 @@
     "listView": "List View",
     "gridView": "Grid View",
     "sort": "Sort",
-    "searchFilter": "Search Filters",
+    "searchFilter": "search",
     "sortBy": "Sort By",
     "ascending": "Ascending",
     "descending": "Descending",
@@ -31,5 +31,9 @@
     "nextPage": "Next Page",
     "of": "of",
     "moreThan": "More than",
-    "rowPerPages": "Rows per page"
+    "rowPerPages": "Rows per page",
+    "specific": "Specific date",
+    "before": "Before",
+    "after": "After",
+    "clearFilters": "Clear Filters"
 }

@@ -3,136 +3,202 @@ import {
   Box,
   Button,
   IconButton,
+  InputAdornment,
+  MenuItem,
+  Select,
+  SelectChangeEvent,
   TextField,
   Typography,
   useTheme,
 } from "@mui/material";
 import { useTranslation } from "react-i18next";
-import CancelIcon from '@mui/icons-material/Cancel';
-import CancelOutlinedIcon from '@mui/icons-material/CancelOutlined';
+import CancelIcon from "@mui/icons-material/Cancel";
+import CancelOutlinedIcon from "@mui/icons-material/CancelOutlined";
 
 interface FilterOverlayProps {
-  setFilterOverlayOpen: (open: boolean) => void;
+  closeOverlay: () => void;
 }
 
-const FilterOverlay: React.FC<FilterOverlayProps> = ({ setFilterOverlayOpen }) => {
+const FilterOverlay: React.FC<FilterOverlayProps> = ({ closeOverlay }) => {
   const theme = useTheme();
   const { t } = useTranslation("searchPage");
+
+  type InputValuesKeys = 'fertiliserName' | 'registrationNumber' | 'dateOfInspection' | 'organisationName' | 'organisationAddress';
+
+  const [inputValues, setInputValues] = useState<Record<InputValuesKeys, string>>({
+    fertiliserName: '',
+    registrationNumber: '',
+    dateOfInspection: '',
+    organisationName: '',
+    organisationAddress: '',
+  });
+  const [selected, setSelected] = useState("specific");
   const [iconHover, setIconHover] = useState(false);
+
+  const handleChange = (event: SelectChangeEvent<string>) => {
+    setSelected(event.target.value as string);
+  };
+
+  const handleInputChange = (event: React.ChangeEvent<HTMLInputElement>) => {
+    const { id, value } = event.target;
+    setInputValues((prev) => ({ ...prev, [id as InputValuesKeys]: value }));
+  };
+
+  const clearFilters = () => {
+    setInputValues({
+      fertiliserName: '',
+      registrationNumber: '',
+      dateOfInspection: '',
+      organisationName: '',
+      organisationAddress: '',
+    });
+    setSelected("specific");
+  };
 
   return (
     <Box
       sx={{
-        position: "fixed",
-        top: "130px",
-        left: "auto",
-        right: "5%",
-        zIndex: 4,
-        width: { xs: "90%", md: "80%", lg: "40%" },
-        maxWidth: "1400px",
         padding: "16px",
-        borderRadius: "8px",
-        backgroundColor: theme.palette.primary.main,
-        boxShadow: theme.shadows[5],
+        backgroundColor: theme.palette.secondary.main,
         display: "flex",
         flexDirection: "column",
-        alignItems: "flex-start",
+        width: {
+          xs: "90vw",
+          sm: "70vw",
+          md: "60vw",
+          lg: "50vw",
+        },
+        maxHeight: "calc(100vh - 100px)",
+        overflowY: "auto",
+        boxSizing: "border-box",
       }}
     >
-      <Typography variant="h5" sx={{ mb: 3 }}>
+      <Typography variant="h5" sx={{ mb: 3, color: "white" }}>
         {t("searchOption")}
       </Typography>
 
       <IconButton
-        sx={{ position: "absolute", top: "5px", right: "5px" }}
+        sx={{ position: "absolute", top: "5px", right: "5px", color: "white" }}
         onMouseEnter={() => setIconHover(true)}
         onMouseLeave={() => setIconHover(false)}
-        onClick={() => setFilterOverlayOpen(false)}
+        onClick={closeOverlay} // Use passed down function to close popover
       >
-        {iconHover ? <CancelIcon fontSize="medium"/> : <CancelOutlinedIcon fontSize="medium"/>}
+        {iconHover ? (
+          <CancelIcon fontSize="medium" />
+        ) : (
+          <CancelOutlinedIcon fontSize="medium" />
+        )}
       </IconButton>
 
-      <Box
-        sx={{
-          display: "flex",
-          flexDirection: { xs: "column", md: "row" },
-          gap: "16px",
-        }}
-      >
-        <Box sx={{ flexDirection: "column" }}>
-          <Typography variant="h6" sx={{ fontWeight: "bold" }}>
+      <Box sx={{ display: "flex", flexDirection: "column", gap: "16px" }}>
+        <Box sx={{ flexDirection: "column", display: "flex", gap: "10px" }}>
+          <Typography variant="h6" sx={{ fontWeight: "bold", color: "white" }}>
             {t("Fertiliser")}
           </Typography>
+          {(["fertiliserName", "registrationNumber"] as InputValuesKeys[]).map((id) => (
+            <TextField
+              key={id}
+              id={id}
+              value={inputValues[id]}
+              onChange={handleInputChange}
+              variant="filled"
+              label={t(id)}
+              size="small"
+              sx={{
+                width: "100%",
+                "& .MuiInputLabel-root": {
+                  color: "black",
+                },
+                "& .MuiFilledInput-root": {
+                  backgroundColor: "#ffffff2b",
+                  "&:before": { borderBottom: "1px solid white" },
+                  "&:hover:not(.Mui-disabled):before": {
+                    borderBottom: "2px solid white",
+                  },
+                  "&:after": { borderBottom: "2px solid white" },
+                },
+              }}
+            />
+          ))}
           <TextField
-            id="fertiliser-name"
-            variant="filled"
-            label={t("fertiliserName")}
-            sx={{
-              width: "70%",
-              marginLeft: "10px",
-              marginTop: "10px",
-              backgroundColor: theme.palette.background.paper,
-            }}
-          />
-          <TextField
-            id="registration-number"
-            variant="filled"
-            label={t("registrationNumber")}
-            sx={{
-              width: "70%",
-              marginLeft: "10px",
-              marginTop: "10px",
-              backgroundColor: theme.palette.background.paper,
-            }}
-          />
-          <TextField
-            id="date-of-inspection"
+            id="dateOfInspection"
+            value={inputValues.dateOfInspection}
+            onChange={handleInputChange}
             variant="filled"
             label={t("dateOfInspection")}
+            size="small"
             sx={{
-              width: "70%",
-              marginLeft: "10px",
-              marginTop: "10px",
-              backgroundColor: theme.palette.background.paper,
+              width: "100%",
+              "& .MuiInputLabel-root": {
+                color: "black",
+              },
+              "& .MuiFilledInput-root": {
+                backgroundColor: "#ffffff2b",
+                "&:before": { borderBottom: "1px solid white" },
+                "&:hover:not(.Mui-disabled):before": {
+                  borderBottom: "2px solid white",
+                },
+                "&:after": { borderBottom: "2px solid white" },
+              },
+            }}
+            InputProps={{
+              endAdornment: (
+                <InputAdornment position="end">
+                  <Select
+                    variant="standard"
+                    size="small"
+                    value={selected}
+                    onChange={handleChange}
+                  >
+                    <MenuItem value="specific">{t("specific")}</MenuItem>
+                    <MenuItem value="before">{t("before")}</MenuItem>
+                    <MenuItem value="after">{t("after")}</MenuItem>
+                  </Select>
+                </InputAdornment>
+              ),
             }}
           />
         </Box>
-        <Box sx={{ flexDirection: "column" }}>
-          <Typography variant="h6" sx={{ fontWeight: "bold" }}>
+        <Box sx={{ flexDirection: "column", display: "flex", gap: "10px" }}>
+          <Typography variant="h6" sx={{ fontWeight: "bold", color: "white" }}>
             {t("Organisation")}
           </Typography>
-
-          <TextField
-            id="organisation-name"
-            variant="filled"
-            label={t("organisationName")}
-            sx={{
-              width: "70%",
-              marginLeft: "10px",
-              marginTop: "10px",
-              backgroundColor: theme.palette.background.paper,
-            }}
-          />
-          <TextField
-            id="organisation-address"
-            variant="filled"
-            label={t("organisationAddress")}
-            sx={{
-              width: "70%",
-              marginLeft: "10px",
-              marginTop: "10px",
-              backgroundColor: theme.palette.background.paper,
-            }}
-          />
+          {(["organisationName", "organisationAddress"] as InputValuesKeys[]).map((id) => (
+            <TextField
+              key={id}
+              id={id}
+              value={inputValues[id]}
+              onChange={handleInputChange}
+              variant="filled"
+              label={t(id)}
+              size="small"
+              sx={{
+                width: "100%",
+                "& .MuiInputLabel-root": {
+                  color: "black",
+                },
+                "& .MuiFilledInput-root": {
+                  backgroundColor: "#ffffff2b",
+                  "&:before": { borderBottom: "1px solid white" },
+                  "&:hover:not(.Mui-disabled):before": {
+                    borderBottom: "2px solid white",
+                  },
+                  "&:after": { borderBottom: "2px solid white" },
+                },
+              }}
+            />
+          ))}
         </Box>
       </Box>
-      <Button
-        variant="contained"
-        color="secondary"
-        sx={{ mt: 3, alignSelf: "flex-end" }}
-      >
-        {t("searchButton")}
-      </Button>
+
+      <Box sx={{ display: "flex", justifyContent: "space-between", mt: 3 }}>
+        <Button variant="contained" color="secondary" onClick={clearFilters}>
+          {t("clearFilters")}
+        </Button>
+        <Button variant="contained" color="secondary">
+          {t("searchButton")}
+        </Button>
+      </Box>
     </Box>
   );
 };

@@ -125,38 +125,47 @@ const mockFertiliserData = [
   }
 ];
 
-
 type SortOrder = 'asc' | 'desc';
 
 function SearchPage() {
   const { t } = useTranslation("searchPage");
-  const [filterOverlayOpen, setFilterOverlayOpen] = useState(false);
+  const [filterAnchorEl, setFilterAnchorEl] = useState<HTMLButtonElement | null>(null);
   const [isListView, setIsListView] = useState(true);
   const [sortedData, setSortedData] = useState(mockFertiliserData);
   const [sortField, setSortField] = useState<keyof typeof mockFertiliserData[0]>('fertiliserName');
   const [sortOrder, setSortOrder] = useState<SortOrder>('asc');
-  const [anchorEl, setAnchorEl] = useState<HTMLButtonElement | null>(null);
+  const [sortAnchorEl, setSortAnchorEl] = useState<HTMLButtonElement | null>(null);
 
   const handleSortClick = (event: React.MouseEvent<HTMLButtonElement>) => {
-    setAnchorEl(event.currentTarget);
+    setSortAnchorEl(event.currentTarget);
   };
 
-  const handlePopoverClose = () => {
-    setAnchorEl(null);
+  const handleSortClose = () => {
+    setSortAnchorEl(null);
   };
+
+  const handleFilterClick = (event: React.MouseEvent<HTMLButtonElement>) => {
+    setFilterAnchorEl(event.currentTarget);
+  };
+
+  const handleFilterClose = () => {
+    setFilterAnchorEl(null);
+  };
+
+  const sortOpen = Boolean(sortAnchorEl);
+  const filterOpen = Boolean(filterAnchorEl);
+
   const fieldOptions = [
-  { value: 'fertiliserName', label: t("fertiliserName") },
-  { value: 'organisationName', label: t("organisationName") },
-  { value: 'dateOfInspection', label: t("dateOfInspection") },
-  { value: 'registrationNumber', label: t("registrationNumber") },
-  { value: 'lotNumber', label: t("lotNumber") },
-  { value: 'location', label: t("location") },
-  { value: 'inspectorName', label: t('inspectorName') },
-  { value: 'organisationAddress', label: t("organisationAddress") },
-  { value: 'organisationPhoneNumber', label: t("organisationPhoneNumber") },
-];
-
-  const open = Boolean(anchorEl);
+    { value: 'fertiliserName', label: t("fertiliserName") },
+    { value: 'organisationName', label: t("organisationName") },
+    { value: 'dateOfInspection', label: t("dateOfInspection") },
+    { value: 'registrationNumber', label: t("registrationNumber") },
+    { value: 'lotNumber', label: t("lotNumber") },
+    { value: 'location', label: t("location") },
+    { value: 'inspectorName', label: t('inspectorName') },
+    { value: 'organisationAddress', label: t("organisationAddress") },
+    { value: 'organisationPhoneNumber', label: t("organisationPhoneNumber") },
+  ];
 
   const sortData = (field: keyof typeof mockFertiliserData[0], order: SortOrder) => {
     const sorted = [...sortedData].sort((a, b) => {
@@ -225,11 +234,15 @@ function SearchPage() {
         )}
 
         <Popover
-          open={open}
-          anchorEl={anchorEl}
-          onClose={handlePopoverClose}
+          open={sortOpen}
+          anchorEl={sortAnchorEl}
+          onClose={handleSortClose}
           anchorOrigin={{
             vertical: 'bottom',
+            horizontal: 'left',
+          }}
+          transformOrigin={{
+            vertical: 'top',
             horizontal: 'left',
           }}
         >
@@ -254,13 +267,28 @@ function SearchPage() {
           variant="contained"
           color="secondary"
           startIcon={<FilterListIcon />}
-          onClick={() => setFilterOverlayOpen(!filterOverlayOpen)}
+          onClick={handleFilterClick}
         >
           {t("searchFilter")}
         </Button>
-      </Box>
 
-      {filterOverlayOpen && <FilterOverlay setFilterOverlayOpen={setFilterOverlayOpen} />}
+        <Popover
+          open={filterOpen}
+          anchorEl={filterAnchorEl}
+          onClose={handleFilterClose}
+          anchorOrigin={{
+            vertical: 'bottom',
+            horizontal: 'left',
+          }}
+          transformOrigin={{
+            vertical: 'top',
+            horizontal: 'left',
+          }}
+          sx={{marginTop: '10px'}}
+        >
+          <FilterOverlay closeOverlay={handleFilterClose} />
+        </Popover>
+      </Box>
 
       {isListView ? (
         <FertiliserListView fertilisers={sortedData} />
