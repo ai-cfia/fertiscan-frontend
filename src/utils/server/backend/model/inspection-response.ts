@@ -24,65 +24,74 @@ import type { ProductInformationOutput } from "./product-information-output";
 // May contain unused imports in some cases
 // @ts-ignore
 import type { SubLabel } from "./sub-label";
+// May contain unused imports in some cases
+// @ts-ignore
+import type { ValuesObjects } from "./values-objects";
 
 /**
  *
  * @export
- * @interface Inspection
+ * @interface InspectionResponse
  */
-export interface Inspection {
+export interface InspectionResponse {
   /**
    *
    * @type {string}
-   * @memberof Inspection
+   * @memberof InspectionResponse
+   */
+  inspection_id: string;
+  /**
+   *
+   * @type {string}
+   * @memberof InspectionResponse
+   */
+  inspector_id?: string | null;
+  /**
+   *
+   * @type {string}
+   * @memberof InspectionResponse
    */
   inspection_comment?: string | null;
   /**
    *
    * @type {boolean}
-   * @memberof Inspection
+   * @memberof InspectionResponse
    */
   verified?: boolean | null;
   /**
    *
-   * @type {OrganizationInformation}
-   * @memberof Inspection
+   * @type {Array<OrganizationInformation>}
+   * @memberof InspectionResponse
    */
-  company?: OrganizationInformation | null;
-  /**
-   *
-   * @type {OrganizationInformation}
-   * @memberof Inspection
-   */
-  manufacturer?: OrganizationInformation | null;
+  organizations?: Array<OrganizationInformation> | null;
   /**
    *
    * @type {ProductInformationOutput}
-   * @memberof Inspection
+   * @memberof InspectionResponse
    */
   product: ProductInformationOutput;
   /**
    *
    * @type {SubLabel}
-   * @memberof Inspection
+   * @memberof InspectionResponse
    */
   cautions: SubLabel;
   /**
    *
    * @type {SubLabel}
-   * @memberof Inspection
+   * @memberof InspectionResponse
    */
   instructions: SubLabel;
   /**
    *
    * @type {FertiscanDbMetadataInspectionGuaranteedAnalysis}
-   * @memberof Inspection
+   * @memberof InspectionResponse
    */
   guaranteed_analysis: FertiscanDbMetadataInspectionGuaranteedAnalysis;
   /**
    *
-   * @type {string}
-   * @memberof Inspection
+   * @type {ValuesObjects}
+   * @memberof InspectionResponse
    */
-  inspection_id: string;
+  ingredients: ValuesObjects;
 }
