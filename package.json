@@ -33,6 +33,7 @@
     "i18next-chained-backend": "^4.6.2",
     "i18next-http-backend": "^3.0.2",
     "i18next-resources-to-backend": "^1.2.1",
+    "identity-obj-proxy": "^3.0.0",
     "jest-environment-jsdom": "^29.7.0",
     "js-cookie": "^3.0.5",
     "next": "15.1.6",
