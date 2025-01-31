@@ -6,7 +6,6 @@ interface FertiliserPreviewProps {
     fertiliserName: string;
     registrationNumber: string;
     lotNumber: string;
-    location: string;
     inspectorName: string;
     dateOfInspection: Date;
     organisationName: string;
@@ -23,7 +22,6 @@ const FertiliserPreview: React.FC<FertiliserPreviewProps> = ({
     fertiliserName,
     registrationNumber,
     lotNumber,
-    location,
     inspectorName,
     dateOfInspection,
     organisationName,
@@ -53,7 +51,6 @@ const FertiliserPreview: React.FC<FertiliserPreviewProps> = ({
                     <strong>{fertiliserName}</strong>&nbsp;&nbsp;{registrationNumber}
                 </Typography>
                 <Typography variant="body2">{lotNumber}</Typography>
-                <Typography variant="body2">{location}</Typography>
             </Grid>
 
             {/* Right Column for Organisation Details */}

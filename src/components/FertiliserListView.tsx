@@ -6,7 +6,6 @@ interface Fertiliser {
   fertiliserName: string;
   registrationNumber: string;
   lotNumber: string;
-  location: string;
   inspectorName: string;
   organisationName: string;
   organisationAddress: string;
@@ -28,14 +27,13 @@ const FertiliserListView: React.FC<FertiliserListViewProps> = ({ fertilisers }) 
         { field: 'organisationName', headerName: t("organisationName"), width: 200 },
         { field: 'organisationAddress', headerName: t("organisationAddress"), width: 250 },
         { field: 'organisationPhoneNumber', headerName: t("organisationPhoneNumber"), width: 200 },
-        { field: 'location', headerName: t("location"), width: 150 },
         { field: 'inspectorName', headerName: t('inspectorName'), width: 150 },
         { field: 'dateOfInspection', headerName: t("dateOfInspection"), width: 150 }
       ];
 
 return (
     <div className="p-5 h-[calc(100vh-100px)]" style={{ width: '100%' }}>
-        <DataGrid
+         <DataGrid
             rows={fertilisers}
             columns={columns}
             getRowId={(row) => row.registrationNumber}
@@ -46,7 +44,7 @@ return (
                 columnMenuHideColumn: t("hideColumns"),
                 columnMenuManageColumns: t("manageColumns"),
                 columnMenuUnsort: t("unsort"),
-                columnHeaderSortIconLabel:t("sort"),
+                columnHeaderSortIconLabel: t("sort"),
                 columnsManagementReset: t("reset"),
                 columnsManagementSearchTitle: t("search"),
                 columnsManagementShowHideAllText: t("showHideAll"),
@@ -61,7 +59,14 @@ return (
                     },
                 },
             }}
+            onRowClick={() => console.log("row clicked")}
             disableColumnFilter
+            disableRowSelectionOnClick
+            sx={{
+                '& .MuiDataGrid-row': {
+                    cursor: 'pointer',
+                },
+            }}
         />
     </div>
 );

@@ -10,6 +10,7 @@ import FilterOverlay from '@/components/FilterOverlay';
 import ViewListOutlinedIcon from '@mui/icons-material/ViewListOutlined';
 import GridViewOutlinedIcon from '@mui/icons-material/GridViewOutlined';
 import FertiliserListView from '@/components/FertiliserListView';
+import theme from '../theme';
 
 // Mock data for fertilizer previews
 const mockFertiliserData = [
@@ -17,7 +18,6 @@ const mockFertiliserData = [
     fertiliserName: "Fertilizer Ultra-Green",
     registrationNumber: "2023-101",
     lotNumber: "LOT456",
-    location: "Green Acres Farm",
     inspectorName: "John Doe",
     dateOfInspection: new Date(2023, 2, 15),
     organisationName: "Green Solutions Inc.",
@@ -28,7 +28,6 @@ const mockFertiliserData = [
     fertiliserName: "Crop Booster Plus",
     registrationNumber: "2023-102",
     lotNumber: "LOT457",
-    location: "Sunnyvale Orchards",
     inspectorName: "Jane Smith",
     dateOfInspection: new Date(2023, 3, 18),
     organisationName: "AgriCare Co.",
@@ -39,7 +38,6 @@ const mockFertiliserData = [
     fertiliserName: "Nature's Formula",
     registrationNumber: "2023-103",
     lotNumber: "LOT458",
-    location: "Riverside Gardens",
     inspectorName: "Michael Brown",
     dateOfInspection: new Date(2023, 4, 12),
     organisationName: "EcoHarvest LLP",
@@ -50,7 +48,6 @@ const mockFertiliserData = [
     fertiliserName: "Growth Accelerator",
     registrationNumber: "2023-104",
     lotNumber: "LOT459",
-    location: "Hillside Vineyards",
     inspectorName: "Emily White",
     dateOfInspection: new Date(2023, 5, 21),
     organisationName: "Fertile Earth Ltd.",
@@ -61,7 +58,6 @@ const mockFertiliserData = [
     fertiliserName: "Plant Power Mix",
     registrationNumber: "2023-105",
     lotNumber: "LOT460",
-    location: "Lakeside Pastures",
     inspectorName: "William Green",
     dateOfInspection: new Date(2023, 6, 10),
     organisationName: "Growing Goodies Corp.",
@@ -72,7 +68,6 @@ const mockFertiliserData = [
     fertiliserName: "Yield Maximizer",
     registrationNumber: "2023-106",
     lotNumber: "LOT461",
-    location: "Sunnyfield Plains",
     inspectorName: "Jessica Black",
     dateOfInspection: new Date(2023, 7, 22),
     organisationName: "Farmscape Innovations",
@@ -83,7 +78,6 @@ const mockFertiliserData = [
     fertiliserName: "EcoGrow Premium",
     registrationNumber: "2023-107",
     lotNumber: "LOT462",
-    location: "Clover Valley Farms",
     inspectorName: "Robert Blue",
     dateOfInspection: new Date(2023, 8, 5),
     organisationName: "Verdant Ventures",
@@ -94,7 +88,6 @@ const mockFertiliserData = [
     fertiliserName: "ProPlant Nutrients",
     registrationNumber: "2023-108",
     lotNumber: "LOT463",
-    location: "Emerald Estates",
     inspectorName: "Natalie Gold",
     dateOfInspection: new Date(2023, 9, 14),
     organisationName: "GreenThumb Agency",
@@ -105,7 +98,6 @@ const mockFertiliserData = [
     fertiliserName: "Soil Enrich Pro",
     registrationNumber: "2023-109",
     lotNumber: "LOT464",
-    location: "Evergreen Fields",
     inspectorName: "Patrick Orange",
     dateOfInspection: new Date(2023, 10, 20),
     organisationName: "TrueGardens Inc.",
@@ -116,7 +108,6 @@ const mockFertiliserData = [
     fertiliserName: "Harvest Harmony",
     registrationNumber: "2023-110",
     lotNumber: "LOT465",
-    location: "Meadowbrook Park",
     inspectorName: "Sophia Silver",
     dateOfInspection: new Date(2023, 11, 3),
     organisationName: "Nature's Bounty Ltd.",
@@ -161,7 +152,6 @@ function SearchPage() {
     { value: 'dateOfInspection', label: t("dateOfInspection") },
     { value: 'registrationNumber', label: t("registrationNumber") },
     { value: 'lotNumber', label: t("lotNumber") },
-    { value: 'location', label: t("location") },
     { value: 'inspectorName', label: t('inspectorName') },
     { value: 'organisationAddress', label: t("organisationAddress") },
     { value: 'organisationPhoneNumber', label: t("organisationPhoneNumber") },
@@ -246,7 +236,7 @@ function SearchPage() {
             horizontal: 'left',
           }}
         >
-          <Box sx={{ display: 'flex', flexDirection: 'column', padding: 2, gap: 2 }}>
+          <Box sx={{ display: 'flex', flexDirection: 'column', padding: 2, gap: 2, backgroundColor:theme.palette.secondary.main }}>
             <FormControl variant="outlined" fullWidth>
               <InputLabel>Sort By</InputLabel>
               <Select value={sortField} onChange={handleFieldChange} label="Sort By">
@@ -257,7 +247,7 @@ function SearchPage() {
                 ))}
               </Select>
             </FormControl>
-            <Button variant="outlined" onClick={toggleSortOrder}>
+            <Button variant="outlined" color='primary' onClick={toggleSortOrder}>
               {sortOrder === 'asc' ? 'Ascending' : 'Descending'}
             </Button>
           </Box>
