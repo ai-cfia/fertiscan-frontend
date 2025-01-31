@@ -5,7 +5,7 @@ import { mapLabelDataOutputToLabelData } from "@/utils/server/modelTransformatio
 
 export async function POST(request: Request) {
   const formData = await request.formData();
-  console.debug("request body (formdata):", formData);
+  console.debug("[post extract-label-data] request body (formdata):", formData);
   const files = formData.getAll("files") as File[];
 
   const authHeader = request.headers.get("Authorization");
@@ -16,8 +16,12 @@ export async function POST(request: Request) {
   return pipelineApi
     .analyzeDocumentAnalyzePost(files)
     .then((analyzeResponse) => {
+      console.debug(
+        "[post extract-label-data] response data:",
+        analyzeResponse.data,
+      );
       const labelData = mapLabelDataOutputToLabelData(analyzeResponse.data);
-      console.debug("response:", labelData);
+      console.debug("[post extract-label-data] returned labelData:", labelData);
       return Response.json(labelData);
     })
     .catch((error) => {

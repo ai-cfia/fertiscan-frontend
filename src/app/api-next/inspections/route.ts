@@ -7,25 +7,28 @@ import {
 } from "@/utils/server/modelTransformation";
 
 export async function POST(request: Request) {
-  const formData = await request.formData();
-  console.debug("request body (formdata):", formData);
-  const files = formData.getAll("files") as File[];
-  const labelDataString = formData.get("labelData") as string;
-  const labelData = JSON.parse(labelDataString);
-  const LabelDataInput = mapLabelDataToLabelDataInput(labelData);
-
   const authHeader = request.headers.get("Authorization");
   if (!authHeader) {
     return MISSING_AUTH_RESPONSE;
   }
 
+  const formData = await request.formData();
+  console.debug("[post inspections] request body (formdata):", formData);
+  const files = formData.getAll("files") as File[];
+  const labelDataString = formData.get("labelData") as string;
+  const labelData = JSON.parse(labelDataString);
+  const labelDataInput = mapLabelDataToLabelDataInput(labelData);
+  console.debug("[post inspections] sent labelDataInput:", labelDataInput);
+
+
   return inspectionsApi
-    .postInspectionInspectionsPost(LabelDataInput, files, {
+    .postInspectionInspectionsPost(labelDataInput, files, {
       headers: { Authorization: authHeader },
     })
     .then((inspectionsResponse) => {
+      console.debug("[post inspections] response data:", inspectionsResponse.data);
       const labelData = mapInspectionToLabelData(inspectionsResponse.data);
-      console.debug("response:", labelData);
+      console.debug("[post inspections] returned labelData:", labelData);
       return Response.json(labelData);
     })
     .catch((error) => {
@@ -36,12 +39,7 @@ export async function POST(request: Request) {
 export async function GET(request: Request) {
   const authHeader = request.headers.get("Authorization");
   if (!authHeader) {
-    return new Response(
-      JSON.stringify({ error: "Missing Authorization header" }),
-      {
-        status: 401,
-      },
-    );
+    return MISSING_AUTH_RESPONSE;
   }
 
   return inspectionsApi
