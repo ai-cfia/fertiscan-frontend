@@ -38,9 +38,9 @@ import {
 import type { DeletedInspection } from "../model";
 // @ts-ignore
 // @ts-ignore
-import type { Inspection } from "../model";
-// @ts-ignore
 import type { InspectionData } from "../model";
+// @ts-ignore
+import type { InspectionResponse } from "../model";
 // @ts-ignore
 import type { InspectionUpdate } from "../model";
 // @ts-ignore
@@ -387,7 +387,10 @@ export const InspectionsApiFp = function (configuration?: Configuration) {
       id: string,
       options?: RawAxiosRequestConfig,
     ): Promise<
-      (axios?: AxiosInstance, basePath?: string) => AxiosPromise<Inspection>
+      (
+        axios?: AxiosInstance,
+        basePath?: string,
+      ) => AxiosPromise<InspectionResponse>
     > {
       const localVarAxiosArgs =
         await localVarAxiosParamCreator.getInspectionInspectionsIdGet(
@@ -449,7 +452,10 @@ export const InspectionsApiFp = function (configuration?: Configuration) {
       files: Array<File>,
       options?: RawAxiosRequestConfig,
     ): Promise<
-      (axios?: AxiosInstance, basePath?: string) => AxiosPromise<Inspection>
+      (
+        axios?: AxiosInstance,
+        basePath?: string,
+      ) => AxiosPromise<InspectionResponse>
     > {
       const localVarAxiosArgs =
         await localVarAxiosParamCreator.postInspectionInspectionsPost(
@@ -483,7 +489,10 @@ export const InspectionsApiFp = function (configuration?: Configuration) {
       inspectionUpdate: InspectionUpdate,
       options?: RawAxiosRequestConfig,
     ): Promise<
-      (axios?: AxiosInstance, basePath?: string) => AxiosPromise<Inspection>
+      (
+        axios?: AxiosInstance,
+        basePath?: string,
+      ) => AxiosPromise<InspectionResponse>
     > {
       const localVarAxiosArgs =
         await localVarAxiosParamCreator.putInspectionInspectionsIdPut(
@@ -543,7 +552,7 @@ export const InspectionsApiFactory = function (
     getInspectionInspectionsIdGet(
       id: string,
       options?: RawAxiosRequestConfig,
-    ): AxiosPromise<Inspection> {
+    ): AxiosPromise<InspectionResponse> {
       return localVarFp
         .getInspectionInspectionsIdGet(id, options)
         .then((request) => request(axios, basePath));
@@ -573,7 +582,7 @@ export const InspectionsApiFactory = function (
       labelData: LabelDataInput,
       files: Array<File>,
       options?: RawAxiosRequestConfig,
-    ): AxiosPromise<Inspection> {
+    ): AxiosPromise<InspectionResponse> {
       return localVarFp
         .postInspectionInspectionsPost(labelData, files, options)
         .then((request) => request(axios, basePath));
@@ -590,7 +599,7 @@ export const InspectionsApiFactory = function (
       id: string,
       inspectionUpdate: InspectionUpdate,
       options?: RawAxiosRequestConfig,
-    ): AxiosPromise<Inspection> {
+    ): AxiosPromise<InspectionResponse> {
       return localVarFp
         .putInspectionInspectionsIdPut(id, inspectionUpdate, options)
         .then((request) => request(axios, basePath));
