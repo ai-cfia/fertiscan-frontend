@@ -11,9 +11,12 @@ interface DevStoreProps {
   setUploadedJsonFile: (file: File) => void;
   labelDataOutput: LabelDataOutput | null;
   setLabelDataOutput: (labelDataOutput: LabelDataOutput) => void;
+  isPasswordVisible: boolean;
+  setIsPasswordVisible: () => void;
+  passwordTriggerCount: number;
 }
 
-const useDevStore = create<DevStoreProps>((set) => ({
+const useDevStore = create<DevStoreProps>((set, get) => ({
   triggerLabelDataLoad: false,
   setTriggerLabelDataLoad: (triggerLabelDataLoad: boolean) =>
     set({ triggerLabelDataLoad }),
@@ -28,6 +31,15 @@ const useDevStore = create<DevStoreProps>((set) => ({
   labelDataOutput: null,
   setLabelDataOutput: (labelDataOutput: LabelDataOutput) =>
     set({ labelDataOutput }),
+  isPasswordVisible: false,
+  setIsPasswordVisible: () => {
+    const currentCount = get().passwordTriggerCount;
+    if (currentCount >= 6) {
+      set({ isPasswordVisible: true });
+    }
+    set({ passwordTriggerCount: currentCount + 1 });
+  },
+  passwordTriggerCount: 0,
 }));
 
 export default useDevStore;

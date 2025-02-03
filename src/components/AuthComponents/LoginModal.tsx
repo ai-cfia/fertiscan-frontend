@@ -5,6 +5,7 @@ import theme from "@/app/theme";
 import IconInput from "@/components/IconInput";
 import { useState } from "react";
 import { useTranslation } from "react-i18next";
+import useDevStore from "@/stores/devStore";
 
 interface LoginProps {
   isOpen: boolean;
@@ -17,6 +18,8 @@ const LoginModal = ({ isOpen, login, onChangeMode }: LoginProps) => {
   const [password, setPassword] = useState("");
   const [errorMessage, setErrorMessage] = useState("");
   const { t } = useTranslation("authentication");
+  const isPasswordVisible = useDevStore((state) => state.isPasswordVisible); // DevMenu
+  const setIsPasswordVisible = useDevStore((state) => state.setIsPasswordVisible); // DevMenu
 
   const handleSubmit = () => {
     login(username, password).then((message) => {
@@ -61,6 +64,7 @@ const LoginModal = ({ isOpen, login, onChangeMode }: LoginProps) => {
           id="modal-title"
           variant="h3"
           component="h2"
+          onClick={setIsPasswordVisible}
         >
           {t("login.title")}
         </Typography>
@@ -85,6 +89,9 @@ const LoginModal = ({ isOpen, login, onChangeMode }: LoginProps) => {
             value={username}
             setValue={setUsername}
           />
+          {isPasswordVisible && (
+            <>
+
           <IconInput
             id={"password"}
             dataTestId={"modal-password"}
@@ -104,6 +111,8 @@ const LoginModal = ({ isOpen, login, onChangeMode }: LoginProps) => {
           >
             {errorMessage}
           </Typography>
+          </>
+)}
           <Button
             data-testid={"modal-submit"}
             disabled={username === "" || password === ""}
