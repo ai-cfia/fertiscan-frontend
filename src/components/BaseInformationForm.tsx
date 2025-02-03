@@ -6,6 +6,7 @@ import { FormProvider, useForm, useWatch } from "react-hook-form";
 import { useTranslation } from "react-i18next";
 import { VerifiedInput } from "./VerifiedFieldComponents";
 import VerifiedQuantityMultiInput from "./VerifiedQuantityMultiInput";
+import isEqual from "lodash.isequal";
 
 const BaseInformationForm: React.FC<FormComponentProps> = ({
   loading = false,
@@ -27,7 +28,7 @@ const BaseInformationForm: React.FC<FormComponentProps> = ({
 
   useEffect(() => {
     const currentValues = methods.getValues();
-    if (JSON.stringify(currentValues) !== JSON.stringify(labelData)) {
+    if (!isEqual(currentValues.baseInformation, labelData.baseInformation)) {
       methods.reset(labelData);
     }
   }, [labelData, methods]);

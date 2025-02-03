@@ -6,6 +6,8 @@ import { FormProvider, useForm, useWatch } from "react-hook-form";
 import { useTranslation } from "react-i18next";
 import VerifiedBilingualTable from "./VerifiedBilingualTable";
 import { VerifiedInput, VerifiedRadio } from "./VerifiedFieldComponents";
+import isEqual from "lodash.isequal";
+
 
 const GuaranteedAnalysisForm: React.FC<FormComponentProps> = ({
   loading = false,
@@ -27,7 +29,7 @@ const GuaranteedAnalysisForm: React.FC<FormComponentProps> = ({
 
   useEffect(() => {
     const currentValues = methods.getValues();
-    if (JSON.stringify(currentValues) !== JSON.stringify(labelData)) {
+    if (!isEqual(currentValues.guaranteedAnalysis, labelData.guaranteedAnalysis)) {
       methods.reset(labelData);
     }
   }, [labelData, methods]);

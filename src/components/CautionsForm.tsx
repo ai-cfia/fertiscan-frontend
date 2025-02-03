@@ -4,6 +4,7 @@ import { Box } from "@mui/material";
 import { useEffect } from "react";
 import { FormProvider, useForm, useWatch } from "react-hook-form";
 import VerifiedBilingualTable from "./VerifiedBilingualTable";
+import isEqual from "lodash.isequal";
 
 const CautionsForm: React.FC<FormComponentProps> = ({
   labelData,
@@ -24,7 +25,7 @@ const CautionsForm: React.FC<FormComponentProps> = ({
 
   useEffect(() => {
     const currentValues = methods.getValues();
-    if (JSON.stringify(currentValues) !== JSON.stringify(labelData)) {
+    if (!isEqual(currentValues.cautions, labelData.cautions)) {
       methods.reset(labelData);
     }
   }, [labelData, methods]);
