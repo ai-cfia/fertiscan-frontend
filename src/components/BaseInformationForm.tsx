@@ -27,14 +27,17 @@ const BaseInformationForm: React.FC<FormComponentProps> = ({
       methods.reset(labelData);
     }
   }, [labelData, methods]);
-  
+
   useEffect(() => {
-    if (watchedBaseInformation) {
-      setLabelData((prevLabelData) => ({
-        ...prevLabelData,
-        baseInformation: watchedBaseInformation,
-      }));
-    }
+    const handler = setTimeout(() => {
+      if (watchedBaseInformation) {
+        setLabelData((prevLabelData) => ({
+          ...prevLabelData,
+          baseInformation: watchedBaseInformation,
+        }));
+      }
+    }, 300);
+    return () => clearTimeout(handler);
   }, [watchedBaseInformation, setLabelData]);
 
   return (

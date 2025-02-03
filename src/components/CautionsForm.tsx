@@ -26,12 +26,15 @@ const CautionsForm: React.FC<FormComponentProps> = ({
   }, [labelData, methods]);
 
   useEffect(() => {
-    if (watchedCautions) {
-      setLabelData((prevLabelData) => ({
-        ...prevLabelData,
-        cautions: watchedCautions,
-      }));
-    }
+    const handler = setTimeout(() => {
+      if (watchedCautions) {
+        setLabelData((prevLabelData) => ({
+          ...prevLabelData,
+          cautions: watchedCautions,
+        }));
+      }
+    }, 300);
+    return () => clearTimeout(handler);
   }, [watchedCautions, setLabelData]);
 
   return (

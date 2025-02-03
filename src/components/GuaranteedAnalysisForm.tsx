@@ -29,12 +29,15 @@ const GuaranteedAnalysisForm: React.FC<FormComponentProps> = ({
   }, [labelData, methods]);
 
   useEffect(() => {
-    if (watchedGuaranteedAnalysis) {
-      setLabelData((prevLabelData) => ({
-        ...prevLabelData,
-        guaranteedAnalysis: watchedGuaranteedAnalysis,
-      }));
-    }
+    const handler = setTimeout(() => {
+      if (watchedGuaranteedAnalysis) {
+        setLabelData((prevLabelData) => ({
+          ...prevLabelData,
+          guaranteedAnalysis: watchedGuaranteedAnalysis,
+        }));
+      }
+    }, 300);
+    return () => clearTimeout(handler);
   }, [watchedGuaranteedAnalysis, setLabelData]);
 
   return (

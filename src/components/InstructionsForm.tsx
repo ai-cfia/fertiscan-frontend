@@ -3,6 +3,7 @@ import { Box } from "@mui/material";
 import { useEffect } from "react";
 import { FormProvider, useForm, useWatch } from "react-hook-form";
 import VerifiedBilingualTable from "./VerifiedBilingualTable";
+import isEqual from "lodash.isequal";
 
 const InstructionsForm: React.FC<FormComponentProps> = ({
   labelData,
@@ -20,18 +21,21 @@ const InstructionsForm: React.FC<FormComponentProps> = ({
 
   useEffect(() => {
     const currentValues = methods.getValues();
-    if (JSON.stringify(currentValues) !== JSON.stringify(labelData)) {
+    if (!isEqual(currentValues.instructions, labelData.instructions)) {
       methods.reset(labelData);
     }
   }, [labelData, methods]);
 
   useEffect(() => {
-    if (watchedInstructions) {
-      setLabelData((prevLabelData) => ({
-        ...prevLabelData,
-        instructions: watchedInstructions,
-      }));
-    }
+    const handler = setTimeout(() => {
+      if (watchedInstructions) {
+        setLabelData((prevLabelData) => ({
+          ...prevLabelData,
+          instructions: watchedInstructions,
+        }));
+      }
+    }, 300);
+    return () => clearTimeout(handler);
   }, [watchedInstructions, setLabelData]);
 
   return (

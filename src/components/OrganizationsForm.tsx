@@ -19,6 +19,7 @@ import {
   useWatch,
 } from "react-hook-form";
 import { VerifiedInput } from "./VerifiedFieldComponents";
+import isEqual from "lodash.isequal";
 
 const fieldNames = Object.keys(DEFAULT_ORGANIZATION) as Array<
   keyof Organization
@@ -47,18 +48,21 @@ const OrganizationsForm: React.FC<FormComponentProps> = ({
 
   useEffect(() => {
     const currentValues = methods.getValues();
-    if (JSON.stringify(currentValues) !== JSON.stringify(labelData)) {
+    if (!isEqual(currentValues.organizations, labelData.organizations)) {
       methods.reset(labelData);
     }
   }, [labelData, methods]);
 
   useEffect(() => {
-    if (watchedOrganizations) {
-      setLabelData((prevLabelData) => ({
-        ...prevLabelData,
-        organizations: watchedOrganizations,
-      }));
-    }
+    const handler = setTimeout(() => {
+      if (watchedOrganizations) {
+        setLabelData((prevLabelData) => ({
+          ...prevLabelData,
+          organizations: watchedOrganizations,
+        }));
+      }
+    }, 300);
+    return () => clearTimeout(handler);
   }, [watchedOrganizations, setLabelData]);
 
   const setAllVerified = useCallback(

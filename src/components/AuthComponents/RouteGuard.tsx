@@ -14,6 +14,12 @@ const RouteGuard = ({ children }: Readonly<{ children: React.ReactNode }>) => {
 
   const handleLogin = async (username: string, password: string) => {
     try {
+      if (process.env.NODE_ENV === "development") {
+        // Simulate successful login in development
+        Cookies.set("token", btoa(username), { sameSite: "Strict" });
+        setAuth(true);
+        return "";
+      }
       const res = await axios.post(
         "/api/login",
         { username: username },
