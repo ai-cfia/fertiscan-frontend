@@ -15,6 +15,7 @@ import {
   useCallback,
   useEffect,
 } from "react";
+import { useRouter } from "next/navigation";
 import { useTranslation } from "react-i18next";
 // import useBreakpoints from "@/utils/useBreakpoints";
 
@@ -51,12 +52,18 @@ const UserMenu = ({
   setAnchorElement,
 }: UserMenuProps): ReactElement => {
   const placeholderUser = usePlaceholder();
+  const router = useRouter()
   const { t } = useTranslation("header");
 
   const handleClose = useCallback((): void => {
     setIsUserMenuOpen(false);
     setAnchorElement(null);
   }, [setIsUserMenuOpen, setAnchorElement]);
+
+  const handleDashboardClick = (): void => {
+    router.push("/dashboard");
+    handleClose();
+  }
 
   const handleLogout = (): void => {
     document.cookie="token=; expires=Thu, 01 Jan 1970 00:00:00 UTC; path=/; SameSite=Strict";
@@ -100,7 +107,7 @@ const UserMenu = ({
         </ListItemIcon>
         <Typography>{placeholderUser.getUsername()}</Typography>
       </MenuItem>
-      <MenuItem onClick={handleClose} data-testid="dashboard-menu-item">
+      <MenuItem onClick={handleDashboardClick} data-testid="dashboard-menu-item">
         <ListItemIcon aria-label={t("userMenu.altText.dashboardIcon")}>
           <DashboardIcon />
         </ListItemIcon>

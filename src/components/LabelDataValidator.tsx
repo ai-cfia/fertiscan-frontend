@@ -1,4 +1,5 @@
 "use client";
+import FileUploaded from "@/classe/File";
 import BaseInformationForm from "@/components/BaseInformationForm";
 import CautionsForm from "@/components/CautionsForm";
 import GuaranteedAnalysisForm from "@/components/GuaranteedAnalysisForm";
@@ -11,6 +12,7 @@ import {
   StepperControls,
   StepStatus,
 } from "@/components/stepper";
+import useLabelDataStore from "@/stores/labelDataStore";
 import { FormComponentProps, LabelData } from "@/types/types";
 import {
   checkFieldArray,
@@ -18,12 +20,13 @@ import {
 } from "@/utils/client/fieldValidation";
 import useBreakpoints from "@/utils/client/useBreakpoints";
 import { Box, Container, Typography } from "@mui/material";
+import { useRouter } from "next/navigation";
 import { useEffect, useState } from "react";
 import { useTranslation } from "react-i18next";
 
 interface LabelDataValidatorProps {
   loading?: boolean;
-  files: File[];
+  fileUploads: FileUploaded[];
   labelData: LabelData;
   setLabelData: React.Dispatch<React.SetStateAction<LabelData>>;
   inspectionId?: string;
@@ -31,13 +34,11 @@ interface LabelDataValidatorProps {
 
 function LabelDataValidator({
   loading = false,
-  files,
+  fileUploads,
   labelData,
   setLabelData,
-  inspectionId,
 }: LabelDataValidatorProps) {
   const { t } = useTranslation("labelDataValidator");
-  const imageFiles = files;
   const { isDownXs, isBetweenXsSm, isBetweenSmMd, isBetweenMdLg } =
     useBreakpoints();
   const isLgOrBelow =
@@ -56,6 +57,9 @@ function LabelDataValidator({
     useState<StepStatus>(StepStatus.Incomplete);
   const [ingredientsStepStatus, setIngredientsStepStatus] =
     useState<StepStatus>(StepStatus.Incomplete);
+  const storeLabelData = useLabelDataStore((state) => state.setLabelData);
+  const router = useRouter();
+  const imageFiles = fileUploads.map((file) => file.getFile());
 
   const createStep = (
     title: string,
@@ -117,7 +121,8 @@ function LabelDataValidator({
   ];
 
   const submit = () => {
-    console.log("inspectionId:", inspectionId, "labelData", labelData);
+    storeLabelData(labelData);
+    router.push("/label-data-confirmation");
   };
 
   useEffect(() => {

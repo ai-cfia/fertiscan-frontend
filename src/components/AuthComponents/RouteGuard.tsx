@@ -6,7 +6,11 @@ import Cookies from "js-cookie";
 import { useEffect, useState } from "react";
 import { useTranslation } from "react-i18next";
 
-const RouteGuard = ({ children }: Readonly<{ children: React.ReactNode }>) => {
+interface RouteGuardProps extends React.HTMLAttributes<HTMLDivElement> {
+  children: React.ReactNode;
+}
+
+const RouteGuard = ({ children, ...divProps }: RouteGuardProps) => {
   const [isAuth, setAuth] = useState(false);
   const [isSignup, setIsSignup] = useState(false);
   const { showAlert } = useAlertStore();
@@ -21,7 +25,7 @@ const RouteGuard = ({ children }: Readonly<{ children: React.ReactNode }>) => {
         return "";
       }
       const res = await axios.post(
-        "/api/login",
+        "/api-next/login",
         { username: username },
         {
           headers: {
@@ -59,7 +63,7 @@ const RouteGuard = ({ children }: Readonly<{ children: React.ReactNode }>) => {
     }
     try {
       const res = await axios.post(
-        "/api/signup",
+        "/api-next/signup",
         { username: username },
         {
           headers: {
@@ -98,7 +102,7 @@ const RouteGuard = ({ children }: Readonly<{ children: React.ReactNode }>) => {
   }, []);
 
   return (
-    <div data-testid={"route-guard-root"}>
+    <div data-testid={"route-guard-root"} {...divProps}>
       <>
         {isSignup ? (
           <SignUpModal

@@ -6,7 +6,7 @@ import ZoomOutIcon from "@mui/icons-material/ZoomOut";
 import { Box, Button } from "@mui/material";
 import Tooltip from "@mui/material/Tooltip";
 import Image from "next/image";
-import { useEffect, useState } from "react";
+import { useState } from "react";
 import type { ReactZoomPanPinchRef } from "react-zoom-pan-pinch";
 import { TransformComponent, TransformWrapper } from "react-zoom-pan-pinch";
 import "swiper/css";
@@ -19,27 +19,12 @@ interface ImageViewerProps {
 }
 
 const ImageViewer: React.FC<ImageViewerProps> = ({ imageFiles }) => {
-  const [imageUrls, setImageUrls] = useState<string[]>([]);
   const [swiperInstance, setSwiperInstance] = useState<SwiperClass | null>(
     null,
   );
   const [zoomRefs, setZoomRefs] = useState<ReactZoomPanPinchRef[]>([]);
   const [activeIndex, setActiveIndex] = useState(0);
-
-  useEffect(() => {
-    const urls = imageFiles.map((file) => URL.createObjectURL(file));
-    setImageUrls(urls);
-    setZoomRefs((prevRefs) =>
-      Array.from({ length: urls.length }, (_, i) => prevRefs[i] || null),
-    );
-    return () => {
-      urls.forEach((url) => URL.revokeObjectURL(url));
-    };
-  }, [imageFiles, setZoomRefs, setImageUrls, setActiveIndex]);
-
-  useEffect(() => {
-    zoomRefs.forEach((ref) => ref?.resetTransform());
-  }, [imageFiles, zoomRefs]);
+  const imageUrls = imageFiles.map((file) => URL.createObjectURL(file));
 
   const handleInit = (index: number, ref: ReactZoomPanPinchRef) => {
     setZoomRefs((prevRefs) => {
@@ -95,7 +80,7 @@ const ImageViewer: React.FC<ImageViewerProps> = ({ imageFiles }) => {
                     alt={`Slide ${index + 1}`}
                     width={500}
                     height={500}
-                    data-testid="image-slide"
+                    data-testid={`image-slide-${index + 1}`}
                   />
                 </TransformComponent>
               </TransformWrapper>

@@ -6,7 +6,7 @@ import {
   Organization,
 } from "@/types/types";
 import { fireEvent, render, screen } from "@testing-library/react";
-import { useEffect, useState } from "react";
+import { act, useEffect, useState } from "react";
 import { FormProvider, useForm } from "react-hook-form";
 import OrganizationsForm from "../OrganizationsForm";
 
@@ -40,6 +40,7 @@ describe("OrganizationsForm Rendering", () => {
     render(
       <Wrapper
         initialData={{
+          ...DEFAULT_LABEL_DATA,
           organizations: [DEFAULT_ORGANIZATION, DEFAULT_ORGANIZATION],
           baseInformation: DEFAULT_BASE_INFORMATION,
           cautions: [],
@@ -106,7 +107,7 @@ describe("OrganizationsForm Functionality", () => {
     expect(screen.queryAllByTestId(/organization-\d+/)).toHaveLength(0);
   });
 
-  it("should update watched organizations in state when a field is updated", () => {
+  it("should update watched organizations in state when a field is updated", async () => {
     const mockStateChange = jest.fn();
 
     render(
@@ -124,6 +125,9 @@ describe("OrganizationsForm Functionality", () => {
     fireEvent.change(input!, { target: { value: "Updated Address" } });
     expect(input).toHaveValue("Updated Address");
 
+    await act(async () => {
+      await new Promise((resolve) => setTimeout(resolve, 350));
+    });
     expect(mockStateChange).toHaveBeenCalledWith(
       expect.objectContaining({
         organizations: [
@@ -137,7 +141,7 @@ describe("OrganizationsForm Functionality", () => {
     );
   });
 
-  it("should update the organization field verification when the Verified button is clicked", () => {
+  it("should update the organization field verification when the Verified button is clicked", async () => {
     const mockStateChange = jest.fn();
 
     render(
@@ -154,6 +158,9 @@ describe("OrganizationsForm Functionality", () => {
 
     fireEvent.click(verifyButton);
 
+    await act(async () => {
+      await new Promise((resolve) => setTimeout(resolve, 350));
+    });
     expect(mockStateChange).toHaveBeenCalledWith(
       expect.objectContaining({
         organizations: [
@@ -167,7 +174,7 @@ describe("OrganizationsForm Functionality", () => {
     );
   });
 
-  it("should mark all fields as Verified and update the data when Mark All Verified button is clicked", () => {
+  it("should mark all fields as Verified and update the data when Mark All Verified button is clicked", async () => {
     const mockStateChange = jest.fn();
 
     render(
@@ -182,6 +189,9 @@ describe("OrganizationsForm Functionality", () => {
 
     fireEvent.click(verifyAllButton);
     expect(verifyAllButton).toBeDisabled();
+    await act(async () => {
+      await new Promise((resolve) => setTimeout(resolve, 350));
+    });
     expect(mockStateChange).toHaveBeenCalledWith(
       expect.objectContaining({
         organizations: [
@@ -237,7 +247,7 @@ describe("OrganizationsForm Functionality", () => {
     expect(verifyAllButton).toBeDisabled();
   });
 
-  it("should mark all fields as Unverified and update the data when Mark All Unverified button is clicked", () => {
+  it("should mark all fields as Unverified and update the data when Mark All Unverified button is clicked", async () => {
     const mockStateChange = jest.fn();
 
     const partiallyVerifiedOrg = {
@@ -275,6 +285,9 @@ describe("OrganizationsForm Functionality", () => {
     fireEvent.click(unverifyAllButton);
     expect(unverifyAllButton).toBeDisabled();
 
+    await act(async () => {
+      await new Promise((resolve) => setTimeout(resolve, 350));
+    });
     expect(mockStateChange).toHaveBeenCalledWith(
       expect.objectContaining({
         organizations: [

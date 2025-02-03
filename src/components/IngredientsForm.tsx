@@ -1,4 +1,5 @@
 import { FormComponentProps, LabelData, UNITS } from "@/types/types";
+import useDebouncedSave from "@/utils/client/useDebouncedSave";
 import { Box } from "@mui/material";
 import { useEffect } from "react";
 import { FormProvider, useForm, useWatch } from "react-hook-form";
@@ -14,13 +15,16 @@ function IngredientsForm({
   const methods = useForm<LabelData>({
     defaultValues: labelData,
   });
+  const sectionName = "ingredients";
 
   const { control } = methods;
 
   const watchedIngredients = useWatch({
     control,
-    name: "ingredients",
+    name: sectionName,
   });
+
+  const save = useDebouncedSave(setLabelData);
 
   useEffect(() => {
     const currentValues = methods.getValues();
@@ -31,21 +35,16 @@ function IngredientsForm({
 
   useEffect(() => {
     const handler = setTimeout(() => {
-    if (watchedIngredients) {
-      setLabelData((prevLabelData) => ({
-        ...prevLabelData,
-        ingredients: watchedIngredients,
-      }));
-    }
+      save(sectionName, watchedIngredients);
   }, 300);
   return () => clearTimeout(handler);
-  }, [watchedIngredients, setLabelData]);
+  }, [watchedIngredients, save]);
 
   return (
     <FormProvider {...methods}>
       <Box className="p-4" data-testid="ingredients-form">
         <VerifiedBilingualTable
-          path={"ingredients"}
+          path={sectionName}
           unitOptions={UNITS.ingredients}
           valueColumn
           loading={loading}
