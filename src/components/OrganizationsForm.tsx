@@ -86,51 +86,33 @@ const OrganizationsForm: React.FC<FormComponentProps> = ({
             >
               <OrganizationInformation index={index} loading={loading} />
               <Box className="flex flex-wrap mt-4 justify-end gap-2">
-                <Tooltip
-                  title="Mark all as Verified"
-                  enterDelay={1000}
-                  disableHoverListener={checkFieldRecord(
-                    watchedOrganizations?.[index],
-                    true,
-                  )}
-                >
-                  <span>
-                    <Button
-                      variant="outlined"
-                      color="secondary"
-                      onClick={() => setAllVerified(index, true)}
-                      disabled={checkFieldRecord(
-                        watchedOrganizations?.[index],
-                        true,
-                      )}
-                      data-testid={`verify-all-btn-${index}`}
-                    >
-                      <DoneAllIcon />
-                    </Button>
-                  </span>
+                <Tooltip title="Mark all as Verified" enterDelay={1000}>
+                  <Button
+                    variant="outlined"
+                    color="secondary"
+                    onClick={() => setAllVerified(index, true)}
+                    disabled={checkFieldRecord(
+                      watchedOrganizations?.[index],
+                      true,
+                    )}
+                    data-testid={`verify-all-btn-${index}`}
+                  >
+                    <DoneAllIcon />
+                  </Button>
                 </Tooltip>
-                <Tooltip
-                  title="Mark all as Unverified"
-                  enterDelay={1000}
-                  disableHoverListener={checkFieldRecord(
-                    watchedOrganizations?.[index],
-                    false,
-                  )}
-                >
-                  <span>
-                    <Button
-                      variant="outlined"
-                      color="secondary"
-                      onClick={() => setAllVerified(index, false)}
-                      disabled={checkFieldRecord(
-                        watchedOrganizations?.[index],
-                        false,
-                      )}
-                      data-testid={`unverify-all-btn-${index}`}
-                    >
-                      <RemoveDoneIcon />
-                    </Button>
-                  </span>
+                <Tooltip title="Mark all as Unverified" enterDelay={1000}>
+                  <Button
+                    variant="outlined"
+                    color="secondary"
+                    onClick={() => setAllVerified(index, false)}
+                    disabled={checkFieldRecord(
+                      watchedOrganizations?.[index],
+                      false,
+                    )}
+                    data-testid={`unverify-all-btn-${index}`}
+                  >
+                    <RemoveDoneIcon />
+                  </Button>
                 </Tooltip>
                 <Tooltip title="Remove Organization" enterDelay={1000}>
                   <span>
