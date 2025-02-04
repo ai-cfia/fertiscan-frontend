@@ -17,7 +17,13 @@
 import type { NutrientValue } from "./nutrient-value";
 // May contain unused imports in some cases
 // @ts-ignore
+import type { Organization } from "./organization";
+// May contain unused imports in some cases
+// @ts-ignore
 import type { PipelineInspectionGuaranteedAnalysis } from "./pipeline-inspection-guaranteed-analysis";
+// May contain unused imports in some cases
+// @ts-ignore
+import type { PipelineInspectionRegistrationNumber } from "./pipeline-inspection-registration-number";
 // May contain unused imports in some cases
 // @ts-ignore
 import type { PipelineInspectionValue } from "./pipeline-inspection-value";
@@ -30,52 +36,10 @@ import type { PipelineInspectionValue } from "./pipeline-inspection-value";
 export interface LabelDataInput {
   /**
    *
-   * @type {string}
+   * @type {Array<Organization>}
    * @memberof LabelDataInput
    */
-  company_name?: string | null;
-  /**
-   *
-   * @type {string}
-   * @memberof LabelDataInput
-   */
-  company_address?: string | null;
-  /**
-   *
-   * @type {string}
-   * @memberof LabelDataInput
-   */
-  company_website?: string | null;
-  /**
-   *
-   * @type {string}
-   * @memberof LabelDataInput
-   */
-  company_phone_number?: string | null;
-  /**
-   *
-   * @type {string}
-   * @memberof LabelDataInput
-   */
-  manufacturer_name?: string | null;
-  /**
-   *
-   * @type {string}
-   * @memberof LabelDataInput
-   */
-  manufacturer_address?: string | null;
-  /**
-   *
-   * @type {string}
-   * @memberof LabelDataInput
-   */
-  manufacturer_website?: string | null;
-  /**
-   *
-   * @type {string}
-   * @memberof LabelDataInput
-   */
-  manufacturer_phone_number?: string | null;
+  organizations?: Array<Organization>;
   /**
    *
    * @type {string}
@@ -84,10 +48,10 @@ export interface LabelDataInput {
   fertiliser_name?: string | null;
   /**
    *
-   * @type {string}
+   * @type {Array<PipelineInspectionRegistrationNumber>}
    * @memberof LabelDataInput
    */
-  registration_number?: string | null;
+  registration_number?: Array<PipelineInspectionRegistrationNumber>;
   /**
    *
    * @type {string}

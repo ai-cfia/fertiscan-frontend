@@ -29,8 +29,12 @@ export async function GET(
       headers: { Authorization: authHeader },
     })
     .then((inspectionResponse) => {
+      console.debug(
+        "[get inspections/id] response data:",
+        inspectionResponse.data,
+      );
       const labelData = mapInspectionToLabelData(inspectionResponse.data);
-      console.debug("response:", labelData);
+      console.debug("[get inspections/id] response:", labelData);
       return Response.json(labelData);
     })
     .catch((error) => {
@@ -52,15 +56,25 @@ export async function PUT(
     return INVALID_ID_RESPONSE;
   }
   const body = await request.json();
-  console.debug("request body:", body);
+  console.debug("[put inspections/id] request body:", body);
   const inspectionUpdate = mapLabelDataToInspectionUpdate(body);
+  console.debug(
+    "[put inspections/id] sent id:",
+    id,
+    "inspectionUpdate:",
+    inspectionUpdate,
+  );
   return inspectionsApi
     .putInspectionInspectionsIdPut(id, inspectionUpdate, {
       headers: { Authorization: authHeader },
     })
     .then((inspectionResponse) => {
+      console.debug(
+        "[put inspections/id] response data:",
+        inspectionResponse.data,
+      );
       const labelData = mapInspectionToLabelData(inspectionResponse.data);
-      console.debug("response:", labelData);
+      console.debug("[put inspections/id] returned labelData:", labelData);
       return Response.json(labelData);
     })
     .catch((error) => {

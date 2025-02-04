@@ -13,51 +13,33 @@
  */
 
 /**
- *
+ * Represents an organization such as a manufacturer, company, or any entity  associated with a fertilizer.
  * @export
- * @interface OrganizationInformation
+ * @interface Organization
  */
-export interface OrganizationInformation {
+export interface Organization {
   /**
    *
    * @type {string}
-   * @memberof OrganizationInformation
-   */
-  id?: string | null;
-  /**
-   *
-   * @type {string}
-   * @memberof OrganizationInformation
+   * @memberof Organization
    */
   name?: string | null;
   /**
    *
    * @type {string}
-   * @memberof OrganizationInformation
+   * @memberof Organization
    */
   address?: string | null;
   /**
    *
    * @type {string}
-   * @memberof OrganizationInformation
+   * @memberof Organization
    */
   website?: string | null;
   /**
    *
    * @type {string}
-   * @memberof OrganizationInformation
+   * @memberof Organization
    */
   phone_number?: string | null;
-  /**
-   *
-   * @type {boolean}
-   * @memberof OrganizationInformation
-   */
-  edited?: boolean | null;
-  /**
-   *
-   * @type {boolean}
-   * @memberof OrganizationInformation
-   */
-  is_main_contact?: boolean | null;
 }
