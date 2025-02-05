@@ -1,17 +1,16 @@
 "use client";
 import ImageViewer from "@/components/ImageViewer";
+import LoadingButton from "@/components/LoadingButton";
+import { QuantityChips } from "@/components/QuantityChip";
 import useAlertStore from "@/stores/alertStore";
 import useUploadedFilesStore from "@/stores/fileStore";
 import useLabelDataStore from "@/stores/labelDataStore";
-import { BilingualField, LabelData, Quantity } from "@/types/types";
+import { BilingualField, LabelData } from "@/types/types";
 import { processAxiosError } from "@/utils/client/apiErrors";
 import { isAllVerified } from "@/utils/client/fieldValidation";
 import {
   Box,
-  Button,
   Checkbox,
-  Chip,
-  CircularProgress,
   Container,
   FormControlLabel,
   FormGroup,
@@ -40,7 +39,8 @@ const LabelDataConfirmationPage = () => {
   );
   const imageFiles = uploadedFiles.map((file) => file.getFile());
   const router = useRouter();
-  const [loading, setLoading] = useState(false);
+  const [confirmLoading, setConfirmLoading] = useState(false);
+  const [editLoading, setEditLoading] = useState(false);
   const showAlert = useAlertStore((state) => state.showAlert);
   const [confirmed, setConfirmed] = useState(false);
   const { t } = useTranslation("confirmationPage");
@@ -51,7 +51,7 @@ const LabelDataConfirmationPage = () => {
 
   const putLabelData = (labelData: LabelData, signal: AbortSignal) => {
     const confirmedLabelData = { ...labelData, confirmed: true };
-    setLoading(true);
+    setConfirmLoading(true);
     axios
       .put(
         `/api-next/inspections/${confirmedLabelData.inspectionId}`,
@@ -74,7 +74,7 @@ const LabelDataConfirmationPage = () => {
         );
       })
       .finally(() => {
-        setLoading(false);
+        setConfirmLoading(false);
       });
   };
 
@@ -85,7 +85,7 @@ const LabelDataConfirmationPage = () => {
       formData.append("files", file);
     });
     formData.append("labelData", JSON.stringify(labelData));
-    setLoading(true);
+    setConfirmLoading(true);
     axios
       .post("/api-next/inspections", formData, {
         headers: { Authorization: getAuthHeader() },
@@ -105,11 +105,12 @@ const LabelDataConfirmationPage = () => {
         );
       })
       .finally(() => {
-        setLoading(false);
+        setConfirmLoading(false);
       });
   };
 
   const handleEditClick = () => {
+    setEditLoading(true);
     if (labelData?.inspectionId) {
       router.push(`/label-data-validation/${labelData.inspectionId}`);
     } else {
@@ -512,7 +513,7 @@ const LabelDataConfirmationPage = () => {
                   <Checkbox
                     checked={confirmed}
                     onChange={(event) => setConfirmed(event.target.checked)}
-                    disabled={loading}
+                    disabled={confirmLoading}
                     data-testid="confirmation-checkbox"
                   />
                 }
@@ -526,38 +527,24 @@ const LabelDataConfirmationPage = () => {
 
             {/* Confirm and Edit Buttons */}
             <Box className="flex justify-center gap-4 pt-2">
-              <Button
+              <LoadingButton
+                className="px-4 py-2 font-bold hover:bg-green-700"
                 variant="contained"
                 color="success"
-                className="px-4 py-2 font-bold hover:bg-green-700"
-                disabled={!confirmed || loading}
+                disabled={!confirmed}
                 onClick={handleConfirmClick}
                 data-testid="confirm-button"
-              >
-                {loading ? (
-                  <>
-                    <CircularProgress
-                      size={16}
-                      color="inherit"
-                      data-testid="loading-spinner"
-                    />
-                    <span className="ml-2">
-                      {t("confirmationSection.confirmingButton")}
-                    </span>
-                  </>
-                ) : (
-                  <span>{t("confirmationSection.confirmButton")}</span>
-                )}
-              </Button>
-              <Button
+                loading={confirmLoading}
+                text={t("confirmationSection.confirmButton")}
+              />
+              <LoadingButton
                 variant="contained"
                 className="px-4 py-2 bg-gray-300 text-black font-bold hover:bg-gray-400"
-                disabled={loading}
                 onClick={handleEditClick}
                 data-testid="edit-button"
-              >
-                <span>{t("confirmationSection.editButton")}</span>
-              </Button>
+                loading={editLoading}
+                text={t("confirmationSection.editButton")}
+              />
             </Box>
           </Box>
         </Box>
@@ -567,31 +554,6 @@ const LabelDataConfirmationPage = () => {
 };
 
 export default LabelDataConfirmationPage;
-
-export interface QuantityChipsProps extends React.ComponentProps<typeof Box> {
-  quantities: Quantity[] | undefined;
-}
-
-export const QuantityChips = React.forwardRef<
-  HTMLDivElement,
-  QuantityChipsProps
->(({ quantities, ...rest }, ref) => {
-  return (
-    <Box
-      {...rest}
-      ref={ref}
-      className={`flex flex-wrap gap-1 ${rest.className || ""}`}
-    >
-      {quantities
-        ?.filter((q) => q.value)
-        .map((q, i) => (
-          <Chip key={i} label={`${q.value} ${q.unit}`} variant="outlined" />
-        ))}
-    </Box>
-  );
-});
-
-QuantityChips.displayName = "QuantityChips";
 
 interface BilingualTableProps {
   data: BilingualField[];

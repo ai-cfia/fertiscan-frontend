@@ -1,9 +1,10 @@
 "use client";
 import Dropzone from "@/components/Dropzone";
+import LoadingButton from "@/components/LoadingButton";
 import FileList from "@/components/FileList";
 import useUploadedFilesStore from "@/stores/fileStore";
 import type { DropzoneState } from "@/types/types";
-import { Box, Button, Grid2, Tooltip } from "@mui/material";
+import { Box, Grid2, Tooltip } from "@mui/material";
 import { useRouter } from "next/navigation";
 import { Suspense, useState } from "react";
 import { useTranslation } from "react-i18next";
@@ -11,6 +12,7 @@ import { useTranslation } from "react-i18next";
 function HomePage() {
   const { t } = useTranslation("homePage");
   const router = useRouter();
+  const [loading, setLoading] = useState(false);
 
   const [dropzoneState, setDropzoneState] = useState<DropzoneState>({
     visible: false,
@@ -18,6 +20,11 @@ function HomePage() {
     fillPercentage: 0,
   });
   const { uploadedFiles } = useUploadedFilesStore();
+
+  const handleSubmission = () => {
+    setLoading(true);
+    router.push("/label-data-validation");
+  };
 
   return (
     <Suspense fallback="loading">
@@ -61,17 +68,17 @@ function HomePage() {
               className="w-[90%] max-w-full min-w-[133.44px]"
             >
               <span className="flex justify-center w-full">
-                <Button
-                  className={`xs:w-[90%] md:w-[100%] min-w-[133.44px] max-h-[40px] md:max-w-[470px]`} // do not modify md:max-w-[470px] so that the button keeps the same width as the FileList
+                <LoadingButton
+                  className="xs:w-[90%] md:w-[100%] min-w-[133.44px] max-h-[40px] md:max-w-[470px]" // do not modify md:max-w-[470px] so that the button keeps the same width as the FileList
                   data-testid="submit-button"
                   variant="contained"
                   color="secondary"
                   disabled={uploadedFiles.length === 0}
                   fullWidth
-                  onClick={() => router.push("/label-data-validation")}
-                >
-                  {t("submitButton")}
-                </Button>
+                  onClick={handleSubmission}
+                  loading={loading}
+                  text={t("submitButton")}
+                />
               </span>
             </Tooltip>
           </Grid2>
