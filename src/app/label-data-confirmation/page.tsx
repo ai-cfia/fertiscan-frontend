@@ -162,8 +162,8 @@ const LabelDataConfirmationPage = () => {
     }
   }, [imageFiles, labelData, router, showAlert]);
 
-  const { isDownXs, isBetweenXsSm, isBetweenSmMd } = useBreakpoints();
-  const isSmallOrBelow = isDownXs || isBetweenXsSm || isBetweenSmMd;
+  const { isDownXs, isBetweenXsSm, isBetweenSmMd, isBetweenMdLg } = useBreakpoints();
+  const isLgOrBelow = isDownXs || isBetweenXsSm || isBetweenSmMd || isBetweenMdLg;
 
   return (
     <Container
@@ -194,27 +194,27 @@ const LabelDataConfirmationPage = () => {
           >
             <SvgIcon aria-hidden>
               {isRetractedView ? (
-                isSmallOrBelow ? (
-                  <Tooltip title={t("expandRetractButton.expandButton")}>
-                    <image href="/img/expandIcon.svg" height="24" width="24" />
-                  </Tooltip>
-                ) : (
+                isLgOrBelow ? (
                   <Tooltip title={t("expandRetractButton.retractButton")}>
-                    <image
-                      href="/img/retractIconDown.svg"
-                      height="24"
-                      width="24"
-                    />
-                  </Tooltip>
+                  <image
+                    href="/img/retractIconDown.svg"
+                    height="24"
+                    width="24"
+                  />
+                </Tooltip>
+                ) : (
+                  <Tooltip title={t("expandRetractButton.expandButton")}>
+                  <image href="/img/expandIcon.svg" height="24" width="24" />
+                </Tooltip>
                 )
-              ) : isSmallOrBelow ? (
-                <Tooltip title={t("expandRetractButton.retractButton")}>
-                  <image href="/img/retractIcon.svg" height="24" width="24" />
-                </Tooltip>
-              ) : (
+              ) : isLgOrBelow ? (
                 <Tooltip title={t("expandRetractButton.expandButton")}>
-                  <image href="/img/expandIconUp.svg" height="24" width="24" />
-                </Tooltip>
+                <image href="/img/expandIconUp.svg" height="24" width="24" />
+              </Tooltip>
+              ) : (
+                <Tooltip title={t("expandRetractButton.retractButton")}>
+                <image href="/img/retractIcon.svg" height="24" width="24" />
+              </Tooltip>
               )}
             </SvgIcon>
           </IconButton>
