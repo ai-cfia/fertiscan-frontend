@@ -6,6 +6,7 @@ import useLabelDataStore from "@/stores/labelDataStore";
 import { BilingualField, LabelData, Quantity } from "@/types/types";
 import { processAxiosError } from "@/utils/client/apiErrors";
 import { isAllVerified } from "@/utils/client/fieldValidation";
+import useBreakpoints from "@/utils/client/useBreakpoints";
 import {
   Box,
   Button,
@@ -163,8 +164,8 @@ const LabelDataConfirmationPage = () => {
     }
   }, [imageFiles, labelData, router, showAlert]);
 
-  const theme = useTheme();
-  const isUpMediumScreen = useMediaQuery(theme.breakpoints.up("md"));
+  const { isDownXs, isBetweenXsSm, isBetweenSmMd, isBetweenMdLg } = useBreakpoints();
+  const isSmallOrBelow = isDownXs || isBetweenXsSm || isBetweenSmMd;
 
   return (
     <Container
@@ -195,23 +196,24 @@ const LabelDataConfirmationPage = () => {
           >
            <SvgIcon aria-hidden>
     {isRetractedView ? (
-      isUpMediumScreen ? (
-        <Tooltip title={t("expandRetractButton.retractButton")}>
-          <image href="/img/retractIconDown.svg" height="24" width="24" />
-        </Tooltip>
-      ) : (
+      isSmallOrBelow ? (
         <Tooltip title={t("expandRetractButton.expandButton")}>
           <image href="/img/expandIcon.svg" height="24" width="24" />
         </Tooltip>
-      )
-    ) : isUpMediumScreen ? (
-      <Tooltip title={t("expandRetractButton.expandButton")}>
-        <image href="/img/expandIconUp.svg" height="24" width="24" />
+      ) : (
+
+        <Tooltip title={t("expandRetractButton.retractButton")}>
+        <image href="/img/retractIconDown.svg" height="24" width="24" />
       </Tooltip>
-    ) : (
+      )
+    ) : isSmallOrBelow ? (
       <Tooltip title={t("expandRetractButton.retractButton")}>
         <image href="/img/retractIcon.svg" height="24" width="24" />
       </Tooltip>
+    ) : (
+      <Tooltip title={t("expandRetractButton.expandButton")}>
+      <image href="/img/expandIconUp.svg" height="24" width="24" />
+    </Tooltip>
     )}
   </SvgIcon>
           </IconButton>
@@ -625,7 +627,7 @@ const LabelDataConfirmationPage = () => {
                 {/* Left Column: Base Information */}
                 <Box className="flex flex-col gap-4 flex-1 border-r overflow-y-auto sm:px-8 py-4 max-w-[50%] h-fit min-w-[250px]">
                   {/* Title */}
-                  <Typography variant="h5" className="font-bold mb-2">
+                  <Typography variant="h5" className="!font-bold mb-2">
                     {t("baseInformation.sectionTitle")}
                   </Typography>
                   <TableContainer>
@@ -710,7 +712,7 @@ const LabelDataConfirmationPage = () => {
 
                   {/* Cautions */}
                   <Box>
-                    <Typography variant="h5" className="font-bold mb-2">
+                    <Typography variant="h5" className="!font-bold mb-2">
                       {t("cautions.sectionTitle")}
                     </Typography>
                     <BilingualTable data={labelData?.cautions ?? []} />
@@ -718,7 +720,7 @@ const LabelDataConfirmationPage = () => {
 
                   {/* Instructions */}
                   <Box>
-                    <Typography variant="h5" className="font-bold mb-2">
+                    <Typography variant="h5" className="!font-bold mb-2">
                       {t("instructions.sectionTitle")}
                     </Typography>
                     <BilingualTable data={labelData?.instructions ?? []} />
@@ -801,7 +803,7 @@ const LabelDataConfirmationPage = () => {
                 <Box className="flex flex-col gap-4 flex-1 sm:px-8 py-4 max-w-[50%] h-fit min-w-[250px]">
                   {labelData?.organizations?.map((org, index) => (
                     <Box key={index} className="mb-4">
-                      <Typography variant="h5" className="font-bold mb-2">
+                      <Typography variant="h5" className="!font-bold mb-2">
                         {t("organizations.sectionTitle") + " " + (index + 1)}
                       </Typography>
                       <TableContainer>
