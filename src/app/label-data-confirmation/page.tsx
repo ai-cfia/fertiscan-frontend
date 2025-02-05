@@ -25,7 +25,10 @@ import {
   TableContainer,
   TableHead,
   TableRow,
+  Tooltip,
   Typography,
+  useMediaQuery,
+  useTheme,
 } from "@mui/material";
 import axios from "axios";
 import Cookies from "js-cookie";
@@ -162,6 +165,9 @@ const LabelDataConfirmationPage = () => {
     }
   }, [imageFiles, labelData, router, showAlert]);
 
+  const theme = useTheme();
+  const isUpMediumScreen = useMediaQuery(theme.breakpoints.up("md"));
+
   return (
     <Container
       className="flex flex-col max-w-[1920px] bg-gray-100 text-black h-[calc(100vh-65px)]"
@@ -169,7 +175,7 @@ const LabelDataConfirmationPage = () => {
       data-testid="label-data-validator-container"
     >
       <Box
-        className="flex flex-col lg:flex-row gap-4 my-4 lg:h-[85vh] lg:min-h-[500px]"
+        className="flex flex-col lg:flex-row gap-4 my-4 lg:h-[85vh] lg:min-h-[500px] "
         data-testid="main-content"
       >
         {!isRetractedView && (
@@ -180,22 +186,36 @@ const LabelDataConfirmationPage = () => {
             <ImageViewer imageFiles={imageFiles} />
           </Box>
         )}
-        <Box className="flex flex-col size-full min-w-0 mb-0  pb-6 text-center bg-white border border-black">
+        <Box
+          className="flex flex-col size-full min-w-0 mb-0  pb-6 text-center bg-white border border-black"
+          sx={{ minWidth: "500px" }}
+        >
           <IconButton
             className="self-start -p-4"
-            onClick={() => {
-              setIsRetractedView(!isRetractedView),
-                console.log(!isRetractedView);
-            }}
+            onClick={() => setIsRetractedView(!isRetractedView)}
             data-testid="retract-button"
           >
-            <SvgIcon aria-hidden>
-              {isRetractedView ? (
-                <image href="/img/expandIcon.svg" height="24" width="24" />
-              ) : (
-                <image href="/img/retractIcon.svg" height="24" width="24" />
-              )}
-            </SvgIcon>
+           <SvgIcon aria-hidden>
+    {isRetractedView ? (
+      isUpMediumScreen ? (
+        <Tooltip title={t("expandRetractButton.retractButton")}>
+          <image href="/img/retractIconDown.svg" height="24" width="24" />
+        </Tooltip>
+      ) : (
+        <Tooltip title={t("expandRetractButton.expandButton")}>
+          <image href="/img/expandIcon.svg" height="24" width="24" />
+        </Tooltip>
+      )
+    ) : isUpMediumScreen ? (
+      <Tooltip title={t("expandRetractButton.expandButton")}>
+        <image href="/img/expandIconUp.svg" height="24" width="24" />
+      </Tooltip>
+    ) : (
+      <Tooltip title={t("expandRetractButton.retractButton")}>
+        <image href="/img/retractIcon.svg" height="24" width="24" />
+      </Tooltip>
+    )}
+  </SvgIcon>
           </IconButton>
           {!isRetractedView && (
             <Box className="flex flex-col size-full min-w-0 p-4 pt-0 border-t-0 text-center gap-4 content-end ">
@@ -592,19 +612,20 @@ const LabelDataConfirmationPage = () => {
             </Box>
           )}
           {isRetractedView && (
-            <><Box className="flex flex-col pb-2">
-              {/* Title */}
-              <Typography
-                variant="h4"
-                className="text-center !font-bold"
-                data-testid="page-title"
-              >
-                {t("pageTitle")}
-              </Typography>
-            </Box><Box className="flex flex-row justify-between size-full min-w-0 p-x-4 pb-1 pt-0 border-t-0 text-left gap-4 content-end overflow-auto ">
-
+            <>
+              <Box className="flex flex-col pb-2 ">
+                {/* Title */}
+                <Typography
+                  variant="h4"
+                  className="text-center !font-bold"
+                  data-testid="page-title"
+                >
+                  {t("pageTitle")}
+                </Typography>
+              </Box>
+              <Box className="flex flex-row justify-between size-full min-w-0 p-x-4 pb-1 pt-0 border-t-0 text-left gap-4 content-end overflow-auto ">
                 {/* Left Column: Base Information */}
-                <Box className="flex flex-col gap-4 flex-1 border-r overflow-y-auto sm:px-8 py-4 max-w-[50%] h-fit">
+                <Box className="flex flex-col gap-4 flex-1 border-r overflow-y-auto sm:px-8 py-4 max-w-[50%] h-fit min-w-[250px]">
                   {/* Title */}
                   <Typography variant="h5" className="font-bold mb-2">
                     {t("baseInformation.sectionTitle")}
@@ -622,10 +643,15 @@ const LabelDataConfirmationPage = () => {
                         </TableRow>
                         <TableRow>
                           <TableCell className="font-bold">
-                            {t("baseInformation.tableHeaders.registrationNumber")}
+                            {t(
+                              "baseInformation.tableHeaders.registrationNumber",
+                            )}
                           </TableCell>
                           <TableCell>
-                            {labelData?.baseInformation.registrationNumber.value}
+                            {
+                              labelData?.baseInformation.registrationNumber
+                                .value
+                            }
                           </TableCell>
                         </TableRow>
                         <TableRow>
@@ -650,7 +676,10 @@ const LabelDataConfirmationPage = () => {
                           </TableCell>
                           <TableCell>
                             <QuantityChips
-                              quantities={labelData?.baseInformation.weight.quantities} />
+                              quantities={
+                                labelData?.baseInformation.weight.quantities
+                              }
+                            />
                           </TableCell>
                         </TableRow>
                         <TableRow>
@@ -659,7 +688,10 @@ const LabelDataConfirmationPage = () => {
                           </TableCell>
                           <TableCell>
                             <QuantityChips
-                              quantities={labelData?.baseInformation.density.quantities} />
+                              quantities={
+                                labelData?.baseInformation.density.quantities
+                              }
+                            />
                           </TableCell>
                         </TableRow>
                         <TableRow>
@@ -668,7 +700,10 @@ const LabelDataConfirmationPage = () => {
                           </TableCell>
                           <TableCell>
                             <QuantityChips
-                              quantities={labelData?.baseInformation.volume.quantities} />
+                              quantities={
+                                labelData?.baseInformation.volume.quantities
+                              }
+                            />
                           </TableCell>
                         </TableRow>
                       </TableBody>
@@ -755,7 +790,7 @@ const LabelDataConfirmationPage = () => {
                                     <Typography>{nutrient.unit}</Typography>
                                   </TableCell>
                                 </TableRow>
-                              )
+                              ),
                             )}
                           </TableBody>
                         </Table>
@@ -765,7 +800,7 @@ const LabelDataConfirmationPage = () => {
                 </Box>
 
                 {/* Right Column: Organizations */}
-                <Box className="flex flex-col gap-4 flex-1 sm:px-8 py-4 max-w-[50%] h-fit">
+                <Box className="flex flex-col gap-4 flex-1 sm:px-8 py-4 max-w-[50%] h-fit min-w-[250px]">
                   {labelData?.organizations?.map((org, index) => (
                     <Box key={index} className="mb-4">
                       <Typography variant="h5" className="font-bold mb-2">
@@ -817,66 +852,72 @@ const LabelDataConfirmationPage = () => {
                   ))}
                 </Box>
               </Box>
-                <Box className="flex justify-end gap-4 pr-6" sx={{marginBottom: "-10px"}}>
-                <Box className="flex flex-col gap-1 items-center"
-                data-testid="confirmation-section"
+              <Box
+                className="flex justify-center gap-4 pr-6"
+                sx={{ marginBottom: "-10px" }}
               >
-                <Typography>{t("confirmationSection.prompt")}</Typography>
-                {/* Acknowledgment Checkbox */}
-                <FormGroup className="flex items-center justify-center gap-2 w-[50%]">
-                  <FormControlLabel
-                    control={
-                      <Checkbox
-                        checked={confirmed}
-                        onChange={(event) => setConfirmed(event.target.checked)}
-                        disabled={loading}
-                        data-testid="confirmation-checkbox"
-                      />
-                    }
-                    label={
-                      <Typography variant="body2" className="!font-bold">
-                        {t("confirmationSection.acknowledgment")}
-                      </Typography>
-                    }
-                  />
-                </FormGroup>
-                    <Box className="flex justify-center gap-4 pt-2">
-                  <Button
-                    variant="contained"
-                    color="success"
-                    className="px-4 py-2 font-bold hover:bg-green-700"
-                    disabled={!confirmed || loading}
-                    onClick={handleConfirmClick}
-                    data-testid="confirm-button"
-                  >
-                    {loading ? (
-                      <>
-                        <CircularProgress
-                          size={16}
-                          color="inherit"
-                          data-testid="loading-spinner"
+                <Box
+                  className="flex flex-col gap-1 items-center"
+                  data-testid="confirmation-section"
+                >
+                  <Typography>{t("confirmationSection.prompt")}</Typography>
+                  {/* Acknowledgment Checkbox */}
+                  <FormGroup className="flex items-center justify-center gap-2 w-[100%]">
+                    <FormControlLabel
+                      control={
+                        <Checkbox
+                          checked={confirmed}
+                          onChange={(event) =>
+                            setConfirmed(event.target.checked)
+                          }
+                          disabled={loading}
+                          data-testid="confirmation-checkbox"
                         />
-                        <span className="ml-2">
-                          {t("confirmationSection.confirmingButton")}
-                        </span>
-                      </>
-                    ) : (
-                      <span>{t("confirmationSection.confirmButton")}</span>
-                    )}
-                  </Button>
-                  <Button
-                    variant="contained"
-                    className="px-4 py-2 bg-gray-300 text-black font-bold hover:bg-gray-400"
-                    disabled={loading}
-                    onClick={handleEditClick}
-                    data-testid="edit-button"
-                  >
-                    <span>{t("confirmationSection.editButton")}</span>
-                  </Button>
+                      }
+                      label={
+                        <Typography variant="body2" className="!font-bold">
+                          {t("confirmationSection.acknowledgment")}
+                        </Typography>
+                      }
+                    />
+                  </FormGroup>
+                  <Box className="flex justify-center gap-4 pt-2">
+                    <Button
+                      variant="contained"
+                      color="success"
+                      className="px-4 py-2 font-bold hover:bg-green-700"
+                      disabled={!confirmed || loading}
+                      onClick={handleConfirmClick}
+                      data-testid="confirm-button"
+                    >
+                      {loading ? (
+                        <>
+                          <CircularProgress
+                            size={16}
+                            color="inherit"
+                            data-testid="loading-spinner"
+                          />
+                          <span className="ml-2">
+                            {t("confirmationSection.confirmingButton")}
+                          </span>
+                        </>
+                      ) : (
+                        <span>{t("confirmationSection.confirmButton")}</span>
+                      )}
+                    </Button>
+                    <Button
+                      variant="contained"
+                      className="px-4 py-2 bg-gray-300 text-black font-bold hover:bg-gray-400"
+                      disabled={loading}
+                      onClick={handleEditClick}
+                      data-testid="edit-button"
+                    >
+                      <span>{t("confirmationSection.editButton")}</span>
+                    </Button>
                   </Box>
                 </Box>
-                </Box>
-              </>
+              </Box>
+            </>
           )}
         </Box>
       </Box>

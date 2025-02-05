@@ -56,6 +56,10 @@
     "confirmingButton": "Confirmation en cours",
     "editButton": "Modifier les détails"
   },
+  "expandRetractButton":{
+    "expandButton": "Masquer l'image et afficher uniquement les informations de l'étiquette.",
+    "retractButton": "Afficher l'image et les informations de l'étiquette."
+  },
   "yes": "Oui",
   "no": "Non"
 }
