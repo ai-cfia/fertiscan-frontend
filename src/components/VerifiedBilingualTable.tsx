@@ -19,6 +19,7 @@ import {
   Tooltip,
   Typography,
 } from "@mui/material";
+import { useState } from "react";
 import {
   Controller,
   useFieldArray,
@@ -29,7 +30,6 @@ import { useTranslation } from "react-i18next";
 import QuantityInput from "./QuantityInput";
 import StyledSkeleton from "./StyledSkeleton";
 import StyledTextField from "./StyledTextField";
-import { useState } from "react";
 
 interface VerifiedBilingualTableProps {
   path: string;
@@ -225,22 +225,17 @@ const VerifiedBilingualTable = ({
                       <Tooltip
                         title={t("verifiedBilingualTable.delete")}
                         enterDelay={1000}
-                        disableHoverListener={
-                          isVerified(index) || fields.length <= 1
-                        }
                       >
-                        <span>
-                          <IconButton
-                            onClick={() => remove(index)}
-                            disabled={isVerified(index) || fields.length <= 1}
-                            aria-label={t(
-                              "verifiedBilingualTable.accessibility.deleteButton",
-                            )}
-                            data-testid={`delete-row-btn-${path}-${index}`}
-                          >
-                            <DeleteIcon aria-hidden="true" />
-                          </IconButton>
-                        </span>
+                        <IconButton
+                          onClick={() => remove(index)}
+                          disabled={isVerified(index) || fields.length <= 1}
+                          aria-label={t(
+                            "verifiedBilingualTable.accessibility.deleteButton",
+                          )}
+                          data-testid={`delete-row-btn-${path}-${index}`}
+                        >
+                          <DeleteIcon aria-hidden="true" />
+                        </IconButton>
                       </Tooltip>
                       <Divider
                         orientation="vertical"
@@ -319,48 +314,38 @@ const VerifiedBilingualTable = ({
         <Tooltip
           title={t("verifiedBilingualTable.verifyAll")}
           enterDelay={1000}
-          disableHoverListener={data.every(
-            (row: VerifiedField) => row.verified,
-          )}
         >
-          <span>
-            <Button
-              onClick={() => setAllVerified(true)}
-              variant="outlined"
-              color="secondary"
-              disabled={data.every((row: VerifiedField) => row.verified)}
-              aria-label={t(
-                "verifiedBilingualTable.accessibility.verifyAllButton",
-              )}
-              data-testid={`verify-all-btn-${path}`}
-            >
-              <DoneAllIcon aria-hidden="true" />
-            </Button>
-          </span>
+          <Button
+            onClick={() => setAllVerified(true)}
+            variant="outlined"
+            color="secondary"
+            disabled={data.every((row: VerifiedField) => row.verified)}
+            aria-label={t(
+              "verifiedBilingualTable.accessibility.verifyAllButton",
+            )}
+            data-testid={`verify-all-btn-${path}`}
+          >
+            <DoneAllIcon aria-hidden="true" />
+          </Button>
         </Tooltip>
 
         {/* Mark all as Unverified Button */}
         <Tooltip
           title={t("verifiedBilingualTable.unverifyAll")}
           enterDelay={1000}
-          disableHoverListener={data.every(
-            (row: VerifiedField) => !row.verified,
-          )}
         >
-          <span>
-            <Button
-              onClick={() => setAllVerified(false)}
-              variant="outlined"
-              color="secondary"
-              disabled={data.every((row: VerifiedField) => !row.verified)}
-              aria-label={t(
-                "verifiedBilingualTable.accessibility.unverifyAllButton",
-              )}
-              data-testid={`unverify-all-btn-${path}`}
-            >
-              <RemoveDoneIcon aria-hidden="true" />
-            </Button>
-          </span>
+          <Button
+            onClick={() => setAllVerified(false)}
+            variant="outlined"
+            color="secondary"
+            disabled={data.every((row: VerifiedField) => !row.verified)}
+            aria-label={t(
+              "verifiedBilingualTable.accessibility.unverifyAllButton",
+            )}
+            data-testid={`unverify-all-btn-${path}`}
+          >
+            <RemoveDoneIcon aria-hidden="true" />
+          </Button>
         </Tooltip>
       </Box>
     </Box>
