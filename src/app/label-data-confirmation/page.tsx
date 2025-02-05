@@ -192,28 +192,31 @@ const LabelDataConfirmationPage = () => {
             onClick={() => setIsRetractedView(!isRetractedView)}
             data-testid="retract-button"
           >
-           <SvgIcon aria-hidden>
-    {isRetractedView ? (
-      isSmallOrBelow ? (
-        <Tooltip title={t("expandRetractButton.expandButton")}>
-          <image href="/img/expandIcon.svg" height="24" width="24" />
-        </Tooltip>
-      ) : (
-
-        <Tooltip title={t("expandRetractButton.retractButton")}>
-        <image href="/img/retractIconDown.svg" height="24" width="24" />
-      </Tooltip>
-      )
-    ) : isSmallOrBelow ? (
-      <Tooltip title={t("expandRetractButton.retractButton")}>
-        <image href="/img/retractIcon.svg" height="24" width="24" />
-      </Tooltip>
-    ) : (
-      <Tooltip title={t("expandRetractButton.expandButton")}>
-      <image href="/img/expandIconUp.svg" height="24" width="24" />
-    </Tooltip>
-    )}
-  </SvgIcon>
+            <SvgIcon aria-hidden>
+              {isRetractedView ? (
+                isSmallOrBelow ? (
+                  <Tooltip title={t("expandRetractButton.expandButton")}>
+                    <image href="/img/expandIcon.svg" height="24" width="24" />
+                  </Tooltip>
+                ) : (
+                  <Tooltip title={t("expandRetractButton.retractButton")}>
+                    <image
+                      href="/img/retractIconDown.svg"
+                      height="24"
+                      width="24"
+                    />
+                  </Tooltip>
+                )
+              ) : isSmallOrBelow ? (
+                <Tooltip title={t("expandRetractButton.retractButton")}>
+                  <image href="/img/retractIcon.svg" height="24" width="24" />
+                </Tooltip>
+              ) : (
+                <Tooltip title={t("expandRetractButton.expandButton")}>
+                  <image href="/img/expandIconUp.svg" height="24" width="24" />
+                </Tooltip>
+              )}
+            </SvgIcon>
           </IconButton>
           {!isRetractedView && (
             <Box className="flex flex-col size-full min-w-0 p-4 pt-0 border-t-0 text-center gap-4 content-end ">
