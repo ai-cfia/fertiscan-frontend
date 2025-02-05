@@ -27,8 +27,6 @@ import {
   TableRow,
   Tooltip,
   Typography,
-  useMediaQuery,
-  useTheme,
 } from "@mui/material";
 import axios from "axios";
 import Cookies from "js-cookie";
@@ -164,7 +162,7 @@ const LabelDataConfirmationPage = () => {
     }
   }, [imageFiles, labelData, router, showAlert]);
 
-  const { isDownXs, isBetweenXsSm, isBetweenSmMd, isBetweenMdLg } = useBreakpoints();
+  const { isDownXs, isBetweenXsSm, isBetweenSmMd } = useBreakpoints();
   const isSmallOrBelow = isDownXs || isBetweenXsSm || isBetweenSmMd;
 
   return (
