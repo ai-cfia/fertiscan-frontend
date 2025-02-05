@@ -1,13 +1,14 @@
 import FileUploaded from "@/classe/File";
 import useUploadedFilesStore from "@/stores/fileStore";
 import useLabelDataStore from "@/stores/labelDataStore";
+import { Quantity } from "@/types/types";
 import {
   VERIFIED_LABEL_DATA,
   VERIFIED_LABEL_DATA_WITH_ID,
 } from "@/utils/client/constants";
 import { fireEvent, render, screen } from "@testing-library/react";
 import axios from "axios";
-import LabelDataConfirmationPage from "../page";
+import LabelDataConfirmationPage, { QuantityChips } from "../page";
 
 const mockedRouterPush = jest.fn();
 jest.mock("next/navigation", () => ({
@@ -203,5 +204,21 @@ describe("LabelDataConfirmationPage", () => {
       "bilingual-table-container",
     );
     expect(bilingualTableContainers.length).toBe(4);
+  });
+});
+
+describe("QuantityChips", () => {
+  it("renders valid quantities, filters out invalid values", () => {
+    const quantities: Quantity[] = [
+      { value: "5", unit: "kg" },
+      { value: "", unit: "g" },
+      { value: "0", unit: "kg" },
+    ];
+
+    render(<QuantityChips quantities={quantities} />);
+
+    expect(screen.getByText("5 kg")).toBeInTheDocument();
+    expect(screen.getByText("0 kg")).toBeInTheDocument();
+    expect(screen.queryByText("g")).not.toBeInTheDocument();
   });
 });
