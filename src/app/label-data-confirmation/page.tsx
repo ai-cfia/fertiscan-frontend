@@ -18,7 +18,6 @@ import {
   IconButton,
   Link,
   SvgIcon,
-  Tab,
   Table,
   TableBody,
   TableCell,
@@ -35,7 +34,6 @@ import Cookies from "js-cookie";
 import { useRouter } from "next/navigation";
 import React, { useEffect, useState } from "react";
 import { useTranslation } from "react-i18next";
-import retractIcon from "../../public/img/retractIcon.svg";
 
 const LabelDataConfirmationPage = () => {
   const labelData = useLabelDataStore((state) => state.labelData);
