@@ -25,6 +25,7 @@ import {
   TableContainer,
   TableHead,
   TableRow,
+  TextField,
   Tooltip,
   Typography,
 } from "@mui/material";
@@ -38,6 +39,7 @@ const LabelDataConfirmationPage = () => {
   const labelData = useLabelDataStore((state) => state.labelData);
   const setLabelData = useLabelDataStore((state) => state.setLabelData);
   const resetLabelData = useLabelDataStore((state) => state.resetLabelData);
+  const setComment = useLabelDataStore((state) => state.setComment);
   const uploadedFiles = useUploadedFilesStore((state) => state.uploadedFiles);
   const clearUploadedFiles = useUploadedFilesStore(
     (state) => state.clearUploadedFiles,
@@ -549,6 +551,28 @@ const LabelDataConfirmationPage = () => {
                     />
                   </Box>
                 </Box>
+
+                {/* Notes */}
+                <Box data-testid="notes-section">
+                  <Typography
+                    variant="h5"
+                    className="text-left !font-bold"
+                    gutterBottom
+                  >
+                    {t("notes.sectionTitle")}
+                  </Typography>
+                  <TextField
+                    multiline
+                    rows={3}
+                    variant="outlined"
+                    fullWidth
+                    placeholder={t("notes.placeholder")}
+                    data-testid="notes-textbox"
+                    value={labelData?.comment}
+                    onChange={(e) => setComment(e.target.value)}
+                    disabled={confirmed}
+                  />
+                </Box>
               </Box>
 
               {/* Confirmation Section */}
@@ -580,6 +604,15 @@ const LabelDataConfirmationPage = () => {
                 <Box className="flex justify-center gap-4 pt-2">
                   <Button
                     variant="contained"
+                    className="px-4 py-2 bg-gray-300 text-black font-bold hover:bg-gray-400"
+                    disabled={loading}
+                    onClick={handleEditClick}
+                    data-testid="edit-button"
+                  >
+                    <span>{t("confirmationSection.editButton")}</span>
+                  </Button>
+                  <Button
+                    variant="contained"
                     color="success"
                     className="px-4 py-2 font-bold hover:bg-green-700"
                     disabled={!confirmed || loading}
@@ -600,15 +633,6 @@ const LabelDataConfirmationPage = () => {
                     ) : (
                       <span>{t("confirmationSection.confirmButton")}</span>
                     )}
-                  </Button>
-                  <Button
-                    variant="contained"
-                    className="px-4 py-2 bg-gray-300 text-black font-bold hover:bg-gray-400"
-                    disabled={loading}
-                    onClick={handleEditClick}
-                    data-testid="edit-button"
-                  >
-                    <span>{t("confirmationSection.editButton")}</span>
                   </Button>
                 </Box>
               </Box>
@@ -853,6 +877,28 @@ const LabelDataConfirmationPage = () => {
                       </TableContainer>
                     </Box>
                   ))}
+
+                  {/* Notes */}
+                  <Box data-testid="notes-section">
+                    <Typography
+                      variant="h5"
+                      className="text-left !font-bold"
+                      gutterBottom
+                    >
+                      {t("notes.sectionTitle")}
+                    </Typography>
+                    <TextField
+                      multiline
+                      rows={3}
+                      variant="outlined"
+                      fullWidth
+                      placeholder={t("notes.placeholder")}
+                      data-testid="notes-textbox"
+                      value={labelData?.comment}
+                      onChange={(e) => setComment(e.target.value)}
+                      disabled={confirmed}
+                    />
+                  </Box>
                 </Box>
               </Box>
               <Box
@@ -887,6 +933,15 @@ const LabelDataConfirmationPage = () => {
                   <Box className="flex justify-center gap-4 pt-2">
                     <Button
                       variant="contained"
+                      className="px-4 py-2 bg-gray-300 text-black font-bold hover:bg-gray-400"
+                      disabled={loading}
+                      onClick={handleEditClick}
+                      data-testid="edit-button"
+                    >
+                      <span>{t("confirmationSection.editButton")}</span>
+                    </Button>
+                    <Button
+                      variant="contained"
                       color="success"
                       className="px-4 py-2 font-bold hover:bg-green-700"
                       disabled={!confirmed || loading}
@@ -907,15 +962,6 @@ const LabelDataConfirmationPage = () => {
                       ) : (
                         <span>{t("confirmationSection.confirmButton")}</span>
                       )}
-                    </Button>
-                    <Button
-                      variant="contained"
-                      className="px-4 py-2 bg-gray-300 text-black font-bold hover:bg-gray-400"
-                      disabled={loading}
-                      onClick={handleEditClick}
-                      data-testid="edit-button"
-                    >
-                      <span>{t("confirmationSection.editButton")}</span>
                     </Button>
                   </Box>
                 </Box>

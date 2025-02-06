@@ -41,6 +41,10 @@
     "sectionTitle": "Ingrédients",
     "nutrients": "Nutriments"
   },
+  "notes": {
+    "sectionTitle": "Notes",
+    "placeholder": "Ajouter une note"
+  },
   "bilingualTable": {
     "tableHeaders": {
       "english": "Anglais",

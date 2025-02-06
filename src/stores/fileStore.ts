@@ -13,12 +13,12 @@ const useUploadedFilesStore = create<UploadedFilesState>((set) => ({
   uploadedFiles: [],
 
   addUploadedFile: (file) => {
-    console.log(`[File Store] Added: ${file.getInfo().path}`);
+    console.debug(`[File Store] Added: ${file.getInfo().path}`);
     set((state) => ({ uploadedFiles: [...state.uploadedFiles, file] }));
   },
 
   removeUploadedFile: (path) => {
-    console.log(`[File Store] Removed: ${path}`);
+    console.debug(`[File Store] Removed: ${path}`);
     set((state) => ({
       uploadedFiles: state.uploadedFiles.filter(
         (file) => file.getInfo().path !== path,
@@ -32,7 +32,7 @@ const useUploadedFilesStore = create<UploadedFilesState>((set) => ({
   },
 
   renameUploadedFile: (path, newName) => {
-    console.log(`[File Store] Renamed: ${path} -> ${newName}`);
+    console.debug(`[File Store] Renamed: ${path} -> ${newName}`);
     set((state) => ({
       uploadedFiles: state.uploadedFiles.map((file) =>
         file.getInfo().path === path

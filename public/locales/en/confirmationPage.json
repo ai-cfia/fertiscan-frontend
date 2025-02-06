@@ -41,6 +41,10 @@
     "sectionTitle": "Ingredients",
     "nutrients": "Nutrients"
   },
+  "notes": {
+    "sectionTitle": "Notes",
+    "placeholder": "Add a note"
+  },
   "bilingualTable": {
     "tableHeaders": {
       "english": "English",
@@ -56,9 +60,8 @@
     "confirmingButton": "Confirming",
     "editButton": "Edit Details"
   },
-  "expandRetractButton":{
+  "expandRetractButton": {
     "expandButton": "Hide image and show only label information.",
     "retractButton": "Show image and label information."
   }
-
 }
