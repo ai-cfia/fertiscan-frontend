@@ -2,10 +2,11 @@
 import Dropzone from "@/components/Dropzone";
 import FileList from "@/components/FileList";
 import useUploadedFilesStore from "@/stores/fileStore";
+import useLabelDataStore from "@/stores/labelDataStore";
 import type { DropzoneState } from "@/types/types";
 import { Box, Button, Grid2, Tooltip } from "@mui/material";
 import { useRouter } from "next/navigation";
-import { Suspense, useState } from "react";
+import { Suspense, useEffect, useState } from "react";
 import { useTranslation } from "react-i18next";
 
 function HomePage() {
@@ -17,7 +18,17 @@ function HomePage() {
     imageUrl: null,
     fillPercentage: 0,
   });
-  const { uploadedFiles } = useUploadedFilesStore();
+
+  const uploadedFiles = useUploadedFilesStore((state) => state.uploadedFiles);
+  const clearUploadedFiles = useUploadedFilesStore(
+    (state) => state.clearUploadedFiles,
+  );
+  const resetLabelData = useLabelDataStore((state) => state.resetLabelData);
+
+  useEffect(() => {
+    clearUploadedFiles();
+    resetLabelData();
+  }, [clearUploadedFiles, resetLabelData]);
 
   return (
     <Suspense fallback="loading">
