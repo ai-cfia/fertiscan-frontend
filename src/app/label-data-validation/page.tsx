@@ -20,7 +20,7 @@ function LabelDataValidationPage() {
 
   useEffect(() => {
     if (uploadedFiles.length === 0) {
-      showAlert("No files uploaded.", "error");
+      showAlert("No files uploaded.", "warning");
       router.push("/");
       return;
     }
