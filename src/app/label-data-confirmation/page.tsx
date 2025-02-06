@@ -878,6 +878,26 @@ const LabelDataConfirmationPage = () => {
                     </Box>
                   ))}
 
+                  {/* Ingredients */}
+                  <Box data-testid="ingredients-section">
+                    <Typography
+                      variant="h5"
+                      className="text-left !font-bold"
+                      gutterBottom
+                    >
+                      {t("ingredients.sectionTitle")}
+                    </Typography>
+                    <Box>
+                      <Typography className="!font-bold mb-2 text-left">
+                        {t("ingredients.nutrients")}
+                      </Typography>
+                      <BilingualTable
+                        data={labelData?.ingredients ?? []}
+                        data-testid="ingredients-nutrients-table"
+                      />
+                    </Box>
+                  </Box>
+
                   {/* Notes */}
                   <Box data-testid="notes-section">
                     <Typography
