@@ -17,14 +17,8 @@ function IngredientsForm({
     defaultValues: labelData,
   });
   const sectionName = "ingredients";
-
   const { control } = methods;
-
-  const watchedIngredients = useWatch({
-    control,
-    name: sectionName,
-  });
-
+  const watchedIngredients = useWatch({ control, name: sectionName });
   const save = useDebouncedSave(setLabelData);
 
   useEffect(() => {
@@ -35,6 +29,7 @@ function IngredientsForm({
   }, [labelData, methods]);
 
   useEffect(() => {
+    console.log("watchedIngredients", watchedIngredients);
     save(sectionName, watchedIngredients);
   }, [watchedIngredients, save]);
 
@@ -46,24 +41,40 @@ function IngredientsForm({
           fontWeight="bold"
           data-testid="guaranteed-analysis-title"
         >
-          {t("guaranteedAnalysis.labellingOptions")}
+          {t("ingredients.labellingOptions")}
         </Typography>
-        <Box className="flex flex-shrink-0 mb-4">
-          <VerifiedRadio
-            label={t("guaranteedAnalysis.recordKeeping")}
-            path="ingredients.recordKeeping"
-            loading={loading}
-            isHelpActive={true}
-            helpText={t("guaranteedAnalysis.helpMessage.recordKeeping")}
-            data-testid="guaranteed-analysis-record-keeping"
-          />
+        <Box className="grid grid-cols-1 items-start sm:grid-cols-1 md:grid-cols-2 lg:grid-cols-1 xxl:grid-cols-2 gap-4 p-4">
+          <Box className="flex flex-shrink-0">
+            <VerifiedRadio
+              label={t("ingredients.recordKeeping")}
+              path="ingredients.recordKeeping"
+              loading={loading}
+              isHelpActive={true}
+              helpText={t("ingredients.helpMessage.recordKeeping")}
+              data-testid="guaranteed-analysis-record-keeping"
+            />
+          </Box>
         </Box>
-        <VerifiedBilingualTable
-          path={sectionName}
-          unitOptions={UNITS.ingredients}
-          valueColumn
-          loading={loading}
-        />
+        {!watchedIngredients?.recordKeeping.value && (
+          <>
+            <Typography
+              variant="subtitle1"
+              fontWeight="bold"
+              className="!mt-16"
+              data-testid="guaranteed-analysis-nutrients-title"
+            >
+              {t("ingredients.nutrients")}
+            </Typography>
+            <Box className="px-4">
+              <VerifiedBilingualTable
+                path={"ingredients.nutrients"}
+                unitOptions={UNITS.ingredients}
+                valueColumn
+                loading={loading}
+              />
+            </Box>
+          </>
+        )}
       </Box>
     </FormProvider>
   );

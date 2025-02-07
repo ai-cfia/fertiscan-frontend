@@ -39,7 +39,14 @@
     "stepTitle": "Instructions"
   },
   "ingredients": {
-    "stepTitle": "Ingredients"
+    "stepTitle": "Ingredients",
+    "recordKeeping": "Record Keeping",
+    "helpIcon": "Help Icon",
+    "labellingOptions": "Labelling Options",
+    "helpMessage": {
+      "recordKeeping": "Indicate whether a statement is used to specify that the product contains only registered or exempted ingredients, instead of detailing each individual ingredient."
+    },
+    "nutrients": "Nutrients"
   },
   "guaranteedAnalysis": {
     "stepTitle": "Guaranteed Analysis",
@@ -49,13 +56,7 @@
     "labelEn": "English",
     "placeholderEn": "Enter English title",
     "isMinimal": "The analysis is minimal",
-    "recordKeeping": "Record Keeping",
-    "labellingOptions": "Labelling Options",
-    "nutrients": "Nutrients",
-    "helpIcon": "Help Icon",
-    "helpMessage": {
-      "recordKeeping": "Indicate whether a statement is used to specify that the product contains only registered or exempted ingredients, instead of detailing each individual ingredient."
-    }
+    "nutrients": "Nutrients"
   },
   "verifiedInput": {
     "verify": "Mark {{label}} as Verified",

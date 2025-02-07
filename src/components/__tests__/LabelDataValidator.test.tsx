@@ -433,15 +433,20 @@ describe("LabelDataValidator and Forms Integration", () => {
     });
 
     const verifyButtons = screen.getAllByTestId(
-      /verify-row-btn-ingredients-\d+/,
+      /verify-row-btn-ingredients.nutrients-\d+/,
     );
     expect(verifyButtons.length).toBeGreaterThanOrEqual(1);
 
-    for (const button of verifyButtons) {
-      await act(async () => {
+    await act(async () => {
+      fireEvent.click(
+        screen.getByTestId(
+          "toggle-verified-btn-ingredients.recordKeeping.verified",
+        ),
+      );
+      for (const button of verifyButtons) {
         fireEvent.click(button);
-      });
-    }
+      }
+    });
 
     await act(async () => {
       await new Promise((resolve) => setTimeout(resolve, 350));

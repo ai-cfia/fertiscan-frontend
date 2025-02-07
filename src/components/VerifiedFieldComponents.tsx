@@ -1,4 +1,6 @@
 import CheckIcon from "@mui/icons-material/Check";
+import HelpIcon from "@mui/icons-material/Help";
+import HelpOutlineIcon from "@mui/icons-material/HelpOutline";
 import {
   Box,
   Divider,
@@ -15,8 +17,6 @@ import { Control, Controller, useFormContext, useWatch } from "react-hook-form";
 import { useTranslation } from "react-i18next";
 import StyledSkeleton from "./StyledSkeleton";
 import StyledTextField from "./StyledTextField";
-import HelpOutlineIcon from "@mui/icons-material/HelpOutline";
-import HelpIcon from "@mui/icons-material/Help";
 
 interface VerifiedFieldWrapperProps {
   label: ReactNode;
@@ -52,13 +52,7 @@ export const VerifiedFieldWrapper: React.FC<VerifiedFieldWrapperProps> = ({
 
   return (
     <Box>
-      <Typography
-        className="px-2 !font-bold select-none text-left"
-        data-testid={`field-label-${path}`}
-      >
-        {label}
-      </Typography>
-
+      <>{label}</>
       {loading ? (
         <StyledSkeleton />
       ) : (
@@ -147,7 +141,10 @@ export const VerifiedRadio: React.FC<VerifiedRadioProps> = ({
     <VerifiedFieldWrapper
       label={
         <Box className="flex items-start">
-          <Typography className="!font-bold select-none text-left">
+          <Typography
+            className="!font-bold select-none text-left pl-2"
+            data-testid={`field-label-${path}`}
+          >
             {label}
           </Typography>
           {isHelpActive && (
@@ -160,9 +157,15 @@ export const VerifiedRadio: React.FC<VerifiedRadioProps> = ({
                   className="!bg-transparent p-0"
                 >
                   {hoverHelp ? (
-                    <HelpIcon className="-mt-2 -mb-4" style={{fontSize:"20"}}/>
+                    <HelpIcon
+                      className="-mt-2 -mb-4"
+                      style={{ fontSize: "20" }}
+                    />
                   ) : (
-                    <HelpOutlineIcon className="-mt-2 -mb-4" style={{fontSize:"20"}}/>
+                    <HelpOutlineIcon
+                      className="-mt-2 -mb-4"
+                      style={{ fontSize: "20" }}
+                    />
                   )}
                 </IconButton>
               </Tooltip>
@@ -183,12 +186,6 @@ export const VerifiedRadio: React.FC<VerifiedRadioProps> = ({
               onChange={(e) => field.onChange(e.target.value === "yes")}
               className="flex-1 !flex-row px-2 "
               onFocus={() => setIsFocused(true)}
-              onBlur={(e) => {
-                setIsFocused(false);
-                if (field.value.trim() !== (e.target as HTMLInputElement).value.trim()) {
-                  field.onChange((e.target as HTMLInputElement).value.trim());
-                }
-              }}
               data-testid={`radio-group-field-${valuePath}`}
               aria-label={`${t("verifiedInput.accessibility.radioGroup", { label })}`}
             >
@@ -241,7 +238,14 @@ export const VerifiedInput: React.FC<VerifiedInputProps> = ({
 
   return (
     <VerifiedFieldWrapper
-      label={label}
+      label={
+        <Typography
+          className="!font-bold select-none text-left px-2"
+          data-testid={`field-label-${path}`}
+        >
+          {label}
+        </Typography>
+      }
       path={path}
       className={className}
       loading={loading}

@@ -78,23 +78,26 @@ export const VERIFIED_LABEL_DATA: LabelData = {
       },
     ],
   },
-  ingredients: [
-    { en: "Urea", fr: "Urée", value: "10", unit: "%", verified: true },
-    {
-      en: "Ammonium phosphate",
-      fr: "Phosphate d'ammonium",
-      value: "30",
-      unit: "%",
-      verified: true,
-    },
-    {
-      en: "Potassium chloride",
-      fr: "Chlorure de potassium",
-      value: "60",
-      unit: "%",
-      verified: true,
-    },
-  ],
+  ingredients: {
+    recordKeeping: { value: false, verified: true },
+    nutrients: [
+      { en: "Urea", fr: "Urée", value: "10", unit: "%", verified: true },
+      {
+        en: "Ammonium phosphate",
+        fr: "Phosphate d'ammonium",
+        value: "30",
+        unit: "%",
+        verified: true,
+      },
+      {
+        en: "Potassium chloride",
+        fr: "Chlorure de potassium",
+        value: "60",
+        unit: "%",
+        verified: true,
+      },
+    ],
+  },
   confirmed: false,
   comment: "",
 };

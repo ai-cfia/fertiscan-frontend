@@ -32,10 +32,12 @@ const Wrapper = ({
 describe("IngredientsForm Rendering", () => {
   it("should render the title input fields and nutrients table", () => {
     render(<Wrapper initialData={DEFAULT_LABEL_DATA} />);
-
+    expect(
+      screen.getByTestId("verified-field-ingredients.recordKeeping"),
+    ).toBeInTheDocument();
     expect(screen.getByTestId("ingredients-form")).toBeInTheDocument();
     expect(
-      screen.getByTestId("table-container-ingredients"),
+      screen.getByTestId("table-container-ingredients.nutrients"),
     ).toBeInTheDocument();
   });
 });

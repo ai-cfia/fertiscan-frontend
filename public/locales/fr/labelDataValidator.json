@@ -39,7 +39,14 @@
     "stepTitle": "Instructions"
   },
   "ingredients": {
-    "stepTitle": "Ingrédients"
+    "stepTitle": "Ingrédients",
+    "recordKeeping": "Tenue de registres",
+    "labellingOptions": "Options d'étiquetage",
+    "helpIcon": "Icône d'aide",
+    "helpMessage": {
+      "recordKeeping": "Indiquez si une déclaration est utilisée pour préciser que le produit contient uniquement des ingrédients enregistrés ou exemptés, au lieu de détailler chaque ingrédient individuellement."
+    },
+    "nutrients": "Nutriments"
   },
   "guaranteedAnalysis": {
     "stepTitle": "Analyse Garantie",
@@ -49,13 +56,7 @@
     "labelEn": "Anglais",
     "placeholderEn": "Entrez le titre en anglais",
     "isMinimal": "L'analyse est minimale",
-    "recordKeeping": "Tenue de registres",
-    "labellingOptions": "Options d'étiquetage",
-    "nutrients": "Nutriments",
-    "helpIcon": "Icône d'aide",
-    "helpMessage":{
-      "recordKeeping":"Indiquez si une déclaration est utilisée pour préciser que le produit contient uniquement des ingrédients enregistrés ou exemptés, au lieu de détailler chaque ingrédient individuellement."
-    }
+    "nutrients": "Nutriments"
   },
   "verifiedInput": {
     "verify": "Marquer {{label}} comme vérifié",

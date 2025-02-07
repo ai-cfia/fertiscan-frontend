@@ -39,7 +39,8 @@
   },
   "ingredients": {
     "sectionTitle": "Ingredients",
-    "nutrients": "Nutrients"
+    "nutrients": "Nutrients",
+    "recordKeeping": "Record Keeping"
   },
   "bilingualTable": {
     "tableHeaders": {
@@ -56,9 +57,8 @@
     "confirmingButton": "Confirming",
     "editButton": "Edit Details"
   },
-  "expandRetractButton":{
+  "expandRetractButton": {
     "expandButton": "Hide image and show only label information.",
     "retractButton": "Show image and label information."
   }
-
 }
