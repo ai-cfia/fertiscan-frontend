@@ -99,7 +99,7 @@ export const VERIFIED_LABEL_DATA: LabelData = {
     ],
   },
   confirmed: false,
-  comment: "",
+  comment: "Compliant with regulations.",
 };
 
 export const VERIFIED_LABEL_DATA_WITH_ID = {

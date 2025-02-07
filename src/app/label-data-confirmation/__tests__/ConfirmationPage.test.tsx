@@ -1,14 +1,15 @@
 import FileUploaded from "@/classe/File";
 import useUploadedFilesStore from "@/stores/fileStore";
 import useLabelDataStore from "@/stores/labelDataStore";
-import { Quantity } from "@/types/types";
 import {
   VERIFIED_LABEL_DATA,
   VERIFIED_LABEL_DATA_WITH_ID,
 } from "@/utils/client/constants";
 import { fireEvent, render, screen } from "@testing-library/react";
 import axios from "axios";
-import LabelDataConfirmationPage, { QuantityChips } from "../page";
+import LabelDataConfirmationPage from "../page";
+import { QuantityChips } from "@/components/QuantityChip";
+import { Quantity } from "@/types/types";
 
 const mockedRouterPush = jest.fn();
 jest.mock("next/navigation", () => ({
@@ -220,5 +221,45 @@ describe("QuantityChips", () => {
     expect(screen.getByText("5 kg")).toBeInTheDocument();
     expect(screen.getByText("0 kg")).toBeInTheDocument();
     expect(screen.queryByText("g")).not.toBeInTheDocument();
+  });
+});
+
+describe("Notes Section Tests", () => {
+  it("should render the notes section with a textbox", () => {
+    render(<LabelDataConfirmationPage />);
+    const notesSection = screen.getByTestId("notes-section");
+    const notesTextbox = screen.getByTestId("notes-textbox");
+    expect(notesSection).toBeInTheDocument();
+    expect(notesTextbox).toBeInTheDocument();
+  });
+
+  it("should update the comment value when text is entered", () => {
+    useLabelDataStore.getState().setLabelData(VERIFIED_LABEL_DATA);
+    expect(useLabelDataStore.getState().labelData?.comment).toBe("Compliant with regulations.");
+    render(<LabelDataConfirmationPage />);
+    const notesTextbox = screen
+      .getByTestId("notes-textbox")
+      .querySelector("textarea");
+    expect(notesTextbox).toBeInTheDocument();
+    fireEvent.change(notesTextbox!, { target: { value: "New note" } });
+    expect(useLabelDataStore.getState().labelData?.comment).toBe("New note");
+    expect(notesTextbox).toHaveValue("New note");
+  });
+
+  it("should toggle the notes textbox disabled state when the checkbox is clicked", () => {
+    render(<LabelDataConfirmationPage />);
+    const notesTextbox = screen
+      .getByTestId("notes-textbox")
+      .querySelector("textarea");
+    const checkboxInput = screen
+      .getByTestId("confirmation-checkbox")
+      .querySelector("input");
+    expect(notesTextbox).toBeInTheDocument();
+    expect(checkboxInput).toBeInTheDocument();
+    expect(notesTextbox).not.toBeDisabled();
+    fireEvent.click(checkboxInput!);
+    expect(notesTextbox).toBeDisabled();
+    fireEvent.click(checkboxInput!);
+    expect(notesTextbox).not.toBeDisabled();
   });
 });

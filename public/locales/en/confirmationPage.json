@@ -42,6 +42,10 @@
     "nutrients": "Nutrients",
     "recordKeeping": "Record Keeping"
   },
+  "notes": {
+    "sectionTitle": "Notes",
+    "placeholder": "Add a note"
+  },
   "bilingualTable": {
     "tableHeaders": {
       "english": "English",

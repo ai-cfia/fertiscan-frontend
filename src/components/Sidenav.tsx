@@ -1,4 +1,3 @@
-import useUploadedFilesStore from "@/stores/fileStore";
 import BugReportIcon from "@mui/icons-material/BugReport";
 import HomeIcon from "@mui/icons-material/Home";
 import SearchIcon from "@mui/icons-material/Search";
@@ -16,6 +15,7 @@ import {
 } from "@mui/material";
 import Image from "next/image";
 import Link from "next/link";
+import { useRouter } from "next/navigation";
 import { useTranslation } from "react-i18next";
 
 interface DrawerMenuProps {
@@ -24,8 +24,9 @@ interface DrawerMenuProps {
 }
 
 const SideNav = ({ open, onClose }: DrawerMenuProps) => {
+  const router = useRouter();
   const { t } = useTranslation("header");
-  const { clearUploadedFiles } = useUploadedFilesStore();
+
   return (
     <Drawer
       className="darkContainer w-[240px] flex-shrink-0"
@@ -68,7 +69,7 @@ const SideNav = ({ open, onClose }: DrawerMenuProps) => {
               href="/"
               passHref
               data-testid="new-inspection-button"
-              onClick={clearUploadedFiles}
+              onClick={() => router.push("/")}
             >
               <ListItemButton>
                 <ListItemIcon

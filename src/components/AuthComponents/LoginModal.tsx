@@ -1,10 +1,11 @@
-import { Box, Button, Modal, Typography } from "@mui/material";
-import AccountCircleIcon from "@mui/icons-material/AccountCircle";
-import LockIcon from "@mui/icons-material/Lock";
 import theme from "@/app/theme";
 import IconInput from "@/components/IconInput";
+import AccountCircleIcon from "@mui/icons-material/AccountCircle";
+import LockIcon from "@mui/icons-material/Lock";
+import { Box, Modal, Typography } from "@mui/material";
 import { useState } from "react";
 import { useTranslation } from "react-i18next";
+import LoadingButton from "../LoadingButton";
 
 interface LoginProps {
   isOpen: boolean;
@@ -17,11 +18,14 @@ const LoginModal = ({ isOpen, login, onChangeMode }: LoginProps) => {
   const [password, setPassword] = useState("");
   const [errorMessage, setErrorMessage] = useState("");
   const { t } = useTranslation("authentication");
+  const [loading, setLoading] = useState(false);
 
   const handleSubmit = () => {
+    setLoading(true);
     login(username, password).then((message) => {
       console.log(message);
       setErrorMessage(message);
+      setLoading(false);
     });
   };
 
@@ -104,18 +108,14 @@ const LoginModal = ({ isOpen, login, onChangeMode }: LoginProps) => {
           >
             {errorMessage}
           </Typography>
-          <Button
-            data-testid={"modal-submit"}
-            disabled={username === "" || password === ""}
-            className={`
-              !bg-white
-              !pointer-events-auto
-              ${username === "" || password === "" ? "!cursor-not-allowed !text-gray-400" : "!cursor-pointer !text-black"}
-            `}
+          <LoadingButton
             onClick={handleSubmit}
-          >
-            {t("login.title")}
-          </Button>
+            disabled={username === "" || password === ""}
+            loading={loading}
+            text={t("login.title")}
+            className="!bg-white !pointer-events-auto"
+            data-testid="modal-submit"
+          />
         </form>
         <Typography
           data-testid={"modal-change"}
