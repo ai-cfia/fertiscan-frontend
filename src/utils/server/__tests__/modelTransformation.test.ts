@@ -909,4 +909,16 @@ describe("mapLabelDataToInspectionUpdate", () => {
     });
     expect(result.ingredients).toEqual({ en: [], fr: [] });
   });
+
+  it("should return empty ingredients when recordKeeping is true", () => {
+    const modifiedLabelData: LabelData = {
+      ...labelData,
+      ingredients: {
+        ...labelData.ingredients,
+        recordKeeping: { value: true, verified: false },
+      },
+    };
+    const result = mapLabelDataToInspectionUpdate(modifiedLabelData);
+    expect(result.ingredients).toEqual({ en: [], fr: [] });
+  });
 });

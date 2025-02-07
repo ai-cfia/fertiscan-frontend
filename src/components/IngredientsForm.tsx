@@ -29,7 +29,6 @@ function IngredientsForm({
   }, [labelData, methods]);
 
   useEffect(() => {
-    console.log("watchedIngredients", watchedIngredients);
     save(sectionName, watchedIngredients);
   }, [watchedIngredients, save]);
 
