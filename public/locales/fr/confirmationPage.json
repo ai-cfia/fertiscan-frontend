@@ -1,0 +1,65 @@
+{
+  "pageTitle": "Revoir et confirmer les données de l'étiquette",
+  "baseInformation": {
+    "sectionTitle": "Informations de base sur l'engrais",
+    "tableHeaders": {
+      "name": "Nom",
+      "registrationNumber": "Numéro d'enregistrement",
+      "lotNumber": "Numéro de lot",
+      "npk": "NPK",
+      "weight": "Poids",
+      "density": "Densité",
+      "volume": "Volume"
+    }
+  },
+  "organizations": {
+    "sectionTitle": "Organisations",
+    "tableHeaders": {
+      "name": "Nom",
+      "address": "Adresse",
+      "website": "Site Web",
+      "phoneNumber": "Numéro de téléphone"
+    }
+  },
+  "cautions": {
+    "sectionTitle": "Précautions"
+  },
+  "instructions": {
+    "sectionTitle": "Instructions"
+  },
+  "guaranteedAnalysis": {
+    "sectionTitle": "Analyse garantie",
+    "title": "Titre",
+    "tableHeaders": {
+      "english": "Anglais",
+      "french": "Français",
+      "isMinimal": "Est minimal"
+    },
+    "nutrients": "Nutriments"
+  },
+  "ingredients": {
+    "sectionTitle": "Ingrédients",
+    "nutrients": "Nutriments"
+  },
+  "bilingualTable": {
+    "tableHeaders": {
+      "english": "Anglais",
+      "french": "Français",
+      "value": "Valeur",
+      "unit": "Unité"
+    }
+  },
+  "confirmationSection": {
+    "prompt": "Veuillez confirmer que les données sont exactes. Si des modifications sont nécessaires, retournez pour les modifier.",
+    "acknowledgment": "Je reconnais que les données sont exactes.",
+    "confirmButton": "Confirmer",
+    "confirmingButton": "Confirmation en cours",
+    "editButton": "Modifier les détails"
+  },
+  "expandRetractButton":{
+    "expandButton": "Masquer l'image et afficher uniquement les informations de l'étiquette.",
+    "retractButton": "Afficher l'image et les informations de l'étiquette."
+  },
+  "yes": "Oui",
+  "no": "Non"
+}

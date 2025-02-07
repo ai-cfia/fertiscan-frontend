@@ -5,6 +5,7 @@ import {
   Organization,
 } from "@/types/types";
 import { checkFieldRecord } from "@/utils/client/fieldValidation";
+import useDebouncedSave from "@/utils/client/useDebouncedSave";
 import AddIcon from "@mui/icons-material/Add";
 import DeleteIcon from "@mui/icons-material/Delete";
 import DoneAllIcon from "@mui/icons-material/DoneAll";
@@ -34,16 +35,19 @@ const OrganizationsForm: React.FC<FormComponentProps> = ({
   });
 
   const { control, setValue } = methods;
+  const sectionName = "organizations";
 
   const { fields, append, remove } = useFieldArray({
     control,
-    name: "organizations",
+    name: sectionName,
   });
 
   const watchedOrganizations = useWatch({
     control,
-    name: "organizations",
+    name: sectionName,
   });
+
+  const save = useDebouncedSave(setLabelData);
 
   useEffect(() => {
     const currentValues = methods.getValues();
@@ -53,19 +57,14 @@ const OrganizationsForm: React.FC<FormComponentProps> = ({
   }, [labelData, methods]);
 
   useEffect(() => {
-    if (watchedOrganizations) {
-      setLabelData((prevLabelData) => ({
-        ...prevLabelData,
-        organizations: watchedOrganizations,
-      }));
-    }
-  }, [watchedOrganizations, setLabelData]);
+    save(sectionName, watchedOrganizations);
+  }, [watchedOrganizations, save]);
 
   const setAllVerified = useCallback(
     (orgIndex: number, verified: boolean) => {
       fieldNames.forEach((fieldName) => {
         const fieldPath =
-          `organizations.${orgIndex}.${fieldName}.verified` as FieldPath<LabelData>;
+          `${sectionName}.${orgIndex}.${fieldName}.verified` as FieldPath<LabelData>;
         setValue(fieldPath, verified, {
           shouldValidate: true,
           shouldDirty: true,
@@ -87,51 +86,33 @@ const OrganizationsForm: React.FC<FormComponentProps> = ({
             >
               <OrganizationInformation index={index} loading={loading} />
               <Box className="flex flex-wrap mt-4 justify-end gap-2">
-                <Tooltip
-                  title="Mark all as Verified"
-                  enterDelay={1000}
-                  disableHoverListener={checkFieldRecord(
-                    watchedOrganizations?.[index],
-                    true,
-                  )}
-                >
-                  <span>
-                    <Button
-                      variant="outlined"
-                      color="secondary"
-                      onClick={() => setAllVerified(index, true)}
-                      disabled={checkFieldRecord(
-                        watchedOrganizations?.[index],
-                        true,
-                      )}
-                      data-testid={`verify-all-btn-${index}`}
-                    >
-                      <DoneAllIcon />
-                    </Button>
-                  </span>
+                <Tooltip title="Mark all as Verified" enterDelay={1000}>
+                  <Button
+                    variant="outlined"
+                    color="secondary"
+                    onClick={() => setAllVerified(index, true)}
+                    disabled={checkFieldRecord(
+                      watchedOrganizations?.[index],
+                      true,
+                    )}
+                    data-testid={`verify-all-btn-${index}`}
+                  >
+                    <DoneAllIcon />
+                  </Button>
                 </Tooltip>
-                <Tooltip
-                  title="Mark all as Unverified"
-                  enterDelay={1000}
-                  disableHoverListener={checkFieldRecord(
-                    watchedOrganizations?.[index],
-                    false,
-                  )}
-                >
-                  <span>
-                    <Button
-                      variant="outlined"
-                      color="secondary"
-                      onClick={() => setAllVerified(index, false)}
-                      disabled={checkFieldRecord(
-                        watchedOrganizations?.[index],
-                        false,
-                      )}
-                      data-testid={`unverify-all-btn-${index}`}
-                    >
-                      <RemoveDoneIcon />
-                    </Button>
-                  </span>
+                <Tooltip title="Mark all as Unverified" enterDelay={1000}>
+                  <Button
+                    variant="outlined"
+                    color="secondary"
+                    onClick={() => setAllVerified(index, false)}
+                    disabled={checkFieldRecord(
+                      watchedOrganizations?.[index],
+                      false,
+                    )}
+                    data-testid={`unverify-all-btn-${index}`}
+                  >
+                    <RemoveDoneIcon />
+                  </Button>
                 </Tooltip>
                 <Tooltip title="Remove Organization" enterDelay={1000}>
                   <span>

@@ -14,6 +14,9 @@
 
 // May contain unused imports in some cases
 // @ts-ignore
+import type { FertiscanDbMetadataInspectionRegistrationNumber } from "./fertiscan-db-metadata-inspection-registration-number";
+// May contain unused imports in some cases
+// @ts-ignore
 import type { Metrics } from "./metrics";
 
 /**
@@ -34,12 +37,6 @@ export interface ProductInformationInput {
    * @memberof ProductInformationInput
    */
   label_id?: string | null;
-  /**
-   *
-   * @type {string}
-   * @memberof ProductInformationInput
-   */
-  registration_number?: string | null;
   /**
    *
    * @type {string}
@@ -82,4 +79,22 @@ export interface ProductInformationInput {
    * @memberof ProductInformationInput
    */
   k?: number | null;
+  /**
+   *
+   * @type {boolean}
+   * @memberof ProductInformationInput
+   */
+  verified?: boolean | null;
+  /**
+   *
+   * @type {Array<FertiscanDbMetadataInspectionRegistrationNumber>}
+   * @memberof ProductInformationInput
+   */
+  registration_numbers?: Array<FertiscanDbMetadataInspectionRegistrationNumber> | null;
+  /**
+   *
+   * @type {boolean}
+   * @memberof ProductInformationInput
+   */
+  record_keeping?: boolean | null;
 }

@@ -1,0 +1,64 @@
+{
+  "pageTitle": "Review and Confirm The Label Data",
+  "baseInformation": {
+    "sectionTitle": "Fertilizer Base Information",
+    "tableHeaders": {
+      "name": "Name",
+      "registrationNumber": "Registration Number",
+      "lotNumber": "Lot Number",
+      "npk": "NPK",
+      "weight": "Weight",
+      "density": "Density",
+      "volume": "Volume"
+    }
+  },
+  "organizations": {
+    "sectionTitle": "Organizations",
+    "tableHeaders": {
+      "name": "Name",
+      "address": "Address",
+      "website": "Website",
+      "phoneNumber": "Phone Number"
+    }
+  },
+  "cautions": {
+    "sectionTitle": "Cautions"
+  },
+  "instructions": {
+    "sectionTitle": "Instructions"
+  },
+  "guaranteedAnalysis": {
+    "sectionTitle": "Guaranteed Analysis",
+    "title": "Title",
+    "tableHeaders": {
+      "english": "English",
+      "french": "French",
+      "isMinimal": "Is Minimal"
+    },
+    "nutrients": "Nutrients"
+  },
+  "ingredients": {
+    "sectionTitle": "Ingredients",
+    "nutrients": "Nutrients"
+  },
+  "bilingualTable": {
+    "tableHeaders": {
+      "english": "English",
+      "french": "French",
+      "value": "Value",
+      "unit": "Unit"
+    }
+  },
+  "confirmationSection": {
+    "prompt": "Please confirm the data is accurate. If changes are needed, return to edit.",
+    "acknowledgment": "I acknowledge that the data is accurate.",
+    "confirmButton": "Confirm",
+    "confirmingButton": "Confirming",
+    "editButton": "Edit Details"
+  },
+  "expandRetractButton":{
+    "expandButton": "Hide image and show only label information.",
+    "retractButton": "Show image and label information."
+  }
+
+}
