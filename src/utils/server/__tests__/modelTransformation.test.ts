@@ -364,6 +364,7 @@ describe("mapLabelDataOutputToLabelData", () => {
 const emptyInspection: InspectionResponse = {
   inspection_id: "",
   inspector_id: null,
+  picture_set_id: "",
   inspection_comment: null,
   verified: true,
   organizations: null,
@@ -404,6 +405,7 @@ describe("mapInspectionToLabelData", () => {
     const input: InspectionResponse = {
       inspection_id: "INS123",
       inspector_id: null,
+      picture_set_id: "PIC123",
       inspection_comment: "comment",
       verified: false,
       organizations: [
@@ -538,6 +540,7 @@ describe("mapInspectionToLabelData", () => {
 
     expect(result.confirmed).toBe(false);
     expect(result.comment).toBe("comment");
+    expect(result.pictureSetId).toBe("PIC123");
   });
 
   it("should handle missing fields gracefully", () => {
@@ -561,6 +564,7 @@ describe("mapInspectionToLabelData", () => {
     expect(result.guaranteedAnalysis.isMinimal.value).toBe(false);
     expect(result.guaranteedAnalysis.nutrients).toEqual([]);
     expect(result.ingredients).toEqual([]);
+    expect(result.pictureSetId).toBe("");
   });
 
   it("sets all fields as verified if inspection is verified", () => {
@@ -672,6 +676,7 @@ const labelData: LabelData = {
   ],
   confirmed: false,
   comment: "InspectionResponse passed with minor issues",
+  pictureSetId: "PIC123",
 };
 
 const emptyLabelData: LabelData = {
@@ -850,6 +855,7 @@ describe("mapLabelDataToInspectionUpdate", () => {
         { name: "Farine d'os", value: 50, unit: "g" },
       ],
     });
+    expect(result.picture_set_id).toBe("PIC123");
   });
 
   it("should handle empty arrays gracefully", () => {
@@ -878,5 +884,6 @@ describe("mapLabelDataToInspectionUpdate", () => {
       fr: [],
     });
     expect(result.ingredients).toEqual({ en: [], fr: [] });
+    expect(result.picture_set_id).toBe("");
   });
 });
