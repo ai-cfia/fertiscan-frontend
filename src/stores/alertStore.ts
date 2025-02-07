@@ -10,7 +10,7 @@ interface AlertState {
 const useAlertStore = create<AlertState>((set) => ({
   alert: null,
   showAlert: (message, type = "info") => {
-    console.log(`Alert: ${message} | Type: ${type}`);
+    console.debug(`Alert: ${message} | Type: ${type}`);
     set({ alert: { message, type } });
   },
   hideAlert: () => set({ alert: null }),
