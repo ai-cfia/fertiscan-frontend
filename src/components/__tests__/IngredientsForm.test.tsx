@@ -1,5 +1,5 @@
 import { DEFAULT_LABEL_DATA, LabelData } from "@/types/types";
-import { render, screen } from "@testing-library/react";
+import { fireEvent, render, screen } from "@testing-library/react";
 import { useEffect, useState } from "react";
 import { FormProvider, useForm } from "react-hook-form";
 import IngredientsForm from "../IngredientsForm";
@@ -39,5 +39,26 @@ describe("IngredientsForm Rendering", () => {
     expect(
       screen.getByTestId("table-container-ingredients.nutrients"),
     ).toBeInTheDocument();
+  });
+
+  it("should not render the nutrient section when record-keeping is set to yes, then render it again when set to no", () => {
+    render(<Wrapper initialData={DEFAULT_LABEL_DATA} />);
+    fireEvent.click(
+      screen.getByTestId("radio-yes-field-ingredients.recordKeeping.value"),
+    );
+    setTimeout(() => {
+      expect(
+        screen.queryByTestId("table-container-ingredients.nutrients"),
+      ).not.toBeInTheDocument();
+
+      fireEvent.click(
+        screen.getByTestId("radio-no-field-ingredients.recordKeeping.value"),
+      );
+      setTimeout(() => {
+        expect(
+          screen.getByTestId("table-container-ingredients.nutrients"),
+        ).toBeInTheDocument();
+      }, 350);
+    }, 350);
   });
 });
