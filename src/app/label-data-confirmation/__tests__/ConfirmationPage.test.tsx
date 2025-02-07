@@ -1,14 +1,15 @@
 import FileUploaded from "@/classe/File";
 import useUploadedFilesStore from "@/stores/fileStore";
 import useLabelDataStore from "@/stores/labelDataStore";
-import { Quantity } from "@/types/types";
 import {
   VERIFIED_LABEL_DATA,
   VERIFIED_LABEL_DATA_WITH_ID,
 } from "@/utils/client/constants";
 import { fireEvent, render, screen } from "@testing-library/react";
 import axios from "axios";
-import LabelDataConfirmationPage, { QuantityChips } from "../page";
+import LabelDataConfirmationPage from "../page";
+import { QuantityChips } from "@/components/QuantityChip";
+import { Quantity } from "@/types/types";
 
 const mockedRouterPush = jest.fn();
 jest.mock("next/navigation", () => ({
