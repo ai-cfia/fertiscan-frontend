@@ -1,18 +1,18 @@
+import theme from "@/app/theme";
+import IconInput from "@/components/IconInput";
+import AccountCircleIcon from "@mui/icons-material/AccountCircle";
+import LockIcon from "@mui/icons-material/Lock";
 import {
   Box,
-  Button,
   Checkbox,
   FormControlLabel,
   FormGroup,
   Modal,
   Typography,
 } from "@mui/material";
-import AccountCircleIcon from "@mui/icons-material/AccountCircle";
-import LockIcon from "@mui/icons-material/Lock";
-import IconInput from "@/components/IconInput";
 import { useState } from "react";
 import { useTranslation } from "react-i18next";
-import theme from "@/app/theme";
+import LoadingButton from "../LoadingButton";
 
 interface SignUpProps {
   isOpen: boolean;
@@ -31,10 +31,13 @@ const SignUpModal = ({ isOpen, signup, onChangeMode }: SignUpProps) => {
   const [checkedReminder, setReminderChecked] = useState(false);
   const [errorMessage, setErrorMessage] = useState("");
   const { t } = useTranslation("authentication");
+  const [loading, setLoading] = useState(false);
 
   const handleSubmit = () => {
+    setLoading(true);
     signup(username, password, confirmPassword).then((message) => {
       setErrorMessage(message);
+      setLoading(false);
     });
   };
 
@@ -146,23 +149,19 @@ const SignUpModal = ({ isOpen, signup, onChangeMode }: SignUpProps) => {
           >
             {errorMessage}
           </Typography>
-          <Button
-            data-testid={"modal-submit"}
+          <LoadingButton
+            onClick={handleSubmit}
             disabled={
               username === "" ||
               password === "" ||
               confirmPassword === "" ||
               !checkedReminder
             }
-            className={`
-                !bg-white
-                !pointer-events-auto
-                ${username === "" || password === "" || confirmPassword === "" || !checkedReminder ? "!cursor-not-allowed !text-gray-400" : "!cursor-pointer !text-black"}
-              `}
-            onClick={handleSubmit}
-          >
-            {t("signup.title")}
-          </Button>
+            loading={loading}
+            text={t("signup.title")}
+            className="!bg-white !pointer-events-auto"
+            data-testid="modal-submit"
+          />
         </form>
         <Typography
           data-testid={"modal-change"}
