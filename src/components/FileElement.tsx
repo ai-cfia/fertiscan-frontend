@@ -1,3 +1,4 @@
+import FileUploaded from "@/classe/File";
 import useUploadedFilesStore from "@/stores/fileStore";
 import { DropzoneState } from "@/types/types";
 import CheckIcon from "@mui/icons-material/Check";
@@ -11,6 +12,7 @@ import {
   Typography,
   useTheme,
 } from "@mui/material";
+import Image from "next/image";
 import React, { useState } from "react";
 import { useTranslation } from "react-i18next";
 
@@ -19,43 +21,37 @@ import { useTranslation } from "react-i18next";
  */
 interface FileElementProps {
   setDropzoneState: React.Dispatch<React.SetStateAction<DropzoneState>>;
-  fileName: string;
-  fileUrl: string;
+  imageFile: FileUploaded;
 }
 
 /**
  *
  * FileElement component to display the uploaded file
  * @param setDropZoneState: function to set the dropzone state
- * @param fileName: name of the file
- * @param fileUrl: url of the file
+ * @param imageName: name of the file
+ * @param imageUrl: url of the file
  * @param handleDelete: function to handle the deletion of the file
  *
  * @returns
  */
 const FileElement: React.FC<FileElementProps> = ({
   setDropzoneState,
-  fileName,
-  fileUrl,
+  imageFile,
 }) => {
   const theme = useTheme();
   const { t } = useTranslation("homePage");
   const [hovered, setHovered] = useState(false);
   const { removeUploadedFile, renameUploadedFile } = useUploadedFilesStore();
   const [isRenaming, setIsRenaming] = useState(false);
-  const extension = fileName.split(".").pop() || "";
-  const baseName = fileName.replace(`.${extension}`, "");
+  const { name: imageName, path: imageUrl } = imageFile.getInfo();
+  const extension = imageName.split(".").pop() || "";
+  const baseName =
+    imageName.substring(0, imageName.lastIndexOf(".")) || imageName;
   const [newName, setNewName] = useState(baseName);
-
-  const isValidObjectURL = (url: string) => {
-    const pattern =
-      /^(blob:+http:\/\/|https:\/\/)[a-zA-Z0-9\-_.]+(?:\.[a-zA-Z0-9\-_.]+)*(?::\d+)?\/[a-zA-Z0-9\-_.]+$/;
-    return pattern.test(url);
-  };
 
   const handleRenameSubmit = (event: React.KeyboardEvent) => {
     if (event.key === "Enter" && newName.trim() !== "") {
-      renameUploadedFile(fileUrl, `${newName.trim()}.${extension}`);
+      renameUploadedFile(imageUrl, `${newName.trim()}.${extension}`);
     }
   };
 
@@ -64,7 +60,7 @@ const FileElement: React.FC<FileElementProps> = ({
       <Grid2
         onMouseEnter={() => {
           setHovered(true);
-          setDropzoneState({ visible: true, imageUrl: fileUrl });
+          setDropzoneState({ visible: true, imageUrl: imageUrl });
         }}
         onMouseLeave={() => {
           setHovered(false);
@@ -72,19 +68,19 @@ const FileElement: React.FC<FileElementProps> = ({
         }}
         className="relative h-full w-full min-h-[90px] flex items-center
         justify-center overflow-hidden rounded border-2 border-neutral-600 bg-neutral-200"
-        data-testid={`file-element-${fileName}`}
+        data-testid={`file-element-${imageName}`}
       >
         <Grid2 size={20} className="relative flex justify-center items-center">
-          {isValidObjectURL(fileUrl) && (
-            <div>
-              <img
-                className="!relative max-h-[90px] max-w-full p-1"
-                src={fileUrl}
-                alt={t("fileElement.altText.uploadedFileAlt")}
-                data-testid="logo-image"
-              />
-            </div>
-          )}
+          <div>
+            <Image
+              className="!relative max-h-[90px] max-w-full p-1"
+              src={imageUrl}
+              alt={t("fileElement.altText.uploadedFileAlt")}
+              fill={true}
+              priority
+              data-testid="logo-image"
+            />
+          </div>
         </Grid2>
         <Divider
           orientation="vertical"
@@ -140,7 +136,10 @@ const FileElement: React.FC<FileElementProps> = ({
                 }}
                 onClick={() => {
                   setIsRenaming(false);
-                  renameUploadedFile(fileUrl, `${newName.trim()}.${extension}`);
+                  renameUploadedFile(
+                    imageUrl,
+                    `${newName.trim()}.${extension}`,
+                  );
                 }}
                 data-testid={`rename-submit`}
               >
@@ -155,7 +154,7 @@ const FileElement: React.FC<FileElementProps> = ({
               sx={{ maxWidth: { xs: "80%", md: "calc(100% - 75px)" } }}
               data-testid="file-name"
             >
-              {fileName}
+              {imageName}
             </Typography>
           )}
         </Grid2>
@@ -180,10 +179,10 @@ const FileElement: React.FC<FileElementProps> = ({
                 },
               }}
               onClick={() => {
-                removeUploadedFile(fileUrl);
+                removeUploadedFile(imageUrl);
                 setDropzoneState({ visible: false, imageUrl: "" });
               }}
-              data-testid={`delete-${fileName}`}
+              data-testid={`delete-${imageName}`}
             >
               <DeleteIcon
                 data-testid="delete-icon"
@@ -209,7 +208,7 @@ const FileElement: React.FC<FileElementProps> = ({
                 },
               }}
               onClick={() => setIsRenaming(true)}
-              data-testid={`rename-${fileName}`}
+              data-testid={`rename-${imageName}`}
             >
               <CreateIcon
                 data-testid={`rename-icon`}
