@@ -37,12 +37,8 @@ import { useTranslation } from "react-i18next";
 const LabelDataConfirmationPage = () => {
   const labelData = useLabelDataStore((state) => state.labelData);
   const setLabelData = useLabelDataStore((state) => state.setLabelData);
-  const resetLabelData = useLabelDataStore((state) => state.resetLabelData);
   const setComment = useLabelDataStore((state) => state.setComment);
   const uploadedFiles = useUploadedFilesStore((state) => state.uploadedFiles);
-  const clearUploadedFiles = useUploadedFilesStore(
-    (state) => state.clearUploadedFiles,
-  );
   const imageFiles = uploadedFiles.map((file) => file.getFile());
   const router = useRouter();
   const [confirmLoading, setConfirmLoading] = useState(false);
@@ -79,8 +75,6 @@ const LabelDataConfirmationPage = () => {
           `${t("error.saveFailed")}: ${processAxiosError(error)}`,
           "error",
         );
-      })
-      .finally(() => {
         setConfirmLoading(false);
       });
   };
@@ -102,8 +96,13 @@ const LabelDataConfirmationPage = () => {
         if (!response.data.inspectionId) {
           throw new Error(t("error.idMissing"));
         }
-        setLabelData(response.data);
-        putLabelData(response.data, signal);
+        const _labelData: LabelData = {
+          ...labelData,
+          inspectionId: response.data.inspectionId,
+          pictureSetId: response.data.pictureSetId,
+        };
+        setLabelData(_labelData);
+        putLabelData(_labelData, signal);
       })
       .catch((error) => {
         showAlert(
@@ -545,15 +544,21 @@ const LabelDataConfirmationPage = () => {
                 >
                   {t("ingredients.sectionTitle")}
                 </Typography>
-                <Box>
+                {!labelData?.ingredients?.recordKeeping?.value ? (
+                  <Box>
+                    <Typography className="!font-bold mb-2 text-left">
+                      {t("ingredients.nutrients")}
+                    </Typography>
+                    <BilingualTable
+                      data={labelData?.ingredients.nutrients ?? []}
+                      data-testid="ingredients-nutrients-table"
+                    />
+                  </Box>
+                ) : (
                   <Typography className="!font-bold mb-2 text-left">
-                    {t("ingredients.nutrients")}
+                    {t("ingredients.recordKeeping")}
                   </Typography>
-                  <BilingualTable
-                    data={labelData?.ingredients ?? []}
-                    data-testid="ingredients-nutrients-table"
-                  />
-                </Box>
+                )}
               </Box>
 
               {/* Notes */}
