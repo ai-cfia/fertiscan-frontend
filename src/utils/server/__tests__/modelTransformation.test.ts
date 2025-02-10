@@ -1,4 +1,4 @@
-import { LabelData } from "@/types/types";
+import { LabelData, RegistrationType } from "@/types/types";
 import {
   FertiscanDbMetadataInspectionValue,
   InspectionResponse,
@@ -204,7 +204,9 @@ describe("mapLabelDataOutputToLabelData", () => {
         },
       ],
       fertiliser_name: "SuperGrow",
-      registration_number: [{ identifier: "1234567A", type: null }],
+      registration_number: [
+        { identifier: "1234567A", type: "ingredient_component" },
+      ],
       lot_number: "LOT42",
       npk: "10-5-5",
       weight: [{ value: 20, unit: "kg" }],
@@ -255,9 +257,15 @@ describe("mapLabelDataOutputToLabelData", () => {
 
     // Base Information
     expect(result.baseInformation.name.value).toBe(input.fertiliser_name);
-    expect(result.baseInformation.registrationNumbers.value).toBe(
-      input.registration_number![0].identifier,
-    );
+    expect(result.baseInformation.registrationNumbers).toEqual({
+      values: [
+        {
+          identifier: "1234567A",
+          type: RegistrationType.INGREDIENT,
+        },
+      ],
+      verified: false,
+    });
     expect(result.baseInformation.lotNumber.value).toBe(input.lot_number);
     expect(result.baseInformation.npk.value).toBe(input.npk);
     expect(result.baseInformation.weight.quantities).toEqual(
@@ -341,7 +349,10 @@ describe("mapLabelDataOutputToLabelData", () => {
 
     // Base Information
     expect(result.baseInformation.name.value).toBe("");
-    expect(result.baseInformation.registrationNumbers.value).toBe("");
+    expect(result.baseInformation.registrationNumbers).toEqual({
+      values: [],
+      verified: false,
+    });
     expect(result.baseInformation.lotNumber.value).toBe("");
     expect(result.baseInformation.npk.value).toBe("");
     expect(result.baseInformation.weight.quantities).toEqual([]);
@@ -495,7 +506,15 @@ describe("mapInspectionToLabelData", () => {
     expect(result.organizations[1].phoneNumber.value).toBe("987-654-3210");
 
     expect(result.baseInformation.name.value).toBe("SuperGrow");
-    expect(result.baseInformation.registrationNumbers.value).toBe("1234567A");
+    expect(result.baseInformation.registrationNumbers).toEqual({
+      verified: false,
+      values: [
+        {
+          identifier: "1234567A",
+          type: RegistrationType.FERTILIZER,
+        },
+      ],
+    });
     expect(result.baseInformation.lotNumber.value).toBe("LOT42");
     expect(result.baseInformation.npk.value).toBe("10-5-5");
 
@@ -565,7 +584,10 @@ describe("mapInspectionToLabelData", () => {
     const result = mapInspectionToLabelData(emptyInspection);
     expect(result.organizations).toEqual([]);
     expect(result.baseInformation.name.value).toBe("");
-    expect(result.baseInformation.registrationNumbers.value).toBe("");
+    expect(result.baseInformation.registrationNumbers).toEqual({
+      verified: true,
+      values: [],
+    });
     expect(result.baseInformation.lotNumber.value).toBe("");
     expect(result.baseInformation.npk.value).toBe("");
     expect(result.baseInformation.weight.quantities).toEqual([]);
@@ -634,7 +656,10 @@ const labelData: LabelData = {
   ],
   baseInformation: {
     name: { value: "SuperGrow", verified: false },
-    registrationNumbers: { value: "1234567A", verified: false },
+    registrationNumbers: {
+      verified: false,
+      values: [{ identifier: "1234567A", type: RegistrationType.FERTILIZER }],
+    },
     lotNumber: { value: "LOT42", verified: false },
     npk: { value: "10-5-5", verified: false },
     weight: { quantities: [{ value: "20", unit: "kg" }], verified: false },
@@ -708,7 +733,10 @@ const emptyLabelData: LabelData = {
   organizations: [],
   baseInformation: {
     name: { value: "", verified: false },
-    registrationNumbers: { value: "", verified: false },
+    registrationNumbers: {
+      values: [{ identifier: "", type: RegistrationType.FERTILIZER }],
+      verified: false,
+    },
     lotNumber: { value: "", verified: false },
     npk: { value: "", verified: false },
     weight: { quantities: [], verified: false },
@@ -749,7 +777,9 @@ describe("mapLabelDataToLabelDataInput", () => {
       },
     ]);
     expect(result.fertiliser_name).toBe("SuperGrow");
-    expect(result.registration_number).toEqual([{ identifier: "1234567A" }]);
+    expect(result.registration_number).toEqual([
+      { identifier: "1234567A", type: "fertilizer_product" },
+    ]);
     expect(result.lot_number).toBe("LOT42");
     expect(result.npk).toBe("10-5-5");
     expect(result.weight).toEqual([{ value: 20, unit: "kg" }]);
@@ -795,7 +825,7 @@ describe("mapLabelDataToLabelDataInput", () => {
     const result = mapLabelDataToLabelDataInput(emptyLabelData);
     expect(result.organizations).toEqual([]);
     expect(result.fertiliser_name).toBe("");
-    expect(result.registration_number).toEqual([{ identifier: "" }]);
+    expect(result.registration_number).toEqual([]);
     expect(result.lot_number).toBe("");
     expect(result.npk).toBe("");
     expect(result.weight).toEqual([]);
@@ -844,7 +874,12 @@ describe("mapLabelDataToInspectionUpdate", () => {
     ]);
     expect(result.product).toEqual({
       name: "SuperGrow",
-      registration_numbers: [{ registration_number: "1234567A" }],
+      registration_numbers: [
+        {
+          registration_number: "1234567A",
+          is_an_ingredient: false,
+        },
+      ],
       lot_number: "LOT42",
       npk: "10-5-5",
       metrics: {
@@ -895,7 +930,7 @@ describe("mapLabelDataToInspectionUpdate", () => {
     expect(result.organizations).toEqual([]);
     expect(result.product).toEqual({
       name: "",
-      registration_numbers: [{ registration_number: "" }],
+      registration_numbers: [],
       lot_number: "",
       npk: "",
       metrics: {

@@ -1,4 +1,9 @@
-import { BilingualField, LabelData, Quantity } from "@/types/types";
+import {
+  BilingualField,
+  LabelData,
+  Quantity,
+  RegistrationType,
+} from "@/types/types";
 import {
   FertiscanDbMetadataInspectionValue,
   InspectionResponse,
@@ -92,8 +97,11 @@ export function mapLabelDataOutputToLabelData(
     baseInformation: {
       name: { value: data.fertiliser_name ?? "", verified: false },
       registrationNumbers: {
-        value: data.registration_number?.[0]?.identifier ?? "",
         verified: false,
+        values: (data.registration_number ?? []).map((reg) => ({
+          identifier: reg.identifier ?? "",
+          type: (reg.type as RegistrationType) ?? RegistrationType.FERTILIZER,
+        })),
       },
       lotNumber: { value: data.lot_number ?? "", verified: false },
       npk: { value: data.npk ?? "", verified: false },
@@ -152,10 +160,13 @@ export function mapInspectionToLabelData(
     baseInformation: {
       name: { value: inspection.product.name ?? "", verified: v },
       registrationNumbers: {
-        value:
-          inspection.product.registration_numbers?.[0]?.registration_number ??
-          "",
         verified: v,
+        values: (inspection.product.registration_numbers ?? []).map((reg) => ({
+          identifier: reg.registration_number ?? "",
+          type: reg.is_an_ingredient
+            ? RegistrationType.INGREDIENT
+            : RegistrationType.FERTILIZER,
+        })),
       },
       lotNumber: { value: inspection.product.lot_number ?? "", verified: v },
       npk: { value: inspection.product.npk ?? "", verified: v },
@@ -230,11 +241,12 @@ export function mapLabelDataToLabelDataInput(
       phone_number: org.phoneNumber?.value,
     })),
     fertiliser_name: labelData.baseInformation.name.value,
-    registration_number: [
-      {
-        identifier: labelData.baseInformation.registrationNumbers.value,
-      },
-    ],
+    registration_number: labelData.baseInformation.registrationNumbers.values
+      .filter((r) => r.identifier)
+      .map((reg) => ({
+        identifier: reg.identifier,
+        type: reg.type ?? null,
+      })),
     lot_number: labelData.baseInformation.lotNumber.value,
     weight:
       labelData.baseInformation.weight.quantities?.map((q) => ({
@@ -303,12 +315,12 @@ export function mapLabelDataToInspectionUpdate(
     })),
     product: {
       name: labelData.baseInformation.name.value,
-      registration_numbers: [
-        {
-          registration_number:
-            labelData.baseInformation.registrationNumbers.value,
-        },
-      ],
+      registration_numbers: labelData.baseInformation.registrationNumbers.values
+        .filter((reg) => reg.identifier)
+        .map((reg) => ({
+          registration_number: reg.identifier,
+          is_an_ingredient: reg.type === RegistrationType.INGREDIENT,
+        })),
       lot_number: labelData.baseInformation.lotNumber.value,
       npk: labelData.baseInformation.npk.value,
       metrics: {
