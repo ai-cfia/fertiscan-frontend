@@ -2,7 +2,7 @@ import { VerifiedQuantityField } from "@/types/types";
 import { fireEvent, render, screen } from "@testing-library/react";
 import userEvent from "@testing-library/user-event";
 import { FormProvider, useForm } from "react-hook-form";
-import VerifiedQuantityMultiInput from "../VerifiedQuantityMultiInput";
+import VerifiedQuantityList from "../VerifiedQuantityList";
 
 const Wrapper = ({
   label = "Test Label",
@@ -36,7 +36,7 @@ const Wrapper = ({
           methods.handleSubmit(onSubmit)();
         }}
       >
-        <VerifiedQuantityMultiInput
+        <VerifiedQuantityList
           label={label}
           path={path}
           unitOptions={unitOptions}

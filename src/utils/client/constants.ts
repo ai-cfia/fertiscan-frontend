@@ -9,10 +9,10 @@ export const VERIFIED_LABEL_DATA: LabelData = {
       phoneNumber: { value: "+1-800-555-0199", verified: true },
     },
     {
-      name: { value: "AgriGrow Fertilizers Inc.", verified: true },
-      address: { value: "123 Greenfield Ave, Springfield", verified: true },
-      website: { value: "www.agrigrow.com", verified: true },
-      phoneNumber: { value: "+1-800-555-0199", verified: true },
+      name: { value: "GreenHarvest Solutions", verified: true },
+      address: { value: "456 Eco Lane, Riverdale", verified: true },
+      website: { value: "www.greenharvest.com", verified: true },
+      phoneNumber: { value: "+1-800-555-0234", verified: true },
     },
   ],
   baseInformation: {
@@ -24,7 +24,7 @@ export const VERIFIED_LABEL_DATA: LabelData = {
       verified: true,
       quantities: [
         { value: "25", unit: "kg" },
-        { value: "25", unit: "kg" },
+        { value: "55.12", unit: "lb" },
       ],
     },
     density: {

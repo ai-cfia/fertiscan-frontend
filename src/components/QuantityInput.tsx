@@ -11,7 +11,7 @@ interface QuantityInputProps {
   disabled?: boolean;
   unitRules?: RegisterOptions;
   onFocus?: () => void;
-  onblur?: () => void;
+  onBlur?: () => void;
   verified?: boolean;
 }
 
@@ -22,7 +22,7 @@ const QuantityInput = ({
   disabled = false,
   unitRules,
   onFocus,
-  onblur,
+  onBlur,
   verified,
 }: QuantityInputProps) => {
   const { t } = useTranslation("labelDataValidator");
@@ -50,7 +50,7 @@ const QuantityInput = ({
             disabled={disabled}
             onFocus={onFocus}
             onBlur={(e) => {
-              onblur?.();
+              onBlur?.();
               field.onChange(e.target.value.trim());
             }}
             aria-label={t("quantityInput.accessibility.value")}
@@ -81,13 +81,13 @@ const QuantityInput = ({
             renderInput={(params) => (
               <StyledTextField
                 {...params}
-                className={`!w-[10ch] !px-2 bg-gray-100 ${verified ? "bg-gray-300": ""}`}
+                className={`!w-[10ch] !px-2 bg-gray-100 ${verified ? "bg-gray-300" : ""}`}
                 aria-label={t("quantityInput.accessibility.unit")}
                 data-testid={`${name}-unit-input`}
                 placeholder={t("quantityInput.placeholder.unit")}
                 onFocus={onFocus}
                 onBlur={(e) => {
-                  onblur?.();
+                  onBlur?.();
                   field.onChange(e.target.value.trim());
                 }}
                 error={!!error}

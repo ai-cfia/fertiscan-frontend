@@ -29,6 +29,7 @@ interface VerifiedFieldWrapperProps {
     valuePath: string;
     verified: boolean;
   }) => ReactNode;
+  validate?: (callback: (valid: boolean) => void) => Promise<void>;
 }
 
 export const VerifiedFieldWrapper: React.FC<VerifiedFieldWrapperProps> = ({
@@ -37,6 +38,7 @@ export const VerifiedFieldWrapper: React.FC<VerifiedFieldWrapperProps> = ({
   className = "",
   loading = false,
   renderField,
+  validate,
 }) => {
   const { t } = useTranslation("labelDataValidator");
   const { control } = useFormContext();
@@ -63,13 +65,16 @@ export const VerifiedFieldWrapper: React.FC<VerifiedFieldWrapperProps> = ({
           data-testid={`verified-field-${path}`}
         >
           {renderField({ setIsFocused, control, valuePath, verified })}
+
+          {/* Vertical Divider */}
           <Divider
             orientation="vertical"
             flexItem
-            className={isFocused ? "!border-fertiscan-blue" : ""}
-            sx={{ bgcolor: verified ? "#00C55E" : "inherit" }}
+            className={`${isFocused ? "!border-fertiscan-blue" : ""} ${verified ? "bg-green-500" : "bg-inherit"}`}
             data-testid={`divider-${path}`}
           />
+
+          {/* Verified Toggle Button */}
           <Controller
             name={verifiedPath}
             control={control}
@@ -83,7 +88,13 @@ export const VerifiedFieldWrapper: React.FC<VerifiedFieldWrapperProps> = ({
                 enterDelay={1000}
               >
                 <IconButton
-                  onClick={() => onChange(!value)}
+                  onClick={() =>
+                    validate
+                      ? validate((valid) => {
+                          if (valid) onChange(!value);
+                        })
+                      : onChange(!value)
+                  }
                   data-testid={`toggle-verified-btn-${verifiedPath}`}
                   aria-label={
                     verified
