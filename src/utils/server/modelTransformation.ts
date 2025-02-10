@@ -127,10 +127,13 @@ export function mapLabelDataOutputToLabelData(
         data.guaranteed_analysis_fr?.nutrients,
       ),
     },
-    ingredients: verifiedItemPairNutrientValue(
-      data.ingredients_en,
-      data.ingredients_fr,
-    ),
+    ingredients: {
+      recordKeeping: { value: false, verified: false },
+      nutrients: verifiedItemPairNutrientValue(
+        data.ingredients_en,
+        data.ingredients_fr,
+      ),
+    },
     confirmed: false,
   };
 }
@@ -138,7 +141,7 @@ export function mapLabelDataOutputToLabelData(
 export function mapInspectionToLabelData(
   inspection: InspectionResponse,
 ): LabelData {
-  const v = inspection.verified ?? false;
+  const v = inspection.verified || false;
   return {
     organizations: (inspection.organizations ?? []).map((org) => ({
       name: { value: org.name ?? "", verified: v },
@@ -198,12 +201,18 @@ export function mapInspectionToLabelData(
         v,
       ),
     },
-    ingredients: verifiedItemPairInspectionValue(
-      inspection.ingredients?.en,
-      inspection.ingredients?.fr,
-      v,
-    ),
-    confirmed: inspection.verified ?? false,
+    ingredients: {
+      recordKeeping: {
+        value: !!inspection.product?.record_keeping,
+        verified: v,
+      },
+      nutrients: verifiedItemPairInspectionValue(
+        inspection.ingredients?.en,
+        inspection.ingredients?.fr,
+        v,
+      ),
+    },
+    confirmed: v,
     inspectionId: inspection.inspection_id,
     comment: inspection.inspection_comment ?? "",
     pictureSetId: inspection.picture_set_id,
@@ -266,12 +275,12 @@ export function mapLabelDataToLabelDataInput(
     cautions_fr: labelData.cautions.map((c) => c.fr),
     instructions_en: labelData.instructions.map((i) => i.en),
     instructions_fr: labelData.instructions.map((i) => i.fr),
-    ingredients_en: labelData.ingredients.map((i) => ({
+    ingredients_en: labelData.ingredients.nutrients.map((i) => ({
       nutrient: i.en,
       value: Number(i.value),
       unit: i.unit,
     })),
-    ingredients_fr: labelData.ingredients.map((i) => ({
+    ingredients_fr: labelData.ingredients.nutrients.map((i) => ({
       nutrient: i.fr,
       value: Number(i.value),
       unit: i.unit,
@@ -282,6 +291,7 @@ export function mapLabelDataToLabelDataInput(
 export function mapLabelDataToInspectionUpdate(
   labelData: LabelData,
 ): InspectionUpdate {
+  const recordKeeping = labelData.ingredients.recordKeeping.value;
   return {
     inspection_comment: labelData.comment,
     verified: labelData.confirmed,
@@ -319,6 +329,7 @@ export function mapLabelDataToInspectionUpdate(
           unit: labelData.baseInformation.volume.quantities?.[0]?.unit || null,
         },
       },
+      record_keeping: recordKeeping,
     },
     cautions: {
       en: labelData.cautions.map((c) => c.en),
@@ -346,16 +357,20 @@ export function mapLabelDataToInspectionUpdate(
       })),
     },
     ingredients: {
-      en: labelData.ingredients.map((i) => ({
-        name: i.en,
-        value: Number(i.value),
-        unit: i.unit,
-      })),
-      fr: labelData.ingredients.map((i) => ({
-        name: i.fr,
-        value: Number(i.value),
-        unit: i.unit,
-      })),
+      en: recordKeeping
+        ? []
+        : labelData.ingredients.nutrients.map((i) => ({
+            name: i.en,
+            value: Number(i.value),
+            unit: i.unit,
+          })),
+      fr: recordKeeping
+        ? []
+        : labelData.ingredients.nutrients.map((i) => ({
+            name: i.fr,
+            value: Number(i.value),
+            unit: i.unit,
+          })),
     },
     inspection_id: labelData.inspectionId,
     picture_set_id: labelData.pictureSetId || "",

@@ -307,7 +307,7 @@ describe("mapLabelDataOutputToLabelData", () => {
     );
 
     // Ingredients
-    expect(result.ingredients).toEqual(
+    expect(result.ingredients.nutrients).toEqual(
       input.ingredients_en!.map((ingredient, i) => ({
         en: ingredient.nutrient,
         fr: input.ingredients_fr![i].nutrient,
@@ -316,6 +316,12 @@ describe("mapLabelDataOutputToLabelData", () => {
         verified: false,
       })),
     );
+    expect(result.ingredients.recordKeeping).toEqual({
+      value: false,
+      verified: false,
+    });
+
+    expect(result.confirmed).toBe(false);
   });
 
   it("should handle missing fields gracefully", () => {
@@ -357,7 +363,10 @@ describe("mapLabelDataOutputToLabelData", () => {
     expect(result.guaranteedAnalysis.nutrients).toEqual([]);
 
     // Ingredients
-    expect(result.ingredients).toEqual([]);
+    expect(result.ingredients).toEqual({
+      nutrients: [],
+      recordKeeping: { value: false, verified: false },
+    });
   });
 });
 
@@ -443,7 +452,7 @@ describe("mapInspectionToLabelData", () => {
             edited: false,
           },
         ],
-        record_keeping: true,
+        record_keeping: false,
       },
       cautions: {
         en: ["Keep away from children"],
@@ -534,9 +543,18 @@ describe("mapInspectionToLabelData", () => {
       },
     ]);
 
-    expect(result.ingredients).toEqual([
-      { en: "Nitrogen", fr: "Azote", value: "10", unit: "%", verified: false },
-    ]);
+    expect(result.ingredients).toEqual({
+      nutrients: [
+        {
+          en: "Nitrogen",
+          fr: "Azote",
+          value: "10",
+          unit: "%",
+          verified: false,
+        },
+      ],
+      recordKeeping: { value: false, verified: false },
+    });
 
     expect(result.confirmed).toBe(false);
     expect(result.comment).toBe("comment");
@@ -563,8 +581,11 @@ describe("mapInspectionToLabelData", () => {
     expect(result.guaranteedAnalysis.titleFr.value).toBe("");
     expect(result.guaranteedAnalysis.isMinimal.value).toBe(false);
     expect(result.guaranteedAnalysis.nutrients).toEqual([]);
-    expect(result.ingredients).toEqual([]);
     expect(result.pictureSetId).toBe("");
+    expect(result.ingredients).toEqual({
+      nutrients: [],
+      recordKeeping: { value: false, verified: true },
+    });
   });
 
   it("sets all fields as verified if inspection is verified", () => {
@@ -589,9 +610,10 @@ describe("mapInspectionToLabelData", () => {
         (nutrient) => nutrient.verified,
       ),
     ).toBe(true);
-    expect(result.ingredients.every((ingredient) => ingredient.verified)).toBe(
-      true,
-    );
+    expect(result.ingredients.recordKeeping.verified).toBe(true);
+    expect(
+      result.ingredients.nutrients.every((ingredient) => ingredient.verified),
+    ).toBe(true);
   });
 });
 
@@ -658,22 +680,25 @@ const labelData: LabelData = {
     },
     { en: "Water thoroughly", fr: "Arroser abondamment", verified: false },
   ],
-  ingredients: [
-    {
-      en: "Fish meal",
-      fr: "Farine de poisson",
-      value: "50",
-      unit: "g",
-      verified: false,
-    },
-    {
-      en: "Bone meal",
-      fr: "Farine d'os",
-      value: "50",
-      unit: "g",
-      verified: false,
-    },
-  ],
+  ingredients: {
+    nutrients: [
+      {
+        en: "Fish meal",
+        fr: "Farine de poisson",
+        value: "50",
+        unit: "g",
+        verified: false,
+      },
+      {
+        en: "Bone meal",
+        fr: "Farine d'os",
+        value: "50",
+        unit: "g",
+        verified: false,
+      },
+    ],
+    recordKeeping: { value: false, verified: false },
+  },
   confirmed: false,
   comment: "InspectionResponse passed with minor issues",
   pictureSetId: "PIC123",
@@ -698,7 +723,10 @@ const emptyLabelData: LabelData = {
   },
   cautions: [],
   instructions: [],
-  ingredients: [],
+  ingredients: {
+    nutrients: [],
+    recordKeeping: { value: true, verified: false },
+  },
   confirmed: false,
   comment: "",
 };
@@ -824,6 +852,7 @@ describe("mapLabelDataToInspectionUpdate", () => {
         density: { value: 1.2, unit: "g/cm³" },
         volume: { value: 5, unit: "L" },
       },
+      record_keeping: false,
     });
     expect(result.cautions).toEqual({
       en: ["Keep away from children"],
@@ -874,6 +903,7 @@ describe("mapLabelDataToInspectionUpdate", () => {
         density: { value: null, unit: null },
         volume: { value: null, unit: null },
       },
+      record_keeping: true,
     });
     expect(result.cautions).toEqual({ en: [], fr: [] });
     expect(result.instructions).toEqual({ en: [], fr: [] });
@@ -885,5 +915,17 @@ describe("mapLabelDataToInspectionUpdate", () => {
     });
     expect(result.ingredients).toEqual({ en: [], fr: [] });
     expect(result.picture_set_id).toBe("");
+  });
+
+  it("should return empty ingredients when recordKeeping is true", () => {
+    const modifiedLabelData: LabelData = {
+      ...labelData,
+      ingredients: {
+        ...labelData.ingredients,
+        recordKeeping: { value: true, verified: false },
+      },
+    };
+    const result = mapLabelDataToInspectionUpdate(modifiedLabelData);
+    expect(result.ingredients).toEqual({ en: [], fr: [] });
   });
 });
