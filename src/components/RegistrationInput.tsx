@@ -60,7 +60,7 @@ const RegistrationInput = ({
         name={`${name}.type`}
         control={control}
         rules={typeRules}
-        render={({ field, fieldState: { error } }) => (
+        render={({ field }) => (
           <Select
             {...field}
             className={`!w-[20ch] !text-[15px] ${verified ? "bg-inherit" : "bg-gray-100"} px-2`}

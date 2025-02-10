@@ -39,4 +39,6 @@ const StyledDeleteButton = React.forwardRef<
   },
 );
 
+StyledDeleteButton.displayName = "StyledDeleteButton";
+
 export default StyledDeleteButton;

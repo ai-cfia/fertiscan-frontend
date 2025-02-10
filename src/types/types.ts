@@ -219,6 +219,7 @@ export type LabelData = {
   confirmed: boolean;
   comment?: string;
   inspectionId?: string;
+  pictureSetId?: string;
 };
 
 export const DEFAULT_LABEL_DATA: LabelData = {

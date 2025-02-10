@@ -65,17 +65,17 @@ export interface InspectionData {
    * @type {string}
    * @memberof InspectionData
    */
-  manufacturer_info_id?: string | null;
+  main_organization_id?: string | null;
   /**
    *
    * @type {string}
    * @memberof InspectionData
    */
-  company_info_id?: string | null;
+  main_organization_name?: string | null;
   /**
    *
-   * @type {string}
+   * @type {boolean}
    * @memberof InspectionData
    */
-  company_name?: string | null;
+  verified?: boolean | null;
 }
