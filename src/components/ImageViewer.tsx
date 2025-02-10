@@ -79,7 +79,7 @@ const ImageViewer: React.FC<ImageViewerProps> = ({ imageFiles }) => {
                     key={index}
                     className="object-contain size-full"
                     src={url}
-                    alt={`Slide ${index + 1}`}
+                    alt={`Slide ${index + 1}`} //*** */
                     width={500}
                     height={500}
                     data-testid={`image-slide-${index + 1}`}
@@ -119,52 +119,57 @@ const ControlBar: React.FC<ControlBarProps> = ({
       className="flex items-center justify-center gap-4 p-4 flex-wrap"
       data-testid="control-bar"
     >
-      <Tooltip title={t("previous")}>
+      <Tooltip title={t("controlBar.previous")}>
         <Button
           variant="contained"
           onClick={() => swiper?.slidePrev()}
           data-testid="prev-button"
           disabled={activeIndex <= 0}
+          aria-label={t("controlBar.previous")}
         >
           <ArrowBackIosIcon />
         </Button>
       </Tooltip>
-      <Tooltip title={t("next")}>
+      <Tooltip title={t("controlBar.next")}>
         <Button
           variant="contained"
           onClick={() => swiper?.slideNext()}
           data-testid="next-button"
           disabled={activeIndex >= zoomRefs.length - 1}
+          aria-label={t("controlBar.next")}
         >
           <ArrowForwardIosIcon />
         </Button>
       </Tooltip>
-      <Tooltip title={t("zoomIn")}>
+      <Tooltip title={t("controlBar.zoomIn")}>
         <Button
           variant="contained"
           onClick={() => currentZoomRef?.zoomIn()}
           data-testid="zoom-in-button"
           disabled={!currentZoomRef}
+          aria-label={t("controlBar.zoomIn")}
         >
           <ZoomInIcon />
         </Button>
       </Tooltip>
-      <Tooltip title={t("zoomOut")}>
+      <Tooltip title={t("controlBar.zoomOut")}>
         <Button
           variant="contained"
           onClick={() => currentZoomRef?.zoomOut()}
           data-testid="zoom-out-button"
           disabled={!currentZoomRef}
+          aria-label={t("controlBar.zoomOut")}
         >
           <ZoomOutIcon />
         </Button>
       </Tooltip>
-      <Tooltip title={t("resetZoom")}>
+      <Tooltip title={t("controlBar.resetZoom")}>
         <Button
           variant="contained"
           onClick={() => zoomRefs.forEach((ref) => ref?.resetTransform())}
           data-testid="reset-button"
           disabled={!currentZoomRef}
+          aria-label={t("controlBar.resetZoom")}
         >
           <YoutubeSearchedForIcon />
         </Button>

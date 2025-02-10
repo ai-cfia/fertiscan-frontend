@@ -120,7 +120,7 @@ const Dashboard = () => {
                   className: "p-2 after:!transition-none ",
                   startAdornment: (
                     <InputAdornment position={"start"} className={"!m-0"}>
-                      <Search color="primary" />
+                      <Search color="primary" aria-label={t("alt.searchIcon")}/>
                     </InputAdornment>
                   ),
                 },

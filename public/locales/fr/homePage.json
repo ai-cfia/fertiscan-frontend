@@ -3,7 +3,10 @@
   "submitButtonDisabledHint": "Vous devez ajouter au moins 1 fichier pour commencer l'analyse",
   "fileList": {
     "uploadedfiles": "Fichiers téléversés",
-    "noUploadedfiles": "Aucun fichier téléversé"
+    "noUploadedfiles": "Aucun fichier téléversé",
+    "alt": {
+      "deleteAllIcon": "Icône de suppression de tous les fichiers"
+    }
   },
   "fileElement": {
     "altText": {

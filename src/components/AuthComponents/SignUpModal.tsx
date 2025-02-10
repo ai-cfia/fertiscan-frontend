@@ -99,6 +99,7 @@ const SignUpModal = ({ isOpen, signup, onChangeMode }: SignUpProps) => {
             type={"text"}
             value={username}
             setValue={setUsername}
+            arial-label={t("alt.userIcon")}
           />
           <IconInput
             id={"password"}
@@ -108,6 +109,7 @@ const SignUpModal = ({ isOpen, signup, onChangeMode }: SignUpProps) => {
             type={"password"}
             value={password}
             setValue={setPassword}
+            arial-label={t("alt.lockIcon")}
           />
           <IconInput
             id={"confirm-password"}
@@ -117,6 +119,7 @@ const SignUpModal = ({ isOpen, signup, onChangeMode }: SignUpProps) => {
             type={"password"}
             value={confirmPassword}
             setValue={setConfirmPassword}
+            arial-label={t("alt.lockIcon")}
           />
           <FormGroup className={"!w-full"}>
             <FormControlLabel
@@ -160,7 +163,6 @@ const SignUpModal = ({ isOpen, signup, onChangeMode }: SignUpProps) => {
             loading={loading}
             text={t("signup.title")}
             className="!bg-white !pointer-events-auto"
-            data-testid="modal-submit"
           />
         </form>
         <Typography

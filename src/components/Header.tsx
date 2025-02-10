@@ -90,6 +90,7 @@ const Header: React.FC<HeaderProps> = ({ setSideNavOpen }) => {
               fill={true}
               priority
               data-testid="logo-image"
+              aria-label={t("altText.logoCFIAAlt")}
             />
           </Link>
         </Box>

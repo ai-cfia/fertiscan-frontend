@@ -75,5 +75,11 @@
     "labelNotFound": "Label data not found.",
     "labelAlreadyConfirmed": "Label data already confirmed.",
     "labelDataNotFullySaved": "Label data not fully saved."
+  },
+  "alt":{
+    "editButton": "Edit button",
+    "confirmButton": "Confirm button",
+    "expendIcon": "Expend icon",
+    "retractIcon": "Retract icon"
   }
 }

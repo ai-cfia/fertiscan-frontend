@@ -77,5 +77,11 @@
       "labelNotFound": "Données de l'étiquette non trouvées.",
       "labelAlreadyConfirmed": "Données de l'étiquette déjà confirmées.",
       "labelDataNotFullySaved": "Données de l'étiquette non entièrement enregistrées."
+  },
+  "alt": {
+    "editButton": "Bouton Modifier",
+    "confirmButton": "Bouton Confirmer",
+    "expendIcon": "Icône d'expansion",
+    "retractIcon": "Icône de rétractation"
   }
 }

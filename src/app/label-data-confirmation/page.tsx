@@ -196,6 +196,11 @@ const LabelDataConfirmationPage = () => {
             className="self-start -p-4"
             onClick={() => setIsRetractedView(!isRetractedView)}
             data-testid="retract-button"
+            aria-label={
+              isRetractedView
+                ? t("expandRetractButton.expandButton")
+                : t("expandRetractButton.retractButton")
+            }
           >
             <SvgIcon aria-hidden>
               {!isRetractedView ? (
@@ -209,16 +214,16 @@ const LabelDataConfirmationPage = () => {
                   </Tooltip>
                 ) : (
                   <Tooltip title={t("expandRetractButton.expandButton")}>
-                    <image href="/img/expandIcon.svg" height="24" width="24" />
+                    <image href="/img/expandIcon.svg" height="24" width="24"/>
                   </Tooltip>
                 )
               ) : isLgOrBelow ? (
                 <Tooltip title={t("expandRetractButton.expandButton")}>
-                  <image href="/img/expandIconUp.svg" height="24" width="24" />
+                  <image href="/img/expandIconUp.svg" height="24" width="24"/>
                 </Tooltip>
               ) : (
                 <Tooltip title={t("expandRetractButton.retractButton")}>
-                  <image href="/img/retractIcon.svg" height="24" width="24" />
+                  <image href="/img/retractIcon.svg" height="24" width="24"/>
                 </Tooltip>
               )}
             </SvgIcon>
@@ -608,6 +613,7 @@ const LabelDataConfirmationPage = () => {
                   data-testid="edit-button"
                   loading={editLoading}
                   text={t("confirmationSection.editButton")}
+                  aria-label={t("alt.editButton")}
                 />
                 <LoadingButton
                   className="px-4 py-2 font-bold hover:bg-green-700"
@@ -618,6 +624,7 @@ const LabelDataConfirmationPage = () => {
                   data-testid="confirm-button"
                   loading={confirmLoading}
                   text={t("confirmationSection.confirmButton")}
+                  aria-label={t("alt.confirmButton")}
                 />
               </Box>
             </Box>
@@ -626,7 +633,7 @@ const LabelDataConfirmationPage = () => {
       </Box>
     </Container>
   );
-};
+}
 
 export default LabelDataConfirmationPage;
 

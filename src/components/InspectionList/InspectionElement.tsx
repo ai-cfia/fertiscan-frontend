@@ -37,7 +37,7 @@ const InspectionElement = ({
         </Typography>
         {inspection.updated_at === inspection.upload_date && (
           <Tooltip title={t("inspection.unverified")}>
-            <ErrorIcon data-testid={"error-icon"} color="error"></ErrorIcon>
+            <ErrorIcon data-testid={"error-icon"} color="error" arial-label={t("inspection.alt.errorIcon")}></ErrorIcon>
           </Tooltip>
         )}
       </Stack>

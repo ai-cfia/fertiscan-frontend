@@ -34,7 +34,7 @@
     "markAllUnverified": "Mark all as Unverified",
     "markAllVerified": "Mark all as Verified",
     "removeOrganisation": "Remove Organisation",
-    "addOrganisation": "Add Organisation",
+    "addOrganization": "Add Organization",
     "fields": {
       "name": {
         "label": "Name",
@@ -166,7 +166,11 @@
     "duplicateUnit": "Duplicate unit",
     "invalidId": "Invalid id",
     "fetchAborted": "Fetch aborted",
-    "failedFetchInspection": "Failed to fetch inspection."
+    "failedFetchInspection": "Failed to fetch inspection.",
+    "noFileUploaded": "No file uploaded",
+    "requestCancelled": "Request cancelled",
+    "initialSaveFailed": "Initial label data saving failed",
+    "labelExtractionFailed": "Label data extraction failed"
   },
   "stepper": { "next": "Next", "back": "Back", "submit": "Submit" }
 }
