@@ -54,8 +54,8 @@ const FileList: React.FC<FileListProps> = ({ setDropzoneState }) => {
           rounded text-center p-1 bg-transparent bg-contain xs:w-[90%] md:w-[100%] h-[90%]
           xs:min-h-[350px] md:min-h-[400px] overflow-y-auto overflow-x-hidden min-w-[133.44px] md:max-w-[470px]
          `} // do not modify md:max-w-[470px] so that the fileList does not become to big
->
-<Box
+      >
+        <Box
           className={`absolute transform w-full h-full flex flex-col
                       ${
                         uploadedFiles.length === 0

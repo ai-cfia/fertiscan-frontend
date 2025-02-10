@@ -13,6 +13,7 @@ import "swiper/css";
 import "swiper/css/pagination";
 import { Pagination } from "swiper/modules";
 import { Swiper, SwiperClass, SwiperSlide } from "swiper/react";
+import { useTranslation } from "react-i18next";
 
 interface ImageViewerProps {
   imageFiles: File[];
@@ -25,6 +26,7 @@ const ImageViewer: React.FC<ImageViewerProps> = ({ imageFiles }) => {
   const [zoomRefs, setZoomRefs] = useState<ReactZoomPanPinchRef[]>([]);
   const [activeIndex, setActiveIndex] = useState(0);
   const imageUrls = imageFiles.map((file) => URL.createObjectURL(file));
+  const { t } = useTranslation("imageViewer");
 
   const handleInit = (index: number, ref: ReactZoomPanPinchRef) => {
     setZoomRefs((prevRefs) => {
@@ -110,13 +112,14 @@ const ControlBar: React.FC<ControlBarProps> = ({
   activeIndex,
 }) => {
   const currentZoomRef = zoomRefs[activeIndex] ?? null;
+  const { t } = useTranslation("imageViewer");
 
   return (
     <Box
       className="flex items-center justify-center gap-4 p-4 flex-wrap"
       data-testid="control-bar"
     >
-      <Tooltip title="Previous">
+      <Tooltip title={t("previous")}>
         <Button
           variant="contained"
           onClick={() => swiper?.slidePrev()}
@@ -126,7 +129,7 @@ const ControlBar: React.FC<ControlBarProps> = ({
           <ArrowBackIosIcon />
         </Button>
       </Tooltip>
-      <Tooltip title="Next">
+      <Tooltip title={t("next")}>
         <Button
           variant="contained"
           onClick={() => swiper?.slideNext()}
@@ -136,7 +139,7 @@ const ControlBar: React.FC<ControlBarProps> = ({
           <ArrowForwardIosIcon />
         </Button>
       </Tooltip>
-      <Tooltip title="Zoom In">
+      <Tooltip title={t("zoomIn")}>
         <Button
           variant="contained"
           onClick={() => currentZoomRef?.zoomIn()}
@@ -146,7 +149,7 @@ const ControlBar: React.FC<ControlBarProps> = ({
           <ZoomInIcon />
         </Button>
       </Tooltip>
-      <Tooltip title="Zoom Out">
+      <Tooltip title={t("zoomOut")}>
         <Button
           variant="contained"
           onClick={() => currentZoomRef?.zoomOut()}
@@ -156,7 +159,7 @@ const ControlBar: React.FC<ControlBarProps> = ({
           <ZoomOutIcon />
         </Button>
       </Tooltip>
-      <Tooltip title="Reset zoom">
+      <Tooltip title={t("resetZoom")}>
         <Button
           variant="contained"
           onClick={() => zoomRefs.forEach((ref) => ref?.resetTransform())}

@@ -38,12 +38,12 @@ const Dashboard = () => {
       .catch((error) => {
         if (error.response.status === 401) {
           Cookies.remove("token");
-          showAlert("Unauthorized access", "error");
+          showAlert(t("error.unauthorizedAccess"), "error");
         }
         if (error.response.status === 404) {
-          showAlert("No inspections found", "error");
+          showAlert(t("error.noInspection"), "error");
         } else {
-          showAlert("An error occurred", "error");
+          showAlert(t("error.errorOccured"), "error");
         }
       });
   }, [showAlert]);

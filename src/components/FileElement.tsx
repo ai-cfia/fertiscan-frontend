@@ -99,7 +99,7 @@ const FileElement: React.FC<FileElementProps> = ({ setDropzoneState, fileName, f
               onChange={(e) => setNewName(e.target.value)}
               onKeyPress={handleRenameSubmit}
               autoFocus
-              placeholder="Enter file name"
+              placeholder={t("fileElement.altText.enterFileName")}
               inputProps={{ autoComplete: "off" }}
               style={{
                 marginLeft: "5px",

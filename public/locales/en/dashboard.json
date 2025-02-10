@@ -12,5 +12,10 @@
   },
   "inspection": {
     "unverified": "Inspection unverified"
+  },
+  "error":{
+    "unauthorizedAccess": "Unauthorized access",
+    "noInspection": "No inspection found",
+    "errorOccured": "An error occured"
   }
 }

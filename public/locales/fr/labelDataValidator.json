@@ -30,7 +30,29 @@
     }
   },
   "organizations": {
-    "stepTitle": "Organisations"
+    "stepTitle": "Organisations",
+    "markAllUnverified": "Marquer tout comme non vérifié",
+    "markAllVerified": "Marquer tout comme vérifié",
+    "removeOrganisation": "Supprimer Organisation",
+    "addOrganisation": "Ajouter Organisation",
+    "fields": {
+      "name": {
+        "label": "Nom",
+        "placeholder": "Entrez le nom de l'organisation"
+      },
+      "address": {
+        "label": "Adresse",
+        "placeholder": "Entrez l'adresse de l'organisation"
+      },
+      "website": {
+        "label": "Site Web",
+        "placeholder": "Entrez le site Web de l'organisation"
+      },
+      "phone": {
+        "label": "Téléphone",
+        "placeholder": "Entrez le numéro de téléphone de l'organisation"
+      }
+    }
   },
   "cautions": {
     "stepTitle": "Mises en garde"
@@ -134,10 +156,17 @@
       "unverifyAllButton": "Bouton pour tout marquer comme non vérifié"
     }
   },
+  "iconInput":{
+    "hidePassword": "cacher le mot de passe",
+    "displayPassword": "afficher le mot de passe"
+  },
   "errors": {
     "numbersOnly": "Uniquement des nombres",
     "minValue": "La valeur minimale est 0",
-    "duplicateUnit": "Unité dupliquée"
+    "duplicateUnit": "Unité dupliquée",
+    "invalidId": "ID invalide",
+    "fetchAborted":  "Fetch annulé",
+    "failedFetchInspection": "Échec de la récupération de l'inspection."
   },
   "stepper": {
     "next": "Suivant",
