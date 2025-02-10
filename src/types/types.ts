@@ -177,6 +177,16 @@ export const DEFAULT_GUARANTEED_ANALYSIS: GuaranteedAnalysis = {
   nutrients: [FULL_BILINGUAL_FIELD],
 };
 
+export type Ingredients = {
+  recordKeeping: VerifiedBooleanField;
+  nutrients: BilingualField[];
+};
+
+export const DEFAULT_INGREDIENTS: Ingredients = {
+  recordKeeping: DEFAULT_BOOLEAN_FIELD,
+  nutrients: [FULL_BILINGUAL_FIELD],
+};
+
 // LabelData
 export type LabelData = {
   organizations: Organization[];
@@ -184,7 +194,7 @@ export type LabelData = {
   cautions: BilingualField[];
   instructions: BilingualField[];
   guaranteedAnalysis: GuaranteedAnalysis;
-  ingredients: BilingualField[];
+  ingredients: Ingredients;
   confirmed: boolean;
   comment?: string;
   inspectionId?: string;
@@ -196,7 +206,7 @@ export const DEFAULT_LABEL_DATA: LabelData = {
   cautions: [DEFAULT_BILINGUAL_FIELD],
   instructions: [DEFAULT_BILINGUAL_FIELD],
   guaranteedAnalysis: DEFAULT_GUARANTEED_ANALYSIS,
-  ingredients: [FULL_BILINGUAL_FIELD],
+  ingredients: DEFAULT_INGREDIENTS,
   confirmed: false,
 };
 

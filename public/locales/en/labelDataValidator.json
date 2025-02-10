@@ -39,7 +39,14 @@
     "stepTitle": "Instructions"
   },
   "ingredients": {
-    "stepTitle": "Ingredients"
+    "stepTitle": "Ingredients",
+    "recordKeeping": "Record Keeping",
+    "helpIcon": "Help Icon",
+    "labellingOptions": "Labelling Options",
+    "helpMessage": {
+      "recordKeeping": "Indicate whether a statement is used to specify that the product contains only registered or exempted ingredients, instead of detailing each individual ingredient."
+    },
+    "nutrients": "Nutrients"
   },
   "guaranteedAnalysis": {
     "stepTitle": "Guaranteed Analysis",
