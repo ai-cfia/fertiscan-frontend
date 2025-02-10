@@ -104,7 +104,7 @@ export type Quantity = {
 
 export const DEFAULT_QUANTITY = { value: "", unit: "" };
 
-export type VerifiedQuantityList = VerifiedField & {
+export type VerifiedQuantities = VerifiedField & {
   quantities: Quantity[];
 };
 
@@ -116,7 +116,7 @@ export const UNITS = {
   ingredients: ["%", "ppm"],
 };
 
-export const DEFAULT_QUANTITY_FIELD: VerifiedQuantityList = {
+export const DEFAULT_QUANTITY_FIELD: VerifiedQuantities = {
   verified: false,
   quantities: [DEFAULT_QUANTITY],
 };
@@ -148,9 +148,9 @@ export type BaseInformation = {
   registrationNumbers: RegistrationNumbers;
   lotNumber: VerifiedTextField;
   npk: VerifiedTextField;
-  weight: VerifiedQuantityList;
-  density: VerifiedQuantityList;
-  volume: VerifiedQuantityList;
+  weight: VerifiedQuantities;
+  density: VerifiedQuantities;
+  volume: VerifiedQuantities;
 };
 
 export const DEFAULT_BASE_INFORMATION: BaseInformation = {

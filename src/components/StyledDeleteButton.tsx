@@ -25,7 +25,13 @@ const StyledDeleteButton = React.forwardRef<
 
     return (
       <Tooltip enterDelay={enterDelay} title={tooltipTitle}>
-        <IconButton ref={ref} {...props} size="small" className="text-white">
+        <IconButton
+          ref={ref}
+          {...props}
+          size="small"
+          className="text-white"
+          data-testid="styled-delete-button"
+        >
           <DeleteIcon />
         </IconButton>
       </Tooltip>

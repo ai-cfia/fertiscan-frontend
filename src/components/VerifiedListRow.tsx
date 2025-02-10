@@ -28,7 +28,6 @@ const VerifiedListRow: React.FC<VerifiedListRowProps> = ({
           tooltip={t("deleteVerifiedListRow")}
           hideButton={verified || hideDelete}
           onClick={onDelete}
-          data-testid={`delete-row-button`}
         />
       </Box>
 
