@@ -90,6 +90,7 @@ const FileList: React.FC<FileListProps> = ({ setDropzoneState }) => {
                 paddingRight: "0.5rem",
                 marginLeft: "auto",
               }}
+              aria-label={t("fileList.alt.deleteAllIcon")}
             >
               {t("fileList.deleteAll")}
             </Button>

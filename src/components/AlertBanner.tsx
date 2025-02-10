@@ -7,6 +7,7 @@ import IconButton from "@mui/material/IconButton";
 import Typography from "@mui/material/Typography";
 import { useCallback, useEffect, useRef } from "react";
 import useAlertStore from "../stores/alertStore";
+import { useTranslation } from "react-i18next";
 
 const AUTO_DISMISS_TIME =
   Number(process.env.NEXT_PUBLIC_ALERT_BANNER_AUTO_DISMISS_TIME) || 5000;
@@ -35,6 +36,8 @@ const AlertBanner: React.FC = () => {
     return () => clearAutoDismissTimer();
   }, [alert, hideAlert, startAutoDismissTimer]);
 
+  const { t } = useTranslation("alertBanner");
+
   return (
     <Box className="fixed top-0 left-1/2 transform -translate-x-1/2 w-full max-w-lg"
       data-testid="alert-banner-container">
@@ -50,6 +53,7 @@ const AlertBanner: React.FC = () => {
                 size="small"
                 onClick={hideAlert}
                 data-testid="alert-close-button"
+                aria-label={t("alt.closeIcon")}
               >
                 <CloseIcon color={alert.type} />
               </IconButton>

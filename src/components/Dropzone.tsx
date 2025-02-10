@@ -142,6 +142,7 @@ const Dropzone: React.FC<DropzoneProps> = ({
           <Button className="select-none" variant="contained" component="label" color="secondary">
             <b>{tHomePage("dropzone.browseFile")}</b>
             <input
+              id="File type"
               type="file"
               accept=".png,.jpg,.jpeg,.pdf"
               multiple

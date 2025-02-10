@@ -88,6 +88,7 @@ const LoginModal = ({ isOpen, login, onChangeMode }: LoginProps) => {
             type={"text"}
             value={username}
             setValue={setUsername}
+            arial-label={t("alt.userIcon")}
           />
           <IconInput
             id={"password"}
@@ -97,6 +98,7 @@ const LoginModal = ({ isOpen, login, onChangeMode }: LoginProps) => {
             type={"password"}
             value={password}
             setValue={setPassword}
+            arial-label={t("alt.lockIcon")}
           />
           <Typography
             id={"error-message"}

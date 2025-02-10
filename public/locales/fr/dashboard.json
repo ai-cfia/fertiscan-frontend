@@ -12,5 +12,13 @@
   },
   "inspection": {
     "unverified": "Inspection non vérifié"
+  },
+  "error":{
+    "unauthorizedAccess": "Accès non autorisé",
+    "noInspection": "Aucune inspection trouvée",
+    "errorOccured": "Une erreur s'est produite"
+  },
+  "alt":{
+    "searchIcon": "Icône de recherche"
   }
 }

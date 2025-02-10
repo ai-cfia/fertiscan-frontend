@@ -1,6 +1,7 @@
 import { FormControl, IconButton, Input, InputAdornment } from "@mui/material";
 import React, { useState } from "react";
 import { Visibility, VisibilityOff } from "@mui/icons-material";
+import { useTranslation } from "react-i18next";
 
 interface IconInputProps {
   id: string;
@@ -29,6 +30,7 @@ const IconInput = ({
   const [hasFocus, setFocus] = useState(false);
   const [trueType, setTrueType] = useState(type);
   const [showPassword, setShowPassword] = useState(false);
+  const { t } = useTranslation("labelDataValidator");
 
   const handleClickShowPassword = (e: React.MouseEvent<HTMLElement>) => {
     e.stopPropagation();
@@ -68,7 +70,7 @@ const IconInput = ({
       >
         <IconButton
           aria-label={
-            showPassword ? "hide the password" : "display the password"
+            showPassword ? t("iconInput.hidePassword") : t("iconInput.displayPassword")
           }
           onClick={handleClickShowPassword}
           edge="end"

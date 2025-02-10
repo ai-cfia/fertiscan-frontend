@@ -26,5 +26,9 @@
         "unknown": "An unknown error occurred",
         "server": "Server error",
         "unauthorized": "Invalid username or password"
+    },
+    "alt": {
+        "lockIcon": "Lock icon",
+        "userIcon": "User icon"
     }
 }

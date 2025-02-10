@@ -65,12 +65,14 @@ const LabelDataConfirmationPage = () => {
         },
       )
       .then(() => {
-        showAlert("Label data saved successfully.", "success");
+        showAlert(t("error.saveSuccess"), "success");
+        resetLabelData();
+        clearUploadedFiles();
         router.push("/");
       })
       .catch((error) => {
         showAlert(
-          `Label data saving failed: ${processAxiosError(error)}`,
+          `${t("error.saveFailed")}: ${processAxiosError(error)}`,
           "error",
         );
         setConfirmLoading(false);
@@ -92,7 +94,7 @@ const LabelDataConfirmationPage = () => {
       })
       .then((response) => {
         if (!response.data.inspectionId) {
-          throw new Error("ID missing in initial label data saving response.");
+          throw new Error(t("error.idMissing"));
         }
         const _labelData: LabelData = {
           ...labelData,
@@ -104,7 +106,7 @@ const LabelDataConfirmationPage = () => {
       })
       .catch((error) => {
         showAlert(
-          `Label data initial saving failed: ${processAxiosError(error)}`,
+          `${t("error.initialSaveFailed")}: ${processAxiosError(error)}`,
           "error",
         );
       })
@@ -124,11 +126,11 @@ const LabelDataConfirmationPage = () => {
 
   const handleConfirmClick = () => {
     if (!labelData) {
-      showAlert("Internal error: Label data not found.", "error");
+      showAlert(t("error.internalErrorLabelNotFound"), "error");
       return;
     }
     if (!confirmed) {
-      showAlert("Internal error: Label data not confirmed.", "error");
+      showAlert(t("internalErrorLabelNotConfirmed"), "error");
       return;
     }
 
@@ -142,22 +144,22 @@ const LabelDataConfirmationPage = () => {
 
   useEffect(() => {
     if (imageFiles.length === 0) {
-      console.warn("No files uploaded.");
+      console.warn(t("error.noFileUploaded"));
       return router.push("/");
     }
 
     if (!labelData) {
-      console.warn("Label data not found.");
+      console.warn(t("error.labelNotFound"));
       return router.push("/");
     }
 
     if (labelData.confirmed) {
-      console.warn("Label data already confirmed.");
+      console.warn(t("error.labelAlreadyConfirmed"));
       return router.push("/");
     }
 
     if (!isAllVerified(labelData)) {
-      console.warn("Label data not fully verified.");
+      console.warn(t("error.labelDataNotFullySaved"));
       return router.push("/");
     }
   }, [imageFiles, labelData, router, showAlert]);
@@ -193,6 +195,11 @@ const LabelDataConfirmationPage = () => {
             className="self-start -p-4"
             onClick={() => setIsRetractedView(!isRetractedView)}
             data-testid="retract-button"
+            aria-label={
+              isRetractedView
+                ? t("expandRetractButton.expandButton")
+                : t("expandRetractButton.retractButton")
+            }
           >
             <SvgIcon aria-hidden>
               {!isRetractedView ? (
@@ -206,16 +213,16 @@ const LabelDataConfirmationPage = () => {
                   </Tooltip>
                 ) : (
                   <Tooltip title={t("expandRetractButton.expandButton")}>
-                    <image href="/img/expandIcon.svg" height="24" width="24" />
+                    <image href="/img/expandIcon.svg" height="24" width="24"/>
                   </Tooltip>
                 )
               ) : isLgOrBelow ? (
                 <Tooltip title={t("expandRetractButton.expandButton")}>
-                  <image href="/img/expandIconUp.svg" height="24" width="24" />
+                  <image href="/img/expandIconUp.svg" height="24" width="24"/>
                 </Tooltip>
               ) : (
                 <Tooltip title={t("expandRetractButton.retractButton")}>
-                  <image href="/img/retractIcon.svg" height="24" width="24" />
+                  <image href="/img/retractIcon.svg" height="24" width="24"/>
                 </Tooltip>
               )}
             </SvgIcon>
@@ -611,6 +618,7 @@ const LabelDataConfirmationPage = () => {
                   data-testid="edit-button"
                   loading={editLoading}
                   text={t("confirmationSection.editButton")}
+                  aria-label={t("alt.editButton")}
                 />
                 <LoadingButton
                   className="px-4 py-2 font-bold hover:bg-green-700"
@@ -621,6 +629,7 @@ const LabelDataConfirmationPage = () => {
                   data-testid="confirm-button"
                   loading={confirmLoading}
                   text={t("confirmationSection.confirmButton")}
+                  aria-label={t("alt.confirmButton")}
                 />
               </Box>
             </Box>
@@ -629,7 +638,7 @@ const LabelDataConfirmationPage = () => {
       </Box>
     </Container>
   );
-};
+}
 
 export default LabelDataConfirmationPage;
 
