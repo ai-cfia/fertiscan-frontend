@@ -3,7 +3,8 @@
   "submitButtonDisabledHint": "You need to add a minimum of 1 file to start the analysis",
   "fileList": {
     "uploadedfiles": "Uploaded Files",
-    "noUploadedfiles": "No uploaded files"
+    "noUploadedfiles": "No uploaded files",
+    "deleteAll": "Delete All"
   },
   "fileElement": {
     "altText": {

@@ -73,8 +73,6 @@ const LabelDataConfirmationPage = () => {
           `Label data saving failed: ${processAxiosError(error)}`,
           "error",
         );
-      })
-      .finally(() => {
         setConfirmLoading(false);
       });
   };
@@ -96,9 +94,10 @@ const LabelDataConfirmationPage = () => {
         if (!response.data.inspectionId) {
           throw new Error("ID missing in initial label data saving response.");
         }
-        const _labelData = {
+        const _labelData: LabelData = {
           ...labelData,
           inspectionId: response.data.inspectionId,
+          pictureSetId: response.data.pictureSetId,
         };
         setLabelData(_labelData);
         putLabelData(_labelData, signal);

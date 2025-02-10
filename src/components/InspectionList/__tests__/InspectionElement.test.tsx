@@ -1,31 +1,21 @@
-import InspectionPreview from "@/types/InspectionPreview";
-import { render, screen } from "@testing-library/react";
 import InspectionElement from "@/components/InspectionList/InspectionElement";
+import { InspectionData } from "@/utils/server/backend";
+import { render, screen } from "@testing-library/react";
 
 describe("InspectionElement", () => {
-  const mockFinishedInspection: InspectionPreview = {
-    company_info_id: "",
-    company_name: "test_company",
+  const mockFinishedInspection: InspectionData = {
     label_info_id: "",
-    manufacturer_info_id: "test_manufacturer",
-    picture_set_id: "",
-    sample_id: "",
     id: "1",
     product_name: "Fertilizer 1",
     upload_date: new Date().toDateString(),
-    updated_at: new Date(new Date().getDate() + 5).toDateString(),
+    verified: true,
   };
-  const mockUnfinishedInspection: InspectionPreview = {
-    company_info_id: "",
-    company_name: "test_company",
+  const mockUnfinishedInspection: InspectionData = {
     label_info_id: "",
-    manufacturer_info_id: "test_manufacturer",
-    picture_set_id: "",
-    sample_id: "",
     id: "2",
     product_name: "Fertilizer 2",
     upload_date: new Date().toDateString(),
-    updated_at: new Date().toDateString(),
+    verified: false,
   };
 
   const handleClick = jest.fn();

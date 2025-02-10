@@ -215,6 +215,7 @@ export function mapInspectionToLabelData(
     confirmed: v,
     inspectionId: inspection.inspection_id,
     comment: inspection.inspection_comment ?? "",
+    pictureSetId: inspection.picture_set_id,
   };
 }
 
@@ -372,5 +373,6 @@ export function mapLabelDataToInspectionUpdate(
           })),
     },
     inspection_id: labelData.inspectionId,
+    picture_set_id: labelData.pictureSetId || "",
   };
 }
