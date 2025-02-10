@@ -1,8 +1,7 @@
-import { VerifiedQuantityField } from "@/types/types";
+import { VerifiedQuantityList } from "@/types/types";
 import { fireEvent, render, screen } from "@testing-library/react";
 import userEvent from "@testing-library/user-event";
 import { FormProvider, useForm } from "react-hook-form";
-import VerifiedQuantityList from "../VerifiedQuantityList";
 
 const Wrapper = ({
   label = "Test Label",
@@ -19,11 +18,11 @@ const Wrapper = ({
   placeholder?: string;
   path?: string;
   unitOptions?: string[];
-  defaultValues?: VerifiedQuantityField;
+  defaultValues?: VerifiedQuantityList;
   loading?: boolean;
-  onSubmit?: (data: VerifiedQuantityField) => void;
+  onSubmit?: (data: VerifiedQuantityList) => void;
 }) => {
-  const methods = useForm<VerifiedQuantityField>({
+  const methods = useForm<VerifiedQuantityList>({
     defaultValues,
     mode: "onSubmit",
   });

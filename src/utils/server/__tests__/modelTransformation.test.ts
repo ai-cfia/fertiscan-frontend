@@ -255,7 +255,7 @@ describe("mapLabelDataOutputToLabelData", () => {
 
     // Base Information
     expect(result.baseInformation.name.value).toBe(input.fertiliser_name);
-    expect(result.baseInformation.registrationNumber.value).toBe(
+    expect(result.baseInformation.registrationNumbers.value).toBe(
       input.registration_number![0].identifier,
     );
     expect(result.baseInformation.lotNumber.value).toBe(input.lot_number);
@@ -341,7 +341,7 @@ describe("mapLabelDataOutputToLabelData", () => {
 
     // Base Information
     expect(result.baseInformation.name.value).toBe("");
-    expect(result.baseInformation.registrationNumber.value).toBe("");
+    expect(result.baseInformation.registrationNumbers.value).toBe("");
     expect(result.baseInformation.lotNumber.value).toBe("");
     expect(result.baseInformation.npk.value).toBe("");
     expect(result.baseInformation.weight.quantities).toEqual([]);
@@ -493,7 +493,7 @@ describe("mapInspectionToLabelData", () => {
     expect(result.organizations[1].phoneNumber.value).toBe("987-654-3210");
 
     expect(result.baseInformation.name.value).toBe("SuperGrow");
-    expect(result.baseInformation.registrationNumber.value).toBe("1234567A");
+    expect(result.baseInformation.registrationNumbers.value).toBe("1234567A");
     expect(result.baseInformation.lotNumber.value).toBe("LOT42");
     expect(result.baseInformation.npk.value).toBe("10-5-5");
 
@@ -562,7 +562,7 @@ describe("mapInspectionToLabelData", () => {
     const result = mapInspectionToLabelData(emptyInspection);
     expect(result.organizations).toEqual([]);
     expect(result.baseInformation.name.value).toBe("");
-    expect(result.baseInformation.registrationNumber.value).toBe("");
+    expect(result.baseInformation.registrationNumbers.value).toBe("");
     expect(result.baseInformation.lotNumber.value).toBe("");
     expect(result.baseInformation.npk.value).toBe("");
     expect(result.baseInformation.weight.quantities).toEqual([]);
@@ -588,7 +588,7 @@ describe("mapInspectionToLabelData", () => {
     const result = mapInspectionToLabelData(emptyInspection);
     expect(result.organizations).toEqual([]);
     expect(result.baseInformation.name.verified).toBe(true);
-    expect(result.baseInformation.registrationNumber.verified).toBe(true);
+    expect(result.baseInformation.registrationNumbers.verified).toBe(true);
     expect(result.baseInformation.lotNumber.verified).toBe(true);
     expect(result.baseInformation.npk.verified).toBe(true);
     expect(result.baseInformation.weight.verified).toBe(true);
@@ -630,7 +630,7 @@ const labelData: LabelData = {
   ],
   baseInformation: {
     name: { value: "SuperGrow", verified: false },
-    registrationNumber: { value: "1234567A", verified: false },
+    registrationNumbers: { value: "1234567A", verified: false },
     lotNumber: { value: "LOT42", verified: false },
     npk: { value: "10-5-5", verified: false },
     weight: { quantities: [{ value: "20", unit: "kg" }], verified: false },
@@ -703,7 +703,7 @@ const emptyLabelData: LabelData = {
   organizations: [],
   baseInformation: {
     name: { value: "", verified: false },
-    registrationNumber: { value: "", verified: false },
+    registrationNumbers: { value: "", verified: false },
     lotNumber: { value: "", verified: false },
     npk: { value: "", verified: false },
     weight: { quantities: [], verified: false },

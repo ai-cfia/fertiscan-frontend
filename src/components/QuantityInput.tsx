@@ -81,7 +81,7 @@ const QuantityInput = ({
             renderInput={(params) => (
               <StyledTextField
                 {...params}
-                className={`!w-[10ch] !px-2 bg-gray-100 ${verified ? "bg-gray-300" : ""}`}
+                className={`!w-[10ch] !px-2 ${verified ? "bg-inherit" : "bg-gray-100"}`}
                 aria-label={t("quantityInput.accessibility.unit")}
                 data-testid={`${name}-unit-input`}
                 placeholder={t("quantityInput.placeholder.unit")}

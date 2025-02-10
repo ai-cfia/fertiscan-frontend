@@ -1,3 +1,4 @@
+import { DEFAULT_REGISTRATION_NUMBER } from "@/types/types";
 import { Typography } from "@mui/material";
 import { useFieldArray, useFormContext } from "react-hook-form";
 import RegistrationInput from "./RegistrationInput";
@@ -8,7 +9,6 @@ import VerifiedListRow from "./VerifiedListRow";
 interface VerifiedRegistrationListProps {
   label: string;
   path: string;
-  registrationTypes: string[];
   className?: string;
   loading?: boolean;
 }
@@ -16,23 +16,22 @@ interface VerifiedRegistrationListProps {
 const VerifiedRegistrationList: React.FC<VerifiedRegistrationListProps> = ({
   label,
   path,
-  registrationTypes,
   className = "",
   loading = false,
 }) => {
+  const valuesPath = `${path}.values`;
   const { control, trigger } = useFormContext();
   const { fields, append, remove } = useFieldArray({
     control,
-    name: `${path}.registrations`,
+    name: valuesPath,
   });
-  const registrationsPath = `${path}.registrations`;
 
   const validateFields = async (callback: (valid: boolean) => void) => {
     const validationResults = await Promise.all(
       fields.map((_, index) =>
         Promise.all([
-          trigger(`${registrationsPath}.${index}.number`),
-          trigger(`${registrationsPath}.${index}.type`),
+          trigger(`${valuesPath}.${index}.identifier`),
+          trigger(`${valuesPath}.${index}.type`),
         ]),
       ),
     );
@@ -60,7 +59,7 @@ const VerifiedRegistrationList: React.FC<VerifiedRegistrationListProps> = ({
         <StyledListContainer
           path={path}
           verified={verified}
-          onAppend={() => append({ number: "", type: "" })}
+          onAppend={() => append(DEFAULT_REGISTRATION_NUMBER)}
         >
           {fields.map((fieldItem, index) => (
             <VerifiedListRow
@@ -71,9 +70,8 @@ const VerifiedRegistrationList: React.FC<VerifiedRegistrationListProps> = ({
               isLastItem={index === fields.length - 1}
             >
               <RegistrationInput
-                name={`${registrationsPath}.${index}`}
+                name={`${valuesPath}.${index}`}
                 control={control}
-                registrationTypes={registrationTypes}
                 disabled={verified}
                 onFocus={() => setIsFocused(true)}
                 onBlur={() => setIsFocused(false)}

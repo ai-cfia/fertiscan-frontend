@@ -14,7 +14,6 @@ export const checkFieldArray = (
   fields: VerifiedField[],
   verified: boolean = true,
 ): boolean => {
-  console.debug("type of fields", typeof fields);
   return fields.every((field) => field.verified === verified);
 };
 

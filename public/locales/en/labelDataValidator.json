@@ -6,9 +6,13 @@
         "label": "Name",
         "placeholder": "Enter name"
       },
-      "registrationNumber": {
-        "label": "Registration Number",
-        "placeholder": "Enter registration number"
+      "reg": {
+        "label": "Registration Numbers",
+        "placeholder": "Enter registration number",
+        "type": {
+          "fertilizer": "Fertilizer",
+          "ingredient": "Ingredient"
+        }
       },
       "lotNumber": {
         "label": "Lot Number",
@@ -146,5 +150,7 @@
     "minValue": "Minimum value is 0",
     "duplicateUnit": "Duplicate unit"
   },
-  "stepper": { "next": "Next", "back": "Back", "submit": "Submit" }
+  "stepper": { "next": "Next", "back": "Back", "submit": "Submit" },
+  "fertilizer_product": "Fertilizer",
+  "ingredient_component": "Ingredient"
 }

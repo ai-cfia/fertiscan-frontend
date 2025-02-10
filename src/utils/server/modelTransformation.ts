@@ -91,7 +91,7 @@ export function mapLabelDataOutputToLabelData(
     ],
     baseInformation: {
       name: { value: data.fertiliser_name ?? "", verified: false },
-      registrationNumber: {
+      registrationNumbers: {
         value: data.registration_number?.[0]?.identifier ?? "",
         verified: false,
       },
@@ -151,7 +151,7 @@ export function mapInspectionToLabelData(
     })),
     baseInformation: {
       name: { value: inspection.product.name ?? "", verified: v },
-      registrationNumber: {
+      registrationNumbers: {
         value:
           inspection.product.registration_numbers?.[0]?.registration_number ??
           "",
@@ -231,7 +231,7 @@ export function mapLabelDataToLabelDataInput(
     fertiliser_name: labelData.baseInformation.name.value,
     registration_number: [
       {
-        identifier: labelData.baseInformation.registrationNumber.value,
+        identifier: labelData.baseInformation.registrationNumbers.value,
       },
     ],
     lot_number: labelData.baseInformation.lotNumber.value,
@@ -305,7 +305,7 @@ export function mapLabelDataToInspectionUpdate(
       registration_numbers: [
         {
           registration_number:
-            labelData.baseInformation.registrationNumber.value,
+            labelData.baseInformation.registrationNumbers.value,
         },
       ],
       lot_number: labelData.baseInformation.lotNumber.value,

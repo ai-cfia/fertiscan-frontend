@@ -6,9 +6,13 @@
         "label": "Nom",
         "placeholder": "Entrez le nom"
       },
-      "registrationNumber": {
-        "label": "Numéro d'enregistrement",
-        "placeholder": "Entrez le numéro d'enregistrement"
+      "reg": {
+        "label": "Numéros d'enregistrement",
+        "placeholder": "Entrez le numéro d'enregistrement",
+        "type": {
+          "fertilizer": "Engrais",
+          "ingredient": "Ingrédient"
+        }
       },
       "lotNumber": {
         "label": "Numéro de lot",

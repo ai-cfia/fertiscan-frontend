@@ -298,7 +298,7 @@ const LabelDataConfirmationPage = () => {
                         <TableCell data-testid="base-information-registration-number">
                           <Typography>
                             {
-                              labelData?.baseInformation.registrationNumber
+                              labelData?.baseInformation.registrationNumbers
                                 .value
                             }
                           </Typography>

@@ -48,10 +48,9 @@ const BaseInformationForm: React.FC<FormComponentProps> = ({
             loading={loading}
           />
           <VerifiedRegistrationList
-            label={t("baseInformation.fields.registrationNumber.label")}
-            path="baseInformation.registrationNumber"
+            label={t("baseInformation.fields.reg.label")}
+            path="baseInformation.registrationNumbers"
             loading={loading}
-            registrationTypes={["Fertilizer", "Ingredient"]}
           />
           <VerifiedInput
             label={t("baseInformation.fields.lotNumber.label")}
