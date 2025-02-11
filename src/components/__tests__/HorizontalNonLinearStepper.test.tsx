@@ -158,10 +158,8 @@ describe("HorizontalNonLinearStepper with StepperControls", () => {
         ]}
       />,
     );
-    const submitButton = screen.getByText("stepper.submit");
-    setTimeout(() => {
-      expect(submitButton).toBeDisabled();
-    }, 350);
+    const submitButton = screen.getByText("stepper.submit").closest("button");
+    expect(submitButton).toBeDisabled();
   });
 
   it("enables 'Submit' button when all steps are completed", () => {

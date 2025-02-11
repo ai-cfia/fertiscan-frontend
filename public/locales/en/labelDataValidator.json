@@ -7,12 +7,7 @@
         "placeholder": "Enter name"
       },
       "reg": {
-        "label": "Registration Numbers",
-        "placeholder": "Enter registration number",
-        "type": {
-          "fertilizer": "Fertilizer",
-          "ingredient": "Ingredient"
-        }
+        "label": "Registration Numbers"
       },
       "lotNumber": {
         "label": "Lot Number",
@@ -84,9 +79,27 @@
       "unit": "Dropdown to select a unit of measurement"
     }
   },
-  "verifiedQuantityMultiInput": {
+  "registrationInput": {
+    "placeholder": "Enter registration number",
+    "type": {
+      "fertilizer": "Fertilizer",
+      "ingredient": "Ingredient"
+    },
+    "accessibility": {
+      "identifier": "Input field for registration number",
+      "unit": "Dropdown to select a type of registration number"
+    }
+  },
+  "verifiedListRow": {
+    "accessibility": {
+      "deleteRowButton": "Button to delete this row"
+    }
+  },
+  "listContainer": {
+    "addRow": "Add Row"
+  },
+  "verifiedQuantityList": {
     "deleteRow": "Delete this row",
-    "addRow": "Add Row",
     "removeRow": "Remove",
     "verify": "Mark as Verified",
     "unverify": "Mark as Unverified",
@@ -105,7 +118,6 @@
       "lb/gal": "lb/gal"
     },
     "accessibility": {
-      "deleteRowButton": "Button to delete this row",
       "addRowButton": "Button to add a new row",
       "valueInput": "Input field for numeric value",
       "unitDropdown": "Dropdown to select a unit of measurement",

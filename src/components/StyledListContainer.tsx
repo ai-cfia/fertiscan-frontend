@@ -35,7 +35,7 @@ const StyledListContainer: React.FC<StyledListContainerProps> = ({
         disabled={verified}
         data-testid={`add-button-${path}`}
       >
-        {t("addRow")}
+        {t("listContainer.addRow")}
       </Button>
     </Box>
   );

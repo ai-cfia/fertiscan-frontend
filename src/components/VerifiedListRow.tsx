@@ -28,6 +28,7 @@ const VerifiedListRow: React.FC<VerifiedListRowProps> = ({
           tooltip={t("deleteVerifiedListRow")}
           hideButton={verified || hideDelete}
           onClick={onDelete}
+          aria-label={t("verifiedListRow.accessibility.deleteRowButtons")}
         />
       </Box>
 

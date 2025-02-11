@@ -350,12 +350,14 @@ describe("mapLabelDataOutputToLabelData", () => {
     // Base Information
     expect(result.baseInformation.name.value).toBe("");
     expect(result.baseInformation.registrationNumbers).toEqual({
-      values: [],
+      values: [{ identifier: "", type: "fertilizer_product" }],
       verified: false,
     });
     expect(result.baseInformation.lotNumber.value).toBe("");
     expect(result.baseInformation.npk.value).toBe("");
-    expect(result.baseInformation.weight.quantities).toEqual([]);
+    expect(result.baseInformation.weight.quantities).toEqual([
+      { value: "", unit: "" },
+    ]);
     expect(result.baseInformation.density.quantities).toEqual([
       { value: "", unit: "" },
     ]);
@@ -586,11 +588,13 @@ describe("mapInspectionToLabelData", () => {
     expect(result.baseInformation.name.value).toBe("");
     expect(result.baseInformation.registrationNumbers).toEqual({
       verified: true,
-      values: [],
+      values: [{ identifier: "", type: RegistrationType.FERTILIZER }],
     });
     expect(result.baseInformation.lotNumber.value).toBe("");
     expect(result.baseInformation.npk.value).toBe("");
-    expect(result.baseInformation.weight.quantities).toEqual([]);
+    expect(result.baseInformation.weight.quantities).toEqual([
+      { value: "", unit: "" },
+    ]);
     expect(result.baseInformation.density.quantities).toEqual([
       { value: "", unit: "" },
     ]);
