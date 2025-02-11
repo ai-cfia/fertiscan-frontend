@@ -1,5 +1,7 @@
 import {
   BilingualField,
+  DEFAULT_QUANTITY,
+  DEFAULT_REGISTRATION_NUMBER,
   LabelData,
   Quantity,
   RegistrationType,
@@ -98,16 +100,21 @@ export function mapLabelDataOutputToLabelData(
       name: { value: data.fertiliser_name ?? "", verified: false },
       registrationNumbers: {
         verified: false,
-        values: (data.registration_number ?? []).map((reg) => ({
-          identifier: reg.identifier ?? "",
-          type: (reg.type as RegistrationType) ?? RegistrationType.FERTILIZER,
-        })),
+        values: data.registration_number?.length
+          ? data.registration_number.map((reg) => ({
+              identifier: reg.identifier ?? "",
+              type:
+                (reg.type as RegistrationType) ?? RegistrationType.FERTILIZER,
+            }))
+          : [DEFAULT_REGISTRATION_NUMBER],
       },
       lotNumber: { value: data.lot_number ?? "", verified: false },
       npk: { value: data.npk ?? "", verified: false },
       weight: {
         verified: false,
-        quantities: (data.weight ?? []).map(quantity),
+        quantities: data.weight?.length
+          ? (data.weight ?? []).map(quantity)
+          : [DEFAULT_QUANTITY],
       },
       density: { verified: false, quantities: [quantity(data.density)] },
       volume: { verified: false, quantities: [quantity(data.volume)] },
@@ -161,18 +168,22 @@ export function mapInspectionToLabelData(
       name: { value: inspection.product.name ?? "", verified: v },
       registrationNumbers: {
         verified: v,
-        values: (inspection.product.registration_numbers ?? []).map((reg) => ({
-          identifier: reg.registration_number ?? "",
-          type: reg.is_an_ingredient
-            ? RegistrationType.INGREDIENT
-            : RegistrationType.FERTILIZER,
-        })),
+        values: inspection.product.registration_numbers?.length
+          ? inspection.product.registration_numbers.map((reg) => ({
+              identifier: reg.registration_number ?? "",
+              type: reg.is_an_ingredient
+                ? RegistrationType.INGREDIENT
+                : RegistrationType.FERTILIZER,
+            }))
+          : [DEFAULT_REGISTRATION_NUMBER],
       },
       lotNumber: { value: inspection.product.lot_number ?? "", verified: v },
       npk: { value: inspection.product.npk ?? "", verified: v },
       weight: {
         verified: v,
-        quantities: (inspection.product.metrics?.weight ?? []).map(quantity),
+        quantities: inspection.product.metrics?.weight?.length
+          ? inspection.product.metrics.weight.map(quantity)
+          : [DEFAULT_QUANTITY],
       },
       density: {
         verified: v,
