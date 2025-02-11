@@ -1,4 +1,5 @@
 /* eslint-disable react-hooks/rules-of-hooks */
+import useUIStore from "@/stores/uiStore";
 import { ThemeProvider, createTheme } from "@mui/material/styles";
 import "@testing-library/jest-dom";
 import { fireEvent, render, screen } from "@testing-library/react";
@@ -18,8 +19,6 @@ const theme = createTheme();
 const { t } = useTranslation("header");
 
 describe("SideNav Component", () => {
-  const onClose = jest.fn();
-
   beforeEach(() => {
     (useRouter as jest.Mock).mockReturnValue({
       push: jest.fn(),
@@ -29,7 +28,7 @@ describe("SideNav Component", () => {
   it("should render the SideNav component", () => {
     render(
       <ThemeProvider theme={theme}>
-        <SideNav open={true} onClose={onClose} />
+        <SideNav />
       </ThemeProvider>,
     );
 
@@ -39,42 +38,50 @@ describe("SideNav Component", () => {
     expect(screen.getByText(t("sideNav.repportIssue"))).toBeInTheDocument();
   });
 
-  it("should call onClose when clicking on the drawer button", () => {
+  it("should close the sidebar when clicking on any drawer button", () => {
+    useUIStore.getState().openSidebar();
+    expect(useUIStore.getState().sidebarOpen).toBe(true);
     render(
       <ThemeProvider theme={theme}>
-        <SideNav open={true} onClose={onClose} />
+        <SideNav />
       </ThemeProvider>,
     );
 
     const newInspectionButton = screen.getByTestId("new-inspection-button");
     fireEvent.click(newInspectionButton);
-    expect(onClose).toHaveBeenCalled();
+    expect(useUIStore.getState().sidebarOpen).toBe(false);
 
+    useUIStore.getState().openSidebar();
+    expect(useUIStore.getState().sidebarOpen).toBe(true);
     const searchPageButton = screen.getByTestId("search-page-button");
     fireEvent.click(searchPageButton);
-    expect(onClose).toHaveBeenCalled();
+    expect(useUIStore.getState().sidebarOpen).toBe(false);
 
+    useUIStore.getState().openSidebar();
+    expect(useUIStore.getState().sidebarOpen).toBe(true);
     const reportIssueButton = screen.getByTestId("report-issue-button");
     fireEvent.click(reportIssueButton);
-    expect(onClose).toHaveBeenCalled();
+    expect(useUIStore.getState().sidebarOpen).toBe(false);
   });
 
   it("should call onClose when clicking outside the drawer", () => {
+    useUIStore.getState().openSidebar();
+    expect(useUIStore.getState().sidebarOpen).toBe(true);
     render(
       <ThemeProvider theme={theme}>
-        <SideNav open={true} onClose={onClose} />
+        <SideNav />
       </ThemeProvider>,
     );
 
     const drawer = screen.getByTestId("backdrop");
     fireEvent.click(drawer);
-    expect(onClose).toHaveBeenCalled();
+    expect(useUIStore.getState().sidebarOpen).toBe(false);
   });
 
   it("should have correct links", () => {
     render(
       <ThemeProvider theme={theme}>
-        <SideNav open={true} onClose={onClose} />
+        <SideNav />
       </ThemeProvider>,
     );
 
@@ -93,7 +100,7 @@ describe("SideNav Component", () => {
     const router = useRouter();
     render(
       <ThemeProvider theme={theme}>
-        <SideNav open={true} onClose={onClose} />
+        <SideNav />
       </ThemeProvider>,
     );
 

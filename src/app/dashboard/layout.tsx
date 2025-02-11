@@ -1,7 +1,7 @@
 import { Metadata } from "next";
 
 export const metadata: Metadata = {
-  title: "Validation",
+  title: "Dashboard",
 };
 
 function layout({ children }: Readonly<{ children: React.ReactNode }>) {
