@@ -10,8 +10,15 @@ import AddIcon from "@mui/icons-material/Add";
 import DeleteIcon from "@mui/icons-material/Delete";
 import DoneAllIcon from "@mui/icons-material/DoneAll";
 import RemoveDoneIcon from "@mui/icons-material/RemoveDone";
-import { Box, Button, Tooltip } from "@mui/material";
-import { useCallback, useEffect } from "react";
+import {
+  Box,
+  Button,
+  FormControlLabel,
+  Radio,
+  Tooltip,
+  Typography,
+} from "@mui/material";
+import { useCallback, useEffect, useState } from "react";
 import {
   FieldPath,
   FormProvider,
@@ -19,6 +26,7 @@ import {
   useForm,
   useWatch,
 } from "react-hook-form";
+import { useTranslation } from "react-i18next";
 import { VerifiedInput } from "./VerifiedFieldComponents";
 
 const fieldNames = Object.keys(DEFAULT_ORGANIZATION) as Array<
@@ -30,6 +38,7 @@ const OrganizationsForm: React.FC<FormComponentProps> = ({
   setLabelData,
   loading = false,
 }) => {
+  const { t } = useTranslation("labelDataValidator");
   const methods = useForm<LabelData>({
     defaultValues: labelData,
   });
@@ -48,6 +57,8 @@ const OrganizationsForm: React.FC<FormComponentProps> = ({
   });
 
   const save = useDebouncedSave(setLabelData);
+
+  const [mainContactIndex, setMainContactIndex] = useState<number | null>(null);
 
   useEffect(() => {
     const currentValues = methods.getValues();
@@ -86,6 +97,22 @@ const OrganizationsForm: React.FC<FormComponentProps> = ({
             >
               <OrganizationInformation index={index} loading={loading} />
               <Box className="flex flex-wrap mt-4 justify-end gap-2">
+                <FormControlLabel
+                  control={
+                    <Radio
+                      className="h-3"
+                      checked={mainContactIndex === index}
+                      onChange={() => setMainContactIndex(index)}
+                      name="mainContact"
+                      data-testid={`main-contact-radio-${index}`}
+                    />
+                  }
+                  label={
+                    <Typography className="!font-bold">
+                      {t("organizations.mainContact")}
+                    </Typography>
+                  }
+                />
                 <Tooltip title="Mark all as Verified" enterDelay={1000}>
                   <Button
                     variant="outlined"
@@ -115,16 +142,14 @@ const OrganizationsForm: React.FC<FormComponentProps> = ({
                   </Button>
                 </Tooltip>
                 <Tooltip title="Remove Organization" enterDelay={1000}>
-                  <span>
-                    <Button
-                      variant="outlined"
-                      color="secondary"
-                      onClick={() => remove(index)}
-                      data-testid={`remove-org-btn-${index}`}
-                    >
-                      <DeleteIcon />
-                    </Button>
-                  </span>
+                  <Button
+                    variant="outlined"
+                    color="secondary"
+                    onClick={() => remove(index)}
+                    data-testid={`remove-org-btn-${index}`}
+                  >
+                    <DeleteIcon />
+                  </Button>
                 </Tooltip>
               </Box>
             </Box>
@@ -137,7 +162,7 @@ const OrganizationsForm: React.FC<FormComponentProps> = ({
               startIcon={<AddIcon />}
               data-testid="add-org-btn"
             >
-              Add Organization
+              {t("organizations.addOrganization")}
             </Button>
           </Box>
         </Box>

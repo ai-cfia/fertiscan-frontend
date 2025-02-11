@@ -30,7 +30,9 @@
     }
   },
   "organizations": {
-    "stepTitle": "Organisations"
+    "stepTitle": "Organizations",
+    "mainContact": "Contact Principal",
+    "addOrganization": "Ajouter une organisation"
   },
   "cautions": {
     "stepTitle": "Mises en garde"

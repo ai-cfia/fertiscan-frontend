@@ -30,7 +30,9 @@
     }
   },
   "organizations": {
-    "stepTitle": "Organizations"
+    "stepTitle": "Organizations",
+    "mainContact": "Main Contact",
+    "addOrganization": "Add Organization"
   },
   "cautions": {
     "stepTitle": "Cautions"
