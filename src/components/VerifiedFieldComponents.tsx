@@ -19,7 +19,7 @@ import StyledSkeleton from "./StyledSkeleton";
 import StyledTextField from "./StyledTextField";
 
 interface VerifiedFieldWrapperProps {
-  label: ReactNode;
+  label: string | ReactNode;
   path: string;
   className?: string;
   loading?: boolean;
@@ -55,7 +55,16 @@ export const VerifiedFieldWrapper: React.FC<VerifiedFieldWrapperProps> = ({
 
   return (
     <Box>
-      <>{label}</>
+      {typeof label === "string" ? (
+        <Typography
+          className="!font-bold select-none text-left pl-2"
+          data-testid={`field-label-${path}`}
+        >
+          {label}
+        </Typography>
+      ) : (
+        label
+      )}
       {loading ? (
         <StyledSkeleton />
       ) : (
@@ -83,8 +92,8 @@ export const VerifiedFieldWrapper: React.FC<VerifiedFieldWrapperProps> = ({
               <Tooltip
                 title={
                   verified
-                    ? t("verifiedInput.unverify", { label })
-                    : t("verifiedInput.verify", { label })
+                    ? t("verifiedInput.unverify")
+                    : t("verifiedInput.verify")
                 }
                 enterDelay={1000}
               >
@@ -99,14 +108,19 @@ export const VerifiedFieldWrapper: React.FC<VerifiedFieldWrapperProps> = ({
                   data-testid={`toggle-verified-btn-${verifiedPath}`}
                   aria-label={
                     verified
-                      ? t("verifiedInput.unverify", { label })
-                      : t("verifiedInput.verify", { label })
+                      ? t("verifiedInput.unverify")
+                      : t("verifiedInput.verify")
                   }
                   onMouseEnter={() => setHover(true)}
                   onMouseLeave={() => setHover(false)}
-                  onFocus={() => {setIconFocus(!iconFocus); setIsFocused(true)}}
-                  onBlur={() => {setIconFocus(!iconFocus); setIsFocused(false)}}
-
+                  onFocus={() => {
+                    setIconFocus(!iconFocus);
+                    setIsFocused(true);
+                  }}
+                  onBlur={() => {
+                    setIconFocus(!iconFocus);
+                    setIsFocused(false);
+                  }}
                 >
                   {hover && verified ? (
                     <SvgIcon aria-hidden>
@@ -118,8 +132,7 @@ export const VerifiedFieldWrapper: React.FC<VerifiedFieldWrapperProps> = ({
                     </SvgIcon>
                   ) : (
                     <CheckIcon
-                      className={`${value ? "text-green-500" : "" } ${ iconFocus ? "text-fertiscan-blue font-bold" : ""
-                      } `}
+                      className={`${value ? "text-green-500" : ""} ${iconFocus ? "text-fertiscan-blue font-bold" : ""}`}
                       data-testid={`verified-icon-${verifiedPath}`}
                       aria-hidden
                     />
@@ -215,9 +228,8 @@ export const VerifiedRadio: React.FC<VerifiedRadioProps> = ({
               className="flex-1 !flex-row px-2 "
               onFocus={() => setIsFocused(true)}
               onBlur={() => setIsFocused(false)}
-
               data-testid={`radio-group-field-${valuePath}`}
-              aria-label={`${t("verifiedInput.accessibility.radioGroup", { label })}`}
+              aria-label={`${t("verifiedInput.accessibility.radioGroup")}`}
             >
               <FormControlLabel
                 value="yes"
@@ -270,14 +282,7 @@ export const VerifiedInput: React.FC<VerifiedInputProps> = ({
 
   return (
     <VerifiedFieldWrapper
-      label={
-        <Typography
-          className="!font-bold select-none text-left px-2"
-          data-testid={`field-label-${path}`}
-        >
-          {label}
-        </Typography>
-      }
+      label={label}
       path={path}
       className={className}
       loading={loading}
@@ -299,9 +304,8 @@ export const VerifiedInput: React.FC<VerifiedInputProps> = ({
                 }
               }}
               data-testid={`input-field-${valuePath}`}
-              aria-label={`${t("verifiedInput.accessibility.input", { label })}`}
+              aria-label={`${t("verifiedInput.accessibility.input")}`}
               autoFocus={isFocus}
-
             />
           )}
         />

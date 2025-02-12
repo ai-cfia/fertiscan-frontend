@@ -80,11 +80,10 @@
     "nutrients": "Nutrients"
   },
   "verifiedInput": {
-    "verify": "Mark {{label}} as Verified",
-    "unverify": "Mark {{label}} as Unverified",
+    "verify": "Mark as Verified",
+    "unverify": "Mark as Unverified",
     "accessibility": {
-      "input": "Input field for {{label}}",
-      "checkbox": "Checkbox for {{label}}"
+      "input": "Input field"
     },
     "options": {
       "yes": "Yes",
@@ -179,7 +178,7 @@
       "unverifyAllButton": "Button to mark all rows as Unverified"
     }
   },
-  "iconInput":{
+  "iconInput": {
     "hidePassword": "hide the password",
     "displayPassword": "display the password"
   },

@@ -46,7 +46,7 @@ describe("VerifiedRegistrationList rendering", () => {
   it("renders correctly with default settings", () => {
     render(<Wrapper />);
 
-    expect(screen.getByTestId("registration-list-label-")).toHaveTextContent(
+    expect(screen.getByTestId("field-label-")).toHaveTextContent(
       "Test Label",
     );
     expect(screen.getByTestId("add-button-")).toBeInTheDocument();

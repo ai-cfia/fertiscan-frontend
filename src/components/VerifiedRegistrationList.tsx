@@ -1,5 +1,4 @@
 import { DEFAULT_REGISTRATION_NUMBER } from "@/types/types";
-import { Typography } from "@mui/material";
 import { useFieldArray, useFormContext } from "react-hook-form";
 import RegistrationInput from "./RegistrationInput";
 import StyledListContainer from "./StyledListContainer";
@@ -43,14 +42,7 @@ const VerifiedRegistrationList: React.FC<VerifiedRegistrationListProps> = ({
 
   return (
     <VerifiedFieldWrapper
-      label={
-        <Typography
-          className="!font-bold select-none text-left px-2"
-          data-testid={`registration-list-label-${path}`}
-        >
-          {label}
-        </Typography>
-      }
+      label={label}
       path={path}
       className={className}
       loading={loading}

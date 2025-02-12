@@ -54,7 +54,7 @@ describe("QuantityMultiInput rendering", () => {
   it("renders correctly with default settings", () => {
     render(<Wrapper />);
 
-    expect(screen.getByTestId("quantity-multi-input-label-")).toHaveTextContent(
+    expect(screen.getByTestId("field-label-")).toHaveTextContent(
       "Test Label",
     );
     expect(screen.getByTestId("add-button-")).toBeInTheDocument();

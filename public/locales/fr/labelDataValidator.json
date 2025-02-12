@@ -80,11 +80,10 @@
     "nutrients": "Nutriments"
   },
   "verifiedInput": {
-    "verify": "Marquer {{label}} comme vérifié",
-    "unverify": "Marquer {{label}} comme non vérifié",
+    "verify": "Marquer comme vérifié",
+    "unverify": "Marquer comme non vérifié",
     "accessibility": {
-      "input": "Champ de saisie pour {{label}}",
-      "checkbox": "Case à cocher pour {{label}}"
+      "input": "Champ de saisie"
     },
     "options": {
       "yes": "Oui",
@@ -180,7 +179,7 @@
       "unverifyAllButton": "Bouton pour tout marquer comme non vérifié"
     }
   },
-  "iconInput":{
+  "iconInput": {
     "hidePassword": "cacher le mot de passe",
     "displayPassword": "afficher le mot de passe"
   },
@@ -189,7 +188,7 @@
     "minValue": "La valeur minimale est 0",
     "duplicateUnit": "Unité dupliquée",
     "invalidId": "ID invalide",
-    "fetchAborted":  "Fetch annulé",
+    "fetchAborted": "Fetch annulé",
     "failedFetchInspection": "Échec de la récupération de l'inspection.",
     "noFileUploaded": "Aucun fichier téléchargé",
     "requestCancelled": "Requête annulée",

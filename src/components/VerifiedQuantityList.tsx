@@ -1,5 +1,4 @@
 import { DEFAULT_QUANTITY } from "@/types/types";
-import { Typography } from "@mui/material";
 import { useFieldArray, useFormContext, useWatch } from "react-hook-form";
 import QuantityInput from "./QuantityInput";
 import StyledListContainer from "./StyledListContainer";
@@ -56,14 +55,7 @@ const VerifiedQuantityList: React.FC<VerifiedQuantityListProps> = ({
 
   return (
     <VerifiedFieldWrapper
-      label={
-        <Typography
-          className="select-none px-2 !font-bold text-left"
-          data-testid={`quantity-multi-input-label-${path}`}
-        >
-          {label}
-        </Typography>
-      }
+      label={label}
       path={path}
       className={className}
       loading={loading}
