@@ -1,7 +1,7 @@
 import { BilingualField, LabelData, Quantity } from "@/types/types";
 import {
   FertiscanDbMetadataInspectionValue,
-  Inspection,
+  InspectionResponse,
   InspectionUpdate,
   LabelDataInput,
   LabelDataOutput,
@@ -59,20 +59,32 @@ export function mapLabelDataOutputToLabelData(
   return {
     organizations: [
       {
-        name: { value: data.company_name ?? "", verified: false },
-        address: { value: data.company_address ?? "", verified: false },
-        website: { value: data.company_website ?? "", verified: false },
+        name: { value: data.organizations?.[0]?.name ?? "", verified: false },
+        address: {
+          value: data.organizations?.[0]?.address ?? "",
+          verified: false,
+        },
+        website: {
+          value: data.organizations?.[0]?.website ?? "",
+          verified: false,
+        },
         phoneNumber: {
-          value: data.company_phone_number ?? "",
+          value: data.organizations?.[0]?.phone_number ?? "",
           verified: false,
         },
       },
       {
-        name: { value: data.manufacturer_name ?? "", verified: false },
-        address: { value: data.manufacturer_address ?? "", verified: false },
-        website: { value: data.manufacturer_website ?? "", verified: false },
+        name: { value: data.organizations?.[1]?.name ?? "", verified: false },
+        address: {
+          value: data.organizations?.[1]?.address ?? "",
+          verified: false,
+        },
+        website: {
+          value: data.organizations?.[1]?.website ?? "",
+          verified: false,
+        },
         phoneNumber: {
-          value: data.manufacturer_phone_number ?? "",
+          value: data.organizations?.[1]?.phone_number ?? "",
           verified: false,
         },
       },
@@ -80,7 +92,7 @@ export function mapLabelDataOutputToLabelData(
     baseInformation: {
       name: { value: data.fertiliser_name ?? "", verified: false },
       registrationNumber: {
-        value: data.registration_number ?? "",
+        value: data.registration_number?.[0]?.identifier ?? "",
         verified: false,
       },
       lotNumber: { value: data.lot_number ?? "", verified: false },
@@ -115,41 +127,34 @@ export function mapLabelDataOutputToLabelData(
         data.guaranteed_analysis_fr?.nutrients,
       ),
     },
-    ingredients: verifiedItemPairNutrientValue(
-      data.ingredients_en,
-      data.ingredients_fr,
-    ),
+    ingredients: {
+      recordKeeping: { value: false, verified: false },
+      nutrients: verifiedItemPairNutrientValue(
+        data.ingredients_en,
+        data.ingredients_fr,
+      ),
+    },
     confirmed: false,
   };
 }
 
-export function mapInspectionToLabelData(inspection: Inspection): LabelData {
-  const v = inspection.verified ?? false;
+export function mapInspectionToLabelData(
+  inspection: InspectionResponse,
+): LabelData {
+  const v = inspection.verified || false;
   return {
-    organizations: [
-      {
-        name: { value: inspection.company?.name ?? "", verified: v },
-        address: { value: inspection.company?.address ?? "", verified: v },
-        website: { value: inspection.company?.website ?? "", verified: v },
-        phoneNumber: {
-          value: inspection.company?.phone_number ?? "",
-          verified: v,
-        },
-      },
-      {
-        name: { value: inspection.manufacturer?.name ?? "", verified: v },
-        address: { value: inspection.manufacturer?.address ?? "", verified: v },
-        website: { value: inspection.manufacturer?.website ?? "", verified: v },
-        phoneNumber: {
-          value: inspection.manufacturer?.phone_number ?? "",
-          verified: v,
-        },
-      },
-    ],
+    organizations: (inspection.organizations ?? []).map((org) => ({
+      name: { value: org.name ?? "", verified: v },
+      address: { value: org.address ?? "", verified: v },
+      website: { value: org.website ?? "", verified: v },
+      phoneNumber: { value: org.phone_number ?? "", verified: v },
+    })),
     baseInformation: {
       name: { value: inspection.product.name ?? "", verified: v },
       registrationNumber: {
-        value: inspection.product.registration_number ?? "",
+        value:
+          inspection.product.registration_numbers?.[0]?.registration_number ??
+          "",
         verified: v,
       },
       lotNumber: { value: inspection.product.lot_number ?? "", verified: v },
@@ -196,35 +201,40 @@ export function mapInspectionToLabelData(inspection: Inspection): LabelData {
         v,
       ),
     },
-    ingredients: verifiedItemPairInspectionValue(
-      // TODO: use ingredients once the backend is updated
-      inspection.guaranteed_analysis?.en,
-      inspection.guaranteed_analysis?.fr,
-      v,
-    ),
-    confirmed: inspection.verified ?? false,
+    ingredients: {
+      recordKeeping: {
+        value: !!inspection.product?.record_keeping,
+        verified: v,
+      },
+      nutrients: verifiedItemPairInspectionValue(
+        inspection.ingredients?.en,
+        inspection.ingredients?.fr,
+        v,
+      ),
+    },
+    confirmed: v,
     inspectionId: inspection.inspection_id,
     comment: inspection.inspection_comment ?? "",
+    pictureSetId: inspection.picture_set_id,
   };
 }
 
 export function mapLabelDataToLabelDataInput(
   labelData: LabelData,
 ): LabelDataInput {
-  const org0 = labelData.organizations?.[0] || {};
-  const org1 = labelData.organizations?.[1] || {};
-
   return {
-    company_name: org0.name?.value,
-    company_address: org0.address?.value,
-    company_website: org0.website?.value,
-    company_phone_number: org0.phoneNumber?.value,
-    manufacturer_name: org1.name?.value,
-    manufacturer_address: org1.address?.value,
-    manufacturer_website: org1.website?.value,
-    manufacturer_phone_number: org1.phoneNumber?.value,
+    organizations: (labelData.organizations || []).map((org) => ({
+      name: org.name?.value,
+      address: org.address?.value,
+      website: org.website?.value,
+      phone_number: org.phoneNumber?.value,
+    })),
     fertiliser_name: labelData.baseInformation.name.value,
-    registration_number: labelData.baseInformation.registrationNumber.value,
+    registration_number: [
+      {
+        identifier: labelData.baseInformation.registrationNumber.value,
+      },
+    ],
     lot_number: labelData.baseInformation.lotNumber.value,
     weight:
       labelData.baseInformation.weight.quantities?.map((q) => ({
@@ -265,12 +275,12 @@ export function mapLabelDataToLabelDataInput(
     cautions_fr: labelData.cautions.map((c) => c.fr),
     instructions_en: labelData.instructions.map((i) => i.en),
     instructions_fr: labelData.instructions.map((i) => i.fr),
-    ingredients_en: labelData.ingredients.map((i) => ({
+    ingredients_en: labelData.ingredients.nutrients.map((i) => ({
       nutrient: i.en,
       value: Number(i.value),
       unit: i.unit,
     })),
-    ingredients_fr: labelData.ingredients.map((i) => ({
+    ingredients_fr: labelData.ingredients.nutrients.map((i) => ({
       nutrient: i.fr,
       value: Number(i.value),
       unit: i.unit,
@@ -281,27 +291,24 @@ export function mapLabelDataToLabelDataInput(
 export function mapLabelDataToInspectionUpdate(
   labelData: LabelData,
 ): InspectionUpdate {
-  const org0 = labelData.organizations?.[0] || {};
-  const org1 = labelData.organizations?.[1] || {};
-
+  const recordKeeping = labelData.ingredients.recordKeeping.value;
   return {
     inspection_comment: labelData.comment,
     verified: labelData.confirmed,
-    company: {
-      name: org0.name?.value,
-      address: org0.address?.value,
-      website: org0.website?.value,
-      phone_number: org0.phoneNumber?.value,
-    },
-    manufacturer: {
-      name: org1.name?.value,
-      address: org1.address?.value,
-      website: org1.website?.value,
-      phone_number: org1.phoneNumber?.value,
-    },
+    organizations: labelData.organizations?.map((org) => ({
+      name: org.name?.value,
+      address: org.address?.value,
+      website: org.website?.value,
+      phone_number: org.phoneNumber?.value,
+    })),
     product: {
       name: labelData.baseInformation.name.value,
-      registration_number: labelData.baseInformation.registrationNumber.value,
+      registration_numbers: [
+        {
+          registration_number:
+            labelData.baseInformation.registrationNumber.value,
+        },
+      ],
       lot_number: labelData.baseInformation.lotNumber.value,
       npk: labelData.baseInformation.npk.value,
       metrics: {
@@ -313,15 +320,16 @@ export function mapLabelDataToInspectionUpdate(
           value:
             Number(labelData.baseInformation.density.quantities?.[0]?.value) ||
             null,
-          unit: labelData.baseInformation.density.quantities?.[0]?.unit,
+          unit: labelData.baseInformation.density.quantities?.[0]?.unit || null,
         },
         volume: {
           value:
             Number(labelData.baseInformation.volume.quantities?.[0]?.value) ||
             null,
-          unit: labelData.baseInformation.volume.quantities?.[0]?.unit,
+          unit: labelData.baseInformation.volume.quantities?.[0]?.unit || null,
         },
       },
+      record_keeping: recordKeeping,
     },
     cautions: {
       en: labelData.cautions.map((c) => c.en),
@@ -348,5 +356,23 @@ export function mapLabelDataToInspectionUpdate(
         unit: n.unit,
       })),
     },
+    ingredients: {
+      en: recordKeeping
+        ? []
+        : labelData.ingredients.nutrients.map((i) => ({
+            name: i.en,
+            value: Number(i.value),
+            unit: i.unit,
+          })),
+      fr: recordKeeping
+        ? []
+        : labelData.ingredients.nutrients.map((i) => ({
+            name: i.fr,
+            value: Number(i.value),
+            unit: i.unit,
+          })),
+    },
+    inspection_id: labelData.inspectionId,
+    picture_set_id: labelData.pictureSetId || "",
   };
 }

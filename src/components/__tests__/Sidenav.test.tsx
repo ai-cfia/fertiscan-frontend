@@ -1,13 +1,12 @@
 /* eslint-disable react-hooks/rules-of-hooks */
-import React from "react";
-import { render, screen, fireEvent } from "@testing-library/react";
-import "@testing-library/jest-dom";
-import SideNav from "../Sidenav";
+import useUIStore from "@/stores/uiStore";
 import { ThemeProvider, createTheme } from "@mui/material/styles";
-import { useRouter } from "next/router";
+import "@testing-library/jest-dom";
+import { fireEvent, render, screen } from "@testing-library/react";
+import { useRouter } from "next/navigation";
 import { useTranslation } from "react-i18next";
-import useUploadedFilesStore from "@/stores/fileStore";
-jest.mock("next/router", () => ({
+import SideNav from "../Sidenav";
+jest.mock("next/navigation", () => ({
   useRouter: jest.fn(),
 }));
 jest.mock("react-i18next", () => ({
@@ -20,8 +19,6 @@ const theme = createTheme();
 const { t } = useTranslation("header");
 
 describe("SideNav Component", () => {
-  const onClose = jest.fn();
-
   beforeEach(() => {
     (useRouter as jest.Mock).mockReturnValue({
       push: jest.fn(),
@@ -31,7 +28,7 @@ describe("SideNav Component", () => {
   it("should render the SideNav component", () => {
     render(
       <ThemeProvider theme={theme}>
-        <SideNav open={true} onClose={onClose} />
+        <SideNav />
       </ThemeProvider>,
     );
 
@@ -41,42 +38,50 @@ describe("SideNav Component", () => {
     expect(screen.getByText(t("sideNav.repportIssue"))).toBeInTheDocument();
   });
 
-  it("should call onClose when clicking on the drawer button", () => {
+  it("should close the sidebar when clicking on any drawer button", () => {
+    useUIStore.getState().openSidebar();
+    expect(useUIStore.getState().sidebarOpen).toBe(true);
     render(
       <ThemeProvider theme={theme}>
-        <SideNav open={true} onClose={onClose} />
+        <SideNav />
       </ThemeProvider>,
     );
 
     const newInspectionButton = screen.getByTestId("new-inspection-button");
     fireEvent.click(newInspectionButton);
-    expect(onClose).toHaveBeenCalled();
+    expect(useUIStore.getState().sidebarOpen).toBe(false);
 
+    useUIStore.getState().openSidebar();
+    expect(useUIStore.getState().sidebarOpen).toBe(true);
     const searchPageButton = screen.getByTestId("search-page-button");
     fireEvent.click(searchPageButton);
-    expect(onClose).toHaveBeenCalled();
+    expect(useUIStore.getState().sidebarOpen).toBe(false);
 
+    useUIStore.getState().openSidebar();
+    expect(useUIStore.getState().sidebarOpen).toBe(true);
     const reportIssueButton = screen.getByTestId("report-issue-button");
     fireEvent.click(reportIssueButton);
-    expect(onClose).toHaveBeenCalled();
+    expect(useUIStore.getState().sidebarOpen).toBe(false);
   });
 
   it("should call onClose when clicking outside the drawer", () => {
+    useUIStore.getState().openSidebar();
+    expect(useUIStore.getState().sidebarOpen).toBe(true);
     render(
       <ThemeProvider theme={theme}>
-        <SideNav open={true} onClose={onClose} />
+        <SideNav />
       </ThemeProvider>,
     );
 
     const drawer = screen.getByTestId("backdrop");
     fireEvent.click(drawer);
-    expect(onClose).toHaveBeenCalled();
+    expect(useUIStore.getState().sidebarOpen).toBe(false);
   });
 
   it("should have correct links", () => {
     render(
       <ThemeProvider theme={theme}>
-        <SideNav open={true} onClose={onClose} />
+        <SideNav />
       </ThemeProvider>,
     );
 
@@ -88,25 +93,20 @@ describe("SideNav Component", () => {
     ).toHaveAttribute("href", "/SearchPage");
     expect(
       screen.getByText(t("sideNav.repportIssue")).closest("a"),
-    ).toHaveAttribute(
-      "href",
-      );
+    ).toHaveAttribute("href");
   });
-  
-  it("should call clearUploadedFiles when 'new inspection' is clicked", () => {
-    const store = useUploadedFilesStore;
-    const clearUploadedFilesSpy = jest.spyOn(store.getState(), "clearUploadedFiles");
 
+  it("should navigate to '/' when 'new inspection' is clicked", () => {
+    const router = useRouter();
     render(
       <ThemeProvider theme={theme}>
-        <SideNav open={true} onClose={onClose} />
+        <SideNav />
       </ThemeProvider>,
     );
 
     const newInspectionButton = screen.getByTestId("new-inspection-button");
     fireEvent.click(newInspectionButton);
 
-    expect(clearUploadedFilesSpy).toHaveBeenCalled();
+    expect(router.push).toHaveBeenCalledWith("/");
   });
-
 });

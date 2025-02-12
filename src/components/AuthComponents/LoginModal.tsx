@@ -1,10 +1,11 @@
-import { Box, Button, Modal, Typography } from "@mui/material";
-import AccountCircleIcon from "@mui/icons-material/AccountCircle";
-import LockIcon from "@mui/icons-material/Lock";
 import theme from "@/app/theme";
 import IconInput from "@/components/IconInput";
+import AccountCircleIcon from "@mui/icons-material/AccountCircle";
+import LockIcon from "@mui/icons-material/Lock";
+import { Box, Modal, Typography } from "@mui/material";
 import { useState } from "react";
 import { useTranslation } from "react-i18next";
+import LoadingButton from "../LoadingButton";
 
 interface LoginProps {
   isOpen: boolean;
@@ -17,16 +18,19 @@ const LoginModal = ({ isOpen, login, onChangeMode }: LoginProps) => {
   const [password, setPassword] = useState("");
   const [errorMessage, setErrorMessage] = useState("");
   const { t } = useTranslation("authentication");
+  const [loading, setLoading] = useState(false);
 
   const handleSubmit = () => {
+    setLoading(true);
     login(username, password).then((message) => {
       console.log(message);
       setErrorMessage(message);
+      setLoading(false);
     });
   };
 
   return (
-    <Modal open={isOpen} data-testid={"modal"}>
+    <Modal open={isOpen} data-testid={"modal"} disableAutoFocus disableEnforceFocus>
       <Box
         className="
           absolute
@@ -84,6 +88,7 @@ const LoginModal = ({ isOpen, login, onChangeMode }: LoginProps) => {
             type={"text"}
             value={username}
             setValue={setUsername}
+            arial-label={t("alt.userIcon")}
           />
           <IconInput
             id={"password"}
@@ -93,6 +98,7 @@ const LoginModal = ({ isOpen, login, onChangeMode }: LoginProps) => {
             type={"password"}
             value={password}
             setValue={setPassword}
+            arial-label={t("alt.lockIcon")}
           />
           <Typography
             id={"error-message"}
@@ -104,18 +110,14 @@ const LoginModal = ({ isOpen, login, onChangeMode }: LoginProps) => {
           >
             {errorMessage}
           </Typography>
-          <Button
-            data-testid={"modal-submit"}
-            disabled={username === "" || password === ""}
-            className={`
-              !bg-white
-              !pointer-events-auto
-              ${username === "" || password === "" ? "!cursor-not-allowed !text-gray-400" : "!cursor-pointer !text-black"}
-            `}
+          <LoadingButton
             onClick={handleSubmit}
-          >
-            {t("login.title")}
-          </Button>
+            disabled={username === "" || password === ""}
+            loading={loading}
+            text={t("login.title")}
+            className="!bg-white !pointer-events-auto"
+            data-testid="modal-submit"
+          />
         </form>
         <Typography
           data-testid={"modal-change"}
@@ -129,10 +131,16 @@ const LoginModal = ({ isOpen, login, onChangeMode }: LoginProps) => {
         >
           {t("login.switchText")}
           <a
-            id={"toggleSignButton"}
-            data-testid={"modal-change-button"}
-            className={"underline text-white cursor-pointer"}
-            onClick={onChangeMode}
+            href="#"
+            role="button"
+            tabIndex={0}
+            id="toggleSignButton"
+            data-testid="modal-change-button"
+            className="underline text-white cursor-pointer focus:outline-none focus:ring-2 focus:ring-blue-400"
+            onClick={(e) => {
+              e.preventDefault(); // Prevent scrolling to top
+              onChangeMode();
+            }}
           >
             {t("login.switchLink")}
           </a>

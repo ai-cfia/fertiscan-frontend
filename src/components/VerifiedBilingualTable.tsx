@@ -19,6 +19,7 @@ import {
   Tooltip,
   Typography,
 } from "@mui/material";
+import { useEffect, useRef, useState } from "react";
 import {
   Controller,
   useFieldArray,
@@ -29,13 +30,13 @@ import { useTranslation } from "react-i18next";
 import QuantityInput from "./QuantityInput";
 import StyledSkeleton from "./StyledSkeleton";
 import StyledTextField from "./StyledTextField";
-import { useState } from "react";
 
 interface VerifiedBilingualTableProps {
   path: string;
   valueColumn?: boolean;
   unitOptions?: string[];
   loading?: boolean;
+  isFocus: boolean;
 }
 
 const VerifiedBilingualTable = ({
@@ -43,6 +44,7 @@ const VerifiedBilingualTable = ({
   valueColumn = false,
   unitOptions,
   loading = false,
+  isFocus,
 }: VerifiedBilingualTableProps) => {
   const { control, setValue, trigger } = useFormContext();
   const { fields, append, remove } = useFieldArray({
@@ -51,9 +53,13 @@ const VerifiedBilingualTable = ({
   });
   const [hoverIndex, setHoverIndex] = useState<number | null>(null);
   const { t } = useTranslation("labelDataValidator");
-
+  const [deleteIconFocusIndex, setDeleteIconFocusIndex] = useState<number | null>(null);
+  const [verifyIconFocusIndex, setVerifyIconFocusIndex] = useState<number | null>(null);
+  const [isFocused, setIsFocused] = useState<string | null>(null);
+  const firstEnglishInputRef = useRef<HTMLInputElement | null>(null);
   const data = useWatch({ control, name: path });
   const isVerified = (index: number) => Boolean(data?.[index]?.verified);
+
 
   const handleVerify = async (index: number, value: boolean) => {
     const isValid = await trigger(`${path}.${index}.value`);
@@ -69,6 +75,12 @@ const VerifiedBilingualTable = ({
   const setAllVerified = async (value: boolean) => {
     await Promise.all(fields.map((_, index) => handleVerify(index, value)));
   };
+
+  useEffect(() => {
+    if (isFocus && firstEnglishInputRef.current) {
+      firstEnglishInputRef.current.focus();
+    }
+  }, [isFocus]);
 
   return (
     <Box>
@@ -177,6 +189,7 @@ const VerifiedBilingualTable = ({
                           aria-disabled={isVerified(index)}
                           data-testid={`input-english-${path}-${index}`}
                           multiline
+                          inputRef={index === 0 ? firstEnglishInputRef : null}
                         />
                       )}
                     />
@@ -225,22 +238,19 @@ const VerifiedBilingualTable = ({
                       <Tooltip
                         title={t("verifiedBilingualTable.delete")}
                         enterDelay={1000}
-                        disableHoverListener={
-                          isVerified(index) || fields.length <= 1
-                        }
                       >
-                        <span>
-                          <IconButton
-                            onClick={() => remove(index)}
-                            disabled={isVerified(index) || fields.length <= 1}
-                            aria-label={t(
-                              "verifiedBilingualTable.accessibility.deleteButton",
-                            )}
-                            data-testid={`delete-row-btn-${path}-${index}`}
-                          >
-                            <DeleteIcon aria-hidden="true" />
-                          </IconButton>
-                        </span>
+                        <IconButton
+                          onClick={() => remove(index)}
+                          disabled={isVerified(index) || fields.length <= 1}
+                          aria-label={t(
+                            "verifiedBilingualTable.accessibility.deleteButton",
+                          )}
+                          onFocus={() => setDeleteIconFocusIndex(index)}
+                          onBlur={() => setDeleteIconFocusIndex(null)}
+                          data-testid={`delete-row-btn-${path}-${index}`}
+                        >
+                          <DeleteIcon aria-hidden="true" className={`${deleteIconFocusIndex === index ? "text-fertiscan-blue font-bold" : ""} `}/>
+                        </IconButton>
                       </Tooltip>
                       <Divider
                         orientation="vertical"
@@ -272,6 +282,8 @@ const VerifiedBilingualTable = ({
                                 data-testid={`verify-row-btn-${path}-${index}`}
                                 onMouseEnter={() => setHoverIndex(index)}
                                 onMouseLeave={() => setHoverIndex(null)}
+                                onFocus={() => setVerifyIconFocusIndex(index)}
+                                onBlur={() => setVerifyIconFocusIndex(null)}
                               >
                                 {hoverIndex === index && isVerified(index) ? (
                                   <SvgIcon aria-hidden>
@@ -283,7 +295,8 @@ const VerifiedBilingualTable = ({
                                   </SvgIcon>
                                 ) : (
                                   <CheckIcon
-                                    className={value ? "text-green-500" : ""}
+                                  className={`${value ? "text-green-500" : "" }${ verifyIconFocusIndex === index ? "text-fertiscan-blue font-bold" : ""
+                                  } `}
                                     aria-hidden
                                   />
                                 )}
@@ -305,12 +318,15 @@ const VerifiedBilingualTable = ({
       <Box className="flex justify-end gap-2 mt-4">
         {/* Add Row Button */}
         <Button
+          className={`${isFocused === "add" ? "!border-fertiscan-blue" : ""}`}
           onClick={() => append(DEFAULT_BILINGUAL_FIELD)}
           variant="outlined"
           color="secondary"
           startIcon={<AddIcon aria-hidden="true" />}
           aria-label={t("verifiedBilingualTable.accessibility.addRowButton")}
           data-testid={`add-row-btn-${path}`}
+          onFocus={() => setIsFocused("add")}
+          onBlur={() => setIsFocused(null)}
         >
           {t("verifiedBilingualTable.addRow")}
         </Button>
@@ -319,48 +335,44 @@ const VerifiedBilingualTable = ({
         <Tooltip
           title={t("verifiedBilingualTable.verifyAll")}
           enterDelay={1000}
-          disableHoverListener={data.every(
-            (row: VerifiedField) => row.verified,
-          )}
         >
-          <span>
-            <Button
-              onClick={() => setAllVerified(true)}
-              variant="outlined"
-              color="secondary"
-              disabled={data.every((row: VerifiedField) => row.verified)}
-              aria-label={t(
-                "verifiedBilingualTable.accessibility.verifyAllButton",
-              )}
-              data-testid={`verify-all-btn-${path}`}
-            >
-              <DoneAllIcon aria-hidden="true" />
-            </Button>
-          </span>
+          <Button
+            className={`${isFocused === "verifyAll" ? "!border-fertiscan-blue" : ""}`}
+            onClick={() => setAllVerified(true)}
+            variant="outlined"
+            color="secondary"
+            disabled={data.every((row: VerifiedField) => row.verified)}
+            aria-label={t(
+              "verifiedBilingualTable.accessibility.verifyAllButton",
+            )}
+            data-testid={`verify-all-btn-${path}`}
+            onFocus={() => setIsFocused("verifyAll")}
+            onBlur={() => setIsFocused(null)}
+          >
+            <DoneAllIcon aria-hidden="true" />
+          </Button>
         </Tooltip>
 
         {/* Mark all as Unverified Button */}
         <Tooltip
           title={t("verifiedBilingualTable.unverifyAll")}
           enterDelay={1000}
-          disableHoverListener={data.every(
-            (row: VerifiedField) => !row.verified,
-          )}
         >
-          <span>
-            <Button
-              onClick={() => setAllVerified(false)}
-              variant="outlined"
-              color="secondary"
-              disabled={data.every((row: VerifiedField) => !row.verified)}
-              aria-label={t(
-                "verifiedBilingualTable.accessibility.unverifyAllButton",
-              )}
-              data-testid={`unverify-all-btn-${path}`}
-            >
-              <RemoveDoneIcon aria-hidden="true" />
-            </Button>
-          </span>
+          <Button
+            className={`${isFocused === "unverifyAll" ? "!border-fertiscan-blue border-2" : ""}`}
+            onClick={() => setAllVerified(false)}
+            variant="outlined"
+            color="secondary"
+            disabled={data.every((row: VerifiedField) => !row.verified)}
+            aria-label={t(
+              "verifiedBilingualTable.accessibility.unverifyAllButton",
+            )}
+            data-testid={`unverify-all-btn-${path}`}
+            onFocus={() => setIsFocused("unverifyAll")}
+            onBlur={() => setIsFocused(null)}
+          >
+            <RemoveDoneIcon aria-hidden="true" />
+          </Button>
         </Tooltip>
       </Box>
     </Box>

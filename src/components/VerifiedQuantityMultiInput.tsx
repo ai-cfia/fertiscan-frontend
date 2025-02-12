@@ -2,9 +2,22 @@ import { DEFAULT_QUANTITY } from "@/types/types";
 import AddIcon from "@mui/icons-material/Add";
 import CheckIcon from "@mui/icons-material/Check";
 import DeleteIcon from "@mui/icons-material/Delete";
-import { Box, Button, Divider, IconButton, SvgIcon, Tooltip, Typography } from "@mui/material";
+import {
+  Box,
+  Button,
+  Divider,
+  IconButton,
+  SvgIcon,
+  Tooltip,
+  Typography,
+} from "@mui/material";
 import { useState } from "react";
-import { Controller, useFieldArray, useFormContext, useWatch } from "react-hook-form";
+import {
+  Controller,
+  useFieldArray,
+  useFormContext,
+  useWatch,
+} from "react-hook-form";
 import { useTranslation } from "react-i18next";
 import QuantityInput from "./QuantityInput";
 import StyledSkeleton from "./StyledSkeleton";
@@ -28,6 +41,9 @@ const VerifiedQuantityMultiInput: React.FC<VerifiedQuantityMultiInputProps> = ({
   const { control, trigger } = useFormContext();
   const [isFocused, setIsFocused] = useState(false);
   const [hover, setHover] = useState(false);
+  const [deleteIconFocusIndex, setDeleteIconFocusIndex] = useState<number | null>(null);
+  const [verifyIconFocus, setVerifyIconFocus] = useState(false);
+  const [addButtonFocus, setAddButtonFocus] = useState(false);
 
   const quantitiesPath = `${path}.quantities`;
   const verifiedPath = `${path}.verified`;
@@ -75,7 +91,6 @@ const VerifiedQuantityMultiInput: React.FC<VerifiedQuantityMultiInputProps> = ({
         .length > 1;
     return !isDuplicate || "errors.duplicateUnit";
   };
-
 
   return (
     <Box>
@@ -129,31 +144,36 @@ const VerifiedQuantityMultiInput: React.FC<VerifiedQuantityMultiInputProps> = ({
                     <Tooltip
                       enterDelay={1000}
                       title={t("verifiedQuantityMultiInput.deleteRow")}
-                      disableHoverListener={verified}
                     >
-                      <span>
                       <IconButton
                         size="small"
                         className="text-white"
-                        sx={{display: verified ? "none" : (fields.length === 1 ? "none" : "flex")}}
+                        sx={{
+                          display: verified
+                            ? "none"
+                            : fields.length === 1
+                              ? "none"
+                              : "flex",
+                        }}
                         onClick={() => remove(index)}
                         disabled={verified}
                         aria-label={t(
                           "verifiedQuantityMultiInput.accessibility.deleteRowButton",
                         )}
                         data-testid={`delete-button-${quantitiesPath}-${index}`}
+                        onFocus={() => { setDeleteIconFocusIndex(index); setIsFocused(true)}}
+                        onBlur={() => { setDeleteIconFocusIndex(null); setIsFocused(false)}}
                       >
-                          <DeleteIcon />
-                        </IconButton>
-                      </span>
+                        <DeleteIcon className={`${deleteIconFocusIndex === index ? "text-fertiscan-blue font-bold" : ""} `}/>
+                      </IconButton>
                     </Tooltip>
                   </Box>
                   <Divider
-                  className={`!my-1 ${isFocused ? "!border-fertiscan-blue" : ""}`}
-                  sx={{
-                    bgcolor: verified ? "#00C55E" : "inherit",
-                    display: isLastItem && verified? "none" : "block",
-                  }}
+                    className={`!my-1 ${isFocused ? "!border-fertiscan-blue" : ""}`}
+                    sx={{
+                      bgcolor: verified ? "#00C55E" : "inherit",
+                      display: isLastItem && verified ? "none" : "block",
+                    }}
                     data-testid={`row-divider-${quantitiesPath}-${index}`}
                   />
                 </Box>
@@ -163,10 +183,15 @@ const VerifiedQuantityMultiInput: React.FC<VerifiedQuantityMultiInputProps> = ({
             {/* Add Row Button */}
             <Button
               size="small"
-              className="!p-2 text-white bg-green-500"
+              className={`!p-2 bg-green-500 ${addButtonFocus ? "!text-fertiscan-blue font-bold" : ""}`}
+              sx={{
+                marginRight: "5px",
+              }}
               onClick={() => append(DEFAULT_QUANTITY)}
               startIcon={<AddIcon />}
               disabled={verified}
+              onFocus={() => { setIsFocused(true); setAddButtonFocus(true)}}
+              onBlur={() => { setIsFocused(false); setAddButtonFocus(false)}}
               aria-label={t(
                 "verifiedQuantityMultiInput.accessibility.addRowButton",
               )}
@@ -206,18 +231,24 @@ const VerifiedQuantityMultiInput: React.FC<VerifiedQuantityMultiInputProps> = ({
                   data-testid={`toggle-verified-btn-${path}`}
                   onMouseEnter={() => setHover(true)}
                   onMouseLeave={() => setHover(false)}
+                  onFocus={() => {setVerifyIconFocus(true); setIsFocused(true)}}
+                  onBlur={() => {setVerifyIconFocus(false); setIsFocused(false)}}
                 >
                   {hover && verified ? (
                     <SvgIcon aria-hidden>
-                    <image href="/img/unverifyIcon.svg" height="24" width="24" />
+                      <image
+                        href="/img/unverifyIcon.svg"
+                        height="24"
+                        width="24"
+                      />
                     </SvgIcon>
-                ) : (
-                  <CheckIcon
-                    className={value ? "text-green-500" : ""}
-                    data-testid={`verified-icon-${verifiedPath}`}
-                    aria-hidden
-                  />
-                )}
+                  ) : (
+                    <CheckIcon
+                    className={`${value ? "text-green-500" : ""} ${ verifyIconFocus ? "text-fertiscan-blue font-bold" : ""} `}
+                      data-testid={`verified-icon-${verifiedPath}`}
+                      aria-hidden
+                    />
+                  )}
                 </IconButton>
               </Tooltip>
             )}

@@ -48,4 +48,16 @@ export interface OrganizationInformation {
    * @memberof OrganizationInformation
    */
   phone_number?: string | null;
+  /**
+   *
+   * @type {boolean}
+   * @memberof OrganizationInformation
+   */
+  edited?: boolean | null;
+  /**
+   *
+   * @type {boolean}
+   * @memberof OrganizationInformation
+   */
+  is_main_contact?: boolean | null;
 }

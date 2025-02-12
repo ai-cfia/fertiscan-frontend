@@ -24,6 +24,9 @@ import type { ProductInformationInput } from "./product-information-input";
 // May contain unused imports in some cases
 // @ts-ignore
 import type { SubLabel } from "./sub-label";
+// May contain unused imports in some cases
+// @ts-ignore
+import type { ValuesObjects } from "./values-objects";
 
 /**
  *
@@ -31,6 +34,18 @@ import type { SubLabel } from "./sub-label";
  * @interface InspectionUpdate
  */
 export interface InspectionUpdate {
+  /**
+   *
+   * @type {string}
+   * @memberof InspectionUpdate
+   */
+  inspection_id?: string | null;
+  /**
+   *
+   * @type {string}
+   * @memberof InspectionUpdate
+   */
+  inspector_id?: string | null;
   /**
    *
    * @type {string}
@@ -45,16 +60,10 @@ export interface InspectionUpdate {
   verified?: boolean | null;
   /**
    *
-   * @type {OrganizationInformation}
+   * @type {Array<OrganizationInformation>}
    * @memberof InspectionUpdate
    */
-  company?: OrganizationInformation | null;
-  /**
-   *
-   * @type {OrganizationInformation}
-   * @memberof InspectionUpdate
-   */
-  manufacturer?: OrganizationInformation | null;
+  organizations?: Array<OrganizationInformation> | null;
   /**
    *
    * @type {ProductInformationInput}
@@ -79,4 +88,16 @@ export interface InspectionUpdate {
    * @memberof InspectionUpdate
    */
   guaranteed_analysis: FertiscanDbMetadataInspectionGuaranteedAnalysis;
+  /**
+   *
+   * @type {ValuesObjects}
+   * @memberof InspectionUpdate
+   */
+  ingredients: ValuesObjects;
+  /**
+   *
+   * @type {string}
+   * @memberof InspectionUpdate
+   */
+  picture_set_id: string;
 }

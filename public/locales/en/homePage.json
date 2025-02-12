@@ -3,12 +3,17 @@
   "submitButtonDisabledHint": "You need to add a minimum of 1 file to start the analysis",
   "fileList": {
     "uploadedfiles": "Uploaded Files",
-    "noUploadedfiles": "No uploaded files"
+    "noUploadedfiles": "No uploaded files",
+    "alt": {
+      "deleteAllIcon": "Delete All icon"
+    },
+    "deleteAll": "Delete All"
   },
   "fileElement": {
     "altText": {
       "uploadedFileAlt": "Uploaded file picture",
-      "deleteFileAlt": "Delete file button icon"
+      "deleteFileAlt": "Delete file button icon",
+      "enterFileName": "Enter file name"
     }
   },
   "dropzone": {
@@ -19,5 +24,6 @@
     "dragDrop": "Drag and Drop Files",
     "or": "OR",
     "browseFile": "Browse Files"
+
   }
 }

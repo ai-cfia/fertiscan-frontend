@@ -1,11 +1,13 @@
 import FileUploaded from "@/classe/File";
+import { QuantityChips } from "@/components/QuantityChip";
 import useUploadedFilesStore from "@/stores/fileStore";
 import useLabelDataStore from "@/stores/labelDataStore";
+import { Quantity } from "@/types/types";
 import {
   VERIFIED_LABEL_DATA,
   VERIFIED_LABEL_DATA_WITH_ID,
 } from "@/utils/client/constants";
-import { fireEvent, render, screen } from "@testing-library/react";
+import { fireEvent, render, screen, waitFor } from "@testing-library/react";
 import axios from "axios";
 import LabelDataConfirmationPage from "../page";
 
@@ -203,5 +205,102 @@ describe("LabelDataConfirmationPage", () => {
       "bilingual-table-container",
     );
     expect(bilingualTableContainers.length).toBe(4);
+  });
+});
+
+describe("QuantityChips", () => {
+  it("renders valid quantities, filters out invalid values", () => {
+    const quantities: Quantity[] = [
+      { value: "5", unit: "kg" },
+      { value: "", unit: "g" },
+      { value: "0", unit: "kg" },
+    ];
+
+    render(<QuantityChips quantities={quantities} />);
+
+    expect(screen.getByText("5 kg")).toBeInTheDocument();
+    expect(screen.getByText("0 kg")).toBeInTheDocument();
+    expect(screen.queryByText("g")).not.toBeInTheDocument();
+  });
+});
+
+describe("Notes Section Tests", () => {
+  it("should render the notes section with a textbox", () => {
+    render(<LabelDataConfirmationPage />);
+    const notesSection = screen.getByTestId("notes-section");
+    const notesTextbox = screen.getByTestId("notes-textbox");
+    expect(notesSection).toBeInTheDocument();
+    expect(notesTextbox).toBeInTheDocument();
+  });
+
+  it("should update the comment value when text is entered", () => {
+    useLabelDataStore.getState().setLabelData(VERIFIED_LABEL_DATA);
+    expect(useLabelDataStore.getState().labelData?.comment).toBe(
+      "Compliant with regulations.",
+    );
+    render(<LabelDataConfirmationPage />);
+    const notesTextbox = screen
+      .getByTestId("notes-textbox")
+      .querySelector("textarea");
+    expect(notesTextbox).toBeInTheDocument();
+    fireEvent.change(notesTextbox!, { target: { value: "New note" } });
+    expect(useLabelDataStore.getState().labelData?.comment).toBe("New note");
+    expect(notesTextbox).toHaveValue("New note");
+  });
+
+  it("should toggle the notes textbox disabled state when the checkbox is clicked", () => {
+    render(<LabelDataConfirmationPage />);
+    const notesTextbox = screen
+      .getByTestId("notes-textbox")
+      .querySelector("textarea");
+    const checkboxInput = screen
+      .getByTestId("confirmation-checkbox")
+      .querySelector("input");
+    expect(notesTextbox).toBeInTheDocument();
+    expect(checkboxInput).toBeInTheDocument();
+    expect(notesTextbox).not.toBeDisabled();
+    fireEvent.click(checkboxInput!);
+    expect(notesTextbox).toBeDisabled();
+    fireEvent.click(checkboxInput!);
+    expect(notesTextbox).not.toBeDisabled();
+  });
+});
+
+describe("LabelDataConfirmationPage - Ingredients Section", () => {
+  it("should render the nutrients table when recordKeeping is false or undefined", async () => {
+    useLabelDataStore.getState().setLabelData({
+      ...VERIFIED_LABEL_DATA,
+      ingredients: {
+        ...VERIFIED_LABEL_DATA.ingredients,
+        recordKeeping: { value: false, verified: true },
+      },
+    });
+    expect(
+      useLabelDataStore.getState().labelData?.ingredients.recordKeeping,
+    ).toEqual({ value: false, verified: true });
+
+    render(<LabelDataConfirmationPage />);
+
+    expect(screen.getByTestId("ingredients-section")).toBeInTheDocument();
+    await waitFor(() => {
+      expect(screen.getByText("ingredients.nutrients")).toBeInTheDocument();
+      expect(screen.getByText("Ammonium phosphate")).toBeInTheDocument();
+    });
+
+    useLabelDataStore.getState().setLabelData({
+      ...VERIFIED_LABEL_DATA,
+      ingredients: {
+        ...VERIFIED_LABEL_DATA.ingredients,
+        recordKeeping: { value: true, verified: true },
+      },
+    });
+
+    expect(screen.getByTestId("ingredients-section")).toBeInTheDocument();
+    await waitFor(() => {
+      expect(
+        screen.queryByText("ingredients.nutrients"),
+      ).not.toBeInTheDocument();
+      expect(screen.queryByText("Ammonium phosphate")).not.toBeInTheDocument();
+    });
   });
 });

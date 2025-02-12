@@ -4,8 +4,9 @@ import Step from "@mui/material/Step";
 import StepButton from "@mui/material/StepButton";
 import StepLabel from "@mui/material/StepLabel";
 import Stepper from "@mui/material/Stepper";
-import { useEffect, useRef } from "react";
+import { useEffect, useRef, useState } from "react";
 import { useTranslation } from "react-i18next";
+import LoadingButton from "./LoadingButton";
 
 export enum StepStatus {
   Incomplete = "incomplete",
@@ -76,6 +77,12 @@ export const StepperControls: React.FC<StepperProps> = ({
 }) => {
   const { t } = useTranslation("labelDataValidator");
   const stepsTotal = stepTitles.length;
+  const [loading, setLoading] = useState(false);
+
+  const handleSubmission = () => {
+    setLoading(true);
+    submit();
+  };
 
   return (
     <Box className="flex flex-col gap-2 content-center">
@@ -88,16 +95,16 @@ export const StepperControls: React.FC<StepperProps> = ({
         >
           {t("stepper.back")}
         </Button>
-        <Button
-          onClick={submit}
+        <LoadingButton
+          onClick={handleSubmission}
           disabled={stepStatuses.some(
             (value) => value !== StepStatus.Completed,
           )}
+          loading={loading}
+          text={t("stepper.submit")}
           variant="contained"
           color="secondary"
-        >
-          {t("stepper.submit")}
-        </Button>
+        />
         <Button
           onClick={() =>
             setActiveStep((prev) => Math.min(prev + 1, stepsTotal - 1))

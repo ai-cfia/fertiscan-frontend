@@ -1,4 +1,5 @@
-import useUploadedFilesStore from "@/stores/fileStore";
+"use client";
+import useUIStore from "@/stores/uiStore";
 import BugReportIcon from "@mui/icons-material/BugReport";
 import HomeIcon from "@mui/icons-material/Home";
 import SearchIcon from "@mui/icons-material/Search";
@@ -16,23 +17,22 @@ import {
 } from "@mui/material";
 import Image from "next/image";
 import Link from "next/link";
+import { useRouter } from "next/navigation";
 import { useTranslation } from "react-i18next";
 
-interface DrawerMenuProps {
-  open: boolean;
-  onClose: () => void;
-}
-
-const SideNav = ({ open, onClose }: DrawerMenuProps) => {
+const SideNav = () => {
+  const router = useRouter();
   const { t } = useTranslation("header");
-  const { clearUploadedFiles } = useUploadedFilesStore();
+  const sidebarOpen = useUIStore((state) => state.sidebarOpen);
+  const closeSidebar = useUIStore((state) => state.closeSidebar);
+
   return (
     <Drawer
       className="darkContainer w-[240px] flex-shrink-0"
       variant="temporary"
       anchor="left"
-      open={open}
-      onClose={onClose}
+      open={sidebarOpen}
+      onClose={closeSidebar}
       transitionDuration={0}
       ModalProps={{
         keepMounted: true,
@@ -45,7 +45,7 @@ const SideNav = ({ open, onClose }: DrawerMenuProps) => {
         className="w-[250px] h-full flex flex-col justify-between text-white bg-sky-900"
         role="presentation"
         data-testid="backdrop"
-        onClick={onClose}
+        onClick={closeSidebar}
       >
         <div>
           <Toolbar className="flex">
@@ -68,7 +68,7 @@ const SideNav = ({ open, onClose }: DrawerMenuProps) => {
               href="/"
               passHref
               data-testid="new-inspection-button"
-              onClick={clearUploadedFiles}
+              onClick={() => router.push("/")}
             >
               <ListItemButton>
                 <ListItemIcon

@@ -1,17 +1,17 @@
 "use client";
 import { CircularProgress, Stack } from "@mui/material";
-import InspectionPreview from "@/types/InspectionPreview";
 import InspectionElement from "@/components/InspectionList/InspectionElement";
 import { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
+import { InspectionData } from "@/utils/server/backend";
 
 interface InspectionListProps {
   search: string;
-  inspectionList: InspectionPreview[];
+  inspectionList: InspectionData[];
 }
 
 const InspectionList = ({ search, inspectionList }: InspectionListProps) => {
-  const [shownList, setShownList] = useState([] as InspectionPreview[]);
+  const [shownList, setShownList] = useState([] as InspectionData[]);
   const [loading, setLoading] = useState(true);
 
   const router = useRouter();

@@ -168,7 +168,10 @@ function LabelDataValidator({
   }, [labelData.guaranteedAnalysis, setGuaranteedAnalysisStepStatus]);
 
   useEffect(() => {
-    const verified = checkFieldArray(labelData.ingredients);
+    const verified =
+      checkFieldRecord({
+        recordKeeping: labelData.ingredients.recordKeeping,
+      }) && checkFieldArray(labelData.ingredients.nutrients);
     setIngredientsStepStatus(
       verified ? StepStatus.Completed : StepStatus.Incomplete,
     );
@@ -176,7 +179,7 @@ function LabelDataValidator({
 
   return (
     <Container
-      className="flex flex-col max-w-[1920px] bg-gray-100 text-black"
+      className="flex flex-col max-w-[1920px] text-black"
       maxWidth={false}
       data-testid="label-data-validator-container"
     >

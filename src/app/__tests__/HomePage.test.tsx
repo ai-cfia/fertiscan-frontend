@@ -1,6 +1,9 @@
 /* eslint-disable react/display-name */
 /* eslint-disable react-hooks/rules-of-hooks */
+import FileUploaded from "@/classe/File";
 import useUploadedFilesStore from "@/stores/fileStore";
+import useLabelDataStore from "@/stores/labelDataStore";
+import { VERIFIED_LABEL_DATA } from "@/utils/client/constants";
 import { fireEvent, render, screen, waitFor } from "@testing-library/react";
 import userEvent from "@testing-library/user-event";
 import { useTranslation } from "react-i18next";
@@ -72,7 +75,7 @@ describe("HomePage Component", () => {
     const file = new File(["hello"], "hello.png", { type: "image/png" });
 
     // Find the file input element and upload the file
-    const input = screen.getByLabelText(t("dropzone.browseFile"));
+    const input = screen.getByTestId("browse-file-button");
     userEvent.upload(input, file);
 
     // Check that the file was uploaded and appears in the list.
@@ -85,15 +88,15 @@ describe("HomePage Component", () => {
     fireEvent.mouseEnter(fileElement);
 
     await waitFor(() => {
-
-    // Find and click the delete button
-    const deleteButton = screen.getByTestId("delete-hello.png");
-    fireEvent.click(deleteButton);
+      // Find and click the delete button
+      const deleteButton = screen.getByTestId("delete-hello.png");
+      fireEvent.click(deleteButton);
     });
 
-
     // Check that the file was removed
-    expect(screen.queryByTestId("file-element-hello.png")).not.toBeInTheDocument();
+    expect(
+      screen.queryByTestId("file-element-hello.png"),
+    ).not.toBeInTheDocument();
   });
 
   it("should allow file uploads via drag and drop", async () => {
@@ -152,14 +155,15 @@ describe("HomePage Component", () => {
     fireEvent.mouseEnter(fileElement);
 
     await waitFor(() => {
-
-    // Find and click the delete button
-    const deleteButton = screen.getByTestId("delete-hello.png");
-    fireEvent.click(deleteButton);
+      // Find and click the delete button
+      const deleteButton = screen.getByTestId("delete-hello.png");
+      fireEvent.click(deleteButton);
     });
 
     // Check that the file was removed
-    expect(screen.queryByTestId("file-element-hello.png")).not.toBeInTheDocument();
+    expect(
+      screen.queryByTestId("file-element-hello.png"),
+    ).not.toBeInTheDocument();
   });
 
   it("should allow file upload via input and keep hover effect until delete button is clicked", async () => {
@@ -169,7 +173,7 @@ describe("HomePage Component", () => {
     const file = new File(["hello"], "hello.png", { type: "image/png" });
 
     // Find the file input element and upload the file
-    const input = screen.getByLabelText(t("dropzone.browseFile"));
+    const input = screen.getByTestId("browse-file-button");
     userEvent.upload(input, file);
 
     // Check that the file was uploaded and appears in the list.
@@ -182,14 +186,15 @@ describe("HomePage Component", () => {
     fireEvent.mouseEnter(fileElement);
 
     await waitFor(() => {
-
-    // Find and click the delete button
-    const deleteButton = screen.getByTestId("delete-hello.png");
-    fireEvent.click(deleteButton);
+      // Find and click the delete button
+      const deleteButton = screen.getByTestId("delete-hello.png");
+      fireEvent.click(deleteButton);
     });
 
     // Check that the file was removed
-    expect(screen.queryByTestId("file-element-hello.png")).not.toBeInTheDocument();
+    expect(
+      screen.queryByTestId("file-element-hello.png"),
+    ).not.toBeInTheDocument();
   });
 
   it("The button submit should be visible when a file is uploaded", async () => {
@@ -199,7 +204,7 @@ describe("HomePage Component", () => {
     const file = new File(["hello"], "hello.png", { type: "image/png" });
 
     // Find the file input element and upload the file
-    const input = screen.getByLabelText(t("dropzone.browseFile"));
+    const input = screen.getByTestId("browse-file-button");
     userEvent.upload(input, file);
 
     // Check that the file was uploaded and appears in the list.
@@ -220,7 +225,7 @@ describe("HomePage Component", () => {
     const file = new File(["hello"], "hello.png", { type: "image/png" });
 
     // Find the file input element and upload the file
-    const input = screen.getByLabelText(t("dropzone.browseFile"));
+    const input = screen.getByTestId("browse-file-button");
     userEvent.upload(input, file);
 
     // Check that the file was uploaded and appears in the list.
@@ -244,11 +249,11 @@ describe("HomePage Component", () => {
     const file2 = new File(["hello2"], "hello2.png", { type: "image/png" });
 
     // Find the file input element and upload the file
-    const input = screen.getByLabelText(t("dropzone.browseFile"));
+    const input = screen.getByTestId("browse-file-button");
     userEvent.upload(input, [file, file2]);
 
     // Check that the file was uploaded and appears in the list.
-    const fileElement =  await screen.findByTestId("file-element-hello.png");
+    const fileElement = await screen.findByTestId("file-element-hello.png");
     expect(fileElement).toBeInTheDocument();
 
     // Check that the file was uploaded and appears in the list.
@@ -292,7 +297,7 @@ describe("HomePage Component", () => {
 
     const file = new File(["hello"], "hello.png", { type: "image/png" });
 
-    const input = screen.getByLabelText(t("dropzone.browseFile"));
+    const input = screen.getByTestId("browse-file-button");
     userEvent.upload(input, file);
 
     const fileElement = await screen.findByTestId("file-element-hello.png");
@@ -302,5 +307,23 @@ describe("HomePage Component", () => {
     fireEvent.click(submitButton);
 
     expect(mockedRouterPush).toHaveBeenCalledWith("/label-data-validation");
+  });
+
+  it("should clear uploaded files and reset label data on mount", () => {
+    useUploadedFilesStore.getState().addUploadedFile(
+      FileUploaded.newFile(
+        { username: "testUser" },
+        "/uploads/test1.png",
+        new File(["dummy content"], "test1.png", {
+          type: "image/png",
+        }),
+      ),
+    );
+    useLabelDataStore.getState().setLabelData(VERIFIED_LABEL_DATA);
+    expect(useUploadedFilesStore.getState().uploadedFiles.length).toBe(1);
+    expect(useLabelDataStore.getState().labelData).not.toBeNull();
+    render(<HomePage />);
+    expect(useUploadedFilesStore.getState().uploadedFiles.length).toBe(0);
+    expect(useLabelDataStore.getState().labelData).toBe(null);
   });
 });

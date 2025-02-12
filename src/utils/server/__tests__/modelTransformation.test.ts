@@ -1,7 +1,7 @@
 import { LabelData } from "@/types/types";
 import {
   FertiscanDbMetadataInspectionValue,
-  Inspection,
+  InspectionResponse,
   LabelDataOutput,
   NutrientValue,
   PipelineInspectionValue,
@@ -189,16 +189,22 @@ describe("verifiedItemPairInspectionValue", () => {
 describe("mapLabelDataOutputToLabelData", () => {
   it("should map all data correctly", () => {
     const input: LabelDataOutput = {
-      company_name: "Company Inc.",
-      company_address: "123 Street",
-      company_website: "http://example.com",
-      company_phone_number: "123-456-7890",
-      manufacturer_name: "Mfg Corp.",
-      manufacturer_address: "456 Road",
-      manufacturer_website: "http://mfg.com",
-      manufacturer_phone_number: "987-654-3210",
+      organizations: [
+        {
+          name: "Company Inc.",
+          address: "123 Street",
+          website: "http://example.com",
+          phone_number: "123-456-7890",
+        },
+        {
+          name: "Mfg Corp.",
+          address: "456 Road",
+          website: "http://mfg.com",
+          phone_number: "987-654-3210",
+        },
+      ],
       fertiliser_name: "SuperGrow",
-      registration_number: "1234567A",
+      registration_number: [{ identifier: "1234567A", type: null }],
       lot_number: "LOT42",
       npk: "10-5-5",
       weight: [{ value: 20, unit: "kg" }],
@@ -218,6 +224,7 @@ describe("mapLabelDataOutputToLabelData", () => {
       },
       guaranteed_analysis_fr: {
         title: "Analyse Garantie",
+        is_minimal: false,
         nutrients: [
           { nutrient: "Azote", value: 10, unit: "%" },
           { nutrient: "Phosphore", value: 5, unit: "%" },
@@ -235,77 +242,86 @@ describe("mapLabelDataOutputToLabelData", () => {
 
     const result = mapLabelDataOutputToLabelData(input);
 
-    expect(result.organizations.length).toBe(2);
-    expect(result.organizations[0].name.value).toBe("Company Inc.");
-    expect(result.organizations[0].address.value).toBe("123 Street");
-    expect(result.organizations[0].website.value).toBe("http://example.com");
-    expect(result.organizations[0].phoneNumber.value).toBe("123-456-7890");
+    // Organizations
+    expect(result.organizations).toHaveLength(2);
+    input.organizations!.forEach((org, index) => {
+      expect(result.organizations[index].name.value).toBe(org.name);
+      expect(result.organizations[index].address.value).toBe(org.address);
+      expect(result.organizations[index].website.value).toBe(org.website);
+      expect(result.organizations[index].phoneNumber.value).toBe(
+        org.phone_number,
+      );
+    });
 
-    expect(result.organizations[1].name.value).toBe("Mfg Corp.");
-    expect(result.organizations[1].address.value).toBe("456 Road");
-    expect(result.organizations[1].website.value).toBe("http://mfg.com");
-    expect(result.organizations[1].phoneNumber.value).toBe("987-654-3210");
-
-    expect(result.baseInformation.name.value).toBe("SuperGrow");
-    expect(result.baseInformation.registrationNumber.value).toBe("1234567A");
-    expect(result.baseInformation.lotNumber.value).toBe("LOT42");
-    expect(result.baseInformation.npk.value).toBe("10-5-5");
-    expect(result.baseInformation.weight.quantities).toEqual([
-      { value: "20", unit: "kg" },
-    ]);
+    // Base Information
+    expect(result.baseInformation.name.value).toBe(input.fertiliser_name);
+    expect(result.baseInformation.registrationNumber.value).toBe(
+      input.registration_number![0].identifier,
+    );
+    expect(result.baseInformation.lotNumber.value).toBe(input.lot_number);
+    expect(result.baseInformation.npk.value).toBe(input.npk);
+    expect(result.baseInformation.weight.quantities).toEqual(
+      input.weight!.map((w) => ({ value: w.value!.toString(), unit: w.unit })),
+    );
     expect(result.baseInformation.density.quantities).toEqual([
-      { value: "1.2", unit: "g/cm³" },
+      { value: input.density!.value!.toString(), unit: input.density!.unit },
     ]);
     expect(result.baseInformation.volume.quantities).toEqual([
-      { value: "5", unit: "L" },
+      { value: input.volume!.value!.toString(), unit: input.volume!.unit },
     ]);
 
-    expect(result.cautions).toEqual([
-      {
-        en: "Keep away from children",
-        fr: "Tenir loin des enfants",
+    // Cautions & Instructions
+    expect(result.cautions).toEqual(
+      input.cautions_en!.map((en, i) => ({
+        en,
+        fr: input.cautions_fr![i],
         verified: false,
-      },
-    ]);
-    expect(result.instructions).toEqual([
-      {
-        en: "Apply generously",
-        fr: "Appliquer généreusement",
+      })),
+    );
+    expect(result.instructions).toEqual(
+      input.instructions_en!.map((en, i) => ({
+        en,
+        fr: input.instructions_fr![i],
         verified: false,
-      },
-      { en: "Water thoroughly", fr: "Arroser abondamment", verified: false },
-    ]);
+      })),
+    );
 
-    expect(result.guaranteedAnalysis.titleEn.value).toBe("Guaranteed Analysis");
-    expect(result.guaranteedAnalysis.titleFr.value).toBe("Analyse Garantie");
-    expect(result.guaranteedAnalysis.isMinimal.value).toBe(true);
-    expect(result.guaranteedAnalysis.nutrients).toEqual([
-      { en: "Nitrogen", fr: "Azote", value: "10", unit: "%", verified: false },
-      {
-        en: "Phosphorus",
-        fr: "Phosphore",
-        value: "5",
-        unit: "%",
+    // Guaranteed Analysis
+    expect(result.guaranteedAnalysis.titleEn.value).toBe(
+      input.guaranteed_analysis_en!.title,
+    );
+    expect(result.guaranteedAnalysis.titleFr.value).toBe(
+      input.guaranteed_analysis_fr!.title,
+    );
+    expect(result.guaranteedAnalysis.isMinimal.value).toBe(
+      input.guaranteed_analysis_en!.is_minimal,
+    );
+    expect(result.guaranteedAnalysis.nutrients).toEqual(
+      input.guaranteed_analysis_en!.nutrients!.map((nutrient, i) => ({
+        en: nutrient.nutrient,
+        fr: input.guaranteed_analysis_fr!.nutrients![i].nutrient,
+        value: nutrient.value!.toString(),
+        unit: nutrient.unit,
         verified: false,
-      },
-    ]);
+      })),
+    );
 
-    expect(result.ingredients).toEqual([
-      {
-        en: "Fish meal",
-        fr: "Farine de poisson",
-        value: "50",
-        unit: "g",
+    // Ingredients
+    expect(result.ingredients.nutrients).toEqual(
+      input.ingredients_en!.map((ingredient, i) => ({
+        en: ingredient.nutrient,
+        fr: input.ingredients_fr![i].nutrient,
+        value: ingredient.value!.toString(),
+        unit: ingredient.unit,
         verified: false,
-      },
-      {
-        en: "Bone meal",
-        fr: "Farine d'os",
-        value: "50",
-        unit: "g",
-        verified: false,
-      },
-    ]);
+      })),
+    );
+    expect(result.ingredients.recordKeeping).toEqual({
+      value: false,
+      verified: false,
+    });
+
+    expect(result.confirmed).toBe(false);
   });
 
   it("should handle missing fields gracefully", () => {
@@ -347,34 +363,37 @@ describe("mapLabelDataOutputToLabelData", () => {
     expect(result.guaranteedAnalysis.nutrients).toEqual([]);
 
     // Ingredients
-    expect(result.ingredients).toEqual([]);
+    expect(result.ingredients).toEqual({
+      nutrients: [],
+      recordKeeping: { value: false, verified: false },
+    });
   });
 });
 
-const emptyInspection: Inspection = {
+const emptyInspection: InspectionResponse = {
   inspection_id: "",
-  company: {
-    name: "",
-    address: "",
-    website: "",
-    phone_number: "",
-  },
-  manufacturer: {
-    name: "",
-    address: "",
-    website: "",
-    phone_number: "",
-  },
+  inspector_id: null,
+  picture_set_id: "",
+  inspection_comment: null,
+  verified: true,
+  organizations: null,
   product: {
-    name: "",
-    registration_number: "",
-    lot_number: "",
-    npk: "",
+    name: null,
+    label_id: null,
+    lot_number: null,
     metrics: {
       weight: [],
       density: null,
       volume: null,
     },
+    npk: null,
+    warranty: null,
+    n: null,
+    p: null,
+    k: null,
+    verified: null,
+    registration_numbers: null,
+    record_keeping: null,
   },
   cautions: { en: [], fr: [] },
   instructions: { en: [], fr: [] },
@@ -384,29 +403,37 @@ const emptyInspection: Inspection = {
     en: [],
     fr: [],
   },
-  verified: true,
-  inspection_comment: "",
+  ingredients: {
+    en: [],
+    fr: [],
+  },
 };
 
 describe("mapInspectionToLabelData", () => {
   it("should map all data correctly", () => {
-    const input: Inspection = {
+    const input: InspectionResponse = {
       inspection_id: "INS123",
-      company: {
-        name: "Company Inc.",
-        address: "123 Street",
-        website: "http://example.com",
-        phone_number: "123-456-7890",
-      },
-      manufacturer: {
-        name: "Mfg Corp.",
-        address: "456 Road",
-        website: "http://mfg.com",
-        phone_number: "987-654-3210",
-      },
+      inspector_id: null,
+      picture_set_id: "PIC123",
+      inspection_comment: "comment",
+      verified: false,
+      organizations: [
+        {
+          name: "Company Inc.",
+          address: "123 Street",
+          website: "http://example.com",
+          phone_number: "123-456-7890",
+        },
+        {
+          name: "Mfg Corp.",
+          address: "456 Road",
+          website: "http://mfg.com",
+          phone_number: "987-654-3210",
+        },
+      ],
       product: {
         name: "SuperGrow",
-        registration_number: "1234567A",
+        label_id: null,
         lot_number: "LOT42",
         npk: "10-5-5",
         metrics: {
@@ -414,6 +441,18 @@ describe("mapInspectionToLabelData", () => {
           density: { value: 1.2, unit: "g/cm³" },
           volume: { value: 5, unit: "L" },
         },
+        n: 10,
+        p: 5,
+        k: null,
+        verified: true,
+        registration_numbers: [
+          {
+            registration_number: "1234567A",
+            is_an_ingredient: false,
+            edited: false,
+          },
+        ],
+        record_keeping: false,
       },
       cautions: {
         en: ["Keep away from children"],
@@ -435,10 +474,15 @@ describe("mapInspectionToLabelData", () => {
           { name: "Phosphore", value: 5, unit: "%" },
         ],
       },
-      inspection_comment: "comment",
+      ingredients: {
+        en: [{ name: "Nitrogen", value: 10, unit: "%" }],
+        fr: [{ name: "Azote", value: 10, unit: "%" }],
+      },
     };
 
     const result = mapInspectionToLabelData(input);
+
+    expect(result.organizations.length).toBe(2);
 
     expect(result.organizations[0].name.value).toBe("Company Inc.");
     expect(result.organizations[0].address.value).toBe("123 Street");
@@ -454,12 +498,15 @@ describe("mapInspectionToLabelData", () => {
     expect(result.baseInformation.registrationNumber.value).toBe("1234567A");
     expect(result.baseInformation.lotNumber.value).toBe("LOT42");
     expect(result.baseInformation.npk.value).toBe("10-5-5");
+
     expect(result.baseInformation.weight.quantities).toEqual([
       { value: "20", unit: "kg" },
     ]);
+
     expect(result.baseInformation.density.quantities).toEqual([
       { value: "1.2", unit: "g/cm³" },
     ]);
+
     expect(result.baseInformation.volume.quantities).toEqual([
       { value: "5", unit: "L" },
     ]);
@@ -471,6 +518,7 @@ describe("mapInspectionToLabelData", () => {
         verified: false,
       },
     ]);
+
     expect(result.instructions).toEqual([
       {
         en: "Apply generously",
@@ -483,6 +531,7 @@ describe("mapInspectionToLabelData", () => {
     expect(result.guaranteedAnalysis.titleEn.value).toBe("Guaranteed Analysis");
     expect(result.guaranteedAnalysis.titleFr.value).toBe("Analyse Garantie");
     expect(result.guaranteedAnalysis.isMinimal.value).toBe(true);
+
     expect(result.guaranteedAnalysis.nutrients).toEqual([
       { en: "Nitrogen", fr: "Azote", value: "10", unit: "%", verified: false },
       {
@@ -494,30 +543,27 @@ describe("mapInspectionToLabelData", () => {
       },
     ]);
 
-    expect(result.ingredients).toEqual([
-      { en: "Nitrogen", fr: "Azote", value: "10", unit: "%", verified: false },
-      {
-        en: "Phosphorus",
-        fr: "Phosphore",
-        value: "5",
-        unit: "%",
-        verified: false,
-      },
-    ]);
+    expect(result.ingredients).toEqual({
+      nutrients: [
+        {
+          en: "Nitrogen",
+          fr: "Azote",
+          value: "10",
+          unit: "%",
+          verified: false,
+        },
+      ],
+      recordKeeping: { value: false, verified: false },
+    });
+
     expect(result.confirmed).toBe(false);
     expect(result.comment).toBe("comment");
+    expect(result.pictureSetId).toBe("PIC123");
   });
 
   it("should handle missing fields gracefully", () => {
     const result = mapInspectionToLabelData(emptyInspection);
-    expect(result.organizations[0].name.value).toBe("");
-    expect(result.organizations[0].address.value).toBe("");
-    expect(result.organizations[0].website.value).toBe("");
-    expect(result.organizations[0].phoneNumber.value).toBe("");
-    expect(result.organizations[1].name.value).toBe("");
-    expect(result.organizations[1].address.value).toBe("");
-    expect(result.organizations[1].website.value).toBe("");
-    expect(result.organizations[1].phoneNumber.value).toBe("");
+    expect(result.organizations).toEqual([]);
     expect(result.baseInformation.name.value).toBe("");
     expect(result.baseInformation.registrationNumber.value).toBe("");
     expect(result.baseInformation.lotNumber.value).toBe("");
@@ -535,19 +581,16 @@ describe("mapInspectionToLabelData", () => {
     expect(result.guaranteedAnalysis.titleFr.value).toBe("");
     expect(result.guaranteedAnalysis.isMinimal.value).toBe(false);
     expect(result.guaranteedAnalysis.nutrients).toEqual([]);
-    expect(result.ingredients).toEqual([]);
+    expect(result.pictureSetId).toBe("");
+    expect(result.ingredients).toEqual({
+      nutrients: [],
+      recordKeeping: { value: false, verified: true },
+    });
   });
 
   it("sets all fields as verified if inspection is verified", () => {
     const result = mapInspectionToLabelData(emptyInspection);
-    expect(result.organizations[0].name.verified).toBe(true);
-    expect(result.organizations[0].address.verified).toBe(true);
-    expect(result.organizations[0].website.verified).toBe(true);
-    expect(result.organizations[0].phoneNumber.verified).toBe(true);
-    expect(result.organizations[1].name.verified).toBe(true);
-    expect(result.organizations[1].address.verified).toBe(true);
-    expect(result.organizations[1].website.verified).toBe(true);
-    expect(result.organizations[1].phoneNumber.verified).toBe(true);
+    expect(result.organizations).toEqual([]);
     expect(result.baseInformation.name.verified).toBe(true);
     expect(result.baseInformation.registrationNumber.verified).toBe(true);
     expect(result.baseInformation.lotNumber.verified).toBe(true);
@@ -558,6 +601,19 @@ describe("mapInspectionToLabelData", () => {
     expect(result.guaranteedAnalysis.titleEn.verified).toBe(true);
     expect(result.guaranteedAnalysis.titleFr.verified).toBe(true);
     expect(result.guaranteedAnalysis.isMinimal.verified).toBe(true);
+    expect(result.cautions.every((caution) => caution.verified)).toBe(true);
+    expect(
+      result.instructions.every((instruction) => instruction.verified),
+    ).toBe(true);
+    expect(
+      result.guaranteedAnalysis.nutrients.every(
+        (nutrient) => nutrient.verified,
+      ),
+    ).toBe(true);
+    expect(result.ingredients.recordKeeping.verified).toBe(true);
+    expect(
+      result.ingredients.nutrients.every((ingredient) => ingredient.verified),
+    ).toBe(true);
   });
 });
 
@@ -624,46 +680,53 @@ const labelData: LabelData = {
     },
     { en: "Water thoroughly", fr: "Arroser abondamment", verified: false },
   ],
-  ingredients: [
-    {
-      en: "Fish meal",
-      fr: "Farine de poisson",
-      value: "50",
-      unit: "g",
-      verified: false,
-    },
-    {
-      en: "Bone meal",
-      fr: "Farine d'os",
-      value: "50",
-      unit: "g",
-      verified: false,
-    },
-  ],
+  ingredients: {
+    nutrients: [
+      {
+        en: "Fish meal",
+        fr: "Farine de poisson",
+        value: "50",
+        unit: "g",
+        verified: false,
+      },
+      {
+        en: "Bone meal",
+        fr: "Farine d'os",
+        value: "50",
+        unit: "g",
+        verified: false,
+      },
+    ],
+    recordKeeping: { value: false, verified: false },
+  },
   confirmed: false,
-  comment: "Inspection passed with minor issues",
+  comment: "InspectionResponse passed with minor issues",
+  pictureSetId: "PIC123",
 };
 
 const emptyLabelData: LabelData = {
   organizations: [],
   baseInformation: {
-    name: { value: "SuperGrow", verified: false },
-    registrationNumber: { value: "1234567A", verified: false },
-    lotNumber: { value: "LOT42", verified: false },
-    npk: { value: "10-5-5", verified: false },
+    name: { value: "", verified: false },
+    registrationNumber: { value: "", verified: false },
+    lotNumber: { value: "", verified: false },
+    npk: { value: "", verified: false },
     weight: { quantities: [], verified: false },
     density: { quantities: [], verified: false },
     volume: { quantities: [], verified: false },
   },
   guaranteedAnalysis: {
-    titleEn: { value: "Guaranteed Analysis", verified: false },
-    titleFr: { value: "Analyse Garantie", verified: false },
-    isMinimal: { value: true, verified: false },
+    titleEn: { value: "", verified: false },
+    titleFr: { value: "", verified: false },
+    isMinimal: { value: false, verified: false },
     nutrients: [],
   },
   cautions: [],
   instructions: [],
-  ingredients: [],
+  ingredients: {
+    nutrients: [],
+    recordKeeping: { value: true, verified: false },
+  },
   confirmed: false,
   comment: "",
 };
@@ -671,16 +734,22 @@ const emptyLabelData: LabelData = {
 describe("mapLabelDataToLabelDataInput", () => {
   it("should map all fields correctly", () => {
     const result = mapLabelDataToLabelDataInput(labelData);
-    expect(result.company_name).toBe("Company Inc.");
-    expect(result.company_address).toBe("123 Street");
-    expect(result.company_website).toBe("http://example.com");
-    expect(result.company_phone_number).toBe("123-456-7890");
-    expect(result.manufacturer_name).toBe("Mfg Corp.");
-    expect(result.manufacturer_address).toBe("456 Road");
-    expect(result.manufacturer_website).toBe("http://mfg.com");
-    expect(result.manufacturer_phone_number).toBe("987-654-3210");
+    expect(result.organizations).toEqual([
+      {
+        name: "Company Inc.",
+        address: "123 Street",
+        website: "http://example.com",
+        phone_number: "123-456-7890",
+      },
+      {
+        name: "Mfg Corp.",
+        address: "456 Road",
+        website: "http://mfg.com",
+        phone_number: "987-654-3210",
+      },
+    ]);
     expect(result.fertiliser_name).toBe("SuperGrow");
-    expect(result.registration_number).toBe("1234567A");
+    expect(result.registration_number).toEqual([{ identifier: "1234567A" }]);
     expect(result.lot_number).toBe("LOT42");
     expect(result.npk).toBe("10-5-5");
     expect(result.weight).toEqual([{ value: 20, unit: "kg" }]);
@@ -724,19 +793,24 @@ describe("mapLabelDataToLabelDataInput", () => {
 
   it("should handle empty arrays gracefully", () => {
     const result = mapLabelDataToLabelDataInput(emptyLabelData);
-    expect(result.company_name).toBeUndefined();
-    expect(result.company_address).toBeUndefined();
-    expect(result.company_website).toBeUndefined();
-    expect(result.company_phone_number).toBeUndefined();
-    expect(result.manufacturer_name).toBeUndefined();
-    expect(result.manufacturer_address).toBeUndefined();
-    expect(result.manufacturer_website).toBeUndefined();
-    expect(result.manufacturer_phone_number).toBeUndefined();
+    expect(result.organizations).toEqual([]);
+    expect(result.fertiliser_name).toBe("");
+    expect(result.registration_number).toEqual([{ identifier: "" }]);
+    expect(result.lot_number).toBe("");
+    expect(result.npk).toBe("");
     expect(result.weight).toEqual([]);
     expect(result.density).toEqual({ value: null, unit: null });
     expect(result.volume).toEqual({ value: null, unit: null });
-    expect(result.guaranteed_analysis_en?.nutrients ?? []).toEqual([]);
-    expect(result.guaranteed_analysis_fr?.nutrients).toEqual([]);
+    expect(result.guaranteed_analysis_en).toEqual({
+      title: "",
+      is_minimal: false,
+      nutrients: [],
+    });
+    expect(result.guaranteed_analysis_fr).toEqual({
+      title: "",
+      is_minimal: false,
+      nutrients: [],
+    });
     expect(result.cautions_en).toEqual([]);
     expect(result.cautions_fr).toEqual([]);
     expect(result.instructions_en).toEqual([]);
@@ -751,24 +825,26 @@ describe("mapLabelDataToInspectionUpdate", () => {
     const result = mapLabelDataToInspectionUpdate(labelData);
 
     expect(result.inspection_comment).toBe(
-      "Inspection passed with minor issues",
+      "InspectionResponse passed with minor issues",
     );
     expect(result.verified).toBe(false);
-    expect(result.company).toEqual({
-      name: "Company Inc.",
-      address: "123 Street",
-      website: "http://example.com",
-      phone_number: "123-456-7890",
-    });
-    expect(result.manufacturer).toEqual({
-      name: "Mfg Corp.",
-      address: "456 Road",
-      website: "http://mfg.com",
-      phone_number: "987-654-3210",
-    });
+    expect(result.organizations).toEqual([
+      {
+        name: "Company Inc.",
+        address: "123 Street",
+        website: "http://example.com",
+        phone_number: "123-456-7890",
+      },
+      {
+        name: "Mfg Corp.",
+        address: "456 Road",
+        website: "http://mfg.com",
+        phone_number: "987-654-3210",
+      },
+    ]);
     expect(result.product).toEqual({
       name: "SuperGrow",
-      registration_number: "1234567A",
+      registration_numbers: [{ registration_number: "1234567A" }],
       lot_number: "LOT42",
       npk: "10-5-5",
       metrics: {
@@ -776,6 +852,7 @@ describe("mapLabelDataToInspectionUpdate", () => {
         density: { value: 1.2, unit: "g/cm³" },
         volume: { value: 5, unit: "L" },
       },
+      record_keeping: false,
     });
     expect(result.cautions).toEqual({
       en: ["Keep away from children"],
@@ -786,10 +863,7 @@ describe("mapLabelDataToInspectionUpdate", () => {
       fr: ["Appliquer généreusement", "Arroser abondamment"],
     });
     expect(result.guaranteed_analysis).toEqual({
-      title: {
-        en: "Guaranteed Analysis",
-        fr: "Analyse Garantie",
-      },
+      title: { en: "Guaranteed Analysis", fr: "Analyse Garantie" },
       is_minimal: true,
       en: [
         { name: "Nitrogen", value: 10, unit: "%" },
@@ -800,6 +874,17 @@ describe("mapLabelDataToInspectionUpdate", () => {
         { name: "Phosphore", value: 5, unit: "%" },
       ],
     });
+    expect(result.ingredients).toEqual({
+      en: [
+        { name: "Fish meal", value: 50, unit: "g" },
+        { name: "Bone meal", value: 50, unit: "g" },
+      ],
+      fr: [
+        { name: "Farine de poisson", value: 50, unit: "g" },
+        { name: "Farine d'os", value: 50, unit: "g" },
+      ],
+    });
+    expect(result.picture_set_id).toBe("PIC123");
   });
 
   it("should handle empty arrays gracefully", () => {
@@ -807,36 +892,40 @@ describe("mapLabelDataToInspectionUpdate", () => {
 
     expect(result.inspection_comment).toBe("");
     expect(result.verified).toBe(false);
-    expect(result.company).toEqual({
-      name: undefined,
-      address: undefined,
-      website: undefined,
-      phone_number: undefined,
-    });
-    expect(result.manufacturer).toEqual({
-      name: undefined,
-      address: undefined,
-      website: undefined,
-      phone_number: undefined,
-    });
+    expect(result.organizations).toEqual([]);
     expect(result.product).toEqual({
-      name: "SuperGrow",
-      registration_number: "1234567A",
-      lot_number: "LOT42",
-      npk: "10-5-5",
+      name: "",
+      registration_numbers: [{ registration_number: "" }],
+      lot_number: "",
+      npk: "",
       metrics: {
         weight: [],
-        density: { value: null, unit: undefined },
-        volume: { value: null, unit: undefined },
+        density: { value: null, unit: null },
+        volume: { value: null, unit: null },
       },
+      record_keeping: true,
     });
     expect(result.cautions).toEqual({ en: [], fr: [] });
     expect(result.instructions).toEqual({ en: [], fr: [] });
     expect(result.guaranteed_analysis).toEqual({
-      title: { en: "Guaranteed Analysis", fr: "Analyse Garantie" },
-      is_minimal: true,
+      title: { en: "", fr: "" },
+      is_minimal: false,
       en: [],
       fr: [],
     });
+    expect(result.ingredients).toEqual({ en: [], fr: [] });
+    expect(result.picture_set_id).toBe("");
+  });
+
+  it("should return empty ingredients when recordKeeping is true", () => {
+    const modifiedLabelData: LabelData = {
+      ...labelData,
+      ingredients: {
+        ...labelData.ingredients,
+        recordKeeping: { value: true, verified: false },
+      },
+    };
+    const result = mapLabelDataToInspectionUpdate(modifiedLabelData);
+    expect(result.ingredients).toEqual({ en: [], fr: [] });
   });
 });

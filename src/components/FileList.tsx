@@ -32,7 +32,6 @@ const FileList: React.FC<FileListProps> = ({ setDropzoneState }) => {
   const { t } = useTranslation("homePage");
   const { uploadedFiles, clearUploadedFiles } = useUploadedFilesStore();
 
-
   return (
     <Suspense fallback="loading">
       <Box
@@ -54,16 +53,15 @@ const FileList: React.FC<FileListProps> = ({ setDropzoneState }) => {
           rounded text-center p-1 bg-transparent bg-contain xs:w-[90%] md:w-[100%] h-[90%]
           xs:min-h-[350px] md:min-h-[400px] overflow-y-auto overflow-x-hidden min-w-[133.44px] md:max-w-[470px]
          `} // do not modify md:max-w-[470px] so that the fileList does not become to big
->
-<Box
+      >
+        <Box
           className={`absolute transform w-full h-full flex flex-col
                       ${
                         uploadedFiles.length === 0
                           ? "justify-center p-0 left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2"
                           : "justify-start items-start p-2 left-0 top-0 translate-x-none translate-y-none"
                       }
-                      text-center max-w-full max-h-full object-contain `
-                    }
+                      text-center max-w-full max-h-full object-contain `}
         >
           <Typography
             className="select-none"
@@ -92,6 +90,7 @@ const FileList: React.FC<FileListProps> = ({ setDropzoneState }) => {
                 paddingRight: "0.5rem",
                 marginLeft: "auto",
               }}
+              aria-label={t("fileList.alt.deleteAllIcon")}
             >
               {t("fileList.deleteAll")}
             </Button>
@@ -102,13 +101,12 @@ const FileList: React.FC<FileListProps> = ({ setDropzoneState }) => {
             spacing={2}
           >
             {uploadedFiles.map((file, index) => (
-            <FileElement
-              key={index}
-              setDropzoneState={setDropzoneState}
-              fileName={file.getInfo().name}
-              fileUrl={file.getInfo().path}
-            />
-          ))}
+              <FileElement
+                key={index}
+                setDropzoneState={setDropzoneState}
+                imageFile={file}
+              />
+            ))}
           </Stack>
         </Box>
       </Box>

@@ -1,5 +1,7 @@
 "use client";
 import UserMenu from "@/components/UserMenu";
+import useAlertStore from "@/stores/alertStore";
+import useUIStore from "@/stores/uiStore";
 import useBreakpoints from "@/utils/client/useBreakpoints";
 import AccountCircleIcon from "@mui/icons-material/AccountCircle";
 import MenuIcon from "@mui/icons-material/Menu";
@@ -18,10 +20,7 @@ import Link from "next/link";
 import { useState } from "react";
 import { useTranslation } from "react-i18next";
 import AlertBanner from "./AlertBanner";
-
-interface HeaderProps {
-  setSideNavOpen: (open: boolean | ((prevOpen: boolean) => boolean)) => void;
-}
+import "../app/i18n";
 
 /**
  * Header Component
@@ -33,17 +32,25 @@ interface HeaderProps {
  * - User account icon button
  */
 
-const Header: React.FC<HeaderProps> = ({ setSideNavOpen }) => {
+const Header = () => {
   const theme = useTheme();
   const { isDownXs, isBetweenXsSm, isBetweenSmMd } = useBreakpoints();
   const [anchorElement, setAnchorElement] = useState<null | HTMLElement>(null);
   const [isUserMenuOpen, setIsUserMenuOpen] = useState(false);
   const [language, setLanguage] = useState("en");
-  const { t } = useTranslation("header");
-
-  const handleSideNavToggle = () => {
-    setSideNavOpen((prevOpen) => !prevOpen);
+  const toggleSidebar = useUIStore((state) => state.toggleSidebar);
+  const { t, i18n } = useTranslation("header");
+  const { t: tAlert } = useTranslation("alertBanner");
+  const { t: tDebug } = useTranslation("translation");
+  const { showAlert } = useAlertStore();
+  const handleLanguageChange = (lng: string) => {
+    showAlert(tAlert("languageChanged", { lng }), "info");
   };
+
+  i18n.on("languageChanged", handleLanguageChange);
+  if (process.env.NEXT_PUBLIC_DEBUG === "true") {
+    console.log(tDebug("debugMessage"));
+  }
 
   const handleUserMenuToggle = (event: React.MouseEvent<HTMLElement>) => {
     setIsUserMenuOpen(true);
@@ -53,7 +60,7 @@ const Header: React.FC<HeaderProps> = ({ setSideNavOpen }) => {
   // Function to handle language change
   const changeLanguage = (lang: string) => {
     i18next.changeLanguage(lang, (err, t) => {
-      if (err) return console.log("Something went wrong while loading", err);
+      if (err) return console.log(t("error.loadingError"), err);
       t("key");
       setLanguage(lang);
     });
@@ -69,7 +76,7 @@ const Header: React.FC<HeaderProps> = ({ setSideNavOpen }) => {
         <IconButton
           aria-label={t("altText.sideMenuToggleAlt")}
           edge="start"
-          onClick={handleSideNavToggle}
+          onClick={toggleSidebar}
           data-testid="menu-toggle-button"
         >
           <MenuIcon fontSize="large" />
@@ -90,6 +97,7 @@ const Header: React.FC<HeaderProps> = ({ setSideNavOpen }) => {
               fill={true}
               priority
               data-testid="logo-image"
+              aria-label={t("altText.logoCFIAAlt")}
             />
           </Link>
         </Box>
