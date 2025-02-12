@@ -36,7 +36,15 @@ export default function RootLayout({
   i18n.on("languageChanged", handleLanguageChange);
 
   return (
-    <html>
+    <html lang={i18n.language}>
+      <head>
+        <meta charSet="UTF-8" />
+        <meta
+          name="viewport"
+          content="width=device-width, initial-scale=1.0"
+        />
+        <title>{ i18n.language === "en" ? "CFIA Label Data Validator" : "ACIA Validateur de données d'étiquette"}</title>
+      </head>
       <body>
         <AppRouterCacheProvider>
           <ThemeProvider theme={theme}>

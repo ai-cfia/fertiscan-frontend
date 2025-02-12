@@ -123,6 +123,7 @@ const OrganizationsForm: React.FC<FormComponentProps> = ({
                       color="secondary"
                       onClick={() => remove(index)}
                       data-testid={`remove-org-btn-${index}`}
+                      aria-label={t("organizations.removeOrganisation")}
                     >
                       <DeleteIcon />
                     </Button>
@@ -169,6 +170,7 @@ const OrganizationInformation: React.FC<OrganizationInformationProps> = ({
         path={`organizations.${index}.name`}
         loading={loading}
         data-testid={`org-name-input-${index}`}
+        isFocus={true}
       />
       <VerifiedInput
         label={t("organizations.fields.address.label")}

@@ -40,6 +40,7 @@ export const VerifiedFieldWrapper: React.FC<VerifiedFieldWrapperProps> = ({
   const { control } = useFormContext();
   const [isFocused, setIsFocused] = useState(false);
   const [hover, setHover] = useState(false);
+  const [iconFocus, setIconFocus] = useState(false);
 
   const valuePath = `${path}.value`;
   const verifiedPath = `${path}.verified`;
@@ -96,14 +97,18 @@ export const VerifiedFieldWrapper: React.FC<VerifiedFieldWrapperProps> = ({
                   }
                   onMouseEnter={() => setHover(true)}
                   onMouseLeave={() => setHover(false)}
+                  onFocus={() => setIconFocus(!iconFocus)}
+                  onBlur={() => setIconFocus(!iconFocus)}
+
                 >
                                    {hover && verified ? (
-                    <SvgIcon aria-hidden>
+                    <SvgIcon aria-hidden >
                     <image href="/img/unverifyIcon.svg" height="24" width="24" />
                     </SvgIcon>
                 ) : (
                   <CheckIcon
-                    className={value ? "text-green-500" : ""}
+                    className={`value ? "text-green-500" : "" ${ iconFocus ? "text-fertiscan-blue font-bold" : ""
+                    } `}
                     data-testid={`verified-icon-${verifiedPath}`}
                     aria-hidden
                   />
@@ -188,6 +193,7 @@ interface VerifiedInputProps {
   path: string;
   className?: string;
   loading?: boolean;
+  isFocus?: boolean;
 }
 
 export const VerifiedInput: React.FC<VerifiedInputProps> = ({
@@ -196,6 +202,7 @@ export const VerifiedInput: React.FC<VerifiedInputProps> = ({
   path,
   className = "",
   loading = false,
+  isFocus = false,
 }) => {
   const { t } = useTranslation("labelDataValidator");
   return (
@@ -221,6 +228,8 @@ export const VerifiedInput: React.FC<VerifiedInputProps> = ({
               }}
               data-testid={`input-field-${valuePath}`}
               aria-label={`${t("verifiedInput.accessibility.input", { label })}`}
+              autoFocus={isFocus}
+
             />
           )}
         />

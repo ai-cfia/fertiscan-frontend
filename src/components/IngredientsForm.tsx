@@ -43,6 +43,7 @@ function IngredientsForm({
           unitOptions={UNITS.ingredients}
           valueColumn
           loading={loading}
+          isFocus={true}
         />
       </Box>
     </FormProvider>

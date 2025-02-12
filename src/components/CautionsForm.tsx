@@ -36,7 +36,7 @@ const CautionsForm: React.FC<FormComponentProps> = ({
   return (
     <FormProvider {...methods}>
       <Box className="p-4" data-testid="cautions-form">
-        <VerifiedBilingualTable path={sectionName} loading={loading} />
+        <VerifiedBilingualTable path={sectionName} loading={loading} isFocus={true} />
       </Box>
     </FormProvider>
   );

@@ -11,6 +11,7 @@ const StyledTextField = React.forwardRef<HTMLInputElement, TextFieldProps>(
         fullWidth
         placeholder={props.placeholder}
         autoComplete="off"
+        autoFocus={props.autoFocus}
         slotProps={{
           ...props.slotProps,
           input: {
@@ -19,6 +20,7 @@ const StyledTextField = React.forwardRef<HTMLInputElement, TextFieldProps>(
             className: "!text-[15px]",
           },
         }}
+        focused={props.focused}
       />
     );
   },

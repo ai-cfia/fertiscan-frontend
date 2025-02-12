@@ -179,6 +179,9 @@ const VerifiedQuantityMultiInput: React.FC<VerifiedQuantityMultiInputProps> = ({
             <Button
               size="small"
               className="!p-2 text-white bg-green-500"
+              sx={{
+                marginRight: "5px",
+              }}
               onClick={() => append(DEFAULT_QUANTITY)}
               startIcon={<AddIcon />}
               disabled={verified}
