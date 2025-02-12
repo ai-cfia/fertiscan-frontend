@@ -107,7 +107,7 @@ export const VerifiedFieldWrapper: React.FC<VerifiedFieldWrapperProps> = ({
                     </SvgIcon>
                   ) : (
                     <CheckIcon
-                      className={`value ? "text-green-500" : "" ${ iconFocus ? "text-fertiscan-blue font-bold" : ""
+                      className={`${value ? "text-green-500" : "" } ${ iconFocus ? "text-fertiscan-blue font-bold" : ""
                       } `}
                       data-testid={`verified-icon-${verifiedPath}`}
                       aria-hidden

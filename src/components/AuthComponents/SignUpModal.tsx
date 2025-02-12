@@ -163,6 +163,7 @@ const SignUpModal = ({ isOpen, signup, onChangeMode }: SignUpProps) => {
             }
             loading={loading}
             text={t("signup.title")}
+            data-testid="modal-submit"
             className="!bg-white !pointer-events-auto"
           />
         </form>

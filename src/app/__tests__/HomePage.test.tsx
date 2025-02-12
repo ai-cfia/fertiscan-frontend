@@ -75,7 +75,7 @@ describe("HomePage Component", () => {
     const file = new File(["hello"], "hello.png", { type: "image/png" });
 
     // Find the file input element and upload the file
-    const input = screen.getByLabelText(t("dropzone.browseFile"));
+    const input = screen.getByTestId("browse-file-button");
     userEvent.upload(input, file);
 
     // Check that the file was uploaded and appears in the list.

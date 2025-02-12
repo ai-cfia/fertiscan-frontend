@@ -139,7 +139,7 @@ const Dropzone: React.FC<DropzoneProps> = ({
           <Typography className="select-none" variant="h5" color={theme.palette.secondary.main}>
             <b>{tHomePage("dropzone.or")}</b>
           </Typography>
-          <Button className="select-none" variant="contained" color="secondary" role="button" onClick={() => document.getElementById("File type")?.click()}>
+          <Button className="select-none" variant="contained" color="secondary" role="button" onClick={() => document.getElementById("File type")?.click()} >
             <b>{tHomePage("dropzone.browseFile")}</b>
             <input
               id="File type"
@@ -148,6 +148,7 @@ const Dropzone: React.FC<DropzoneProps> = ({
               multiple
               hidden
               onChange={handleFileUpload}
+              data-testid="browse-file-button"
             />
           </Button>
         </Box>
