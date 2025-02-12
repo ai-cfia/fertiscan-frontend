@@ -1,11 +1,14 @@
-import theme from "@/app/theme";
-import IconInput from "@/components/IconInput";
-import AccountCircleIcon from "@mui/icons-material/AccountCircle";
-import LockIcon from "@mui/icons-material/Lock";
-import { Box, Modal, Typography } from "@mui/material";
+import { Modal, Typography } from "@mui/material";
 import { useState } from "react";
 import { useTranslation } from "react-i18next";
 import LoadingButton from "../LoadingButton";
+import AuthBox from "./AuthBox";
+import ErrorMessage from "./ErrorMessage";
+import Form from "./Form";
+import Password from "./Password";
+import Title from "./Title";
+import ToggleSign from "./ToggleSign";
+import Username from "./Username";
 
 interface LoginProps {
   isOpen: boolean;
@@ -30,86 +33,18 @@ const LoginModal = ({ isOpen, login, onChangeMode }: LoginProps) => {
   };
 
   return (
-    <Modal open={isOpen} data-testid={"modal"} disableAutoFocus disableEnforceFocus>
-      <Box
-        className="
-          absolute
-          top-1/2
-          left-1/2
-          transform
-          -translate-x-1/2
-          -translate-y-1/2
-          w-1/2
-          max-w-lg
-          min-w-fit
-          h-fit
-          bg-sky-900
-          outline-none
-          shadow-2xl
-          rounded-2xl
-          flex
-          flex-col
-          max-h-96
-          px-4
-          pt-6
-        "
-      >
-        <Typography
-          className="
-            text-white
-            !mb-8
-            pl-4
-            pt-2
-          "
-          data-testid={"modal-title"}
-          id="modal-title"
-          variant="h3"
-          component="h2"
-        >
-          {t("login.title")}
-        </Typography>
-        <form
-          className={`
-            flex
-            flex-col
-            justify-between
-            gap-6
-            ${errorMessage === "" ? "h-fit" : "h-full"}
-            px-8
-          `}
-        >
-          <IconInput
-            id={"username"}
-            dataTestId={"modal-username"}
-            icon={
-              <AccountCircleIcon sx={{ color: "white", marginBottom: 1 }} />
-            }
-            placeholder={t("login.username")}
-            type={"text"}
-            value={username}
-            setValue={setUsername}
-            arial-label={t("alt.userIcon")}
-          />
-          <IconInput
-            id={"password"}
-            dataTestId={"modal-password"}
-            icon={<LockIcon sx={{ color: "white", marginBottom: 1 }} />}
-            placeholder={t("login.password")}
-            type={"password"}
-            value={password}
-            setValue={setPassword}
-            arial-label={t("alt.lockIcon")}
-          />
-          <Typography
-            id={"error-message"}
-            data-testid={"modal-error-message"}
-            sx={{
-              display: errorMessage === "" ? "none" : "block",
-              color: theme.palette.error.main,
-            }}
-          >
-            {errorMessage}
-          </Typography>
+    <Modal
+      open={isOpen}
+      data-testid="modal"
+      disableAutoFocus
+      disableEnforceFocus
+    >
+      <AuthBox>
+        <Title>{t("login.title")}</Title>
+        <Form>
+          <Username value={username} setValue={setUsername} />
+          <Password value={password} setValue={setPassword} />
+          <ErrorMessage>{errorMessage}</ErrorMessage>
           <LoadingButton
             onClick={handleSubmit}
             disabled={username === "" || password === ""}
@@ -118,34 +53,18 @@ const LoginModal = ({ isOpen, login, onChangeMode }: LoginProps) => {
             className="!bg-white !pointer-events-auto"
             data-testid="modal-submit"
           />
-        </form>
+        </Form>
         <Typography
-          data-testid={"modal-change"}
-          id={"toggleSign"}
-          className="
-            text-white
-            !mt-4
-            !mb-4
-            text-center
-          "
+          data-testid="modal-change"
+          id="toggleSign"
+          className="text-center !mt-4 !mb-4 text-white"
         >
           {t("login.switchText")}
-          <a
-            href="#"
-            role="button"
-            tabIndex={0}
-            id="toggleSignButton"
-            data-testid="modal-change-button"
-            className="underline text-white cursor-pointer focus:outline-none focus:ring-2 focus:ring-blue-400"
-            onClick={(e) => {
-              e.preventDefault(); // Prevent scrolling to top
-              onChangeMode();
-            }}
-          >
+          <ToggleSign onChangeMode={onChangeMode}>
             {t("login.switchLink")}
-          </a>
+          </ToggleSign>
         </Typography>
-      </Box>
+      </AuthBox>
     </Modal>
   );
 };
