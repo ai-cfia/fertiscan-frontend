@@ -32,7 +32,6 @@ const FileList: React.FC<FileListProps> = ({ setDropzoneState }) => {
   const { t } = useTranslation("homePage");
   const { uploadedFiles, clearUploadedFiles } = useUploadedFilesStore();
 
-
   return (
     <Suspense fallback="loading">
       <Box
@@ -62,8 +61,7 @@ const FileList: React.FC<FileListProps> = ({ setDropzoneState }) => {
                           ? "justify-center p-0 left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2"
                           : "justify-start items-start p-2 left-0 top-0 translate-x-none translate-y-none"
                       }
-                      text-center max-w-full max-h-full object-contain `
-                    }
+                      text-center max-w-full max-h-full object-contain `}
         >
           <Typography
             className="select-none"
@@ -103,13 +101,12 @@ const FileList: React.FC<FileListProps> = ({ setDropzoneState }) => {
             spacing={2}
           >
             {uploadedFiles.map((file, index) => (
-            <FileElement
-              key={index}
-              setDropzoneState={setDropzoneState}
-              fileName={file.getInfo().name}
-              fileUrl={file.getInfo().path}
-            />
-          ))}
+              <FileElement
+                key={index}
+                setDropzoneState={setDropzoneState}
+                imageFile={file}
+              />
+            ))}
           </Stack>
         </Box>
       </Box>

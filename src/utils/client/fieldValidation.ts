@@ -14,6 +14,7 @@ export const checkFieldArray = (
   fields: VerifiedField[],
   verified: boolean = true,
 ): boolean => {
+  console.debug("type of fields", typeof fields);
   return fields.every((field) => field.verified === verified);
 };
 
@@ -30,7 +31,9 @@ export const isAllVerified = (labelData: LabelData): boolean => {
       titleFr: labelData.guaranteedAnalysis.titleFr,
       isMinimal: labelData.guaranteedAnalysis.isMinimal,
     }) && checkFieldArray(labelData.guaranteedAnalysis.nutrients);
-  const isIngredientsVerified = checkFieldArray(labelData.ingredients);
+  const isIngredientsVerified =
+    checkFieldRecord({ recordKeeping: labelData.ingredients.recordKeeping }) &&
+    checkFieldArray(labelData.ingredients.nutrients);
   return (
     isOrganizationsVerified &&
     isBaseInformationVerified &&

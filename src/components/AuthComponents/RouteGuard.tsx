@@ -1,3 +1,4 @@
+"use client";
 import LoginModal from "@/components/AuthComponents/LoginModal";
 import SignUpModal from "@/components/AuthComponents/SignUpModal";
 import useAlertStore from "@/stores/alertStore";

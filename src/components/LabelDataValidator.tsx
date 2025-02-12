@@ -168,7 +168,10 @@ function LabelDataValidator({
   }, [labelData.guaranteedAnalysis, setGuaranteedAnalysisStepStatus]);
 
   useEffect(() => {
-    const verified = checkFieldArray(labelData.ingredients);
+    const verified =
+      checkFieldRecord({
+        recordKeeping: labelData.ingredients.recordKeeping,
+      }) && checkFieldArray(labelData.ingredients.nutrients);
     setIngredientsStepStatus(
       verified ? StepStatus.Completed : StepStatus.Incomplete,
     );

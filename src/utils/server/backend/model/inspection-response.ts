@@ -94,4 +94,10 @@ export interface InspectionResponse {
    * @memberof InspectionResponse
    */
   ingredients: ValuesObjects;
+  /**
+   *
+   * @type {string}
+   * @memberof InspectionResponse
+   */
+  picture_set_id: string;
 }

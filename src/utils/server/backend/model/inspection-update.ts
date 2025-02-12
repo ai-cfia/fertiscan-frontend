@@ -94,4 +94,10 @@ export interface InspectionUpdate {
    * @memberof InspectionUpdate
    */
   ingredients: ValuesObjects;
+  /**
+   *
+   * @type {string}
+   * @memberof InspectionUpdate
+   */
+  picture_set_id: string;
 }
