@@ -64,5 +64,23 @@
   "expandRetractButton": {
     "expandButton": "Hide image and show only label information.",
     "retractButton": "Show image and label information."
+  },
+  "error": {
+    "saveSuccess": "Label data saved successfully.",
+    "saveFailed": "Label data saving failed",
+    "idMissing": "ID missing in initial label data saving response",
+    "initialSaveFailed": "Initial label data saving failed",
+    "internalErrorLabelNotFound": "Internal error: Label data not found.",
+    "internalErrorLabelNotConfirmed": "Internal error: Label data not confirmed.",
+    "noFileUploaded": "No file uploaded",
+    "labelNotFound": "Label data not found.",
+    "labelAlreadyConfirmed": "Label data already confirmed.",
+    "labelDataNotFullySaved": "Label data not fully saved."
+  },
+  "alt":{
+    "editButton": "Edit button",
+    "confirmButton": "Confirm button",
+    "expendIcon": "Expend icon",
+    "retractIcon": "Retract icon"
   }
 }

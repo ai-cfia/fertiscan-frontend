@@ -9,6 +9,7 @@ import axios from "axios";
 import Cookies from "js-cookie";
 import { useRouter } from "next/navigation";
 import { useEffect, useState } from "react";
+import { useTranslation } from "react-i18next";
 
 function LabelDataValidationPage() {
   const uploadedFiles = useUploadedFilesStore((state) => state.uploadedFiles);
@@ -17,10 +18,11 @@ function LabelDataValidationPage() {
   const [loading, setLoading] = useState(true);
   const showAlert = useAlertStore((state) => state.showAlert);
   const router = useRouter();
+  const { t } = useTranslation("labelDataValidator");
 
   useEffect(() => {
     if (uploadedFiles.length === 0) {
-      showAlert("No files uploaded.", "warning");
+      showAlert(t("errors.noFileUploaded"), "warning");
       router.push("/");
       return;
     }
@@ -65,10 +67,10 @@ function LabelDataValidationPage() {
           })
           .catch((error) => {
             if (axios.isCancel(error)) {
-              console.log("Request canceled");
+              console.log(t("errors.requestCanceled"));
             } else {
               showAlert(
-                `Label data initial save failed: ${processAxiosError(error)}`,
+                `${t("errors.initialSaveFailed")}: ${processAxiosError(error)}`,
                 "error",
               );
               setLoading(false);
@@ -81,10 +83,10 @@ function LabelDataValidationPage() {
       })
       .catch((error) => {
         if (axios.isCancel(error)) {
-          console.log("Request canceled");
+          console.log(t("errors.requestCanceled"));
         } else {
           showAlert(
-            `Label data extraction failed: ${processAxiosError(error)}`,
+            `${t("errors.labelExtractionFailed")}: ${processAxiosError(error)}`,
             "error",
           );
           setLoading(false);
@@ -94,7 +96,7 @@ function LabelDataValidationPage() {
     return () => {
       controller.abort(); // avoids react strict mode double fetch
     };
-  }, [uploadedFiles, showAlert, router, storedLabelData, setLabelData]);
+  }, [uploadedFiles, showAlert, router, storedLabelData, setLabelData, t]);
 
   return (
     <LabelDataValidator
