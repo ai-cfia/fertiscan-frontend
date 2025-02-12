@@ -161,8 +161,8 @@ const VerifiedQuantityMultiInput: React.FC<VerifiedQuantityMultiInputProps> = ({
                           "verifiedQuantityMultiInput.accessibility.deleteRowButton",
                         )}
                         data-testid={`delete-button-${quantitiesPath}-${index}`}
-                        onFocus={() => { setDeleteIconFocusIndex(index), setIsFocused(true)}}
-                        onBlur={() => { setDeleteIconFocusIndex(null), setIsFocused(false)}}
+                        onFocus={() => { setDeleteIconFocusIndex(index); setIsFocused(true)}}
+                        onBlur={() => { setDeleteIconFocusIndex(null); setIsFocused(false)}}
                       >
                         <DeleteIcon className={`${deleteIconFocusIndex === index ? "text-fertiscan-blue font-bold" : ""} `}/>
                       </IconButton>
@@ -190,8 +190,8 @@ const VerifiedQuantityMultiInput: React.FC<VerifiedQuantityMultiInputProps> = ({
               onClick={() => append(DEFAULT_QUANTITY)}
               startIcon={<AddIcon />}
               disabled={verified}
-              onFocus={() => { setIsFocused(true), setAddButtonFocus(true)}}
-              onBlur={() => { setIsFocused(false), setAddButtonFocus(false)}}
+              onFocus={() => { setIsFocused(true); setAddButtonFocus(true)}}
+              onBlur={() => { setIsFocused(false); setAddButtonFocus(false)}}
               aria-label={t(
                 "verifiedQuantityMultiInput.accessibility.addRowButton",
               )}
@@ -231,8 +231,8 @@ const VerifiedQuantityMultiInput: React.FC<VerifiedQuantityMultiInputProps> = ({
                   data-testid={`toggle-verified-btn-${path}`}
                   onMouseEnter={() => setHover(true)}
                   onMouseLeave={() => setHover(false)}
-                  onFocus={() => {setVerifyIconFocus(true), setIsFocused(true)}}
-                  onBlur={() => {setVerifyIconFocus(false), setIsFocused(false)}}
+                  onFocus={() => {setVerifyIconFocus(true); setIsFocused(true)}}
+                  onBlur={() => {setVerifyIconFocus(false); setIsFocused(false)}}
                 >
                   {hover && verified ? (
                     <SvgIcon aria-hidden>

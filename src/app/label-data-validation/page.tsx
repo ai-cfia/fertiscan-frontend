@@ -96,7 +96,7 @@ function LabelDataValidationPage() {
     return () => {
       controller.abort(); // avoids react strict mode double fetch
     };
-  }, [uploadedFiles, showAlert, router, storedLabelData, setLabelData]);
+  }, [uploadedFiles, showAlert, router, storedLabelData, setLabelData, t]);
 
   return (
     <LabelDataValidator

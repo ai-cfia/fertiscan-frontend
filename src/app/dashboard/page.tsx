@@ -46,7 +46,7 @@ const Dashboard = () => {
           showAlert(t("error.errorOccured"), "error");
         }
       });
-  }, [showAlert]);
+  }, [showAlert, t]);
 
   return (
     <Grid

@@ -66,8 +66,6 @@ const LabelDataConfirmationPage = () => {
       )
       .then(() => {
         showAlert(t("error.saveSuccess"), "success");
-        resetLabelData();
-        clearUploadedFiles();
         router.push("/");
       })
       .catch((error) => {
@@ -162,7 +160,7 @@ const LabelDataConfirmationPage = () => {
       console.warn(t("error.labelDataNotFullySaved"));
       return router.push("/");
     }
-  }, [imageFiles, labelData, router, showAlert]);
+  }, [imageFiles, labelData, router, showAlert, t]);
 
   const { isDownXs, isBetweenXsSm, isBetweenSmMd, isBetweenMdLg } =
     useBreakpoints();

@@ -93,8 +93,8 @@ export const VerifiedFieldWrapper: React.FC<VerifiedFieldWrapperProps> = ({
                   }
                   onMouseEnter={() => setHover(true)}
                   onMouseLeave={() => setHover(false)}
-                  onFocus={() => {setIconFocus(!iconFocus), setIsFocused(true)}}
-                  onBlur={() => {setIconFocus(!iconFocus), setIsFocused(false)}}
+                  onFocus={() => {setIconFocus(!iconFocus); setIsFocused(true)}}
+                  onBlur={() => {setIconFocus(!iconFocus); setIsFocused(false)}}
 
                 >
                   {hover && verified ? (

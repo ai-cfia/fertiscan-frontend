@@ -59,7 +59,7 @@ export default function Page() {
     return () => {
       controller.abort();
     };
-  }, [inspectionId, router, showAlert, uploadedFiles.length]);
+  }, [inspectionId, router, showAlert, uploadedFiles.length, t]);
 
   return (
     <LabelDataValidator

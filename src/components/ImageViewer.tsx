@@ -26,7 +26,6 @@ const ImageViewer: React.FC<ImageViewerProps> = ({ imageFiles }) => {
   const [zoomRefs, setZoomRefs] = useState<ReactZoomPanPinchRef[]>([]);
   const [activeIndex, setActiveIndex] = useState(0);
   const imageUrls = imageFiles.map((file) => URL.createObjectURL(file));
-  const { t } = useTranslation("imageViewer");
 
   const handleInit = (index: number, ref: ReactZoomPanPinchRef) => {
     setZoomRefs((prevRefs) => {

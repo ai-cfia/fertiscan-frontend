@@ -7,7 +7,6 @@ import { ThemeProvider } from "@mui/material/styles";
 import type { Metadata } from "next";
 import "./globals.css";
 import theme from "./theme";
-import i18n from "./i18n";
 
 export const metadata: Metadata = {
   title: {
