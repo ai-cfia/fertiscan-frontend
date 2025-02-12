@@ -8,7 +8,9 @@ import useLabelDataStore from "@/stores/labelDataStore";
 import { BilingualField, LabelData } from "@/types/types";
 import { processAxiosError } from "@/utils/client/apiErrors";
 import { isAllVerified } from "@/utils/client/fieldValidation";
+import { updateLabelData } from "@/utils/client/modelTransformation";
 import useBreakpoints from "@/utils/client/useBreakpoints";
+import CheckIcon from "@mui/icons-material/Check";
 import {
   Box,
   Checkbox,
@@ -94,11 +96,7 @@ const LabelDataConfirmationPage = () => {
         if (!response.data.inspectionId) {
           throw new Error("ID missing in initial label data saving response.");
         }
-        const _labelData: LabelData = {
-          ...labelData,
-          inspectionId: response.data.inspectionId,
-          pictureSetId: response.data.pictureSetId,
-        };
+        const _labelData = updateLabelData(labelData, response.data);
         setLabelData(_labelData);
         putLabelData(_labelData, signal);
       })
@@ -352,6 +350,11 @@ const LabelDataConfirmationPage = () => {
                   <Table size="small" data-testid="organizations-table">
                     <TableHead>
                       <TableRow className="bg-gray-100">
+                        <TableCell className="min-w-44">
+                          <Typography className="!font-bold">
+                            {t("organizations.tableHeaders.mainContact")}
+                          </Typography>
+                        </TableCell>
                         <TableCell className="min-w-60">
                           <Typography className="!font-bold">
                             {t("organizations.tableHeaders.name")}
@@ -380,6 +383,11 @@ const LabelDataConfirmationPage = () => {
                           key={index}
                           data-testid={`organizations-row-${index}`}
                         >
+                          <TableCell
+                            data-testid={`organizations-row-${index}-name`}
+                          >
+                            {org.mainContact && <CheckIcon />}
+                          </TableCell>
                           <TableCell
                             data-testid={`organizations-row-${index}-name`}
                           >

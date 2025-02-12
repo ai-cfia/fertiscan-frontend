@@ -88,6 +88,7 @@ export type Organization = {
   website: VerifiedTextField;
   phoneNumber: VerifiedTextField;
   mainContact: boolean;
+  id?: string | null;
 };
 
 export const DEFAULT_ORGANIZATION: Organization = {

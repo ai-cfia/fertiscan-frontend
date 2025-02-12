@@ -418,6 +418,7 @@ describe("mapInspectionToLabelData", () => {
       verified: false,
       organizations: [
         {
+          id: "ORG123",
           name: "Company Inc.",
           address: "123 Street",
           website: "http://example.com",
@@ -425,6 +426,7 @@ describe("mapInspectionToLabelData", () => {
           is_main_contact: true,
         },
         {
+          id: "ORG456",
           name: "Mfg Corp.",
           address: "456 Road",
           website: "http://mfg.com",
@@ -490,12 +492,14 @@ describe("mapInspectionToLabelData", () => {
     expect(result.organizations[0].website.value).toBe("http://example.com");
     expect(result.organizations[0].phoneNumber.value).toBe("123-456-7890");
     expect(result.organizations[0].mainContact).toBe(true);
+    expect(result.organizations[0].id).toBe("ORG123");
 
     expect(result.organizations[1].name.value).toBe("Mfg Corp.");
     expect(result.organizations[1].address.value).toBe("456 Road");
     expect(result.organizations[1].website.value).toBe("http://mfg.com");
     expect(result.organizations[1].phoneNumber.value).toBe("987-654-3210");
     expect(result.organizations[1].mainContact).toBe(false);
+    expect(result.organizations[1].id).toBe("ORG456");
 
     expect(result.baseInformation.name.value).toBe("SuperGrow");
     expect(result.baseInformation.registrationNumber.value).toBe("1234567A");
@@ -623,6 +627,7 @@ describe("mapInspectionToLabelData", () => {
 const labelData: LabelData = {
   organizations: [
     {
+      id: "ORG123",
       name: { value: "Company Inc.", verified: false },
       address: { value: "123 Street", verified: false },
       website: { value: "http://example.com", verified: false },
@@ -630,6 +635,7 @@ const labelData: LabelData = {
       mainContact: true,
     },
     {
+      id: "ORG456",
       name: { value: "Mfg Corp.", verified: false },
       address: { value: "456 Road", verified: false },
       website: { value: "http://mfg.com", verified: false },
@@ -835,6 +841,7 @@ describe("mapLabelDataToInspectionUpdate", () => {
     expect(result.verified).toBe(false);
     expect(result.organizations).toEqual([
       {
+        id: "ORG123",
         name: "Company Inc.",
         address: "123 Street",
         website: "http://example.com",
@@ -842,6 +849,7 @@ describe("mapLabelDataToInspectionUpdate", () => {
         is_main_contact: true,
       },
       {
+        id: "ORG456",
         name: "Mfg Corp.",
         address: "456 Road",
         website: "http://mfg.com",

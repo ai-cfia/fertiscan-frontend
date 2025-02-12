@@ -127,6 +127,7 @@ export function mapInspectionToLabelData(
   return {
     organizations: inspection.organizations?.length
       ? (inspection.organizations ?? []).map((org) => ({
+          id: org.id,
           name: { value: org.name ?? "", verified: v },
           address: { value: org.address ?? "", verified: v },
           website: { value: org.website ?? "", verified: v },
@@ -281,6 +282,7 @@ export function mapLabelDataToInspectionUpdate(
     inspection_comment: labelData.comment,
     verified: labelData.confirmed,
     organizations: labelData.organizations?.map((org) => ({
+      id: org.id,
       name: org.name?.value,
       address: org.address?.value,
       website: org.website?.value,

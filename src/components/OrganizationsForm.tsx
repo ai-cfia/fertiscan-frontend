@@ -18,7 +18,7 @@ import {
   Tooltip,
   Typography,
 } from "@mui/material";
-import { useCallback, useEffect, useState } from "react";
+import { useCallback, useEffect } from "react";
 import {
   Controller,
   FieldPath,
@@ -58,8 +58,6 @@ const OrganizationsForm: React.FC<FormComponentProps> = ({
   });
 
   const save = useDebouncedSave(setLabelData);
-
-  const [mainContactIndex, setMainContactIndex] = useState<number | null>(null);
 
   useEffect(() => {
     const currentValues = methods.getValues();
