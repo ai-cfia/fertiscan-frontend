@@ -7,12 +7,14 @@ export const VERIFIED_LABEL_DATA: LabelData = {
       address: { value: "123 Greenfield Ave, Springfield", verified: true },
       website: { value: "www.agrigrow.com", verified: true },
       phoneNumber: { value: "+1-800-555-0199", verified: true },
+      mainContact: true,
     },
     {
       name: { value: "AgriGrow Fertilizers Inc.", verified: true },
       address: { value: "123 Greenfield Ave, Springfield", verified: true },
       website: { value: "www.agrigrow.com", verified: true },
       phoneNumber: { value: "+1-800-555-0199", verified: true },
+      mainContact: false,
     },
   ],
   baseInformation: {

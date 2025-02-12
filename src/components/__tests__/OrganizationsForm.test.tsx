@@ -232,6 +232,7 @@ describe("OrganizationsForm Functionality", () => {
         value: "",
         verified: true,
       },
+      mainContact: false,
     };
 
     render(
@@ -267,6 +268,7 @@ describe("OrganizationsForm Functionality", () => {
         value: "123-456-7890",
         verified: false,
       },
+      mainContact: false,
     };
 
     render(
@@ -328,6 +330,7 @@ describe("OrganizationsForm Functionality", () => {
         value: "123-456-7890",
         verified: false,
       },
+      mainContact: false,
     };
 
     render(

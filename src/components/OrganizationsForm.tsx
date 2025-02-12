@@ -20,6 +20,7 @@ import {
 } from "@mui/material";
 import { useCallback, useEffect, useState } from "react";
 import {
+  Controller,
   FieldPath,
   FormProvider,
   useFieldArray,
@@ -85,6 +86,24 @@ const OrganizationsForm: React.FC<FormComponentProps> = ({
     [setValue],
   );
 
+  const getVerifiedFields = (org?: Organization) =>
+    org && {
+      name: org.name,
+      address: org.address,
+      website: org.website,
+      phoneNumber: org.phoneNumber,
+    };
+
+  const handleMainContactChange = (index: number) => {
+    fields.forEach((_, i) => {
+      if (i !== index) {
+        setValue(`organizations.${i}.mainContact`, false);
+      } else {
+        setValue(`organizations.${i}.mainContact`, true);
+      }
+    });
+  };
+
   return (
     <FormProvider {...methods}>
       <Box className="p-4" data-testid="organizations-form">
@@ -97,21 +116,27 @@ const OrganizationsForm: React.FC<FormComponentProps> = ({
             >
               <OrganizationInformation index={index} loading={loading} />
               <Box className="flex flex-wrap mt-4 justify-end gap-2">
-                <FormControlLabel
-                  control={
-                    <Radio
-                      className="h-3"
-                      checked={mainContactIndex === index}
-                      onChange={() => setMainContactIndex(index)}
-                      name="mainContact"
-                      data-testid={`main-contact-radio-${index}`}
+                <Controller
+                  name={`organizations.${index}.mainContact`}
+                  control={control}
+                  render={({ field }) => (
+                    <FormControlLabel
+                      control={
+                        <Radio
+                          {...field}
+                          checked={field.value === true}
+                          onChange={() => handleMainContactChange(index)}
+                          name="mainContact"
+                          data-testid={`main-contact-radio-${index}`}
+                        />
+                      }
+                      label={
+                        <Typography className="!font-bold">
+                          {t("organizations.mainContact")}
+                        </Typography>
+                      }
                     />
-                  }
-                  label={
-                    <Typography className="!font-bold">
-                      {t("organizations.mainContact")}
-                    </Typography>
-                  }
+                  )}
                 />
                 <Tooltip title="Mark all as Verified" enterDelay={1000}>
                   <Button
@@ -119,8 +144,7 @@ const OrganizationsForm: React.FC<FormComponentProps> = ({
                     color="secondary"
                     onClick={() => setAllVerified(index, true)}
                     disabled={checkFieldRecord(
-                      watchedOrganizations?.[index],
-                      true,
+                      getVerifiedFields(watchedOrganizations?.[index]),
                     )}
                     data-testid={`verify-all-btn-${index}`}
                   >
@@ -133,7 +157,7 @@ const OrganizationsForm: React.FC<FormComponentProps> = ({
                     color="secondary"
                     onClick={() => setAllVerified(index, false)}
                     disabled={checkFieldRecord(
-                      watchedOrganizations?.[index],
+                      getVerifiedFields(watchedOrganizations?.[index]),
                       false,
                     )}
                     data-testid={`unverify-all-btn-${index}`}

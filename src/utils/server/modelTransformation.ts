@@ -1,4 +1,9 @@
-import { BilingualField, LabelData, Quantity } from "@/types/types";
+import {
+  BilingualField,
+  DEFAULT_ORGANIZATION,
+  LabelData,
+  Quantity,
+} from "@/types/types";
 import {
   FertiscanDbMetadataInspectionValue,
   InspectionResponse,
@@ -57,38 +62,15 @@ export function mapLabelDataOutputToLabelData(
   data: LabelDataOutput,
 ): LabelData {
   return {
-    organizations: [
-      {
-        name: { value: data.organizations?.[0]?.name ?? "", verified: false },
-        address: {
-          value: data.organizations?.[0]?.address ?? "",
-          verified: false,
-        },
-        website: {
-          value: data.organizations?.[0]?.website ?? "",
-          verified: false,
-        },
-        phoneNumber: {
-          value: data.organizations?.[0]?.phone_number ?? "",
-          verified: false,
-        },
-      },
-      {
-        name: { value: data.organizations?.[1]?.name ?? "", verified: false },
-        address: {
-          value: data.organizations?.[1]?.address ?? "",
-          verified: false,
-        },
-        website: {
-          value: data.organizations?.[1]?.website ?? "",
-          verified: false,
-        },
-        phoneNumber: {
-          value: data.organizations?.[1]?.phone_number ?? "",
-          verified: false,
-        },
-      },
-    ],
+    organizations: data.organizations?.length
+      ? data.organizations?.map((org) => ({
+          name: { value: org.name ?? "", verified: false },
+          address: { value: org.address ?? "", verified: false },
+          website: { value: org.website ?? "", verified: false },
+          phoneNumber: { value: org.phone_number ?? "", verified: false },
+          mainContact: false,
+        }))
+      : [DEFAULT_ORGANIZATION],
     baseInformation: {
       name: { value: data.fertiliser_name ?? "", verified: false },
       registrationNumber: {
@@ -143,12 +125,15 @@ export function mapInspectionToLabelData(
 ): LabelData {
   const v = inspection.verified || false;
   return {
-    organizations: (inspection.organizations ?? []).map((org) => ({
-      name: { value: org.name ?? "", verified: v },
-      address: { value: org.address ?? "", verified: v },
-      website: { value: org.website ?? "", verified: v },
-      phoneNumber: { value: org.phone_number ?? "", verified: v },
-    })),
+    organizations: inspection.organizations?.length
+      ? (inspection.organizations ?? []).map((org) => ({
+          name: { value: org.name ?? "", verified: v },
+          address: { value: org.address ?? "", verified: v },
+          website: { value: org.website ?? "", verified: v },
+          phoneNumber: { value: org.phone_number ?? "", verified: v },
+          mainContact: org.is_main_contact ?? false,
+        }))
+      : [DEFAULT_ORGANIZATION],
     baseInformation: {
       name: { value: inspection.product.name ?? "", verified: v },
       registrationNumber: {
@@ -300,6 +285,7 @@ export function mapLabelDataToInspectionUpdate(
       address: org.address?.value,
       website: org.website?.value,
       phone_number: org.phoneNumber?.value,
+      is_main_contact: org.mainContact,
     })),
     product: {
       name: labelData.baseInformation.name.value,
