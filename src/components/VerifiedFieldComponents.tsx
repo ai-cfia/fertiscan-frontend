@@ -12,7 +12,7 @@ import {
   Tooltip,
   Typography,
 } from "@mui/material";
-import { ReactNode, useState } from "react";
+import { ReactNode, useEffect, useRef, useState } from "react";
 import { Control, Controller, useFormContext, useWatch } from "react-hook-form";
 import { useTranslation } from "react-i18next";
 import StyledSkeleton from "./StyledSkeleton";
@@ -93,8 +93,8 @@ export const VerifiedFieldWrapper: React.FC<VerifiedFieldWrapperProps> = ({
                   }
                   onMouseEnter={() => setHover(true)}
                   onMouseLeave={() => setHover(false)}
-                  onFocus={() => setIconFocus(!iconFocus)}
-                  onBlur={() => setIconFocus(!iconFocus)}
+                  onFocus={() => {setIconFocus(!iconFocus), setIsFocused(true)}}
+                  onBlur={() => {setIconFocus(!iconFocus), setIsFocused(false)}}
 
                 >
                   {hover && verified ? (
@@ -130,6 +130,7 @@ interface VerifiedRadioProps {
   loading?: boolean;
   isHelpActive?: boolean;
   helpText?: string;
+  isFocus?: boolean;
 }
 
 export const VerifiedRadio: React.FC<VerifiedRadioProps> = ({
@@ -139,9 +140,18 @@ export const VerifiedRadio: React.FC<VerifiedRadioProps> = ({
   loading = false,
   isHelpActive = false,
   helpText,
+  isFocus = false,
 }) => {
   const { t } = useTranslation("labelDataValidator");
   const [hoverHelp, setHoverHelp] = useState(false);
+  const radioGroupRef = useRef<HTMLDivElement>(null);
+
+  useEffect(() => {
+    if (isFocus && radioGroupRef.current) {
+      radioGroupRef.current.focus();
+    }
+  }, [isFocus]);
+
   return (
     <VerifiedFieldWrapper
       label={
@@ -187,10 +197,14 @@ export const VerifiedRadio: React.FC<VerifiedRadioProps> = ({
           control={control}
           render={({ field }) => (
             <RadioGroup
+              ref={radioGroupRef}
+              tabIndex={0}
               value={field.value ? "yes" : "no"}
               onChange={(e) => field.onChange(e.target.value === "yes")}
               className="flex-1 !flex-row px-2 "
               onFocus={() => setIsFocused(true)}
+              onBlur={() => setIsFocused(false)}
+
               data-testid={`radio-group-field-${valuePath}`}
               aria-label={`${t("verifiedInput.accessibility.radioGroup", { label })}`}
             >

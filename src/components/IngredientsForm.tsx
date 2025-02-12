@@ -51,6 +51,7 @@ function IngredientsForm({
               isHelpActive={true}
               helpText={t("ingredients.helpMessage.recordKeeping")}
               data-testid="guaranteed-analysis-record-keeping"
+              isFocus={true}
             />
           </Box>
         </Box>
@@ -70,7 +71,7 @@ function IngredientsForm({
                 unitOptions={UNITS.ingredients}
                 valueColumn
                 loading={loading}
-                isFocus={true}
+                isFocus={false}
               />
             </Box>
           </>

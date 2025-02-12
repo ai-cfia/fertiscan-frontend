@@ -11,6 +11,7 @@ interface IconInputProps {
   value: string;
   setValue: (value: string) => void;
   dataTestId?: string;
+  tabIndex?: number;
 }
 
 /**
@@ -26,6 +27,7 @@ const IconInput = ({
   value,
   setValue,
   dataTestId,
+  tabIndex,
 }: IconInputProps) => {
   const [hasFocus, setFocus] = useState(false);
   const [trueType, setTrueType] = useState(type);
@@ -123,6 +125,7 @@ const IconInput = ({
         }
         endAdornment={showPasswordAdornment}
         data-testid={"input"}
+        tabIndex={tabIndex}
       ></Input>
     </FormControl>
   );

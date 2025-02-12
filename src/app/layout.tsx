@@ -7,6 +7,7 @@ import { ThemeProvider } from "@mui/material/styles";
 import type { Metadata } from "next";
 import "./globals.css";
 import theme from "./theme";
+import i18n from "./i18n";
 
 export const metadata: Metadata = {
   title: {
@@ -19,15 +20,7 @@ export default function RootLayout({
   children,
 }: Readonly<{ children: React.ReactNode }>) {
   return (
-    <html lang={i18n.language}>
-      <head>
-        <meta charSet="UTF-8" />
-        <meta
-          name="viewport"
-          content="width=device-width, initial-scale=1.0"
-        />
-        <title>{ i18n.language === "en" ? "CFIA Label Data Validator" : "ACIA Validateur de données d'étiquette"}</title>
-      </head>
+    <html>
       <body>
         <AppRouterCacheProvider>
           <ThemeProvider theme={theme}>

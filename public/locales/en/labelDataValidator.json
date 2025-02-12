@@ -98,8 +98,8 @@
       "unit": "Unit"
     },
     "accessibility": {
-      "value": "Input field for numeric value",
-      "unit": "Dropdown to select a unit of measurement"
+      "valueInput": "Input field for numeric value",
+      "unitDropdown": "Dropdown to select a unit of measurement"
     }
   },
   "verifiedQuantityMultiInput": {

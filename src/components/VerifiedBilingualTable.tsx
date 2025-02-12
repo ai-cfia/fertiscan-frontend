@@ -19,7 +19,7 @@ import {
   Tooltip,
   Typography,
 } from "@mui/material";
-import { useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import {
   Controller,
   useFieldArray,
@@ -56,9 +56,10 @@ const VerifiedBilingualTable = ({
   const [deleteIconFocusIndex, setDeleteIconFocusIndex] = useState<number | null>(null);
   const [verifyIconFocusIndex, setVerifyIconFocusIndex] = useState<number | null>(null);
   const [isFocused, setIsFocused] = useState<string | null>(null);
-
+  const firstEnglishInputRef = useRef<HTMLInputElement | null>(null);
   const data = useWatch({ control, name: path });
   const isVerified = (index: number) => Boolean(data?.[index]?.verified);
+
 
   const handleVerify = async (index: number, value: boolean) => {
     const isValid = await trigger(`${path}.${index}.value`);
@@ -74,6 +75,12 @@ const VerifiedBilingualTable = ({
   const setAllVerified = async (value: boolean) => {
     await Promise.all(fields.map((_, index) => handleVerify(index, value)));
   };
+
+  useEffect(() => {
+    if (isFocus && firstEnglishInputRef.current) {
+      firstEnglishInputRef.current.focus();
+    }
+  }, [isFocus]);
 
   return (
     <Box>
@@ -182,7 +189,7 @@ const VerifiedBilingualTable = ({
                           aria-disabled={isVerified(index)}
                           data-testid={`input-english-${path}-${index}`}
                           multiline
-                          focused={isFocus} // To modify because not working
+                          inputRef={index === 0 ? firstEnglishInputRef : null}
                         />
                       )}
                     />
@@ -288,7 +295,7 @@ const VerifiedBilingualTable = ({
                                   </SvgIcon>
                                 ) : (
                                   <CheckIcon
-                                  className={`value ? "text-green-500" : "" ${ verifyIconFocusIndex === index ? "text-fertiscan-blue font-bold" : ""
+                                  className={`${value ? "text-green-500" : "" }${ verifyIconFocusIndex === index ? "text-fertiscan-blue font-bold" : ""
                                   } `}
                                     aria-hidden
                                   />

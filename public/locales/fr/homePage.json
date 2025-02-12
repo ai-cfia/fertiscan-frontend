@@ -6,7 +6,7 @@
     "noUploadedfiles": "Aucun fichier téléversé",
     "alt": {
       "deleteAllIcon": "Icône de suppression de tous les fichiers"
-    }
+    },
     "deleteAll": "Tout supprimer"
   },
   "fileElement": {
