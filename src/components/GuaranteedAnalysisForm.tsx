@@ -52,6 +52,7 @@ const GuaranteedAnalysisForm: React.FC<FormComponentProps> = ({
             placeholder={t("guaranteedAnalysis.placeholderEn")}
             path="guaranteedAnalysis.titleEn"
             loading={loading}
+            isFocus={true}
           />
           <VerifiedInput
             label={t("guaranteedAnalysis.labelFr")}
@@ -82,6 +83,7 @@ const GuaranteedAnalysisForm: React.FC<FormComponentProps> = ({
             valueColumn
             unitOptions={UNITS.guaranteedAnalysis}
             loading={loading}
+            isFocus={false}
           />
         </Box>
       </Box>

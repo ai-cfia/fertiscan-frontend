@@ -29,5 +29,8 @@
         "logout":"Logout",
         "dashboard":"Dashboard",
         "appVersion":"App Version: {{version}}"
+    },
+    "error":{
+        "loadingError": "Something went wrong while loading"
     }
 }

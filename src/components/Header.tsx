@@ -60,7 +60,7 @@ const Header = () => {
   // Function to handle language change
   const changeLanguage = (lang: string) => {
     i18next.changeLanguage(lang, (err, t) => {
-      if (err) return console.log("Something went wrong while loading", err);
+      if (err) return console.log(t("error.loadingError"), err);
       t("key");
       setLanguage(lang);
     });
@@ -97,6 +97,7 @@ const Header = () => {
               fill={true}
               priority
               data-testid="logo-image"
+              aria-label={t("altText.logoCFIAAlt")}
             />
           </Link>
         </Box>

@@ -45,6 +45,7 @@ const BaseInformationForm: React.FC<FormComponentProps> = ({
             placeholder={t("baseInformation.fields.name.placeholder")}
             path="baseInformation.name"
             loading={loading}
+            isFocus={true}
           />
           <VerifiedInput
             label={t("baseInformation.fields.registrationNumber.label")}

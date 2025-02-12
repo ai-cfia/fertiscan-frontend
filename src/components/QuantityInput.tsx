@@ -53,7 +53,7 @@ const QuantityInput = ({
               onblur?.();
               field.onChange(e.target.value.trim());
             }}
-            aria-label={t("quantityInput.accessibility.value")}
+            aria-label={t("quantityInput.accessibility.valueInput")}
             data-testid={`${name}-value-input`}
             error={!!error}
             helperText={error?.message ? t(error.message) : ""}
@@ -82,7 +82,7 @@ const QuantityInput = ({
               <StyledTextField
                 {...params}
                 className={`!w-[10ch] !px-2 bg-gray-100 ${verified ? "bg-gray-300": ""}`}
-                aria-label={t("quantityInput.accessibility.unit")}
+                aria-label={t("quantityInput.accessibility.unitDropdown")}
                 data-testid={`${name}-unit-input`}
                 placeholder={t("quantityInput.placeholder.unit")}
                 onFocus={onFocus}

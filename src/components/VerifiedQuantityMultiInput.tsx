@@ -41,6 +41,9 @@ const VerifiedQuantityMultiInput: React.FC<VerifiedQuantityMultiInputProps> = ({
   const { control, trigger } = useFormContext();
   const [isFocused, setIsFocused] = useState(false);
   const [hover, setHover] = useState(false);
+  const [deleteIconFocusIndex, setDeleteIconFocusIndex] = useState<number | null>(null);
+  const [verifyIconFocus, setVerifyIconFocus] = useState(false);
+  const [addButtonFocus, setAddButtonFocus] = useState(false);
 
   const quantitiesPath = `${path}.quantities`;
   const verifiedPath = `${path}.verified`;
@@ -158,8 +161,10 @@ const VerifiedQuantityMultiInput: React.FC<VerifiedQuantityMultiInputProps> = ({
                           "verifiedQuantityMultiInput.accessibility.deleteRowButton",
                         )}
                         data-testid={`delete-button-${quantitiesPath}-${index}`}
+                        onFocus={() => { setDeleteIconFocusIndex(index); setIsFocused(true)}}
+                        onBlur={() => { setDeleteIconFocusIndex(null); setIsFocused(false)}}
                       >
-                        <DeleteIcon />
+                        <DeleteIcon className={`${deleteIconFocusIndex === index ? "text-fertiscan-blue font-bold" : ""} `}/>
                       </IconButton>
                     </Tooltip>
                   </Box>
@@ -178,10 +183,15 @@ const VerifiedQuantityMultiInput: React.FC<VerifiedQuantityMultiInputProps> = ({
             {/* Add Row Button */}
             <Button
               size="small"
-              className="!p-2 text-white bg-green-500"
+              className={`!p-2 bg-green-500 ${addButtonFocus ? "!text-fertiscan-blue font-bold" : ""}`}
+              sx={{
+                marginRight: "5px",
+              }}
               onClick={() => append(DEFAULT_QUANTITY)}
               startIcon={<AddIcon />}
               disabled={verified}
+              onFocus={() => { setIsFocused(true); setAddButtonFocus(true)}}
+              onBlur={() => { setIsFocused(false); setAddButtonFocus(false)}}
               aria-label={t(
                 "verifiedQuantityMultiInput.accessibility.addRowButton",
               )}
@@ -221,6 +231,8 @@ const VerifiedQuantityMultiInput: React.FC<VerifiedQuantityMultiInputProps> = ({
                   data-testid={`toggle-verified-btn-${path}`}
                   onMouseEnter={() => setHover(true)}
                   onMouseLeave={() => setHover(false)}
+                  onFocus={() => {setVerifyIconFocus(true); setIsFocused(true)}}
+                  onBlur={() => {setVerifyIconFocus(false); setIsFocused(false)}}
                 >
                   {hover && verified ? (
                     <SvgIcon aria-hidden>
@@ -232,7 +244,7 @@ const VerifiedQuantityMultiInput: React.FC<VerifiedQuantityMultiInputProps> = ({
                     </SvgIcon>
                   ) : (
                     <CheckIcon
-                      className={value ? "text-green-500" : ""}
+                    className={`${value ? "text-green-500" : ""} ${ verifyIconFocus ? "text-fertiscan-blue font-bold" : ""} `}
                       data-testid={`verified-icon-${verifiedPath}`}
                       aria-hidden
                     />
