@@ -173,7 +173,7 @@ describe("HomePage Component", () => {
     const file = new File(["hello"], "hello.png", { type: "image/png" });
 
     // Find the file input element and upload the file
-    const input = screen.getByLabelText(t("dropzone.browseFile"));
+    const input = screen.getByTestId("browse-file-button");
     userEvent.upload(input, file);
 
     // Check that the file was uploaded and appears in the list.
@@ -204,7 +204,7 @@ describe("HomePage Component", () => {
     const file = new File(["hello"], "hello.png", { type: "image/png" });
 
     // Find the file input element and upload the file
-    const input = screen.getByLabelText(t("dropzone.browseFile"));
+    const input = screen.getByTestId("browse-file-button");
     userEvent.upload(input, file);
 
     // Check that the file was uploaded and appears in the list.
@@ -225,7 +225,7 @@ describe("HomePage Component", () => {
     const file = new File(["hello"], "hello.png", { type: "image/png" });
 
     // Find the file input element and upload the file
-    const input = screen.getByLabelText(t("dropzone.browseFile"));
+    const input = screen.getByTestId("browse-file-button");
     userEvent.upload(input, file);
 
     // Check that the file was uploaded and appears in the list.
@@ -249,7 +249,7 @@ describe("HomePage Component", () => {
     const file2 = new File(["hello2"], "hello2.png", { type: "image/png" });
 
     // Find the file input element and upload the file
-    const input = screen.getByLabelText(t("dropzone.browseFile"));
+    const input = screen.getByTestId("browse-file-button");
     userEvent.upload(input, [file, file2]);
 
     // Check that the file was uploaded and appears in the list.
@@ -297,7 +297,7 @@ describe("HomePage Component", () => {
 
     const file = new File(["hello"], "hello.png", { type: "image/png" });
 
-    const input = screen.getByLabelText(t("dropzone.browseFile"));
+    const input = screen.getByTestId("browse-file-button");
     userEvent.upload(input, file);
 
     const fileElement = await screen.findByTestId("file-element-hello.png");
