@@ -7,12 +7,7 @@
         "placeholder": "Entrez le nom"
       },
       "reg": {
-        "label": "Numéros d'enregistrement",
-        "placeholder": "Entrez le numéro d'enregistrement",
-        "type": {
-          "fertilizer": "Engrais",
-          "ingredient": "Ingrédient"
-        }
+        "label": "Numéros d'enregistrement"
       },
       "lotNumber": {
         "label": "Numéro de lot",
@@ -84,7 +79,26 @@
       "unitDropdown": "Champ de saisie pour une unité de mesure"
     }
   },
-  "verifiedQuantityMultiInput": {
+  "registrationInput": {
+    "placeholder": "Entrez le numéro d'enregistrement",
+    "type": {
+      "fertilizer": "Engrais",
+      "ingredient": "Ingrédient"
+    },
+    "accessibility": {
+      "identifier": "Champ de saisie pour le numéro d'enregistrement",
+      "unit": "Menu déroulant pour sélectionner un type de numéro d'enregistrement"
+    }
+  },
+  "verifiedListRow": {
+    "accessibility": {
+      "deleteRowButton": "Bouton pour supprimer cette ligne"
+    }
+  },
+  "listContainer": {
+    "addRow": "Ajouter une ligne"
+  },
+  "verifiedQuantityList": {
     "deleteRow": "Supprimer cette ligne",
     "addRow": "Ajouter une ligne",
     "removeRow": "Supprimer",
@@ -105,7 +119,6 @@
       "lb/gal": "lb/gal"
     },
     "accessibility": {
-      "deleteRowButton": "Bouton pour supprimer cette ligne",
       "addRowButton": "Bouton pour ajouter une nouvelle ligne",
       "valueInput": "Champ de saisie pour une valeur numérique",
       "unitDropdown": "Menu déroulant pour sélectionner une unité de mesure",

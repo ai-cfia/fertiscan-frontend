@@ -40,14 +40,14 @@ const RegistrationInput = ({
         render={({ field, fieldState: { error } }) => (
           <StyledTextField
             {...field}
-            placeholder={t("baseInformation.fields.reg.placeholder")}
+            placeholder={t("registrationInput.placeholder")}
             disabled={disabled}
             onFocus={onFocus}
             onBlur={(e) => {
               onBlur?.();
               field.onChange(e.target.value.trim());
             }}
-            aria-label={t("baseInformation.fields.reg.accessibility")}
+            aria-label={t("registrationInput.accessibility.identifier")}
             data-testid={`${name}-number-input`}
             error={!!error}
             helperText={error?.message ? t(error.message) : ""}
@@ -73,10 +73,10 @@ const RegistrationInput = ({
             disableUnderline
           >
             <MenuItem value={RegistrationType.FERTILIZER}>
-              {t("baseInformation.fields.reg.type.fertilizer")}
+              {t("registrationInput.type.fertilizer")}
             </MenuItem>
             <MenuItem value={RegistrationType.INGREDIENT}>
-              {t("baseInformation.fields.reg.type.ingredient")}
+              {t("registrationInput.type.ingredient")}
             </MenuItem>
           </Select>
         )}

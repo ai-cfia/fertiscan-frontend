@@ -61,7 +61,7 @@ describe("VerifiedRegistrationList rendering", () => {
     const typeInputs = screen.getAllByRole("combobox");
     expect(typeInputs.length).toBe(1);
     expect(typeInputs[0]).toHaveTextContent(
-      "baseInformation.fields.reg.type.fertilizer",
+      "registrationInput.type.fertilizer",
     );
   });
 
@@ -90,10 +90,10 @@ describe("VerifiedRegistrationList rendering", () => {
     const typeInputs = screen.getAllByRole("combobox");
     expect(typeInputs.length).toBe(2);
     expect(typeInputs[0]).toHaveTextContent(
-      "baseInformation.fields.reg.type.fertilizer",
+      "registrationInput.type.fertilizer",
     );
     expect(typeInputs[1]).toHaveTextContent(
-      "baseInformation.fields.reg.type.ingredient",
+      "registrationInput.type.ingredient",
     );
   });
 
