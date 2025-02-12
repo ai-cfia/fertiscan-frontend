@@ -181,6 +181,9 @@ describe("LabelDataValidator and Forms Integration", () => {
     await act(async () => {
       await new Promise((resolve) => setTimeout(resolve, 350));
     });
+    await act(async () => {
+      await new Promise((resolve) => setTimeout(resolve, 350));
+    });
     expect(targetSpan).toHaveClass("Mui-completed");
 
     fireEvent.click(

@@ -12,7 +12,7 @@ import {
   Tooltip,
   Typography,
 } from "@mui/material";
-import { ReactNode, useState } from "react";
+import { ReactNode, useEffect, useRef, useState } from "react";
 import { Control, Controller, useFormContext, useWatch } from "react-hook-form";
 import { useTranslation } from "react-i18next";
 import StyledSkeleton from "./StyledSkeleton";
@@ -44,6 +44,7 @@ export const VerifiedFieldWrapper: React.FC<VerifiedFieldWrapperProps> = ({
   const { control } = useFormContext();
   const [isFocused, setIsFocused] = useState(false);
   const [hover, setHover] = useState(false);
+  const [iconFocus, setIconFocus] = useState(false);
 
   const valuePath = `${path}.value`;
   const verifiedPath = `${path}.verified`;
@@ -103,6 +104,9 @@ export const VerifiedFieldWrapper: React.FC<VerifiedFieldWrapperProps> = ({
                   }
                   onMouseEnter={() => setHover(true)}
                   onMouseLeave={() => setHover(false)}
+                  onFocus={() => {setIconFocus(!iconFocus); setIsFocused(true)}}
+                  onBlur={() => {setIconFocus(!iconFocus); setIsFocused(false)}}
+
                 >
                   {hover && verified ? (
                     <SvgIcon aria-hidden>
@@ -114,7 +118,8 @@ export const VerifiedFieldWrapper: React.FC<VerifiedFieldWrapperProps> = ({
                     </SvgIcon>
                   ) : (
                     <CheckIcon
-                      className={value ? "text-green-500" : ""}
+                      className={`${value ? "text-green-500" : "" } ${ iconFocus ? "text-fertiscan-blue font-bold" : ""
+                      } `}
                       data-testid={`verified-icon-${verifiedPath}`}
                       aria-hidden
                     />
@@ -136,6 +141,7 @@ interface VerifiedRadioProps {
   loading?: boolean;
   isHelpActive?: boolean;
   helpText?: string;
+  isFocus?: boolean;
 }
 
 export const VerifiedRadio: React.FC<VerifiedRadioProps> = ({
@@ -145,9 +151,18 @@ export const VerifiedRadio: React.FC<VerifiedRadioProps> = ({
   loading = false,
   isHelpActive = false,
   helpText,
+  isFocus = false,
 }) => {
   const { t } = useTranslation("labelDataValidator");
   const [hoverHelp, setHoverHelp] = useState(false);
+  const radioGroupRef = useRef<HTMLDivElement>(null);
+
+  useEffect(() => {
+    if (isFocus && radioGroupRef.current) {
+      radioGroupRef.current.focus();
+    }
+  }, [isFocus]);
+
   return (
     <VerifiedFieldWrapper
       label={
@@ -193,10 +208,14 @@ export const VerifiedRadio: React.FC<VerifiedRadioProps> = ({
           control={control}
           render={({ field }) => (
             <RadioGroup
+              ref={radioGroupRef}
+              tabIndex={0}
               value={field.value ? "yes" : "no"}
               onChange={(e) => field.onChange(e.target.value === "yes")}
               className="flex-1 !flex-row px-2 "
               onFocus={() => setIsFocused(true)}
+              onBlur={() => setIsFocused(false)}
+
               data-testid={`radio-group-field-${valuePath}`}
               aria-label={`${t("verifiedInput.accessibility.radioGroup", { label })}`}
             >
@@ -236,6 +255,7 @@ interface VerifiedInputProps {
   path: string;
   className?: string;
   loading?: boolean;
+  isFocus?: boolean;
 }
 
 export const VerifiedInput: React.FC<VerifiedInputProps> = ({
@@ -244,6 +264,7 @@ export const VerifiedInput: React.FC<VerifiedInputProps> = ({
   path,
   className = "",
   loading = false,
+  isFocus = false,
 }) => {
   const { t } = useTranslation("labelDataValidator");
 
@@ -279,6 +300,8 @@ export const VerifiedInput: React.FC<VerifiedInputProps> = ({
               }}
               data-testid={`input-field-${valuePath}`}
               aria-label={`${t("verifiedInput.accessibility.input", { label })}`}
+              autoFocus={isFocus}
+
             />
           )}
         />

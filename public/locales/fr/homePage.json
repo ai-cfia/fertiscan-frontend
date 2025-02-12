@@ -4,12 +4,16 @@
   "fileList": {
     "uploadedfiles": "Fichiers téléversés",
     "noUploadedfiles": "Aucun fichier téléversé",
+    "alt": {
+      "deleteAllIcon": "Icône de suppression de tous les fichiers"
+    },
     "deleteAll": "Tout supprimer"
   },
   "fileElement": {
     "altText": {
       "uploadedFileAlt": "Image du fichier téléchargé",
-      "deleteFileAlt": "Icône du bouton pour supprimer un fichier"
+      "deleteFileAlt": "Icône du bouton pour supprimer un fichier",
+      "enterFileName": "Entrez le nom du fichier"
     }
   },
   "dropzone": {

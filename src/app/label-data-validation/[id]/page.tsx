@@ -8,6 +8,7 @@ import Cookies from "js-cookie";
 import { useParams, useRouter } from "next/navigation";
 import { useEffect, useState } from "react";
 import { validate } from "uuid";
+import { useTranslation } from "react-i18next";
 
 export default function Page() {
   const uploadedFiles = useUploadedFilesStore((state) => state.uploadedFiles);
@@ -17,12 +18,13 @@ export default function Page() {
   const inspectionId = Array.isArray(id) ? id[0] : id;
   const [loading, setLoading] = useState(true);
   const [labelData, setLabelData] = useState(DEFAULT_LABEL_DATA);
+  const { t } = useTranslation("labelDataValidator");
 
   useEffect(() => {
     if (!inspectionId) return;
 
     if (!validate(inspectionId)) {
-      showAlert(`Invalid id: ${inspectionId}.`, "error");
+      showAlert(`${t("error.invalidId")}: ${inspectionId}.`, "error");
       router.push("/");
       return;
     }
@@ -45,11 +47,11 @@ export default function Page() {
       })
       .catch((error) => {
         if (axios.isCancel(error)) {
-          console.log("Fetch aborted");
+          console.log(t("error.fetchAborted"));
         } else {
           console.error(error);
           setLoading(false);
-          showAlert("Failed to fetch inspection.", "error");
+          showAlert(t("error.failedFetchInspection"), "error");
           router.push("/");
         }
       });
@@ -57,7 +59,7 @@ export default function Page() {
     return () => {
       controller.abort();
     };
-  }, [inspectionId, router, showAlert, uploadedFiles.length]);
+  }, [inspectionId, router, showAlert, uploadedFiles.length, t]);
 
   return (
     <LabelDataValidator

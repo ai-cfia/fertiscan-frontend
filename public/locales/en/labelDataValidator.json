@@ -29,7 +29,29 @@
     }
   },
   "organizations": {
-    "stepTitle": "Organizations"
+    "stepTitle": "Organizations",
+    "markAllUnverified": "Mark all as Unverified",
+    "markAllVerified": "Mark all as Verified",
+    "removeOrganisation": "Remove Organisation",
+    "addOrganization": "Add Organization",
+    "fields": {
+      "name": {
+        "label": "Name",
+        "placeholder": "Enter organization name"
+      },
+      "address": {
+        "label": "Address",
+        "placeholder": "Enter organization address"
+      },
+      "website": {
+        "label": "Website",
+        "placeholder": "Enter organization website"
+      },
+      "phone": {
+        "label": "Phone",
+        "placeholder": "Enter organization phone number"
+      }
+    }
   },
   "cautions": {
     "stepTitle": "Cautions"
@@ -75,8 +97,8 @@
       "unit": "Unit"
     },
     "accessibility": {
-      "value": "Input field for numeric value",
-      "unit": "Dropdown to select a unit of measurement"
+      "valueInput": "Input field for numeric value",
+      "unitDropdown": "Dropdown to select a unit of measurement"
     }
   },
   "registrationInput": {
@@ -157,10 +179,21 @@
       "unverifyAllButton": "Button to mark all rows as Unverified"
     }
   },
+  "iconInput":{
+    "hidePassword": "hide the password",
+    "displayPassword": "display the password"
+  },
   "errors": {
     "numbersOnly": "Numbers only",
     "minValue": "Minimum value is 0",
-    "duplicateUnit": "Duplicate unit"
+    "duplicateUnit": "Duplicate unit",
+    "invalidId": "Invalid id",
+    "fetchAborted": "Fetch aborted",
+    "failedFetchInspection": "Failed to fetch inspection.",
+    "noFileUploaded": "No file uploaded",
+    "requestCancelled": "Request cancelled",
+    "initialSaveFailed": "Initial label data saving failed",
+    "labelExtractionFailed": "Label data extraction failed"
   },
   "stepper": { "next": "Next", "back": "Back", "submit": "Submit" },
   "fertilizer_product": "Fertilizer",

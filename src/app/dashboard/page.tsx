@@ -38,15 +38,15 @@ const Dashboard = () => {
       .catch((error) => {
         if (error.response.status === 401) {
           Cookies.remove("token");
-          showAlert("Unauthorized access", "error");
+          showAlert(t("error.unauthorizedAccess"), "error");
         }
         if (error.response.status === 404) {
-          showAlert("No inspections found", "error");
+          showAlert(t("error.noInspection"), "error");
         } else {
-          showAlert("An error occurred", "error");
+          showAlert(t("error.errorOccured"), "error");
         }
       });
-  }, [showAlert]);
+  }, [showAlert, t]);
 
   return (
     <Grid
@@ -120,7 +120,7 @@ const Dashboard = () => {
                   className: "p-2 after:!transition-none ",
                   startAdornment: (
                     <InputAdornment position={"start"} className={"!m-0"}>
-                      <Search color="primary" />
+                      <Search color="primary" aria-label={t("alt.searchIcon")}/>
                     </InputAdornment>
                   ),
                 },
