@@ -17,7 +17,6 @@ import {
   checkFieldArray,
   checkFieldRecord,
 } from "@/utils/client/fieldValidation";
-import useBreakpoints from "@/utils/client/useBreakpoints";
 import { Box, Container, Typography } from "@mui/material";
 import { useRouter } from "next/navigation";
 import { useEffect, useState } from "react";
@@ -39,10 +38,6 @@ function LabelDataValidator({
   setLabelData,
 }: LabelDataValidatorProps) {
   const { t } = useTranslation("labelDataValidator");
-  const { isDownXs, isBetweenXsSm, isBetweenSmMd, isBetweenMdLg } =
-    useBreakpoints();
-  const isLgOrBelow =
-    isDownXs || isBetweenXsSm || isBetweenSmMd || isBetweenMdLg;
   const [activeStep, setActiveStep] = useState(0);
   const [organizationsStepStatus, setOrganizationsStepStatus] =
     useState<StepStatus>(StepStatus.Incomplete);
@@ -179,7 +174,7 @@ function LabelDataValidator({
 
   return (
     <Container
-      className="flex max-w-[1920px] flex-col text-black bg-gray-100"
+      className="flex max-w-[1920px] flex-col bg-gray-100 text-black"
       maxWidth={false}
       data-testid="label-data-validator-container"
     >
@@ -205,11 +200,7 @@ function LabelDataValidator({
             {steps[activeStep].title}
           </Typography>
         }
-        body={
-          <Box className="">
-            {steps[activeStep].render()}
-          </Box>
-        }
+        body={<Box className="">{steps[activeStep].render()}</Box>}
         footer={
           <StepperControls
             stepTitles={steps.map((step) => step.title)}

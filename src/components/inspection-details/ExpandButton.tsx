@@ -18,7 +18,7 @@ const ExpandButton: React.FC<ExpandButtonProps> = ({
     isDownXs || isBetweenXsSm || isBetweenSmMd || isBetweenMdLg;
   return (
     <IconButton
-      className="!absolute top-1 left-1 z-10"
+      className="!absolute top-1 left-1 z-10 !bg-white"
       onClick={() => setIsRetracted(!isRetracted)}
       data-testid="retract-button"
       aria-label={

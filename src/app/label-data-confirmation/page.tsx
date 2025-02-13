@@ -7,6 +7,7 @@ import useUploadedFilesStore from "@/stores/fileStore";
 import useLabelDataStore from "@/stores/labelDataStore";
 import { LabelData } from "@/types/types";
 import { processAxiosError } from "@/utils/client/apiErrors";
+import { getAuthHeader } from "@/utils/client/auth";
 import { isAllVerified } from "@/utils/client/fieldValidation";
 import {
   Box,
@@ -17,7 +18,6 @@ import {
   Typography,
 } from "@mui/material";
 import axios from "axios";
-import Cookies from "js-cookie";
 import { useRouter } from "next/navigation";
 import { useEffect, useState } from "react";
 import { useTranslation } from "react-i18next";
@@ -34,11 +34,6 @@ const LabelDataConfirmationPage = () => {
   const showAlert = useAlertStore((state) => state.showAlert);
   const [confirmed, setConfirmed] = useState(false);
   const { t } = useTranslation("confirmationPage");
-  const [isRetractedView, setIsRetractedView] = useState(true);
-
-  const getAuthHeader = () => {
-    return "Basic " + btoa(`${atob(Cookies.get("token") ?? "")}:`);
-  };
 
   const putLabelData = (labelData: LabelData, signal: AbortSignal) => {
     const confirmedLabelData = { ...labelData, confirmed: true };
@@ -53,12 +48,12 @@ const LabelDataConfirmationPage = () => {
         },
       )
       .then(() => {
-        showAlert(t("error.saveSuccess"), "success");
+        showAlert(t("alert.saveSuccess"), "success");
         router.push("/");
       })
       .catch((error) => {
         showAlert(
-          `${t("error.saveFailed")}: ${processAxiosError(error)}`,
+          `${t("alert.saveFailed")}: ${processAxiosError(error)}`,
           "error",
         );
         setConfirmLoading(false);
@@ -67,8 +62,7 @@ const LabelDataConfirmationPage = () => {
 
   const postLabelData = (labelData: LabelData, signal: AbortSignal) => {
     const formData = new FormData();
-    uploadedFiles.forEach((fileUploaded) => {
-      const file = fileUploaded.getFile();
+    imageFiles.forEach((file) => {
       formData.append("files", file);
     });
     formData.append("labelData", JSON.stringify(labelData));
@@ -92,7 +86,7 @@ const LabelDataConfirmationPage = () => {
       })
       .catch((error) => {
         showAlert(
-          `${t("error.initialSaveFailed")}: ${processAxiosError(error)}`,
+          `${t("alert.initialSaveFailed")}: ${processAxiosError(error)}`,
           "error",
         );
       })
@@ -112,11 +106,11 @@ const LabelDataConfirmationPage = () => {
 
   const handleConfirmClick = () => {
     if (!labelData) {
-      showAlert(t("error.internalErrorLabelNotFound"), "error");
+      showAlert(t("alert.labelNotFound"), "error");
       return;
     }
     if (!confirmed) {
-      showAlert(t("internalErrorLabelNotConfirmed"), "error");
+      showAlert(t("alert.labelNotConfirmed"), "error");
       return;
     }
 
@@ -129,23 +123,18 @@ const LabelDataConfirmationPage = () => {
   };
 
   useEffect(() => {
-    // if (imageFiles.length === 0) {
-    //   console.warn(t("error.noFileUploaded"));
-    //   return router.push("/");
-    // }
-
     if (!labelData) {
-      console.warn(t("error.labelNotFound"));
+      console.warn("labelData not found");
       return router.push("/");
     }
 
     if (labelData.confirmed) {
-      console.warn(t("error.labelAlreadyConfirmed"));
+      showAlert(t("alert.alreadyCompleted"), "warning");
       return router.push("/");
     }
 
     if (!isAllVerified(labelData)) {
-      console.warn(t("error.labelDataNotFullySaved"));
+      showAlert(t("alert.notAllVerified"), "warning");
       return router.push("/");
     }
   }, [imageFiles, labelData, router, showAlert, t]);

@@ -68,21 +68,24 @@
   "yes": "Oui",
   "no": "Non",
   "error": {
-      "saveSuccess": "Données de l'étiquette enregistrées avec succès.",
-      "saveFailed": "Échec de l'enregistrement des données de l'étiquette",
-      "idMissing": "ID manquant dans la réponse initiale de l'enregistrement des données de l'étiquette",
-      "initialSaveFailed": "Échec de l'enregistrement initial des données de l'étiquette",
-      "internalErrorLabelNotFound": "Erreur interne : Données de l'étiquette non trouvées.",
-      "internalErrorLabelNotConfirmed": "Erreur interne : Données de l'étiquette non confirmées.",
-      "noFileUploaded": "Aucun fichier téléchargé",
-      "labelNotFound": "Données de l'étiquette non trouvées.",
-      "labelAlreadyConfirmed": "Données de l'étiquette déjà confirmées.",
-      "labelDataNotFullySaved": "Données de l'étiquette non entièrement enregistrées."
+    "idMissing": "ID manquant dans la réponse initiale de l'enregistrement des données de l'étiquette",
+    "noFileUploaded": "Aucun fichier téléchargé",
+    "labelAlreadyConfirmed": "Données de l'étiquette déjà confirmées.",
+    "labelDataNotFullySaved": "Données de l'étiquette non entièrement enregistrées."
   },
   "alt": {
     "editButton": "Bouton Modifier",
     "confirmButton": "Bouton Confirmer",
     "expendIcon": "Icône d'expansion",
     "retractIcon": "Icône de rétractation"
+  },
+  "alert": {
+    "labelNotConfirmed": "Données de l'étiquette non confirmées.",
+    "labelNotFound": "Données de l'étiquette non trouvées.",
+    "initialSaveFailed": "Échec de l'enregistrement initial des données de l'étiquette",
+    "saveFailed": "Échec de l'enregistrement des données de l'étiquette",
+    "saveSuccess": "Données de l'étiquette enregistrées avec succès.",
+    "alreadyCompleted": "Cette inspection est déjà terminée.",
+    "notAllVerified": "Tous les champs n'ont pas été vérifiés."
   }
 }

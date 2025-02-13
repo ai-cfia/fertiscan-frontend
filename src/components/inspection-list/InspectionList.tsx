@@ -17,7 +17,7 @@ const InspectionList = ({ search, inspectionList }: InspectionListProps) => {
   const router = useRouter();
 
   const handleInspectionClick = (id: string) => {
-    router.push(`/label-data-validation/${id}`);
+    router.push(`/label-inspections/${id}`);
   };
 
   useEffect(() => {

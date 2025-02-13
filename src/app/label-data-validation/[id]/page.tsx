@@ -3,57 +3,56 @@ import LabelDataValidator from "@/components/LabelDataValidator";
 import useAlertStore from "@/stores/alertStore";
 import useUploadedFilesStore from "@/stores/fileStore";
 import { DEFAULT_LABEL_DATA, LabelData } from "@/types/types";
-import axios from "axios";
-import Cookies from "js-cookie";
+import { getAuthHeader } from "@/utils/client/auth";
+import { Box, CircularProgress } from "@mui/material";
+import axios, { AxiosResponse } from "axios";
+import Error from "next/error";
 import { useParams, useRouter } from "next/navigation";
 import { useEffect, useState } from "react";
-import { validate } from "uuid";
 import { useTranslation } from "react-i18next";
 
 export default function Page() {
+  const { id } = useParams();
+  const inspectionId = Array.isArray(id) ? id[0] : id;
   const uploadedFiles = useUploadedFilesStore((state) => state.uploadedFiles);
   const showAlert = useAlertStore((state) => state.showAlert);
   const router = useRouter();
-  const { id } = useParams();
-  const inspectionId = Array.isArray(id) ? id[0] : id;
   const [loading, setLoading] = useState(true);
   const [labelData, setLabelData] = useState(DEFAULT_LABEL_DATA);
   const { t } = useTranslation("labelDataValidator");
+  const [error, setError] = useState<AxiosResponse | null>(null);
 
   useEffect(() => {
     if (!inspectionId) return;
-
-    if (!validate(inspectionId)) {
-      showAlert(`${t("error.invalidId")}: ${inspectionId}.`, "error");
-      router.push("/");
-      return;
-    }
-
-    const username = atob(Cookies.get("token") ?? "");
-    const password = "";
-    const authHeader = "Basic " + btoa(`${username}:${password}`);
+    
     const controller = new AbortController();
     const signal = controller.signal;
 
     axios
       .get(`/api-next/inspections/${inspectionId}`, {
-        headers: { Authorization: authHeader },
+        headers: { Authorization: getAuthHeader() },
         signal,
       })
       .then((response) => {
         const labelData: LabelData = response.data;
+        if (labelData.confirmed) {
+          showAlert(t("alert.alreadyCompleted"), "warning");
+          return router.push("/");
+        }
         setLabelData(labelData);
-        setLoading(false);
       })
       .catch((error) => {
         if (axios.isCancel(error)) {
-          console.log(t("error.fetchAborted"));
+          console.log("fetch aborted");
+        } else if (error.response) {
+          setError(error.response);
+          console.error("fetch inspection failed:", error.response.data);
         } else {
-          console.error(error);
-          setLoading(false);
-          showAlert(t("error.failedFetchInspection"), "error");
-          router.push("/");
+          showAlert(t("alert.failedFetchInspection"), "error");
         }
+      })
+      .finally(() => {
+        setLoading(false);
       });
 
     return () => {
@@ -61,7 +60,17 @@ export default function Page() {
     };
   }, [inspectionId, router, showAlert, uploadedFiles.length, t]);
 
-  return (
+  if (loading) {
+    return (
+      <Box className="flex h-[90vh] items-center justify-center">
+        <CircularProgress />
+      </Box>
+    );
+  }
+
+  return error ? (
+    <Error statusCode={error.status} />
+  ) : (
     <LabelDataValidator
       fileUploads={uploadedFiles}
       labelData={labelData}

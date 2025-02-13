@@ -20,7 +20,7 @@ import BilingualTable from "./BilingualTable";
 
 interface LabelInformationProps {
   labelData: LabelData | null;
-  setNotes: (text: string) => void;
+  setNotes?: (text: string) => void;
   disableNotes: boolean;
 }
 
@@ -227,7 +227,7 @@ const LabelInformation: React.FC<LabelInformationProps> = ({
           fullWidth
           placeholder={t("notes.placeholder")}
           value={labelData.comment}
-          onChange={(e) => setNotes(e.target.value)}
+          onChange={(e) => (setNotes ? setNotes(e.target.value) : null)}
           disabled={disableNotes}
           data-testid="notes-textbox"
         />
