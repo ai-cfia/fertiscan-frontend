@@ -5,7 +5,7 @@ import {
   LabelData,
   Organization,
 } from "@/types/types";
-import { fireEvent, render, screen } from "@testing-library/react";
+import { fireEvent, render, screen, waitFor } from "@testing-library/react";
 import { act, useEffect, useState } from "react";
 import { FormProvider, useForm } from "react-hook-form";
 import OrganizationsForm from "../OrganizationsForm";
@@ -236,6 +236,7 @@ describe("OrganizationsForm Functionality", () => {
         value: "",
         verified: true,
       },
+      mainContact: false,
     };
 
     render(
@@ -271,6 +272,7 @@ describe("OrganizationsForm Functionality", () => {
         value: "123-456-7890",
         verified: false,
       },
+      mainContact: false,
     };
 
     render(
@@ -332,6 +334,7 @@ describe("OrganizationsForm Functionality", () => {
         value: "123-456-7890",
         verified: false,
       },
+      mainContact: false,
     };
 
     render(
@@ -345,6 +348,35 @@ describe("OrganizationsForm Functionality", () => {
 
     const unverifyAllButton = screen.getByTestId("unverify-all-btn-0");
     expect(unverifyAllButton).toBeDisabled();
+  });
+
+  it("should update the main contact selection when radio button is clicked", async () => {
+    render(
+      <Wrapper
+        initialData={{
+          ...DEFAULT_LABEL_DATA,
+          organizations: [DEFAULT_ORGANIZATION, DEFAULT_ORGANIZATION],
+        }}
+      />,
+    );
+
+    const firstRadio = screen
+      .getByTestId("main-contact-radio-0")
+      .querySelector("input");
+    const secondRadio = screen
+      .getByTestId("main-contact-radio-1")
+      .querySelector("input");
+
+    expect(firstRadio).not.toBeChecked();
+    expect(secondRadio).not.toBeChecked();
+
+    fireEvent.click(firstRadio!);
+    await waitFor(() => expect(firstRadio).toBeChecked());
+    expect(secondRadio).not.toBeChecked();
+
+    fireEvent.click(secondRadio!);
+    await waitFor(() => expect(secondRadio).toBeChecked());
+    expect(firstRadio).not.toBeChecked();
   });
 });
 

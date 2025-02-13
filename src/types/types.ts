@@ -87,6 +87,8 @@ export type Organization = {
   address: VerifiedTextField;
   website: VerifiedTextField;
   phoneNumber: VerifiedTextField;
+  mainContact: boolean;
+  id?: string | null;
 };
 
 export const DEFAULT_ORGANIZATION: Organization = {
@@ -94,6 +96,7 @@ export const DEFAULT_ORGANIZATION: Organization = {
   address: DEFAULT_TEXT_FIELD,
   website: DEFAULT_TEXT_FIELD,
   phoneNumber: DEFAULT_TEXT_FIELD,
+  mainContact: false,
 };
 
 // Quantity

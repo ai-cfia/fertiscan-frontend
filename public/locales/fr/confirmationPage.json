@@ -22,7 +22,8 @@
       "name": "Nom",
       "address": "Adresse",
       "website": "Site Web",
-      "phoneNumber": "Numéro de téléphone"
+      "phoneNumber": "Numéro de téléphone",
+      "mainContact": "Contact principal"
     }
   },
   "cautions": {

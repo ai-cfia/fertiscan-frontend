@@ -30,9 +30,10 @@
   },
   "organizations": {
     "stepTitle": "Organizations",
+    "mainContact": "Main Contact",
     "markAllUnverified": "Mark all as Unverified",
     "markAllVerified": "Mark all as Verified",
-    "removeOrganisation": "Remove Organisation",
+    "removeOrganisation": "Remove Organization",
     "addOrganization": "Add Organization",
     "fields": {
       "name": {

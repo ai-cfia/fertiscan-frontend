@@ -1,13 +1,12 @@
 import { LabelData, VerifiedField } from "@/types/types";
 
 export const checkFieldRecord = (
-  record: Record<string, VerifiedField>,
+  record?: Record<string, VerifiedField>,
   verified: boolean = true,
 ): boolean => {
-  return (
-    record &&
-    Object.values(record).every((field) => field.verified === verified)
-  );
+  return record
+    ? Object.values(record).every((field) => field.verified === verified)
+    : false;
 };
 
 export const checkFieldArray = (
@@ -18,8 +17,9 @@ export const checkFieldArray = (
 };
 
 export const isAllVerified = (labelData: LabelData): boolean => {
-  const isOrganizationsVerified = labelData.organizations.every((org) =>
-    checkFieldRecord(org),
+  const isOrganizationsVerified = labelData.organizations.every(
+    ({ name, address, website, phoneNumber }) =>
+      checkFieldRecord({ name, address, website, phoneNumber }),
   );
   const isBaseInformationVerified = checkFieldRecord(labelData.baseInformation);
   const isCautionsVerified = checkFieldArray(labelData.cautions);

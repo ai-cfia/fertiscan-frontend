@@ -7,12 +7,14 @@ export const VERIFIED_LABEL_DATA: LabelData = {
       address: { value: "123 Greenfield Ave, Springfield", verified: true },
       website: { value: "www.agrigrow.com", verified: true },
       phoneNumber: { value: "+1-800-555-0199", verified: true },
+      mainContact: true,
     },
     {
-      name: { value: "GreenHarvest Solutions", verified: true },
-      address: { value: "456 Eco Lane, Riverdale", verified: true },
+      name: { value: "GreenHarvest Supplies", verified: true },
+      address: { value: "456 Farm Road, Rivertown", verified: true },
       website: { value: "www.greenharvest.com", verified: true },
-      phoneNumber: { value: "+1-800-555-0234", verified: true },
+      phoneNumber: { value: "+1-800-555-0246", verified: true },
+      mainContact: false,
     },
   ],
   baseInformation: {

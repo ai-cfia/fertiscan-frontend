@@ -1,4 +1,4 @@
-import { LabelData, RegistrationType } from "@/types/types";
+import { DEFAULT_ORGANIZATION, LabelData, RegistrationType } from "@/types/types";
 import {
   FertiscanDbMetadataInspectionValue,
   InspectionResponse,
@@ -253,6 +253,7 @@ describe("mapLabelDataOutputToLabelData", () => {
       expect(result.organizations[index].phoneNumber.value).toBe(
         org.phone_number,
       );
+      expect(result.organizations[index].mainContact).toBe(false);
     });
 
     // Base Information
@@ -337,15 +338,13 @@ describe("mapLabelDataOutputToLabelData", () => {
     const result = mapLabelDataOutputToLabelData(input);
 
     // Organizations
-    expect(result.organizations[0].name.value).toBe("");
-    expect(result.organizations[0].address.value).toBe("");
-    expect(result.organizations[0].website.value).toBe("");
-    expect(result.organizations[0].phoneNumber.value).toBe("");
-
-    expect(result.organizations[1].name.value).toBe("");
-    expect(result.organizations[1].address.value).toBe("");
-    expect(result.organizations[1].website.value).toBe("");
-    expect(result.organizations[1].phoneNumber.value).toBe("");
+    result.organizations.forEach((org) => {
+      expect(org.name.value).toBe("");
+      expect(org.address.value).toBe("");
+      expect(org.website.value).toBe("");
+      expect(org.phoneNumber.value).toBe("");
+      expect(org.mainContact).toBe(false);
+    });
 
     // Base Information
     expect(result.baseInformation.name.value).toBe("");
@@ -432,16 +431,20 @@ describe("mapInspectionToLabelData", () => {
       verified: false,
       organizations: [
         {
+          id: "ORG123",
           name: "Company Inc.",
           address: "123 Street",
           website: "http://example.com",
           phone_number: "123-456-7890",
+          is_main_contact: true,
         },
         {
+          id: "ORG456",
           name: "Mfg Corp.",
           address: "456 Road",
           website: "http://mfg.com",
           phone_number: "987-654-3210",
+          is_main_contact: false,
         },
       ],
       product: {
@@ -501,11 +504,15 @@ describe("mapInspectionToLabelData", () => {
     expect(result.organizations[0].address.value).toBe("123 Street");
     expect(result.organizations[0].website.value).toBe("http://example.com");
     expect(result.organizations[0].phoneNumber.value).toBe("123-456-7890");
+    expect(result.organizations[0].mainContact).toBe(true);
+    expect(result.organizations[0].id).toBe("ORG123");
 
     expect(result.organizations[1].name.value).toBe("Mfg Corp.");
     expect(result.organizations[1].address.value).toBe("456 Road");
     expect(result.organizations[1].website.value).toBe("http://mfg.com");
     expect(result.organizations[1].phoneNumber.value).toBe("987-654-3210");
+    expect(result.organizations[1].mainContact).toBe(false);
+    expect(result.organizations[1].id).toBe("ORG456");
 
     expect(result.baseInformation.name.value).toBe("SuperGrow");
     expect(result.baseInformation.registrationNumbers).toEqual({
@@ -584,7 +591,7 @@ describe("mapInspectionToLabelData", () => {
 
   it("should handle missing fields gracefully", () => {
     const result = mapInspectionToLabelData(emptyInspection);
-    expect(result.organizations).toEqual([]);
+    expect(result.organizations).toEqual([DEFAULT_ORGANIZATION]);
     expect(result.baseInformation.name.value).toBe("");
     expect(result.baseInformation.registrationNumbers).toEqual({
       verified: true,
@@ -616,7 +623,7 @@ describe("mapInspectionToLabelData", () => {
 
   it("sets all fields as verified if inspection is verified", () => {
     const result = mapInspectionToLabelData(emptyInspection);
-    expect(result.organizations).toEqual([]);
+    expect(result.organizations).toEqual([DEFAULT_ORGANIZATION]);
     expect(result.baseInformation.name.verified).toBe(true);
     expect(result.baseInformation.registrationNumbers.verified).toBe(true);
     expect(result.baseInformation.lotNumber.verified).toBe(true);
@@ -646,16 +653,20 @@ describe("mapInspectionToLabelData", () => {
 const labelData: LabelData = {
   organizations: [
     {
+      id: "ORG123",
       name: { value: "Company Inc.", verified: false },
       address: { value: "123 Street", verified: false },
       website: { value: "http://example.com", verified: false },
       phoneNumber: { value: "123-456-7890", verified: false },
+      mainContact: true,
     },
     {
+      id: "ORG456",
       name: { value: "Mfg Corp.", verified: false },
       address: { value: "456 Road", verified: false },
       website: { value: "http://mfg.com", verified: false },
       phoneNumber: { value: "987-654-3210", verified: false },
+      mainContact: false,
     },
   ],
   baseInformation: {
@@ -864,16 +875,20 @@ describe("mapLabelDataToInspectionUpdate", () => {
     expect(result.verified).toBe(false);
     expect(result.organizations).toEqual([
       {
+        id: "ORG123",
         name: "Company Inc.",
         address: "123 Street",
         website: "http://example.com",
         phone_number: "123-456-7890",
+        is_main_contact: true,
       },
       {
+        id: "ORG456",
         name: "Mfg Corp.",
         address: "456 Road",
         website: "http://mfg.com",
         phone_number: "987-654-3210",
+        is_main_contact: false,
       },
     ]);
     expect(result.product).toEqual({

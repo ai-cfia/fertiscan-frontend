@@ -29,7 +29,8 @@
     }
   },
   "organizations": {
-    "stepTitle": "Organisations",
+    "stepTitle": "Organizations",
+    "mainContact": "Contact Principal",
     "markAllUnverified": "Marquer tout comme non vérifié",
     "markAllVerified": "Marquer tout comme vérifié",
     "removeOrganisation": "Supprimer Organisation",
