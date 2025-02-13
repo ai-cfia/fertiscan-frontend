@@ -6,9 +6,8 @@
         "label": "Name",
         "placeholder": "Enter name"
       },
-      "registrationNumber": {
-        "label": "Registration Number",
-        "placeholder": "Enter registration number"
+      "reg": {
+        "label": "Registration Numbers"
       },
       "lotNumber": {
         "label": "Lot Number",
@@ -81,11 +80,10 @@
     "nutrients": "Nutrients"
   },
   "verifiedInput": {
-    "verify": "Mark {{label}} as Verified",
-    "unverify": "Mark {{label}} as Unverified",
+    "verify": "Mark as Verified",
+    "unverify": "Mark as Unverified",
     "accessibility": {
-      "input": "Input field for {{label}}",
-      "checkbox": "Checkbox for {{label}}"
+      "input": "Input field"
     },
     "options": {
       "yes": "Yes",
@@ -102,9 +100,27 @@
       "unitDropdown": "Dropdown to select a unit of measurement"
     }
   },
-  "verifiedQuantityMultiInput": {
+  "registrationInput": {
+    "placeholder": "Enter registration number",
+    "type": {
+      "fertilizer": "Fertilizer",
+      "ingredient": "Ingredient"
+    },
+    "accessibility": {
+      "identifier": "Input field for registration number",
+      "unit": "Dropdown to select a type of registration number"
+    }
+  },
+  "verifiedListRow": {
+    "accessibility": {
+      "deleteRowButton": "Button to delete this row"
+    }
+  },
+  "listContainer": {
+    "addRow": "Add Row"
+  },
+  "verifiedQuantityList": {
     "deleteRow": "Delete this row",
-    "addRow": "Add Row",
     "removeRow": "Remove",
     "verify": "Mark as Verified",
     "unverify": "Mark as Unverified",
@@ -123,7 +139,6 @@
       "lb/gal": "lb/gal"
     },
     "accessibility": {
-      "deleteRowButton": "Button to delete this row",
       "addRowButton": "Button to add a new row",
       "valueInput": "Input field for numeric value",
       "unitDropdown": "Dropdown to select a unit of measurement",
@@ -163,7 +178,7 @@
       "unverifyAllButton": "Button to mark all rows as Unverified"
     }
   },
-  "iconInput":{
+  "iconInput": {
     "hidePassword": "hide the password",
     "displayPassword": "display the password"
   },
@@ -179,5 +194,7 @@
     "initialSaveFailed": "Initial label data saving failed",
     "labelExtractionFailed": "Label data extraction failed"
   },
-  "stepper": { "next": "Next", "back": "Back", "submit": "Submit" }
+  "stepper": { "next": "Next", "back": "Back", "submit": "Submit" },
+  "fertilizer_product": "Fertilizer",
+  "ingredient_component": "Ingredient"
 }

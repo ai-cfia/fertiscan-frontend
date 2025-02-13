@@ -1,7 +1,8 @@
 "use client";
 import ImageViewer from "@/components/ImageViewer";
 import LoadingButton from "@/components/LoadingButton";
-import { QuantityChips } from "@/components/QuantityChip";
+import { QuantityChips } from "@/components/QuantityChips";
+import { RegistrationChips } from "@/components/RegistrationChips";
 import useAlertStore from "@/stores/alertStore";
 import useUploadedFilesStore from "@/stores/fileStore";
 import useLabelDataStore from "@/stores/labelDataStore";
@@ -300,12 +301,12 @@ const LabelDataConfirmationPage = () => {
                           </Typography>
                         </TableCell>
                         <TableCell data-testid="base-information-registration-number">
-                          <Typography>
-                            {
-                              labelData?.baseInformation.registrationNumber
-                                .value
+                          <RegistrationChips
+                            registrations={
+                              labelData?.baseInformation.registrationNumbers
+                                .values
                             }
-                          </Typography>
+                          />
                         </TableCell>
                         <TableCell data-testid="base-information-lot-number">
                           <Typography>

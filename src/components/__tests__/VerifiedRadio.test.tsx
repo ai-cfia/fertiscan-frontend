@@ -64,19 +64,29 @@ describe("VerifiedRadio Behavior", () => {
   });
 
   it("handles loading state correctly", () => {
-    const { rerender } = render(<TestWrapper verified={false} loading={true} />);
+    const { rerender } = render(
+      <TestWrapper verified={false} loading={true} />,
+    );
 
     const skeleton = screen.getByTestId("styled-skeleton");
     expect(skeleton).toBeInTheDocument();
 
-    expect(screen.queryByTestId("radio-group-field-fieldName.value")).not.toBeInTheDocument();
-    expect(screen.queryByTestId("toggle-verified-btn-fieldName.verified")).not.toBeInTheDocument();
+    expect(
+      screen.queryByTestId("radio-group-field-fieldName.value"),
+    ).not.toBeInTheDocument();
+    expect(
+      screen.queryByTestId("toggle-verified-btn-fieldName.verified"),
+    ).not.toBeInTheDocument();
 
     rerender(<TestWrapper verified={false} loading={false} />);
 
     expect(screen.queryByTestId("styled-skeleton")).not.toBeInTheDocument();
-    expect(screen.getByTestId("radio-group-field-fieldName.value")).toBeInTheDocument();
-    expect(screen.getByTestId("toggle-verified-btn-fieldName.verified")).toBeInTheDocument();
+    expect(
+      screen.getByTestId("radio-group-field-fieldName.value"),
+    ).toBeInTheDocument();
+    expect(
+      screen.getByTestId("toggle-verified-btn-fieldName.verified"),
+    ).toBeInTheDocument();
   });
 });
 

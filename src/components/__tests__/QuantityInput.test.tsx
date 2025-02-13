@@ -52,7 +52,7 @@ const Wrapper = ({
           disabled={disabled}
           unitRules={unitRules}
           onFocus={onFocus}
-          onblur={onblur}
+          onBlur={onblur}
         />
         <button type="submit" data-testid="submit-button">
           Submit

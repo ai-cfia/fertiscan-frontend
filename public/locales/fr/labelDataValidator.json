@@ -6,9 +6,8 @@
         "label": "Nom",
         "placeholder": "Entrez le nom"
       },
-      "registrationNumber": {
-        "label": "Numéro d'enregistrement",
-        "placeholder": "Entrez le numéro d'enregistrement"
+      "reg": {
+        "label": "Numéros d'enregistrement"
       },
       "lotNumber": {
         "label": "Numéro de lot",
@@ -81,11 +80,10 @@
     "nutrients": "Nutriments"
   },
   "verifiedInput": {
-    "verify": "Marquer {{label}} comme vérifié",
-    "unverify": "Marquer {{label}} comme non vérifié",
+    "verify": "Marquer comme vérifié",
+    "unverify": "Marquer comme non vérifié",
     "accessibility": {
-      "input": "Champ de saisie pour {{label}}",
-      "checkbox": "Case à cocher pour {{label}}"
+      "input": "Champ de saisie"
     },
     "options": {
       "yes": "Oui",
@@ -102,7 +100,26 @@
       "unitDropdown": "Champ de saisie pour une unité de mesure"
     }
   },
-  "verifiedQuantityMultiInput": {
+  "registrationInput": {
+    "placeholder": "Entrez le numéro d'enregistrement",
+    "type": {
+      "fertilizer": "Engrais",
+      "ingredient": "Ingrédient"
+    },
+    "accessibility": {
+      "identifier": "Champ de saisie pour le numéro d'enregistrement",
+      "unit": "Menu déroulant pour sélectionner un type de numéro d'enregistrement"
+    }
+  },
+  "verifiedListRow": {
+    "accessibility": {
+      "deleteRowButton": "Bouton pour supprimer cette ligne"
+    }
+  },
+  "listContainer": {
+    "addRow": "Ajouter une ligne"
+  },
+  "verifiedQuantityList": {
     "deleteRow": "Supprimer cette ligne",
     "addRow": "Ajouter une ligne",
     "removeRow": "Supprimer",
@@ -123,7 +140,6 @@
       "lb/gal": "lb/gal"
     },
     "accessibility": {
-      "deleteRowButton": "Bouton pour supprimer cette ligne",
       "addRowButton": "Bouton pour ajouter une nouvelle ligne",
       "valueInput": "Champ de saisie pour une valeur numérique",
       "unitDropdown": "Menu déroulant pour sélectionner une unité de mesure",
@@ -163,7 +179,7 @@
       "unverifyAllButton": "Bouton pour tout marquer comme non vérifié"
     }
   },
-  "iconInput":{
+  "iconInput": {
     "hidePassword": "cacher le mot de passe",
     "displayPassword": "afficher le mot de passe"
   },
@@ -172,7 +188,7 @@
     "minValue": "La valeur minimale est 0",
     "duplicateUnit": "Unité dupliquée",
     "invalidId": "ID invalide",
-    "fetchAborted":  "Fetch annulé",
+    "fetchAborted": "Fetch annulé",
     "failedFetchInspection": "Échec de la récupération de l'inspection.",
     "noFileUploaded": "Aucun fichier téléchargé",
     "requestCancelled": "Requête annulée",

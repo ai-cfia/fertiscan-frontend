@@ -1,5 +1,5 @@
 import FileUploaded from "@/classe/File";
-import { QuantityChips } from "@/components/QuantityChip";
+import { QuantityChips } from "@/components/QuantityChips";
 import useUploadedFilesStore from "@/stores/fileStore";
 import useLabelDataStore from "@/stores/labelDataStore";
 import { Quantity } from "@/types/types";

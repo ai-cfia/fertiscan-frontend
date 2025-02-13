@@ -33,8 +33,8 @@ describe("BaseInformationForm Rendering", () => {
   it("should render all fields with correct components", () => {
     render(<Wrapper initialData={DEFAULT_LABEL_DATA} />);
 
-    const verifiedFields = ["name", "registrationNumber", "lotNumber", "npk"];
-    const quantityFields = ["weight", "density", "volume"];
+    const verifiedFields = ["name", "lotNumber", "npk"];
+    const verifiedLists = ["registrationNumbers", "weight", "density", "volume"];
 
     verifiedFields.forEach((key) => {
       const verifiedInput = screen.getByTestId(
@@ -43,9 +43,9 @@ describe("BaseInformationForm Rendering", () => {
       expect(verifiedInput).toBeInTheDocument();
     });
 
-    quantityFields.forEach((key) => {
+    verifiedLists.forEach((key) => {
       const quantityInput = screen.getByTestId(
-        `quantity-multi-input-baseInformation.${key}`,
+        `fields-container-baseInformation.${key}`,
       );
       expect(quantityInput).toBeInTheDocument();
     });

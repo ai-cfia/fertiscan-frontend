@@ -1,6 +1,6 @@
 import { Quantity } from "@/types/types";
 import { render, screen } from "@testing-library/react";
-import { QuantityChips } from "../QuantityChip";
+import { QuantityChips } from "../QuantityChips";
 
 describe("QuantityChips", () => {
   it("renders valid quantities, filters out invalid values", () => {
