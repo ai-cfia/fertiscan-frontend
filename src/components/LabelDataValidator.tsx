@@ -3,7 +3,6 @@ import FileUploaded from "@/classe/File";
 import BaseInformationForm from "@/components/BaseInformationForm";
 import CautionsForm from "@/components/CautionsForm";
 import GuaranteedAnalysisForm from "@/components/GuaranteedAnalysisForm";
-import ImageViewer from "@/components/ImageViewer";
 import IngredientsForm from "@/components/IngredientsForm";
 import InstructionsForm from "@/components/InstructionsForm";
 import OrganizationsForm from "@/components/OrganizationsForm";
@@ -23,6 +22,7 @@ import { Box, Container, Typography } from "@mui/material";
 import { useRouter } from "next/navigation";
 import { useEffect, useState } from "react";
 import { useTranslation } from "react-i18next";
+import SplitContentLayout from "./inspection-details/SplitContentLayout";
 
 interface LabelDataValidatorProps {
   loading?: boolean;
@@ -179,35 +179,14 @@ function LabelDataValidator({
 
   return (
     <Container
-      className="flex flex-col max-w-[1920px] text-black"
+      className="flex max-w-[1920px] flex-col text-black bg-gray-100"
       maxWidth={false}
       data-testid="label-data-validator-container"
     >
-      {!isLgOrBelow && (
-        <Box className="p-4 mt-4" data-testid="stepper">
-          <HorizontalNonLinearStepper
-            stepTitles={steps.map((step) => step.title)}
-            stepStatuses={steps.map((step) => step.stepStatus)}
-            activeStep={activeStep}
-            setActiveStep={setActiveStep}
-            submit={submit}
-          />
-        </Box>
-      )}
-
-      <Box
-        className="flex flex-col lg:flex-row gap-4 my-4 lg:h-[75vh] lg:min-h-[500px]"
-        data-testid="main-content"
-      >
-        <Box
-          className="flex h-[500px] md:h-[720px] lg:size-full justify-center min-w-0 "
-          data-testid="image-viewer-container"
-        >
-          <ImageViewer imageFiles={imageFiles} />
-        </Box>
-
-        {isLgOrBelow && (
-          <Box className="p-4 mt-4" data-testid="stepper-md">
+      <SplitContentLayout
+        imageFiles={imageFiles}
+        topPanel={
+          <Box className="mt-4 p-4" data-testid="stepper">
             <HorizontalNonLinearStepper
               stepTitles={steps.map((step) => step.title)}
               stepStatuses={steps.map((step) => step.stepStatus)}
@@ -216,12 +195,8 @@ function LabelDataValidator({
               submit={submit}
             />
           </Box>
-        )}
-
-        <Box
-          className="flex flex-col size-full min-w-0 p-4 text-center gap-4 content-end bg-white border border-black"
-          data-testid="form-container"
-        >
+        }
+        header={
           <Typography
             variant="h6"
             className="text-lg !font-bold"
@@ -229,9 +204,13 @@ function LabelDataValidator({
           >
             {steps[activeStep].title}
           </Typography>
-          <Box className="flex-1 overflow-y-auto sm:px-8">
+        }
+        body={
+          <Box className="">
             {steps[activeStep].render()}
           </Box>
+        }
+        footer={
           <StepperControls
             stepTitles={steps.map((step) => step.title)}
             stepStatuses={steps.map((step) => step.stepStatus)}
@@ -239,8 +218,8 @@ function LabelDataValidator({
             setActiveStep={setActiveStep}
             submit={submit}
           />
-        </Box>
-      </Box>
+        }
+      />
     </Container>
   );
 }

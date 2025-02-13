@@ -34,7 +34,7 @@ const LabelInformation: React.FC<LabelInformationProps> = ({
   if (!labelData) return null;
 
   return (
-    <Box className="grid flex-1 grid-cols-1 gap-4 overflow-y-auto border py-4 sm:px-8">
+    <Box className="flex flex-col gap-4">
       {/* Base Information */}
       <Section
         title={t("baseInformation.sectionTitle")}

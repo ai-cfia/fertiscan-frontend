@@ -1,7 +1,6 @@
 "use client";
-import ImageViewer from "@/components/ImageViewer";
-import ExpandButton from "@/components/inspection-details/ExpandButton";
 import LabelInformation from "@/components/inspection-details/LabelInformation";
+import SplitContentLayout from "@/components/inspection-details/SplitContentLayout";
 import LoadingButton from "@/components/LoadingButton";
 import useAlertStore from "@/stores/alertStore";
 import useUploadedFilesStore from "@/stores/fileStore";
@@ -130,10 +129,10 @@ const LabelDataConfirmationPage = () => {
   };
 
   useEffect(() => {
-    if (imageFiles.length === 0) {
-      console.warn(t("error.noFileUploaded"));
-      return router.push("/");
-    }
+    // if (imageFiles.length === 0) {
+    //   console.warn(t("error.noFileUploaded"));
+    //   return router.push("/");
+    // }
 
     if (!labelData) {
       console.warn(t("error.labelNotFound"));
@@ -157,99 +156,70 @@ const LabelDataConfirmationPage = () => {
       maxWidth={false}
       data-testid="label-data-validator-container"
     >
-      <Box
-        className="my-4 flex flex-col gap-4 lg:h-[85vh] lg:min-h-[500px] lg:flex-row"
-        data-testid="main-content"
-      >
-        {isRetractedView && (
-          <Box
-            className="flex h-[500px] min-w-0 justify-center md:h-[720px] lg:size-full"
-            data-testid="image-viewer-container"
+      <SplitContentLayout
+        imageFiles={imageFiles}
+        expandable
+        header={
+          <Typography
+            variant="h5"
+            className="text-center !font-bold"
+            data-testid="page-title"
           >
-            <ImageViewer imageFiles={imageFiles} />
-          </Box>
-        )}
-        <Box
-          className="mb-0 flex size-full min-w-0 flex-col border border-black bg-white pb-6 text-center"
-          sx={{ minWidth: "500px" }}
-        >
-          {/* Expand button */}
-          <ExpandButton
-            isRetracted={isRetractedView}
-            setIsRetracted={setIsRetractedView}
+            {t("pageTitle")}
+          </Typography>
+        }
+        body={
+          <LabelInformation
+            labelData={labelData}
+            setNotes={setComment}
+            disableNotes={confirmed}
           />
-
-          <Box className="flex size-full min-w-0 flex-col content-end gap-4 p-4 pt-0 text-center">
-            <Box className="flex flex-col">
-              {/* Title */}
-              <Typography
-                variant="h5"
-                className="text-center !font-bold"
-                data-testid="page-title"
-              >
-                {t("pageTitle")}
-              </Typography>
-            </Box>
-
-            {/* Label Information */}
-            <LabelInformation
-              labelData={labelData}
-              setNotes={setComment}
-              disableNotes={confirmed}
-            />
-
-            {/* Confirmation Section */}
-            <Box
-              className="flex flex-col gap-1 p-4 text-center"
-              data-testid="confirmation-section"
-            >
-              <Typography>{t("confirmationSection.prompt")}</Typography>
-              {/* Acknowledgment Checkbox */}
-              <FormGroup className="flex w-[100%] items-center justify-center gap-2">
-                <FormControlLabel
-                  control={
-                    <Checkbox
-                      checked={confirmed}
-                      onChange={(event) => setConfirmed(event.target.checked)}
-                      disabled={confirmLoading}
-                      data-testid="confirmation-checkbox"
-                    />
-                  }
-                  label={
-                    <Typography variant="body2" className="!font-bold">
-                      {t("confirmationSection.acknowledgment")}
-                    </Typography>
-                  }
-                />
-              </FormGroup>
-
-              {/* Confirm and Edit Buttons */}
-              <Box className="flex justify-center gap-4 pt-2">
-                <LoadingButton
-                  variant="contained"
-                  className="bg-gray-300 px-4 py-2 font-bold text-black hover:bg-gray-400"
-                  onClick={handleEditClick}
-                  data-testid="edit-button"
-                  loading={editLoading}
-                  text={t("confirmationSection.editButton")}
-                  aria-label={t("alt.editButton")}
-                />
-                <LoadingButton
-                  className="px-4 py-2 font-bold hover:bg-green-700"
-                  variant="contained"
-                  color="success"
-                  disabled={!confirmed}
-                  onClick={handleConfirmClick}
-                  data-testid="confirm-button"
-                  loading={confirmLoading}
-                  text={t("confirmationSection.confirmButton")}
-                  aria-label={t("alt.confirmButton")}
-                />
-              </Box>
+        }
+        footer={
+          <Box className="flex flex-col gap-1 p-4 text-center">
+            <Typography>{t("confirmationSection.prompt")}</Typography>
+            <FormGroup className="flex w-[100%] items-center justify-center gap-2">
+              <FormControlLabel
+                control={
+                  <Checkbox
+                    checked={confirmed}
+                    onChange={(event) => setConfirmed(event.target.checked)}
+                    disabled={confirmLoading}
+                    data-testid="confirmation-checkbox"
+                  />
+                }
+                label={
+                  <Typography variant="body2" className="!font-bold">
+                    {t("confirmationSection.acknowledgment")}
+                  </Typography>
+                }
+              />
+            </FormGroup>
+            <Box className="flex justify-center gap-4 pt-2">
+              <LoadingButton
+                variant="contained"
+                className="bg-gray-300 px-4 py-2 font-bold text-black hover:bg-gray-400"
+                onClick={handleEditClick}
+                data-testid="edit-button"
+                loading={editLoading}
+                text={t("confirmationSection.editButton")}
+                aria-label={t("alt.editButton")}
+              />
+              <LoadingButton
+                className="px-4 py-2 font-bold hover:bg-green-700"
+                variant="contained"
+                color="success"
+                disabled={!confirmed}
+                onClick={handleConfirmClick}
+                data-testid="confirm-button"
+                loading={confirmLoading}
+                text={t("confirmationSection.confirmButton")}
+                aria-label={t("alt.confirmButton")}
+              />
             </Box>
           </Box>
-        </Box>
-      </Box>
+        }
+      />{" "}
     </Container>
   );
 };
