@@ -1,7 +1,7 @@
 "use client";
 import Dropzone from "@/components/Dropzone";
-import LoadingButton from "@/components/LoadingButton";
 import FileList from "@/components/FileList";
+import LoadingButton from "@/components/LoadingButton";
 import useUploadedFilesStore from "@/stores/fileStore";
 import useLabelDataStore from "@/stores/labelDataStore";
 import type { DropzoneState } from "@/types/types";
@@ -68,7 +68,7 @@ function HomePage() {
             size={{ xs: 10, md: 7 }}
           />
           <Grid2
-            className="xs:flex md:flow-root justify-center"
+            className="justify-center xs:flex md:flow-root"
             size={{ xs: 9, md: 4 }}
           >
             <Tooltip
@@ -76,11 +76,11 @@ function HomePage() {
               title={t("submitButtonDisabledHint")}
               disableHoverListener={uploadedFiles.length !== 0}
               placement="top"
-              className="w-[90%] max-w-full min-w-[133.44px]"
+              className="w-[90%] min-w-[133.44px] max-w-full"
             >
-              <span className="flex justify-center w-full">
+              <span className="flex w-full justify-center">
                 <LoadingButton
-                  className="xs:w-[90%] md:w-[100%] min-w-[133.44px] max-h-[40px] md:max-w-[470px]" // do not modify md:max-w-[470px] so that the button keeps the same width as the FileList
+                  className="max-h-[40px] min-w-[133.44px] xs:w-[90%] md:w-[100%] md:max-w-[470px]" // do not modify md:max-w-[470px] so that the button keeps the same width as the FileList
                   data-testid="submit-button"
                   variant="contained"
                   color="secondary"
