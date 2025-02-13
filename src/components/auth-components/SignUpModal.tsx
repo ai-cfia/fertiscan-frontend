@@ -19,7 +19,7 @@ interface SignUpProps {
   signup: (
     username: string,
     password: string,
-    confirm: string
+    confirm: string,
   ) => Promise<string>;
   onChangeMode: () => void;
 }
@@ -48,29 +48,9 @@ const SignUpModal = ({ isOpen, signup, onChangeMode }: SignUpProps) => {
       disableEnforceFocus
       disableAutoFocus
     >
-      <Box
-        className="
-          absolute
-          top-1/2
-          left-1/2
-          transform
-          -translate-x-1/2
-          -translate-y-1/2
-          max-w-lg
-          h-fit
-          bg-sky-900
-          outline-none
-          shadow-2xl
-          max-h-[500px]
-          px-4
-          py-4
-          rounded-2xl
-          flex
-          flex-col
-        "
-      >
+      <Box className="absolute top-1/2 left-1/2 flex h-fit max-h-[500px] max-w-lg -translate-x-1/2 -translate-y-1/2 transform flex-col rounded-2xl bg-sky-900 px-4 py-4 shadow-2xl outline-none">
         <Typography
-          className="text-white !mb-8 pl-4 pt-2"
+          className="!mb-8 pt-2 pl-4 text-white"
           data-testid="modal-title"
           id="modal-title"
           variant="h3"
@@ -80,19 +60,14 @@ const SignUpModal = ({ isOpen, signup, onChangeMode }: SignUpProps) => {
         </Typography>
 
         <form
-          className={`
-            margin-bottom-1
-            flex flex-col
-            justify-between
-            gap-4
-            ${errorMessage === "" ? "h-2/3" : "h-full"}
-            px-8
-          `}
+          className={`margin-bottom-1 flex flex-col justify-between gap-4 ${errorMessage === "" ? "h-2/3" : "h-full"} px-8`}
         >
           <IconInput
             id="username"
             dataTestId="modal-username"
-            icon={<AccountCircleIcon sx={{ color: "white", marginBottom: 1 }} />}
+            icon={
+              <AccountCircleIcon sx={{ color: "white", marginBottom: 1 }} />
+            }
             placeholder={t("signup.username")}
             type="text"
             value={username}
@@ -133,7 +108,7 @@ const SignUpModal = ({ isOpen, signup, onChangeMode }: SignUpProps) => {
                 />
               }
               label={
-                <Typography className="!text-xs text-justify">
+                <Typography className="text-justify !text-xs">
                   {t("signup.dataPolicy")}
                   <br />
                   <u>{t("signup.dataReminder")}</u>
@@ -164,14 +139,14 @@ const SignUpModal = ({ isOpen, signup, onChangeMode }: SignUpProps) => {
             loading={loading}
             text={t("signup.title")}
             data-testid="modal-submit"
-            className="!bg-white !pointer-events-auto"
+            className="!pointer-events-auto !bg-white"
           />
         </form>
 
         <Typography
           data-testid="modal-change"
           id="toggleSign"
-          className="text-white !mt-2 !mb-1 text-center"
+          className="!mt-2 !mb-1 text-center text-white"
         >
           {t("signup.switchText")}
           <a
@@ -180,7 +155,7 @@ const SignUpModal = ({ isOpen, signup, onChangeMode }: SignUpProps) => {
             tabIndex={0}
             id="toggleSignButton"
             data-testid="modal-change-button"
-            className="underline text-white cursor-pointer focus:outline-none focus:ring-2 focus:ring-blue-400"
+            className="cursor-pointer text-white underline focus:ring-2 focus:ring-blue-400 focus:outline-none"
             onClick={(e) => {
               e.preventDefault();
               onChangeMode();

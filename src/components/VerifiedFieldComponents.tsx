@@ -51,10 +51,6 @@ export const VerifiedFieldWrapper: React.FC<VerifiedFieldWrapperProps> = ({
     name: verifiedPath,
   });
 
-  useEffect(() => {
-    console.debug("focused", isFocused);
-  }, [isFocused]);
-
   return (
     <Box>
       <>{label}</>

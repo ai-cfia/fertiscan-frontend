@@ -1,9 +1,9 @@
 "use client";
-import { CircularProgress, Stack } from "@mui/material";
-import InspectionElement from "@/components/InspectionList/InspectionElement";
-import { useEffect, useState } from "react";
-import { useRouter } from "next/navigation";
 import { InspectionData } from "@/utils/server/backend";
+import { CircularProgress, Stack } from "@mui/material";
+import { useRouter } from "next/navigation";
+import { useEffect, useState } from "react";
+import InspectionElement from "./InspectionElement";
 
 interface InspectionListProps {
   search: string;
@@ -31,16 +31,26 @@ const InspectionList = ({ search, inspectionList }: InspectionListProps) => {
     setLoading(false);
   }, [inspectionList, search]);
   return (
-    <Stack spacing={2} className={"overflow-y-auto pl-0 pb-4 h-full" + (loading ? "flex items-center" : "")}>
-      {loading ? <CircularProgress color={"secondary"}/> : shownList.map((inspection) => {
-        return (
-          <InspectionElement
-            inspection={inspection}
-            key={inspection.id}
-            handleClick={() => handleInspectionClick(inspection.id)}
-          />
-        );
-      })}
+    <Stack
+      spacing={2}
+      className={
+        "h-full overflow-y-auto pb-4 pl-0" +
+        (loading ? "flex items-center" : "")
+      }
+    >
+      {loading ? (
+        <CircularProgress color={"secondary"} />
+      ) : (
+        shownList.map((inspection) => {
+          return (
+            <InspectionElement
+              inspection={inspection}
+              key={inspection.id}
+              handleClick={() => handleInspectionClick(inspection.id)}
+            />
+          );
+        })
+      )}
     </Stack>
   );
 };

@@ -1,6 +1,6 @@
 "use client";
 import theme from "@/app/theme";
-import FertilizerList from "@/components/InspectionList/InspectionList";
+import FertilizerList from "@/components/inspection-list/InspectionList";
 import useAlertStore from "@/stores/alertStore";
 import { Search } from "@mui/icons-material";
 import {
@@ -52,14 +52,14 @@ const Dashboard = () => {
     <Grid
       container
       spacing={2}
-      className={"p-5 h-[calc(100vh-65px)]"}
+      className={"h-[calc(100vh-65px)] p-5"}
       sx={{ backgroundColor: theme.palette.background.paper }}
     >
       <Grid size={{ xs: 12, sm: 4, md: 3 }}>
         <Grid
           data-testid={"user-info"}
           container
-          className={"p-2 border-gray-200 border-2 rounded-md h-fit"}
+          className={"h-fit rounded-md border-2 border-gray-200 p-2"}
         >
           <Grid size={12}>
             <Typography component={"h2"} className={"!font-black text-black"}>
@@ -76,7 +76,7 @@ const Dashboard = () => {
         <Grid
           container
           className={
-            "p-2 border-gray-200 border-2 rounded-md h-fit mt-2 w-11/12"
+            "mt-2 h-fit w-11/12 rounded-md border-2 border-gray-200 p-2"
           }
         >
           <Grid size={12}>
@@ -92,7 +92,7 @@ const Dashboard = () => {
       <Grid
         size={{ xs: 12, sm: 8, md: 9 }}
         className={
-          "border-gray-200 border-2 rounded-md p-2 xs:pb-1 sm:pb-0 xs:h-[calc(100%-10.75rem)] sm:h-full min-h-60"
+          "xs:pb-1 xs:h-[calc(100%-10.75rem)] min-h-60 rounded-md border-2 border-gray-200 p-2 sm:h-full sm:pb-0"
         }
       >
         <Grid container spacing={2} className={"h-full"}>
@@ -120,7 +120,10 @@ const Dashboard = () => {
                   className: "p-2 after:!transition-none ",
                   startAdornment: (
                     <InputAdornment position={"start"} className={"!m-0"}>
-                      <Search color="primary" aria-label={t("alt.searchIcon")}/>
+                      <Search
+                        color="primary"
+                        aria-label={t("alt.searchIcon")}
+                      />
                     </InputAdornment>
                   ),
                 },

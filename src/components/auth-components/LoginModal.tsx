@@ -30,37 +30,15 @@ const LoginModal = ({ isOpen, login, onChangeMode }: LoginProps) => {
   };
 
   return (
-    <Modal open={isOpen} data-testid={"modal"} disableAutoFocus disableEnforceFocus>
-      <Box
-        className="
-          absolute
-          top-1/2
-          left-1/2
-          transform
-          -translate-x-1/2
-          -translate-y-1/2
-          w-1/2
-          max-w-lg
-          min-w-fit
-          h-fit
-          bg-sky-900
-          outline-none
-          shadow-2xl
-          rounded-2xl
-          flex
-          flex-col
-          max-h-96
-          px-4
-          pt-6
-        "
-      >
+    <Modal
+      open={isOpen}
+      data-testid={"modal"}
+      disableAutoFocus
+      disableEnforceFocus
+    >
+      <Box className="absolute top-1/2 left-1/2 flex h-fit max-h-96 w-1/2 max-w-lg min-w-fit -translate-x-1/2 -translate-y-1/2 transform flex-col rounded-2xl bg-sky-900 px-4 pt-6 shadow-2xl outline-none">
         <Typography
-          className="
-            text-white
-            !mb-8
-            pl-4
-            pt-2
-          "
+          className="!mb-8 pt-2 pl-4 text-white"
           data-testid={"modal-title"}
           id="modal-title"
           variant="h3"
@@ -69,14 +47,7 @@ const LoginModal = ({ isOpen, login, onChangeMode }: LoginProps) => {
           {t("login.title")}
         </Typography>
         <form
-          className={`
-            flex
-            flex-col
-            justify-between
-            gap-6
-            ${errorMessage === "" ? "h-fit" : "h-full"}
-            px-8
-          `}
+          className={`flex flex-col justify-between gap-6 ${errorMessage === "" ? "h-fit" : "h-full"} px-8`}
         >
           <IconInput
             id={"username"}
@@ -115,19 +86,14 @@ const LoginModal = ({ isOpen, login, onChangeMode }: LoginProps) => {
             disabled={username === "" || password === ""}
             loading={loading}
             text={t("login.title")}
-            className="!bg-white !pointer-events-auto"
+            className="!pointer-events-auto !bg-white"
             data-testid="modal-submit"
           />
         </form>
         <Typography
           data-testid={"modal-change"}
           id={"toggleSign"}
-          className="
-            text-white
-            !mt-4
-            !mb-4
-            text-center
-          "
+          className="!mt-4 !mb-4 text-center text-white"
         >
           {t("login.switchText")}
           <a
@@ -136,7 +102,7 @@ const LoginModal = ({ isOpen, login, onChangeMode }: LoginProps) => {
             tabIndex={0}
             id="toggleSignButton"
             data-testid="modal-change-button"
-            className="underline text-white cursor-pointer focus:outline-none focus:ring-2 focus:ring-blue-400"
+            className="cursor-pointer text-white underline focus:ring-2 focus:ring-blue-400 focus:outline-none"
             onClick={(e) => {
               e.preventDefault(); // Prevent scrolling to top
               onChangeMode();

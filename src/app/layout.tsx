@@ -1,4 +1,4 @@
-import RouteGuard from "@/components/AuthComponents/RouteGuard";
+import RouteGuard from "@/components/auth-components/RouteGuard";
 import Header from "@/components/Header";
 import SideNav from "@/components/Sidenav";
 import { Box } from "@mui/material";
@@ -23,7 +23,7 @@ export default function RootLayout({
       <body>
         <AppRouterCacheProvider>
           <ThemeProvider theme={theme}>
-            <RouteGuard className="flex flex-col min-h-screen">
+            <RouteGuard className="flex min-h-screen flex-col">
               <SideNav />
               <Header />
               <Box className="mt-16 flex-grow bg-white">{children}</Box>
