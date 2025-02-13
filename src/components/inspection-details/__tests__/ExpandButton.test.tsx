@@ -1,3 +1,4 @@
+import useBreakpoints from "@/utils/client/useBreakpoints";
 import { fireEvent, render, screen } from "@testing-library/react";
 import ExpandButton from "../ExpandButton";
 
@@ -35,10 +36,9 @@ describe("ExpandButton", () => {
   ])(
     "applies correct rotation when isRetracted=%s and isSmallScreen=%s",
     (isRetracted, isSmallScreen, rotation) => {
-      const useBreakpoints = require("@/utils/client/useBreakpoints").default;
-
-      // Mock small screen behavior
-      useBreakpoints.mockReturnValue({ isDownXs: isSmallScreen });
+      (useBreakpoints as jest.Mock).mockReturnValue({
+        isDownXs: isSmallScreen,
+      });
       render(
         <ExpandButton isRetracted={isRetracted} setIsRetracted={() => {}} />,
       );

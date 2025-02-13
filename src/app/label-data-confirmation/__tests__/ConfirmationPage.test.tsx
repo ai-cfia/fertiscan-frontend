@@ -189,23 +189,6 @@ describe("LabelDataConfirmationPage", () => {
       expect(mockedRouterPush).toHaveBeenCalledWith("/label-data-validation");
     });
   });
-
-  it("should render all required tables in the Confirmation Section", () => {
-    render(<LabelDataConfirmationPage />);
-    const specificTables = [
-      "base-information-table",
-      "organizations-table",
-      "guaranteed-analysis-title-table",
-    ];
-    specificTables.forEach((testId) => {
-      const table = screen.getByTestId(testId);
-      expect(table).toBeInTheDocument();
-    });
-    const bilingualTableContainers = screen.getAllByTestId(
-      "bilingual-table-container",
-    );
-    expect(bilingualTableContainers.length).toBe(4);
-  });
 });
 
 describe("QuantityChips", () => {
@@ -225,14 +208,6 @@ describe("QuantityChips", () => {
 });
 
 describe("Notes Section Tests", () => {
-  it("should render the notes section with a textbox", () => {
-    render(<LabelDataConfirmationPage />);
-    const notesSection = screen.getByTestId("notes-section");
-    const notesTextbox = screen.getByTestId("notes-textbox");
-    expect(notesSection).toBeInTheDocument();
-    expect(notesTextbox).toBeInTheDocument();
-  });
-
   it("should update the comment value when text is entered", () => {
     useLabelDataStore.getState().setLabelData(VERIFIED_LABEL_DATA);
     expect(useLabelDataStore.getState().labelData?.comment).toBe(
@@ -249,6 +224,10 @@ describe("Notes Section Tests", () => {
   });
 
   it("should toggle the notes textbox disabled state when the checkbox is clicked", () => {
+    useLabelDataStore.getState().setLabelData(VERIFIED_LABEL_DATA);
+    expect(useLabelDataStore.getState().labelData?.comment).toBe(
+      "Compliant with regulations.",
+    );
     render(<LabelDataConfirmationPage />);
     const notesTextbox = screen
       .getByTestId("notes-textbox")

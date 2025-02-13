@@ -65,6 +65,8 @@
     "expandButton": "Hide image and show only label information.",
     "retractButton": "Show image and label information."
   },
+  "yes": "Yes",
+  "no": "No",
   "error": {
     "saveSuccess": "Label data saved successfully.",
     "saveFailed": "Label data saving failed",
@@ -77,7 +79,7 @@
     "labelAlreadyConfirmed": "Label data already confirmed.",
     "labelDataNotFullySaved": "Label data not fully saved."
   },
-  "alt":{
+  "alt": {
     "editButton": "Edit button",
     "confirmButton": "Confirm button",
     "expendIcon": "Expend icon",
