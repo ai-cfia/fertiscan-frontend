@@ -6,23 +6,5 @@ const config: Config = {
     "./src/components/**/*.{js,ts,jsx,tsx,mdx}",
     "./src/app/**/*.{js,ts,jsx,tsx,mdx}",
   ],
-  theme: {
-    extend: {
-      colors: {
-        background: "var(--background)",
-        foreground: "var(--foreground)",
-        "fertiscan-blue": "#05486C",
-      },
-    },
-    // Updated breakpoints to match MUI’s defaults
-    screens: {
-      xs: "0px",
-      sm: "600px",
-      md: "900px",
-      lg: "1200px",
-      xl: "1500px",
-      xxl: "1800px",
-    },
-  },
 };
 export default config;

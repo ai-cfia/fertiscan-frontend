@@ -126,8 +126,9 @@ function LabelDataValidator({
   };
 
   useEffect(() => {
-    const verified = labelData.organizations.every((org) =>
-      checkFieldRecord(org),
+    const verified = labelData.organizations.every(
+      ({ name, address, website, phoneNumber }) =>
+        checkFieldRecord({ name, address, website, phoneNumber }),
     );
     setOrganizationsStepStatus(
       verified ? StepStatus.Completed : StepStatus.Incomplete,

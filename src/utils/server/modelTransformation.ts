@@ -1,4 +1,12 @@
-import { BilingualField, LabelData, Quantity } from "@/types/types";
+import {
+  BilingualField,
+  DEFAULT_ORGANIZATION,
+  LabelData,
+  Quantity,
+  DEFAULT_QUANTITY,
+  DEFAULT_REGISTRATION_NUMBER,
+  RegistrationType,
+} from "@/types/types";
 import {
   FertiscanDbMetadataInspectionValue,
   InspectionResponse,
@@ -57,49 +65,34 @@ export function mapLabelDataOutputToLabelData(
   data: LabelDataOutput,
 ): LabelData {
   return {
-    organizations: [
-      {
-        name: { value: data.organizations?.[0]?.name ?? "", verified: false },
-        address: {
-          value: data.organizations?.[0]?.address ?? "",
-          verified: false,
-        },
-        website: {
-          value: data.organizations?.[0]?.website ?? "",
-          verified: false,
-        },
-        phoneNumber: {
-          value: data.organizations?.[0]?.phone_number ?? "",
-          verified: false,
-        },
-      },
-      {
-        name: { value: data.organizations?.[1]?.name ?? "", verified: false },
-        address: {
-          value: data.organizations?.[1]?.address ?? "",
-          verified: false,
-        },
-        website: {
-          value: data.organizations?.[1]?.website ?? "",
-          verified: false,
-        },
-        phoneNumber: {
-          value: data.organizations?.[1]?.phone_number ?? "",
-          verified: false,
-        },
-      },
-    ],
+    organizations: data.organizations?.length
+      ? data.organizations?.map((org) => ({
+          name: { value: org.name ?? "", verified: false },
+          address: { value: org.address ?? "", verified: false },
+          website: { value: org.website ?? "", verified: false },
+          phoneNumber: { value: org.phone_number ?? "", verified: false },
+          mainContact: false,
+        }))
+      : [DEFAULT_ORGANIZATION],
     baseInformation: {
       name: { value: data.fertiliser_name ?? "", verified: false },
-      registrationNumber: {
-        value: data.registration_number?.[0]?.identifier ?? "",
+      registrationNumbers: {
         verified: false,
+        values: data.registration_number?.length
+          ? data.registration_number.map((reg) => ({
+              identifier: reg.identifier ?? "",
+              type:
+                (reg.type as RegistrationType) ?? RegistrationType.FERTILIZER,
+            }))
+          : [DEFAULT_REGISTRATION_NUMBER],
       },
       lotNumber: { value: data.lot_number ?? "", verified: false },
       npk: { value: data.npk ?? "", verified: false },
       weight: {
         verified: false,
-        quantities: (data.weight ?? []).map(quantity),
+        quantities: data.weight?.length
+          ? (data.weight ?? []).map(quantity)
+          : [DEFAULT_QUANTITY],
       },
       density: { verified: false, quantities: [quantity(data.density)] },
       volume: { verified: false, quantities: [quantity(data.volume)] },
@@ -143,25 +136,36 @@ export function mapInspectionToLabelData(
 ): LabelData {
   const v = inspection.verified || false;
   return {
-    organizations: (inspection.organizations ?? []).map((org) => ({
-      name: { value: org.name ?? "", verified: v },
-      address: { value: org.address ?? "", verified: v },
-      website: { value: org.website ?? "", verified: v },
-      phoneNumber: { value: org.phone_number ?? "", verified: v },
-    })),
+    organizations: inspection.organizations?.length
+      ? (inspection.organizations ?? []).map((org) => ({
+          id: org.id,
+          name: { value: org.name ?? "", verified: v },
+          address: { value: org.address ?? "", verified: v },
+          website: { value: org.website ?? "", verified: v },
+          phoneNumber: { value: org.phone_number ?? "", verified: v },
+          mainContact: org.is_main_contact ?? false,
+        }))
+      : [DEFAULT_ORGANIZATION],
     baseInformation: {
       name: { value: inspection.product.name ?? "", verified: v },
-      registrationNumber: {
-        value:
-          inspection.product.registration_numbers?.[0]?.registration_number ??
-          "",
+      registrationNumbers: {
         verified: v,
+        values: inspection.product.registration_numbers?.length
+          ? inspection.product.registration_numbers.map((reg) => ({
+              identifier: reg.registration_number ?? "",
+              type: reg.is_an_ingredient
+                ? RegistrationType.INGREDIENT
+                : RegistrationType.FERTILIZER,
+            }))
+          : [DEFAULT_REGISTRATION_NUMBER],
       },
       lotNumber: { value: inspection.product.lot_number ?? "", verified: v },
       npk: { value: inspection.product.npk ?? "", verified: v },
       weight: {
         verified: v,
-        quantities: (inspection.product.metrics?.weight ?? []).map(quantity),
+        quantities: inspection.product.metrics?.weight?.length
+          ? inspection.product.metrics.weight.map(quantity)
+          : [DEFAULT_QUANTITY],
       },
       density: {
         verified: v,
@@ -230,11 +234,12 @@ export function mapLabelDataToLabelDataInput(
       phone_number: org.phoneNumber?.value,
     })),
     fertiliser_name: labelData.baseInformation.name.value,
-    registration_number: [
-      {
-        identifier: labelData.baseInformation.registrationNumber.value,
-      },
-    ],
+    registration_number: labelData.baseInformation.registrationNumbers.values
+      .filter((r) => r.identifier)
+      .map((reg) => ({
+        identifier: reg.identifier,
+        type: reg.type ?? null,
+      })),
     lot_number: labelData.baseInformation.lotNumber.value,
     weight:
       labelData.baseInformation.weight.quantities?.map((q) => ({
@@ -296,19 +301,21 @@ export function mapLabelDataToInspectionUpdate(
     inspection_comment: labelData.comment,
     verified: labelData.confirmed,
     organizations: labelData.organizations?.map((org) => ({
+      id: org.id,
       name: org.name?.value,
       address: org.address?.value,
       website: org.website?.value,
       phone_number: org.phoneNumber?.value,
+      is_main_contact: org.mainContact,
     })),
     product: {
       name: labelData.baseInformation.name.value,
-      registration_numbers: [
-        {
-          registration_number:
-            labelData.baseInformation.registrationNumber.value,
-        },
-      ],
+      registration_numbers: labelData.baseInformation.registrationNumbers.values
+        .filter((reg) => reg.identifier)
+        .map((reg) => ({
+          registration_number: reg.identifier,
+          is_an_ingredient: reg.type === RegistrationType.INGREDIENT,
+        })),
       lot_number: labelData.baseInformation.lotNumber.value,
       npk: labelData.baseInformation.npk.value,
       metrics: {

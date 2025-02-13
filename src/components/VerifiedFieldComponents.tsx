@@ -19,7 +19,7 @@ import StyledSkeleton from "./StyledSkeleton";
 import StyledTextField from "./StyledTextField";
 
 interface VerifiedFieldWrapperProps {
-  label: ReactNode;
+  label: string | ReactNode;
   path: string;
   className?: string;
   loading?: boolean;
@@ -29,6 +29,7 @@ interface VerifiedFieldWrapperProps {
     valuePath: string;
     verified: boolean;
   }) => ReactNode;
+  validate?: (callback: (valid: boolean) => void) => Promise<void>;
 }
 
 export const VerifiedFieldWrapper: React.FC<VerifiedFieldWrapperProps> = ({
@@ -37,6 +38,7 @@ export const VerifiedFieldWrapper: React.FC<VerifiedFieldWrapperProps> = ({
   className = "",
   loading = false,
   renderField,
+  validate,
 }) => {
   const { t } = useTranslation("labelDataValidator");
   const { control } = useFormContext();
@@ -51,26 +53,42 @@ export const VerifiedFieldWrapper: React.FC<VerifiedFieldWrapperProps> = ({
     name: verifiedPath,
   });
 
+  useEffect(() => {
+    console.debug("focused", isFocused);
+  }, [isFocused]);
+
   return (
     <Box>
-      <>{label}</>
+      {typeof label === "string" ? (
+        <Typography
+          className="!font-bold select-none text-left pl-2"
+          data-testid={`field-label-${path}`}
+        >
+          {label}
+        </Typography>
+      ) : (
+        label
+      )}
       {loading ? (
         <StyledSkeleton />
       ) : (
         <Box
-          className={`flex items-center p-1 border-2 rounded-tr-md rounded-br-md ${
-            isFocused ? "border-fertiscan-blue" : ""
+          className={`flex items-center rounded-br-md rounded-tr-md border-2 p-1 ${
+            isFocused ? "border-fertiscan-blue" : "border-[#e5e7eb]"
           } ${verified ? "border-green-500 bg-gray-300" : ""} ${className}`}
           data-testid={`verified-field-${path}`}
         >
           {renderField({ setIsFocused, control, valuePath, verified })}
+
+          {/* Vertical Divider */}
           <Divider
             orientation="vertical"
             flexItem
-            className={isFocused ? "!border-fertiscan-blue" : ""}
-            sx={{ bgcolor: verified ? "#00C55E" : "inherit" }}
+            className={`${isFocused ? "!border-fertiscan-blue" : ""} ${verified ? "bg-green-500" : "bg-inherit"}`}
             data-testid={`divider-${path}`}
           />
+
+          {/* Verified Toggle Button */}
           <Controller
             name={verifiedPath}
             control={control}
@@ -78,24 +96,35 @@ export const VerifiedFieldWrapper: React.FC<VerifiedFieldWrapperProps> = ({
               <Tooltip
                 title={
                   verified
-                    ? t("verifiedInput.unverify", { label })
-                    : t("verifiedInput.verify", { label })
+                    ? t("verifiedInput.unverify")
+                    : t("verifiedInput.verify")
                 }
                 enterDelay={1000}
               >
                 <IconButton
-                  onClick={() => onChange(!value)}
+                  onClick={() =>
+                    validate
+                      ? validate((valid) => {
+                          if (valid) onChange(!value);
+                        })
+                      : onChange(!value)
+                  }
                   data-testid={`toggle-verified-btn-${verifiedPath}`}
                   aria-label={
                     verified
-                      ? t("verifiedInput.unverify", { label })
-                      : t("verifiedInput.verify", { label })
+                      ? t("verifiedInput.unverify")
+                      : t("verifiedInput.verify")
                   }
                   onMouseEnter={() => setHover(true)}
                   onMouseLeave={() => setHover(false)}
-                  onFocus={() => {setIconFocus(!iconFocus); setIsFocused(true)}}
-                  onBlur={() => {setIconFocus(!iconFocus); setIsFocused(false)}}
-
+                  onFocus={() => {
+                    setIconFocus(!iconFocus);
+                    setIsFocused(true);
+                  }}
+                  onBlur={() => {
+                    setIconFocus(!iconFocus);
+                    setIsFocused(false);
+                  }}
                 >
                   {hover && verified ? (
                     <SvgIcon aria-hidden>
@@ -107,8 +136,7 @@ export const VerifiedFieldWrapper: React.FC<VerifiedFieldWrapperProps> = ({
                     </SvgIcon>
                   ) : (
                     <CheckIcon
-                      className={`${value ? "text-green-500" : "" } ${ iconFocus ? "text-fertiscan-blue font-bold" : ""
-                      } `}
+                      className={`${value ? "text-green-500" : ""} ${iconFocus ? "font-bold text-fertiscan-blue" : ""} `}
                       data-testid={`verified-icon-${verifiedPath}`}
                       aria-hidden
                     />
@@ -157,7 +185,7 @@ export const VerifiedRadio: React.FC<VerifiedRadioProps> = ({
       label={
         <Box className="flex items-start">
           <Typography
-            className="!font-bold select-none text-left pl-2"
+            className="select-none pl-2 text-left !font-bold"
             data-testid={`field-label-${path}`}
           >
             {label}
@@ -173,12 +201,12 @@ export const VerifiedRadio: React.FC<VerifiedRadioProps> = ({
                 >
                   {hoverHelp ? (
                     <HelpIcon
-                      className="-mt-2 -mb-4"
+                      className="-mb-4 -mt-2"
                       style={{ fontSize: "20" }}
                     />
                   ) : (
                     <HelpOutlineIcon
-                      className="-mt-2 -mb-4"
+                      className="-mb-4 -mt-2"
                       style={{ fontSize: "20" }}
                     />
                   )}
@@ -201,18 +229,17 @@ export const VerifiedRadio: React.FC<VerifiedRadioProps> = ({
               tabIndex={0}
               value={field.value ? "yes" : "no"}
               onChange={(e) => field.onChange(e.target.value === "yes")}
-              className="flex-1 !flex-row px-2 "
+              className="flex-1 !flex-row px-2"
               onFocus={() => setIsFocused(true)}
               onBlur={() => setIsFocused(false)}
-
               data-testid={`radio-group-field-${valuePath}`}
-              aria-label={`${t("verifiedInput.accessibility.radioGroup", { label })}`}
+              aria-label={`${t("verifiedInput.accessibility.radioGroup")}`}
             >
               <FormControlLabel
                 value="yes"
                 control={<Radio size="small" />}
                 label={
-                  <Typography className="!text-[15px] select-none">
+                  <Typography className="select-none !text-[15px]">
                     {t("verifiedInput.options.yes")}
                   </Typography>
                 }
@@ -223,7 +250,7 @@ export const VerifiedRadio: React.FC<VerifiedRadioProps> = ({
                 value="no"
                 control={<Radio size="small" />}
                 label={
-                  <Typography className="!text-[15px] select-none">
+                  <Typography className="select-none !text-[15px]">
                     {t("verifiedInput.options.no")}
                   </Typography>
                 }
@@ -259,14 +286,7 @@ export const VerifiedInput: React.FC<VerifiedInputProps> = ({
 
   return (
     <VerifiedFieldWrapper
-      label={
-        <Typography
-          className="!font-bold select-none text-left px-2"
-          data-testid={`field-label-${path}`}
-        >
-          {label}
-        </Typography>
-      }
+      label={label}
       path={path}
       className={className}
       loading={loading}
@@ -288,9 +308,8 @@ export const VerifiedInput: React.FC<VerifiedInputProps> = ({
                 }
               }}
               data-testid={`input-field-${valuePath}`}
-              aria-label={`${t("verifiedInput.accessibility.input", { label })}`}
+              aria-label={`${t("verifiedInput.accessibility.input")}`}
               autoFocus={isFocus}
-
             />
           )}
         />
