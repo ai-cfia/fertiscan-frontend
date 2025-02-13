@@ -1,6 +1,4 @@
-@tailwind base;
-@tailwind components;
-@tailwind utilities;
+@import "tailwindcss";
 
 :root {
   --background: #ffffff;
@@ -32,4 +30,19 @@ body {
 
 .swiper-pagination-bullet-active {
   opacity: 1 !important;
+}
+
+@theme {
+  /* Colors */
+  --color-background: var(--background);
+  --color-foreground: var(--foreground);
+  --color-fertiscan-blue: #05486c;
+
+  /* Breakpoints */
+  --breakpoint-xs: 0px;
+  --breakpoint-sm: 600px;
+  --breakpoint-md: 900px;
+  --breakpoint-lg: 1200px;
+  --breakpoint-xl: 1500px;
+  --breakpoint-xxl: 1800px;
 }
