@@ -136,7 +136,7 @@ const OrganizationsForm: React.FC<FormComponentProps> = ({
                     />
                   )}
                 />
-                <Tooltip title="Mark all as Verified" enterDelay={1000}>
+                <Tooltip title={t("organizations.markAllVerified")} enterDelay={1000}>
                   <Button
                     variant="outlined"
                     color="secondary"
@@ -149,7 +149,7 @@ const OrganizationsForm: React.FC<FormComponentProps> = ({
                     <DoneAllIcon />
                   </Button>
                 </Tooltip>
-                <Tooltip title="Mark all as Unverified" enterDelay={1000}>
+                <Tooltip title={t("organizations.markAllUnverified")} enterDelay={1000}>
                   <Button
                     variant="outlined"
                     color="secondary"
@@ -163,12 +163,13 @@ const OrganizationsForm: React.FC<FormComponentProps> = ({
                     <RemoveDoneIcon />
                   </Button>
                 </Tooltip>
-                <Tooltip title="Remove Organization" enterDelay={1000}>
+                <Tooltip title={t("organizations.removeOrganisation")} enterDelay={1000}>
                   <Button
                     variant="outlined"
                     color="secondary"
                     onClick={() => remove(index)}
                     data-testid={`remove-org-btn-${index}`}
+                    aria-label={t("organizations.removeOrganisation")}
                   >
                     <DeleteIcon />
                   </Button>
@@ -202,35 +203,37 @@ const OrganizationInformation: React.FC<OrganizationInformationProps> = ({
   index,
   loading = false,
 }) => {
+  const { t } = useTranslation("labelDataValidator");
   return (
     <Box
       className="grid grid-cols-1 sm:grid-cols-1 md:grid-cols-2 lg:grid-cols-1 xxl:grid-cols-2 gap-4"
       data-testid={`organization-info-${index}`}
     >
       <VerifiedInput
-        label="Name"
-        placeholder="Enter organization name"
+        label={t("organizations.fields.name.label")}
+        placeholder={t("organizations.fields.name.placeholder")}
         path={`organizations.${index}.name`}
         loading={loading}
         data-testid={`org-name-input-${index}`}
+        isFocus={true}
       />
       <VerifiedInput
-        label="Address"
-        placeholder="Enter address"
+        label={t("organizations.fields.address.label")}
+        placeholder={t("organizations.fields.address.placeholder")}
         path={`organizations.${index}.address`}
         loading={loading}
         data-testid={`org-address-input-${index}`}
       />
       <VerifiedInput
-        label="Website"
-        placeholder="Enter website"
+        label={t("organizations.fields.website.label")}
+        placeholder={t("organizations.fields.website.placeholder")}
         path={`organizations.${index}.website`}
         loading={loading}
         data-testid={`org-website-input-${index}`}
       />
       <VerifiedInput
-        label="Phone Number"
-        placeholder="Enter phone number"
+        label={t("organizations.fields.phone.label")}
+        placeholder={t("organizations.fields.phone.placeholder")}
         path={`organizations.${index}.phoneNumber`}
         loading={loading}
         data-testid={`org-phone-input-${index}`}

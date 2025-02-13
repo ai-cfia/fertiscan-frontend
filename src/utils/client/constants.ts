@@ -1,4 +1,4 @@
-import { LabelData } from "@/types/types";
+import { LabelData, RegistrationType } from "@/types/types";
 
 export const VERIFIED_LABEL_DATA: LabelData = {
   organizations: [
@@ -19,14 +19,22 @@ export const VERIFIED_LABEL_DATA: LabelData = {
   ],
   baseInformation: {
     name: { value: "SuperGrow 20-20-20", verified: true },
-    registrationNumber: { value: "1234567A", verified: true },
+    registrationNumbers: {
+      values: [
+        {
+          identifier: "",
+          type: RegistrationType.FERTILIZER,
+        },
+      ],
+      verified: true,
+    },
     lotNumber: { value: "LOT-4567", verified: true },
     npk: { value: "20-20-20", verified: true },
     weight: {
       verified: true,
       quantities: [
         { value: "25", unit: "kg" },
-        { value: "25", unit: "kg" },
+        { value: "55.12", unit: "lb" },
       ],
     },
     density: {

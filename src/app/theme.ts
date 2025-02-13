@@ -21,6 +21,7 @@ const theme = createTheme({
     background: {
       default: "#C5C5C5", // Light Grey
     },
+    
   },
   typography: {
     fontFamily: "Roboto, Arial, sans-serif",
@@ -53,7 +54,7 @@ const theme = createTheme({
     MuiStepIcon: {
       styleOverrides: {
         root: {
-          color: "#7B7B7B",
+          color: "#666666",
           "&.Mui-active": {
             color: "#05486C", // Dark Blue when active
           },
@@ -78,7 +79,7 @@ const theme = createTheme({
           "&.Mui-error": {
             color: colors.red["500"],
           },
-          color: "#7B7B7B", // Default Grey
+          color: "#666666", // Default Grey
         },
       },
     },

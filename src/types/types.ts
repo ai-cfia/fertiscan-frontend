@@ -107,7 +107,7 @@ export type Quantity = {
 
 export const DEFAULT_QUANTITY = { value: "", unit: "" };
 
-export type VerifiedQuantityField = VerifiedField & {
+export type VerifiedQuantities = VerifiedField & {
   quantities: Quantity[];
 };
 
@@ -119,25 +119,46 @@ export const UNITS = {
   ingredients: ["%", "ppm"],
 };
 
-export const DEFAULT_QUANTITY_FIELD = {
+export const DEFAULT_QUANTITY_FIELD: VerifiedQuantities = {
   verified: false,
   quantities: [DEFAULT_QUANTITY],
+};
+
+// reg numbers
+export enum RegistrationType {
+  FERTILIZER = "fertilizer_product",
+  INGREDIENT = "ingredient_component",
+}
+export type RegistrationNumber = {
+  identifier: string;
+  type: RegistrationType;
+};
+export const DEFAULT_REGISTRATION_NUMBER: RegistrationNumber = {
+  identifier: "",
+  type: RegistrationType.FERTILIZER,
+};
+export type RegistrationNumbers = VerifiedField & {
+  values: RegistrationNumber[];
+};
+export const DEFAULT_REGISTRATION_NUMBERS: RegistrationNumbers = {
+  verified: false,
+  values: [DEFAULT_REGISTRATION_NUMBER],
 };
 
 // Base Information
 export type BaseInformation = {
   name: VerifiedTextField;
-  registrationNumber: VerifiedTextField;
+  registrationNumbers: RegistrationNumbers;
   lotNumber: VerifiedTextField;
   npk: VerifiedTextField;
-  weight: VerifiedQuantityField;
-  density: VerifiedQuantityField;
-  volume: VerifiedQuantityField;
+  weight: VerifiedQuantities;
+  density: VerifiedQuantities;
+  volume: VerifiedQuantities;
 };
 
 export const DEFAULT_BASE_INFORMATION: BaseInformation = {
   name: DEFAULT_TEXT_FIELD,
-  registrationNumber: DEFAULT_TEXT_FIELD,
+  registrationNumbers: DEFAULT_REGISTRATION_NUMBERS,
   lotNumber: DEFAULT_TEXT_FIELD,
   npk: DEFAULT_TEXT_FIELD,
   weight: DEFAULT_QUANTITY_FIELD,

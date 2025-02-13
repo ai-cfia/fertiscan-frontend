@@ -9,6 +9,7 @@ import { fireEvent, render, screen, waitFor } from "@testing-library/react";
 import { act, useEffect, useState } from "react";
 import { FormProvider, useForm } from "react-hook-form";
 import OrganizationsForm from "../OrganizationsForm";
+import { useTranslation } from "react-i18next";
 
 const Wrapper = ({
   initialData,
@@ -35,6 +36,12 @@ const Wrapper = ({
   );
 };
 
+jest.mock("react-i18next", () => ({
+  useTranslation: () => ({
+    t: (key: string) => key,
+  }),
+}));
+
 describe("OrganizationsForm Rendering", () => {
   it("should render the correct number of organizations", () => {
     render(
@@ -53,19 +60,16 @@ describe("OrganizationsForm Rendering", () => {
   });
 
   it("should render all inputs for each organization", () => {
+    const { t } = useTranslation("labelDataValidator");
     render(<Wrapper initialData={DEFAULT_LABEL_DATA} />);
-
-    expect(
-      screen.getByPlaceholderText("Enter organization name"),
-    ).toBeInTheDocument();
-    expect(screen.getByPlaceholderText("Enter address")).toBeInTheDocument();
-    expect(screen.getByPlaceholderText("Enter website")).toBeInTheDocument();
-    expect(
-      screen.getByPlaceholderText("Enter phone number"),
-    ).toBeInTheDocument();
+    expect(screen.getByPlaceholderText(t("organizations.fields.name.placeholder"))).toBeInTheDocument();
+    expect(screen.getByPlaceholderText(t("organizations.fields.address.placeholder"))).toBeInTheDocument();
+    expect(screen.getByPlaceholderText(t("organizations.fields.website.placeholder"))).toBeInTheDocument();
+    expect(screen.getByPlaceholderText(t("organizations.fields.phone.placeholder"))).toBeInTheDocument();
   });
 
   it("should render the Add Organization button", () => {
+      const { t } = useTranslation("labelDataValidator");
     render(
       <Wrapper
         initialData={{
@@ -77,7 +81,7 @@ describe("OrganizationsForm Rendering", () => {
 
     const addButton = screen.getByTestId("add-org-btn");
     expect(addButton).toBeInTheDocument();
-    expect(addButton).toHaveTextContent("organizations.addOrganization");
+    expect(addButton).toHaveTextContent(t("organizations.addOrganization"));
   });
 });
 
@@ -378,6 +382,7 @@ describe("OrganizationsForm Functionality", () => {
 
 describe("OrganizationsForm Edge Cases", () => {
   it("should render correctly when no organizations are in labelData", () => {
+  const { t } = useTranslation("labelDataValidator");
     render(
       <Wrapper
         initialData={{
@@ -389,7 +394,7 @@ describe("OrganizationsForm Edge Cases", () => {
 
     const addButton = screen.getByTestId("add-org-btn");
     expect(addButton).toBeInTheDocument();
-    expect(addButton).toHaveTextContent("organizations.addOrganization");
+    expect(addButton).toHaveTextContent(t("organizations.addOrganization"));
 
     const organizationFields = screen.queryAllByTestId(/organization-\d+/);
     expect(organizationFields).toHaveLength(0);

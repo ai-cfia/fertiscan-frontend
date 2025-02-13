@@ -10,6 +10,10 @@
       "weight": "Poids",
       "density": "Densité",
       "volume": "Volume"
+    },
+    "regType": {
+      "fertilizer": "Engrais",
+      "ingredient": "Ingrédient"
     }
   },
   "organizations": {
@@ -67,5 +71,23 @@
     "retractButton": "Afficher l'image et les informations de l'étiquette."
   },
   "yes": "Oui",
-  "no": "Non"
+  "no": "Non",
+  "error": {
+      "saveSuccess": "Données de l'étiquette enregistrées avec succès.",
+      "saveFailed": "Échec de l'enregistrement des données de l'étiquette",
+      "idMissing": "ID manquant dans la réponse initiale de l'enregistrement des données de l'étiquette",
+      "initialSaveFailed": "Échec de l'enregistrement initial des données de l'étiquette",
+      "internalErrorLabelNotFound": "Erreur interne : Données de l'étiquette non trouvées.",
+      "internalErrorLabelNotConfirmed": "Erreur interne : Données de l'étiquette non confirmées.",
+      "noFileUploaded": "Aucun fichier téléchargé",
+      "labelNotFound": "Données de l'étiquette non trouvées.",
+      "labelAlreadyConfirmed": "Données de l'étiquette déjà confirmées.",
+      "labelDataNotFullySaved": "Données de l'étiquette non entièrement enregistrées."
+  },
+  "alt": {
+    "editButton": "Bouton Modifier",
+    "confirmButton": "Bouton Confirmer",
+    "expendIcon": "Icône d'expansion",
+    "retractIcon": "Icône de rétractation"
+  }
 }

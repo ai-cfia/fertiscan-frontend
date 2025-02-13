@@ -5,15 +5,19 @@ import { render, screen } from "@testing-library/react";
 
 import ImageViewer from "@/components/ImageViewer";
 
+global.ResizeObserver = class {
+  observe() {}
+  unobserve() {}
+  disconnect() {}
+};
+
 describe("ImageViewer Component", () => {
   const mockImageFiles = [
     new File([""], "image1", { type: "image/png" }),
-    new File([""], "image2", { type: "image/png" })
+    new File([""], "image2", { type: "image/png" }),
   ];
 
-  global.URL.createObjectURL = jest.fn(
-    () => "blob:http://localhost:3001/bbe73af9-a6a3-4644-967c-a566d6ac19ab",
-  );
+  global.URL.createObjectURL = jest.fn();
 
   it("renders the ImageViewer component and its sub-components", () => {
     render(
