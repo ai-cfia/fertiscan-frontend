@@ -18,5 +18,9 @@
   "alt": {
     "edit": "Edit inspection",
     "discard": "Discard inspection"
-  }
+  },
+  "confirmDiscardTitle": "Confirm Discard",
+  "confirmDiscardMessage": "Are you sure you want to discard this inspection? This action cannot be undone.",
+  "cancel": "Cancel",
+  "confirm": "Confirm"
 }

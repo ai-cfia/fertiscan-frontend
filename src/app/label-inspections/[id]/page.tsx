@@ -7,7 +7,18 @@ import useUploadedFilesStore from "@/stores/fileStore";
 import { LabelData } from "@/types/types";
 import { processAxiosError } from "@/utils/client/apiErrors";
 import { getAuthHeader } from "@/utils/client/auth";
-import { Box, CircularProgress, Container, Typography } from "@mui/material";
+import {
+  Box,
+  Button,
+  CircularProgress,
+  Container,
+  Dialog,
+  DialogActions,
+  DialogContent,
+  DialogContentText,
+  DialogTitle,
+  Typography,
+} from "@mui/material";
 import axios, { AxiosResponse } from "axios";
 import Error from "next/error";
 import { useParams, useRouter } from "next/navigation";
@@ -27,6 +38,7 @@ function InspectionPage() {
   const { t } = useTranslation("inspectionPage");
   const [error, setError] = useState<AxiosResponse | null>(null);
   const router = useRouter();
+  const [confirmOpen, setConfirmOpen] = useState(false);
 
   const deleteInspection = (id: string, signal: AbortSignal) => {
     axios
@@ -88,6 +100,11 @@ function InspectionPage() {
   };
 
   const handleDiscardClick = () => {
+    setConfirmOpen(true);
+  };
+
+  const confirmDiscard = () => {
+    setConfirmOpen(false);
     if (!inspectionId) {
       showAlert(t("alert.internalErrorLabelNotFound"), "error");
       return;
@@ -173,6 +190,29 @@ function InspectionPage() {
           </Box>
         }
       />
+      <Dialog
+        open={confirmOpen}
+        onClose={() => setConfirmOpen(false)}
+        aria-labelledby="alert-dialog-title"
+        aria-describedby="alert-dialog-description"
+      >
+        <DialogTitle id="alert-dialog-title">
+          {t("confirmDiscardTitle")}
+        </DialogTitle>
+        <DialogContent>
+          <DialogContentText id="alert-dialog-description">
+            {t("confirmDiscardMessage")}
+          </DialogContentText>
+        </DialogContent>
+        <DialogActions>
+          <Button onClick={() => setConfirmOpen(false)} color="primary">
+            {t("cancel")}
+          </Button>
+          <Button onClick={confirmDiscard} color="error" autoFocus>
+            {t("confirm")}
+          </Button>
+        </DialogActions>
+      </Dialog>
     </Container>
   );
 }

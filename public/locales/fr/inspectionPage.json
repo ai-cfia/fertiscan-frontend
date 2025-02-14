@@ -18,5 +18,9 @@
   "alt": {
     "edit": "Modifier l'inspection",
     "discard": "Supprimer l'inspection"
-  }
+  },
+  "confirmDiscardTitle": "Confirmer la suppression",
+  "confirmDiscardMessage": "Êtes-vous sûr de vouloir supprimer cette inspection ? Cette action est irréversible.",
+  "cancel": "Annuler",
+  "confirm": "Confirmer"
 }

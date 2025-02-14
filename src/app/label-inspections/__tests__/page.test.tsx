@@ -125,7 +125,23 @@ describe("InspectionPage", () => {
     );
   });
 
-  it("calls delete API and redirects on discard", async () => {
+  it("opens confirmation dialog when discard button is clicked", async () => {
+    (axios.get as jest.Mock).mockResolvedValue({
+      data: VERIFIED_LABEL_DATA_WITH_ID,
+    });
+
+    render(<InspectionPage />);
+    await waitFor(() =>
+      expect(
+        screen.getByText(VERIFIED_LABEL_DATA_WITH_ID.inspectionId),
+      ).toBeInTheDocument(),
+    );
+
+    fireEvent.click(screen.getByTestId("discard-button"));
+    expect(screen.getByText("confirmDiscardMessage")).toBeInTheDocument();
+  });
+
+  it("confirms discard and calls delete API", async () => {
     (axios.get as jest.Mock).mockResolvedValue({
       data: VERIFIED_LABEL_DATA_WITH_ID,
     });
@@ -140,10 +156,44 @@ describe("InspectionPage", () => {
 
     fireEvent.click(screen.getByTestId("discard-button"));
 
+    await waitFor(() =>
+      expect(screen.getByText("confirmDiscardMessage")).toBeInTheDocument(),
+    );
+
+    fireEvent.click(screen.getByText("confirm"));
+
+    await waitFor(() => expect(axios.delete).toHaveBeenCalled());
     await waitFor(() => expect(mockRouter.push).toHaveBeenCalledWith("/"));
   });
 
-  it("handles delete API failure without alert", async () => {
+  it("cancels discard and does not call delete API", async () => {
+    (axios.get as jest.Mock).mockResolvedValue({
+      data: VERIFIED_LABEL_DATA_WITH_ID,
+    });
+
+    render(<InspectionPage />);
+    await waitFor(() =>
+      expect(
+        screen.getByText(VERIFIED_LABEL_DATA_WITH_ID.inspectionId),
+      ).toBeInTheDocument(),
+    );
+
+    fireEvent.click(screen.getByTestId("discard-button"));
+
+    await waitFor(() =>
+      expect(screen.getByText("confirmDiscardMessage")).toBeInTheDocument(),
+    );
+
+    fireEvent.click(screen.getByText("cancel"));
+
+    expect(axios.delete).not.toHaveBeenCalled();
+
+    await waitFor(() =>
+      expect(screen.queryByText("confirmDiscardMessage")).not.toBeInTheDocument(),
+    );
+  });
+
+  it("handles delete API failure correctly", async () => {
     (axios.get as jest.Mock).mockResolvedValue({
       data: VERIFIED_LABEL_DATA_WITH_ID,
     });
@@ -158,6 +208,14 @@ describe("InspectionPage", () => {
 
     fireEvent.click(screen.getByTestId("discard-button"));
 
-    await waitFor(() => expect(mockRouter.push).not.toHaveBeenCalled());
+    await waitFor(() =>
+      expect(screen.getByText("confirmDiscardMessage")).toBeInTheDocument(),
+    );
+
+    fireEvent.click(screen.getByText("confirm"));
+
+    await waitFor(() => expect(axios.delete).toHaveBeenCalled());
+
+    expect(mockRouter.push).not.toHaveBeenCalled();
   });
 });
