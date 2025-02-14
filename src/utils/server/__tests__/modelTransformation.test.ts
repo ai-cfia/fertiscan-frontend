@@ -1,4 +1,4 @@
-import { LabelData } from "@/types/types";
+import { DEFAULT_ORGANIZATION, LabelData, RegistrationType } from "@/types/types";
 import {
   FertiscanDbMetadataInspectionValue,
   InspectionResponse,
@@ -204,7 +204,9 @@ describe("mapLabelDataOutputToLabelData", () => {
         },
       ],
       fertiliser_name: "SuperGrow",
-      registration_number: [{ identifier: "1234567A", type: null }],
+      registration_number: [
+        { identifier: "1234567A", type: "ingredient_component" },
+      ],
       lot_number: "LOT42",
       npk: "10-5-5",
       weight: [{ value: 20, unit: "kg" }],
@@ -251,13 +253,20 @@ describe("mapLabelDataOutputToLabelData", () => {
       expect(result.organizations[index].phoneNumber.value).toBe(
         org.phone_number,
       );
+      expect(result.organizations[index].mainContact).toBe(false);
     });
 
     // Base Information
     expect(result.baseInformation.name.value).toBe(input.fertiliser_name);
-    expect(result.baseInformation.registrationNumber.value).toBe(
-      input.registration_number![0].identifier,
-    );
+    expect(result.baseInformation.registrationNumbers).toEqual({
+      values: [
+        {
+          identifier: "1234567A",
+          type: RegistrationType.INGREDIENT,
+        },
+      ],
+      verified: false,
+    });
     expect(result.baseInformation.lotNumber.value).toBe(input.lot_number);
     expect(result.baseInformation.npk.value).toBe(input.npk);
     expect(result.baseInformation.weight.quantities).toEqual(
@@ -329,22 +338,25 @@ describe("mapLabelDataOutputToLabelData", () => {
     const result = mapLabelDataOutputToLabelData(input);
 
     // Organizations
-    expect(result.organizations[0].name.value).toBe("");
-    expect(result.organizations[0].address.value).toBe("");
-    expect(result.organizations[0].website.value).toBe("");
-    expect(result.organizations[0].phoneNumber.value).toBe("");
-
-    expect(result.organizations[1].name.value).toBe("");
-    expect(result.organizations[1].address.value).toBe("");
-    expect(result.organizations[1].website.value).toBe("");
-    expect(result.organizations[1].phoneNumber.value).toBe("");
+    result.organizations.forEach((org) => {
+      expect(org.name.value).toBe("");
+      expect(org.address.value).toBe("");
+      expect(org.website.value).toBe("");
+      expect(org.phoneNumber.value).toBe("");
+      expect(org.mainContact).toBe(false);
+    });
 
     // Base Information
     expect(result.baseInformation.name.value).toBe("");
-    expect(result.baseInformation.registrationNumber.value).toBe("");
+    expect(result.baseInformation.registrationNumbers).toEqual({
+      values: [{ identifier: "", type: "fertilizer_product" }],
+      verified: false,
+    });
     expect(result.baseInformation.lotNumber.value).toBe("");
     expect(result.baseInformation.npk.value).toBe("");
-    expect(result.baseInformation.weight.quantities).toEqual([]);
+    expect(result.baseInformation.weight.quantities).toEqual([
+      { value: "", unit: "" },
+    ]);
     expect(result.baseInformation.density.quantities).toEqual([
       { value: "", unit: "" },
     ]);
@@ -419,16 +431,20 @@ describe("mapInspectionToLabelData", () => {
       verified: false,
       organizations: [
         {
+          id: "ORG123",
           name: "Company Inc.",
           address: "123 Street",
           website: "http://example.com",
           phone_number: "123-456-7890",
+          is_main_contact: true,
         },
         {
+          id: "ORG456",
           name: "Mfg Corp.",
           address: "456 Road",
           website: "http://mfg.com",
           phone_number: "987-654-3210",
+          is_main_contact: false,
         },
       ],
       product: {
@@ -488,14 +504,26 @@ describe("mapInspectionToLabelData", () => {
     expect(result.organizations[0].address.value).toBe("123 Street");
     expect(result.organizations[0].website.value).toBe("http://example.com");
     expect(result.organizations[0].phoneNumber.value).toBe("123-456-7890");
+    expect(result.organizations[0].mainContact).toBe(true);
+    expect(result.organizations[0].id).toBe("ORG123");
 
     expect(result.organizations[1].name.value).toBe("Mfg Corp.");
     expect(result.organizations[1].address.value).toBe("456 Road");
     expect(result.organizations[1].website.value).toBe("http://mfg.com");
     expect(result.organizations[1].phoneNumber.value).toBe("987-654-3210");
+    expect(result.organizations[1].mainContact).toBe(false);
+    expect(result.organizations[1].id).toBe("ORG456");
 
     expect(result.baseInformation.name.value).toBe("SuperGrow");
-    expect(result.baseInformation.registrationNumber.value).toBe("1234567A");
+    expect(result.baseInformation.registrationNumbers).toEqual({
+      verified: false,
+      values: [
+        {
+          identifier: "1234567A",
+          type: RegistrationType.FERTILIZER,
+        },
+      ],
+    });
     expect(result.baseInformation.lotNumber.value).toBe("LOT42");
     expect(result.baseInformation.npk.value).toBe("10-5-5");
 
@@ -563,12 +591,17 @@ describe("mapInspectionToLabelData", () => {
 
   it("should handle missing fields gracefully", () => {
     const result = mapInspectionToLabelData(emptyInspection);
-    expect(result.organizations).toEqual([]);
+    expect(result.organizations).toEqual([DEFAULT_ORGANIZATION]);
     expect(result.baseInformation.name.value).toBe("");
-    expect(result.baseInformation.registrationNumber.value).toBe("");
+    expect(result.baseInformation.registrationNumbers).toEqual({
+      verified: true,
+      values: [{ identifier: "", type: RegistrationType.FERTILIZER }],
+    });
     expect(result.baseInformation.lotNumber.value).toBe("");
     expect(result.baseInformation.npk.value).toBe("");
-    expect(result.baseInformation.weight.quantities).toEqual([]);
+    expect(result.baseInformation.weight.quantities).toEqual([
+      { value: "", unit: "" },
+    ]);
     expect(result.baseInformation.density.quantities).toEqual([
       { value: "", unit: "" },
     ]);
@@ -590,9 +623,9 @@ describe("mapInspectionToLabelData", () => {
 
   it("sets all fields as verified if inspection is verified", () => {
     const result = mapInspectionToLabelData(emptyInspection);
-    expect(result.organizations).toEqual([]);
+    expect(result.organizations).toEqual([DEFAULT_ORGANIZATION]);
     expect(result.baseInformation.name.verified).toBe(true);
-    expect(result.baseInformation.registrationNumber.verified).toBe(true);
+    expect(result.baseInformation.registrationNumbers.verified).toBe(true);
     expect(result.baseInformation.lotNumber.verified).toBe(true);
     expect(result.baseInformation.npk.verified).toBe(true);
     expect(result.baseInformation.weight.verified).toBe(true);
@@ -620,21 +653,28 @@ describe("mapInspectionToLabelData", () => {
 const labelData: LabelData = {
   organizations: [
     {
+      id: "ORG123",
       name: { value: "Company Inc.", verified: false },
       address: { value: "123 Street", verified: false },
       website: { value: "http://example.com", verified: false },
       phoneNumber: { value: "123-456-7890", verified: false },
+      mainContact: true,
     },
     {
+      id: "ORG456",
       name: { value: "Mfg Corp.", verified: false },
       address: { value: "456 Road", verified: false },
       website: { value: "http://mfg.com", verified: false },
       phoneNumber: { value: "987-654-3210", verified: false },
+      mainContact: false,
     },
   ],
   baseInformation: {
     name: { value: "SuperGrow", verified: false },
-    registrationNumber: { value: "1234567A", verified: false },
+    registrationNumbers: {
+      verified: false,
+      values: [{ identifier: "1234567A", type: RegistrationType.FERTILIZER }],
+    },
     lotNumber: { value: "LOT42", verified: false },
     npk: { value: "10-5-5", verified: false },
     weight: { quantities: [{ value: "20", unit: "kg" }], verified: false },
@@ -708,7 +748,10 @@ const emptyLabelData: LabelData = {
   organizations: [],
   baseInformation: {
     name: { value: "", verified: false },
-    registrationNumber: { value: "", verified: false },
+    registrationNumbers: {
+      values: [{ identifier: "", type: RegistrationType.FERTILIZER }],
+      verified: false,
+    },
     lotNumber: { value: "", verified: false },
     npk: { value: "", verified: false },
     weight: { quantities: [], verified: false },
@@ -749,7 +792,9 @@ describe("mapLabelDataToLabelDataInput", () => {
       },
     ]);
     expect(result.fertiliser_name).toBe("SuperGrow");
-    expect(result.registration_number).toEqual([{ identifier: "1234567A" }]);
+    expect(result.registration_number).toEqual([
+      { identifier: "1234567A", type: "fertilizer_product" },
+    ]);
     expect(result.lot_number).toBe("LOT42");
     expect(result.npk).toBe("10-5-5");
     expect(result.weight).toEqual([{ value: 20, unit: "kg" }]);
@@ -795,7 +840,7 @@ describe("mapLabelDataToLabelDataInput", () => {
     const result = mapLabelDataToLabelDataInput(emptyLabelData);
     expect(result.organizations).toEqual([]);
     expect(result.fertiliser_name).toBe("");
-    expect(result.registration_number).toEqual([{ identifier: "" }]);
+    expect(result.registration_number).toEqual([]);
     expect(result.lot_number).toBe("");
     expect(result.npk).toBe("");
     expect(result.weight).toEqual([]);
@@ -830,21 +875,30 @@ describe("mapLabelDataToInspectionUpdate", () => {
     expect(result.verified).toBe(false);
     expect(result.organizations).toEqual([
       {
+        id: "ORG123",
         name: "Company Inc.",
         address: "123 Street",
         website: "http://example.com",
         phone_number: "123-456-7890",
+        is_main_contact: true,
       },
       {
+        id: "ORG456",
         name: "Mfg Corp.",
         address: "456 Road",
         website: "http://mfg.com",
         phone_number: "987-654-3210",
+        is_main_contact: false,
       },
     ]);
     expect(result.product).toEqual({
       name: "SuperGrow",
-      registration_numbers: [{ registration_number: "1234567A" }],
+      registration_numbers: [
+        {
+          registration_number: "1234567A",
+          is_an_ingredient: false,
+        },
+      ],
       lot_number: "LOT42",
       npk: "10-5-5",
       metrics: {
@@ -895,7 +949,7 @@ describe("mapLabelDataToInspectionUpdate", () => {
     expect(result.organizations).toEqual([]);
     expect(result.product).toEqual({
       name: "",
-      registration_numbers: [{ registration_number: "" }],
+      registration_numbers: [],
       lot_number: "",
       npk: "",
       metrics: {
@@ -915,6 +969,18 @@ describe("mapLabelDataToInspectionUpdate", () => {
     });
     expect(result.ingredients).toEqual({ en: [], fr: [] });
     expect(result.picture_set_id).toBe("");
+  });
+
+  it("should return empty ingredients when recordKeeping is true", () => {
+    const modifiedLabelData: LabelData = {
+      ...labelData,
+      ingredients: {
+        ...labelData.ingredients,
+        recordKeeping: { value: true, verified: false },
+      },
+    };
+    const result = mapLabelDataToInspectionUpdate(modifiedLabelData);
+    expect(result.ingredients).toEqual({ en: [], fr: [] });
   });
 
   it("should return empty ingredients when recordKeeping is true", () => {

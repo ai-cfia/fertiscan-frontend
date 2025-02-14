@@ -1,34 +1,34 @@
-import { FormControl, IconButton, Input, InputAdornment } from "@mui/material";
-import React, { useState } from "react";
 import { Visibility, VisibilityOff } from "@mui/icons-material";
+import {
+  FormControl,
+  IconButton,
+  Input,
+  InputAdornment,
+  InputProps,
+} from "@mui/material";
+import React, { useState } from "react";
 import { useTranslation } from "react-i18next";
 
-interface IconInputProps {
-  id: string;
-  icon: React.ReactNode;
-  placeholder: string;
-  type: string;
-  value: string;
+export interface IconInputProps extends InputProps {
+  icon?: React.ReactNode;
   setValue: (value: string) => void;
   dataTestId?: string;
-  tabIndex?: number;
 }
 
 /**
  * IconInput Component
  *
- * This component renders an input field with an icon on the left side.
+ * This component renders an input field with an optional left icon and password visibility toggle.
+ * Users can override adornments if needed.
  */
-const IconInput = ({
+const IconInput: React.FC<IconInputProps> = ({
   id,
   icon,
-  placeholder,
   type,
-  value,
   setValue,
   dataTestId,
-  tabIndex,
-}: IconInputProps) => {
+  ...inputProps
+}) => {
   const [hasFocus, setFocus] = useState(false);
   const [trueType, setTrueType] = useState(type);
   const [showPassword, setShowPassword] = useState(false);
@@ -39,7 +39,7 @@ const IconInput = ({
     e.preventDefault();
     setTrueType(!showPassword ? "text" : "password");
     setShowPassword(!showPassword);
-    document.getElementById(id)!.focus();
+    if (id) document.getElementById(id)!.focus();
   };
 
   const handleInputFocus = () => {
@@ -72,12 +72,14 @@ const IconInput = ({
       >
         <IconButton
           aria-label={
-            showPassword ? t("iconInput.hidePassword") : t("iconInput.displayPassword")
+            showPassword
+              ? t("iconInput.hidePassword")
+              : t("iconInput.displayPassword")
           }
           onClick={handleClickShowPassword}
           edge="end"
           className="!text-white"
-          >
+        >
           {showPassword ? (
             <VisibilityOff sx={{ fontSize: "medium" }} />
           ) : (
@@ -93,7 +95,6 @@ const IconInput = ({
     <FormControl variant="standard" data-testid={dataTestId}>
       <Input
         id={id}
-        placeholder={placeholder}
         type={trueType}
         className="
           text-white
@@ -116,7 +117,6 @@ const IconInput = ({
             borderBottom: "2px solid white !important",
           },
         }}
-        value={value}
         onChange={(e) => setValue(e.target.value)}
         onFocus={handleInputFocus}
         onBlur={handleInputBlur}
@@ -124,9 +124,9 @@ const IconInput = ({
           <InputAdornment position="start">{icon}</InputAdornment>
         }
         endAdornment={showPasswordAdornment}
-        data-testid={"input"}
-        tabIndex={tabIndex}
-      ></Input>
+        data-testid="input"
+        {...inputProps}
+      />
     </FormControl>
   );
 };

@@ -1,5 +1,5 @@
-import { QuantityChips } from "@/components/QuantityChip";
 import { LabelData } from "@/types/types";
+import CheckIcon from "@mui/icons-material/Check";
 import {
   Box,
   BoxProps,
@@ -16,6 +16,8 @@ import {
 } from "@mui/material";
 import React from "react";
 import { useTranslation } from "react-i18next";
+import { QuantityChips } from "../QuantityChips";
+import { RegistrationChips } from "../RegistrationChips";
 import BilingualTable from "./BilingualTable";
 
 interface LabelInformationProps {
@@ -46,14 +48,14 @@ const LabelInformation: React.FC<LabelInformationProps> = ({
               <TableRow className="bg-gray-100">
                 {[
                   "name",
-                  "registrationNumber",
+                  "registrationNumbers",
                   "lotNumber",
                   "npk",
                   "weight",
                   "density",
                   "volume",
                 ].map((key) => (
-                  <TableCell key={key} className="min-w-32">
+                  <TableCell key={key} className="">
                     <Typography className="!font-bold">
                       {t(`baseInformation.tableHeaders.${key}`)}
                     </Typography>
@@ -65,7 +67,11 @@ const LabelInformation: React.FC<LabelInformationProps> = ({
               <TableRow>
                 <TableCell>{labelData.baseInformation.name.value}</TableCell>
                 <TableCell>
-                  {labelData.baseInformation.registrationNumber.value}
+                  <RegistrationChips
+                    registrations={
+                      labelData?.baseInformation.registrationNumbers.values
+                    }
+                  />
                 </TableCell>
                 <TableCell>
                   {labelData.baseInformation.lotNumber.value}
@@ -101,18 +107,21 @@ const LabelInformation: React.FC<LabelInformationProps> = ({
           <Table size="small">
             <TableHead>
               <TableRow className="bg-gray-100">
-                {["name", "address", "website", "phoneNumber"].map((key) => (
-                  <TableCell key={key} className="min-w-44">
-                    <Typography className="!font-bold">
-                      {t(`organizations.tableHeaders.${key}`)}
-                    </Typography>
-                  </TableCell>
-                ))}
+                {["mainContact", "name", "address", "website", "phoneNumber"].map(
+                  (key) => (
+                    <TableCell key={key} className="">
+                      <Typography className="!font-bold">
+                        {t(`organizations.tableHeaders.${key}`)}
+                      </Typography>
+                    </TableCell>
+                  ),
+                )}
               </TableRow>
             </TableHead>
             <TableBody>
               {labelData.organizations.map((org, index) => (
                 <TableRow key={index}>
+                  <TableCell>{org.mainContact && <CheckIcon />}</TableCell>
                   <TableCell>{org.name.value}</TableCell>
                   <TableCell>{org.address.value}</TableCell>
                   <TableCell>

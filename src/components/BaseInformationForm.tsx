@@ -5,7 +5,8 @@ import { useEffect } from "react";
 import { FormProvider, useForm, useWatch } from "react-hook-form";
 import { useTranslation } from "react-i18next";
 import { VerifiedInput } from "./VerifiedFieldComponents";
-import VerifiedQuantityMultiInput from "./VerifiedQuantityMultiInput";
+import VerifiedQuantityList from "./VerifiedQuantityList";
+import VerifiedRegistrationList from "./VerifiedRegistrationList";
 
 const BaseInformationForm: React.FC<FormComponentProps> = ({
   loading = false,
@@ -47,12 +48,9 @@ const BaseInformationForm: React.FC<FormComponentProps> = ({
             loading={loading}
             isFocus={true}
           />
-          <VerifiedInput
-            label={t("baseInformation.fields.registrationNumber.label")}
-            placeholder={t(
-              "baseInformation.fields.registrationNumber.placeholder",
-            )}
-            path="baseInformation.registrationNumber"
+          <VerifiedRegistrationList
+            label={t("baseInformation.fields.reg.label")}
+            path="baseInformation.registrationNumbers"
             loading={loading}
           />
           <VerifiedInput
@@ -67,19 +65,19 @@ const BaseInformationForm: React.FC<FormComponentProps> = ({
             path="baseInformation.npk"
             loading={loading}
           />
-          <VerifiedQuantityMultiInput
+          <VerifiedQuantityList
             label={t("baseInformation.fields.weight.label")}
             path="baseInformation.weight"
             unitOptions={UNITS.weight}
             loading={loading}
           />
-          <VerifiedQuantityMultiInput
+          <VerifiedQuantityList
             label={t("baseInformation.fields.density.label")}
             path="baseInformation.density"
             unitOptions={UNITS.density}
             loading={loading}
           />
-          <VerifiedQuantityMultiInput
+          <VerifiedQuantityList
             label={t("baseInformation.fields.volume.label")}
             path="baseInformation.volume"
             unitOptions={UNITS.volume}

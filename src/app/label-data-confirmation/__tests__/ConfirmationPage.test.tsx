@@ -1,5 +1,4 @@
 import FileUploaded from "@/classe/File";
-import { QuantityChips } from "@/components/QuantityChip";
 import useUploadedFilesStore from "@/stores/fileStore";
 import useLabelDataStore from "@/stores/labelDataStore";
 import { Quantity } from "@/types/types";
@@ -10,6 +9,7 @@ import {
 import { fireEvent, render, screen, waitFor } from "@testing-library/react";
 import axios from "axios";
 import LabelDataConfirmationPage from "../page";
+import { QuantityChips } from "@/components/QuantityChips";
 
 const mockedRouterPush = jest.fn();
 jest.mock("next/navigation", () => ({

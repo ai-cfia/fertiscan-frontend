@@ -9,6 +9,7 @@ import { LabelData } from "@/types/types";
 import { processAxiosError } from "@/utils/client/apiErrors";
 import { getAuthHeader } from "@/utils/client/auth";
 import { isAllVerified } from "@/utils/client/fieldValidation";
+import { updateLabelData } from "@/utils/client/modelTransformation";
 import {
   Box,
   Checkbox,
@@ -76,11 +77,7 @@ const LabelDataConfirmationPage = () => {
         if (!response.data.inspectionId) {
           throw new Error(t("error.idMissing"));
         }
-        const _labelData: LabelData = {
-          ...labelData,
-          inspectionId: response.data.inspectionId,
-          pictureSetId: response.data.pictureSetId,
-        };
+        const _labelData = updateLabelData(labelData, response.data);
         setLabelData(_labelData);
         putLabelData(_labelData, signal);
       })
@@ -123,6 +120,8 @@ const LabelDataConfirmationPage = () => {
   };
 
   useEffect(() => {
+    console.debug("confirmation page label", labelData);
+
     if (!labelData) {
       console.warn("labelData not found");
       return router.push("/");
@@ -208,7 +207,7 @@ const LabelDataConfirmationPage = () => {
             </Box>
           </Box>
         }
-      />{" "}
+      />
     </Container>
   );
 };

@@ -46,19 +46,17 @@ describe("IngredientsForm Rendering", () => {
     fireEvent.click(
       screen.getByTestId("radio-yes-field-ingredients.recordKeeping.value"),
     );
-    setTimeout(() => {
-      expect(
-        screen.queryByTestId("table-container-ingredients.nutrients"),
-      ).not.toBeInTheDocument();
 
-      fireEvent.click(
-        screen.getByTestId("radio-no-field-ingredients.recordKeeping.value"),
-      );
-      setTimeout(() => {
-        expect(
-          screen.getByTestId("table-container-ingredients.nutrients"),
-        ).toBeInTheDocument();
-      }, 350);
-    }, 350);
+    expect(
+      screen.queryByTestId("table-container-ingredients.nutrients"),
+    ).not.toBeInTheDocument();
+
+    fireEvent.click(
+      screen.getByTestId("radio-no-field-ingredients.recordKeeping.value"),
+    );
+
+    expect(
+      screen.getByTestId("table-container-ingredients.nutrients"),
+    ).toBeInTheDocument();
   });
 });

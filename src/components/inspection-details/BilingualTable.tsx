@@ -22,12 +22,12 @@ const BilingualTable: React.FC<BilingualTableProps> = ({ data }) => {
       <Table size="small" data-testid="bilingual-table">
         <TableHead>
           <TableRow className="bg-gray-100">
-            <TableCell className="min-w-60">
+            <TableCell>
               <Typography className="!font-bold">
                 {t("bilingualTable.tableHeaders.english")}
               </Typography>
             </TableCell>
-            <TableCell className="min-w-60">
+            <TableCell>
               <Typography className="!font-bold">
                 {t("bilingualTable.tableHeaders.french")}
               </Typography>
@@ -52,17 +52,17 @@ const BilingualTable: React.FC<BilingualTableProps> = ({ data }) => {
           {data.map((item, index) => (
             <TableRow key={index} data-testid={`bilingual-table-row-${index}`}>
               <TableCell data-testid={`bilingual-table-row-${index}-english`}>
-                <Typography>{item.en}</Typography>
+                {item.en}
               </TableCell>
               <TableCell data-testid={`bilingual-table-row-${index}-french`}>
-                <Typography>{item.fr}</Typography>
+                {item.fr}
               </TableCell>
               {item.value !== undefined && (
                 <TableCell
                   align="right"
                   data-testid={`bilingual-table-row-${index}-value`}
                 >
-                  <Typography>{item.value}</Typography>
+                  {item.value}
                 </TableCell>
               )}
               {item.unit !== undefined && (
@@ -70,7 +70,7 @@ const BilingualTable: React.FC<BilingualTableProps> = ({ data }) => {
                   align="right"
                   data-testid={`bilingual-table-row-${index}-unit`}
                 >
-                  <Typography>{item.unit}</Typography>
+                  {item.unit}
                 </TableCell>
               )}
             </TableRow>

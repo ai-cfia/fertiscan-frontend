@@ -4,12 +4,16 @@
     "sectionTitle": "Informations de base sur l'engrais",
     "tableHeaders": {
       "name": "Nom",
-      "registrationNumber": "Numéro d'enregistrement",
+      "registrationNumbers": "Numéros d'enregistrement",
       "lotNumber": "Numéro de lot",
       "npk": "NPK",
       "weight": "Poids",
       "density": "Densité",
       "volume": "Volume"
+    },
+    "regType": {
+      "fertilizer": "Engrais",
+      "ingredient": "Ingrédient"
     }
   },
   "organizations": {
@@ -18,7 +22,8 @@
       "name": "Nom",
       "address": "Adresse",
       "website": "Site Web",
-      "phoneNumber": "Numéro de téléphone"
+      "phoneNumber": "Numéro de téléphone",
+      "mainContact": "Contact principal"
     }
   },
   "cautions": {

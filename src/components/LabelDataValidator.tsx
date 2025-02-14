@@ -117,12 +117,14 @@ function LabelDataValidator({
 
   const submit = () => {
     storeLabelData(labelData);
+    console.debug("Label data stored", labelData);
     router.push("/label-data-confirmation");
   };
 
   useEffect(() => {
-    const verified = labelData.organizations.every((org) =>
-      checkFieldRecord(org),
+    const verified = labelData.organizations.every(
+      ({ name, address, website, phoneNumber }) =>
+        checkFieldRecord({ name, address, website, phoneNumber }),
     );
     setOrganizationsStepStatus(
       verified ? StepStatus.Completed : StepStatus.Incomplete,

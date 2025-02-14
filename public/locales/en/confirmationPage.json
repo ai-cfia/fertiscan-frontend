@@ -4,12 +4,16 @@
     "sectionTitle": "Fertilizer Base Information",
     "tableHeaders": {
       "name": "Name",
-      "registrationNumber": "Registration Number",
+      "registrationNumbers": "Registration Numbers",
       "lotNumber": "Lot Number",
       "npk": "NPK",
       "weight": "Weight",
       "density": "Density",
       "volume": "Volume"
+    },
+    "regType": {
+      "fertilizer": "Fertilizer",
+      "ingredient": "Ingredient"
     }
   },
   "organizations": {
@@ -18,7 +22,8 @@
       "name": "Name",
       "address": "Address",
       "website": "Website",
-      "phoneNumber": "Phone Number"
+      "phoneNumber": "Phone Number",
+      "mainContact": "Main Contact"
     }
   },
   "cautions": {

@@ -1,3 +1,4 @@
+import { RegistrationType } from "@/types/types";
 import { VERIFIED_LABEL_DATA_WITH_ID } from "@/utils/client/constants";
 import { fireEvent, render, screen, waitFor } from "@testing-library/react";
 import axios from "axios";
@@ -42,7 +43,7 @@ describe("InspectionPage", () => {
     expect(screen.getByRole("progressbar")).toBeInTheDocument();
   });
 
-  it("fetches and displays inspection data", async () => {
+  it("renders all inspection data", async () => {
     (axios.get as jest.Mock).mockResolvedValue({
       data: VERIFIED_LABEL_DATA_WITH_ID,
     });
@@ -55,15 +56,46 @@ describe("InspectionPage", () => {
       ).toBeInTheDocument(),
     );
 
-    expect(
-      screen.getByText(VERIFIED_LABEL_DATA_WITH_ID.baseInformation.name.value),
-    ).toBeInTheDocument();
+    Object.values(VERIFIED_LABEL_DATA_WITH_ID.baseInformation).forEach(
+      (field) => {
+        if (typeof field === "object" && "value" in field) {
+          expect(screen.getByText(field.value)).toBeInTheDocument();
+        }
+      },
+    );
 
-    expect(
-      screen.getByText(
-        VERIFIED_LABEL_DATA_WITH_ID.baseInformation.registrationNumber.value,
-      ),
-    ).toBeInTheDocument();
+    VERIFIED_LABEL_DATA_WITH_ID.baseInformation.registrationNumbers.values.forEach(
+      ({ identifier, type }) =>
+        expect(
+          screen.getByText(
+            `${identifier} (baseInformation.regType.${type === RegistrationType.FERTILIZER ? "fertilizer" : "ingredient"})`,
+          ),
+        ).toBeInTheDocument(),
+    );
+
+    VERIFIED_LABEL_DATA_WITH_ID.cautions.forEach(({ en }) => {
+      expect(screen.getByText(en)).toBeInTheDocument();
+    });
+
+    VERIFIED_LABEL_DATA_WITH_ID.instructions.forEach(({ en }) => {
+      expect(screen.getByText(en)).toBeInTheDocument();
+    });
+
+    VERIFIED_LABEL_DATA_WITH_ID.guaranteedAnalysis.nutrients.forEach(
+      ({ en, value, unit }) => {
+        expect(screen.queryAllByText(en).length).toBeGreaterThan(0);
+        expect(screen.queryAllByText(value!).length).toBeGreaterThan(0);
+        expect(screen.queryAllByText(unit!).length).toBeGreaterThan(0);
+      },
+    );
+
+    VERIFIED_LABEL_DATA_WITH_ID.ingredients.nutrients.forEach(
+      ({ en, value, unit }) => {
+        expect(screen.queryAllByText(en).length).toBeGreaterThan(0);
+        expect(screen.queryAllByText(value!).length).toBeGreaterThan(0);
+        expect(screen.queryAllByText(unit!).length).toBeGreaterThan(0);
+      },
+    );
   });
 
   it("handles API error and displays error page", async () => {
