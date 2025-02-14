@@ -184,7 +184,7 @@ function InspectionPage() {
               data-testid="discard-button"
               text={t("discard")}
               aria-label={t("alt.discard")}
-              //   disabled={labelData?.confirmed}
+              disabled={labelData?.confirmed}
               loading={discardLoading}
             />
           </Box>

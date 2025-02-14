@@ -117,7 +117,6 @@ function LabelDataValidator({
 
   const submit = () => {
     storeLabelData(labelData);
-    console.debug("Label data stored", labelData);
     router.push("/label-data-confirmation");
   };
 

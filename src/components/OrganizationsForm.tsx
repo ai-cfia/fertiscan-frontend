@@ -67,7 +67,6 @@ const OrganizationsForm: React.FC<FormComponentProps> = ({
   }, [labelData, methods]);
 
   useEffect(() => {
-    console.debug("watchedOrganizations", watchedOrganizations);
     save(sectionName, watchedOrganizations);
   }, [watchedOrganizations, save]);
 

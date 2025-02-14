@@ -1,5 +1,8 @@
 import { RegistrationType } from "@/types/types";
-import { VERIFIED_LABEL_DATA_WITH_ID } from "@/utils/client/constants";
+import {
+  CONFIRMED_LABEL_DATA,
+  VERIFIED_LABEL_DATA_WITH_ID,
+} from "@/utils/client/constants";
 import { fireEvent, render, screen, waitFor } from "@testing-library/react";
 import axios from "axios";
 import { useRouter } from "next/navigation";
@@ -189,7 +192,9 @@ describe("InspectionPage", () => {
     expect(axios.delete).not.toHaveBeenCalled();
 
     await waitFor(() =>
-      expect(screen.queryByText("confirmDiscardMessage")).not.toBeInTheDocument(),
+      expect(
+        screen.queryByText("confirmDiscardMessage"),
+      ).not.toBeInTheDocument(),
     );
   });
 
@@ -217,5 +222,24 @@ describe("InspectionPage", () => {
     await waitFor(() => expect(axios.delete).toHaveBeenCalled());
 
     expect(mockRouter.push).not.toHaveBeenCalled();
+  });
+
+  it("disables edit and discard buttons when inspection is confirmed", async () => {
+    (axios.get as jest.Mock).mockResolvedValue({
+      data: CONFIRMED_LABEL_DATA,
+    });
+
+    render(<InspectionPage />);
+    await waitFor(() =>
+      expect(
+        screen.getByText(CONFIRMED_LABEL_DATA.inspectionId),
+      ).toBeInTheDocument(),
+    );
+
+    const editButton = screen.getByTestId("edit-button");
+    const discardButton = screen.getByTestId("discard-button");
+
+    expect(editButton).toBeDisabled();
+    expect(discardButton).toBeDisabled();
   });
 });

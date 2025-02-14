@@ -120,8 +120,6 @@ const LabelDataConfirmationPage = () => {
   };
 
   useEffect(() => {
-    console.debug("confirmation page label", labelData);
-
     if (!labelData) {
       console.warn("labelData not found");
       return router.push("/");
