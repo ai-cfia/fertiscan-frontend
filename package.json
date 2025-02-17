@@ -38,7 +38,7 @@
     "jest-environment-jsdom": "^29.7.0",
     "js-cookie": "^3.0.5",
     "libphonenumber-js": "^1.11.19",
-    "next": "15.1.6",
+    "next": "15.1.7",
     "postcss": "^8.5.2",
     "react": "^19",
     "react-dom": "^19",
