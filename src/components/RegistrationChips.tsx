@@ -30,6 +30,7 @@ export const RegistrationChips = React.forwardRef<
       {...rest}
       ref={ref}
       className={`flex flex-wrap gap-1 ${rest.className || ""}`}
+      data-testid="registration-chips"
     >
       {registrations
         ?.filter((reg) => reg.identifier)

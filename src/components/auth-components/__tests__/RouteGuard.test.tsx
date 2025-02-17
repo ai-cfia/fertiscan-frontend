@@ -1,8 +1,8 @@
-import { render, screen } from "@testing-library/react";
-import { ThemeProvider } from "@mui/material/styles";
 import theme from "@/app/theme";
-import RouteGuard from "@/components/AuthComponents/RouteGuard";
 import { beforeEach } from "@jest/globals";
+import { ThemeProvider } from "@mui/material/styles";
+import { render, screen } from "@testing-library/react";
+import RouteGuard from "../RouteGuard";
 
 describe("RouteGuard", () => {
   beforeEach(() => {

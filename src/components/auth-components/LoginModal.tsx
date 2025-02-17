@@ -50,14 +50,14 @@ const LoginModal = ({ isOpen, login, onChangeMode }: LoginProps) => {
             disabled={username === "" || password === ""}
             loading={loading}
             text={t("login.title")}
-            className="!bg-white !pointer-events-auto"
+            className="!pointer-events-auto !bg-white"
             data-testid="modal-submit"
           />
         </Form>
         <Typography
           data-testid="modal-change"
           id="toggleSign"
-          className="text-center !mt-4 !mb-4 text-white"
+          className="!mt-4 !mb-4 text-center text-white"
         >
           {t("login.switchText")}
           <ToggleSign onChangeMode={onChangeMode}>

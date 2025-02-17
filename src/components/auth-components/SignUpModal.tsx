@@ -98,14 +98,14 @@ const SignUpModal = ({ isOpen, signup, onChangeMode }: SignUpProps) => {
             loading={loading}
             text={t("signup.title")}
             data-testid="modal-submit"
-            className="!bg-white !pointer-events-auto"
+            className="!pointer-events-auto !bg-white"
           />
         </Form>
 
         <Typography
           data-testid="modal-change"
           id="toggleSign"
-          className="text-center !mt-2 !mb-1 text-white"
+          className="!mt-2 !mb-1 text-center text-white"
         >
           {t("signup.switchText")}
           <ToggleSign onChangeMode={onChangeMode}>

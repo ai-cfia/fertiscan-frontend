@@ -1,8 +1,8 @@
-import { fireEvent, render, screen } from "@testing-library/react";
 import theme from "@/app/theme";
 import { ThemeProvider } from "@mui/material/styles";
-import LoginModal from "@/components/AuthComponents/LoginModal";
+import { fireEvent, render, screen } from "@testing-library/react";
 import { act } from "react";
+import LoginModal from "../LoginModal";
 
 describe("LoginModal", () => {
   const mockErrorLogin = jest.fn(async (username: string, password: string) => {

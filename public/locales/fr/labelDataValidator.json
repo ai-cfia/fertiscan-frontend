@@ -188,17 +188,20 @@
     "numbersOnly": "Uniquement des nombres",
     "minValue": "La valeur minimale est 0",
     "duplicateUnit": "Unité dupliquée",
-    "invalidId": "ID invalide",
     "fetchAborted": "Fetch annulé",
-    "failedFetchInspection": "Échec de la récupération de l'inspection.",
     "noFileUploaded": "Aucun fichier téléchargé",
-    "requestCancelled": "Requête annulée",
-    "initialSaveFailed": "Échec de l'enregistrement initial des données de l'étiquette",
-    "labelExtractionFailed": "Échec de l'extraction des données de l'étiquette"
+    "requestCancelled": "Requête annulée"
   },
   "stepper": {
     "next": "Suivant",
     "back": "Retour",
     "submit": "Soumettre"
+  },
+  "alert": {
+    "labelExtractionFailed": "Échec de l'extraction des données de l'étiquette",
+    "initialSaveFailed": "Échec de l'enregistrement initial des données de l'étiquette",
+    "invalidId": "ID invalide",
+    "failedFetchInspection": "Échec de la récupération de l'inspection.",
+    "alreadyCompleted": "Cette inspection est déjà terminée."
   }
 }

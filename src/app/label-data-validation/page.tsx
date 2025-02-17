@@ -67,10 +67,10 @@ function LabelDataValidationPage() {
           })
           .catch((error) => {
             if (axios.isCancel(error)) {
-              console.log(t("errors.requestCanceled"));
+              console.log("request canceled");
             } else {
               showAlert(
-                `${t("errors.initialSaveFailed")}: ${processAxiosError(error)}`,
+                `${t("alert.initialSaveFailed")}: ${processAxiosError(error)}`,
                 "error",
               );
               setLoading(false);
@@ -83,10 +83,10 @@ function LabelDataValidationPage() {
       })
       .catch((error) => {
         if (axios.isCancel(error)) {
-          console.log(t("errors.requestCanceled"));
+          console.log("request canceled");
         } else {
           showAlert(
-            `${t("errors.labelExtractionFailed")}: ${processAxiosError(error)}`,
+            `${t("alert.labelExtractionFailed")}: ${processAxiosError(error)}`,
             "error",
           );
           setLoading(false);

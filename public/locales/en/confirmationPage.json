@@ -4,7 +4,7 @@
     "sectionTitle": "Fertilizer Base Information",
     "tableHeaders": {
       "name": "Name",
-      "registrationNumber": "Registration Number",
+      "registrationNumbers": "Registration Numbers",
       "lotNumber": "Lot Number",
       "npk": "NPK",
       "weight": "Weight",
@@ -70,22 +70,27 @@
     "expandButton": "Hide image and show only label information.",
     "retractButton": "Show image and label information."
   },
+  "yes": "Yes",
+  "no": "No",
   "error": {
-    "saveSuccess": "Label data saved successfully.",
-    "saveFailed": "Label data saving failed",
     "idMissing": "ID missing in initial label data saving response",
-    "initialSaveFailed": "Initial label data saving failed",
-    "internalErrorLabelNotFound": "Internal error: Label data not found.",
-    "internalErrorLabelNotConfirmed": "Internal error: Label data not confirmed.",
     "noFileUploaded": "No file uploaded",
-    "labelNotFound": "Label data not found.",
     "labelAlreadyConfirmed": "Label data already confirmed.",
     "labelDataNotFullySaved": "Label data not fully saved."
   },
-  "alt":{
+  "alt": {
     "editButton": "Edit button",
     "confirmButton": "Confirm button",
     "expendIcon": "Expend icon",
     "retractIcon": "Retract icon"
+  },
+  "alert": {
+    "labelNotConfirmed": "Internal error: Label data not confirmed.",
+    "labelNotFound": "Label data not found.",
+    "initialSaveFailed": "Initial label data saving failed",
+    "saveFailed": "Label data saving failed",
+    "saveSuccess": "Label data saved successfully.",
+    "alreadyCompleted": "This inspection has already been completed.",
+    "notAllVerified": "Not all fields have been verified."
   }
 }

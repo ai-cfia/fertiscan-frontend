@@ -28,12 +28,9 @@ export async function GET(
     .getInspectionInspectionsIdGet(id, {
       headers: { Authorization: authHeader },
     })
-    .then((inspectionResponse) => {
-      console.debug(
-        "[get inspections/id] response data:",
-        inspectionResponse.data,
-      );
-      const labelData = mapInspectionToLabelData(inspectionResponse.data);
+    .then((r) => {
+      console.debug("[get inspections/id] response data:", r.data);
+      const labelData = mapInspectionToLabelData(r.data);
       console.debug("[get inspections/id] response:", labelData);
       return Response.json(labelData);
     })
@@ -68,14 +65,38 @@ export async function PUT(
     .putInspectionInspectionsIdPut(id, inspectionUpdate, {
       headers: { Authorization: authHeader },
     })
-    .then((inspectionResponse) => {
-      console.debug(
-        "[put inspections/id] response data:",
-        inspectionResponse.data,
-      );
-      const labelData = mapInspectionToLabelData(inspectionResponse.data);
+    .then((r) => {
+      console.debug("[put inspections/id] response data:", r.data);
+      const labelData = mapInspectionToLabelData(r.data);
       console.debug("[put inspections/id] returned labelData:", labelData);
       return Response.json(labelData);
+    })
+    .catch((error) => {
+      return handleApiError(error);
+    });
+}
+
+export async function DELETE(
+  request: Request,
+  { params }: { params: Promise<{ id: string }> },
+) {
+  const authHeader = request.headers.get("Authorization");
+  if (!authHeader) {
+    return MISSING_AUTH_RESPONSE;
+  }
+
+  const id = (await params).id;
+  if (!validate(id)) {
+    return INVALID_ID_RESPONSE;
+  }
+
+  return inspectionsApi
+    .deleteInspectionInspectionsIdDelete(id, {
+      headers: { Authorization: authHeader },
+    })
+    .then((r) => {
+      console.debug("[delete inspections/id] id:", id, "response:", r.data);
+      return new Response(null, { status: 204 });
     })
     .catch((error) => {
       return handleApiError(error);

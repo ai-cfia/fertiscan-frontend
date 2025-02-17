@@ -1,6 +1,6 @@
-import InspectionElement from "@/components/InspectionList/InspectionElement";
 import { InspectionData } from "@/utils/server/backend";
 import { render, screen } from "@testing-library/react";
+import InspectionElement from "../InspectionElement";
 
 describe("InspectionElement", () => {
   const mockFinishedInspection: InspectionData = {

@@ -22,7 +22,7 @@ export const VERIFIED_LABEL_DATA: LabelData = {
     registrationNumbers: {
       values: [
         {
-          identifier: "",
+          identifier: "1234567A",
           type: RegistrationType.FERTILIZER,
         },
       ],

@@ -1,11 +1,11 @@
 "use client";
-import LoginModal from "@/components/AuthComponents/LoginModal";
-import SignUpModal from "@/components/AuthComponents/SignUpModal";
 import useAlertStore from "@/stores/alertStore";
 import axios, { AxiosError } from "axios";
 import Cookies from "js-cookie";
 import { useEffect, useState } from "react";
 import { useTranslation } from "react-i18next";
+import LoginModal from "./LoginModal";
+import SignUpModal from "./SignUpModal";
 
 interface RouteGuardProps extends React.HTMLAttributes<HTMLDivElement> {
   children: React.ReactNode;

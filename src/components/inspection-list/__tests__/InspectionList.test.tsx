@@ -1,7 +1,7 @@
 import { render, screen } from "@testing-library/react";
-import InspectionList from "@/components/InspectionList/InspectionList";
 
 import i18n from "@/app/i18n";
+import InspectionList from "../InspectionList";
 
 // Mock useRouter:
 jest.mock("next/navigation", () => ({

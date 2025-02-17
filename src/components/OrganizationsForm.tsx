@@ -73,17 +73,22 @@ const OrganizationsForm: React.FC<FormComponentProps> = ({
   const setAllVerified = useCallback(
     (orgIndex: number, verified: boolean) => {
       fieldNames.forEach((fieldName) => {
-        const fieldPath =
-          `${sectionName}.${orgIndex}.${fieldName}.verified` as FieldPath<LabelData>;
-        setValue(fieldPath, verified, {
-          shouldValidate: true,
-          shouldDirty: true,
-        });
+        if (
+          typeof DEFAULT_ORGANIZATION[fieldName] === "object" &&
+          "verified" in DEFAULT_ORGANIZATION[fieldName]!
+        ) {
+          const fieldPath =
+            `${sectionName}.${orgIndex}.${fieldName}.verified` as FieldPath<LabelData>;
+          setValue(fieldPath, verified, {
+            shouldValidate: true,
+            shouldDirty: true,
+          });
+        }
       });
     },
     [setValue],
   );
-
+  
   const getVerifiedFields = (org?: Organization) =>
     org && {
       name: org.name,
@@ -113,7 +118,7 @@ const OrganizationsForm: React.FC<FormComponentProps> = ({
               data-testid={`organization-${index}`}
             >
               <OrganizationInformation index={index} loading={loading} />
-              <Box className="flex flex-wrap mt-4 justify-end gap-2">
+              <Box className="mt-4 flex flex-wrap justify-end gap-2">
                 <Controller
                   name={`organizations.${index}.mainContact`}
                   control={control}
@@ -124,7 +129,6 @@ const OrganizationsForm: React.FC<FormComponentProps> = ({
                           {...field}
                           checked={field.value === true}
                           onChange={() => handleMainContactChange(index)}
-                          name="mainContact"
                           data-testid={`main-contact-radio-${index}`}
                         />
                       }
@@ -136,7 +140,10 @@ const OrganizationsForm: React.FC<FormComponentProps> = ({
                     />
                   )}
                 />
-                <Tooltip title={t("organizations.markAllVerified")} enterDelay={1000}>
+                <Tooltip
+                  title={t("organizations.markAllVerified")}
+                  enterDelay={1000}
+                >
                   <Button
                     variant="outlined"
                     color="secondary"
@@ -149,7 +156,10 @@ const OrganizationsForm: React.FC<FormComponentProps> = ({
                     <DoneAllIcon />
                   </Button>
                 </Tooltip>
-                <Tooltip title={t("organizations.markAllUnverified")} enterDelay={1000}>
+                <Tooltip
+                  title={t("organizations.markAllUnverified")}
+                  enterDelay={1000}
+                >
                   <Button
                     variant="outlined"
                     color="secondary"
@@ -163,7 +173,10 @@ const OrganizationsForm: React.FC<FormComponentProps> = ({
                     <RemoveDoneIcon />
                   </Button>
                 </Tooltip>
-                <Tooltip title={t("organizations.removeOrganisation")} enterDelay={1000}>
+                <Tooltip
+                  title={t("organizations.removeOrganisation")}
+                  enterDelay={1000}
+                >
                   <Button
                     variant="outlined"
                     color="secondary"
@@ -206,7 +219,7 @@ const OrganizationInformation: React.FC<OrganizationInformationProps> = ({
   const { t } = useTranslation("labelDataValidator");
   return (
     <Box
-      className="grid grid-cols-1 sm:grid-cols-1 md:grid-cols-2 lg:grid-cols-1 xxl:grid-cols-2 gap-4"
+      className="xxl:grid-cols-2 grid grid-cols-1 gap-4 sm:grid-cols-1 md:grid-cols-2 lg:grid-cols-1"
       data-testid={`organization-info-${index}`}
     >
       <VerifiedInput

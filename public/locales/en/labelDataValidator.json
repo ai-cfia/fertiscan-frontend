@@ -187,15 +187,16 @@
     "numbersOnly": "Numbers only",
     "minValue": "Minimum value is 0",
     "duplicateUnit": "Duplicate unit",
-    "invalidId": "Invalid id",
     "fetchAborted": "Fetch aborted",
-    "failedFetchInspection": "Failed to fetch inspection.",
     "noFileUploaded": "No file uploaded",
-    "requestCancelled": "Request cancelled",
-    "initialSaveFailed": "Initial label data saving failed",
-    "labelExtractionFailed": "Label data extraction failed"
+    "requestCancelled": "Request cancelled"
   },
   "stepper": { "next": "Next", "back": "Back", "submit": "Submit" },
-  "fertilizer_product": "Fertilizer",
-  "ingredient_component": "Ingredient"
+  "alert": {
+    "initialSaveFailed": "Initial label data saving failed",
+    "invalidId": "Invalid id",
+    "failedFetchInspection": "Failed to fetch inspection.",
+    "alreadyCompleted": "This inspection has already been completed.",
+    "labelExtractionFailed": "Label data extraction failed"
+  }
 }
