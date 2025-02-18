@@ -20,16 +20,6 @@ import { useTranslation } from "react-i18next";
  * @component
  * @returns {JSX.Element} The rendered Dashboard component.
  *
- * @hook
- * - `useTranslation` - for translation of text.
- * - `useState` - for managing local state.
- * - `useEffect` - for performing side effects.
- *
- * @dependencies
- * - `axios` - for making HTTP requests.
- * - `Cookies` - for handling cookies.
- * - `useAlertStore` - for showing alert messages.
- *
  * @state
  * - `search` - the search query string.
  * - `inspectList` - the list of inspections.
@@ -38,8 +28,6 @@ import { useTranslation } from "react-i18next";
  * @effect
  * - Fetches the username from cookies and sets it in the state.
  * - Fetches the list of inspections from the API and sets it in the state.
- *
- * @returns {JSX.Element} The rendered Dashboard component.
  */
 const Dashboard = () => {
   const { t } = useTranslation("dashboard");
