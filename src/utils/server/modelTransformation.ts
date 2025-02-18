@@ -8,10 +8,10 @@ import {
   RegistrationType,
 } from "@/types/types";
 import {
+  LabelData as BackendLabelData,
   Quantity as BackendQuantity,
   InspectionResponse,
   InspectionUpdate,
-  LabelDataInput,
   LabelDataOutput,
   Nutrient,
   Value,
@@ -221,9 +221,9 @@ export function mapInspectionToLabelData(
   };
 }
 
-export function mapLabelDataToLabelDataInput(
+export function mapLabelDataToBackendLabelData(
   labelData: LabelData,
-): LabelDataInput {
+): BackendLabelData {
   return {
     organizations: (labelData.organizations || []).map((org) => ({
       name: org.name?.value,
@@ -255,7 +255,7 @@ export function mapLabelDataToLabelDataInput(
         Number(labelData.baseInformation.volume.quantities?.[0]?.value) || null,
       unit: labelData.baseInformation.volume.quantities?.[0]?.unit || null,
     },
-    npk: labelData.baseInformation.npk.value || null,
+    npk: labelData.baseInformation.npk.value || undefined,
     guaranteed_analysis_en: {
       title: labelData.guaranteedAnalysis.titleEn.value,
       is_minimal: labelData.guaranteedAnalysis.isMinimal.value,

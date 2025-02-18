@@ -13,8 +13,8 @@ import {
 import {
   mapInspectionToLabelData,
   mapLabelDataOutputToLabelData,
+  mapLabelDataToBackendLabelData,
   mapLabelDataToInspectionUpdate,
-  mapLabelDataToLabelDataInput,
   mapVerifiedInspectionValues,
   mapVerifiedNutrientPairs,
   quantity,
@@ -780,9 +780,9 @@ const emptyLabelData: LabelData = {
   comment: "",
 };
 
-describe("mapLabelDataToLabelDataInput", () => {
+describe("mapLabelDataToBackendLabelData", () => {
   it("should map all fields correctly", () => {
-    const result = mapLabelDataToLabelDataInput(labelData);
+    const result = mapLabelDataToBackendLabelData(labelData);
     expect(result.organizations).toEqual([
       {
         name: "Company Inc.",
@@ -843,7 +843,7 @@ describe("mapLabelDataToLabelDataInput", () => {
   });
 
   it("should handle empty arrays gracefully", () => {
-    const result = mapLabelDataToLabelDataInput(emptyLabelData);
+    const result = mapLabelDataToBackendLabelData(emptyLabelData);
     expect(result.organizations).toEqual([
       {
         name: "",
@@ -855,7 +855,7 @@ describe("mapLabelDataToLabelDataInput", () => {
     expect(result.fertiliser_name).toBe("");
     expect(result.registration_number).toEqual([]);
     expect(result.lot_number).toBe("");
-    expect(result.npk).toBe(null);
+    expect(result.npk).not.toBeDefined();
     expect(result.weight).toEqual([]);
     expect(result.density).toEqual({ value: null, unit: null });
     expect(result.volume).toEqual({ value: null, unit: null });
