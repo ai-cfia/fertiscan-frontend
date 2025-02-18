@@ -10,19 +10,38 @@ import Title from "./Title";
 import ToggleSign from "./ToggleSign";
 import Username from "./Username";
 
+/**
+ * Props for the LoginModal component.
+ *
+ * @interface LoginProps
+ * @property {boolean} isOpen - Indicates whether the login modal is open.
+ * @property {(username: string, password: string) => Promise<string>} login - Function to handle the login process, returns a promise that resolves to a string.
+ * @property {() => void} onChangeMode - Function to handle the change of mode (e.g., switching to a signup modal).
+ */
 interface LoginProps {
   isOpen: boolean;
   login: (username: string, password: string) => Promise<string>;
   onChangeMode: () => void;
 }
 
+/**
+ * LoginModal component handles the user login process.
+ *
+ * @component
+ * @param {LoginProps} props - The properties for the LoginModal component.
+ * @param {boolean} props.isOpen - Determines if the modal is open.
+ * @param {Function} props.login - Function to handle the login process.
+ * @param {Function} props.onChangeMode - Function to handle changing the authentication mode.
+ * @returns {JSX.Element} The rendered LoginModal component.
+ */
 const LoginModal = ({ isOpen, login, onChangeMode }: LoginProps) => {
+  const { t } = useTranslation("authentication");
   const [username, setUsername] = useState("");
   const [password, setPassword] = useState("");
   const [errorMessage, setErrorMessage] = useState("");
-  const { t } = useTranslation("authentication");
   const [loading, setLoading] = useState(false);
 
+  // Handles the form submission for the login process.
   const handleSubmit = () => {
     setLoading(true);
     login(username, password).then((message) => {

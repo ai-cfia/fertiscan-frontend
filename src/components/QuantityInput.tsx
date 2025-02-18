@@ -4,6 +4,20 @@ import { useTranslation } from "react-i18next";
 import StyledAutocomplete from "./StyledAutocomplete";
 import StyledTextField from "./StyledTextField";
 
+/**
+ * Props for the QuantityInput component.
+ *
+ * @interface QuantityInputProps
+ *
+ * @property {string} name - The name of the input field.
+ * @property {Control} control - The control object for managing form state.
+ * @property {string[]} unitOptions - An array of unit options for the input.
+ * @property {boolean} [disabled] - Optional flag to disable the input.
+ * @property {RegisterOptions} [unitRules] - Optional validation rules for the unit input.
+ * @property {() => void} [onFocus] - Optional callback function to handle focus events.
+ * @property {() => void} [onBlur] - Optional callback function to handle blur events.
+ * @property {boolean} [verified] - Optional flag to indicate if the input is verified.
+ */
 interface QuantityInputProps {
   name: string;
   control: Control;
@@ -15,6 +29,20 @@ interface QuantityInputProps {
   verified?: boolean;
 }
 
+/**
+ * QuantityInput component renders an input field for quantity value and a dropdown for unit selection.
+ *
+ * @param {QuantityInputProps} props - The properties for the QuantityInput component.
+ * @param {string} props.name - The name of the input field.
+ * @param {Control} props.control - The control object from react-hook-form.
+ * @param {Array} props.unitOptions - The options for the unit dropdown.
+ * @param {boolean} [props.disabled=false] - Flag to disable the input fields.
+ * @param {RegisterOptions} props.unitRules - The validation rules for the unit field.
+ * @param {Function} [props.onFocus] - The function to call on focus event.
+ * @param {Function} [props.onBlur] - The function to call on blur event.
+ * @param {boolean} props.verified - Flag to indicate if the input is verified.
+ * @returns {JSX.Element} The rendered QuantityInput component.
+ */
 const QuantityInput = ({
   name,
   control,

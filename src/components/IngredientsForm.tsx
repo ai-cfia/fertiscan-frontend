@@ -7,20 +7,37 @@ import { useTranslation } from "react-i18next";
 import VerifiedBilingualTable from "./VerifiedBilingualTable";
 import { VerifiedRadio } from "./VerifiedFieldComponents";
 
-function IngredientsForm({
+/**
+ * IngredientsForm component.
+ * Renders a page of the form for entering ingredients information of a label with debounced save functionality.
+ *
+ * @param {FormComponentProps} props - The properties passed to this component.
+ * @param {boolean} [props.loading=false] - Determines if loading state is active (disabling fields).
+ * @param {LabelData} props.labelData - The label data being edited in this form page.
+ * @param {React.Dispatch<React.SetStateAction<LabelData>>} props.setLabelData - Function to update label data.
+ * @returns {JSX.Element} The rendered IngredientsForm component.
+ */
+const IngredientsForm: React.FC<FormComponentProps> = ({
   labelData,
   setLabelData,
   loading = false,
-}: FormComponentProps) {
+}) => {
   const { t } = useTranslation("labelDataValidator");
   const methods = useForm<LabelData>({
     defaultValues: labelData,
   });
   const sectionName = "ingredients";
-  const { control } = methods;
-  const watchedIngredients = useWatch({ control, name: sectionName });
+
+  // Watch the ingredient information section to react to changes
+  const watchedIngredients = useWatch({
+    control: methods.control,
+    name: sectionName,
+  });
+
+  // Setup debounced save function
   const save = useDebouncedSave(setLabelData);
 
+  // Update form values when labelData props change
   useEffect(() => {
     const currentValues = methods.getValues();
     if (JSON.stringify(currentValues) !== JSON.stringify(labelData)) {
@@ -28,6 +45,7 @@ function IngredientsForm({
     }
   }, [labelData, methods]);
 
+  // Trigger debounced save function when watched ingredient information changes
   useEffect(() => {
     save(sectionName, watchedIngredients);
   }, [watchedIngredients, save]);

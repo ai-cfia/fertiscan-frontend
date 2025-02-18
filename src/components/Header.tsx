@@ -23,26 +23,28 @@ import AlertBanner from "./AlertBanner";
 import "../app/i18n";
 
 /**
- * Header Component
+ * Header component that displays the application header with navigation, logo, language toggle, and user account menu.
  *
- * This component renders the header of the web application which includes:
- * - Navigation menu toggle button
- * - Logo of the application
- * - Language button
- * - User account icon button
+ * @component
+ * @returns {JSX.Element} The rendered Header component.
+ *
+ * @function
+ * - `handleLanguageChange` - Handles the language change event.
+ * - `handleUserMenuToggle` - Toggles the user menu.
+ * - `changeLanguage` - Changes the application language.
  */
-
 const Header = () => {
+  const { t, i18n } = useTranslation("header");
+  const { t: tAlert } = useTranslation("alertBanner");
+  const { t: tDebug } = useTranslation("translation");
   const theme = useTheme();
   const { isDownXs, isBetweenXsSm, isBetweenSmMd } = useBreakpoints();
   const [anchorElement, setAnchorElement] = useState<null | HTMLElement>(null);
   const [isUserMenuOpen, setIsUserMenuOpen] = useState(false);
   const [language, setLanguage] = useState("en");
   const toggleSidebar = useUIStore((state) => state.toggleSidebar);
-  const { t, i18n } = useTranslation("header");
-  const { t: tAlert } = useTranslation("alertBanner");
-  const { t: tDebug } = useTranslation("translation");
   const { showAlert } = useAlertStore();
+
   const handleLanguageChange = (lng: string) => {
     showAlert(tAlert("languageChanged", { lng }), "info");
   };
@@ -57,7 +59,6 @@ const Header = () => {
     setAnchorElement(event.currentTarget);
   };
 
-  // Function to handle language change
   const changeLanguage = (lang: string) => {
     i18next.changeLanguage(lang, (err, t) => {
       if (err) return console.log(t("error.loadingError"), err);

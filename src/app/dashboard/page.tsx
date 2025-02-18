@@ -14,6 +14,21 @@ import Cookies from "js-cookie";
 import { useEffect, useState } from "react";
 import { useTranslation } from "react-i18next";
 
+/**
+ * Dashboard component that displays user information and a list of inspections.
+ *
+ * @component
+ * @returns {JSX.Element} The rendered Dashboard component.
+ *
+ * @state
+ * - `search` - the search query string.
+ * - `inspectList` - the list of inspections.
+ * - `user` - the username of the logged-in user.
+ *
+ * @effect
+ * - Fetches the username from cookies and sets it in the state.
+ * - Fetches the list of inspections from the API and sets it in the state.
+ */
 const Dashboard = () => {
   const { t } = useTranslation("dashboard");
   const [search, setSearch] = useState("");

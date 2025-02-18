@@ -20,9 +20,17 @@ import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { useTranslation } from "react-i18next";
 
+/**
+ * SideNav component renders a sidebar navigation drawer.
+ * It uses Material-UI's Drawer component to create a temporary sidebar
+ * that can be toggled open or closed.
+ *
+ * @component
+ * @returns {JSX.Element} The rendered SideNav component.
+ */
 const SideNav = () => {
-  const router = useRouter();
   const { t } = useTranslation("header");
+  const router = useRouter();
   const sidebarOpen = useUIStore((state) => state.sidebarOpen);
   const closeSidebar = useUIStore((state) => state.closeSidebar);
 

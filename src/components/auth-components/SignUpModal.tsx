@@ -16,6 +16,14 @@ import Title from "./Title";
 import ToggleSign from "./ToggleSign";
 import Username from "./Username";
 
+/**
+ * Props for the SignUpModal component.
+ *
+ * @interface SignUpProps
+ * @property {boolean} isOpen - Indicates whether the sign-up modal is open.
+ * @property {(username: string, password: string, confirm: string) => Promise<string>} signup - Function to handle the sign-up process.
+ * @property {() => void} onChangeMode - Function to switch between different modes (e.g., sign-up and login).
+ */
 interface SignUpProps {
   isOpen: boolean;
   signup: (
@@ -26,15 +34,25 @@ interface SignUpProps {
   onChangeMode: () => void;
 }
 
+/**
+ * SignUpModal component renders a modal for user sign-up.
+ *
+ * @param {SignUpProps} props - The properties for the SignUpModal component.
+ * @param {boolean} props.isOpen - Determines if the modal is open.
+ * @param {Function} props.signup - Function to handle the sign-up process.
+ * @param {Function} props.onChangeMode - Function to switch between sign-up and login modes.
+ * @returns {JSX.Element} The rendered SignUpModal component.
+ */
 const SignUpModal = ({ isOpen, signup, onChangeMode }: SignUpProps) => {
+  const { t } = useTranslation("authentication");
   const [username, setUsername] = useState("");
   const [password, setPassword] = useState("");
   const [confirmPassword, setConfirmPassword] = useState("");
   const [checkedReminder, setReminderChecked] = useState(false);
   const [errorMessage, setErrorMessage] = useState("");
-  const { t } = useTranslation("authentication");
   const [loading, setLoading] = useState(false);
 
+  // Handles the sign-up process.
   const handleSubmit = () => {
     setLoading(true);
     signup(username, password, confirmPassword).then((message) => {

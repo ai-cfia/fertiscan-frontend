@@ -15,10 +15,25 @@ import { Pagination } from "swiper/modules";
 import { Swiper, SwiperClass, SwiperSlide } from "swiper/react";
 import { useTranslation } from "react-i18next";
 
+/**
+ * Props for the ImageViewer component.
+ *
+ * @interface ImageViewerProps
+ * @property {File[]} imageFiles - An array of image files to be displayed in the viewer.
+ */
 interface ImageViewerProps {
   imageFiles: File[];
 }
 
+/**
+ * ImageViewer component displays a list of images using Swiper for navigation and
+ * React Zoom Pan Pinch for zooming and panning functionality.
+ *
+ * @component
+ * @param {ImageViewerProps} props - The props for the ImageViewer component.
+ * @param {File[]} props.imageFiles - An array of image files to be displayed.
+ * @returns {JSX.Element} The rendered ImageViewer component.
+ */
 const ImageViewer: React.FC<ImageViewerProps> = ({ imageFiles }) => {
   const [swiperInstance, setSwiperInstance] = useState<SwiperClass | null>(
     null,
@@ -27,6 +42,7 @@ const ImageViewer: React.FC<ImageViewerProps> = ({ imageFiles }) => {
   const [activeIndex, setActiveIndex] = useState(0);
   const imageUrls = imageFiles.map((file) => URL.createObjectURL(file));
 
+  // Initialize the zoomRefs array with null values
   const handleInit = (index: number, ref: ReactZoomPanPinchRef) => {
     setZoomRefs((prevRefs) => {
       const newRefs = [...prevRefs];
@@ -99,19 +115,37 @@ const ImageViewer: React.FC<ImageViewerProps> = ({ imageFiles }) => {
   );
 };
 
+/**
+ * Props for the ControlBar component.
+ *
+ * @interface ControlBarProps
+ * @property {SwiperClass | null} swiper - The Swiper instance or null if not available.
+ * @property {ReactZoomPanPinchRef[]} zoomRefs - An array of references for the zoom and pan functionality.
+ * @property {number} activeIndex - The index of the currently active item.
+ */
 interface ControlBarProps {
   swiper: SwiperClass | null;
   zoomRefs: ReactZoomPanPinchRef[];
   activeIndex: number;
 }
 
+/**
+ * ControlBar component provides a set of controls for navigating and zooming images.
+ *
+ * @component
+ * @param {ControlBarProps} props - The properties of the controlBar component.
+ * @param {Swiper} props.swiper - The swiper instance used for navigation.
+ * @param {Array<ZoomRef>} props.zoomRefs - An array of references to zoomable elements.
+ * @param {number} props.activeIndex - The index of the currently active image.
+ * @returns {JSX.Element} The rendered ControlBar component.
+ */
 const ControlBar: React.FC<ControlBarProps> = ({
   swiper,
   zoomRefs,
   activeIndex,
 }) => {
-  const currentZoomRef = zoomRefs[activeIndex] ?? null;
   const { t } = useTranslation("imageViewer");
+  const currentZoomRef = zoomRefs[activeIndex] ?? null;
 
   return (
     <Box

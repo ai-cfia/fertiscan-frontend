@@ -10,10 +10,33 @@ import {
 } from "@mui/material";
 import { useTranslation } from "react-i18next";
 
+/**
+ * Props for the BilingualTable component.
+ *
+ * @interface BilingualTableProps
+ * @property {BilingualField[]} data - An array of bilingual fields to be displayed in the table.
+ */
 interface BilingualTableProps {
   data: BilingualField[];
 }
 
+/**
+ * BilingualTable component renders a table with bilingual headers and data rows.
+ * It supports optional value and unit columns based on the provided data.
+ *
+ * @component
+ * @param {BilingualTableProps} props - The props for the BilingualTable component.
+ * @param {Array<{ en: string, fr: string, value?: string | number, unit?: string }>} props.data - The data to be displayed in the table.
+ * @returns {JSX.Element} The rendered BilingualTable component.
+ *
+ * @example
+ * const data = [
+ *   { en: "Hello", fr: "Bonjour", value: 10, unit: "kg" },
+ *   { en: "Goodbye", fr: "Au revoir" }
+ * ];
+ *
+ * <BilingualTable data={data} />
+ */
 const BilingualTable: React.FC<BilingualTableProps> = ({ data }) => {
   const { t } = useTranslation("confirmationPage");
 

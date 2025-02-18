@@ -12,6 +12,9 @@ import { useTranslation } from "react-i18next";
  * Props for the Dropzone component.
  *
  * @interface DropzoneProps
+ *
+ * @property {DropzoneState} dropzoneState - State of the dropzone.
+ * @property {React.Dispatch<React.SetStateAction<DropzoneState>>} setDropzoneState - Function to update the dropzone state.
  */
 interface DropzoneProps {
   dropzoneState: DropzoneState;
@@ -20,6 +23,11 @@ interface DropzoneProps {
 
 /**
  * Dropzone component for handling file uploads via drag-and-drop or file selection.
+ *
+ * @component
+ * @param {DropzoneProps} props - The props for the Dropzone component.
+ * @param {DropzoneState} props.dropzoneState - State of the dropzone.
+ * @returns {JSX.Element} The rendered Dropzone component.
  *
  * @property {FileUploaded[]} uploadedFiles - An array of uploaded files.
  * @property {React.Dispatch<React.SetStateAction<FileUploaded[]>>} setUploadedFiles - Function to update the uploaded files state.
@@ -38,11 +46,13 @@ const Dropzone: React.FC<DropzoneProps> = ({
 
   const { uploadedFiles, addUploadedFile } = useUploadedFilesStore();
 
-  function handleDragOver(event: React.DragEvent<HTMLDivElement>) {
+  // Handle the drag over event
+  const handleDragOver = (event: React.DragEvent<HTMLDivElement>) =>{
     event.preventDefault();
   }
 
-  async function handleDrop(event: React.DragEvent<HTMLDivElement>) {
+  // Handle the drop event
+  const handleDrop = async (event: React.DragEvent<HTMLDivElement>) => {
     event.preventDefault();
     const items = event.dataTransfer.items;
     if (items && items.length > 0) {
@@ -55,7 +65,8 @@ const Dropzone: React.FC<DropzoneProps> = ({
     }
   }
 
-  async function traverseFileTree(item: FileSystemEntry) {
+  // Traverse the file tree and process files
+  const traverseFileTree= async (item: FileSystemEntry) => {
     if (item.isFile) {
       const fileEntry = item as FileSystemFileEntry;
       fileEntry.file((file: File) => {
@@ -74,7 +85,8 @@ const Dropzone: React.FC<DropzoneProps> = ({
     }
   }
 
-  function handleFileUpload(event: React.ChangeEvent<HTMLInputElement>) {
+  // Handle file upload
+  const handleFileUpload = (event: React.ChangeEvent<HTMLInputElement>) => {
     const files = event.target.files;
     if (files && files.length > 0) {
       for (let i = 0; i < files.length; i++) {
@@ -83,7 +95,14 @@ const Dropzone: React.FC<DropzoneProps> = ({
     }
   }
 
-  async function processFile(file: File) {
+  /**
+   * Process the file and add it to the uploaded files.
+   * If the file already exists, show an error alert.
+   * If the file is a PDF, show an info alert.
+   *
+   * @param {File} file - The file to process.
+  */
+  const processFile = async(file: File)=> {
     const alreadyExists = uploadedFiles.some(
       (uploadedFile) => uploadedFile.getInfo().name === file.name,
     );

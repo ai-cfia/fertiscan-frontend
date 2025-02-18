@@ -5,6 +5,16 @@ import { useEffect } from "react";
 import { FormProvider, useForm, useWatch } from "react-hook-form";
 import VerifiedBilingualTable from "./VerifiedBilingualTable";
 
+/**
+ * CautionsForm component.
+ * Renders a page of the form for entering cautions information of a label with debounced save functionality.
+ *
+ * @param {Object} props - The component props.
+ * @param {LabelData} props.labelData - The initial data for the form.
+ * @param {Function} props.setLabelData - The function to update the label data.
+ * @param {boolean} [props.loading=false] - The loading state to indicate if the form is in a loading state.
+ * @returns {JSX.Element} The rendered CautionsForm component.
+ */
 const CautionsForm: React.FC<FormComponentProps> = ({
   labelData,
   setLabelData,
@@ -15,13 +25,16 @@ const CautionsForm: React.FC<FormComponentProps> = ({
   });
   const sectionName = "cautions";
 
+  // Watch the caution information section to react to changes
   const watchedCautions = useWatch({
     control: methods.control,
     name: sectionName,
   });
 
+  // Setup debounced save function
   const save = useDebouncedSave(setLabelData);
 
+  // Update form values when labelData props change
   useEffect(() => {
     const currentValues = methods.getValues();
     if (JSON.stringify(currentValues) !== JSON.stringify(labelData)) {
@@ -29,6 +42,7 @@ const CautionsForm: React.FC<FormComponentProps> = ({
     }
   }, [labelData, methods]);
 
+  // Trigger debounced save function when watched caution information changes
   useEffect(() => {
     save(sectionName, watchedCautions);
   }, [watchedCautions, save]);

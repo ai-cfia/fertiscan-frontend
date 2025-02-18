@@ -17,7 +17,6 @@ import {
 } from "react";
 import { useRouter } from "next/navigation";
 import { useTranslation } from "react-i18next";
-// import useBreakpoints from "@/utils/useBreakpoints";
 
 /**
  * Props for the UserMenu component
@@ -42,6 +41,10 @@ type UserMenuProps = {
  * navigate to the dashboard, and log out. It also displays the current app version.
  *
  * @param {UserMenuProps} props - The properties of the UserMenu component
+ * @param {HTMLElement | null} props.anchorElement - The element that serves as the anchor for the user menu
+ * @param {boolean} props.isUserMenuOpen - Indicates whether the user menu is open
+ * @param {Dispatch<SetStateAction<boolean>>} props.setIsUserMenuOpen - Function to set the open state of the user menu
+ * @param {Dispatch<SetStateAction<HTMLElement | null>>} props.setAnchorElement - Function to set the anchor element for the user menu
  * @returns {ReactElement} A UserMenu component
  *
  */
@@ -51,26 +54,30 @@ const UserMenu = ({
   setIsUserMenuOpen,
   setAnchorElement,
 }: UserMenuProps): ReactElement => {
+  const { t } = useTranslation("header");
   const placeholderUser = usePlaceholder();
   const router = useRouter()
-  const { t } = useTranslation("header");
 
+  // Close the user menu
   const handleClose = useCallback((): void => {
     setIsUserMenuOpen(false);
     setAnchorElement(null);
   }, [setIsUserMenuOpen, setAnchorElement]);
 
+  // Navigate to the dashboard
   const handleDashboardClick = (): void => {
     router.push("/dashboard");
     handleClose();
   }
 
+  // Log out the user
   const handleLogout = (): void => {
     document.cookie="token=; expires=Thu, 01 Jan 1970 00:00:00 UTC; path=/; SameSite=Strict";
     location.reload()
     handleClose();
   };
 
+  // Close the user menu when the window is resized
   useEffect(() => {
     window.addEventListener("resize", handleClose);
     return () => window.removeEventListener("resize", handleClose);

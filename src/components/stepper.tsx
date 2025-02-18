@@ -8,12 +8,28 @@ import { useEffect, useRef, useState } from "react";
 import { useTranslation } from "react-i18next";
 import LoadingButton from "./LoadingButton";
 
+/**
+ * @enum {StepStatus}
+ *
+ * Enum representing the status of a step in a stepper component.
+ */
 export enum StepStatus {
   Incomplete = "incomplete",
   Completed = "completed",
   Error = "error",
 }
 
+/**
+ * Props for the Stepper component.
+ *
+ * @interface StepperProps
+ *
+ * @property {string[]} stepTitles - An array of titles for each step in the stepper.
+ * @property {StepStatus[]} stepStatuses - An array of statuses for each step in the stepper.
+ * @property {number} activeStep - The index of the currently active step.
+ * @property {React.Dispatch<React.SetStateAction<number>>} setActiveStep - Function to set the active step.
+ * @property {() => void} submit - Function to be called when the stepper is submitted.
+ */
 export interface StepperProps {
   stepTitles: string[];
   stepStatuses: StepStatus[];
@@ -22,6 +38,16 @@ export interface StepperProps {
   submit: () => void;
 }
 
+/**
+ * A non-linear horizontal stepper component.
+ *
+ * @param {StepperProps} props - The properties for the stepper component.
+ * @param {string[]} props.stepTitles - An array of titles for each step.
+ * @param {StepStatus[]} props.stepStatuses - An array of statuses for each step.
+ * @param {number} props.activeStep - The index of the currently active step.
+ * @param {React.Dispatch<React.SetStateAction<number>>} props.setActiveStep - Function to set the active step.
+ * @returns {JSX.Element} The rendered horizontal non-linear stepper component.
+ */
 export const HorizontalNonLinearStepper: React.FC<StepperProps> = ({
   stepTitles,
   stepStatuses,
@@ -29,9 +55,9 @@ export const HorizontalNonLinearStepper: React.FC<StepperProps> = ({
   setActiveStep,
 }) => {
   const stepRefs = useRef<HTMLDivElement[]>([]);
-
   const handleStep = (step: number) => () => setActiveStep(step);
 
+  // Scroll to the active step when it changes
   useEffect(() => {
     const currentStepRef = stepRefs.current[activeStep];
     if (currentStepRef && currentStepRef.scrollIntoView) {
@@ -68,6 +94,18 @@ export const HorizontalNonLinearStepper: React.FC<StepperProps> = ({
   );
 };
 
+/**
+ * StepperControls component provides navigation controls for a multi-step process.
+ * It includes buttons to navigate between steps and a submit button.
+ *
+ * @param {StepperProps} props - The properties for the StepperControls component.
+ * @param {string[]} props.stepTitles - An array of titles for each step.
+ * @param {number} props.activeStep - The index of the currently active step.
+ * @param {StepStatus[]} props.stepStatuses - An array of statuses for each step.
+ * @param {Function} props.setActiveStep - Function to set the active step.
+ * @param {Function} props.submit - Function to handle the submission of the stepper.
+ * @returns {JSX.Element} The rendered StepperControls component.
+ */
 export const StepperControls: React.FC<StepperProps> = ({
   stepTitles,
   activeStep,
@@ -79,6 +117,7 @@ export const StepperControls: React.FC<StepperProps> = ({
   const stepsTotal = stepTitles.length;
   const [loading, setLoading] = useState(false);
 
+  // Handle submission of the stepper
   const handleSubmission = () => {
     setLoading(true);
     submit();

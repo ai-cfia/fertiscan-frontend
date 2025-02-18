@@ -8,24 +8,37 @@ import { VerifiedInput } from "./VerifiedFieldComponents";
 import VerifiedQuantityList from "./VerifiedQuantityList";
 import VerifiedRegistrationList from "./VerifiedRegistrationList";
 
+/**
+ * BaseInformationForm component.
+ * Renders a page of the form for entering base information of a label with debounced save functionality.
+ *
+ * @param {FormComponentProps} props - The properties passed to this component.
+ * @param {boolean} [props.loading=false] - Determines if loading state is active (disabling fields).
+ * @param {LabelData} props.labelData - The label data being edited in this form page.
+ * @param {React.Dispatch<React.SetStateAction<LabelData>>} props.setLabelData - Function to update label data.
+ * @returns {JSX.Element} The rendered BaseInformationForm component.
+ */
 const BaseInformationForm: React.FC<FormComponentProps> = ({
   loading = false,
   labelData,
   setLabelData,
 }) => {
   const { t } = useTranslation("labelDataValidator");
-  const sectionName = "baseInformation";
   const methods = useForm<LabelData>({
     defaultValues: labelData,
   });
+  const sectionName = "baseInformation";
 
+  // Watch the base information section to react to changes
   const watchedBaseInformation = useWatch({
     control: methods.control,
     name: sectionName,
   });
 
+  // Setup debounced save function
   const save = useDebouncedSave(setLabelData);
 
+  // Update form values when labelData props change
   useEffect(() => {
     const currentValues = methods.getValues();
     if (JSON.stringify(currentValues) !== JSON.stringify(labelData)) {
@@ -33,6 +46,7 @@ const BaseInformationForm: React.FC<FormComponentProps> = ({
     }
   }, [labelData, methods]);
 
+  // Trigger debounced save function when watched base information changes
   useEffect(() => {
     save(sectionName, watchedBaseInformation);
   }, [watchedBaseInformation, save]);

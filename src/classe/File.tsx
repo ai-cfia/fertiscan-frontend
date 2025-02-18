@@ -1,9 +1,28 @@
 type FileType = "pdf" | "png" | "jpg";
 
+/**
+ * Represents a user.
+ *
+ * @interface User
+ *
+ * @property {string} username - The username of the user.
+ */
 interface User {
   username: string;
 }
 
+/**
+ * Represents information about a file.
+ *
+ * @interface FileInfo
+ *
+ * @property {string} path - The path to the file.
+ * @property {User} user - The user associated with the file.
+ * @property {File} file - The file object.
+ * @property {Date} uploadDate - The date the file was uploaded.
+ * @property {FileType} type - The type of the file.
+ * @property {string} name - The name of the file.
+ */
 interface FileInfo {
   path: string;
   user: User;

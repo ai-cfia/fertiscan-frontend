@@ -10,7 +10,24 @@ import { useRouter } from "next/navigation";
 import { Suspense, useEffect, useState } from "react";
 import { useTranslation } from "react-i18next";
 
-function HomePage() {
+/**
+ * HomePage component
+ *
+ * This component represents the home page of the application. It initializes
+ * the state for the dropzone and handles the submission of uploaded files.
+ *
+ * @component
+ * @returns {JSX.Element} The rendered home page component.
+ *
+ * @param {Function} setDropzoneState - Function to update the dropzone state.
+ * @param {Array} uploadedFiles - Array of uploaded files.
+ * @param {Function} clearUploadedFiles - Function to clear the uploaded files.
+ * @param {Function} resetLabelData - Function to reset the label data.
+ * @param {boolean} loading - Loading state for the submit button.
+ * @param {Function} setLoading - Function to update the loading state.
+ * @param {Function} handleSubmission - Function to handle the submission of uploaded files.
+ */
+const HomePage = () => {
   const { t } = useTranslation("homePage");
   const router = useRouter();
   const [loading, setLoading] = useState(false);

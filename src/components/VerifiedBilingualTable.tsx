@@ -31,6 +31,16 @@ import QuantityInput from "./QuantityInput";
 import StyledSkeleton from "./StyledSkeleton";
 import StyledTextField from "./StyledTextField";
 
+/**
+ * Props for the VerifiedBilingualTable component.
+ *
+ * @interface VerifiedBilingualTableProps
+ * @property {string} path - The path to the data source.
+ * @property {boolean} [valueColumn] - Optional flag to indicate if the value column should be displayed.
+ * @property {string[]} [unitOptions] - Optional array of unit options to be displayed.
+ * @property {boolean} [loading] - Optional flag to indicate if the table is in a loading state.
+ * @property {boolean} isFocus - Flag to indicate if the table is in focus.
+ */
 interface VerifiedBilingualTableProps {
   path: string;
   valueColumn?: boolean;
@@ -39,6 +49,19 @@ interface VerifiedBilingualTableProps {
   isFocus: boolean;
 }
 
+/**
+ * Component for rendering a verified bilingual table with English and French inputs,
+ * optional value column, and actions to verify/unverify and delete rows.
+ *
+ * @param {VerifiedBilingualTableProps} props - The properties for the component.
+ * @param {string} props.path - The path for the form field array.
+ * @param {boolean} [props.valueColumn=false] - Flag to show or hide the value column.
+ * @param {Array} props.unitOptions - Options for the unit selection in the value column.
+ * @param {boolean} [props.loading=false] - Flag to show loading state.
+ * @param {boolean} props.isFocus - Flag to set focus on the first English input.
+ * @returns {JSX.Element} The rendered component.
+ *
+ */
 const VerifiedBilingualTable = ({
   path,
   valueColumn = false,
@@ -46,13 +69,13 @@ const VerifiedBilingualTable = ({
   loading = false,
   isFocus,
 }: VerifiedBilingualTableProps) => {
+  const { t } = useTranslation("labelDataValidator");
   const { control, setValue, trigger } = useFormContext();
   const { fields, append, remove } = useFieldArray({
     control,
     name: path,
   });
   const [hoverIndex, setHoverIndex] = useState<number | null>(null);
-  const { t } = useTranslation("labelDataValidator");
   const [deleteIconFocusIndex, setDeleteIconFocusIndex] = useState<number | null>(null);
   const [verifyIconFocusIndex, setVerifyIconFocusIndex] = useState<number | null>(null);
   const [isFocused, setIsFocused] = useState<string | null>(null);
@@ -60,7 +83,7 @@ const VerifiedBilingualTable = ({
   const data = useWatch({ control, name: path });
   const isVerified = (index: number) => Boolean(data?.[index]?.verified);
 
-
+  // Function to handle verifying a row
   const handleVerify = async (index: number, value: boolean) => {
     const isValid = await trigger(`${path}.${index}.value`);
     if (isValid) {
@@ -68,14 +91,17 @@ const VerifiedBilingualTable = ({
     }
   };
 
+  // Function to toggle verify status of a row
   const toggleVerify = async (index: number) => {
     await handleVerify(index, !data?.[index]?.verified);
   };
 
+  // Function to verify all rows
   const setAllVerified = async (value: boolean) => {
     await Promise.all(fields.map((_, index) => handleVerify(index, value)));
   };
 
+  // Set focus on the first English input when the table is in focus
   useEffect(() => {
     if (isFocus && firstEnglishInputRef.current) {
       firstEnglishInputRef.current.focus();

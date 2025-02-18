@@ -18,6 +18,16 @@ import { useTranslation } from "react-i18next";
 import StyledSkeleton from "./StyledSkeleton";
 import StyledTextField from "./StyledTextField";
 
+/**
+ * Props for the VerifiedFieldWrapper component.
+ *
+ * @property {string | ReactNode} label - The label to display for the field.
+ * @property {string} path - The path to the field value in the form data.
+ * @property {string} [className] - Optional additional class names for styling.
+ * @property {boolean} [loading] - Optional flag to indicate if the field is in a loading state.
+ * @property {(props: { setIsFocused: (value: boolean) => void; control: Control; valuePath: string; verified: boolean; }) => ReactNode} renderField - Function to render the field component.
+ * @property {(callback: (valid: boolean) => void) => Promise<void>} [validate] - Optional function to validate the field value.
+ */
 interface VerifiedFieldWrapperProps {
   label: string | ReactNode;
   path: string;
@@ -32,6 +42,19 @@ interface VerifiedFieldWrapperProps {
   validate?: (callback: (valid: boolean) => void) => Promise<void>;
 }
 
+/**
+ * A wrapper component for rendering a verified field with a label, loading state, and verification toggle button.
+ *
+ * @param {VerifiedFieldWrapperProps} props - The properties for the VerifiedFieldWrapper component.
+ * @param {string | React.ReactNode} props.label - The label to display for the field. Can be a string or a React node.
+ * @param {string} props.path - The path to the field in the form context.
+ * @param {string} [props.className=""] - Additional class names to apply to the wrapper.
+ * @param {boolean} [props.loading=false] - Whether the field is in a loading state.
+ * @param {Function} props.renderField - A function to render the field component.
+ * @param {Function} [props.validate] - An optional validation function to validate the field before toggling verification.
+ *
+ * @returns {JSX.Element} The rendered VerifiedFieldWrapper component.
+ */
 export const VerifiedFieldWrapper: React.FC<VerifiedFieldWrapperProps> = ({
   label,
   path,
@@ -147,6 +170,17 @@ export const VerifiedFieldWrapper: React.FC<VerifiedFieldWrapperProps> = ({
   );
 };
 
+/**
+ * Props for the VerifiedRadio component.
+ *
+ * @property {string} label - The label for the radio button.
+ * @property {string} path - The path associated with the radio button.
+ * @property {string} [className] - Optional CSS class name for styling.
+ * @property {boolean} [loading] - Optional flag to indicate loading state.
+ * @property {boolean} [isHelpActive] - Optional flag to indicate if help text is active.
+ * @property {string} [helpText] - Optional help text to display.
+ * @property {boolean} [isFocus] - Optional flag to indicate if the radio button is focused.
+ */
 interface VerifiedRadioProps {
   label: string;
   path: string;
@@ -157,6 +191,20 @@ interface VerifiedRadioProps {
   isFocus?: boolean;
 }
 
+/**
+ * `VerifiedRadio` is a React functional component that renders a radio button group
+ * with additional features such as loading state, help tooltip, and focus management.
+ *
+ * @param {VerifiedRadioProps} props - The properties for the `VerifiedRadio` component.
+ * @param {string} props.label - The label for the radio group.
+ * @param {string} props.path - The path used for data binding and test identification.
+ * @param {string} [props.className=""] - Optional additional class names for styling.
+ * @param {boolean} [props.loading=false] - Indicates if the component is in a loading state.
+ * @param {boolean} [props.isHelpActive=false] - Indicates if the help tooltip is active.
+ * @param {string} [props.helpText] - The text to display in the help tooltip.
+ * @param {boolean} [props.isFocus=false] - Indicates if the radio group should be focused.
+ * @returns {JSX.Element} The rendered `VerifiedRadio` component.
+ */
 export const VerifiedRadio: React.FC<VerifiedRadioProps> = ({
   label,
   path,
@@ -261,6 +309,16 @@ export const VerifiedRadio: React.FC<VerifiedRadioProps> = ({
   );
 };
 
+/**
+ * Props for the VerifiedInput component.
+ *
+ * @property {string} label - The label for the input field.
+ * @property {string} placeholder - The placeholder text for the input field.
+ * @property {string} path - The path used for some internal logic or data binding.
+ * @property {string} [className] - Optional additional CSS class names for styling.
+ * @property {boolean} [loading] - Optional flag to indicate if the input is in a loading state.
+ * @property {boolean} [isFocus] - Optional flag to indicate if the input should be focused.
+ */
 interface VerifiedInputProps {
   label: string;
   placeholder: string;
@@ -270,6 +328,18 @@ interface VerifiedInputProps {
   isFocus?: boolean;
 }
 
+/**
+ * A React functional component that renders a verified input field.
+ *
+ * @param {VerifiedInputProps} props - The properties for the VerifiedInput component.
+ * @param {string} props.label - The label for the input field.
+ * @param {string} props.placeholder - The placeholder text for the input field.
+ * @param {string} props.path - The path used for the input field.
+ * @param {string} [props.className=""] - Additional CSS classes for the input field.
+ * @param {boolean} [props.loading=false] - Indicates if the input field is in a loading state.
+ * @param {boolean} [props.isFocus=false] - Indicates if the input field should be auto-focused.
+ * @returns {JSX.Element} The rendered VerifiedInput component.
+ */
 export const VerifiedInput: React.FC<VerifiedInputProps> = ({
   label,
   placeholder,

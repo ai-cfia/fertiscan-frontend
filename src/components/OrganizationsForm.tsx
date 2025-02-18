@@ -30,10 +30,21 @@ import {
 import { useTranslation } from "react-i18next";
 import { VerifiedInput } from "./VerifiedFieldComponents";
 
+// Field names of organization, used for dynamic field management
 const fieldNames = Object.keys(DEFAULT_ORGANIZATION) as Array<
   keyof Organization
 >;
 
+/**
+ * OrganizationsForm component.
+ * Renders a page of the form for entering organizations information of a label with debounced save functionality.
+ *
+ * @param {FormComponentProps} props - Props passed to the component.
+ * @param {LabelData} props.labelData - The current label data containing organizations.
+ * @param {React.Dispatch<React.SetStateAction<LabelData>>} props.setLabelData - Function to update label data.
+ * @param {boolean} [props.loading=false] - Indicates if the form is in a loading state.
+ * @returns {JSX.Element} The rendered OrganizationsForm component.
+ */
 const OrganizationsForm: React.FC<FormComponentProps> = ({
   labelData,
   setLabelData,
@@ -52,13 +63,16 @@ const OrganizationsForm: React.FC<FormComponentProps> = ({
     name: sectionName,
   });
 
+  // Watch the organisation section to react to changes
   const watchedOrganizations = useWatch({
     control,
     name: sectionName,
   });
 
+  // Setup debounced save function
   const save = useDebouncedSave(setLabelData);
 
+  // Update form values when labelData props change
   useEffect(() => {
     const currentValues = methods.getValues();
     if (JSON.stringify(currentValues) !== JSON.stringify(labelData)) {
@@ -66,10 +80,17 @@ const OrganizationsForm: React.FC<FormComponentProps> = ({
     }
   }, [labelData, methods]);
 
+  // Trigger debounced save function when watched organizations change
   useEffect(() => {
     save(sectionName, watchedOrganizations);
   }, [watchedOrganizations, save]);
 
+  /**
+   * Sets the verification status for all fields of a given organization.
+   *
+   * @param {number} orgIndex - The index of the organization to update.
+   * @param {boolean} verified - The verification status to apply to all fields.
+   */
   const setAllVerified = useCallback(
     (orgIndex: number, verified: boolean) => {
       fieldNames.forEach((fieldName) => {
@@ -88,7 +109,13 @@ const OrganizationsForm: React.FC<FormComponentProps> = ({
     },
     [setValue],
   );
-  
+
+  /**
+   * Extracts fields that need verification from an organization.
+   *
+   * @param {Organization} [org] - The organization to retrieve fields from.
+   * @returns {Object} An object containing verified fields.
+   */
   const getVerifiedFields = (org?: Organization) =>
     org && {
       name: org.name,
@@ -97,6 +124,11 @@ const OrganizationsForm: React.FC<FormComponentProps> = ({
       phoneNumber: org.phoneNumber,
     };
 
+  /**
+   * Handles changing the main contact radio button for organizations.
+   *
+   * @param {number} index - Index of the organization to set as the main contact.
+   */
   const handleMainContactChange = (index: number) => {
     fields.forEach((_, i) => {
       if (i !== index) {
@@ -207,16 +239,33 @@ const OrganizationsForm: React.FC<FormComponentProps> = ({
   );
 };
 
+/**
+ * Props for the OrganizationInformation component.
+ *
+ * @interface OrganizationInformationProps
+ * @property {number} index - The index of the organization.
+ * @property {boolean} [loading] - Optional flag indicating if the organization information is loading.
+ */
 interface OrganizationInformationProps {
   index: number;
   loading?: boolean;
 }
 
+/**
+ * OrganizationsInformation component.
+ * Renders input fields for an organization's details.
+ *
+ * @param {OrganizationInformationProps} props - Props passed to the component.
+ * @param {number} props.index - The index of this organization's data in the parent form.
+ * @param {boolean} [props.loading=false] - Indicates if loading state is active (disabling fields).
+ * @returns {JSX.Element} The rendered OrganizationInformation component.
+ */
 const OrganizationInformation: React.FC<OrganizationInformationProps> = ({
   index,
   loading = false,
 }) => {
   const { t } = useTranslation("labelDataValidator");
+
   return (
     <Box
       className="xxl:grid-cols-2 grid grid-cols-1 gap-4 sm:grid-cols-1 md:grid-cols-2 lg:grid-cols-1"

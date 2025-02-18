@@ -10,6 +10,7 @@ import { useTranslation } from "react-i18next";
  * Props for the FileList component.
  *
  * @interface FileListProps
+ * @property {React.Dispatch<React.SetStateAction<DropzoneState>>} setDropzoneState - Function to set the state of the dropzone.
  */
 interface FileListProps {
   setDropzoneState: React.Dispatch<React.SetStateAction<DropzoneState>>;
@@ -24,12 +25,11 @@ interface FileListProps {
  * @param {Array} props.uploadedFiles - An array of uploaded file objects.
  * @param {Function} props.setUploadedFiles - Function to update the uploaded files state.
  * @param {Function} props.handleSetDropzoneState - Function to set the state of the dropzone.
- *
  * @returns {JSX.Element} The rendered FileList component.
  */
 const FileList: React.FC<FileListProps> = ({ setDropzoneState }) => {
+  const { t } = useTranslation("fileList");
   const theme = useTheme();
-  const { t } = useTranslation("homePage");
   const { uploadedFiles, clearUploadedFiles } = useUploadedFilesStore();
 
   return (

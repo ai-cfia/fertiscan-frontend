@@ -2,6 +2,14 @@ import AccountCircleIcon from "@mui/icons-material/AccountCircle";
 import { useTranslation } from "react-i18next";
 import IconInput, { IconInputProps } from "../IconInput";
 
+/**
+ * This component renders an `IconInput` component
+ * specifically for the username field in an authentication form.
+ *
+ * @component
+ * @param {IconInputProps} props - The properties passed to the `IconInput` component.
+ * @returns {JSX.Element} The rendered `IconInput` component with a username icon and placeholder.
+ */
 const Username = ({ ...props }: IconInputProps) => {
   const { t } = useTranslation("authentication");
 

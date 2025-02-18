@@ -7,15 +7,49 @@ import { useTranslation } from "react-i18next";
 import LoginModal from "./LoginModal";
 import SignUpModal from "./SignUpModal";
 
+/**
+ * Props for the RouteGuard component.
+ *
+ * @interface RouteGuardProps
+ * @extends {React.HTMLAttributes<HTMLDivElement>}
+ *
+ * @property {React.ReactNode} children - The child components to be rendered within the RouteGuard.
+ */
 interface RouteGuardProps extends React.HTMLAttributes<HTMLDivElement> {
   children: React.ReactNode;
 }
 
+/**
+ * RouteGuard component that handles user authentication and authorization.
+ * It displays either a login or signup modal based on the authentication state.
+ *
+ * @component
+ * @param {RouteGuardProps} props - The properties passed to the RouteGuard component.
+ * @param {React.ReactNode} props.children - The child components to render if the user is authenticated.
+ * @param {object} divProps - Additional properties to be spread onto the root div element.
+ * @returns {JSX.Element} The rendered RouteGuard component.
+ *
+ *
+ * @function
+ * @name RouteGuard
+ *
+ * @description
+ * The RouteGuard component manages user authentication state and displays either a login or signup modal
+ * based on whether the user is authenticated. It uses cookies to store the authentication token and
+ * provides functions for handling login and signup requests.
+ *
+ * @property {boolean} isAuth - State indicating whether the user is authenticated.
+ * @property {boolean} isSignup - State indicating whether the signup modal should be displayed.
+ * @property {function} handleLogin - Function to handle user login.
+ * @property {function} handleSignup - Function to handle user signup.
+ * @property {function} toggleMode - Function to toggle between login and signup modes.
+ * @property {function} useEffect - Hook to set the authentication state based on the presence of a token in cookies.
+ */
 const RouteGuard = ({ children, ...divProps }: RouteGuardProps) => {
+  const { t } = useTranslation("authentication");
   const [isAuth, setAuth] = useState(false);
   const [isSignup, setIsSignup] = useState(false);
   const { showAlert } = useAlertStore();
-  const { t } = useTranslation("authentication");
 
   const handleLogin = async (username: string, password: string) => {
     try {

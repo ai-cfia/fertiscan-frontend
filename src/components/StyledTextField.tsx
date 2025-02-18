@@ -1,6 +1,14 @@
 import { TextField, TextFieldProps } from "@mui/material";
 import React from "react";
 
+/**
+ * A styled text field component that uses `React.forwardRef` to pass a ref to the underlying input element.
+ * This component wraps the `TextField` component and applies additional styles and properties.
+ *
+ * @param {TextFieldProps} props - The properties passed to the `TextField` component.
+ * @param {React.Ref<HTMLInputElement>} ref - The ref to be forwarded to the input element.
+ * @returns {JSX.Element} The styled text field component.
+ */
 const StyledTextField = React.forwardRef<HTMLInputElement, TextFieldProps>(
   (props, ref) => {
     return (
