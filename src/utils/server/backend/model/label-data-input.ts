@@ -14,19 +14,19 @@
 
 // May contain unused imports in some cases
 // @ts-ignore
-import type { NutrientValue } from "./nutrient-value";
+import type { AppModelsLabelDataGuaranteedAnalysis } from "./app-models-label-data-guaranteed-analysis";
+// May contain unused imports in some cases
+// @ts-ignore
+import type { Nutrient } from "./nutrient";
 // May contain unused imports in some cases
 // @ts-ignore
 import type { Organization } from "./organization";
 // May contain unused imports in some cases
 // @ts-ignore
-import type { PipelineInspectionGuaranteedAnalysis } from "./pipeline-inspection-guaranteed-analysis";
+import type { Quantity } from "./quantity";
 // May contain unused imports in some cases
 // @ts-ignore
-import type { PipelineInspectionRegistrationNumber } from "./pipeline-inspection-registration-number";
-// May contain unused imports in some cases
-// @ts-ignore
-import type { PipelineInspectionValue } from "./pipeline-inspection-value";
+import type { RegistrationNumber } from "./registration-number";
 
 /**
  *
@@ -48,10 +48,10 @@ export interface LabelDataInput {
   fertiliser_name?: string | null;
   /**
    *
-   * @type {Array<PipelineInspectionRegistrationNumber>}
+   * @type {Array<RegistrationNumber>}
    * @memberof LabelDataInput
    */
-  registration_number?: Array<PipelineInspectionRegistrationNumber>;
+  registration_number?: Array<RegistrationNumber>;
   /**
    *
    * @type {string}
@@ -60,22 +60,22 @@ export interface LabelDataInput {
   lot_number?: string | null;
   /**
    *
-   * @type {Array<PipelineInspectionValue>}
+   * @type {Array<Quantity>}
    * @memberof LabelDataInput
    */
-  weight?: Array<PipelineInspectionValue>;
+  weight?: Array<Quantity>;
   /**
    *
-   * @type {PipelineInspectionValue}
+   * @type {Quantity}
    * @memberof LabelDataInput
    */
-  density?: PipelineInspectionValue | null;
+  density?: Quantity | null;
   /**
    *
-   * @type {PipelineInspectionValue}
+   * @type {Quantity}
    * @memberof LabelDataInput
    */
-  volume?: PipelineInspectionValue | null;
+  volume?: Quantity | null;
   /**
    *
    * @type {string}
@@ -84,28 +84,28 @@ export interface LabelDataInput {
   npk?: string | null;
   /**
    *
-   * @type {PipelineInspectionGuaranteedAnalysis}
+   * @type {AppModelsLabelDataGuaranteedAnalysis}
    * @memberof LabelDataInput
    */
-  guaranteed_analysis_en?: PipelineInspectionGuaranteedAnalysis | null;
+  guaranteed_analysis_en?: AppModelsLabelDataGuaranteedAnalysis | null;
   /**
    *
-   * @type {PipelineInspectionGuaranteedAnalysis}
+   * @type {AppModelsLabelDataGuaranteedAnalysis}
    * @memberof LabelDataInput
    */
-  guaranteed_analysis_fr?: PipelineInspectionGuaranteedAnalysis | null;
-  /**
-   *
-   * @type {Array<string>}
-   * @memberof LabelDataInput
-   */
-  cautions_en?: Array<string>;
+  guaranteed_analysis_fr?: AppModelsLabelDataGuaranteedAnalysis | null;
   /**
    *
    * @type {Array<string>}
    * @memberof LabelDataInput
    */
-  cautions_fr?: Array<string>;
+  cautions_en?: Array<string> | null;
+  /**
+   *
+   * @type {Array<string>}
+   * @memberof LabelDataInput
+   */
+  cautions_fr?: Array<string> | null;
   /**
    *
    * @type {Array<string>}
@@ -120,14 +120,14 @@ export interface LabelDataInput {
   instructions_fr?: Array<string>;
   /**
    *
-   * @type {Array<NutrientValue>}
+   * @type {Array<Nutrient>}
    * @memberof LabelDataInput
    */
-  ingredients_en?: Array<NutrientValue>;
+  ingredients_en?: Array<Nutrient>;
   /**
    *
-   * @type {Array<NutrientValue>}
+   * @type {Array<Nutrient>}
    * @memberof LabelDataInput
    */
-  ingredients_fr?: Array<NutrientValue>;
+  ingredients_fr?: Array<Nutrient>;
 }

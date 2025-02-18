@@ -17,6 +17,8 @@
 import type { AppModelsLabelDataGuaranteedAnalysis } from "./app-models-label-data-guaranteed-analysis";
 // May contain unused imports in some cases
 // @ts-ignore
+// May contain unused imports in some cases
+// @ts-ignore
 import type { Nutrient } from "./nutrient";
 // May contain unused imports in some cases
 // @ts-ignore
@@ -31,103 +33,103 @@ import type { RegistrationNumber } from "./registration-number";
 /**
  *
  * @export
- * @interface LabelDataOutput
+ * @interface LabelData
  */
-export interface LabelDataOutput {
+export interface LabelData {
   /**
    *
    * @type {Array<Organization>}
-   * @memberof LabelDataOutput
+   * @memberof LabelData
    */
   organizations?: Array<Organization>;
   /**
    *
    * @type {string}
-   * @memberof LabelDataOutput
+   * @memberof LabelData
    */
-  fertiliser_name?: string | null;
+  fertiliser_name?: string;
   /**
    *
    * @type {Array<RegistrationNumber>}
-   * @memberof LabelDataOutput
+   * @memberof LabelData
    */
   registration_number?: Array<RegistrationNumber>;
   /**
    *
    * @type {string}
-   * @memberof LabelDataOutput
+   * @memberof LabelData
    */
-  lot_number?: string | null;
+  lot_number?: string;
   /**
    *
    * @type {Array<Quantity>}
-   * @memberof LabelDataOutput
+   * @memberof LabelData
    */
   weight?: Array<Quantity>;
   /**
    *
    * @type {Quantity}
-   * @memberof LabelDataOutput
+   * @memberof LabelData
    */
-  density?: Quantity | null;
+  density?: Quantity;
   /**
    *
    * @type {Quantity}
-   * @memberof LabelDataOutput
+   * @memberof LabelData
    */
-  volume?: Quantity | null;
+  volume?: Quantity;
   /**
    *
    * @type {string}
-   * @memberof LabelDataOutput
+   * @memberof LabelData
    */
-  npk?: string | null;
+  npk?: string;
   /**
    *
    * @type {AppModelsLabelDataGuaranteedAnalysis}
-   * @memberof LabelDataOutput
+   * @memberof LabelData
    */
-  guaranteed_analysis_en?: AppModelsLabelDataGuaranteedAnalysis | null;
+  guaranteed_analysis_en?: AppModelsLabelDataGuaranteedAnalysis;
   /**
    *
    * @type {AppModelsLabelDataGuaranteedAnalysis}
-   * @memberof LabelDataOutput
+   * @memberof LabelData
    */
-  guaranteed_analysis_fr?: AppModelsLabelDataGuaranteedAnalysis | null;
+  guaranteed_analysis_fr?: AppModelsLabelDataGuaranteedAnalysis;
   /**
    *
    * @type {Array<string>}
-   * @memberof LabelDataOutput
+   * @memberof LabelData
    */
-  cautions_en?: Array<string> | null;
+  cautions_en?: Array<string>;
   /**
    *
    * @type {Array<string>}
-   * @memberof LabelDataOutput
+   * @memberof LabelData
    */
-  cautions_fr?: Array<string> | null;
+  cautions_fr?: Array<string>;
   /**
    *
    * @type {Array<string>}
-   * @memberof LabelDataOutput
+   * @memberof LabelData
    */
   instructions_en?: Array<string>;
   /**
    *
    * @type {Array<string>}
-   * @memberof LabelDataOutput
+   * @memberof LabelData
    */
   instructions_fr?: Array<string>;
   /**
    *
    * @type {Array<Nutrient>}
-   * @memberof LabelDataOutput
+   * @memberof LabelData
    */
   ingredients_en?: Array<Nutrient>;
   /**
    *
    * @type {Array<Nutrient>}
-   * @memberof LabelDataOutput
+   * @memberof LabelData
    */
   ingredients_fr?: Array<Nutrient>;
 }

@@ -1,25 +1,23 @@
 import {
   BilingualField,
   DEFAULT_ORGANIZATION,
-  LabelData,
-  Quantity,
   DEFAULT_QUANTITY,
   DEFAULT_REGISTRATION_NUMBER,
+  LabelData,
+  Quantity,
   RegistrationType,
 } from "@/types/types";
 import {
-  FertiscanDbMetadataInspectionValue,
+  Quantity as BackendQuantity,
   InspectionResponse,
   InspectionUpdate,
   LabelDataInput,
   LabelDataOutput,
-  NutrientValue,
-  PipelineInspectionValue,
+  Nutrient,
+  Value,
 } from "./backend";
 
-export function quantity(
-  val?: PipelineInspectionValue | FertiscanDbMetadataInspectionValue | null,
-): Quantity {
+export function quantity(val?: BackendQuantity | Value | null): Quantity {
   return { value: String(val?.value ?? ""), unit: val?.unit ?? "" };
 }
 
@@ -34,9 +32,9 @@ export function verifiedTranslations(
   }));
 }
 
-export function verifiedItemPairNutrientValue(
-  enList?: NutrientValue[] | null,
-  frList?: NutrientValue[] | null,
+export function mapVerifiedNutrientPairs(
+  enList?: Nutrient[] | null,
+  frList?: Nutrient[] | null,
 ): BilingualField[] {
   return (enList ?? []).map((en, i) => ({
     en: en.nutrient ?? "",
@@ -47,9 +45,9 @@ export function verifiedItemPairNutrientValue(
   }));
 }
 
-export function verifiedItemPairInspectionValue(
-  enList?: FertiscanDbMetadataInspectionValue[] | null,
-  frList?: FertiscanDbMetadataInspectionValue[] | null,
+export function mapVerifiedInspectionValues(
+  enList?: Value[] | null,
+  frList?: Value[] | null,
   verified?: boolean | null,
 ): BilingualField[] {
   return (enList ?? []).map((en, i) => ({
@@ -115,14 +113,14 @@ export function mapLabelDataOutputToLabelData(
         value: !!data.guaranteed_analysis_en?.is_minimal,
         verified: false,
       },
-      nutrients: verifiedItemPairNutrientValue(
+      nutrients: mapVerifiedNutrientPairs(
         data.guaranteed_analysis_en?.nutrients,
         data.guaranteed_analysis_fr?.nutrients,
       ),
     },
     ingredients: {
       recordKeeping: { value: false, verified: false },
-      nutrients: verifiedItemPairNutrientValue(
+      nutrients: mapVerifiedNutrientPairs(
         data.ingredients_en,
         data.ingredients_fr,
       ),
@@ -199,7 +197,7 @@ export function mapInspectionToLabelData(
         value: !!inspection.guaranteed_analysis?.is_minimal,
         verified: v,
       },
-      nutrients: verifiedItemPairInspectionValue(
+      nutrients: mapVerifiedInspectionValues(
         inspection.guaranteed_analysis?.en,
         inspection.guaranteed_analysis?.fr,
         v,
@@ -210,7 +208,7 @@ export function mapInspectionToLabelData(
         value: !!inspection.product?.record_keeping,
         verified: v,
       },
-      nutrients: verifiedItemPairInspectionValue(
+      nutrients: mapVerifiedInspectionValues(
         inspection.ingredients?.en,
         inspection.ingredients?.fr,
         v,
@@ -231,7 +229,7 @@ export function mapLabelDataToLabelDataInput(
       name: org.name?.value,
       address: org.address?.value,
       website: org.website?.value,
-      phone_number: org.phoneNumber?.value,
+      phone_number: org.phoneNumber?.value || null,
     })),
     fertiliser_name: labelData.baseInformation.name.value,
     registration_number: labelData.baseInformation.registrationNumbers.values
@@ -257,7 +255,7 @@ export function mapLabelDataToLabelDataInput(
         Number(labelData.baseInformation.volume.quantities?.[0]?.value) || null,
       unit: labelData.baseInformation.volume.quantities?.[0]?.unit || null,
     },
-    npk: labelData.baseInformation.npk.value,
+    npk: labelData.baseInformation.npk.value || null,
     guaranteed_analysis_en: {
       title: labelData.guaranteedAnalysis.titleEn.value,
       is_minimal: labelData.guaranteedAnalysis.isMinimal.value,
@@ -305,7 +303,7 @@ export function mapLabelDataToInspectionUpdate(
       name: org.name?.value,
       address: org.address?.value,
       website: org.website?.value,
-      phone_number: org.phoneNumber?.value,
+      phone_number: org.phoneNumber?.value || null,
       is_main_contact: org.mainContact,
     })),
     product: {
@@ -317,7 +315,7 @@ export function mapLabelDataToInspectionUpdate(
           is_an_ingredient: reg.type === RegistrationType.INGREDIENT,
         })),
       lot_number: labelData.baseInformation.lotNumber.value,
-      npk: labelData.baseInformation.npk.value,
+      npk: labelData.baseInformation.npk.value || null,
       metrics: {
         weight: labelData.baseInformation.weight.quantities.map((q) => ({
           value: Number(q.value),

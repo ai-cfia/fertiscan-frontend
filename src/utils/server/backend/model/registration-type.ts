@@ -15,19 +15,13 @@
 /**
  *
  * @export
- * @interface PipelineInspectionValue
+ * @enum {string}
  */
-export interface PipelineInspectionValue {
-  /**
-   *
-   * @type {number}
-   * @memberof PipelineInspectionValue
-   */
-  value: number | null;
-  /**
-   *
-   * @type {string}
-   * @memberof PipelineInspectionValue
-   */
-  unit: string | null;
-}
+
+export const RegistrationType = {
+  FertilizerProduct: "fertilizer_product",
+  IngredientComponent: "ingredient_component",
+} as const;
+
+export type RegistrationType =
+  (typeof RegistrationType)[keyof typeof RegistrationType];

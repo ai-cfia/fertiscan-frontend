@@ -15,31 +15,19 @@
 /**
  *
  * @export
- * @interface FertiscanDbMetadataInspectionValue
+ * @interface Quantity
  */
-export interface FertiscanDbMetadataInspectionValue {
+export interface Quantity {
   /**
    *
    * @type {number}
-   * @memberof FertiscanDbMetadataInspectionValue
+   * @memberof Quantity
    */
   value?: number | null;
   /**
    *
    * @type {string}
-   * @memberof FertiscanDbMetadataInspectionValue
+   * @memberof Quantity
    */
   unit?: string | null;
-  /**
-   *
-   * @type {string}
-   * @memberof FertiscanDbMetadataInspectionValue
-   */
-  name?: string | null;
-  /**
-   *
-   * @type {boolean}
-   * @memberof FertiscanDbMetadataInspectionValue
-   */
-  edited?: boolean | null;
 }

@@ -12,26 +12,34 @@
  * Do not edit the class manually.
  */
 
-// May contain unused imports in some cases
-// @ts-ignore
-import type { Value } from "./value";
-
 /**
  *
  * @export
- * @interface ValuesObjects
+ * @interface Value
  */
-export interface ValuesObjects {
+export interface Value {
   /**
    *
-   * @type {Array<Value>}
-   * @memberof ValuesObjects
+   * @type {number}
+   * @memberof Value
    */
-  en?: Array<Value>;
+  value?: number | null;
   /**
    *
-   * @type {Array<Value>}
-   * @memberof ValuesObjects
+   * @type {string}
+   * @memberof Value
    */
-  fr?: Array<Value>;
+  unit?: string | null;
+  /**
+   *
+   * @type {string}
+   * @memberof Value
+   */
+  name?: string | null;
+  /**
+   *
+   * @type {boolean}
+   * @memberof Value
+   */
+  edited?: boolean | null;
 }

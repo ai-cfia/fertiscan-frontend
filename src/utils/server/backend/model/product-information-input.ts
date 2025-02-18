@@ -14,10 +14,10 @@
 
 // May contain unused imports in some cases
 // @ts-ignore
-import type { FertiscanDbMetadataInspectionRegistrationNumber } from "./fertiscan-db-metadata-inspection-registration-number";
+import type { Metrics } from "./metrics";
 // May contain unused imports in some cases
 // @ts-ignore
-import type { Metrics } from "./metrics";
+import type { RegistrationNumbers } from "./registration-numbers";
 
 /**
  *
@@ -87,10 +87,10 @@ export interface ProductInformationInput {
   verified?: boolean | null;
   /**
    *
-   * @type {Array<FertiscanDbMetadataInspectionRegistrationNumber>}
+   * @type {Array<RegistrationNumbers>}
    * @memberof ProductInformationInput
    */
-  registration_numbers?: Array<FertiscanDbMetadataInspectionRegistrationNumber> | null;
+  registration_numbers?: Array<RegistrationNumbers> | null;
   /**
    *
    * @type {boolean}

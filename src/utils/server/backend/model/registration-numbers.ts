@@ -15,25 +15,25 @@
 /**
  *
  * @export
- * @interface FertiscanDbMetadataInspectionRegistrationNumber
+ * @interface RegistrationNumbers
  */
-export interface FertiscanDbMetadataInspectionRegistrationNumber {
+export interface RegistrationNumbers {
   /**
    *
    * @type {string}
-   * @memberof FertiscanDbMetadataInspectionRegistrationNumber
+   * @memberof RegistrationNumbers
    */
   registration_number?: string | null;
   /**
    *
    * @type {boolean}
-   * @memberof FertiscanDbMetadataInspectionRegistrationNumber
+   * @memberof RegistrationNumbers
    */
   is_an_ingredient?: boolean | null;
   /**
    *
    * @type {boolean}
-   * @memberof FertiscanDbMetadataInspectionRegistrationNumber
+   * @memberof RegistrationNumbers
    */
   edited?: boolean | null;
 }

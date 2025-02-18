@@ -202,6 +202,7 @@
     "initialSaveFailed": "Échec de l'enregistrement initial des données de l'étiquette",
     "invalidId": "ID invalide",
     "failedFetchInspection": "Échec de la récupération de l'inspection.",
-    "alreadyCompleted": "Cette inspection est déjà terminée."
+    "alreadyCompleted": "Cette inspection est déjà terminée.",
+    "labelExtractionSuccess": "Données de l'étiquette extraites avec succès. Enregistrement de la version initiale…"
   }
 }

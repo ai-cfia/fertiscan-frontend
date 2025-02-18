@@ -14,30 +14,30 @@
 
 // May contain unused imports in some cases
 // @ts-ignore
-import type { NutrientValue } from "./nutrient-value";
+import type { Nutrient } from "./nutrient";
 
 /**
  *
  * @export
- * @interface PipelineInspectionGuaranteedAnalysis
+ * @interface AppModelsLabelDataGuaranteedAnalysis
  */
-export interface PipelineInspectionGuaranteedAnalysis {
+export interface AppModelsLabelDataGuaranteedAnalysis {
   /**
    *
    * @type {string}
-   * @memberof PipelineInspectionGuaranteedAnalysis
+   * @memberof AppModelsLabelDataGuaranteedAnalysis
    */
   title?: string | null;
   /**
    *
-   * @type {Array<NutrientValue>}
-   * @memberof PipelineInspectionGuaranteedAnalysis
+   * @type {Array<Nutrient>}
+   * @memberof AppModelsLabelDataGuaranteedAnalysis
    */
-  nutrients?: Array<NutrientValue>;
+  nutrients?: Array<Nutrient>;
   /**
    *
    * @type {boolean}
-   * @memberof PipelineInspectionGuaranteedAnalysis
+   * @memberof AppModelsLabelDataGuaranteedAnalysis
    */
   is_minimal?: boolean | null;
 }
