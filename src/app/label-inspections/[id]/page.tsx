@@ -25,7 +25,34 @@ import { useParams, useRouter } from "next/navigation";
 import { useEffect, useState } from "react";
 import { useTranslation } from "react-i18next";
 
-function InspectionPage() {
+/**
+ * InspectionPage component renders the inspection details page.
+ * It fetches inspection data based on the inspection ID from the URL parameters.
+ * It provides functionalities to edit or discard the inspection.
+ *
+ * @component
+ * @returns {JSX.Element} The rendered inspection page component.
+ *
+ * @function deleteInspection
+ * Deletes an inspection by making a DELETE request to the API.
+ * @param {string} id - The ID of the inspection to delete.
+ * @param {AbortSignal} signal - The abort signal to cancel the request if needed.
+ *
+ * @function handleEditClick
+ * Navigates to the label data validation page for editing the inspection.
+ *
+ * @function handleDiscardClick
+ * Opens the confirmation dialog for discarding the inspection.
+ *
+ * @function confirmDiscard
+ * Confirms the discard action and deletes the inspection.
+ *
+ * @hook useEffect
+ * Fetches the inspection data when the component mounts or the inspection ID changes.
+ *
+ */
+const InspectionPage = () => {
+  const { t } = useTranslation("inspectionPage");
   const { id } = useParams();
   const inspectionId = Array.isArray(id) ? id[0] : id;
   const [loading, setLoading] = useState(true);
@@ -35,7 +62,6 @@ function InspectionPage() {
   const imageFiles = uploadedFiles.map((file) => file.getFile());
   const showAlert = useAlertStore((state) => state.showAlert);
   const [labelData, setLabelData] = useState<LabelData | null>(null);
-  const { t } = useTranslation("inspectionPage");
   const [error, setError] = useState<AxiosResponse | null>(null);
   const router = useRouter();
   const [confirmOpen, setConfirmOpen] = useState(false);

@@ -18,6 +18,10 @@ import { useTranslation } from "react-i18next";
 
 /**
  * FileElementProps interface to define the props for the FileElement component
+ *
+ * @interface FileElementProps
+ * @property {React.Dispatch<React.SetStateAction<DropzoneState>>} setDropzoneState - Function to set the dropzone state
+ * @property {FileUploaded} imageFile - The uploaded file
  */
 interface FileElementProps {
   setDropzoneState: React.Dispatch<React.SetStateAction<DropzoneState>>;
@@ -27,19 +31,19 @@ interface FileElementProps {
 /**
  *
  * FileElement component to display the uploaded file
- * @param setDropZoneState: function to set the dropzone state
- * @param imageName: name of the file
- * @param imageUrl: url of the file
- * @param handleDelete: function to handle the deletion of the file
  *
- * @returns
+ * @component
+ * @param {FileElementProps} props - The props for the FileElement component
+ * @param {React.Dispatch<React.SetStateAction<DropzoneState>>} props.setDropzoneState - Function to set the dropzone state
+ * @param {FileUploaded} props.imageFile - The uploaded file
+ * @returns {JSX.Element} The rendered FileElement component
  */
 const FileElement: React.FC<FileElementProps> = ({
   setDropzoneState,
   imageFile,
 }) => {
-  const theme = useTheme();
   const { t } = useTranslation("homePage");
+  const theme = useTheme();
   const [hovered, setHovered] = useState(false);
   const { removeUploadedFile, renameUploadedFile } = useUploadedFilesStore();
   const [isRenaming, setIsRenaming] = useState(false);
@@ -49,6 +53,12 @@ const FileElement: React.FC<FileElementProps> = ({
     imageName.substring(0, imageName.lastIndexOf(".")) || imageName;
   const [newName, setNewName] = useState(baseName);
 
+  /**
+   * Handle the rename submit event
+   *
+   * @param {React.KeyboardEvent} event - The keyboard event (Enter)
+   * @returns {void}
+  */
   const handleRenameSubmit = (event: React.KeyboardEvent) => {
     if (event.key === "Enter" && newName.trim() !== "") {
       renameUploadedFile(imageUrl, `${newName.trim()}.${extension}`);

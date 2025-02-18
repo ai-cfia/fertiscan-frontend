@@ -20,12 +20,30 @@ import { QuantityChips } from "../QuantityChips";
 import { RegistrationChips } from "../RegistrationChips";
 import BilingualTable from "./BilingualTable";
 
+/**
+ * Props for the LabelInformation component.
+ *
+ * @interface LabelInformationProps
+ * @property {LabelData | null} labelData - The data associated with the label. Can be null if no data is available.
+ * @property {(text: string) => void} [setNotes] - Optional callback function to set notes text.
+ * @property {boolean} disableNotes - Flag to indicate whether the notes section should be disabled.
+ */
 interface LabelInformationProps {
   labelData: LabelData | null;
   setNotes?: (text: string) => void;
   disableNotes: boolean;
 }
 
+/**
+ * Component to display detailed information about a label.
+ *
+ * @component
+ * @param {LabelInformationProps} props - The properties for the LabelInformation component.
+ * @param {Object} props.labelData - The data object containing all the information about the label.
+ * @param {Function} props.setNotes - Function to set the notes for the label.
+ * @param {boolean} props.disableNotes - Flag to disable the notes input field.
+ * @returns {JSX.Element | null} The rendered LabelInformation component or null if no labelData is provided.
+ */
 const LabelInformation: React.FC<LabelInformationProps> = ({
   labelData,
   setNotes,
@@ -33,6 +51,7 @@ const LabelInformation: React.FC<LabelInformationProps> = ({
 }) => {
   const { t } = useTranslation("confirmationPage");
 
+  // Return nothing if labelData is not available
   if (!labelData) return null;
 
   return (
@@ -199,7 +218,7 @@ const LabelInformation: React.FC<LabelInformationProps> = ({
           </TableContainer>
         </SubSection>
 
-        {/* Nutrients */}
+        {/* Guaranteed analysis */}
         <SubSection
           title={t("guaranteedAnalysis.nutrients")}
           testId="guaranteed-analysis-nutrients-section"
@@ -247,6 +266,16 @@ const LabelInformation: React.FC<LabelInformationProps> = ({
 
 export default LabelInformation;
 
+/**
+ * Props for the Section and SubSection component.
+ *
+ * @interface SectionProps
+ * @property {string} title - The title of the component.
+ * @property {React.ReactNode} children - The content to be displayed within the component.
+ * @property {string} [testId] - Optional test ID for the component, useful for testing purposes.
+ * @property {BoxProps} [boxProps] - Optional properties to be passed to the Box component.
+ * @property {TypographyProps} [titleProps] - Optional properties to be passed to the Typography component for the title.
+ */
 interface SectionProps {
   title: string;
   children: React.ReactNode;
@@ -255,6 +284,18 @@ interface SectionProps {
   titleProps?: TypographyProps;
 }
 
+/**
+ * A functional component that renders a section with a title and children content.
+ *
+ * @component
+ * @param {SectionProps} props - The properties for the Section component.
+ * @param {string} props.title - The title to be displayed in the section.
+ * @param {React.ReactNode} props.children - The content to be displayed within the section.
+ * @param {string} [props.testId] - The test ID for the section, used for testing purposes.
+ * @param {BoxProps} [props.boxProps] - Additional properties to be passed to the Box component.
+ * @param {TypographyProps} [props.titleProps] - Additional properties to be passed to the Typography component.
+ * @returns {JSX.Element} The rendered section component.
+ */
 const Section: React.FC<SectionProps> = ({
   title,
   children,
@@ -275,6 +316,18 @@ const Section: React.FC<SectionProps> = ({
   </Box>
 );
 
+/**
+ * A functional component that renders a subsection within a section.
+ *
+ * @component
+ * @param {SectionProps} props - The properties for the SubSection component.
+ * @param {string} props.title - The title to be displayed in the subsection.
+ * @param {React.ReactNode} props.children - The content to be displayed within the subsection.
+ * @param {string} [props.testId] - The test ID for the subSection, used for testing purposes.
+ * @param {BoxProps} [props.boxProps] - Additional properties to be passed to the Box component.
+ * @param {TypographyProps} [props.titleProps] - Additional properties to be passed to the Typography component.
+ * @returns {JSX.Element} The rendered subsection component.
+ */
 const SubSection: React.FC<SectionProps> = ({
   title,
   children,

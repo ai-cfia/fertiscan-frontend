@@ -3,12 +3,28 @@ import ErrorIcon from "@mui/icons-material/Error";
 import { Box, Card, Stack, Tooltip, Typography } from "@mui/material";
 import { useTranslation } from "react-i18next";
 
+/**
+ * Props for the InspectionElement component.
+ *
+ * @interface InspectionElementProps
+ * @property {InspectionData} inspection - The data for the inspection.
+ * @property {string} key - A unique key for the inspection element.
+ * @property {() => void} handleClick - Function to handle click events.
+ */
 interface InspectionElementProps {
   inspection: InspectionData;
   key: string;
   handleClick(): void;
 }
 
+/**
+ * Component representing an inspection element in a list.
+ *
+ * @param {InspectionElementProps} props - The properties for the InspectionElement component.
+ * @param {InspectionData} props.inspection - The inspection data.
+ * @param {Function} props.handleClick - The function to handle click events on the card.
+ * @returns {JSX.Element} The rendered InspectionElement component.
+ */
 const InspectionElement = ({
   inspection,
   handleClick,

@@ -9,6 +9,16 @@ import {
 import React, { useState } from "react";
 import { useTranslation } from "react-i18next";
 
+/**
+ * Props for the IconInput component.
+ *
+ * @interface IconInputProps
+ * @extends InputProps
+ *
+ * @property {React.ReactNode} [icon] - Optional icon to be displayed inside the input.
+ * @property {(value: string) => void} setValue - Function to set the value of the input.
+ * @property {string} [dataTestId] - Optional data-testid attribute for testing purposes.
+ */
 export interface IconInputProps extends InputProps {
   icon?: React.ReactNode;
   setValue: (value: string) => void;
@@ -16,10 +26,17 @@ export interface IconInputProps extends InputProps {
 }
 
 /**
- * IconInput Component
+ * IconInput component renders an input field with an optional icon and password visibility toggle.
  *
- * This component renders an input field with an optional left icon and password visibility toggle.
- * Users can override adornments if needed.
+ * @component
+ * @param {IconInputProps} props - The properties for the IconInput component.
+ * @param {string} props.id - The id of the input element.
+ * @param {React.ReactNode} props.icon - The icon to be displayed inside the input field.
+ * @param {string} props.type - The type of the input field (e.g., "text", "password").
+ * @param {function} props.setValue - The function to set the value of the input field.
+ * @param {string} [props.dataTestId] - The data-testid attribute for testing purposes.
+ * @param {object} [props.inputProps] - Additional props to be passed to the input element.
+ * @returns {JSX.Element} The rendered IconInput component.
  */
 const IconInput: React.FC<IconInputProps> = ({
   id,
@@ -29,11 +46,12 @@ const IconInput: React.FC<IconInputProps> = ({
   dataTestId,
   ...inputProps
 }) => {
+  const { t } = useTranslation("labelDataValidator");
   const [hasFocus, setFocus] = useState(false);
   const [trueType, setTrueType] = useState(type);
   const [showPassword, setShowPassword] = useState(false);
-  const { t } = useTranslation("labelDataValidator");
 
+  // Handle the visibility of the password input.
   const handleClickShowPassword = (e: React.MouseEvent<HTMLElement>) => {
     e.stopPropagation();
     e.preventDefault();
@@ -42,6 +60,7 @@ const IconInput: React.FC<IconInputProps> = ({
     if (id) document.getElementById(id)!.focus();
   };
 
+  // Handle the focus of the input field.
   const handleInputFocus = () => {
     setFocus(true);
     if (type == "password") {
@@ -50,6 +69,7 @@ const IconInput: React.FC<IconInputProps> = ({
     }
   };
 
+  // Handle the blur of the input field.
   const handleInputBlur = (e: React.FocusEvent<HTMLElement>) => {
     if (type == "password") {
       const adornment = document.getElementById(id + "-show_password");
@@ -63,6 +83,7 @@ const IconInput: React.FC<IconInputProps> = ({
     setFocus(false);
   };
 
+  // Display the password visibility toggle if the input type is "password".
   const showPasswordAdornment =
     type === "password" ? (
       <InputAdornment

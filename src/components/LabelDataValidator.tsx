@@ -23,6 +23,16 @@ import { useEffect, useState } from "react";
 import { useTranslation } from "react-i18next";
 import SplitContentLayout from "./inspection-details/SplitContentLayout";
 
+/**
+ * Props for LabelDataValidator component.
+ *
+ * @typedef {Object} LabelDataValidatorProps
+ * @property {boolean} [loading=false] - Indicates whether the component is in a loading state.
+ * @property {FileUploaded[]} fileUploads - List of uploaded files.
+ * @property {LabelData} labelData - The current label data.
+ * @property {React.Dispatch<React.SetStateAction<LabelData>>} setLabelData - Function to update label data.
+ * @property {string} [inspectionId] - Optional inspection ID.
+ */
 interface LabelDataValidatorProps {
   loading?: boolean;
   fileUploads: FileUploaded[];
@@ -31,12 +41,18 @@ interface LabelDataValidatorProps {
   inspectionId?: string;
 }
 
-function LabelDataValidator({
+/**
+ * Renders a label data validation page with a step-by-step form process.
+ *
+ * @param {LabelDataValidatorProps} props - The properties passed to the component.
+ * @returns {JSX.Element} The rendered LabelDataValidator component.
+ */
+const LabelDataValidator=({
   loading = false,
   fileUploads,
   labelData,
   setLabelData,
-}: LabelDataValidatorProps) {
+}: LabelDataValidatorProps) => {
   const { t } = useTranslation("labelDataValidator");
   const [activeStep, setActiveStep] = useState(0);
   const [organizationsStepStatus, setOrganizationsStepStatus] =
@@ -56,6 +72,15 @@ function LabelDataValidator({
   const router = useRouter();
   const imageFiles = fileUploads.map((file) => file.getFile());
 
+  /**
+   * Creates a step for the multi-step form process.
+   *
+   * @param {string} title - The title of the step.
+   * @param {React.FC<FormComponentProps>} StepComponent - The form component for the step.
+   * @param {StepStatus} stepStatus - The current status of the step.
+   * @param {React.Dispatch<React.SetStateAction<StepStatus>>} setStepStatusState - Function to set the status of the step.
+   * @returns {Object} An object representing the step with a render function.
+   */
   const createStep = (
     title: string,
     StepComponent: React.FC<FormComponentProps>,
@@ -76,6 +101,7 @@ function LabelDataValidator({
     };
   };
 
+  // Define all the steps in the stepper
   const steps = [
     createStep(
       t("baseInformation.stepTitle"),
@@ -115,11 +141,15 @@ function LabelDataValidator({
     ),
   ];
 
+  /**
+   * Submits the current label data and navigates to the confirmation page.
+   */
   const submit = () => {
     storeLabelData(labelData);
     router.push("/label-data-confirmation");
   };
 
+  // Use effects to update step statuses based on field validation
   useEffect(() => {
     const verified = labelData.organizations.every(
       ({ name, address, website, phoneNumber }) =>

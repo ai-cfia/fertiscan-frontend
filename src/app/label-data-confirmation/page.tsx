@@ -36,6 +36,13 @@ const LabelDataConfirmationPage = () => {
   const [confirmed, setConfirmed] = useState(false);
   const { t } = useTranslation("confirmationPage");
 
+  /**
+   * Updates existing label data by sending a PUT request to the API and
+   * sets the 'confirmed' flag on the label data.
+   *
+   * @param {LabelData} labelData - The label data object to update.
+   * @param {AbortSignal} signal - An AbortSignal to allow aborting the request.
+   */
   const putLabelData = (labelData: LabelData, signal: AbortSignal) => {
     const confirmedLabelData = { ...labelData, confirmed: true };
     setConfirmLoading(true);
@@ -61,6 +68,12 @@ const LabelDataConfirmationPage = () => {
       });
   };
 
+  /**
+   * Creates new label data by sending a POST request to the API.
+   *
+   * @param {LabelData} labelData - The label data object to create.
+   * @param {AbortSignal} signal - An AbortSignal to allow aborting the request.
+   */
   const postLabelData = (labelData: LabelData, signal: AbortSignal) => {
     const formData = new FormData();
     imageFiles.forEach((file) => {
@@ -91,7 +104,11 @@ const LabelDataConfirmationPage = () => {
         setConfirmLoading(false);
       });
   };
-
+  /**
+   * Handles click on the edit button.
+   * Redirects the user to the label data validation page to modify
+   * the information of the label.
+   */
   const handleEditClick = () => {
     setEditLoading(true);
     if (labelData?.inspectionId) {
@@ -101,6 +118,10 @@ const LabelDataConfirmationPage = () => {
     }
   };
 
+  /**
+   * Handles click on the confirm button. Validates the label data and calls appropriate API requests
+   * to save or update the label data.
+   */
   const handleConfirmClick = () => {
     if (!labelData) {
       showAlert(t("alert.labelNotFound"), "error");

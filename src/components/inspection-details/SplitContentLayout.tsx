@@ -4,6 +4,20 @@ import useBreakpoints from "@/utils/client/useBreakpoints";
 import { Box, BoxProps } from "@mui/material";
 import { ReactNode, useState } from "react";
 
+/**
+ * Props for the SplitContentLayout component.
+ *
+ * @interface SplitContentLayoutProps
+ * @extends {BoxProps}
+ *
+ * @property {File[]} imageFiles - An array of image files to be displayed.
+ * @property {ReactNode} [topPanel] - Optional top panel content.
+ * @property {ReactNode} [bottomPanel] - Optional bottom panel content.
+ * @property {ReactNode} header - Content for the header section.
+ * @property {ReactNode} body - Content for the body section.
+ * @property {ReactNode} footer - Content for the footer section.
+ * @property {boolean} [expandable] - Optional flag to indicate if the layout is expandable.
+ */
 interface SplitContentLayoutProps extends BoxProps {
   imageFiles: File[];
   topPanel?: ReactNode;
@@ -14,6 +28,21 @@ interface SplitContentLayoutProps extends BoxProps {
   expandable?: boolean;
 }
 
+/**
+ * SplitContentLayout component is a flexible layout component that arranges content
+ * into a split view with optional expandable sections.
+ *
+ * @param {SplitContentLayoutProps} props - The properties for the SplitContentLayout component.
+ * @param {React.ReactNode[]} props.imageFiles - An array of image files to be displayed in the image viewer.
+ * @param {React.ReactNode} props.topPanel - Content to be displayed in the top panel.
+ * @param {React.ReactNode} props.bottomPanel - Content to be displayed in the bottom panel.
+ * @param {React.ReactNode} props.header - Content to be displayed in the header section.
+ * @param {React.ReactNode} props.body - Content to be displayed in the body section.
+ * @param {React.ReactNode} props.footer - Content to be displayed in the footer section.
+ * @param {boolean} [props.expandable=false] - Flag to determine if the right section is expandable.
+ * @param {BoxProps} [props.boxProps] - Additional properties to be passed to the main container Box component.
+ * @returns {JSX.Element} The rendered SplitContentLayout component.
+ */
 const SplitContentLayout = ({
   imageFiles,
   topPanel,

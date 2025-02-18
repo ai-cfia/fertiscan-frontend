@@ -4,6 +4,18 @@ import { Control, Controller, RegisterOptions } from "react-hook-form";
 import { useTranslation } from "react-i18next";
 import StyledTextField from "./StyledTextField";
 
+/**
+ * Props for the RegistrationInput component.
+ *
+ * @interface RegistrationInputProps
+ * @property {string} name - The name of the input field.
+ * @property {Control} control - The control object for managing the input state.
+ * @property {boolean} [disabled] - Optional flag to disable the input field.
+ * @property {RegisterOptions} [typeRules] - Optional validation rules for the input field.
+ * @property {() => void} [onFocus] - Optional callback function to handle focus event.
+ * @property {() => void} [onBlur] - Optional callback function to handle blur event.
+ * @property {boolean} [verified] - Optional flag to indicate if the input is verified.
+ */
 interface RegistrationInputProps {
   name: string;
   control: Control;
@@ -14,6 +26,19 @@ interface RegistrationInputProps {
   verified?: boolean;
 }
 
+/**
+ * RegistrationInput component for handling registration input fields.
+ *
+ * @param {RegistrationInputProps} props - The properties for the RegistrationInput component.
+ * @param {string} props.name - The name of the input field.
+ * @param {Control} props.control - The control object from react-hook-form.
+ * @param {boolean} [props.disabled=false] - Flag to disable the input fields.
+ * @param {RegisterOptions} props.typeRules - Validation rules for the registration type field.
+ * @param {Function} [props.onFocus] - Callback function to handle focus event.
+ * @param {Function} [props.onBlur] - Callback function to handle blur event.
+ * @param {boolean} props.verified - Flag to indicate if the input is verified.
+ * @returns {JSX.Element} The rendered RegistrationInput component.
+ */
 const RegistrationInput = ({
   name,
   control,

@@ -11,7 +11,14 @@ import { useRouter } from "next/navigation";
 import { useEffect, useState } from "react";
 import { useTranslation } from "react-i18next";
 
-function LabelDataValidationPage() {
+/**
+ * A React component that handles the validation process for label data.
+ * It manages the flow of uploading files, extracting label data from them,
+ * and navigating to the validation detail page.
+ *
+ * @returns {JSX.Element} The rendered LabelDataValidationPage component.
+ */
+const LabelDataValidationPage = () => {
   const uploadedFiles = useUploadedFilesStore((state) => state.uploadedFiles);
   const storedLabelData = useLabelDataStore((state) => state.labelData);
   const [labelData, setLabelData] = useState(DEFAULT_LABEL_DATA);
@@ -20,6 +27,7 @@ function LabelDataValidationPage() {
   const router = useRouter();
   const { t } = useTranslation("labelDataValidator");
 
+  // Check if no files were uploaded
   useEffect(() => {
     if (uploadedFiles.length === 0) {
       showAlert(t("errors.noFileUploaded"), "warning");
@@ -44,9 +52,12 @@ function LabelDataValidationPage() {
       formData.append("files", file);
     });
 
+    // Basic authentication setup using token from cookies
     const username = atob(Cookies.get("token") ?? "");
     const password = "";
     const authHeader = "Basic " + btoa(`${username}:${password}`);
+
+    // API call to extract label data from uploaded files
     axios
       .post("/api-next/extract-label-data", formData, {
         headers: { Authorization: authHeader },
@@ -55,6 +66,8 @@ function LabelDataValidationPage() {
       .then(async (response) => {
         const labelData: LabelData = response.data;
         formData.append("labelData", JSON.stringify(labelData));
+
+        // API call to post the extracted label data
         axios
           .post("/api-next/inspections", formData, {
             headers: { Authorization: authHeader },

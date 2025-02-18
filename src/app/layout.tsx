@@ -15,6 +15,21 @@ export const metadata: Metadata = {
   },
 };
 
+/**
+ * RootLayout component that sets up the main layout structure for the application.
+ *
+ * @param {Readonly<{ children: React.ReactNode }>} props - The props object containing children elements.
+ * @returns {JSX.Element} The rendered layout component.
+ *
+ * This component includes:
+ * - HTML structure with <html> and <body> tags.
+ * - AppRouterCacheProvider for caching router data.
+ * - ThemeProvider to apply the theme to the application.
+ * - RouteGuard to protect routes and ensure proper navigation.
+ * - SideNav component for the side navigation menu.
+ * - Header component for the top header.
+ * - Box component to wrap the children elements with specific styling.
+ */
 export default function RootLayout({
   children,
 }: Readonly<{ children: React.ReactNode }>) {

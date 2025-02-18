@@ -5,6 +5,14 @@ import StyledListContainer from "./StyledListContainer";
 import { VerifiedFieldWrapper } from "./VerifiedFieldComponents";
 import VerifiedListRow from "./VerifiedListRow";
 
+/**
+ * Props for the VerifiedRegistrationList component.
+ *
+ * @property {string} label - The label to display for the list.
+ * @property {string} path - The path to fetch the verified registrations from.
+ * @property {string} [className] - Optional additional class names for styling.
+ * @property {boolean} [loading] - Optional flag to indicate if the list is loading.
+ */
 interface VerifiedRegistrationListProps {
   label: string;
   path: string;
@@ -12,6 +20,16 @@ interface VerifiedRegistrationListProps {
   loading?: boolean;
 }
 
+/**
+ * Component for rendering a list of verified registrations.
+ *
+ * @param {VerifiedRegistrationListProps} props - The properties for the component.
+ * @param {string} props.label - The label for the list.
+ * @param {string} props.path - The path for the form context.
+ * @param {string} [props.className=""] - Optional additional class name for styling.
+ * @param {boolean} [props.loading=false] - Flag indicating if the component is in a loading state.
+ * @returns {JSX.Element} The rendered component.
+ */
 const VerifiedRegistrationList: React.FC<VerifiedRegistrationListProps> = ({
   label,
   path,
