@@ -13,7 +13,7 @@
  */
 
 /**
- * Represents an organization such as a manufacturer, company, or any entity  associated with a fertilizer.
+ *
  * @export
  * @interface Organization
  */

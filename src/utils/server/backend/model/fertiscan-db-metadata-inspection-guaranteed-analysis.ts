@@ -14,10 +14,10 @@
 
 // May contain unused imports in some cases
 // @ts-ignore
-import type { FertiscanDbMetadataInspectionValue } from "./fertiscan-db-metadata-inspection-value";
+import type { Title } from "./title";
 // May contain unused imports in some cases
 // @ts-ignore
-import type { Title } from "./title";
+import type { Value } from "./value";
 
 /**
  *
@@ -39,14 +39,14 @@ export interface FertiscanDbMetadataInspectionGuaranteedAnalysis {
   is_minimal?: boolean | null;
   /**
    *
-   * @type {Array<FertiscanDbMetadataInspectionValue>}
+   * @type {Array<Value>}
    * @memberof FertiscanDbMetadataInspectionGuaranteedAnalysis
    */
-  en?: Array<FertiscanDbMetadataInspectionValue>;
+  en?: Array<Value>;
   /**
    *
-   * @type {Array<FertiscanDbMetadataInspectionValue>}
+   * @type {Array<Value>}
    * @memberof FertiscanDbMetadataInspectionGuaranteedAnalysis
    */
-  fr?: Array<FertiscanDbMetadataInspectionValue>;
+  fr?: Array<Value>;
 }

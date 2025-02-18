@@ -12,22 +12,26 @@
  * Do not edit the class manually.
  */
 
+// May contain unused imports in some cases
+// @ts-ignore
+import type { RegistrationType } from "./registration-type";
+
 /**
  *
  * @export
- * @interface PipelineInspectionRegistrationNumber
+ * @interface RegistrationNumber
  */
-export interface PipelineInspectionRegistrationNumber {
+export interface RegistrationNumber {
   /**
    *
    * @type {string}
-   * @memberof PipelineInspectionRegistrationNumber
+   * @memberof RegistrationNumber
    */
-  identifier: string | null;
+  identifier?: string | null;
   /**
    *
-   * @type {string}
-   * @memberof PipelineInspectionRegistrationNumber
+   * @type {RegistrationType}
+   * @memberof RegistrationNumber
    */
-  type?: string | null;
+  type?: RegistrationType | null;
 }

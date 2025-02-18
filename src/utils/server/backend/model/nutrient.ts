@@ -15,25 +15,25 @@
 /**
  *
  * @export
- * @interface NutrientValue
+ * @interface Nutrient
  */
-export interface NutrientValue {
-  /**
-   *
-   * @type {string}
-   * @memberof NutrientValue
-   */
-  nutrient: string;
+export interface Nutrient {
   /**
    *
    * @type {number}
-   * @memberof NutrientValue
+   * @memberof Nutrient
    */
   value?: number | null;
   /**
    *
    * @type {string}
-   * @memberof NutrientValue
+   * @memberof Nutrient
    */
   unit?: string | null;
+  /**
+   *
+   * @type {string}
+   * @memberof Nutrient
+   */
+  nutrient?: string | null;
 }

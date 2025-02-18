@@ -53,6 +53,7 @@ function LabelDataValidationPage() {
         signal,
       })
       .then(async (response) => {
+        showAlert(t("alert.labelExtractionSuccess"), "success");
         const labelData: LabelData = response.data;
         formData.append("labelData", JSON.stringify(labelData));
         axios
@@ -61,6 +62,7 @@ function LabelDataValidationPage() {
             signal,
           })
           .then((response) => {
+            showAlert(t("alert.initialSaveSuccess"), "success");
             const labelData: LabelData = response.data;
             router.push(`/label-data-validation/${labelData.inspectionId}`);
             return null;

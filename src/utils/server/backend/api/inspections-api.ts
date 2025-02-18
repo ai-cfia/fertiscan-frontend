@@ -44,7 +44,7 @@ import type { InspectionResponse } from "../model";
 // @ts-ignore
 import type { InspectionUpdate } from "../model";
 // @ts-ignore
-import type { LabelDataInput } from "../model";
+import type { LabelData } from "../model";
 /**
  * InspectionsApi - axios parameter creator
  * @export
@@ -199,13 +199,13 @@ export const InspectionsApiAxiosParamCreator = function (
     /**
      *
      * @summary Post Inspection
-     * @param {LabelDataInput} labelData
+     * @param {LabelData} labelData
      * @param {Array<File>} files
      * @param {*} [options] Override http request option.
      * @throws {RequiredError}
      */
     postInspectionInspectionsPost: async (
-      labelData: LabelDataInput,
+      labelData: LabelData,
       files: Array<File>,
       options: RawAxiosRequestConfig = {},
     ): Promise<RequestArgs> => {
@@ -442,13 +442,13 @@ export const InspectionsApiFp = function (configuration?: Configuration) {
     /**
      *
      * @summary Post Inspection
-     * @param {LabelDataInput} labelData
+     * @param {LabelData} labelData
      * @param {Array<File>} files
      * @param {*} [options] Override http request option.
      * @throws {RequiredError}
      */
     async postInspectionInspectionsPost(
-      labelData: LabelDataInput,
+      labelData: LabelData,
       files: Array<File>,
       options?: RawAxiosRequestConfig,
     ): Promise<
@@ -573,13 +573,13 @@ export const InspectionsApiFactory = function (
     /**
      *
      * @summary Post Inspection
-     * @param {LabelDataInput} labelData
+     * @param {LabelData} labelData
      * @param {Array<File>} files
      * @param {*} [options] Override http request option.
      * @throws {RequiredError}
      */
     postInspectionInspectionsPost(
-      labelData: LabelDataInput,
+      labelData: LabelData,
       files: Array<File>,
       options?: RawAxiosRequestConfig,
     ): AxiosPromise<InspectionResponse> {
@@ -664,14 +664,14 @@ export class InspectionsApi extends BaseAPI {
   /**
    *
    * @summary Post Inspection
-   * @param {LabelDataInput} labelData
+   * @param {LabelData} labelData
    * @param {Array<File>} files
    * @param {*} [options] Override http request option.
    * @throws {RequiredError}
    * @memberof InspectionsApi
    */
   public postInspectionInspectionsPost(
-    labelData: LabelDataInput,
+    labelData: LabelData,
     files: Array<File>,
     options?: RawAxiosRequestConfig,
   ) {

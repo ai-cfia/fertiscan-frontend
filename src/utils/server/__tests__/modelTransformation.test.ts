@@ -1,25 +1,29 @@
-import { DEFAULT_ORGANIZATION, LabelData, RegistrationType } from "@/types/types";
 import {
-  FertiscanDbMetadataInspectionValue,
+  DEFAULT_ORGANIZATION,
+  LabelData,
+  RegistrationType,
+} from "@/types/types";
+import {
   InspectionResponse,
   LabelDataOutput,
-  NutrientValue,
-  PipelineInspectionValue,
+  Nutrient,
+  Quantity,
+  Value,
 } from "../backend";
 import {
   mapInspectionToLabelData,
   mapLabelDataOutputToLabelData,
+  mapLabelDataToBackendLabelData,
   mapLabelDataToInspectionUpdate,
-  mapLabelDataToLabelDataInput,
+  mapVerifiedInspectionValues,
+  mapVerifiedNutrientPairs,
   quantity,
-  verifiedItemPairInspectionValue,
-  verifiedItemPairNutrientValue,
   verifiedTranslations,
 } from "../modelTransformation";
 
 describe("quantity", () => {
-  it("should handle a valid PipelineInspectionValue", () => {
-    const val: PipelineInspectionValue = { value: 10, unit: "kg" };
+  it("should handle a valid Quantity", () => {
+    const val: Quantity = { value: 10, unit: "kg" };
     const result = quantity(val);
     expect(result).toEqual({ value: "10", unit: "kg" });
   });
@@ -35,7 +39,7 @@ describe("quantity", () => {
   });
 
   it("should convert null value to empty string", () => {
-    const val: PipelineInspectionValue = { value: null, unit: "kg" };
+    const val: Quantity = { value: null, unit: "kg" };
     const result = quantity(val);
     expect(result).toEqual({ value: "", unit: "kg" });
   });
@@ -80,17 +84,17 @@ describe("verifiedTranslations", () => {
   });
 });
 
-describe("verifiedItemPairNutrientValue", () => {
+describe("verifiedItemPairNutrient", () => {
   it("should pair up nutrient items correctly", () => {
-    const enList: NutrientValue[] = [
+    const enList: Nutrient[] = [
       { nutrient: "Nitrogen", value: 10, unit: "%" },
       { nutrient: "Phosphorus", value: 5, unit: "%" },
     ];
-    const frList: NutrientValue[] = [
+    const frList: Nutrient[] = [
       { nutrient: "Azote", value: 10, unit: "%" },
       { nutrient: "Phosphore", value: 5, unit: "%" },
     ];
-    const result = verifiedItemPairNutrientValue(enList, frList);
+    const result = mapVerifiedNutrientPairs(enList, frList);
     expect(result).toEqual([
       { en: "Nitrogen", fr: "Azote", value: "10", unit: "%", verified: false },
       {
@@ -104,23 +108,23 @@ describe("verifiedItemPairNutrientValue", () => {
   });
 
   it("should handle null or undefined lists", () => {
-    const result = verifiedItemPairNutrientValue(undefined, undefined);
+    const result = mapVerifiedNutrientPairs(undefined, undefined);
     expect(result).toEqual([]);
   });
 
   it("should handle items where frList is shorter", () => {
-    const enList: NutrientValue[] = [{ nutrient: "Nitrogen", value: 10 }];
-    const frList: NutrientValue[] = [];
-    const result = verifiedItemPairNutrientValue(enList, frList);
+    const enList: Nutrient[] = [{ nutrient: "Nitrogen", value: 10 }];
+    const frList: Nutrient[] = [];
+    const result = mapVerifiedNutrientPairs(enList, frList);
     expect(result).toEqual([
       { en: "Nitrogen", fr: "", value: "10", unit: "", verified: false },
     ]);
   });
 
   it("should handle null items", () => {
-    const enList: NutrientValue[] = [{ nutrient: "", value: null, unit: null }];
-    const frList: NutrientValue[] = [{ nutrient: "", value: null, unit: null }];
-    const result = verifiedItemPairNutrientValue(enList, frList);
+    const enList: Nutrient[] = [{ nutrient: "", value: null, unit: null }];
+    const frList: Nutrient[] = [{ nutrient: "", value: null, unit: null }];
+    const result = mapVerifiedNutrientPairs(enList, frList);
     expect(result).toEqual([
       { en: "", fr: "", value: "", unit: "", verified: false },
     ]);
@@ -129,15 +133,15 @@ describe("verifiedItemPairNutrientValue", () => {
 
 describe("verifiedItemPairInspectionValue", () => {
   it("should pair up inspection items correctly", () => {
-    const enList: FertiscanDbMetadataInspectionValue[] = [
+    const enList: Value[] = [
       { name: "Fish meal", value: 50, unit: "g" },
       { name: "Bone meal", value: 50, unit: "g" },
     ];
-    const frList: FertiscanDbMetadataInspectionValue[] = [
+    const frList: Value[] = [
       { name: "Farine de poisson", value: 50, unit: "g" },
       { name: "Farine d'os", value: 50, unit: "g" },
     ];
-    const result = verifiedItemPairInspectionValue(enList, frList);
+    const result = mapVerifiedInspectionValues(enList, frList);
     expect(result).toEqual([
       {
         en: "Fish meal",
@@ -157,29 +161,23 @@ describe("verifiedItemPairInspectionValue", () => {
   });
 
   it("should handle null or undefined lists", () => {
-    const result = verifiedItemPairInspectionValue(undefined, undefined);
+    const result = mapVerifiedInspectionValues(undefined, undefined);
     expect(result).toEqual([]);
   });
 
   it("should handle items where frList is shorter", () => {
-    const enList: FertiscanDbMetadataInspectionValue[] = [
-      { name: "Fish meal", value: 50 },
-    ];
-    const frList: FertiscanDbMetadataInspectionValue[] = [];
-    const result = verifiedItemPairInspectionValue(enList, frList);
+    const enList: Value[] = [{ name: "Fish meal", value: 50 }];
+    const frList: Value[] = [];
+    const result = mapVerifiedInspectionValues(enList, frList);
     expect(result).toEqual([
       { en: "Fish meal", fr: "", value: "50", unit: "", verified: false },
     ]);
   });
 
   it("should handle null items", () => {
-    const enList: FertiscanDbMetadataInspectionValue[] = [
-      { name: "", value: null, unit: null },
-    ];
-    const frList: FertiscanDbMetadataInspectionValue[] = [
-      { name: "", value: null, unit: null },
-    ];
-    const result = verifiedItemPairInspectionValue(enList, frList);
+    const enList: Value[] = [{ name: "", value: null, unit: null }];
+    const frList: Value[] = [{ name: "", value: null, unit: null }];
+    const result = mapVerifiedInspectionValues(enList, frList);
     expect(result).toEqual([
       { en: "", fr: "", value: "", unit: "", verified: false },
     ]);
@@ -745,7 +743,15 @@ const labelData: LabelData = {
 };
 
 const emptyLabelData: LabelData = {
-  organizations: [],
+  organizations: [
+    {
+      name: { value: "", verified: false },
+      address: { value: "", verified: false },
+      website: { value: "", verified: false },
+      phoneNumber: { value: "", verified: false },
+      mainContact: false,
+    },
+  ],
   baseInformation: {
     name: { value: "", verified: false },
     registrationNumbers: {
@@ -774,9 +780,9 @@ const emptyLabelData: LabelData = {
   comment: "",
 };
 
-describe("mapLabelDataToLabelDataInput", () => {
+describe("mapLabelDataToBackendLabelData", () => {
   it("should map all fields correctly", () => {
-    const result = mapLabelDataToLabelDataInput(labelData);
+    const result = mapLabelDataToBackendLabelData(labelData);
     expect(result.organizations).toEqual([
       {
         name: "Company Inc.",
@@ -837,12 +843,19 @@ describe("mapLabelDataToLabelDataInput", () => {
   });
 
   it("should handle empty arrays gracefully", () => {
-    const result = mapLabelDataToLabelDataInput(emptyLabelData);
-    expect(result.organizations).toEqual([]);
+    const result = mapLabelDataToBackendLabelData(emptyLabelData);
+    expect(result.organizations).toEqual([
+      {
+        name: "",
+        address: "",
+        website: "",
+        phone_number: null,
+      },
+    ]);
     expect(result.fertiliser_name).toBe("");
     expect(result.registration_number).toEqual([]);
     expect(result.lot_number).toBe("");
-    expect(result.npk).toBe("");
+    expect(result.npk).not.toBeDefined();
     expect(result.weight).toEqual([]);
     expect(result.density).toEqual({ value: null, unit: null });
     expect(result.volume).toEqual({ value: null, unit: null });
@@ -946,12 +959,20 @@ describe("mapLabelDataToInspectionUpdate", () => {
 
     expect(result.inspection_comment).toBe("");
     expect(result.verified).toBe(false);
-    expect(result.organizations).toEqual([]);
+    expect(result.organizations).toEqual([
+      {
+        name: "",
+        address: "",
+        website: "",
+        phone_number: null,
+        is_main_contact: false,
+      },
+    ]);
     expect(result.product).toEqual({
       name: "",
       registration_numbers: [],
       lot_number: "",
-      npk: "",
+      npk: null,
       metrics: {
         weight: [],
         density: { value: null, unit: null },
