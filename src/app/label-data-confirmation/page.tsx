@@ -7,7 +7,7 @@ import useUploadedFilesStore from "@/stores/fileStore";
 import useLabelDataStore from "@/stores/labelDataStore";
 import { LabelData } from "@/types/types";
 import { processAxiosError } from "@/utils/client/apiErrors";
-import { getAuthHeader } from "@/utils/client/auth";
+import { getAuthHeader } from "@/utils/client/cookies";
 import { isAllVerified } from "@/utils/client/fieldValidation";
 import { updateLabelData } from "@/utils/client/modelTransformation";
 import {

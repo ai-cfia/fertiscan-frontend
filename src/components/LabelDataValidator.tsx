@@ -13,6 +13,7 @@ import {
 } from "@/components/stepper";
 import useLabelDataStore from "@/stores/labelDataStore";
 import { FormComponentProps, LabelData } from "@/types/types";
+import { setLabelDataInCookies } from "@/utils/client/cookies";
 import {
   checkFieldArray,
   checkFieldRecord,
@@ -47,7 +48,7 @@ interface LabelDataValidatorProps {
  * @param {LabelDataValidatorProps} props - The properties passed to the component.
  * @returns {JSX.Element} The rendered LabelDataValidator component.
  */
-const LabelDataValidator=({
+const LabelDataValidator = ({
   loading = false,
   fileUploads,
   labelData,
@@ -203,6 +204,10 @@ const LabelDataValidator=({
     );
   }, [labelData.ingredients, setIngredientsStepStatus]);
 
+  useEffect(() => {
+    setLabelDataInCookies(labelData);
+  }, [labelData]);
+
   return (
     <Container
       className="flex max-w-[1920px] flex-col bg-gray-100 text-black"
@@ -244,6 +249,6 @@ const LabelDataValidator=({
       />
     </Container>
   );
-}
+};
 
 export default LabelDataValidator;
