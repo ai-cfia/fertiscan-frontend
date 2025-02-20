@@ -12,6 +12,7 @@
  * Do not edit the class manually.
  */
 
+export * from "./api/files-api";
 export * from "./api/home-api";
 export * from "./api/inspections-api";
 export * from "./api/monitoring-api";
