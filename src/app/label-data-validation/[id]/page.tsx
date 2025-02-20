@@ -3,7 +3,7 @@ import LabelDataValidator from "@/components/LabelDataValidator";
 import useAlertStore from "@/stores/alertStore";
 import useUploadedFilesStore from "@/stores/fileStore";
 import { DEFAULT_LABEL_DATA, LabelData } from "@/types/types";
-import { getAuthHeader } from "@/utils/client/auth";
+import { getAuthHeader, getLabelDataFromCookies } from "@/utils/client/cookies";
 import { Box, CircularProgress } from "@mui/material";
 import axios, { AxiosResponse } from "axios";
 import Error from "next/error";
@@ -11,7 +11,7 @@ import { useParams, useRouter } from "next/navigation";
 import { useEffect, useState } from "react";
 import { useTranslation } from "react-i18next";
 
-export default function Page() {
+export default function LabelDataValidationPageWithId() {
   const { id } = useParams();
   const inspectionId = Array.isArray(id) ? id[0] : id;
   const uploadedFiles = useUploadedFilesStore((state) => state.uploadedFiles);
@@ -24,7 +24,7 @@ export default function Page() {
 
   useEffect(() => {
     if (!inspectionId) return;
-    
+
     const controller = new AbortController();
     const signal = controller.signal;
 
@@ -39,7 +39,8 @@ export default function Page() {
           showAlert(t("alert.alreadyCompleted"), "warning");
           return router.push("/");
         }
-        setLabelData(labelData);
+        const c_labelData = getLabelDataFromCookies(inspectionId);
+        setLabelData(c_labelData ? c_labelData : labelData);
       })
       .catch((error) => {
         if (axios.isCancel(error)) {

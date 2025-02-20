@@ -22,13 +22,17 @@ flowchart TD
 ```mermaid
 flowchart TD
     Start([Start]) --> LabelDataValidationID["/label-data-validation/id"]
+    
+    %% Parallel branches
     LabelDataValidationID --> ImagesUploaded{Images Uploaded?}
-    ImagesUploaded -->|No| GetInspections[GET /inspections/id]
-    ImagesUploaded -->|Yes| DisplayUploadedImages["Display Uploaded Images"]
-    DisplayUploadedImages --> GetInspections
-    GetInspections --> FetchSuccess{Success?}
-    FetchSuccess -->|No| HomePage["/home"]
-    FetchSuccess -->|Yes| DisplayData["Display Data"]
-    DisplayData --> End([End])
-    HomePage --> End
+    LabelDataValidationID --> FetchInspections[GET /inspections/id]
+    
+    %% Image handling branch
+    ImagesUploaded -->|No| End([End])
+    ImagesUploaded -->|Yes| DisplayUploadedImages["Display Uploaded Images"] --> End
+
+    %% Inspection handling branch
+    FetchInspections --> FetchSuccess{Success?}
+    FetchSuccess -->|No| ErrorPage["Display Error Page"] --> End
+    FetchSuccess -->|Yes| UpdateValidationProgress["Update Validation Progress from Cookies"] --> DisplayData["Display Data"] --> End
 ```

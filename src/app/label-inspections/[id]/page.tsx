@@ -6,7 +6,7 @@ import useAlertStore from "@/stores/alertStore";
 import useUploadedFilesStore from "@/stores/fileStore";
 import { LabelData } from "@/types/types";
 import { processAxiosError } from "@/utils/client/apiErrors";
-import { getAuthHeader } from "@/utils/client/auth";
+import { getAuthHeader } from "@/utils/client/cookies";
 import {
   Box,
   Button,
