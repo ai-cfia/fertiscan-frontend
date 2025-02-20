@@ -9,7 +9,6 @@ import { getAuthHeader } from "@/utils/client/cookies";
 import {
   Box,
   Button,
-  CircularProgress,
   Container,
   Dialog,
   DialogActions,
@@ -54,7 +53,6 @@ const InspectionPage = () => {
   const { t } = useTranslation("inspectionPage");
   const { id } = useParams();
   const inspectionId = Array.isArray(id) ? id[0] : id;
-  const [loading, setLoading] = useState(true);
   const [editLoading, setEditLoading] = useState(false);
   const [discardLoading, setDiscardLoading] = useState(false);
   // const uploadedFiles = useUploadedFilesStore((state) => state.uploadedFiles);
@@ -65,6 +63,8 @@ const InspectionPage = () => {
   const [error, setError] = useState<AxiosResponse | null>(null);
   const router = useRouter();
   const [confirmOpen, setConfirmOpen] = useState(false);
+  const [fetchingInspection, setFetchingInspection] = useState(true);
+  const [fetchingPictures, setFetchingPictures] = useState(true);
 
   const deleteInspection = (id: string, signal: AbortSignal) => {
     axios
@@ -89,7 +89,7 @@ const InspectionPage = () => {
     if (!inspectionId) return;
     const controller = new AbortController();
 
-    setLoading(true);
+    setFetchingInspection(true);
 
     axios
       .get(`/api-next/inspections/${inspectionId}`, {
@@ -98,6 +98,53 @@ const InspectionPage = () => {
       })
       .then((response) => {
         setLabelData(response.data);
+        setFetchingInspection(false);
+        if (!response.data.pictureSetId) return;
+        setFetchingPictures(true);
+        return axios
+          .get(`/api-next/pictures/${response.data.pictureSetId}`, {
+            headers: { Authorization: getAuthHeader() },
+            signal: controller.signal,
+          })
+          .then((res) => {
+            const pictureIds: string[] = res.data;
+            return Promise.all(
+              pictureIds.map((pictureId) =>
+                axios
+                  .get(
+                    `/api-next/pictures/${response.data.pictureSetId}/${pictureId}`,
+                    {
+                      headers: { Authorization: getAuthHeader() },
+                      signal: controller.signal,
+                      responseType: "blob",
+                    },
+                  )
+                  .then((res) => new File([res.data], pictureId))
+                  .catch((error) => {
+                    if (!axios.isCancel(error)) {
+                      showAlert(
+                        `${t("alert.getPictureFailed")}: ${processAxiosError(error)}`,
+                        "error",
+                      );
+                    }
+                    return null;
+                  }),
+              ),
+            );
+          })
+          .then((files) => {
+            setImageFiles(files.filter((file): file is File => file !== null));
+            setFetchingPictures(false);
+          })
+          .catch((error) => {
+            if (!axios.isCancel(error)) {
+              showAlert(
+                `${t("alert.getPictureSetFailed")}: ${processAxiosError(error)}`,
+                "error",
+              );
+              setError(error.response);
+            }
+          });
       })
       .catch((error) => {
         if (axios.isCancel(error)) {
@@ -112,63 +159,14 @@ const InspectionPage = () => {
         }
       })
       .finally(() => {
-        setLoading(false);
+        setFetchingInspection(false);
+        setFetchingPictures(false);
       });
 
     return () => {
       controller.abort();
     };
   }, [inspectionId, showAlert, t]);
-
-  useEffect(() => {
-    if (!labelData || !labelData.pictureSetId) return;
-    console.debug("get picture", labelData.pictureSetId);
-    const controller = new AbortController();
-    axios
-      .get(`/api-next/pictures/${labelData.pictureSetId}`, {
-        headers: { Authorization: getAuthHeader() },
-        signal: controller.signal,
-      })
-      .then((response) => {
-        const pictureIds: string[] = response.data;
-        return Promise.all(
-          pictureIds.map((pictureId) =>
-            axios
-              .get(
-                `/api-next/pictures/${labelData.pictureSetId}/${pictureId}`,
-                {
-                  headers: { Authorization: getAuthHeader() },
-                  signal: controller.signal,
-                  responseType: "blob",
-                },
-              )
-              .then((res) => new File([res.data], pictureId)),
-          ),
-        );
-      })
-      .then((files) => {
-        setImageFiles(files);
-      })
-      .catch((error) => {
-        if (axios.isCancel(error)) {
-          console.debug("fetch aborted");
-        } else if (error.response) {
-          setError(error.response);
-        } else {
-          showAlert(
-            `${t("alert.getPictureSetFailed")}: ${processAxiosError(error)}`,
-            "error",
-          );
-        }
-      })
-      .finally(() => {
-        setLoading(false);
-      });
-
-    return () => {
-      controller.abort();
-    };
-  }, [labelData, showAlert, t]);
 
   const handleEditClick = () => {
     setEditLoading(true);
@@ -188,14 +186,6 @@ const InspectionPage = () => {
     setDiscardLoading(true);
     deleteInspection(inspectionId, new AbortController().signal);
   };
-
-  if (loading) {
-    return (
-      <Box className="flex h-[100vh] items-center justify-center">
-        <CircularProgress />
-      </Box>
-    );
-  }
 
   return error ? (
     <Error statusCode={error.status} />
@@ -265,6 +255,8 @@ const InspectionPage = () => {
             />
           </Box>
         }
+        loadingRightSection={fetchingInspection}
+        loadingImageViewer={fetchingInspection || fetchingPictures}
       />
       <Dialog
         open={confirmOpen}

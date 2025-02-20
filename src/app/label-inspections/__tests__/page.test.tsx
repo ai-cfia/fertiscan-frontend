@@ -39,13 +39,6 @@ describe("InspectionPage", () => {
     jest.clearAllMocks();
   });
 
-  it("renders loading state initially", () => {
-    (axios.get as jest.Mock).mockImplementation(() => new Promise(() => {}));
-
-    render(<InspectionPage />);
-    expect(screen.getByRole("progressbar")).toBeInTheDocument();
-  });
-
   it("renders all inspection data", async () => {
     (axios.get as jest.Mock).mockResolvedValue({
       data: VERIFIED_LABEL_DATA_WITH_ID,
