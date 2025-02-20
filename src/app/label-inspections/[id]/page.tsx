@@ -3,7 +3,6 @@ import LabelInformation from "@/components/inspection-details/LabelInformation";
 import SplitContentLayout from "@/components/inspection-details/SplitContentLayout";
 import LoadingButton from "@/components/LoadingButton";
 import useAlertStore from "@/stores/alertStore";
-import useUploadedFilesStore from "@/stores/fileStore";
 import { LabelData } from "@/types/types";
 import { processAxiosError } from "@/utils/client/apiErrors";
 import { getAuthHeader } from "@/utils/client/cookies";
@@ -58,8 +57,9 @@ const InspectionPage = () => {
   const [loading, setLoading] = useState(true);
   const [editLoading, setEditLoading] = useState(false);
   const [discardLoading, setDiscardLoading] = useState(false);
-  const uploadedFiles = useUploadedFilesStore((state) => state.uploadedFiles);
-  const imageFiles = uploadedFiles.map((file) => file.getFile());
+  // const uploadedFiles = useUploadedFilesStore((state) => state.uploadedFiles);
+  // const imageFiles = uploadedFiles.map((file) => file.getFile());
+  const [imageFiles, setImageFiles] = useState<File[]>([]);
   const showAlert = useAlertStore((state) => state.showAlert);
   const [labelData, setLabelData] = useState<LabelData | null>(null);
   const [error, setError] = useState<AxiosResponse | null>(null);
@@ -119,6 +119,56 @@ const InspectionPage = () => {
       controller.abort();
     };
   }, [inspectionId, showAlert, t]);
+
+  useEffect(() => {
+    if (!labelData || !labelData.pictureSetId) return;
+    console.debug("get picture", labelData.pictureSetId);
+    const controller = new AbortController();
+    axios
+      .get(`/api-next/pictures/${labelData.pictureSetId}`, {
+        headers: { Authorization: getAuthHeader() },
+        signal: controller.signal,
+      })
+      .then((response) => {
+        const pictureIds: string[] = response.data;
+        return Promise.all(
+          pictureIds.map((pictureId) =>
+            axios
+              .get(
+                `/api-next/pictures/${labelData.pictureSetId}/${pictureId}`,
+                {
+                  headers: { Authorization: getAuthHeader() },
+                  signal: controller.signal,
+                  responseType: "blob",
+                },
+              )
+              .then((res) => new File([res.data], pictureId)),
+          ),
+        );
+      })
+      .then((files) => {
+        setImageFiles(files);
+      })
+      .catch((error) => {
+        if (axios.isCancel(error)) {
+          console.debug("fetch aborted");
+        } else if (error.response) {
+          setError(error.response);
+        } else {
+          showAlert(
+            `${t("alert.getPictureSetFailed")}: ${processAxiosError(error)}`,
+            "error",
+          );
+        }
+      })
+      .finally(() => {
+        setLoading(false);
+      });
+
+    return () => {
+      controller.abort();
+    };
+  }, [labelData, showAlert, t]);
 
   const handleEditClick = () => {
     setEditLoading(true);
@@ -241,6 +291,6 @@ const InspectionPage = () => {
       </Dialog>
     </Container>
   );
-}
+};
 
 export default InspectionPage;

@@ -168,7 +168,7 @@ export const FilesApiFp = function (configuration?: Configuration) {
       fileId: string,
       options?: RawAxiosRequestConfig,
     ): Promise<
-      (axios?: AxiosInstance, basePath?: string) => AxiosPromise<void>
+      (axios?: AxiosInstance, basePath?: string) => AxiosPromise<ArrayBuffer>
     > {
       const localVarAxiosArgs =
         await localVarAxiosParamCreator.getFileFilesFolderIdFileIdGet(
@@ -246,7 +246,7 @@ export const FilesApiFactory = function (
       folderId: string,
       fileId: string,
       options?: RawAxiosRequestConfig,
-    ): AxiosPromise<void> {
+    ): AxiosPromise<ArrayBuffer> {
       return localVarFp
         .getFileFilesFolderIdFileIdGet(folderId, fileId, options)
         .then((request) => request(axios, basePath));
