@@ -21,6 +21,8 @@ export default function LabelDataValidationPageWithId() {
   const [labelData, setLabelData] = useState(DEFAULT_LABEL_DATA);
   const { t } = useTranslation("labelDataValidator");
   const [error, setError] = useState<AxiosResponse | null>(null);
+  const [imageFiles, setImageFiles] = useState<File[]>([]);
+  const [fetchingPictures, setFetchingPictures] = useState(false);
 
   useEffect(() => {
     if (!inspectionId) return;
@@ -41,19 +43,67 @@ export default function LabelDataValidationPageWithId() {
         }
         const c_labelData = getLabelDataFromCookies(inspectionId);
         setLabelData(c_labelData ? c_labelData : labelData);
+
+        if (!labelData.pictureSetId) return;
+        setFetchingPictures(true);
+
+        return axios
+          .get(`/api-next/pictures/${labelData.pictureSetId}`, {
+            headers: { Authorization: getAuthHeader() },
+            signal,
+          })
+          .then((res) => {
+            const pictureIds: string[] = res.data;
+            return Promise.all(
+              pictureIds.map((pictureId) =>
+                axios
+                  .get(
+                    `/api-next/pictures/${labelData.pictureSetId}/${pictureId}`,
+                    {
+                      headers: { Authorization: getAuthHeader() },
+                      signal,
+                      responseType: "blob",
+                    },
+                  )
+                  .then((res) => new File([res.data], pictureId))
+                  .catch((error) => {
+                    if (!axios.isCancel(error)) {
+                      showAlert(
+                        `${t("alert.getPictureFailed")}: ${error.message}`,
+                        "error",
+                      );
+                    }
+                    return null;
+                  }),
+              ),
+            );
+          })
+          .then((files) => {
+            setImageFiles(files.filter((file): file is File => file !== null));
+            setFetchingPictures(false);
+          })
+          .catch((error) => {
+            if (!axios.isCancel(error)) {
+              showAlert(
+                `${t("alert.getPictureSetFailed")}: ${error.message}`,
+                "error",
+              );
+              setError(error.response);
+            }
+          });
       })
       .catch((error) => {
         if (axios.isCancel(error)) {
-          console.log("fetch aborted");
+          console.debug("fetch aborted");
         } else if (error.response) {
           setError(error.response);
-          console.error("fetch inspection failed:", error.response.data);
         } else {
           showAlert(t("alert.failedFetchInspection"), "error");
         }
       })
       .finally(() => {
         setLoading(false);
+        setFetchingPictures(false);
       });
 
     return () => {
@@ -73,11 +123,11 @@ export default function LabelDataValidationPageWithId() {
     <Error statusCode={error.status} />
   ) : (
     <LabelDataValidator
-      fileUploads={uploadedFiles}
       labelData={labelData}
       setLabelData={setLabelData}
       loading={loading}
       inspectionId={inspectionId}
+      imageFiles={imageFiles}
     />
   );
 }

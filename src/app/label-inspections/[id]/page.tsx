@@ -55,8 +55,6 @@ const InspectionPage = () => {
   const inspectionId = Array.isArray(id) ? id[0] : id;
   const [editLoading, setEditLoading] = useState(false);
   const [discardLoading, setDiscardLoading] = useState(false);
-  // const uploadedFiles = useUploadedFilesStore((state) => state.uploadedFiles);
-  // const imageFiles = uploadedFiles.map((file) => file.getFile());
   const [imageFiles, setImageFiles] = useState<File[]>([]);
   const showAlert = useAlertStore((state) => state.showAlert);
   const [labelData, setLabelData] = useState<LabelData | null>(null);
@@ -88,7 +86,6 @@ const InspectionPage = () => {
   useEffect(() => {
     if (!inspectionId) return;
     const controller = new AbortController();
-
     setFetchingInspection(true);
 
     axios

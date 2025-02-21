@@ -26,6 +26,7 @@ const LabelDataValidationPage = () => {
   const showAlert = useAlertStore((state) => state.showAlert);
   const router = useRouter();
   const { t } = useTranslation("labelDataValidator");
+  const imageFiles = uploadedFiles.map((file) => file.getFile());
 
   // Check if no files were uploaded
   useEffect(() => {
@@ -115,12 +116,12 @@ const LabelDataValidationPage = () => {
 
   return (
     <LabelDataValidator
-      fileUploads={uploadedFiles}
+      imageFiles={imageFiles}
       labelData={labelData}
       setLabelData={setLabelData}
       loading={loading}
     />
   );
-}
+};
 
 export default LabelDataValidationPage;

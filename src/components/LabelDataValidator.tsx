@@ -1,5 +1,4 @@
 "use client";
-import FileUploaded from "@/classe/File";
 import BaseInformationForm from "@/components/BaseInformationForm";
 import CautionsForm from "@/components/CautionsForm";
 import GuaranteedAnalysisForm from "@/components/GuaranteedAnalysisForm";
@@ -29,14 +28,14 @@ import SplitContentLayout from "./inspection-details/SplitContentLayout";
  *
  * @typedef {Object} LabelDataValidatorProps
  * @property {boolean} [loading=false] - Indicates whether the component is in a loading state.
- * @property {FileUploaded[]} fileUploads - List of uploaded files.
+ * @property {File[]} imageFiles - An array of image files to be displayed.
  * @property {LabelData} labelData - The current label data.
  * @property {React.Dispatch<React.SetStateAction<LabelData>>} setLabelData - Function to update label data.
  * @property {string} [inspectionId] - Optional inspection ID.
  */
 interface LabelDataValidatorProps {
   loading?: boolean;
-  fileUploads: FileUploaded[];
+  imageFiles: File[];
   labelData: LabelData;
   setLabelData: React.Dispatch<React.SetStateAction<LabelData>>;
   inspectionId?: string;
@@ -50,7 +49,7 @@ interface LabelDataValidatorProps {
  */
 const LabelDataValidator = ({
   loading = false,
-  fileUploads,
+  imageFiles,
   labelData,
   setLabelData,
 }: LabelDataValidatorProps) => {
@@ -71,7 +70,6 @@ const LabelDataValidator = ({
     useState<StepStatus>(StepStatus.Incomplete);
   const storeLabelData = useLabelDataStore((state) => state.setLabelData);
   const router = useRouter();
-  const imageFiles = fileUploads.map((file) => file.getFile());
 
   /**
    * Creates a step for the multi-step form process.
