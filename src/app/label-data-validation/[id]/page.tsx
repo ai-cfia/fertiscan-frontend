@@ -4,7 +4,6 @@ import useAlertStore from "@/stores/alertStore";
 import useUploadedFilesStore from "@/stores/fileStore";
 import { DEFAULT_LABEL_DATA, LabelData } from "@/types/types";
 import { getAuthHeader, getLabelDataFromCookies } from "@/utils/client/cookies";
-import { Box, CircularProgress } from "@mui/material";
 import axios, { AxiosResponse } from "axios";
 import Error from "next/error";
 import { useParams, useRouter } from "next/navigation";
@@ -22,7 +21,7 @@ export default function LabelDataValidationPageWithId() {
   const { t } = useTranslation("labelDataValidator");
   const [error, setError] = useState<AxiosResponse | null>(null);
   const [imageFiles, setImageFiles] = useState<File[]>([]);
-  const [fetchingPictures, setFetchingPictures] = useState(false);
+  const [fetchingPictures, setFetchingPictures] = useState(true);
 
   useEffect(() => {
     if (!inspectionId) return;
@@ -111,23 +110,15 @@ export default function LabelDataValidationPageWithId() {
     };
   }, [inspectionId, router, showAlert, uploadedFiles.length, t]);
 
-  if (loading) {
-    return (
-      <Box className="flex h-[90vh] items-center justify-center">
-        <CircularProgress />
-      </Box>
-    );
-  }
-
   return error ? (
     <Error statusCode={error.status} />
   ) : (
     <LabelDataValidator
       labelData={labelData}
       setLabelData={setLabelData}
-      loading={loading}
       inspectionId={inspectionId}
       imageFiles={imageFiles}
+      loadingImages={fetchingPictures}
     />
   );
 }

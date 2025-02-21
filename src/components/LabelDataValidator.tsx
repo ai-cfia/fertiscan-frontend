@@ -27,18 +27,20 @@ import SplitContentLayout from "./inspection-details/SplitContentLayout";
  * Props for LabelDataValidator component.
  *
  * @typedef {Object} LabelDataValidatorProps
- * @property {boolean} [loading=false] - Indicates whether the component is in a loading state.
+ * @property {boolean} [loadingFieldsData] - Optional flag to indicate if fields data is loading.
  * @property {File[]} imageFiles - An array of image files to be displayed.
  * @property {LabelData} labelData - The current label data.
  * @property {React.Dispatch<React.SetStateAction<LabelData>>} setLabelData - Function to update label data.
  * @property {string} [inspectionId] - Optional inspection ID.
+ * @property {boolean} [loadingImages] - Optional flag to indicate if images are loading.
  */
 interface LabelDataValidatorProps {
-  loading?: boolean;
+  loadingFieldsData?: boolean;
   imageFiles: File[];
   labelData: LabelData;
   setLabelData: React.Dispatch<React.SetStateAction<LabelData>>;
   inspectionId?: string;
+  loadingImages?: boolean;
 }
 
 /**
@@ -48,10 +50,11 @@ interface LabelDataValidatorProps {
  * @returns {JSX.Element} The rendered LabelDataValidator component.
  */
 const LabelDataValidator = ({
-  loading = false,
+  loadingFieldsData,
   imageFiles,
   labelData,
   setLabelData,
+  loadingImages,
 }: LabelDataValidatorProps) => {
   const { t } = useTranslation("labelDataValidator");
   const [activeStep, setActiveStep] = useState(0);
@@ -94,7 +97,7 @@ const LabelDataValidator = ({
         <StepComponent
           labelData={labelData}
           setLabelData={setLabelData}
-          loading={loading}
+          loading={loadingFieldsData}
         />
       ),
     };
@@ -244,6 +247,7 @@ const LabelDataValidator = ({
             submit={submit}
           />
         }
+        loadingImageViewer={loadingImages}
       />
     </Container>
   );

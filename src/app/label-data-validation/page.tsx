@@ -119,7 +119,7 @@ const LabelDataValidationPage = () => {
       imageFiles={imageFiles}
       labelData={labelData}
       setLabelData={setLabelData}
-      loading={loading}
+      loadingFieldsData={loading}
     />
   );
 };
