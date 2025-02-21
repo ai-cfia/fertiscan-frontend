@@ -1,10 +1,11 @@
-import FileUploaded from "@/classe/File";
 import LabelDataValidator from "@/components/LabelDataValidator";
 import useLabelDataStore from "@/stores/labelDataStore";
 import { DEFAULT_LABEL_DATA } from "@/types/types";
 import { VERIFIED_LABEL_DATA } from "@/utils/client/constants";
 import { act, fireEvent, render, screen } from "@testing-library/react";
 import { JSX, useState } from "react";
+
+global.URL.createObjectURL = jest.fn(() => "mocked-url");
 
 jest.mock("@/components/ImageViewer", () => ({
   __esModule: true,

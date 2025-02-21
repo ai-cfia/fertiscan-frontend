@@ -1,4 +1,5 @@
-import FileUploaded from "@/classe/File";
+import FileUploaded from "@/classes/File";
+import { QuantityChips } from "@/components/QuantityChips";
 import useUploadedFilesStore from "@/stores/fileStore";
 import useLabelDataStore from "@/stores/labelDataStore";
 import { Quantity } from "@/types/types";
@@ -9,7 +10,6 @@ import {
 import { fireEvent, render, screen, waitFor } from "@testing-library/react";
 import axios from "axios";
 import LabelDataConfirmationPage from "../page";
-import { QuantityChips } from "@/components/QuantityChips";
 
 const mockedRouterPush = jest.fn();
 jest.mock("next/navigation", () => ({
@@ -105,22 +105,14 @@ describe("LabelDataConfirmationPage", () => {
     });
 
     it("should send a POST request with the correct FormData when labelData does not have an inspectionId and include uploaded files", async () => {
-      const mockFile = new File(["file content"], "test-file.txt", {
-        type: "text/plain",
+      const mockFile = new File(["file content"], "test-file.png", {
+        type: "image/png",
       });
       const mockFileUploaded = new FileUploaded(
-        {
-          path: "mock-path",
-          user: { username: "test-user" },
-          file: mockFile,
-          uploadDate: new Date(),
-          type: "pdf",
-          name: mockFile.name,
-        },
+        { username: "test-user" },
         "mock-path",
         mockFile,
       );
-
       const mockPost = jest.spyOn(axios, "post").mockResolvedValueOnce({
         data: { inspectionId: "5678" },
       });

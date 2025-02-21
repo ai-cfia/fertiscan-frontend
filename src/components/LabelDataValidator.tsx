@@ -1,4 +1,5 @@
 "use client";
+import FileUploaded from "@/classes/File";
 import BaseInformationForm from "@/components/BaseInformationForm";
 import CautionsForm from "@/components/CautionsForm";
 import GuaranteedAnalysisForm from "@/components/GuaranteedAnalysisForm";
@@ -10,6 +11,7 @@ import {
   StepperControls,
   StepStatus,
 } from "@/components/stepper";
+import useUploadedFilesStore from "@/stores/fileStore";
 import useLabelDataStore from "@/stores/labelDataStore";
 import { FormComponentProps, LabelData } from "@/types/types";
 import { setLabelDataInCookies } from "@/utils/client/cookies";
@@ -72,6 +74,9 @@ const LabelDataValidator = ({
   const [ingredientsStepStatus, setIngredientsStepStatus] =
     useState<StepStatus>(StepStatus.Incomplete);
   const storeLabelData = useLabelDataStore((state) => state.setLabelData);
+  const setUploadedFiles = useUploadedFilesStore(
+    (state) => state.setUploadedFiles,
+  );
   const router = useRouter();
 
   /**
@@ -148,6 +153,11 @@ const LabelDataValidator = ({
    */
   const submit = () => {
     storeLabelData(labelData);
+    const fileUploads = imageFiles.map(
+      (file) =>
+        new FileUploaded({ username: "user" }, URL.createObjectURL(file), file),
+    );
+    setUploadedFiles(fileUploads);
     router.push("/label-data-confirmation");
   };
 

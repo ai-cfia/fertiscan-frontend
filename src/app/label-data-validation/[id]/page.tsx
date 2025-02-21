@@ -1,4 +1,5 @@
 "use client";
+import { processFetchedBlob } from "@/classes/File";
 import LabelDataValidator from "@/components/LabelDataValidator";
 import useAlertStore from "@/stores/alertStore";
 import useUploadedFilesStore from "@/stores/fileStore";
@@ -16,7 +17,6 @@ export default function LabelDataValidationPageWithId() {
   const uploadedFiles = useUploadedFilesStore((state) => state.uploadedFiles);
   const showAlert = useAlertStore((state) => state.showAlert);
   const router = useRouter();
-  const [loading, setLoading] = useState(true);
   const [labelData, setLabelData] = useState(DEFAULT_LABEL_DATA);
   const { t } = useTranslation("labelDataValidator");
   const [error, setError] = useState<AxiosResponse | null>(null);
@@ -64,7 +64,7 @@ export default function LabelDataValidationPageWithId() {
                       responseType: "blob",
                     },
                   )
-                  .then((res) => new File([res.data], pictureId))
+                  .then((res) => processFetchedBlob(res.data, pictureId))
                   .catch((error) => {
                     if (!axios.isCancel(error)) {
                       showAlert(
@@ -101,7 +101,6 @@ export default function LabelDataValidationPageWithId() {
         }
       })
       .finally(() => {
-        setLoading(false);
         setFetchingPictures(false);
       });
 

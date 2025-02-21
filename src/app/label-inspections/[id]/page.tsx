@@ -1,4 +1,5 @@
 "use client";
+import { processFetchedBlob } from "@/classes/File";
 import LabelInformation from "@/components/inspection-details/LabelInformation";
 import SplitContentLayout from "@/components/inspection-details/SplitContentLayout";
 import LoadingButton from "@/components/LoadingButton";
@@ -116,7 +117,7 @@ const InspectionPage = () => {
                       responseType: "blob",
                     },
                   )
-                  .then((res) => new File([res.data], pictureId))
+                  .then(async (res) => processFetchedBlob(res.data, pictureId))
                   .catch((error) => {
                     if (!axios.isCancel(error)) {
                       showAlert(
