@@ -1,5 +1,4 @@
 "use client";
-import { processFetchedBlob } from "@/classes/File";
 import LabelInformation from "@/components/inspection-details/LabelInformation";
 import SplitContentLayout from "@/components/inspection-details/SplitContentLayout";
 import LoadingButton from "@/components/LoadingButton";
@@ -7,6 +6,7 @@ import useAlertStore from "@/stores/alertStore";
 import { LabelData } from "@/types/types";
 import { processAxiosError } from "@/utils/client/apiErrors";
 import { getAuthHeader } from "@/utils/client/cookies";
+import { fetchImages } from "@/utils/client/requests";
 import {
   Box,
   Button,
@@ -86,79 +86,51 @@ const InspectionPage = () => {
 
   useEffect(() => {
     if (!inspectionId) return;
+
     const controller = new AbortController();
+    const signal = controller.signal;
     setFetchingInspection(true);
 
     axios
       .get(`/api-next/inspections/${inspectionId}`, {
         headers: { Authorization: getAuthHeader() },
-        signal: controller.signal,
+        signal,
       })
       .then((response) => {
         setLabelData(response.data);
         setFetchingInspection(false);
+
         if (!response.data.pictureSetId) return;
+
         setFetchingPictures(true);
-        return axios
-          .get(`/api-next/pictures/${response.data.pictureSetId}`, {
-            headers: { Authorization: getAuthHeader() },
-            signal: controller.signal,
-          })
-          .then((res) => {
-            const pictureIds: string[] = res.data;
-            return Promise.all(
-              pictureIds.map((pictureId) =>
-                axios
-                  .get(
-                    `/api-next/pictures/${response.data.pictureSetId}/${pictureId}`,
-                    {
-                      headers: { Authorization: getAuthHeader() },
-                      signal: controller.signal,
-                      responseType: "blob",
-                    },
-                  )
-                  .then(async (res) => processFetchedBlob(res.data, pictureId))
-                  .catch((error) => {
-                    if (!axios.isCancel(error)) {
-                      showAlert(
-                        `${t("alert.getPictureFailed")}: ${processAxiosError(error)}`,
-                        "error",
-                      );
-                    }
-                    return null;
-                  }),
-              ),
-            );
-          })
+
+        fetchImages(response.data.pictureSetId, signal)
           .then((files) => {
-            setImageFiles(files.filter((file): file is File => file !== null));
-            setFetchingPictures(false);
+            setImageFiles(files);
           })
           .catch((error) => {
-            if (!axios.isCancel(error)) {
-              showAlert(
-                `${t("alert.getPictureSetFailed")}: ${processAxiosError(error)}`,
-                "error",
-              );
-              setError(error.response);
-            }
+            showAlert(
+              `${t("alert.getPictureSetFailed")}: ${processAxiosError(error)}`,
+              "error",
+            );
+          })
+          .finally(() => {
+            setFetchingPictures(false);
           });
       })
       .catch((error) => {
         if (axios.isCancel(error)) {
           console.debug("fetch aborted");
-        } else if (error.response) {
-          setError(error.response);
-        } else {
-          showAlert(
-            `${t("alert.getInspectionFailed")}: ${processAxiosError(error)}`,
-            "error",
-          );
+          return;
         }
+        showAlert(
+          `${t("alert.getInspectionFailed")}: ${processAxiosError(error)}`,
+          "error",
+        );
+        setError(error.response);
       })
       .finally(() => {
         setFetchingInspection(false);
-        setFetchingPictures(false);
       });
 
     return () => {
@@ -186,7 +158,7 @@ const InspectionPage = () => {
   };
 
   return error ? (
-    <Error statusCode={error.status} />
+    <Error statusCode={error.status} withDarkMode={false}/>
   ) : (
     <Container
       className="h-min-[calc(100vh-65px)] flex max-w-[1920px] flex-col bg-gray-100 text-black"

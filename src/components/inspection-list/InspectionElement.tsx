@@ -1,57 +1,94 @@
+import { fetchImages } from "@/utils/client/requests";
 import { InspectionData } from "@/utils/server/backend";
 import ErrorIcon from "@mui/icons-material/Error";
-import { Box, Card, Stack, Tooltip, Typography } from "@mui/material";
+import {
+  Box,
+  Card,
+  CircularProgress,
+  Stack,
+  Tooltip,
+  Typography,
+} from "@mui/material";
+import axios from "axios";
+import { useEffect, useState } from "react";
 import { useTranslation } from "react-i18next";
 
-/**
- * Props for the InspectionElement component.
- *
- * @interface InspectionElementProps
- * @property {InspectionData} inspection - The data for the inspection.
- * @property {string} key - A unique key for the inspection element.
- * @property {() => void} handleClick - Function to handle click events.
- */
 interface InspectionElementProps {
   inspection: InspectionData;
-  key: string;
   handleClick(): void;
 }
 
-/**
- * Component representing an inspection element in a list.
- *
- * @param {InspectionElementProps} props - The properties for the InspectionElement component.
- * @param {InspectionData} props.inspection - The inspection data.
- * @param {Function} props.handleClick - The function to handle click events on the card.
- * @returns {JSX.Element} The rendered InspectionElement component.
- */
 const InspectionElement = ({
   inspection,
   handleClick,
 }: InspectionElementProps) => {
   const { t } = useTranslation("dashboard");
 
+  const [imageSrc, setImageSrc] = useState<string>("/img/image.png");
+  const pictureSetId = inspection.picture_set_id;
+  const [fetchingImages, setFetchingImages] = useState<boolean>(true);
+
+  useEffect(() => {
+    if (!pictureSetId) return;
+
+    const controller = new AbortController();
+    const signal = controller.signal;
+    setFetchingImages(true);
+
+    fetchImages(pictureSetId, signal)
+      .then((files) => {
+        if (files.length > 0) {
+          const imageUrl = URL.createObjectURL(files[0]);
+          setImageSrc(imageUrl);
+        }
+      })
+      .catch((error) => {
+        if (!axios.isCancel(error)) {
+          console.error("Failed to fetch images:", error);
+        }
+      })
+      .finally(() => {
+        setFetchingImages(false);
+      });
+
+    return () => {
+      controller.abort();
+    };
+  }, [pictureSetId]);
+
   return (
     <Card
       className={
-        "p-2 xs:h-[75px] s:h-[100px] cursor-pointer hover:shadow-xl flex-shrink-0"
+        "xs:h-[75px] s:h-[100px] flex-shrink-0 cursor-pointer p-2 hover:shadow-xl"
       }
       onClick={handleClick}
     >
       <Stack direction={"row"} className={"h-full items-center"}>
         <Box
           data-testid="image"
-          component="img"
-          alt={inspection.product_name || "Fertilizer picture"}
-          src={"/img/image.png"}
-          className={`max-h-full h-full`}
-        />
+          component="div"
+          className="flex h-full max-h-full w-[75px] items-center justify-center"
+        >
+          {fetchingImages ? (
+            <CircularProgress size={20}  />
+          ) : (
+            <img
+              src={imageSrc}
+              alt={inspection.product_name || "Fertilizer picture"}
+              className="h-full max-h-full"
+            />
+          )}
+        </Box>
         <Typography component={"h2"} className={`!ml-2 w-full`}>
           {inspection.product_name}
         </Typography>
         {!inspection.verified && (
           <Tooltip title={t("inspection.unverified")}>
-            <ErrorIcon data-testid={"error-icon"} color="error" arial-label={t("inspection.alt.errorIcon")}></ErrorIcon>
+            <ErrorIcon
+              data-testid={"error-icon"}
+              color="error"
+              arial-label={t("inspection.alt.errorIcon")}
+            />
           </Tooltip>
         )}
       </Stack>

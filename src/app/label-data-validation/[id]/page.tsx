@@ -1,10 +1,10 @@
 "use client";
-import { processFetchedBlob } from "@/classes/File";
 import LabelDataValidator from "@/components/LabelDataValidator";
 import useAlertStore from "@/stores/alertStore";
 import useUploadedFilesStore from "@/stores/fileStore";
 import { DEFAULT_LABEL_DATA, LabelData } from "@/types/types";
 import { getAuthHeader, getLabelDataFromCookies } from "@/utils/client/cookies";
+import { fetchImages } from "@/utils/client/requests";
 import axios, { AxiosResponse } from "axios";
 import Error from "next/error";
 import { useParams, useRouter } from "next/navigation";
@@ -44,64 +44,29 @@ export default function LabelDataValidationPageWithId() {
         setLabelData(c_labelData ? c_labelData : labelData);
 
         if (!labelData.pictureSetId) return;
+
         setFetchingPictures(true);
 
-        return axios
-          .get(`/api-next/pictures/${labelData.pictureSetId}`, {
-            headers: { Authorization: getAuthHeader() },
-            signal,
-          })
-          .then((res) => {
-            const pictureIds: string[] = res.data;
-            return Promise.all(
-              pictureIds.map((pictureId) =>
-                axios
-                  .get(
-                    `/api-next/pictures/${labelData.pictureSetId}/${pictureId}`,
-                    {
-                      headers: { Authorization: getAuthHeader() },
-                      signal,
-                      responseType: "blob",
-                    },
-                  )
-                  .then((res) => processFetchedBlob(res.data, pictureId))
-                  .catch((error) => {
-                    if (!axios.isCancel(error)) {
-                      showAlert(
-                        `${t("alert.getPictureFailed")}: ${error.message}`,
-                        "error",
-                      );
-                    }
-                    return null;
-                  }),
-              ),
-            );
-          })
+        fetchImages(labelData.pictureSetId, signal)
           .then((files) => {
-            setImageFiles(files.filter((file): file is File => file !== null));
-            setFetchingPictures(false);
+            setImageFiles(files);
           })
           .catch((error) => {
-            if (!axios.isCancel(error)) {
-              showAlert(
-                `${t("alert.getPictureSetFailed")}: ${error.message}`,
-                "error",
-              );
-              setError(error.response);
-            }
+            showAlert(
+              `${t("alert.getPictureSetFailed")}: ${error.message}`,
+              "error",
+            );
+          })
+          .finally(() => {
+            setFetchingPictures(false);
           });
       })
       .catch((error) => {
         if (axios.isCancel(error)) {
-          console.debug("fetch aborted");
-        } else if (error.response) {
-          setError(error.response);
-        } else {
-          showAlert(t("alert.failedFetchInspection"), "error");
+          return console.debug("fetch aborted");
         }
-      })
-      .finally(() => {
-        setFetchingPictures(false);
+        showAlert(t("alert.failedFetchInspection"), "error");
+        setError(error.response);
       });
 
     return () => {
@@ -110,7 +75,7 @@ export default function LabelDataValidationPageWithId() {
   }, [inspectionId, router, showAlert, uploadedFiles.length, t]);
 
   return error ? (
-    <Error statusCode={error.status} />
+    <Error statusCode={error.status} withDarkMode={false}/>
   ) : (
     <LabelDataValidator
       labelData={labelData}

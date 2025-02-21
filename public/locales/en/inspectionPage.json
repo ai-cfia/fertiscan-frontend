@@ -13,7 +13,8 @@
     "getInspectionFailed": "Failed to fetch inspection details",
     "deleteSuccess": "Inspection deleted successfully",
     "discardFailed": "Failed to discard inspection",
-    "internalErrorLabelNotFound": "Internal error: Label not found"
+    "internalErrorLabelNotFound": "Internal error: Label not found",
+    "getPictureSetFailed": "Failed to get picture set"
   },
   "alt": {
     "edit": "Edit inspection",

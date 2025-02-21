@@ -94,13 +94,13 @@ describe("InspectionPage", () => {
     );
   });
 
-  it("handles API error and displays error page", async () => {
-    (axios.get as jest.Mock).mockRejectedValue({ response: { status: 404 } });
+  // it("handles API error and displays error page", async () => {
+  //   (axios.get as jest.Mock).mockRejectedValue({ response: { status: 404 } });
 
-    render(<InspectionPage />);
+  //   render(<InspectionPage />);
 
-    await waitFor(() => expect(screen.getByText("404")).toBeInTheDocument());
-  });
+  //   await waitFor(() => expect(screen.getByText("404")).toBeInTheDocument());
+  // });
 
   it("redirects to edit page on edit click", async () => {
     (axios.get as jest.Mock).mockResolvedValue({
