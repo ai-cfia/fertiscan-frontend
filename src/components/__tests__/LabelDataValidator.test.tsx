@@ -1,10 +1,11 @@
-import FileUploaded from "@/classe/File";
 import LabelDataValidator from "@/components/LabelDataValidator";
 import useLabelDataStore from "@/stores/labelDataStore";
 import { DEFAULT_LABEL_DATA } from "@/types/types";
 import { VERIFIED_LABEL_DATA } from "@/utils/client/constants";
 import { act, fireEvent, render, screen } from "@testing-library/react";
 import { JSX, useState } from "react";
+
+global.URL.createObjectURL = jest.fn(() => "mocked-url");
 
 jest.mock("@/components/ImageViewer", () => ({
   __esModule: true,
@@ -26,11 +27,11 @@ jest.mock("next/navigation", () => ({
   },
 }));
 
-const mockUser = { username: "testUser" };
+// const mockUser = { username: "testUser" };
 const mockFile = new File(["mock-content"], "file1.png", { type: "image/png" });
-const mockPath = "/mock/path/file1.png";
-const mockFileUploaded = FileUploaded.newFile(mockUser, mockPath, mockFile);
-const mockFiles = [mockFileUploaded];
+// const mockPath = "/mock/path/file1.png";
+// const mockFileUploaded = FileUploaded.newFile(mockUser, mockPath, mockFile);
+const mockFiles = [mockFile];
 
 const Wrapper: React.FC<{
   children: (props: {
@@ -51,7 +52,7 @@ describe("LabelDataValidator Rendering", () => {
       <Wrapper>
         {({ labelData, setLabelData }) => (
           <LabelDataValidator
-            fileUploads={mockFiles}
+            imageFiles={mockFiles}
             labelData={labelData}
             setLabelData={setLabelData}
           />
@@ -71,7 +72,7 @@ describe("LabelDataValidator Rendering", () => {
       <Wrapper>
         {({ labelData, setLabelData }) => (
           <LabelDataValidator
-            fileUploads={mockFiles}
+            imageFiles={mockFiles}
             labelData={labelData}
             setLabelData={setLabelData}
           />
@@ -90,7 +91,7 @@ describe("LabelDataValidator Functionality", () => {
       <Wrapper>
         {({ labelData, setLabelData }) => (
           <LabelDataValidator
-            fileUploads={mockFiles}
+            imageFiles={mockFiles}
             labelData={labelData}
             setLabelData={setLabelData}
           />
@@ -118,7 +119,7 @@ describe("LabelDataValidator Functionality", () => {
       <Wrapper>
         {({ labelData, setLabelData }) => (
           <LabelDataValidator
-            fileUploads={mockFiles}
+            imageFiles={mockFiles}
             labelData={labelData}
             setLabelData={setLabelData}
           />
@@ -141,7 +142,7 @@ describe("LabelDataValidator Functionality", () => {
   it("renders the mocked Image Viewer", () => {
     render(
       <LabelDataValidator
-        fileUploads={mockFiles}
+        imageFiles={mockFiles}
         labelData={DEFAULT_LABEL_DATA}
         setLabelData={jest.fn()}
       />,
@@ -158,7 +159,7 @@ describe("LabelDataValidator and Forms Integration", () => {
       <Wrapper>
         {({ labelData, setLabelData }) => (
           <LabelDataValidator
-            fileUploads={mockFiles}
+            imageFiles={mockFiles}
             labelData={labelData}
             setLabelData={setLabelData}
           />
@@ -200,7 +201,7 @@ describe("LabelDataValidator and Forms Integration", () => {
       <Wrapper>
         {({ labelData, setLabelData }) => (
           <LabelDataValidator
-            fileUploads={mockFiles}
+            imageFiles={mockFiles}
             labelData={labelData}
             setLabelData={setLabelData}
           />
@@ -251,7 +252,7 @@ describe("LabelDataValidator and Forms Integration", () => {
       <Wrapper>
         {({ labelData, setLabelData }) => (
           <LabelDataValidator
-            fileUploads={mockFiles}
+            imageFiles={mockFiles}
             labelData={labelData}
             setLabelData={setLabelData}
           />
@@ -282,7 +283,7 @@ describe("LabelDataValidator and Forms Integration", () => {
     }
 
     await act(async () => {
-      await new Promise((resolve) => setTimeout(resolve, 350));
+      await new Promise((resolve) => setTimeout(resolve, 400));
     });
 
     expect(targetSpan).toHaveClass("Mui-completed");
@@ -302,7 +303,7 @@ describe("LabelDataValidator and Forms Integration", () => {
       <Wrapper>
         {({ labelData, setLabelData }) => (
           <LabelDataValidator
-            fileUploads={mockFiles}
+            imageFiles={mockFiles}
             labelData={labelData}
             setLabelData={setLabelData}
           />
@@ -354,7 +355,7 @@ describe("LabelDataValidator and Forms Integration", () => {
       <Wrapper>
         {({ labelData, setLabelData }) => (
           <LabelDataValidator
-            fileUploads={mockFiles}
+            imageFiles={mockFiles}
             labelData={labelData}
             setLabelData={setLabelData}
           />
@@ -414,7 +415,7 @@ describe("LabelDataValidator and Forms Integration", () => {
       <Wrapper>
         {({ labelData, setLabelData }) => (
           <LabelDataValidator
-            fileUploads={mockFiles}
+            imageFiles={mockFiles}
             labelData={labelData}
             setLabelData={setLabelData}
           />
@@ -471,7 +472,7 @@ describe("LabelDataValidator and Forms Integration", () => {
       <Wrapper defaultLabelData={VERIFIED_LABEL_DATA}>
         {({ labelData, setLabelData }) => (
           <LabelDataValidator
-            fileUploads={mockFiles}
+            imageFiles={mockFiles}
             labelData={labelData}
             setLabelData={setLabelData}
           />

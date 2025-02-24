@@ -12,9 +12,26 @@
  * Do not edit the class manually.
  */
 
-export * from "./api/files-api";
-export * from "./api/home-api";
-export * from "./api/inspections-api";
-export * from "./api/monitoring-api";
-export * from "./api/pipeline-api";
-export * from "./api/users-api";
+// May contain unused imports in some cases
+// @ts-ignore
+import type { AuditTrail } from "./audit-trail";
+
+/**
+ *
+ * @export
+ * @interface FolderMetadata
+ */
+export interface FolderMetadata {
+  /**
+   *
+   * @type {number}
+   * @memberof FolderMetadata
+   */
+  file_count: number;
+  /**
+   *
+   * @type {AuditTrail}
+   * @memberof FolderMetadata
+   */
+  audit_trail: AuditTrail;
+}

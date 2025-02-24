@@ -10,9 +10,9 @@ import {
 import {
   LabelData as BackendLabelData,
   Quantity as BackendQuantity,
+  InspectionCreate,
   InspectionResponse,
   InspectionUpdate,
-  LabelDataOutput,
   Nutrient,
   Value,
 } from "./backend";
@@ -59,8 +59,8 @@ export function mapVerifiedInspectionValues(
   }));
 }
 
-export function mapLabelDataOutputToLabelData(
-  data: LabelDataOutput,
+export function mapBackendLabelDataToLabelData(
+  data: BackendLabelData,
 ): LabelData {
   return {
     organizations: data.organizations?.length
@@ -126,6 +126,7 @@ export function mapLabelDataOutputToLabelData(
       ),
     },
     confirmed: false,
+    pictureSetId: data.picture_set_id || undefined,
   };
 }
 
@@ -221,9 +222,9 @@ export function mapInspectionToLabelData(
   };
 }
 
-export function mapLabelDataToBackendLabelData(
+export function mapLabelDataToInspectionCreate(
   labelData: LabelData,
-): BackendLabelData {
+): InspectionCreate {
   return {
     organizations: (labelData.organizations || []).map((org) => ({
       name: org.name?.value,
@@ -288,6 +289,7 @@ export function mapLabelDataToBackendLabelData(
       value: Number(i.value),
       unit: i.unit,
     })),
+    picture_set_id: labelData.pictureSetId || "",
   };
 }
 

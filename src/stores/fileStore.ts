@@ -1,4 +1,4 @@
-import FileUploaded from "@/classe/File";
+import FileUploaded from "@/classes/File";
 import { create } from "zustand";
 
 /**
@@ -33,6 +33,12 @@ interface UploadedFilesState {
    * @param newName - The new name for the file.
    */
   renameUploadedFile: (path: string, newName: string) => void;
+
+  /**
+   * Sets the uploaded files array directly.
+   * @param files - The new array of uploaded files.
+   */
+  setUploadedFiles: (files: FileUploaded[]) => void;
 }
 
 /**
@@ -44,6 +50,7 @@ interface UploadedFilesState {
  * @function removeUploadedFile - Removes a file from the store by its path.
  * @function clearUploadedFiles - Clears all files from the store.
  * @function renameUploadedFile - Renames a file in the store by its path.
+ * @function setUploadedFiles - Replaces the entire uploaded files array.
  *
  * @returns {UploadedFilesState} The state and actions for managing uploaded files.
  */
@@ -72,20 +79,18 @@ const useUploadedFilesStore = create<UploadedFilesState>((set) => ({
   renameUploadedFile: (path, newName) => {
     console.debug(`[File Store] Renamed: ${path} -> ${newName}`);
     set((state) => ({
-      uploadedFiles: state.uploadedFiles.map((file) =>
-        file.getInfo().path === path
-          ? (() => {
-              const newFile = new FileUploaded(
-                file.getInfo(),
-                file.getInfo().path,
-                file.getFile(),
-              );
-              newFile.setName(newName);
-              return newFile;
-            })()
-          : file,
-      ),
+      uploadedFiles: state.uploadedFiles.map((file) => {
+        if (file.getInfo().path === path) {
+          file.getInfo().name = newName;
+        }
+        return file;
+      }),
     }));
+  },
+
+  setUploadedFiles: (files) => {
+    console.debug("[File Store] Set uploaded files");
+    set({ uploadedFiles: files });
   },
 }));
 

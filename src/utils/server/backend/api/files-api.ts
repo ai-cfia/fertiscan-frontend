@@ -21,7 +21,6 @@ import {
   DUMMY_BASE_URL,
   assertParamExists,
   createRequestFunction,
-  serializeDataIfNeeded,
   setBasicAuthToObject,
   setSearchParams,
   toPathString,
@@ -35,40 +34,97 @@ import {
   type RequestArgs,
 } from "../base";
 // @ts-ignore
-import type { DeletedInspection } from "../model";
+import type { DeleteFolderResponse } from "../model";
 // @ts-ignore
+import type { FolderResponse } from "../model";
 // @ts-ignore
-import type { InspectionCreate } from "../model";
-// @ts-ignore
-import type { InspectionData } from "../model";
-// @ts-ignore
-import type { InspectionResponse } from "../model";
-// @ts-ignore
-import type { InspectionUpdate } from "../model";
 /**
- * InspectionsApi - axios parameter creator
+ * FilesApi - axios parameter creator
  * @export
  */
-export const InspectionsApiAxiosParamCreator = function (
+export const FilesApiAxiosParamCreator = function (
   configuration?: Configuration,
 ) {
   return {
     /**
      *
-     * @summary Delete Inspection
-     * @param {string} id
+     * @summary Create Folder
+     * @param {Array<File>} files
      * @param {*} [options] Override http request option.
      * @throws {RequiredError}
      */
-    deleteInspectionInspectionsIdDelete: async (
-      id: string,
+    createFolderFilesPost: async (
+      files: Array<File>,
       options: RawAxiosRequestConfig = {},
     ): Promise<RequestArgs> => {
-      // verify required parameter 'id' is not null or undefined
-      assertParamExists("deleteInspectionInspectionsIdDelete", "id", id);
-      const localVarPath = `/inspections/{id}`.replace(
-        `{${"id"}}`,
-        encodeURIComponent(String(id)),
+      // verify required parameter 'files' is not null or undefined
+      assertParamExists("createFolderFilesPost", "files", files);
+      const localVarPath = `/files`;
+      // use dummy base URL string because the URL constructor only accepts absolute URLs.
+      const localVarUrlObj = new URL(localVarPath, DUMMY_BASE_URL);
+      let baseOptions;
+      if (configuration) {
+        baseOptions = configuration.baseOptions;
+      }
+
+      const localVarRequestOptions = {
+        method: "POST",
+        ...baseOptions,
+        ...options,
+      };
+      const localVarHeaderParameter = {} as any;
+      const localVarQueryParameter = {} as any;
+      const localVarFormParams = new ((configuration &&
+        configuration.formDataCtor) ||
+        FormData)();
+
+      // authentication HTTPBasic required
+      // http basic authentication required
+      setBasicAuthToObject(localVarRequestOptions, configuration);
+
+      if (files) {
+        files.forEach((element) => {
+          localVarFormParams.append("files", element as any);
+        });
+      }
+
+      localVarHeaderParameter["Content-Type"] = "multipart/form-data";
+
+      setSearchParams(localVarUrlObj, localVarQueryParameter);
+      let headersFromBaseOptions =
+        baseOptions && baseOptions.headers ? baseOptions.headers : {};
+      localVarRequestOptions.headers = {
+        ...localVarHeaderParameter,
+        ...headersFromBaseOptions,
+        ...options.headers,
+      };
+      localVarRequestOptions.data = localVarFormParams;
+
+      return {
+        url: toPathString(localVarUrlObj),
+        options: localVarRequestOptions,
+      };
+    },
+    /**
+     *
+     * @summary Delete Folder
+     * @param {string} folderId
+     * @param {*} [options] Override http request option.
+     * @throws {RequiredError}
+     */
+    deleteFolderFilesFolderIdDelete: async (
+      folderId: string,
+      options: RawAxiosRequestConfig = {},
+    ): Promise<RequestArgs> => {
+      // verify required parameter 'folderId' is not null or undefined
+      assertParamExists(
+        "deleteFolderFilesFolderIdDelete",
+        "folderId",
+        folderId,
+      );
+      const localVarPath = `/files/{folder_id}`.replace(
+        `{${"folder_id"}}`,
+        encodeURIComponent(String(folderId)),
       );
       // use dummy base URL string because the URL constructor only accepts absolute URLs.
       const localVarUrlObj = new URL(localVarPath, DUMMY_BASE_URL);
@@ -105,20 +161,73 @@ export const InspectionsApiAxiosParamCreator = function (
     },
     /**
      *
-     * @summary Get Inspection
-     * @param {string} id
+     * @summary Get File
+     * @param {string} folderId
+     * @param {string} fileId
      * @param {*} [options] Override http request option.
      * @throws {RequiredError}
      */
-    getInspectionInspectionsIdGet: async (
-      id: string,
+    getFileFilesFolderIdFileIdGet: async (
+      folderId: string,
+      fileId: string,
       options: RawAxiosRequestConfig = {},
     ): Promise<RequestArgs> => {
-      // verify required parameter 'id' is not null or undefined
-      assertParamExists("getInspectionInspectionsIdGet", "id", id);
-      const localVarPath = `/inspections/{id}`.replace(
-        `{${"id"}}`,
-        encodeURIComponent(String(id)),
+      // verify required parameter 'folderId' is not null or undefined
+      assertParamExists("getFileFilesFolderIdFileIdGet", "folderId", folderId);
+      // verify required parameter 'fileId' is not null or undefined
+      assertParamExists("getFileFilesFolderIdFileIdGet", "fileId", fileId);
+      const localVarPath = `/files/{folder_id}/{file_id}`
+        .replace(`{${"folder_id"}}`, encodeURIComponent(String(folderId)))
+        .replace(`{${"file_id"}}`, encodeURIComponent(String(fileId)));
+      // use dummy base URL string because the URL constructor only accepts absolute URLs.
+      const localVarUrlObj = new URL(localVarPath, DUMMY_BASE_URL);
+      let baseOptions;
+      if (configuration) {
+        baseOptions = configuration.baseOptions;
+      }
+
+      const localVarRequestOptions = {
+        method: "GET",
+        ...baseOptions,
+        ...options,
+      };
+      const localVarHeaderParameter = {} as any;
+      const localVarQueryParameter = {} as any;
+
+      // authentication HTTPBasic required
+      // http basic authentication required
+      setBasicAuthToObject(localVarRequestOptions, configuration);
+
+      setSearchParams(localVarUrlObj, localVarQueryParameter);
+      let headersFromBaseOptions =
+        baseOptions && baseOptions.headers ? baseOptions.headers : {};
+      localVarRequestOptions.headers = {
+        ...localVarHeaderParameter,
+        ...headersFromBaseOptions,
+        ...options.headers,
+      };
+
+      return {
+        url: toPathString(localVarUrlObj),
+        options: localVarRequestOptions,
+      };
+    },
+    /**
+     *
+     * @summary Get Folder
+     * @param {string} folderId
+     * @param {*} [options] Override http request option.
+     * @throws {RequiredError}
+     */
+    getFolderFilesFolderIdGet: async (
+      folderId: string,
+      options: RawAxiosRequestConfig = {},
+    ): Promise<RequestArgs> => {
+      // verify required parameter 'folderId' is not null or undefined
+      assertParamExists("getFolderFilesFolderIdGet", "folderId", folderId);
+      const localVarPath = `/files/{folder_id}`.replace(
+        `{${"folder_id"}}`,
+        encodeURIComponent(String(folderId)),
       );
       // use dummy base URL string because the URL constructor only accepts absolute URLs.
       const localVarUrlObj = new URL(localVarPath, DUMMY_BASE_URL);
@@ -155,14 +264,14 @@ export const InspectionsApiAxiosParamCreator = function (
     },
     /**
      *
-     * @summary Get Inspections
+     * @summary Get Folders
      * @param {*} [options] Override http request option.
      * @throws {RequiredError}
      */
-    getInspectionsInspectionsGet: async (
+    getFoldersFilesGet: async (
       options: RawAxiosRequestConfig = {},
     ): Promise<RequestArgs> => {
-      const localVarPath = `/inspections`;
+      const localVarPath = `/files`;
       // use dummy base URL string because the URL constructor only accepts absolute URLs.
       const localVarUrlObj = new URL(localVarPath, DUMMY_BASE_URL);
       let baseOptions;
@@ -190,129 +299,6 @@ export const InspectionsApiAxiosParamCreator = function (
         ...headersFromBaseOptions,
         ...options.headers,
       };
-
-      return {
-        url: toPathString(localVarUrlObj),
-        options: localVarRequestOptions,
-      };
-    },
-    /**
-     *
-     * @summary Post Inspection
-     * @param {InspectionCreate} inspectionCreate
-     * @param {*} [options] Override http request option.
-     * @throws {RequiredError}
-     */
-    postInspectionInspectionsPost: async (
-      inspectionCreate: InspectionCreate,
-      options: RawAxiosRequestConfig = {},
-    ): Promise<RequestArgs> => {
-      // verify required parameter 'inspectionCreate' is not null or undefined
-      assertParamExists(
-        "postInspectionInspectionsPost",
-        "inspectionCreate",
-        inspectionCreate,
-      );
-      const localVarPath = `/inspections`;
-      // use dummy base URL string because the URL constructor only accepts absolute URLs.
-      const localVarUrlObj = new URL(localVarPath, DUMMY_BASE_URL);
-      let baseOptions;
-      if (configuration) {
-        baseOptions = configuration.baseOptions;
-      }
-
-      const localVarRequestOptions = {
-        method: "POST",
-        ...baseOptions,
-        ...options,
-      };
-      const localVarHeaderParameter = {} as any;
-      const localVarQueryParameter = {} as any;
-
-      // authentication HTTPBasic required
-      // http basic authentication required
-      setBasicAuthToObject(localVarRequestOptions, configuration);
-
-      localVarHeaderParameter["Content-Type"] = "application/json";
-
-      setSearchParams(localVarUrlObj, localVarQueryParameter);
-      let headersFromBaseOptions =
-        baseOptions && baseOptions.headers ? baseOptions.headers : {};
-      localVarRequestOptions.headers = {
-        ...localVarHeaderParameter,
-        ...headersFromBaseOptions,
-        ...options.headers,
-      };
-      localVarRequestOptions.data = serializeDataIfNeeded(
-        inspectionCreate,
-        localVarRequestOptions,
-        configuration,
-      );
-
-      return {
-        url: toPathString(localVarUrlObj),
-        options: localVarRequestOptions,
-      };
-    },
-    /**
-     *
-     * @summary Put Inspection
-     * @param {string} id
-     * @param {InspectionUpdate} inspectionUpdate
-     * @param {*} [options] Override http request option.
-     * @throws {RequiredError}
-     */
-    putInspectionInspectionsIdPut: async (
-      id: string,
-      inspectionUpdate: InspectionUpdate,
-      options: RawAxiosRequestConfig = {},
-    ): Promise<RequestArgs> => {
-      // verify required parameter 'id' is not null or undefined
-      assertParamExists("putInspectionInspectionsIdPut", "id", id);
-      // verify required parameter 'inspectionUpdate' is not null or undefined
-      assertParamExists(
-        "putInspectionInspectionsIdPut",
-        "inspectionUpdate",
-        inspectionUpdate,
-      );
-      const localVarPath = `/inspections/{id}`.replace(
-        `{${"id"}}`,
-        encodeURIComponent(String(id)),
-      );
-      // use dummy base URL string because the URL constructor only accepts absolute URLs.
-      const localVarUrlObj = new URL(localVarPath, DUMMY_BASE_URL);
-      let baseOptions;
-      if (configuration) {
-        baseOptions = configuration.baseOptions;
-      }
-
-      const localVarRequestOptions = {
-        method: "PUT",
-        ...baseOptions,
-        ...options,
-      };
-      const localVarHeaderParameter = {} as any;
-      const localVarQueryParameter = {} as any;
-
-      // authentication HTTPBasic required
-      // http basic authentication required
-      setBasicAuthToObject(localVarRequestOptions, configuration);
-
-      localVarHeaderParameter["Content-Type"] = "application/json";
-
-      setSearchParams(localVarUrlObj, localVarQueryParameter);
-      let headersFromBaseOptions =
-        baseOptions && baseOptions.headers ? baseOptions.headers : {};
-      localVarRequestOptions.headers = {
-        ...localVarHeaderParameter,
-        ...headersFromBaseOptions,
-        ...options.headers,
-      };
-      localVarRequestOptions.data = serializeDataIfNeeded(
-        inspectionUpdate,
-        localVarRequestOptions,
-        configuration,
-      );
 
       return {
         url: toPathString(localVarUrlObj),
@@ -323,71 +309,30 @@ export const InspectionsApiAxiosParamCreator = function (
 };
 
 /**
- * InspectionsApi - functional programming interface
+ * FilesApi - functional programming interface
  * @export
  */
-export const InspectionsApiFp = function (configuration?: Configuration) {
-  const localVarAxiosParamCreator =
-    InspectionsApiAxiosParamCreator(configuration);
+export const FilesApiFp = function (configuration?: Configuration) {
+  const localVarAxiosParamCreator = FilesApiAxiosParamCreator(configuration);
   return {
     /**
      *
-     * @summary Delete Inspection
-     * @param {string} id
+     * @summary Create Folder
+     * @param {Array<File>} files
      * @param {*} [options] Override http request option.
      * @throws {RequiredError}
      */
-    async deleteInspectionInspectionsIdDelete(
-      id: string,
+    async createFolderFilesPost(
+      files: Array<File>,
       options?: RawAxiosRequestConfig,
     ): Promise<
-      (
-        axios?: AxiosInstance,
-        basePath?: string,
-      ) => AxiosPromise<DeletedInspection>
+      (axios?: AxiosInstance, basePath?: string) => AxiosPromise<FolderResponse>
     > {
       const localVarAxiosArgs =
-        await localVarAxiosParamCreator.deleteInspectionInspectionsIdDelete(
-          id,
-          options,
-        );
+        await localVarAxiosParamCreator.createFolderFilesPost(files, options);
       const localVarOperationServerIndex = configuration?.serverIndex ?? 0;
       const localVarOperationServerBasePath =
-        operationServerMap[
-          "InspectionsApi.deleteInspectionInspectionsIdDelete"
-        ]?.[localVarOperationServerIndex]?.url;
-      return (axios, basePath) =>
-        createRequestFunction(
-          localVarAxiosArgs,
-          globalAxios,
-          BASE_PATH,
-          configuration,
-        )(axios, localVarOperationServerBasePath || basePath);
-    },
-    /**
-     *
-     * @summary Get Inspection
-     * @param {string} id
-     * @param {*} [options] Override http request option.
-     * @throws {RequiredError}
-     */
-    async getInspectionInspectionsIdGet(
-      id: string,
-      options?: RawAxiosRequestConfig,
-    ): Promise<
-      (
-        axios?: AxiosInstance,
-        basePath?: string,
-      ) => AxiosPromise<InspectionResponse>
-    > {
-      const localVarAxiosArgs =
-        await localVarAxiosParamCreator.getInspectionInspectionsIdGet(
-          id,
-          options,
-        );
-      const localVarOperationServerIndex = configuration?.serverIndex ?? 0;
-      const localVarOperationServerBasePath =
-        operationServerMap["InspectionsApi.getInspectionInspectionsIdGet"]?.[
+        operationServerMap["FilesApi.createFolderFilesPost"]?.[
           localVarOperationServerIndex
         ]?.url;
       return (axios, basePath) =>
@@ -400,23 +345,28 @@ export const InspectionsApiFp = function (configuration?: Configuration) {
     },
     /**
      *
-     * @summary Get Inspections
+     * @summary Delete Folder
+     * @param {string} folderId
      * @param {*} [options] Override http request option.
      * @throws {RequiredError}
      */
-    async getInspectionsInspectionsGet(
+    async deleteFolderFilesFolderIdDelete(
+      folderId: string,
       options?: RawAxiosRequestConfig,
     ): Promise<
       (
         axios?: AxiosInstance,
         basePath?: string,
-      ) => AxiosPromise<Array<InspectionData>>
+      ) => AxiosPromise<DeleteFolderResponse>
     > {
       const localVarAxiosArgs =
-        await localVarAxiosParamCreator.getInspectionsInspectionsGet(options);
+        await localVarAxiosParamCreator.deleteFolderFilesFolderIdDelete(
+          folderId,
+          options,
+        );
       const localVarOperationServerIndex = configuration?.serverIndex ?? 0;
       const localVarOperationServerBasePath =
-        operationServerMap["InspectionsApi.getInspectionsInspectionsGet"]?.[
+        operationServerMap["FilesApi.deleteFolderFilesFolderIdDelete"]?.[
           localVarOperationServerIndex
         ]?.url;
       return (axios, basePath) =>
@@ -429,28 +379,28 @@ export const InspectionsApiFp = function (configuration?: Configuration) {
     },
     /**
      *
-     * @summary Post Inspection
-     * @param {InspectionCreate} inspectionCreate
+     * @summary Get File
+     * @param {string} folderId
+     * @param {string} fileId
      * @param {*} [options] Override http request option.
      * @throws {RequiredError}
      */
-    async postInspectionInspectionsPost(
-      inspectionCreate: InspectionCreate,
+    async getFileFilesFolderIdFileIdGet(
+      folderId: string,
+      fileId: string,
       options?: RawAxiosRequestConfig,
     ): Promise<
-      (
-        axios?: AxiosInstance,
-        basePath?: string,
-      ) => AxiosPromise<InspectionResponse>
+      (axios?: AxiosInstance, basePath?: string) => AxiosPromise<ArrayBuffer>
     > {
       const localVarAxiosArgs =
-        await localVarAxiosParamCreator.postInspectionInspectionsPost(
-          inspectionCreate,
+        await localVarAxiosParamCreator.getFileFilesFolderIdFileIdGet(
+          folderId,
+          fileId,
           options,
         );
       const localVarOperationServerIndex = configuration?.serverIndex ?? 0;
       const localVarOperationServerBasePath =
-        operationServerMap["InspectionsApi.postInspectionInspectionsPost"]?.[
+        operationServerMap["FilesApi.getFileFilesFolderIdFileIdGet"]?.[
           localVarOperationServerIndex
         ]?.url;
       return (axios, basePath) =>
@@ -463,31 +413,54 @@ export const InspectionsApiFp = function (configuration?: Configuration) {
     },
     /**
      *
-     * @summary Put Inspection
-     * @param {string} id
-     * @param {InspectionUpdate} inspectionUpdate
+     * @summary Get Folder
+     * @param {string} folderId
      * @param {*} [options] Override http request option.
      * @throws {RequiredError}
      */
-    async putInspectionInspectionsIdPut(
-      id: string,
-      inspectionUpdate: InspectionUpdate,
+    async getFolderFilesFolderIdGet(
+      folderId: string,
+      options?: RawAxiosRequestConfig,
+    ): Promise<
+      (axios?: AxiosInstance, basePath?: string) => AxiosPromise<FolderResponse>
+    > {
+      const localVarAxiosArgs =
+        await localVarAxiosParamCreator.getFolderFilesFolderIdGet(
+          folderId,
+          options,
+        );
+      const localVarOperationServerIndex = configuration?.serverIndex ?? 0;
+      const localVarOperationServerBasePath =
+        operationServerMap["FilesApi.getFolderFilesFolderIdGet"]?.[
+          localVarOperationServerIndex
+        ]?.url;
+      return (axios, basePath) =>
+        createRequestFunction(
+          localVarAxiosArgs,
+          globalAxios,
+          BASE_PATH,
+          configuration,
+        )(axios, localVarOperationServerBasePath || basePath);
+    },
+    /**
+     *
+     * @summary Get Folders
+     * @param {*} [options] Override http request option.
+     * @throws {RequiredError}
+     */
+    async getFoldersFilesGet(
       options?: RawAxiosRequestConfig,
     ): Promise<
       (
         axios?: AxiosInstance,
         basePath?: string,
-      ) => AxiosPromise<InspectionResponse>
+      ) => AxiosPromise<Array<FolderResponse>>
     > {
       const localVarAxiosArgs =
-        await localVarAxiosParamCreator.putInspectionInspectionsIdPut(
-          id,
-          inspectionUpdate,
-          options,
-        );
+        await localVarAxiosParamCreator.getFoldersFilesGet(options);
       const localVarOperationServerIndex = configuration?.serverIndex ?? 0;
       const localVarOperationServerBasePath =
-        operationServerMap["InspectionsApi.putInspectionInspectionsIdPut"]?.[
+        operationServerMap["FilesApi.getFoldersFilesGet"]?.[
           localVarOperationServerIndex
         ]?.url;
       return (axios, basePath) =>
@@ -502,181 +475,181 @@ export const InspectionsApiFp = function (configuration?: Configuration) {
 };
 
 /**
- * InspectionsApi - factory interface
+ * FilesApi - factory interface
  * @export
  */
-export const InspectionsApiFactory = function (
+export const FilesApiFactory = function (
   configuration?: Configuration,
   basePath?: string,
   axios?: AxiosInstance,
 ) {
-  const localVarFp = InspectionsApiFp(configuration);
+  const localVarFp = FilesApiFp(configuration);
   return {
     /**
      *
-     * @summary Delete Inspection
-     * @param {string} id
+     * @summary Create Folder
+     * @param {Array<File>} files
      * @param {*} [options] Override http request option.
      * @throws {RequiredError}
      */
-    deleteInspectionInspectionsIdDelete(
-      id: string,
+    createFolderFilesPost(
+      files: Array<File>,
       options?: RawAxiosRequestConfig,
-    ): AxiosPromise<DeletedInspection> {
+    ): AxiosPromise<FolderResponse> {
       return localVarFp
-        .deleteInspectionInspectionsIdDelete(id, options)
+        .createFolderFilesPost(files, options)
         .then((request) => request(axios, basePath));
     },
     /**
      *
-     * @summary Get Inspection
-     * @param {string} id
+     * @summary Delete Folder
+     * @param {string} folderId
      * @param {*} [options] Override http request option.
      * @throws {RequiredError}
      */
-    getInspectionInspectionsIdGet(
-      id: string,
+    deleteFolderFilesFolderIdDelete(
+      folderId: string,
       options?: RawAxiosRequestConfig,
-    ): AxiosPromise<InspectionResponse> {
+    ): AxiosPromise<DeleteFolderResponse> {
       return localVarFp
-        .getInspectionInspectionsIdGet(id, options)
+        .deleteFolderFilesFolderIdDelete(folderId, options)
         .then((request) => request(axios, basePath));
     },
     /**
      *
-     * @summary Get Inspections
+     * @summary Get File
+     * @param {string} folderId
+     * @param {string} fileId
      * @param {*} [options] Override http request option.
      * @throws {RequiredError}
      */
-    getInspectionsInspectionsGet(
+    getFileFilesFolderIdFileIdGet(
+      folderId: string,
+      fileId: string,
       options?: RawAxiosRequestConfig,
-    ): AxiosPromise<Array<InspectionData>> {
+    ): AxiosPromise<ArrayBuffer> {
       return localVarFp
-        .getInspectionsInspectionsGet(options)
+        .getFileFilesFolderIdFileIdGet(folderId, fileId, options)
         .then((request) => request(axios, basePath));
     },
     /**
      *
-     * @summary Post Inspection
-     * @param {InspectionCreate} inspectionCreate
+     * @summary Get Folder
+     * @param {string} folderId
      * @param {*} [options] Override http request option.
      * @throws {RequiredError}
      */
-    postInspectionInspectionsPost(
-      inspectionCreate: InspectionCreate,
+    getFolderFilesFolderIdGet(
+      folderId: string,
       options?: RawAxiosRequestConfig,
-    ): AxiosPromise<InspectionResponse> {
+    ): AxiosPromise<FolderResponse> {
       return localVarFp
-        .postInspectionInspectionsPost(inspectionCreate, options)
+        .getFolderFilesFolderIdGet(folderId, options)
         .then((request) => request(axios, basePath));
     },
     /**
      *
-     * @summary Put Inspection
-     * @param {string} id
-     * @param {InspectionUpdate} inspectionUpdate
+     * @summary Get Folders
      * @param {*} [options] Override http request option.
      * @throws {RequiredError}
      */
-    putInspectionInspectionsIdPut(
-      id: string,
-      inspectionUpdate: InspectionUpdate,
+    getFoldersFilesGet(
       options?: RawAxiosRequestConfig,
-    ): AxiosPromise<InspectionResponse> {
+    ): AxiosPromise<Array<FolderResponse>> {
       return localVarFp
-        .putInspectionInspectionsIdPut(id, inspectionUpdate, options)
+        .getFoldersFilesGet(options)
         .then((request) => request(axios, basePath));
     },
   };
 };
 
 /**
- * InspectionsApi - object-oriented interface
+ * FilesApi - object-oriented interface
  * @export
- * @class InspectionsApi
+ * @class FilesApi
  * @extends {BaseAPI}
  */
-export class InspectionsApi extends BaseAPI {
+export class FilesApi extends BaseAPI {
   /**
    *
-   * @summary Delete Inspection
-   * @param {string} id
+   * @summary Create Folder
+   * @param {Array<File>} files
    * @param {*} [options] Override http request option.
    * @throws {RequiredError}
-   * @memberof InspectionsApi
+   * @memberof FilesApi
    */
-  public deleteInspectionInspectionsIdDelete(
-    id: string,
+  public createFolderFilesPost(
+    files: Array<File>,
     options?: RawAxiosRequestConfig,
   ) {
-    return InspectionsApiFp(this.configuration)
-      .deleteInspectionInspectionsIdDelete(id, options)
+    return FilesApiFp(this.configuration)
+      .createFolderFilesPost(files, options)
       .then((request) => request(this.axios, this.basePath));
   }
 
   /**
    *
-   * @summary Get Inspection
-   * @param {string} id
+   * @summary Delete Folder
+   * @param {string} folderId
    * @param {*} [options] Override http request option.
    * @throws {RequiredError}
-   * @memberof InspectionsApi
+   * @memberof FilesApi
    */
-  public getInspectionInspectionsIdGet(
-    id: string,
+  public deleteFolderFilesFolderIdDelete(
+    folderId: string,
     options?: RawAxiosRequestConfig,
   ) {
-    return InspectionsApiFp(this.configuration)
-      .getInspectionInspectionsIdGet(id, options)
+    return FilesApiFp(this.configuration)
+      .deleteFolderFilesFolderIdDelete(folderId, options)
       .then((request) => request(this.axios, this.basePath));
   }
 
   /**
    *
-   * @summary Get Inspections
+   * @summary Get File
+   * @param {string} folderId
+   * @param {string} fileId
    * @param {*} [options] Override http request option.
    * @throws {RequiredError}
-   * @memberof InspectionsApi
+   * @memberof FilesApi
    */
-  public getInspectionsInspectionsGet(options?: RawAxiosRequestConfig) {
-    return InspectionsApiFp(this.configuration)
-      .getInspectionsInspectionsGet(options)
+  public getFileFilesFolderIdFileIdGet(
+    folderId: string,
+    fileId: string,
+    options?: RawAxiosRequestConfig,
+  ) {
+    return FilesApiFp(this.configuration)
+      .getFileFilesFolderIdFileIdGet(folderId, fileId, options)
       .then((request) => request(this.axios, this.basePath));
   }
 
   /**
    *
-   * @summary Post Inspection
-   * @param {InspectionCreate} inspectionCreate
+   * @summary Get Folder
+   * @param {string} folderId
    * @param {*} [options] Override http request option.
    * @throws {RequiredError}
-   * @memberof InspectionsApi
+   * @memberof FilesApi
    */
-  public postInspectionInspectionsPost(
-    inspectionCreate: InspectionCreate,
+  public getFolderFilesFolderIdGet(
+    folderId: string,
     options?: RawAxiosRequestConfig,
   ) {
-    return InspectionsApiFp(this.configuration)
-      .postInspectionInspectionsPost(inspectionCreate, options)
+    return FilesApiFp(this.configuration)
+      .getFolderFilesFolderIdGet(folderId, options)
       .then((request) => request(this.axios, this.basePath));
   }
 
   /**
    *
-   * @summary Put Inspection
-   * @param {string} id
-   * @param {InspectionUpdate} inspectionUpdate
+   * @summary Get Folders
    * @param {*} [options] Override http request option.
    * @throws {RequiredError}
-   * @memberof InspectionsApi
+   * @memberof FilesApi
    */
-  public putInspectionInspectionsIdPut(
-    id: string,
-    inspectionUpdate: InspectionUpdate,
-    options?: RawAxiosRequestConfig,
-  ) {
-    return InspectionsApiFp(this.configuration)
-      .putInspectionInspectionsIdPut(id, inspectionUpdate, options)
+  public getFoldersFilesGet(options?: RawAxiosRequestConfig) {
+    return FilesApiFp(this.configuration)
+      .getFoldersFilesGet(options)
       .then((request) => request(this.axios, this.basePath));
   }
 }

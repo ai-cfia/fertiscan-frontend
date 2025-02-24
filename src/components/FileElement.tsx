@@ -1,4 +1,4 @@
-import FileUploaded from "@/classe/File";
+import FileUploaded from "@/classes/File";
 import useUploadedFilesStore from "@/stores/fileStore";
 import { DropzoneState } from "@/types/types";
 import CheckIcon from "@mui/icons-material/Check";
@@ -58,7 +58,7 @@ const FileElement: React.FC<FileElementProps> = ({
    *
    * @param {React.KeyboardEvent} event - The keyboard event (Enter)
    * @returns {void}
-  */
+   */
   const handleRenameSubmit = (event: React.KeyboardEvent) => {
     if (event.key === "Enter" && newName.trim() !== "") {
       renameUploadedFile(imageUrl, `${newName.trim()}.${extension}`);
@@ -76,11 +76,10 @@ const FileElement: React.FC<FileElementProps> = ({
           setHovered(false);
           setDropzoneState({ visible: false, imageUrl: "" });
         }}
-        className="relative h-full w-full min-h-[90px] flex items-center
-        justify-center overflow-hidden rounded border-2 border-neutral-600 bg-neutral-200"
+        className="relative flex h-full min-h-[90px] w-full items-center justify-center overflow-hidden rounded border-2 border-neutral-600 bg-neutral-200"
         data-testid={`file-element-${imageName}`}
       >
-        <Grid2 size={20} className="relative flex justify-center items-center">
+        <Grid2 size={20} className="relative flex items-center justify-center">
           <div>
             <Image
               className="!relative max-h-[90px] max-w-full p-1"
@@ -100,7 +99,7 @@ const FileElement: React.FC<FileElementProps> = ({
         />
         <Grid2 size={80} className="relative flex items-center justify-between">
           {isRenaming ? (
-            <div className="flex items-center w-full">
+            <div className="flex w-full items-center">
               <TextField
                 value={newName}
                 onChange={(e) => setNewName(e.target.value)}
@@ -160,7 +159,7 @@ const FileElement: React.FC<FileElementProps> = ({
             <Typography
               variant="h6"
               color={theme.palette.text.primary}
-              className="overflow-hidden text-ellipsis whitespace-nowrap text-start pl-2"
+              className="overflow-hidden pl-2 text-start text-ellipsis whitespace-nowrap"
               sx={{ maxWidth: { xs: "80%", md: "calc(100% - 75px)" } }}
               data-testid="file-name"
             >

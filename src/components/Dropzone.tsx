@@ -1,5 +1,5 @@
 "use client";
-import FileUploaded from "@/classe/File";
+import FileUploaded from "@/classes/File";
 import useAlertStore from "@/stores/alertStore";
 import useUploadedFilesStore from "@/stores/fileStore";
 import type { DropzoneState } from "@/types/types";
@@ -34,9 +34,7 @@ interface DropzoneProps {
  * @property {DropzoneState} dropzoneState - State of the dropzone.
  * @property {React.Dispatch<React.SetStateAction<DropzoneState>>} setDropzoneState - Function to update the dropzone state.
  */
-const Dropzone: React.FC<DropzoneProps> = ({
-  dropzoneState,
-}) => {
+const Dropzone: React.FC<DropzoneProps> = ({ dropzoneState }) => {
   const theme = useTheme();
   const { t: tHomePage } = useTranslation("homePage");
   const { t: tAlertBanner } = useTranslation("alertBanner");
@@ -47,9 +45,9 @@ const Dropzone: React.FC<DropzoneProps> = ({
   const { uploadedFiles, addUploadedFile } = useUploadedFilesStore();
 
   // Handle the drag over event
-  const handleDragOver = (event: React.DragEvent<HTMLDivElement>) =>{
+  const handleDragOver = (event: React.DragEvent<HTMLDivElement>) => {
     event.preventDefault();
-  }
+  };
 
   // Handle the drop event
   const handleDrop = async (event: React.DragEvent<HTMLDivElement>) => {
@@ -63,10 +61,10 @@ const Dropzone: React.FC<DropzoneProps> = ({
         }
       }
     }
-  }
+  };
 
   // Traverse the file tree and process files
-  const traverseFileTree= async (item: FileSystemEntry) => {
+  const traverseFileTree = async (item: FileSystemEntry) => {
     if (item.isFile) {
       const fileEntry = item as FileSystemFileEntry;
       fileEntry.file((file: File) => {
@@ -83,7 +81,7 @@ const Dropzone: React.FC<DropzoneProps> = ({
         }
       });
     }
-  }
+  };
 
   // Handle file upload
   const handleFileUpload = (event: React.ChangeEvent<HTMLInputElement>) => {
@@ -93,7 +91,7 @@ const Dropzone: React.FC<DropzoneProps> = ({
         processFile(files[i]);
       }
     }
-  }
+  };
 
   /**
    * Process the file and add it to the uploaded files.
@@ -101,8 +99,8 @@ const Dropzone: React.FC<DropzoneProps> = ({
    * If the file is a PDF, show an info alert.
    *
    * @param {File} file - The file to process.
-  */
-  const processFile = async(file: File)=> {
+   */
+  const processFile = async (file: File) => {
     const alreadyExists = uploadedFiles.some(
       (uploadedFile) => uploadedFile.getInfo().name === file.name,
     );
@@ -112,10 +110,10 @@ const Dropzone: React.FC<DropzoneProps> = ({
       return;
     }
 
-    const newFile = FileUploaded.newFile(
+    const newFile = new FileUploaded(
       { username: "user" },
       URL.createObjectURL(file),
-      file
+      file,
     );
 
     const detectedType = await FileUploaded.detectType(newFile.getInfo().path);
@@ -124,14 +122,13 @@ const Dropzone: React.FC<DropzoneProps> = ({
     } else {
       addUploadedFile(newFile);
     }
-  }
+  };
 
   return (
     <Box
       data-testid="dropzone"
       id="dropzone"
-      className="relative flex flex-col justify-center items-center border-dashed border-4 border-sky-900 rounded text-center
-                p-1 bg-transparent bg-contain w-[90%] h-[90%] xs:min-h-[350px] md:min-h-[400px] min-w-[133.44px]"
+      className="xs:min-h-[350px] relative flex h-[90%] w-[90%] min-w-[133.44px] flex-col items-center justify-center rounded border-4 border-dashed border-sky-900 bg-transparent bg-contain p-1 text-center md:min-h-[400px]"
       onDragOver={handleDragOver}
       onDrop={handleDrop}
     >
@@ -141,7 +138,7 @@ const Dropzone: React.FC<DropzoneProps> = ({
           component="img"
           src={dropzoneState.imageUrl}
           alt={tHomePage("altText.hoveredImageAlt")}
-          className="absolute max-w-full max-h-full object-contain w-auto h-auto "
+          className="absolute h-auto max-h-full w-auto max-w-full object-contain"
         />
       ) : (
         <Box className="text-center">
@@ -152,13 +149,27 @@ const Dropzone: React.FC<DropzoneProps> = ({
               fontSize: "7rem",
             }}
           />
-          <Typography  className="select-none" variant="h5" color={theme.palette.secondary.main}>
+          <Typography
+            className="select-none"
+            variant="h5"
+            color={theme.palette.secondary.main}
+          >
             <b>{tHomePage("dropzone.dragDrop")}</b>
           </Typography>
-          <Typography className="select-none" variant="h5" color={theme.palette.secondary.main}>
+          <Typography
+            className="select-none"
+            variant="h5"
+            color={theme.palette.secondary.main}
+          >
             <b>{tHomePage("dropzone.or")}</b>
           </Typography>
-          <Button className="select-none" variant="contained" color="secondary" role="button" onClick={() => document.getElementById("File type")?.click()} >
+          <Button
+            className="select-none"
+            variant="contained"
+            color="secondary"
+            role="button"
+            onClick={() => document.getElementById("File type")?.click()}
+          >
             <b>{tHomePage("dropzone.browseFile")}</b>
             <input
               id="File type"

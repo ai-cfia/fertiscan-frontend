@@ -1,6 +1,6 @@
 /* eslint-disable react/display-name */
 /* eslint-disable react-hooks/rules-of-hooks */
-import FileUploaded from "@/classe/File";
+import FileUploaded from "@/classes/File";
 import useUploadedFilesStore from "@/stores/fileStore";
 import useLabelDataStore from "@/stores/labelDataStore";
 import { VERIFIED_LABEL_DATA } from "@/utils/client/constants";
@@ -311,7 +311,7 @@ describe("HomePage Component", () => {
 
   it("should clear uploaded files and reset label data on mount", () => {
     useUploadedFilesStore.getState().addUploadedFile(
-      FileUploaded.newFile(
+      new FileUploaded(
         { username: "testUser" },
         "/uploads/test1.png",
         new File(["dummy content"], "test1.png", {

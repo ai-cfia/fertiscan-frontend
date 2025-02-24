@@ -6,12 +6,17 @@ export function handleApiError(error: AxiosError): Response {
   if (response) {
     console.error(
       "Response not ok",
-      "Error response:",
+      response.status,
+      response.statusText,
+      "response:",
       JSON.stringify(response.data, null, 2),
     );
-    return new Response(JSON.stringify({ error: message }), {
-      status: response.status,
-    });
+    return new Response(
+      JSON.stringify({ error: message || response.statusText }),
+      {
+        status: response.status,
+      },
+    );
   }
 
   if (request) {

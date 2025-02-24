@@ -1,13 +1,9 @@
 "use client";
-import { usePlaceholder } from "@/classe/User";
+import { usePlaceholder } from "@/classes/User";
 import { AccountCircle, Logout } from "@mui/icons-material";
 import DashboardIcon from "@mui/icons-material/Dashboard";
-import {
-  ListItemIcon,
-  Menu,
-  MenuItem,
-  Typography,
-} from "@mui/material";
+import { ListItemIcon, Menu, MenuItem, Typography } from "@mui/material";
+import { useRouter } from "next/navigation";
 import {
   Dispatch,
   ReactElement,
@@ -15,7 +11,6 @@ import {
   useCallback,
   useEffect,
 } from "react";
-import { useRouter } from "next/navigation";
 import { useTranslation } from "react-i18next";
 
 /**
@@ -56,7 +51,7 @@ const UserMenu = ({
 }: UserMenuProps): ReactElement => {
   const { t } = useTranslation("header");
   const placeholderUser = usePlaceholder();
-  const router = useRouter()
+  const router = useRouter();
 
   // Close the user menu
   const handleClose = useCallback((): void => {
@@ -68,12 +63,13 @@ const UserMenu = ({
   const handleDashboardClick = (): void => {
     router.push("/dashboard");
     handleClose();
-  }
+  };
 
   // Log out the user
   const handleLogout = (): void => {
-    document.cookie="token=; expires=Thu, 01 Jan 1970 00:00:00 UTC; path=/; SameSite=Strict";
-    location.reload()
+    document.cookie =
+      "token=; expires=Thu, 01 Jan 1970 00:00:00 UTC; path=/; SameSite=Strict";
+    location.reload();
     handleClose();
   };
 
@@ -114,7 +110,10 @@ const UserMenu = ({
         </ListItemIcon>
         <Typography>{placeholderUser.getUsername()}</Typography>
       </MenuItem>
-      <MenuItem onClick={handleDashboardClick} data-testid="dashboard-menu-item">
+      <MenuItem
+        onClick={handleDashboardClick}
+        data-testid="dashboard-menu-item"
+      >
         <ListItemIcon aria-label={t("userMenu.altText.dashboardIcon")}>
           <DashboardIcon />
         </ListItemIcon>

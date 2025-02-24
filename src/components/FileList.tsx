@@ -28,7 +28,7 @@ interface FileListProps {
  * @returns {JSX.Element} The rendered FileList component.
  */
 const FileList: React.FC<FileListProps> = ({ setDropzoneState }) => {
-  const { t } = useTranslation("fileList");
+  const { t } = useTranslation("homePage");
   const theme = useTheme();
   const { uploadedFiles, clearUploadedFiles } = useUploadedFilesStore();
 
@@ -49,19 +49,14 @@ const FileList: React.FC<FileListProps> = ({ setDropzoneState }) => {
             backgroundColor: "transparent",
           },
         }}
-        className={`flex relative flex-col items-center border-2 border-sky-900
-          rounded text-center p-1 bg-transparent bg-contain xs:w-[90%] md:w-[100%] h-[90%]
-          xs:min-h-[350px] md:min-h-[400px] overflow-y-auto overflow-x-hidden min-w-[133.44px] md:max-w-[470px]
-         `} // do not modify md:max-w-[470px] so that the fileList does not become to big
+        className={`xs:w-[90%] xs:min-h-[350px] relative flex h-[90%] min-w-[133.44px] flex-col items-center overflow-x-hidden overflow-y-auto rounded border-2 border-sky-900 bg-transparent bg-contain p-1 text-center md:min-h-[400px] md:w-[100%] md:max-w-[470px]`} // do not modify md:max-w-[470px] so that the fileList does not become to big
       >
         <Box
-          className={`absolute transform w-full h-full flex flex-col
-                      ${
-                        uploadedFiles.length === 0
-                          ? "justify-center p-0 left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2"
-                          : "justify-start items-start p-2 left-0 top-0 translate-x-none translate-y-none"
-                      }
-                      text-center max-w-full max-h-full object-contain `}
+          className={`absolute flex h-full w-full transform flex-col ${
+            uploadedFiles.length === 0
+              ? "top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 justify-center p-0"
+              : "translate-x-none translate-y-none top-0 left-0 items-start justify-start p-2"
+          } max-h-full max-w-full object-contain text-center`}
         >
           <Typography
             className="select-none"
@@ -96,7 +91,7 @@ const FileList: React.FC<FileListProps> = ({ setDropzoneState }) => {
             </Button>
           )}
           <Stack
-            className="w-full flex flex-col"
+            className="flex w-full flex-col"
             direction="column"
             spacing={2}
           >

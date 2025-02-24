@@ -26,6 +26,7 @@ const LabelDataValidationPage = () => {
   const showAlert = useAlertStore((state) => state.showAlert);
   const router = useRouter();
   const { t } = useTranslation("labelDataValidator");
+  const imageFiles = uploadedFiles.map((file) => file.getFile());
 
   // Check if no files were uploaded
   useEffect(() => {
@@ -66,12 +67,14 @@ const LabelDataValidationPage = () => {
       .then(async (response) => {
         showAlert(t("alert.labelExtractionSuccess"), "success");
         const labelData: LabelData = response.data;
-        formData.append("labelData", JSON.stringify(labelData));
 
         // API call to post the extracted label data
         axios
-          .post("/api-next/inspections", formData, {
-            headers: { Authorization: authHeader },
+          .post("/api-next/inspections", labelData, {
+            headers: {
+              Authorization: authHeader,
+              "Content-Type": "application/json",
+            },
             signal,
           })
           .then((response) => {
@@ -81,9 +84,8 @@ const LabelDataValidationPage = () => {
             return null;
           })
           .catch((error) => {
-            if (axios.isCancel(error)) {
-              console.log("request canceled");
-            } else {
+            if (axios.isCancel(error)) console.log("request canceled");
+            else {
               showAlert(
                 `${t("alert.initialSaveFailed")}: ${processAxiosError(error)}`,
                 "error",
@@ -97,9 +99,8 @@ const LabelDataValidationPage = () => {
           });
       })
       .catch((error) => {
-        if (axios.isCancel(error)) {
-          console.log("request canceled");
-        } else {
+        if (axios.isCancel(error)) console.log("request canceled");
+        else {
           showAlert(
             `${t("alert.labelExtractionFailed")}: ${processAxiosError(error)}`,
             "error",
@@ -107,7 +108,6 @@ const LabelDataValidationPage = () => {
           setLoading(false);
         }
       });
-
     return () => {
       controller.abort(); // avoids react strict mode double fetch
     };
@@ -115,12 +115,12 @@ const LabelDataValidationPage = () => {
 
   return (
     <LabelDataValidator
-      fileUploads={uploadedFiles}
+      imageFiles={imageFiles}
       labelData={labelData}
       setLabelData={setLabelData}
-      loading={loading}
+      loadingFieldsData={loading}
     />
   );
-}
+};
 
 export default LabelDataValidationPage;

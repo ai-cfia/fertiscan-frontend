@@ -204,6 +204,7 @@
     "failedFetchInspection": "Échec de la récupération de l'inspection.",
     "alreadyCompleted": "Cette inspection est déjà terminée.",
     "labelExtractionSuccess": "Données de l'étiquette extraites avec succès. Enregistrement de la version initiale…",
-    "initialSaveSuccess": "Données de l'étiquette initiale enregistrées avec succès"
+    "initialSaveSuccess": "Données de l'étiquette initiale enregistrées avec succès",
+    "getPictureSetFailed": "Échec de l'obtention de l'ensemble d'images"
   }
 }

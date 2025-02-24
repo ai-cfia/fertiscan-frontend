@@ -1,5 +1,6 @@
 import { BACKEND_URL } from "../constants";
 import {
+  FilesApiFactory,
   InspectionsApiFactory,
   MonitoringApiFactory,
   PipelineApiFactory,
@@ -15,3 +16,4 @@ export const inspectionsApi = InspectionsApiFactory(config);
 export const monitoringApi = MonitoringApiFactory(config);
 export const pipelineApi = PipelineApiFactory(config);
 export const usersApi = UsersApiFactory(config);
+export const filesApi = FilesApiFactory(config);
