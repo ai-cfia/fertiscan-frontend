@@ -60,10 +60,12 @@ const LabelDataConfirmationPage = () => {
         router.push("/");
       })
       .catch((error) => {
-        showAlert(
-          `${t("alert.saveFailed")}: ${processAxiosError(error)}`,
-          "error",
-        );
+        if (axios.isCancel(error)) console.debug("fetch inspection aborted");
+        else
+          showAlert(
+            `${t("alert.saveFailed")}: ${processAxiosError(error)}`,
+            "error",
+          );
         setConfirmLoading(false);
       });
   };
@@ -75,15 +77,13 @@ const LabelDataConfirmationPage = () => {
    * @param {AbortSignal} signal - An AbortSignal to allow aborting the request.
    */
   const postLabelData = (labelData: LabelData, signal: AbortSignal) => {
-    const formData = new FormData();
-    imageFiles.forEach((file) => {
-      formData.append("files", file);
-    });
-    formData.append("labelData", JSON.stringify(labelData));
     setConfirmLoading(true);
     axios
-      .post("/api-next/inspections", formData, {
-        headers: { Authorization: getAuthHeader() },
+      .post("/api-next/inspections", labelData, {
+        headers: {
+          Authorization: getAuthHeader(),
+          "Content-Type": "application/json",
+        },
         signal,
       })
       .then((response) => {
@@ -95,15 +95,18 @@ const LabelDataConfirmationPage = () => {
         putLabelData(_labelData, signal);
       })
       .catch((error) => {
-        showAlert(
-          `${t("alert.initialSaveFailed")}: ${processAxiosError(error)}`,
-          "error",
-        );
+        if (axios.isCancel(error)) console.debug("post inspection aborted");
+        else
+          showAlert(
+            `${t("alert.initialSaveFailed")}: ${processAxiosError(error)}`,
+            "error",
+          );
       })
       .finally(() => {
         setConfirmLoading(false);
       });
   };
+
   /**
    * Handles click on the edit button.
    * Redirects the user to the label data validation page to modify

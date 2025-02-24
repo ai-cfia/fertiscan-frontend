@@ -189,7 +189,8 @@
     "duplicateUnit": "Duplicate unit",
     "fetchAborted": "Fetch aborted",
     "noFileUploaded": "No file uploaded",
-    "requestCancelled": "Request cancelled"
+    "requestCancelled": "Request cancelled",
+    "folderCreationFailed": "Could not save images. Please try again later or report the issue"
   },
   "stepper": { "next": "Next", "back": "Back", "submit": "Submit" },
   "alert": {

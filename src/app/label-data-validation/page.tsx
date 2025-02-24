@@ -5,8 +5,9 @@ import useUploadedFilesStore from "@/stores/fileStore";
 import useLabelDataStore from "@/stores/labelDataStore";
 import { DEFAULT_LABEL_DATA, LabelData } from "@/types/types";
 import { processAxiosError } from "@/utils/client/apiErrors";
+import { getAuthHeader } from "@/utils/client/cookies";
 import axios from "axios";
-import Cookies from "js-cookie";
+import Error from "next/error";
 import { useRouter } from "next/navigation";
 import { useEffect, useState } from "react";
 import { useTranslation } from "react-i18next";
@@ -23,6 +24,7 @@ const LabelDataValidationPage = () => {
   const storedLabelData = useLabelDataStore((state) => state.labelData);
   const [labelData, setLabelData] = useState(DEFAULT_LABEL_DATA);
   const [loading, setLoading] = useState(true);
+  const [error, setError] = useState<boolean>(false);
   const showAlert = useAlertStore((state) => state.showAlert);
   const router = useRouter();
   const { t } = useTranslation("labelDataValidator");
@@ -53,38 +55,36 @@ const LabelDataValidationPage = () => {
       formData.append("files", file);
     });
 
-    // Basic authentication setup using token from cookies
-    const username = atob(Cookies.get("token") ?? "");
-    const password = "";
-    const authHeader = "Basic " + btoa(`${username}:${password}`);
-
-    // API call to extract label data from uploaded files
     axios
       .post("/api-next/extract-label-data", formData, {
-        headers: { Authorization: authHeader },
+        headers: { Authorization: getAuthHeader() },
         signal,
       })
       .then(async (response) => {
-        showAlert(t("alert.labelExtractionSuccess"), "success");
         const labelData: LabelData = response.data;
-        formData.append("labelData", JSON.stringify(labelData));
 
-        // API call to post the extracted label data
+        if (!labelData.pictureSetId) {
+          setError(true);
+          return;
+        }
+
+        showAlert(t("alert.labelExtractionSuccess"), "success");
         axios
-          .post("/api-next/inspections", formData, {
-            headers: { Authorization: authHeader },
+          .post("/api-next/inspections", labelData, {
+            headers: {
+              Authorization: getAuthHeader(),
+              "Content-Type": "application/json",
+            },
             signal,
           })
           .then((response) => {
             showAlert(t("alert.initialSaveSuccess"), "success");
             const labelData: LabelData = response.data;
             router.push(`/label-data-validation/${labelData.inspectionId}`);
-            return null;
           })
           .catch((error) => {
-            if (axios.isCancel(error)) {
-              console.log("request canceled");
-            } else {
+            if (axios.isCancel(error)) console.log("request canceled");
+            else {
               showAlert(
                 `${t("alert.initialSaveFailed")}: ${processAxiosError(error)}`,
                 "error",
@@ -98,9 +98,8 @@ const LabelDataValidationPage = () => {
           });
       })
       .catch((error) => {
-        if (axios.isCancel(error)) {
-          console.log("request canceled");
-        } else {
+        if (axios.isCancel(error)) console.log("request canceled");
+        else {
           showAlert(
             `${t("alert.labelExtractionFailed")}: ${processAxiosError(error)}`,
             "error",
@@ -108,13 +107,18 @@ const LabelDataValidationPage = () => {
           setLoading(false);
         }
       });
-
     return () => {
       controller.abort(); // avoids react strict mode double fetch
     };
   }, [uploadedFiles, showAlert, router, storedLabelData, setLabelData, t]);
 
-  return (
+  return error ? (
+    <Error
+      statusCode={500}
+      title={t("errors.folderCreationFailed")}
+      withDarkMode={false}
+    />
+  ) : (
     <LabelDataValidator
       imageFiles={imageFiles}
       labelData={labelData}

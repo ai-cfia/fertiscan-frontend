@@ -3,7 +3,7 @@ import { MISSING_AUTH_RESPONSE } from "@/utils/server/apiResponses";
 import { inspectionsApi } from "@/utils/server/backend";
 import {
   mapInspectionToLabelData,
-  mapLabelDataToBackendLabelData,
+  mapLabelDataToInspectionCreate,
 } from "@/utils/server/modelTransformation";
 
 export async function POST(request: Request) {
@@ -12,16 +12,14 @@ export async function POST(request: Request) {
     return MISSING_AUTH_RESPONSE;
   }
 
-  const formData = await request.formData();
-  console.debug("[post inspections] request body (formdata):", formData);
-  const files = formData.getAll("files") as File[];
-  const labelDataString = formData.get("labelData") as string;
-  const labelData = JSON.parse(labelDataString);
-  const labelDataInput = mapLabelDataToBackendLabelData(labelData);
+  const labelData = await request.json();
+  console.debug("[post inspections] request body:", labelData);
+
+  const labelDataInput = mapLabelDataToInspectionCreate(labelData);
   console.debug("[post inspections] sent labelDataInput:", labelDataInput);
 
   return inspectionsApi
-    .postInspectionInspectionsPost(labelDataInput, files, {
+    .postInspectionInspectionsPost(labelDataInput, {
       headers: { Authorization: authHeader },
     })
     .then((inspectionsResponse) => {

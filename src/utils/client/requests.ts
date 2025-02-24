@@ -1,6 +1,7 @@
 import { processFetchedBlob } from "@/classes/File";
 import { getAuthHeader } from "@/utils/client/cookies";
 import axios from "axios";
+import { FolderResponse } from "../server/backend";
 
 export function fetchImages(
   pictureSetId: string,
@@ -9,12 +10,13 @@ export function fetchImages(
   if (!pictureSetId) return Promise.resolve([]);
 
   return axios
-    .get<string[]>(`/api-next/pictures/${pictureSetId}`, {
+    .get<FolderResponse>(`/api-next/pictures/${pictureSetId}`, {
       headers: { Authorization: getAuthHeader() },
       signal,
     })
     .then((res) => {
-      const pictureIds = res.data;
+      const folderDetails = res.data;
+      const pictureIds = folderDetails.file_ids || [];
 
       return Promise.all(
         pictureIds.map((pictureId) =>

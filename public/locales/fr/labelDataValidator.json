@@ -190,7 +190,8 @@
     "duplicateUnit": "Unité dupliquée",
     "fetchAborted": "Fetch annulé",
     "noFileUploaded": "Aucun fichier téléchargé",
-    "requestCancelled": "Requête annulée"
+    "requestCancelled": "Requête annulée",
+    "folderCreationFailed": "Échec de l’enregistrement des images. Veuillez réessayer plus tard ou signaler le problème"
   },
   "stepper": {
     "next": "Suivant",

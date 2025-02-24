@@ -52,21 +52,23 @@ export default function LabelDataValidationPageWithId() {
             setImageFiles(files);
           })
           .catch((error) => {
-            showAlert(
-              `${t("alert.getPictureSetFailed")}: ${error.message}`,
-              "error",
-            );
+            if (axios.isCancel(error)) console.debug("fetch images aborted");
+            else
+              showAlert(
+                `${t("alert.getPictureSetFailed")}: ${error.message}`,
+                "error",
+              );
           })
           .finally(() => {
             setFetchingPictures(false);
           });
       })
       .catch((error) => {
-        if (axios.isCancel(error)) {
-          return console.debug("fetch aborted");
+        if (axios.isCancel(error)) console.debug("fetch inspection aborted");
+        else {
+          showAlert(t("alert.failedFetchInspection"), "error");
+          setError(error.response);
         }
-        showAlert(t("alert.failedFetchInspection"), "error");
-        setError(error.response);
       });
 
     return () => {
@@ -75,7 +77,7 @@ export default function LabelDataValidationPageWithId() {
   }, [inspectionId, router, showAlert, uploadedFiles.length, t]);
 
   return error ? (
-    <Error statusCode={error.status} withDarkMode={false}/>
+    <Error statusCode={error.status} withDarkMode={false} />
   ) : (
     <LabelDataValidator
       labelData={labelData}

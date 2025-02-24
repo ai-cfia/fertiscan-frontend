@@ -38,13 +38,13 @@ import {
 import type { DeletedInspection } from "../model";
 // @ts-ignore
 // @ts-ignore
+import type { InspectionCreate } from "../model";
+// @ts-ignore
 import type { InspectionData } from "../model";
 // @ts-ignore
 import type { InspectionResponse } from "../model";
 // @ts-ignore
 import type { InspectionUpdate } from "../model";
-// @ts-ignore
-import type { LabelData } from "../model";
 /**
  * InspectionsApi - axios parameter creator
  * @export
@@ -199,24 +199,20 @@ export const InspectionsApiAxiosParamCreator = function (
     /**
      *
      * @summary Post Inspection
-     * @param {LabelData} labelData
-     * @param {Array<File>} files
+     * @param {InspectionCreate} inspectionCreate
      * @param {*} [options] Override http request option.
      * @throws {RequiredError}
      */
     postInspectionInspectionsPost: async (
-      labelData: LabelData,
-      files: Array<File>,
+      inspectionCreate: InspectionCreate,
       options: RawAxiosRequestConfig = {},
     ): Promise<RequestArgs> => {
-      // verify required parameter 'labelData' is not null or undefined
+      // verify required parameter 'inspectionCreate' is not null or undefined
       assertParamExists(
         "postInspectionInspectionsPost",
-        "labelData",
-        labelData,
+        "inspectionCreate",
+        inspectionCreate,
       );
-      // verify required parameter 'files' is not null or undefined
-      assertParamExists("postInspectionInspectionsPost", "files", files);
       const localVarPath = `/inspections`;
       // use dummy base URL string because the URL constructor only accepts absolute URLs.
       const localVarUrlObj = new URL(localVarPath, DUMMY_BASE_URL);
@@ -232,24 +228,12 @@ export const InspectionsApiAxiosParamCreator = function (
       };
       const localVarHeaderParameter = {} as any;
       const localVarQueryParameter = {} as any;
-      const localVarFormParams = new ((configuration &&
-        configuration.formDataCtor) ||
-        FormData)();
 
       // authentication HTTPBasic required
       // http basic authentication required
       setBasicAuthToObject(localVarRequestOptions, configuration);
 
-      if (labelData !== undefined) {
-        localVarFormParams.append("label_data", JSON.stringify(labelData));
-      }
-      if (files) {
-        files.forEach((element) => {
-          localVarFormParams.append("files", element as any);
-        });
-      }
-
-      localVarHeaderParameter["Content-Type"] = "multipart/form-data";
+      localVarHeaderParameter["Content-Type"] = "application/json";
 
       setSearchParams(localVarUrlObj, localVarQueryParameter);
       let headersFromBaseOptions =
@@ -259,7 +243,11 @@ export const InspectionsApiAxiosParamCreator = function (
         ...headersFromBaseOptions,
         ...options.headers,
       };
-      localVarRequestOptions.data = localVarFormParams;
+      localVarRequestOptions.data = serializeDataIfNeeded(
+        inspectionCreate,
+        localVarRequestOptions,
+        configuration,
+      );
 
       return {
         url: toPathString(localVarUrlObj),
@@ -442,14 +430,12 @@ export const InspectionsApiFp = function (configuration?: Configuration) {
     /**
      *
      * @summary Post Inspection
-     * @param {LabelData} labelData
-     * @param {Array<File>} files
+     * @param {InspectionCreate} inspectionCreate
      * @param {*} [options] Override http request option.
      * @throws {RequiredError}
      */
     async postInspectionInspectionsPost(
-      labelData: LabelData,
-      files: Array<File>,
+      inspectionCreate: InspectionCreate,
       options?: RawAxiosRequestConfig,
     ): Promise<
       (
@@ -459,8 +445,7 @@ export const InspectionsApiFp = function (configuration?: Configuration) {
     > {
       const localVarAxiosArgs =
         await localVarAxiosParamCreator.postInspectionInspectionsPost(
-          labelData,
-          files,
+          inspectionCreate,
           options,
         );
       const localVarOperationServerIndex = configuration?.serverIndex ?? 0;
@@ -573,18 +558,16 @@ export const InspectionsApiFactory = function (
     /**
      *
      * @summary Post Inspection
-     * @param {LabelData} labelData
-     * @param {Array<File>} files
+     * @param {InspectionCreate} inspectionCreate
      * @param {*} [options] Override http request option.
      * @throws {RequiredError}
      */
     postInspectionInspectionsPost(
-      labelData: LabelData,
-      files: Array<File>,
+      inspectionCreate: InspectionCreate,
       options?: RawAxiosRequestConfig,
     ): AxiosPromise<InspectionResponse> {
       return localVarFp
-        .postInspectionInspectionsPost(labelData, files, options)
+        .postInspectionInspectionsPost(inspectionCreate, options)
         .then((request) => request(axios, basePath));
     },
     /**
@@ -664,19 +647,17 @@ export class InspectionsApi extends BaseAPI {
   /**
    *
    * @summary Post Inspection
-   * @param {LabelData} labelData
-   * @param {Array<File>} files
+   * @param {InspectionCreate} inspectionCreate
    * @param {*} [options] Override http request option.
    * @throws {RequiredError}
    * @memberof InspectionsApi
    */
   public postInspectionInspectionsPost(
-    labelData: LabelData,
-    files: Array<File>,
+    inspectionCreate: InspectionCreate,
     options?: RawAxiosRequestConfig,
   ) {
     return InspectionsApiFp(this.configuration)
-      .postInspectionInspectionsPost(labelData, files, options)
+      .postInspectionInspectionsPost(inspectionCreate, options)
       .then((request) => request(this.axios, this.basePath));
   }
 
