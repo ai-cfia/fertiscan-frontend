@@ -4,16 +4,16 @@ import {
   RegistrationType,
 } from "@/types/types";
 import {
+  LabelData as BackendLabelData,
   InspectionResponse,
-  LabelDataOutput,
   Nutrient,
   Quantity,
   Value,
 } from "../backend";
 import {
+  mapBackendLabelDataToLabelData,
   mapInspectionToLabelData,
-  mapLabelDataOutputToLabelData,
-  mapLabelDataToBackendLabelData,
+  mapLabelDataToInspectionCreate,
   mapLabelDataToInspectionUpdate,
   mapVerifiedInspectionValues,
   mapVerifiedNutrientPairs,
@@ -186,7 +186,7 @@ describe("verifiedItemPairInspectionValue", () => {
 
 describe("mapLabelDataOutputToLabelData", () => {
   it("should map all data correctly", () => {
-    const input: LabelDataOutput = {
+    const input: BackendLabelData = {
       organizations: [
         {
           name: "Company Inc.",
@@ -238,9 +238,10 @@ describe("mapLabelDataOutputToLabelData", () => {
         { nutrient: "Farine de poisson", value: 50, unit: "g" },
         { nutrient: "Farine d'os", value: 50, unit: "g" },
       ],
+      picture_set_id: "PIC123",
     };
 
-    const result = mapLabelDataOutputToLabelData(input);
+    const result = mapBackendLabelDataToLabelData(input);
 
     // Organizations
     expect(result.organizations).toHaveLength(2);
@@ -329,11 +330,12 @@ describe("mapLabelDataOutputToLabelData", () => {
     });
 
     expect(result.confirmed).toBe(false);
+    expect(result.pictureSetId).toBe("PIC123");
   });
 
   it("should handle missing fields gracefully", () => {
-    const input: LabelDataOutput = {};
-    const result = mapLabelDataOutputToLabelData(input);
+    const input: BackendLabelData = {};
+    const result = mapBackendLabelDataToLabelData(input);
 
     // Organizations
     result.organizations.forEach((org) => {
@@ -377,6 +379,9 @@ describe("mapLabelDataOutputToLabelData", () => {
       nutrients: [],
       recordKeeping: { value: false, verified: false },
     });
+
+    expect(result.confirmed).toBe(false);
+    expect(result.pictureSetId).not.toBeDefined();
   });
 });
 
@@ -778,11 +783,12 @@ const emptyLabelData: LabelData = {
   },
   confirmed: false,
   comment: "",
+  pictureSetId: "PIC123",
 };
 
 describe("mapLabelDataToBackendLabelData", () => {
   it("should map all fields correctly", () => {
-    const result = mapLabelDataToBackendLabelData(labelData);
+    const result = mapLabelDataToInspectionCreate(labelData);
     expect(result.organizations).toEqual([
       {
         name: "Company Inc.",
@@ -843,7 +849,7 @@ describe("mapLabelDataToBackendLabelData", () => {
   });
 
   it("should handle empty arrays gracefully", () => {
-    const result = mapLabelDataToBackendLabelData(emptyLabelData);
+    const result = mapLabelDataToInspectionCreate(emptyLabelData);
     expect(result.organizations).toEqual([
       {
         name: "",
@@ -989,7 +995,7 @@ describe("mapLabelDataToInspectionUpdate", () => {
       fr: [],
     });
     expect(result.ingredients).toEqual({ en: [], fr: [] });
-    expect(result.picture_set_id).toBe("");
+    expect(result.picture_set_id).toBe("PIC123");
   });
 
   it("should return empty ingredients when recordKeeping is true", () => {

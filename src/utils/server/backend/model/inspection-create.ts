@@ -31,103 +31,109 @@ import type { RegistrationNumber } from "./registration-number";
 /**
  *
  * @export
- * @interface LabelDataOutput
+ * @interface InspectionCreate
  */
-export interface LabelDataOutput {
+export interface InspectionCreate {
   /**
    *
    * @type {Array<Organization>}
-   * @memberof LabelDataOutput
+   * @memberof InspectionCreate
    */
   organizations?: Array<Organization>;
   /**
    *
    * @type {string}
-   * @memberof LabelDataOutput
+   * @memberof InspectionCreate
    */
   fertiliser_name?: string | null;
   /**
    *
    * @type {Array<RegistrationNumber>}
-   * @memberof LabelDataOutput
+   * @memberof InspectionCreate
    */
   registration_number?: Array<RegistrationNumber>;
   /**
    *
    * @type {string}
-   * @memberof LabelDataOutput
+   * @memberof InspectionCreate
    */
   lot_number?: string | null;
   /**
    *
    * @type {Array<Quantity>}
-   * @memberof LabelDataOutput
+   * @memberof InspectionCreate
    */
   weight?: Array<Quantity>;
   /**
    *
    * @type {Quantity}
-   * @memberof LabelDataOutput
+   * @memberof InspectionCreate
    */
   density?: Quantity | null;
   /**
    *
    * @type {Quantity}
-   * @memberof LabelDataOutput
+   * @memberof InspectionCreate
    */
   volume?: Quantity | null;
   /**
    *
    * @type {string}
-   * @memberof LabelDataOutput
+   * @memberof InspectionCreate
    */
   npk?: string | null;
   /**
    *
    * @type {AppModelsLabelDataGuaranteedAnalysis}
-   * @memberof LabelDataOutput
+   * @memberof InspectionCreate
    */
   guaranteed_analysis_en?: AppModelsLabelDataGuaranteedAnalysis | null;
   /**
    *
    * @type {AppModelsLabelDataGuaranteedAnalysis}
-   * @memberof LabelDataOutput
+   * @memberof InspectionCreate
    */
   guaranteed_analysis_fr?: AppModelsLabelDataGuaranteedAnalysis | null;
   /**
    *
    * @type {Array<string>}
-   * @memberof LabelDataOutput
+   * @memberof InspectionCreate
    */
   cautions_en?: Array<string> | null;
   /**
    *
    * @type {Array<string>}
-   * @memberof LabelDataOutput
+   * @memberof InspectionCreate
    */
   cautions_fr?: Array<string> | null;
   /**
    *
    * @type {Array<string>}
-   * @memberof LabelDataOutput
+   * @memberof InspectionCreate
    */
   instructions_en?: Array<string>;
   /**
    *
    * @type {Array<string>}
-   * @memberof LabelDataOutput
+   * @memberof InspectionCreate
    */
   instructions_fr?: Array<string>;
   /**
    *
    * @type {Array<Nutrient>}
-   * @memberof LabelDataOutput
+   * @memberof InspectionCreate
    */
   ingredients_en?: Array<Nutrient>;
   /**
    *
    * @type {Array<Nutrient>}
-   * @memberof LabelDataOutput
+   * @memberof InspectionCreate
    */
   ingredients_fr?: Array<Nutrient>;
+  /**
+   *
+   * @type {string}
+   * @memberof InspectionCreate
+   */
+  picture_set_id: string;
 }

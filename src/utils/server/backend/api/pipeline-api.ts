@@ -21,6 +21,7 @@ import {
   DUMMY_BASE_URL,
   assertParamExists,
   createRequestFunction,
+  setBasicAuthToObject,
   setSearchParams,
   toPathString,
 } from "../common";
@@ -34,7 +35,7 @@ import {
 } from "../base";
 // @ts-ignore
 // @ts-ignore
-import type { LabelDataOutput } from "../model";
+import type { LabelData } from "../model";
 /**
  * PipelineApi - axios parameter creator
  * @export
@@ -74,6 +75,10 @@ export const PipelineApiAxiosParamCreator = function (
       const localVarFormParams = new ((configuration &&
         configuration.formDataCtor) ||
         FormData)();
+
+      // authentication HTTPBasic required
+      // http basic authentication required
+      setBasicAuthToObject(localVarRequestOptions, configuration);
 
       if (files) {
         files.forEach((element) => {
@@ -119,10 +124,7 @@ export const PipelineApiFp = function (configuration?: Configuration) {
       files: Array<File>,
       options?: RawAxiosRequestConfig,
     ): Promise<
-      (
-        axios?: AxiosInstance,
-        basePath?: string,
-      ) => AxiosPromise<LabelDataOutput>
+      (axios?: AxiosInstance, basePath?: string) => AxiosPromise<LabelData>
     > {
       const localVarAxiosArgs =
         await localVarAxiosParamCreator.analyzeDocumentAnalyzePost(
@@ -166,7 +168,7 @@ export const PipelineApiFactory = function (
     analyzeDocumentAnalyzePost(
       files: Array<File>,
       options?: RawAxiosRequestConfig,
-    ): AxiosPromise<LabelDataOutput> {
+    ): AxiosPromise<LabelData> {
       return localVarFp
         .analyzeDocumentAnalyzePost(files, options)
         .then((request) => request(axios, basePath));
