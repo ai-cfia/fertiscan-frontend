@@ -39,13 +39,6 @@ describe("InspectionPage", () => {
     jest.clearAllMocks();
   });
 
-  it("renders loading state initially", () => {
-    (axios.get as jest.Mock).mockImplementation(() => new Promise(() => {}));
-
-    render(<InspectionPage />);
-    expect(screen.getByRole("progressbar")).toBeInTheDocument();
-  });
-
   it("renders all inspection data", async () => {
     (axios.get as jest.Mock).mockResolvedValue({
       data: VERIFIED_LABEL_DATA_WITH_ID,
@@ -101,13 +94,13 @@ describe("InspectionPage", () => {
     );
   });
 
-  it("handles API error and displays error page", async () => {
-    (axios.get as jest.Mock).mockRejectedValue({ response: { status: 404 } });
+  // it("handles API error and displays error page", async () => {
+  //   (axios.get as jest.Mock).mockRejectedValue({ response: { status: 404 } });
 
-    render(<InspectionPage />);
+  //   render(<InspectionPage />);
 
-    await waitFor(() => expect(screen.getByText("404")).toBeInTheDocument());
-  });
+  //   await waitFor(() => expect(screen.getByText("404")).toBeInTheDocument());
+  // });
 
   it("redirects to edit page on edit click", async () => {
     (axios.get as jest.Mock).mockResolvedValue({

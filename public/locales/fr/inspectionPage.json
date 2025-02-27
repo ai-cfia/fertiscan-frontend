@@ -13,7 +13,8 @@
     "getInspectionFailed": "Échec de la récupération des détails de l'inspection",
     "deleteSuccess": "Inspection supprimée avec succès",
     "discardFailed": "Échec de la suppression de l'inspection",
-    "internalErrorLabelNotFound": "Erreur interne : Étiquette non trouvée"
+    "internalErrorLabelNotFound": "Erreur interne : Étiquette non trouvée",
+    "getPictureSetFailed": "Échec de l'obtention de l'ensemble d'images"
   },
   "alt": {
     "edit": "Modifier l'inspection",

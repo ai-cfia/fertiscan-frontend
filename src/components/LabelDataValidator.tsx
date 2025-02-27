@@ -1,5 +1,5 @@
 "use client";
-import FileUploaded from "@/classe/File";
+import FileUploaded from "@/classes/File";
 import BaseInformationForm from "@/components/BaseInformationForm";
 import CautionsForm from "@/components/CautionsForm";
 import GuaranteedAnalysisForm from "@/components/GuaranteedAnalysisForm";
@@ -11,6 +11,7 @@ import {
   StepperControls,
   StepStatus,
 } from "@/components/stepper";
+import useUploadedFilesStore from "@/stores/fileStore";
 import useLabelDataStore from "@/stores/labelDataStore";
 import { FormComponentProps, LabelData } from "@/types/types";
 import { setLabelDataInCookies } from "@/utils/client/cookies";
@@ -28,18 +29,20 @@ import SplitContentLayout from "./inspection-details/SplitContentLayout";
  * Props for LabelDataValidator component.
  *
  * @typedef {Object} LabelDataValidatorProps
- * @property {boolean} [loading=false] - Indicates whether the component is in a loading state.
- * @property {FileUploaded[]} fileUploads - List of uploaded files.
+ * @property {boolean} [loadingFieldsData] - Optional flag to indicate if fields data is loading.
+ * @property {File[]} imageFiles - An array of image files to be displayed.
  * @property {LabelData} labelData - The current label data.
  * @property {React.Dispatch<React.SetStateAction<LabelData>>} setLabelData - Function to update label data.
  * @property {string} [inspectionId] - Optional inspection ID.
+ * @property {boolean} [loadingImages] - Optional flag to indicate if images are loading.
  */
 interface LabelDataValidatorProps {
-  loading?: boolean;
-  fileUploads: FileUploaded[];
+  loadingFieldsData?: boolean;
+  imageFiles: File[];
   labelData: LabelData;
   setLabelData: React.Dispatch<React.SetStateAction<LabelData>>;
   inspectionId?: string;
+  loadingImages?: boolean;
 }
 
 /**
@@ -49,10 +52,11 @@ interface LabelDataValidatorProps {
  * @returns {JSX.Element} The rendered LabelDataValidator component.
  */
 const LabelDataValidator = ({
-  loading = false,
-  fileUploads,
+  loadingFieldsData,
+  imageFiles,
   labelData,
   setLabelData,
+  loadingImages,
 }: LabelDataValidatorProps) => {
   const { t } = useTranslation("labelDataValidator");
   const [activeStep, setActiveStep] = useState(0);
@@ -70,8 +74,10 @@ const LabelDataValidator = ({
   const [ingredientsStepStatus, setIngredientsStepStatus] =
     useState<StepStatus>(StepStatus.Incomplete);
   const storeLabelData = useLabelDataStore((state) => state.setLabelData);
+  const setUploadedFiles = useUploadedFilesStore(
+    (state) => state.setUploadedFiles,
+  );
   const router = useRouter();
-  const imageFiles = fileUploads.map((file) => file.getFile());
 
   /**
    * Creates a step for the multi-step form process.
@@ -96,7 +102,7 @@ const LabelDataValidator = ({
         <StepComponent
           labelData={labelData}
           setLabelData={setLabelData}
-          loading={loading}
+          loading={loadingFieldsData}
         />
       ),
     };
@@ -147,6 +153,11 @@ const LabelDataValidator = ({
    */
   const submit = () => {
     storeLabelData(labelData);
+    const fileUploads = imageFiles.map(
+      (file) =>
+        new FileUploaded({ username: "user" }, URL.createObjectURL(file), file),
+    );
+    setUploadedFiles(fileUploads);
     router.push("/label-data-confirmation");
   };
 
@@ -246,6 +257,7 @@ const LabelDataValidator = ({
             submit={submit}
           />
         }
+        loadingImageViewer={loadingImages}
       />
     </Container>
   );

@@ -3,14 +3,13 @@ import LabelInformation from "@/components/inspection-details/LabelInformation";
 import SplitContentLayout from "@/components/inspection-details/SplitContentLayout";
 import LoadingButton from "@/components/LoadingButton";
 import useAlertStore from "@/stores/alertStore";
-import useUploadedFilesStore from "@/stores/fileStore";
 import { LabelData } from "@/types/types";
 import { processAxiosError } from "@/utils/client/apiErrors";
 import { getAuthHeader } from "@/utils/client/cookies";
+import { fetchImages } from "@/utils/client/requests";
 import {
   Box,
   Button,
-  CircularProgress,
   Container,
   Dialog,
   DialogActions,
@@ -55,16 +54,16 @@ const InspectionPage = () => {
   const { t } = useTranslation("inspectionPage");
   const { id } = useParams();
   const inspectionId = Array.isArray(id) ? id[0] : id;
-  const [loading, setLoading] = useState(true);
   const [editLoading, setEditLoading] = useState(false);
   const [discardLoading, setDiscardLoading] = useState(false);
-  const uploadedFiles = useUploadedFilesStore((state) => state.uploadedFiles);
-  const imageFiles = uploadedFiles.map((file) => file.getFile());
+  const [imageFiles, setImageFiles] = useState<File[]>([]);
   const showAlert = useAlertStore((state) => state.showAlert);
   const [labelData, setLabelData] = useState<LabelData | null>(null);
   const [error, setError] = useState<AxiosResponse | null>(null);
   const router = useRouter();
   const [confirmOpen, setConfirmOpen] = useState(false);
+  const [fetchingInspection, setFetchingInspection] = useState(true);
+  const [fetchingPictures, setFetchingPictures] = useState(true);
 
   const deleteInspection = (id: string, signal: AbortSignal) => {
     axios
@@ -87,32 +86,51 @@ const InspectionPage = () => {
 
   useEffect(() => {
     if (!inspectionId) return;
-    const controller = new AbortController();
 
-    setLoading(true);
+    const controller = new AbortController();
+    const signal = controller.signal;
+    setFetchingInspection(true);
 
     axios
       .get(`/api-next/inspections/${inspectionId}`, {
         headers: { Authorization: getAuthHeader() },
-        signal: controller.signal,
+        signal,
       })
       .then((response) => {
         setLabelData(response.data);
+        setFetchingInspection(false);
+
+        if (!response.data.pictureSetId) return;
+
+        setFetchingPictures(true);
+
+        fetchImages(response.data.pictureSetId, signal)
+          .then((files) => {
+            setImageFiles(files);
+          })
+          .catch((error) => {
+            showAlert(
+              `${t("alert.getPictureSetFailed")}: ${processAxiosError(error)}`,
+              "error",
+            );
+          })
+          .finally(() => {
+            setFetchingPictures(false);
+          });
       })
       .catch((error) => {
         if (axios.isCancel(error)) {
           console.debug("fetch aborted");
-        } else if (error.response) {
-          setError(error.response);
-        } else {
-          showAlert(
-            `${t("alert.getInspectionFailed")}: ${processAxiosError(error)}`,
-            "error",
-          );
+          return;
         }
+        showAlert(
+          `${t("alert.getInspectionFailed")}: ${processAxiosError(error)}`,
+          "error",
+        );
+        setError(error.response);
       })
       .finally(() => {
-        setLoading(false);
+        setFetchingInspection(false);
       });
 
     return () => {
@@ -139,16 +157,8 @@ const InspectionPage = () => {
     deleteInspection(inspectionId, new AbortController().signal);
   };
 
-  if (loading) {
-    return (
-      <Box className="flex h-[100vh] items-center justify-center">
-        <CircularProgress />
-      </Box>
-    );
-  }
-
   return error ? (
-    <Error statusCode={error.status} />
+    <Error statusCode={error.status} withDarkMode={false}/>
   ) : (
     <Container
       className="h-min-[calc(100vh-65px)] flex max-w-[1920px] flex-col bg-gray-100 text-black"
@@ -215,6 +225,8 @@ const InspectionPage = () => {
             />
           </Box>
         }
+        loadingRightSection={fetchingInspection}
+        loadingImageViewer={fetchingInspection || fetchingPictures}
       />
       <Dialog
         open={confirmOpen}
@@ -241,6 +253,6 @@ const InspectionPage = () => {
       </Dialog>
     </Container>
   );
-}
+};
 
 export default InspectionPage;

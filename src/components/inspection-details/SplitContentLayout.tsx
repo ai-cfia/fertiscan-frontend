@@ -1,7 +1,7 @@
 import ImageViewer from "@/components/ImageViewer";
 import ExpandButton from "@/components/inspection-details/ExpandButton";
 import useBreakpoints from "@/utils/client/useBreakpoints";
-import { Box, BoxProps } from "@mui/material";
+import { Box, BoxProps, CircularProgress } from "@mui/material";
 import { ReactNode, useState } from "react";
 
 /**
@@ -17,6 +17,10 @@ import { ReactNode, useState } from "react";
  * @property {ReactNode} body - Content for the body section.
  * @property {ReactNode} footer - Content for the footer section.
  * @property {boolean} [expandable] - Optional flag to indicate if the layout is expandable.
+ * @property {boolean} [loadingImageViewer] - Optional flag to indicate if the image viewer is loading.
+ * @property {boolean} [loadingTopPanel] - Optional flag to indicate if the top panel is loading.
+ * @property {boolean} [loadingRightSection] - Optional flag to indicate if the right section is loading.
+ * @property {boolean} [loadingBottomPanel] - Optional flag to indicate if the bottom panel is loading.
  */
 interface SplitContentLayoutProps extends BoxProps {
   imageFiles: File[];
@@ -26,6 +30,10 @@ interface SplitContentLayoutProps extends BoxProps {
   body: ReactNode;
   footer: ReactNode;
   expandable?: boolean;
+  loadingImageViewer?: boolean;
+  loadingTopPanel?: boolean;
+  loadingRightSection?: boolean;
+  loadingBottomPanel?: boolean;
 }
 
 /**
@@ -40,6 +48,10 @@ interface SplitContentLayoutProps extends BoxProps {
  * @param {React.ReactNode} props.body - Content to be displayed in the body section.
  * @param {React.ReactNode} props.footer - Content to be displayed in the footer section.
  * @param {boolean} [props.expandable=false] - Flag to determine if the right section is expandable.
+ * @param {boolean} [props.loadingImageViewer=false] - Flag to indicate if the image viewer is loading.
+ * @param {boolean} [props.loadingTopPanel=false] - Flag to indicate if the top panel is loading.
+ * @param {boolean} [props.loadingRightSection=false] - Flag to indicate if the right section is loading.
+ * @param {boolean} [props.loadingBottomPanel=false] - Flag to indicate if the bottom panel is loading.
  * @param {BoxProps} [props.boxProps] - Additional properties to be passed to the main container Box component.
  * @returns {JSX.Element} The rendered SplitContentLayout component.
  */
@@ -51,6 +63,10 @@ const SplitContentLayout = ({
   body,
   footer,
   expandable = false,
+  loadingImageViewer = false,
+  loadingTopPanel = false,
+  loadingRightSection = false,
+  loadingBottomPanel = false,
   ...boxProps
 }: SplitContentLayoutProps) => {
   const { isDownXs, isBetweenXsSm, isBetweenSmMd, isBetweenMdLg } =
@@ -69,7 +85,13 @@ const SplitContentLayout = ({
       {/* Top Panel on large screens */}
       {!isLgOrBelow && topPanel && (
         <Box className="w-full" data-testid="top-panel">
-          {topPanel}
+          {loadingTopPanel ? (
+            <Box className="flex h-full items-center justify-center">
+              <CircularProgress />
+            </Box>
+          ) : (
+            topPanel
+          )}
         </Box>
       )}
 
@@ -82,14 +104,26 @@ const SplitContentLayout = ({
             className="flex h-[500px] min-w-0 justify-center md:h-[720px] lg:size-full"
             data-testid="image-viewer-container"
           >
-            <ImageViewer imageFiles={imageFiles} />
+            {loadingImageViewer ? (
+              <Box className="flex h-full w-full items-center justify-center">
+                <CircularProgress />
+              </Box>
+            ) : (
+              <ImageViewer imageFiles={imageFiles} />
+            )}
           </Box>
         )}
 
         {/* Top Panel on small screens */}
         {isLgOrBelow && topPanel && (
           <Box className="mt-4 w-full p-4" data-testid="top-panel-mobile">
-            {topPanel}
+            {loadingTopPanel ? (
+              <Box className="flex h-full items-center justify-center">
+                <CircularProgress />
+              </Box>
+            ) : (
+              topPanel
+            )}
           </Box>
         )}
 
@@ -107,19 +141,27 @@ const SplitContentLayout = ({
           )}
 
           <Box className="flex size-full min-w-0 flex-col gap-4 p-4 text-center">
-            {/* Header Section */}
-            <Box data-testid="header-section">{header}</Box>
+            {loadingRightSection ? (
+              <Box className="flex h-full w-full items-center justify-center">
+                <CircularProgress />
+              </Box>
+            ) : (
+              <>
+                {/* Header Section */}
+                <Box data-testid="header-section">{header}</Box>
 
-            {/* Body Section */}
-            <Box
-              className="flex-1 overflow-y-auto p-4 sm:px-6"
-              data-testid="body-section"
-            >
-              {body}
-            </Box>
+                {/* Body Section */}
+                <Box
+                  className="flex-1 overflow-y-auto p-4 sm:px-6"
+                  data-testid="body-section"
+                >
+                  {body}
+                </Box>
 
-            {/* Footer Section */}
-            <Box data-testid="footer-section">{footer}</Box>
+                {/* Footer Section */}
+                <Box data-testid="footer-section">{footer}</Box>
+              </>
+            )}
           </Box>
         </Box>
       </Box>
@@ -127,7 +169,13 @@ const SplitContentLayout = ({
       {/* Bottom Panel */}
       {bottomPanel && (
         <Box className="w-full" data-testid="bottom-panel">
-          {bottomPanel}
+          {loadingBottomPanel ? (
+            <Box className="flex h-full items-center justify-center">
+              <CircularProgress />
+            </Box>
+          ) : (
+            bottomPanel
+          )}
         </Box>
       )}
     </Box>

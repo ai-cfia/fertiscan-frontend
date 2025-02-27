@@ -17,8 +17,6 @@
 import type { AppModelsLabelDataGuaranteedAnalysis } from "./app-models-label-data-guaranteed-analysis";
 // May contain unused imports in some cases
 // @ts-ignore
-// May contain unused imports in some cases
-// @ts-ignore
 import type { Nutrient } from "./nutrient";
 // May contain unused imports in some cases
 // @ts-ignore
@@ -47,7 +45,7 @@ export interface LabelData {
    * @type {string}
    * @memberof LabelData
    */
-  fertiliser_name?: string;
+  fertiliser_name?: string | null;
   /**
    *
    * @type {Array<RegistrationNumber>}
@@ -59,7 +57,7 @@ export interface LabelData {
    * @type {string}
    * @memberof LabelData
    */
-  lot_number?: string;
+  lot_number?: string | null;
   /**
    *
    * @type {Array<Quantity>}
@@ -71,43 +69,43 @@ export interface LabelData {
    * @type {Quantity}
    * @memberof LabelData
    */
-  density?: Quantity;
+  density?: Quantity | null;
   /**
    *
    * @type {Quantity}
    * @memberof LabelData
    */
-  volume?: Quantity;
+  volume?: Quantity | null;
   /**
    *
    * @type {string}
    * @memberof LabelData
    */
-  npk?: string;
+  npk?: string | null;
   /**
    *
    * @type {AppModelsLabelDataGuaranteedAnalysis}
    * @memberof LabelData
    */
-  guaranteed_analysis_en?: AppModelsLabelDataGuaranteedAnalysis;
+  guaranteed_analysis_en?: AppModelsLabelDataGuaranteedAnalysis | null;
   /**
    *
    * @type {AppModelsLabelDataGuaranteedAnalysis}
    * @memberof LabelData
    */
-  guaranteed_analysis_fr?: AppModelsLabelDataGuaranteedAnalysis;
+  guaranteed_analysis_fr?: AppModelsLabelDataGuaranteedAnalysis | null;
   /**
    *
    * @type {Array<string>}
    * @memberof LabelData
    */
-  cautions_en?: Array<string>;
+  cautions_en?: Array<string> | null;
   /**
    *
    * @type {Array<string>}
    * @memberof LabelData
    */
-  cautions_fr?: Array<string>;
+  cautions_fr?: Array<string> | null;
   /**
    *
    * @type {Array<string>}
@@ -132,4 +130,10 @@ export interface LabelData {
    * @memberof LabelData
    */
   ingredients_fr?: Array<Nutrient>;
+  /**
+   *
+   * @type {string}
+   * @memberof LabelData
+   */
+  picture_set_id?: string | null;
 }

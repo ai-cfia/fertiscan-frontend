@@ -1,11 +1,10 @@
-import { usePlaceholder } from "@/classe/User";
+import { usePlaceholder } from "@/classes/User";
 import { createTheme, ThemeProvider } from "@mui/material/styles";
 import { fireEvent, render, screen } from "@testing-library/react";
-import React from "react";
 import UserMenu from "../UserMenu";
 
 const theme = createTheme();
-jest.mock("../../classe/User", () => ({
+jest.mock("../../classes/User", () => ({
   usePlaceholder: jest.fn(),
 }));
 

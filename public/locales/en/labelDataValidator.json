@@ -189,7 +189,8 @@
     "duplicateUnit": "Duplicate unit",
     "fetchAborted": "Fetch aborted",
     "noFileUploaded": "No file uploaded",
-    "requestCancelled": "Request cancelled"
+    "requestCancelled": "Request cancelled",
+    "folderCreationFailed": "Could not save images. Please try again later or report the issue"
   },
   "stepper": { "next": "Next", "back": "Back", "submit": "Submit" },
   "alert": {
@@ -199,6 +200,7 @@
     "alreadyCompleted": "This inspection has already been completed.",
     "labelExtractionFailed": "Label data extraction failed",
     "labelExtractionSuccess": "Label data extracted successfully. Saving initial version…",
-    "initialSaveSuccess": "Initial label data saved successfully"
+    "initialSaveSuccess": "Initial label data saved successfully",
+    "getPictureSetFailed": "Failed to get picture set"
   }
 }

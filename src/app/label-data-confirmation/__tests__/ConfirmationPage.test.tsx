@@ -1,5 +1,4 @@
-import FileUploaded from "@/classe/File";
-import useUploadedFilesStore from "@/stores/fileStore";
+import { QuantityChips } from "@/components/QuantityChips";
 import useLabelDataStore from "@/stores/labelDataStore";
 import { Quantity } from "@/types/types";
 import {
@@ -9,7 +8,6 @@ import {
 import { fireEvent, render, screen, waitFor } from "@testing-library/react";
 import axios from "axios";
 import LabelDataConfirmationPage from "../page";
-import { QuantityChips } from "@/components/QuantityChips";
 
 const mockedRouterPush = jest.fn();
 jest.mock("next/navigation", () => ({
@@ -104,31 +102,12 @@ describe("LabelDataConfirmationPage", () => {
       );
     });
 
-    it("should send a POST request with the correct FormData when labelData does not have an inspectionId and include uploaded files", async () => {
-      const mockFile = new File(["file content"], "test-file.txt", {
-        type: "text/plain",
-      });
-      const mockFileUploaded = new FileUploaded(
-        {
-          path: "mock-path",
-          user: { username: "test-user" },
-          file: mockFile,
-          uploadDate: new Date(),
-          type: "pdf",
-          name: mockFile.name,
-        },
-        "mock-path",
-        mockFile,
-      );
-
+    it("should send a POST request with the correct JSON payload when labelData does not have an inspectionId", async () => {
       const mockPost = jest.spyOn(axios, "post").mockResolvedValueOnce({
         data: { inspectionId: "5678" },
       });
 
       useLabelDataStore.setState({ labelData: VERIFIED_LABEL_DATA });
-      useUploadedFilesStore.setState({
-        uploadedFiles: [mockFileUploaded],
-      });
 
       const mockSetLabelData = jest.fn();
       jest
@@ -146,21 +125,15 @@ describe("LabelDataConfirmationPage", () => {
 
       expect(mockPost).toHaveBeenCalledWith(
         "/api-next/inspections",
-        expect.any(FormData),
+        VERIFIED_LABEL_DATA,
         expect.objectContaining({
-          headers: expect.any(Object),
+          headers: expect.objectContaining({
+            Authorization: expect.any(String),
+            "Content-Type": "application/json",
+          }),
           signal: expect.any(AbortSignal),
         }),
       );
-
-      const capturedFormData = mockPost.mock.calls[0][1] as FormData;
-
-      expect(capturedFormData.get("labelData")).toEqual(
-        JSON.stringify(VERIFIED_LABEL_DATA),
-      );
-      const fileEntries = capturedFormData.getAll("files") as File[];
-      expect(fileEntries.length).toBe(1);
-      expect(fileEntries[0]).toEqual(mockFile);
     });
   });
 
